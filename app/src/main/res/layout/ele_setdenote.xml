@@ -50,6 +50,7 @@
             />
     </RelativeLayout>
         <RelativeLayout
+            android:id="@+id/choice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/showmonth"
@@ -63,6 +64,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="50dp"
                 android:text="全選"
+                android:textSize="20sp"
                 android:background="#aaaaaa"
                 android:layout_toLeftOf="@+id/save"
                 />
@@ -97,7 +99,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclenul"
         android:layout_width="match_parent"
-        android:layout_below="@+id/showmonth"
+        android:layout_below="@+id/choice"
         android:layout_height="wrap_content">
     </android.support.v7.widget.RecyclerView>
 </RelativeLayout>
