@@ -1,0 +1,122 @@
+package com.chargeapp.whc.chargeapp.Control;
+
+
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
+import com.chargeapp.whc.chargeapp.R;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+
+public class EleActivity extends AppCompatActivity {
+    private ListView elefunction;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.ele_main);
+        elefunction=findViewById(R.id.elefunction);
+        List<EleMainItemVO> eleMainItemVOList=getElemainItemList();
+        elefunction.setAdapter(new EleMainItemVOAdapter(this,eleMainItemVOList));
+        elefunction.setOnItemClickListener(new choiceItemFramgent());
+    }
+
+    private List<EleMainItemVO> getElemainItemList() {
+        List<EleMainItemVO> list=new ArrayList<>();
+        list.add(new EleMainItemVO("綁訂/取消通用性載具",R.drawable.cellphone));
+        list.add(new EleMainItemVO("捐贈發票",R.drawable.health));
+        list.add(new EleMainItemVO("綁定載具",R.drawable.easygo));
+        list.add(new EleMainItemVO("申請通用性載具",R.drawable.barcode));
+        return list;
+    }
+
+
+    private class EleMainItemVOAdapter extends BaseAdapter {
+        Context context;
+        List<EleMainItemVO> eleMainItemVOList;
+
+        EleMainItemVOAdapter(Context context, List<EleMainItemVO> eleMainItemVOList) {
+            this.context = context;
+            this.eleMainItemVOList = eleMainItemVOList;
+        }
+
+        @Override
+        public int getCount() {
+            return eleMainItemVOList.size();
+        }
+
+        @Override
+        public View getView(int position, View itemView, ViewGroup parent) {
+            if (itemView == null) {
+                LayoutInflater layoutInflater = LayoutInflater.from(context);
+                itemView = layoutInflater.inflate(R.layout.ele_main_item, parent, false);
+            }
+
+            EleMainItemVO member = eleMainItemVOList.get(position);
+            ImageView ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
+            ivImage.setImageResource(member.getImage());
+
+            TextView tvId = (TextView) itemView.findViewById(R.id.tvId);
+            tvId.setText(String.valueOf(member.getName()));
+            return itemView;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return eleMainItemVOList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+    }
+
+
+    private class choiceItemFramgent implements android.widget.AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+               Fragment fragment=null;
+               FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack(null);
+               if(i==0)
+               {
+                  fragment=new EleSetCarrier();
+                  fragmentTransaction.replace(R.id.elemain, fragment);
+                  fragmentTransaction.commit();
+               }else if(i==1)
+               {
+                   fragment=new EleDonate();
+                   fragmentTransaction.replace(R.id.elemain, fragment);
+                   fragmentTransaction.commit();
+               }else if(i==2)
+               {
+
+               }else if(i==3)
+               {
+
+               }else if(i==4)
+               {
+
+               }else{
+
+               }
+        }
+    }
+}
