@@ -74,10 +74,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 String endDate=sf.format(new Date(cal.getTimeInMillis()));
                 cal.set(year,month,1);
                 String startDate=sf.format(new Date(cal.getTimeInMillis()));
-//                while (isNoExist<3)
-//                {
+                while (isNoExist<3)
+                {
                     Log.d(TAG, "startDate: "+startDate+"endDate"+endDate+"isNoExist"+isNoExist);
-                    data=getInvoice(user,password,"2017/05/01","2017/05/31");
+                    data=getInvoice(user,password,startDate,endDate);
                     month=month-1;
                     if(month<=0)
                     {
@@ -93,15 +93,15 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     if(jsonIn.indexOf("919")!=-1)
                     {
                         jsonIn="error";
-//                        break;
+                        break;
                     }
                     if(jsonIn.indexOf("200")==-1)
                     {
                         isNoExist++;
-//                        continue;
+                        continue;
                     }
                     getjsonIn(jsonIn,password,user);
-//                }
+                }
             }else if(action.equals("GetToday"))
             {
                 Calendar today=Calendar.getInstance();
@@ -117,6 +117,11 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 if(todayyear==lastyear&&todaymonth==lastmonth)
                 {
                     searchTodayDate(last,today);
+                }else if(todayyear==lastyear)
+                {
+                  searchtomonth(last,today);
+                }else{
+
                 }
 
             }
@@ -125,6 +130,29 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         }
         return jsonIn;
     }
+
+    public void searchtomonth(Calendar last,Calendar today){
+        isNoExist=0;
+        SimpleDateFormat sf=new SimpleDateFormat("yyyy/MM/dd");
+        sf.setCalendar(last);
+        String startday=sf.format(last.getTime());
+        sf.setCalendar(today);
+        String endday=sf.format(today.getTime());
+        List<CarrierVO> carrierVOS=carrierDB.getAll();
+        HashMap data;
+        for(CarrierVO c:carrierVOS)
+        {
+
+            while (isNoExist==3)
+            {
+
+
+            }
+        }
+
+    }
+
+
 
     public void searchTodayDate(Calendar last,Calendar today) throws IOException {
         SimpleDateFormat sf=new SimpleDateFormat("yyyy/MM/dd");
@@ -140,7 +168,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             data=getInvoice(c.getCarNul(),c.getPassword(),startday,endday);
             String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
             String jsonIn = getRemoteData(url,data);
-
             if(jsonIn.indexOf("919")!=-1)
             {
                 jsonIn="error";
@@ -160,7 +187,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                  for (InvoiceVO old:oldInvoicelist)
                  {
                      if(old.getInvNum().equals(i.getInvNum()))
-                     {continue;}
+                     {break;}
                      invoiceDB.insert(i);
                  }
             }
@@ -219,8 +246,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         invoiceVO.setSellerName(j.get("sellerName").getAsString());
         JsonObject jtime=gson.fromJson(j.get("invDate").toString(),JsonObject.class);
         Log.d(TAG,j.toString());
-        String time=String.valueOf(jtime.get("year").getAsInt()+1911)+"-"+jtime.get("month").getAsString()+"-"+jtime.get("date").getAsString()+" "+j.get("invoiceTime").getAsString();
-
+        String time=String.valueOf(jtime.get("year").getAsInt()+1911)+"-"+jtime.get("month").getAsString()+"-"+jtime.get("date").getAsString()+" "+jtime.get("hours").getAsString()+":"+jtime.get("minutes").getAsString()+":"+jtime.get("seconds").getAsString();
         invoiceVO.setTime(Timestamp.valueOf(time));
         invoiceVO.setCarrier(user);
         invoiceVO.setCardEncrypt(password);
@@ -326,7 +352,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         StringBuilder result = new StringBuilder();
         boolean first = true;
         for(Map.Entry<String, String> entry : params.entrySet()){
-//            Log.d("tag",entry.getKey()+":"+entry.getValue());
             if (first)
                 first = false;
             else
