@@ -58,9 +58,13 @@ public class EleDonate extends Fragment {
             chargeAPPDB=new ChargeAPPDB(getActivity());
         }
         invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
-        new GetSQLDate(EleDonate.class,chargeAPPDB).execute("GetToday");
-
-
+        invoiceDB.deleteBytime(Timestamp.valueOf("2017-12-01 00:00:00"));
+        InvoiceVO invoiceVO=invoiceDB.getCarrierAll("/2RDO8+P").get(0);
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd HH:");
+        Log.d("XXXXX", String.valueOf(Timestamp.valueOf("2017-12-01 00:00:00").getTime()));
+        Log.d("XXXXX", String.valueOf(invoiceVO.getTime().getTime()));
+        Log.d("XXXXX",invoiceVO.getInvNum());
+//        new GetSQLDate(EleDonate.class,chargeAPPDB).execute("GetToday");
     }
 
 

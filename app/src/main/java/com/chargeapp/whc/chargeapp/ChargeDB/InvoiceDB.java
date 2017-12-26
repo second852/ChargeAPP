@@ -51,7 +51,7 @@ public class InvoiceDB {
     }
 
     public List<InvoiceVO> getCarrierAll(String carrrier) {
-        String sql = "SELECT * FROM INVOICE  where carrrier = '"+carrrier+"' order by time;";
+        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' order by time desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
@@ -106,8 +106,8 @@ public class InvoiceDB {
         return invoiceVOSList;
     }
 
-    public long findIVByMaxDate() {
-        String sql = "SELECT MAX(time) FROM INVOICE where invDonatable = 'true' and donateMark='true';";
+    public long findIVByMaxDate(String carrier) {
+        String sql = "SELECT MAX(time) FROM INVOICE where carrier ='"+carrier+"';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         long time=0;
@@ -196,6 +196,11 @@ public class InvoiceDB {
     public int deleteById(String  carrier) {
         String whereClause = "carrier" + " = ?;";
         String[] whereArgs = {carrier};
+        return db.delete(TABLE_NAME, whereClause, whereArgs);
+    }
+    public int deleteBytime(Timestamp  timestamp) {
+        String whereClause = "time" + " > ?;";
+        String[] whereArgs = {String.valueOf(timestamp.getTime())};
         return db.delete(TABLE_NAME, whereClause, whereArgs);
     }
 
