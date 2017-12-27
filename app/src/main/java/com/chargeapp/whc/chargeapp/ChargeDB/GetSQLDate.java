@@ -245,8 +245,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         invoiceVO.setInvDonatable(j.get("invDonatable").getAsString());
         invoiceVO.setSellerName(j.get("sellerName").getAsString());
         JsonObject jtime = gson.fromJson(j.get("invDate").toString(), JsonObject.class);
-        Log.d(TAG, j.toString());
-        String time = String.valueOf(jtime.get("year").getAsInt() + 1911) + "-" + jtime.get("month").getAsString() + "-" + jtime.get("date").getAsString() + " " + jtime.get("hours").getAsString() + ":" + jtime.get("minutes").getAsString() + ":" + jtime.get("seconds").getAsString();
+        String hhmmss=j.get("invoiceTime").getAsString();
+        if(hhmmss.indexOf("null")!=-1)
+        {
+            hhmmss="00:00:00";
+        }
+        String time = String.valueOf(jtime.get("year").getAsInt() + 1911) + "-" + jtime.get("month").getAsString() + "-" + jtime.get("date").getAsString() + " " +hhmmss;
         invoiceVO.setTime(Timestamp.valueOf(time));
         invoiceVO.setCarrier(user);
         invoiceVO.setCardEncrypt(password);
