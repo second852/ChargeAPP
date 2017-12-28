@@ -8,14 +8,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 
@@ -39,6 +43,8 @@ public class EleDonate extends Fragment {
     private RecyclerView listinviuce;
     private ChargeAPPDB chargeAPPDB;
     private InvoiceDB invoiceDB;
+    private Spinner carrierlist;
+    private CarrierDB carrierDB;
 
     @Nullable
     @Override
@@ -48,6 +54,17 @@ public class EleDonate extends Fragment {
         download();
         title=cal.get(Calendar.YEAR)+"年"+cal.get(Calendar.MONTH)+"月";
         month.setText(title);
+        ArrayList<String> sppineritem=new ArrayList<>();
+        for(CarrierVO c:carrierDB.getAll())
+        {
+            sppineritem.add(c.getCarNul());
+        }
+        View t=inflater.inflate(R.layout.ele_setdenote, container, false);
+        TextView tson=view.findViewById(R.id.spinnersonitem);
+        tson.setTextSize(25);
+        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,sppineritem);
+        carrierlist.setAdapter(arrayAdapter);
+       
         return view;
     }
 
@@ -57,17 +74,16 @@ public class EleDonate extends Fragment {
         {
             chargeAPPDB=new ChargeAPPDB(getActivity());
         }
+        carrierDB=new CarrierDB(chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
-        invoiceDB.deleteBytime(Timestamp.valueOf("2017-12-01 00:00:00"));
-        List<InvoiceVO> invoicelist=invoiceDB.getCarrierAll("/2RDO8+P");
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        for(InvoiceVO i:invoicelist)
-        {
-            Log.d("XXXXX", i.getInvNum()+":::::::"+sf.format(new Date(i.getTime().getTime())));
-        }
-
         new GetSQLDate(EleDonate.class,chargeAPPDB).execute("GetToday");
     }
+
+    public void setlayout()
+    {
+
+    }
+
 
 
     private void findviewbyid(View view)
@@ -76,6 +92,7 @@ public class EleDonate extends Fragment {
         add=view.findViewById(R.id.add);
         cut=view.findViewById(R.id.cut);
         listinviuce=view.findViewById(R.id.recyclenul);
+        carrierlist=view.findViewById(R.id.carrierlist);
     }
 
 

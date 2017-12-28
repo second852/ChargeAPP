@@ -115,10 +115,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     Log.d(TAG, "last" + sf.format(new Date(maxtime))+ ":today" +sf.format(new Date(today.getTimeInMillis())));
                     if (todayyear == lastyear && todaymonth == lastmonth) {
                         searchTodayDate(last, today, c.getCarNul(), c.getPassword());
-                    } else if (todayyear == lastyear) {
-                        searchtomonth(last, today, c.getCarNul(), c.getPassword());
                     } else {
-
+                        searchtomonth(last, today, c.getCarNul(), c.getPassword());
                     }
                 }
             }
