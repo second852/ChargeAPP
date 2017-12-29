@@ -3,6 +3,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,35 +37,28 @@ import java.util.List;
 
 public class EleDonate extends Fragment {
 
-    private TextView month;
+    private TextView carrier;
     private Calendar cal=Calendar.getInstance();
-    private String title;
     private ImageView add,cut;
     private RecyclerView listinviuce;
     private ChargeAPPDB chargeAPPDB;
     private InvoiceDB invoiceDB;
-    private Spinner carrierlist;
     private CarrierDB carrierDB;
-
+    private List<CarrierVO> carrierVOList;
+    private CarrierVO carrierVO;
+    private SimpleDateFormat sf=new SimpleDateFormat("yyyy/MM/dd");
+    private int choiceca=0;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ele_setdenote, container, false);
         findviewbyid(view);
         download();
-        title=cal.get(Calendar.YEAR)+"年"+cal.get(Calendar.MONTH)+"月";
-        month.setText(title);
-        ArrayList<String> sppineritem=new ArrayList<>();
-        for(CarrierVO c:carrierDB.getAll())
-        {
-            sppineritem.add(c.getCarNul());
-        }
-        View t=inflater.inflate(R.layout.ele_setdenote, container, false);
-        TextView tson=view.findViewById(R.id.spinnersonitem);
-        tson.setTextSize(25);
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,sppineritem);
-        carrierlist.setAdapter(arrayAdapter);
-       
+        carrierVOList=carrierDB.getAll();
+        carrierVO=carrierVOList.get(0);
+        carrier.setText(carrierVO.getCarNul());
+        add.setOnClickListener(new textOnClick(1));
+        cut.setOnClickListener(new textOnClick(-1));
         return view;
     }
 
@@ -76,23 +70,24 @@ public class EleDonate extends Fragment {
         }
         carrierDB=new CarrierDB(chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
-        new GetSQLDate(EleDonate.class,chargeAPPDB).execute("GetToday");
+        new GetSQLDate(this,chargeAPPDB).execute("GetToday");
     }
 
     public void setlayout()
     {
-
+        List<InvoiceVO> invoiceVOList=invoiceDB.getCarrierDoAll(carrierVO.getCarNul());
+        listinviuce.setLayoutManager(new LinearLayoutManager(getActivity()));
+        listinviuce.setAdapter(new InvoiceAdapter(getActivity(),invoiceVOList));
     }
 
 
 
     private void findviewbyid(View view)
     {
-        month= view.findViewById(R.id.month);
+        carrier=view.findViewById(R.id.carrier);
         add=view.findViewById(R.id.add);
         cut=view.findViewById(R.id.cut);
         listinviuce=view.findViewById(R.id.recyclenul);
-        carrierlist=view.findViewById(R.id.carrierlist);
     }
 
 
@@ -101,21 +96,20 @@ public class EleDonate extends Fragment {
         private Context context;
         private List<InvoiceVO> invoiceVOList;
 
+
         InvoiceAdapter(Context context, List<InvoiceVO> memberList) {
             this.context = context;
             this.invoiceVOList = memberList;
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView day,carrier,nul,sell,amount;
+            TextView day,nul,amount;
             CheckBox checkdonate;
             MyViewHolder(View itemView) {
                 super(itemView);
                 checkdonate=itemView.findViewById(R.id.checkdonate);
                 day=itemView.findViewById(R.id.day);
-                carrier=itemView.findViewById(R.id.carrier);
                 nul=itemView.findViewById(R.id.nul);
-                sell=itemView.findViewById(R.id.sell);
                 amount=itemView.findViewById(R.id.amount);
             }
         }
@@ -128,15 +122,40 @@ public class EleDonate extends Fragment {
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
-            View itemView = layoutInflater.inflate(R.layout.ele_main_item, viewGroup, false);
+            View itemView = layoutInflater.inflate(R.layout.ele_setdenote_item,viewGroup, false);
             return new MyViewHolder(itemView);
         }
 
         @Override
         public void onBindViewHolder(MyViewHolder viewHolder, int position) {
-
+            InvoiceVO invoiceVO=invoiceVOList.get(position);
+            viewHolder.day.setText(sf.format(new Date(invoiceVO.getTime().getTime())));
+            viewHolder.nul.setText(invoiceVO.getInvNum());
+            String amout="NT$"+invoiceVO.getAmount();
+            viewHolder.amount.setText(String.format(amout));
         }
     }
 
 
+    private class textOnClick implements View.OnClickListener {
+
+        textOnClick(int action)
+        {
+            choiceca=choiceca+action;
+        }
+
+        @Override
+        public void onClick(View view) {
+            if(choiceca<0)
+            {
+                choiceca=carrierVOList.size()-1;
+            }
+            if(choiceca>carrierVOList.size())
+            {
+                choiceca= 0;
+            }
+            carrierVO=carrierVOList.get(choiceca);
+            setlayout();
+        }
+    }
 }

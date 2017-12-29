@@ -8,6 +8,7 @@ import android.util.Log;
 
 
 import com.chargeapp.whc.chargeapp.Control.Common;
+import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
@@ -296,6 +297,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
     @Override
     protected void onPostExecute(String s) {
+        Log.d("XXXXXXx",(object instanceof EleDonate)+"XXXXXXXXx");
         super.onPostExecute(s);
         if (object instanceof EleSetCarrier) {
             EleSetCarrier eleSetCarrier = (EleSetCarrier) object;
@@ -309,6 +311,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 eleSetCarrier.setListAdapt();
                 Common.showToast(eleSetCarrier.getActivity(), "新增成功");
             }
+        }if(object instanceof EleDonate)
+        {
+            EleDonate eleDonate= (EleDonate) object;
+            eleDonate.setlayout();
         }
     }
 
