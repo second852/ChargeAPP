@@ -1,4 +1,5 @@
 package com.chargeapp.whc.chargeapp.Control;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +39,7 @@ import java.util.List;
 
 public class EleDonate extends Fragment {
 
-    private TextView carrier;
+    private TextView carrier,message;
     private Calendar cal=Calendar.getInstance();
     private ImageView add,cut;
     private RecyclerView listinviuce;
@@ -47,18 +49,18 @@ public class EleDonate extends Fragment {
     private List<CarrierVO> carrierVOList;
     private CarrierVO carrierVO;
     private SimpleDateFormat sf=new SimpleDateFormat("yyyy/MM/dd");
+    private RelativeLayout showmonth;
     private int choiceca=0;
+    private ProgressDialog progressDialog;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ele_setdenote, container, false);
+        progressDialog=new ProgressDialog(getActivity());
         findviewbyid(view);
         download();
-        carrierVOList=carrierDB.getAll();
-        carrierVO=carrierVOList.get(0);
-        carrier.setText(carrierVO.getCarNul());
-        add.setOnClickListener(new textOnClick(1));
-        cut.setOnClickListener(new textOnClick(-1));
+        add.setOnClickListener(new addOnClick());
+        cut.setOnClickListener(new cutOnClick());
         return view;
     }
 
@@ -71,11 +73,38 @@ public class EleDonate extends Fragment {
         carrierDB=new CarrierDB(chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
         new GetSQLDate(this,chargeAPPDB).execute("GetToday");
+        progressDialog.setMessage("正在更新資料,請稍候...");
+        progressDialog.show();
     }
 
     public void setlayout()
     {
+        progressDialog.cancel();
+        carrierVOList=carrierDB.getAll();
+        if(carrierVOList==null||carrierVOList.size()<=0)
+        {
+          message.setText("請新增載具!");
+          message.setVisibility(View.VISIBLE);
+          listinviuce.setVisibility(View.GONE);
+          showmonth.setVisibility(View.GONE);
+          return;
+        }
+        carrierVO=carrierVOList.get(choiceca);
+        listinviuce.removeAllViews();
         List<InvoiceVO> invoiceVOList=invoiceDB.getCarrierDoAll(carrierVO.getCarNul());
+        carrier.setText(carrierVO.getCarNul());
+        if(invoiceVOList==null||invoiceVOList.size()<=0)
+        {
+            message.setText("目前沒有可捐贈發票!");
+            message.setVisibility(View.VISIBLE);
+            listinviuce.setVisibility(View.GONE);
+            showmonth.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        message.setVisibility(View.GONE);
+        listinviuce.setVisibility(View.VISIBLE);
+        showmonth.setVisibility(View.VISIBLE);
         listinviuce.setLayoutManager(new LinearLayoutManager(getActivity()));
         listinviuce.setAdapter(new InvoiceAdapter(getActivity(),invoiceVOList));
     }
@@ -88,6 +117,8 @@ public class EleDonate extends Fragment {
         add=view.findViewById(R.id.add);
         cut=view.findViewById(R.id.cut);
         listinviuce=view.findViewById(R.id.recyclenul);
+        message=view.findViewById(R.id.message);
+        showmonth=view.findViewById(R.id.showmonth);
     }
 
 
@@ -137,24 +168,26 @@ public class EleDonate extends Fragment {
     }
 
 
-    private class textOnClick implements View.OnClickListener {
-
-        textOnClick(int action)
-        {
-            choiceca=choiceca+action;
-        }
-
+    private class addOnClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            choiceca++;
+            if(choiceca>(carrierVOList.size()-1))
+            {
+                choiceca= 0;
+            }
+            setlayout();
+        }
+    }
+
+    private class cutOnClick implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            choiceca--;
             if(choiceca<0)
             {
                 choiceca=carrierVOList.size()-1;
             }
-            if(choiceca>carrierVOList.size())
-            {
-                choiceca= 0;
-            }
-            carrierVO=carrierVOList.get(choiceca);
             setlayout();
         }
     }

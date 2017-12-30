@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 
 import android.util.Log;
+import android.widget.Spinner;
 
 
 import com.chargeapp.whc.chargeapp.Control.Common;
@@ -86,6 +87,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     endDate = sf.format(new Date(cal.getTimeInMillis()));
                     url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
                     jsonIn = getRemoteData(url, data);
+                    if(jsonIn.equals("InternerError"))
+                    {
+                        break;
+                    }
                     if (jsonIn.indexOf("919") != -1) {
                         jsonIn = "error";
                         break;
@@ -94,7 +99,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         isNoExist++;
                         continue;
                     }
-
+                    CarrierVO carrierVO = new CarrierVO();
+                    carrierVO.setCarNul(user);
+                    carrierVO.setPassword(password);
+                    carrierDB.insert(carrierVO);
                     getjsonIn(jsonIn, password, user);
                 }
             } else if (action.equals("GetToday")) {
@@ -108,16 +116,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     last.setTime(new Date(maxtime));
                     todayyear = today.get(Calendar.YEAR);
                     todaymonth = today.get(Calendar.MONTH);
-                    todayday = today.get(Calendar.DAY_OF_MONTH);
                     lastyear = last.get(Calendar.YEAR);
                     lastmonth = last.get(Calendar.MONTH);
-                    lastday = last.get(Calendar.DAY_OF_MONTH);
-                    Log.d(TAG, String.valueOf(invoiceDB.getAll().size()));
-                    Log.d(TAG, "last" + sf.format(new Date(maxtime))+ ":today" +sf.format(new Date(today.getTimeInMillis())));
                     if (todayyear == lastyear && todaymonth == lastmonth) {
-                        searchTodayDate(last, today, c.getCarNul(), c.getPassword());
+                        jsonIn=searchTodayDate(last, today, c.getCarNul(), c.getPassword());
                     } else {
-                        searchtomonth(last, today, c.getCarNul(), c.getPassword());
+                        jsonIn=searchtomonth(last, today, c.getCarNul(), c.getPassword());
                     }
                 }
             }
@@ -127,14 +131,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         return jsonIn;
     }
 
-    private void searchtomonth(Calendar last, Calendar today, String user, String password) throws IOException {
+    private String searchtomonth(Calendar last, Calendar today, String user, String password) throws IOException {
         String startDay, endDay,url,jsonIn;
         HashMap<String, String> data;
         int todayMonth = today.get(Calendar.MONTH);
         int todayYear = today.get(Calendar.YEAR);
-        int lastYear = last.get(Calendar.YEAR);
         int lastMonth = last.get(Calendar.MONTH);
-        int lastDay = last.get(Calendar.DAY_OF_MONTH);
         endDay = sf.format(new Date(today.getTimeInMillis()));
         today.set(todayYear, todayMonth, 1);
         startDay = sf.format(new Date(today.getTimeInMillis()));
@@ -143,9 +145,13 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             Log.d(TAG, "GetToday" + startDay + ":" + endDay);
             url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
             jsonIn = getRemoteData(url, data);
+            if(jsonIn.equals("InternerError"))
+            {
+                return jsonIn;
+            }
             if (jsonIn.indexOf("919") != -1 || jsonIn.indexOf("200") == -1) {
                 jsonIn = "error";
-                return;
+                return jsonIn;
             }
             getjsonIn(jsonIn, password, user);
             todayMonth = todayMonth - 1;
@@ -158,16 +164,17 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             today.set(todayYear, todayMonth, today.getActualMaximum(Calendar.DAY_OF_MONTH));
             endDay = sf.format(new Date(today.getTimeInMillis()));
             if (todayMonth == lastMonth) {
-                searchTodayDate(last,today,user,password);
-                return;
+                jsonIn=searchTodayDate(last,today,user,password);
+                return jsonIn;
             }
         }
+        return "Success";
     }
 
 
 
 
-    public void searchTodayDate(Calendar last, Calendar today, String user, String password) throws IOException {
+    public String searchTodayDate(Calendar last, Calendar today, String user, String password) throws IOException {
         String startday = sf.format(last.getTime());
         String endday = sf.format(today.getTime());
         HashMap data;
@@ -175,9 +182,13 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         data = getInvoice(user, password, startday, endday);
         String url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
         String jsonIn = getRemoteData(url, data);
+        if(jsonIn.equals("InternerError"))
+        {
+            return jsonIn;
+        }
         if (jsonIn.indexOf("919") != -1 || jsonIn.indexOf("200") == -1) {
             jsonIn = "error";
-            return;
+            return jsonIn;
         }
         Calendar cal = last;
         Timestamp start = new Timestamp(cal.getTimeInMillis() - 86400000);
@@ -192,6 +203,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 invoiceDB.insert(i);
             }
         }
+        return "Success";
     }
 
 
@@ -289,7 +301,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             }
             Log.d(TAG, "jsonin " + jsonIn);
         } else {
-            Log.d(TAG, "response code: " + responseCode);
+            jsonIn.append("InternerError");
         }
         conn.disconnect();
         return jsonIn.toString();
@@ -297,23 +309,27 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        Log.d("XXXXXXx",(object instanceof EleDonate)+"XXXXXXXXx");
         super.onPostExecute(s);
         if (object instanceof EleSetCarrier) {
             EleSetCarrier eleSetCarrier = (EleSetCarrier) object;
             if (s.equals("error")) {
                 Common.showToast(eleSetCarrier.getActivity(), "手機條碼或驗證碼有誤");
-            } else {
-                CarrierVO carrierVO = new CarrierVO();
-                carrierVO.setCarNul(user);
-                carrierVO.setPassword(password);
-                carrierDB.insert(carrierVO);
+            } else if(s.equals("InternerError"))
+            {
+                Common.showToast(eleSetCarrier.getActivity(), "沒有網路");
+            }
+            else{
                 eleSetCarrier.setListAdapt();
                 Common.showToast(eleSetCarrier.getActivity(), "新增成功");
             }
         }if(object instanceof EleDonate)
         {
             EleDonate eleDonate= (EleDonate) object;
+            if(s.equals("InternerError"))
+            {
+              Common.showToast(eleDonate.getActivity(), "沒有網路");
+              return;
+            }
             eleDonate.setlayout();
         }
     }
