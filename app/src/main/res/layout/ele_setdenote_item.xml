@@ -16,40 +16,40 @@
         android:orientation="horizontal"
         android:padding="6dp">
        <CheckBox
-           android:id="@+id/checkdonate"
+           android:id="@+id/elechecktitle"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_gravity="center"
            android:buttonTint="#00BBFF"
            />
             <TextView
-                android:id="@+id/day"
+                android:id="@+id/eleday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:layout_marginLeft="18dp"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/checkdonate"
+                android:layout_toRightOf="@+id/elechecktitle"
                 />
             <TextView
-                android:id="@+id/nul"
+                android:id="@+id/elenul"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:textColor="#000000"
-                android:layout_toRightOf="@+id/day"
+                android:layout_toRightOf="@+id/eleday"
                 android:textSize="18sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/amount"
+            android:id="@+id/eleamount"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="30dp"
-            android:layout_toRightOf="@+id/nul"
+            android:layout_toRightOf="@+id/elenul"
             android:textColor="#000000"
             android:textSize="18sp"
             />

@@ -2,11 +2,19 @@ package com.chargeapp.whc.chargeapp.Control;
 
 
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +102,8 @@ public class EleActivity extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                Fragment fragment=null;
-               FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack(null);
+               FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("Elemain");
+               elefunction.setOnItemClickListener(null);
                if(i==0)
                {
                   fragment=new EleSetCarrier();
@@ -102,6 +111,7 @@ public class EleActivity extends AppCompatActivity {
                   fragmentTransaction.commit();
                }else if(i==1)
                {
+
                    fragment=new EleDonate();
                    fragmentTransaction.replace(R.id.elemain, fragment);
                    fragmentTransaction.commit();
@@ -117,6 +127,29 @@ public class EleActivity extends AppCompatActivity {
                }else{
 
                }
+
         }
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        int index = getSupportFragmentManager().getBackStackEntryCount() - 1;
+        if(index!=-1)
+        {
+            FragmentManager.BackStackEntry backEntry = getSupportFragmentManager().getBackStackEntryAt(index);
+            String tag = backEntry.getName();
+            if(tag!=null)
+            {
+                if (tag.equals("Elemain")) {
+                    Intent intent = new Intent(EleActivity.this, EleActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
+
 }

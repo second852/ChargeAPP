@@ -62,6 +62,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         String jsonIn = null;
         String url;
         HashMap<String, String> data;
+        boolean first =true;
         try {
             if (action.equals("getInvoice")) {
                 Calendar cal = Calendar.getInstance();
@@ -99,12 +100,17 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         isNoExist++;
                         continue;
                     }
-                    CarrierVO carrierVO = new CarrierVO();
-                    carrierVO.setCarNul(user);
-                    carrierVO.setPassword(password);
-                    carrierDB.insert(carrierVO);
                     getjsonIn(jsonIn, password, user);
+                    if(first)
+                    {
+                        CarrierVO carrierVO = new CarrierVO();
+                        carrierVO.setCarNul(user);
+                        carrierVO.setPassword(password);
+                        carrierDB.insert(carrierVO);
+                    }
+                    first=false;
                 }
+
             } else if (action.equals("GetToday")) {
                 List<CarrierVO> carrierVOS = carrierDB.getAll();
                 int todayyear, todaymonth, todayday, lastyear, lastmonth, lastday;
@@ -124,10 +130,27 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         jsonIn=searchtomonth(last, today, c.getCarNul(), c.getPassword());
                     }
                 }
+            }else if(action.equals("searchHeartyTeam"))
+            {
+                String keyworld = params[1].toString();
+                jsonIn=searchHeartyTeam(keyworld);
             }
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
+        return jsonIn;
+    }
+
+    private String searchHeartyTeam(String keyworld) throws IOException {
+        String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/loveCodeapp/qryLoveCode?";
+        String jsonIn;
+        HashMap <String,String> data=new HashMap<>();
+        data.put("version","0.2");
+        data.put("qKey",keyworld);
+        data.put("action","qryLoveCode");
+        data.put("UUID","second852");
+        data.put("appID","EINV3201711184648");
+        jsonIn=getRemoteData(url,data);
         return jsonIn;
     }
 
@@ -196,12 +219,20 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         List<InvoiceVO> newInvoicelist = todayjsonIn(jsonIn, password, user);
         List<InvoiceVO> oldInvoicelist = invoiceDB.getInvoiceBytime(start, end, user);
         for (InvoiceVO i : newInvoicelist) {
+            boolean isequals=false;
             for (InvoiceVO old : oldInvoicelist) {
+                Log.d("XXXXXX",i.getInvNum()+" : "+old.getInvNum()+" : "+old.getInvNum().equals(i.getInvNum()));
                 if (old.getInvNum().equals(i.getInvNum())) {
+                    isequals=true;
                     break;
                 }
-                invoiceDB.insert(i);
             }
+            if(!isequals)
+            {
+                invoiceDB.insert(i);
+                Log.d("XXXXXinsert",i.getInvNum());
+            }
+
         }
         return "Success";
     }
@@ -241,7 +272,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 invoiceDB.insert(invoiceVO);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+           e.printStackTrace();
         }
     }
 

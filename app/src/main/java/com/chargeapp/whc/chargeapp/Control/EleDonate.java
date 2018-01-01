@@ -10,13 +10,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
@@ -25,13 +27,16 @@ import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by 1709008NB01 on 2017/12/22.
@@ -40,7 +45,6 @@ import java.util.List;
 public class EleDonate extends Fragment {
 
     private TextView carrier,message;
-    private Calendar cal=Calendar.getInstance();
     private ImageView add,cut;
     private RecyclerView listinviuce;
     private ChargeAPPDB chargeAPPDB;
@@ -49,18 +53,30 @@ public class EleDonate extends Fragment {
     private List<CarrierVO> carrierVOList;
     private CarrierVO carrierVO;
     private SimpleDateFormat sf=new SimpleDateFormat("yyyy/MM/dd");
-    private RelativeLayout showmonth;
+    private RelativeLayout showmonth,searchRL;
     private int choiceca=0;
     private ProgressDialog progressDialog;
+    private HashMap<String,InvoiceVO> donateMap;
+    private Button choiceall,save,cancel;
+    private List<InvoiceVO> invoiceVOList;
+    private boolean sellall=false;
+    private EditText inputH;
+    private ImageView searchI;
+    private ListView heartyList;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ele_setdenote, container, false);
         progressDialog=new ProgressDialog(getActivity());
+        donateMap=new HashMap<>();
         findviewbyid(view);
         download();
         add.setOnClickListener(new addOnClick());
         cut.setOnClickListener(new cutOnClick());
+        choiceall.setOnClickListener(new choiceallchecked());
+        cancel.setOnClickListener(new cancelallchecked());
+        save.setOnClickListener(new uploadheraty());
+        searchI.setOnClickListener(new searchHeartyTeam());
         return view;
     }
 
@@ -72,6 +88,13 @@ public class EleDonate extends Fragment {
         }
         carrierDB=new CarrierDB(chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
+
+//        invoiceDB.deleteBytime(Timestamp.valueOf("2017-12-01 00:00:00"));
+//        for(InvoiceVO i:invoiceVOList)
+//        {
+//            Log.d("XXXXXXXXX",i.getInvNum());
+//        }
+
         new GetSQLDate(this,chargeAPPDB).execute("GetToday");
         progressDialog.setMessage("正在更新資料,請稍候...");
         progressDialog.show();
@@ -91,7 +114,7 @@ public class EleDonate extends Fragment {
         }
         carrierVO=carrierVOList.get(choiceca);
         listinviuce.removeAllViews();
-        List<InvoiceVO> invoiceVOList=invoiceDB.getCarrierDoAll(carrierVO.getCarNul());
+        invoiceVOList=invoiceDB.getCarrierDoAll(carrierVO.getCarNul());
         carrier.setText(carrierVO.getCarNul());
         if(invoiceVOList==null||invoiceVOList.size()<=0)
         {
@@ -119,6 +142,13 @@ public class EleDonate extends Fragment {
         listinviuce=view.findViewById(R.id.recyclenul);
         message=view.findViewById(R.id.message);
         showmonth=view.findViewById(R.id.showmonth);
+        choiceall=view.findViewById(R.id.choiceall);
+        save=view.findViewById(R.id.save);
+        cancel=view.findViewById(R.id.cancel);
+        inputH=view.findViewById(R.id.inputH);
+        searchI=view.findViewById(R.id.searchI);
+        searchRL=view.findViewById(R.id.searchRL);
+        heartyList=view.findViewById(R.id.heartyList);
     }
 
 
@@ -138,10 +168,10 @@ public class EleDonate extends Fragment {
             CheckBox checkdonate;
             MyViewHolder(View itemView) {
                 super(itemView);
-                checkdonate=itemView.findViewById(R.id.checkdonate);
-                day=itemView.findViewById(R.id.day);
-                nul=itemView.findViewById(R.id.nul);
-                amount=itemView.findViewById(R.id.amount);
+                checkdonate=itemView.findViewById(R.id.elechecktitle);
+                day=itemView.findViewById(R.id.eleday);
+                nul=itemView.findViewById(R.id.elenul);
+                amount=itemView.findViewById(R.id.eleamount);
             }
         }
 
@@ -159,11 +189,23 @@ public class EleDonate extends Fragment {
 
         @Override
         public void onBindViewHolder(MyViewHolder viewHolder, int position) {
-            InvoiceVO invoiceVO=invoiceVOList.get(position);
+            final InvoiceVO invoiceVO=invoiceVOList.get(position);
             viewHolder.day.setText(sf.format(new Date(invoiceVO.getTime().getTime())));
             viewHolder.nul.setText(invoiceVO.getInvNum());
             String amout="NT$"+invoiceVO.getAmount();
             viewHolder.amount.setText(String.format(amout));
+            viewHolder.checkdonate.setChecked(sellall);
+            viewHolder.checkdonate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(buttonView.isChecked()) {
+                        donateMap.put(invoiceVO.getInvNum(), invoiceVO);
+                    }else{
+                        donateMap.remove(invoiceVO.getInvNum());
+                    }
+                }
+            });
+
         }
     }
 
@@ -191,4 +233,112 @@ public class EleDonate extends Fragment {
             setlayout();
         }
     }
+
+
+    private class choiceallchecked implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            sellall=true;
+            for(InvoiceVO invoiceVO:invoiceVOList)
+            {
+                donateMap.put(invoiceVO.getInvNum(),invoiceVO);
+            }
+            listinviuce.setAdapter(new InvoiceAdapter(getActivity(),invoiceVOList));
+        }
+    }
+    private class cancelallchecked implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            sellall=false;
+            donateMap.clear();
+            listinviuce.setAdapter(new InvoiceAdapter(getActivity(),invoiceVOList));
+        }
+    }
+
+    private class uploadheraty implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+           if(donateMap.size()==0)
+           {
+               Common.showToast(getActivity(),"請勾選要捐獻發票");
+               return;
+           }
+           searchRL.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private class searchHeartyTeam implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            try {
+                String jsonin= new GetSQLDate(this,chargeAPPDB).execute("searchHeartyTeam",inputH.getText().toString()).get();
+                Gson gson =new Gson();
+                JsonObject jFS=gson.fromJson(jsonin,JsonObject.class);
+                String jFSDT=jFS.get("details").toString();
+                if(jFSDT==null)
+                {
+                      Common.showToast(getActivity(),"查無資料");
+                      return;
+                }
+                Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
+                List<JsonObject> jSS=gson.fromJson(jFSDT,cdType);
+                heartyList.setAdapter(new HeartyAdapter(getActivity(),jSS));
+                Log.d("XXXXXXXX",jsonin);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private class HeartyAdapter extends BaseAdapter {
+        Context context;
+        List<JsonObject> teamlist;
+
+        HeartyAdapter(Context context, List<JsonObject> teamlist) {
+            this.context = context;
+            this.teamlist = teamlist;
+        }
+
+        @Override
+        public int getCount() {
+            return teamlist.size();
+        }
+
+        @Override
+        public View getView(final int position, View itemView, final ViewGroup parent) {
+            if (itemView == null) {
+                LayoutInflater layoutInflater = LayoutInflater.from(context);
+                itemView = layoutInflater.inflate(R.layout.ele_main_item, parent, false);
+            }
+            final JsonObject team = teamlist.get(position);
+            String teamName="";
+            try{
+                teamName=team.get("SocialWelfareName").getAsString();
+            }catch(NullPointerException e)
+            {
+                teamName=team.get("LoveCode").getAsString();
+            }
+            TextView tvId = (TextView) itemView.findViewById(R.id.tvId);
+            tvId.setTextSize(20);
+            tvId.setText(teamName);
+            tvId.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                }
+            });
+            return itemView;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return teamlist.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+    }
+
 }

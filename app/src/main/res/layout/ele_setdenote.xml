@@ -97,7 +97,7 @@
                 />
         </RelativeLayout>
     <RelativeLayout
-        android:id="@+id/titlelist"
+        android:id="@+id/eletitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -106,7 +106,7 @@
         android:background="#FFBB66"
         android:padding="6dp">
         <TextView
-            android:id="@+id/checkdonate"
+            android:id="@+id/elechecktitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -117,7 +117,7 @@
             android:layout_marginLeft="15dp"
             />
         <TextView
-            android:id="@+id/day"
+            android:id="@+id/eleday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"
@@ -125,14 +125,14 @@
             android:layout_marginLeft="30dp"
             android:text="日期"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/checkdonate"
+            android:layout_toRightOf="@+id/elechecktitle"
             />
         <TextView
-            android:id="@+id/nul"
+            android:id="@+id/elenul"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/day"
+            android:layout_toRightOf="@+id/eleday"
             android:layout_marginLeft="40dp"
             android:textColor="#000000"
             android:text="統一編號"
@@ -141,7 +141,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/amount"
+            android:id="@+id/eleamount"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="50dp"
@@ -161,10 +161,58 @@
         android:gravity="center"
         android:visibility="gone"
         />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclenul"
         android:layout_width="match_parent"
-        android:layout_below="@+id/titlelist"
+        android:layout_below="@+id/eletitle"
         android:layout_height="wrap_content">
     </android.support.v7.widget.RecyclerView>
+    <RelativeLayout
+        android:id="@+id/searchRL"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:background="#aaaaaa"
+        android:visibility="gone"
+        >
+        <TextView
+            android:id="@+id/searchHTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="查詢的愛心碼/統編之關鍵字"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:textColor="#000000"
+            />
+        <EditText
+            android:id="@+id/inputH"
+            android:layout_width="150dp"
+            android:layout_height="25dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/searchHTitle"
+            android:layout_marginTop="5dp"
+            android:singleLine="true"
+            android:inputType="text"
+            android:background="#ffffff"
+            android:textColor="#000000"
+            />
+        <ImageView
+            android:id="@+id/searchI"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/search"
+            android:layout_below="@+id/searchHTitle"
+            android:layout_toRightOf="@+id/inputH"
+            android:layout_marginLeft="15dp"
+            />
+        <ListView
+            android:id="@+id/heartyList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/searchI"
+            >
+        </ListView>
+    </RelativeLayout>
 </RelativeLayout>
