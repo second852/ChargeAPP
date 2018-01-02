@@ -312,34 +312,40 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     }
 
 
-    private String getRemoteData(String url, HashMap data) throws IOException {
-
+    private String getRemoteData(String url, HashMap data)  {
         StringBuilder jsonIn = new StringBuilder();
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-        conn.setReadTimeout(15000);
-        conn.setConnectTimeout(15000);
-        conn.setRequestMethod("POST");
-        conn.setDoInput(true);
-        conn.setDoOutput(true);
-        OutputStream os = conn.getOutputStream();
-        BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(os, "UTF-8"));
-        writer.write(getPostDataString(data));
-        writer.flush();
-        writer.close();
-        os.close();
-        int responseCode = conn.getResponseCode();
-        if (responseCode == 200) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line;
-            while ((line = br.readLine()) != null) {
-                jsonIn.append(line);
+        HttpURLConnection conn=null;
+        try {
+            conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setReadTimeout(15000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            OutputStream os = conn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(getPostDataString(data));
+            writer.flush();
+            writer.close();
+            os.close();
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    jsonIn.append(line);
+                }
+                Log.d(TAG, "jsonin " + jsonIn);
             }
-            Log.d(TAG, "jsonin " + jsonIn);
-        } else {
+
+        }catch (Exception e)
+        {
+            jsonIn=new StringBuilder();
             jsonIn.append("InternerError");
+        }finally {
+            conn.disconnect();
         }
-        conn.disconnect();
         return jsonIn.toString();
     }
 
@@ -349,21 +355,27 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         if (object instanceof EleSetCarrier) {
             EleSetCarrier eleSetCarrier = (EleSetCarrier) object;
             if (s.equals("error")) {
-                Common.showToast(eleSetCarrier.getActivity(), "手機條碼或驗證碼有誤");
+                Common.showLongToast(eleSetCarrier.getActivity(), "手機條碼或驗證碼有誤");
+                eleSetCarrier.closeDialog();
+                return;
             } else if(s.equals("InternerError"))
             {
-                Common.showToast(eleSetCarrier.getActivity(), "沒有網路");
+                Common.showLongToast(eleSetCarrier.getActivity(), "財政部網路忙線中，請稍候使用!");
+                eleSetCarrier.closeDialog();
+                return;
             }
             else{
                 eleSetCarrier.setListAdapt();
                 Common.showToast(eleSetCarrier.getActivity(), "新增成功");
+                return;
             }
         }if(object instanceof EleDonate)
         {
             EleDonate eleDonate= (EleDonate) object;
             if(s.equals("InternerError"))
             {
-              Common.showToast(eleDonate.getActivity(), "沒有網路");
+                Common.showLongToast(eleDonate.getActivity(), "財政部網路忙線中，請稍候使用!");
+                eleDonate.cancelDialog();
               return;
             }
             eleDonate.setlayout();

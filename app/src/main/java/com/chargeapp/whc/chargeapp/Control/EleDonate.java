@@ -121,9 +121,13 @@ public class EleDonate extends Fragment {
         progressDialog.show();
     }
 
-    public void setlayout()
+    public void cancelDialog()
     {
         progressDialog.cancel();
+    }
+    public void setlayout()
+    {
+        cancelDialog();
         carrierVO=carrierVOList.get(choiceca);
         listinviuce.removeAllViews();
         invoiceVOList=invoiceDB.getCarrierDoAll(carrierVO.getCarNul());

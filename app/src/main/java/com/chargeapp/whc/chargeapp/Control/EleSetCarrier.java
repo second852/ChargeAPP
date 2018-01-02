@@ -70,6 +70,11 @@ public class EleSetCarrier extends Fragment {
         return view;
     }
 
+    public void closeDialog()
+    {
+        progressDialog.cancel();
+    }
+
     public void setListAdapt()
     {
         carrierlist=carrierDB.getAll();
@@ -80,7 +85,7 @@ public class EleSetCarrier extends Fragment {
             listtiitle.setVisibility(View.GONE);
         }
         listcarrier.setAdapter(new EleSetCarrierAdapter(getActivity(),carrierlist));
-        progressDialog.cancel();
+        closeDialog();
     }
 
     private class EleSetCarrierAdapter extends BaseAdapter {
