@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQ_PERMISSIONS = 0;
 
-    private void askPermissions() {
+    public void askPermissions() {
         //因為是群組授權，所以請求ACCESS_COARSE_LOCATION就等同於請求ACCESS_FINE_LOCATION，因為同屬於LOCATION群組
         String[] permissions = {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,

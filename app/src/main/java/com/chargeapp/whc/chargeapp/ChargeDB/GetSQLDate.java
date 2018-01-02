@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 
 
 import android.util.Log;
-import android.widget.Spinner;
+
 
 
 import com.chargeapp.whc.chargeapp.Control.Common;
@@ -54,6 +54,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         invoiceDB = new InvoiceDB(chargeAPPDB.getReadableDatabase());
         carrierDB = new CarrierDB(chargeAPPDB.getReadableDatabase());
     }
+    public GetSQLDate() {}
+
 
 
     @Override
@@ -79,7 +81,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     data = getInvoice(user, password, startDate, endDate);
                     month = month - 1;
                     if (month <= 0) {
-                        month = 12;
+                        month = 11;
                         year = year - 1;
                     }
                     cal.set(year, month, 1);
@@ -136,10 +138,13 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 jsonIn=searchHeartyTeam(keyworld);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString());
+            e.printStackTrace();
+            jsonIn="InternerError";
         }
         return jsonIn;
     }
+
+
 
     private String searchHeartyTeam(String keyworld) throws IOException {
         String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/loveCodeapp/qryLoveCode?";
@@ -179,7 +184,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             getjsonIn(jsonIn, password, user);
             todayMonth = todayMonth - 1;
             if (todayMonth <= 0) {
-                todayMonth = 12;
+                todayMonth = 11;
                 todayYear = todayYear - 1;
             }
             today.set(todayYear, todayMonth, 1);
@@ -267,9 +272,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             String s = js.get("details").toString();
             List<JsonObject> b = gson.fromJson(s, cdType);
             for (JsonObject j : b) {
-                Log.d(TAG, j.toString());
-                invoiceVO = jsonToInVoice(j, password, user);
-                invoiceDB.insert(invoiceVO);
+                    invoiceVO = jsonToInVoice(j, password, user);
+                    invoiceDB.insert(invoiceVO);
+                    Log.d("insert",invoiceVO.getInvNum());
             }
         } catch (Exception e) {
            e.printStackTrace();

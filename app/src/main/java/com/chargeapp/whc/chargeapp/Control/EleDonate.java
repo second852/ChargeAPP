@@ -1,11 +1,17 @@
 package com.chargeapp.whc.chargeapp.Control;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +30,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -33,7 +40,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -51,18 +60,20 @@ public class EleDonate extends Fragment {
     private InvoiceDB invoiceDB;
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOList;
-    private CarrierVO carrierVO;
+    public static CarrierVO carrierVO;
     private SimpleDateFormat sf=new SimpleDateFormat("yyyy/MM/dd");
     private RelativeLayout showmonth,searchRL;
-    private int choiceca=0;
+    public static int choiceca=0;
     private ProgressDialog progressDialog;
-    private HashMap<String,InvoiceVO> donateMap;
+    public static HashMap<String,InvoiceVO> donateMap;
     private Button choiceall,save,cancel;
     private List<InvoiceVO> invoiceVOList;
     private boolean sellall=false;
     private EditText inputH;
     private ImageView searchI;
     private ListView heartyList;
+    public  static String teamNumber,teamTitle;
+    private Button returnSH;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -77,6 +88,7 @@ public class EleDonate extends Fragment {
         cancel.setOnClickListener(new cancelallchecked());
         save.setOnClickListener(new uploadheraty());
         searchI.setOnClickListener(new searchHeartyTeam());
+        returnSH.setOnClickListener(new retrinDonateM());
         return view;
     }
 
@@ -89,12 +101,21 @@ public class EleDonate extends Fragment {
         carrierDB=new CarrierDB(chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
 
-//        invoiceDB.deleteBytime(Timestamp.valueOf("2017-12-01 00:00:00"));
+//        invoiceDB.deleteBytime(Timestamp.valueOf("2017-12-17 00:00:00"));
+//        setlayout();
 //        for(InvoiceVO i:invoiceVOList)
 //        {
 //            Log.d("XXXXXXXXX",i.getInvNum());
 //        }
-
+        carrierVOList=carrierDB.getAll();
+        if(carrierVOList==null||carrierVOList.size()<=0)
+        {
+            message.setText("請新增載具!");
+            message.setVisibility(View.VISIBLE);
+            listinviuce.setVisibility(View.GONE);
+            showmonth.setVisibility(View.GONE);
+            return;
+        }
         new GetSQLDate(this,chargeAPPDB).execute("GetToday");
         progressDialog.setMessage("正在更新資料,請稍候...");
         progressDialog.show();
@@ -103,15 +124,6 @@ public class EleDonate extends Fragment {
     public void setlayout()
     {
         progressDialog.cancel();
-        carrierVOList=carrierDB.getAll();
-        if(carrierVOList==null||carrierVOList.size()<=0)
-        {
-          message.setText("請新增載具!");
-          message.setVisibility(View.VISIBLE);
-          listinviuce.setVisibility(View.GONE);
-          showmonth.setVisibility(View.GONE);
-          return;
-        }
         carrierVO=carrierVOList.get(choiceca);
         listinviuce.removeAllViews();
         invoiceVOList=invoiceDB.getCarrierDoAll(carrierVO.getCarNul());
@@ -149,6 +161,7 @@ public class EleDonate extends Fragment {
         searchI=view.findViewById(R.id.searchI);
         searchRL=view.findViewById(R.id.searchRL);
         heartyList=view.findViewById(R.id.heartyList);
+        returnSH=view.findViewById(R.id.returnSH);
     }
 
 
@@ -272,17 +285,17 @@ public class EleDonate extends Fragment {
         public void onClick(View v) {
             try {
                 String jsonin= new GetSQLDate(this,chargeAPPDB).execute("searchHeartyTeam",inputH.getText().toString()).get();
-                Gson gson =new Gson();
-                JsonObject jFS=gson.fromJson(jsonin,JsonObject.class);
-                String jFSDT=jFS.get("details").toString();
-                if(jFSDT==null)
+                if(jsonin.indexOf("details")!=-1)
                 {
-                      Common.showToast(getActivity(),"查無資料");
-                      return;
+                    Gson gson =new Gson();
+                    JsonObject jFS=gson.fromJson(jsonin,JsonObject.class);
+                    String jFSDT=jFS.get("details").toString();
+                    Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
+                    List<JsonObject> jSS=gson.fromJson(jFSDT,cdType);
+                    heartyList.setAdapter(new HeartyAdapter(getActivity(),jSS));
+                }else{
+                    Common.showToast(getActivity(),"查無資料");
                 }
-                Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
-                List<JsonObject> jSS=gson.fromJson(jFSDT,cdType);
-                heartyList.setAdapter(new HeartyAdapter(getActivity(),jSS));
                 Log.d("XXXXXXXX",jsonin);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -325,6 +338,10 @@ public class EleDonate extends Fragment {
             tvId.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                     searchRL.setVisibility(View.GONE);
+                     teamTitle=team.get("SocialWelfareName").getAsString();
+                     teamNumber=team.get("SocialWelfareBAN").getAsString();
+                     new AlertDialogFragment().show(getFragmentManager(),"show");
                 }
             });
             return itemView;
@@ -341,4 +358,44 @@ public class EleDonate extends Fragment {
         }
     }
 
+    public static class AlertDialogFragment
+            extends DialogFragment implements DialogInterface.OnClickListener {
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            String message="載具 : "+carrierVO.getCarNul()+"\n";
+            String title="<font color=\"white\">確定要捐獻給</font><br><font color=\"red\">"+teamTitle+"?</font>";
+            for(String s: donateMap.keySet())
+            {
+                message=message+s+" X 1\n";
+            }
+            message=message+"總共 : "+donateMap.size()+" 張";
+            return new AlertDialog.Builder(getActivity())
+                    .setTitle(Html.fromHtml(title))
+                    .setIcon(null)
+                    .setMessage(message)
+                    .setPositiveButton("YES", this)
+                    .setNegativeButton("NO", this)
+                    .create();
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    new SetupDateBase64().execute("DonateTeam");
+                    break;
+                default:
+                    dialog.cancel();
+                    break;
+            }
+        }
+    }
+
+    private class retrinDonateM implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            searchRL.setVisibility(View.GONE);
+        }
+    }
 }
