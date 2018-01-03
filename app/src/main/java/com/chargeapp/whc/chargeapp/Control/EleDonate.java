@@ -23,12 +23,14 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
+import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate123;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
@@ -74,6 +76,7 @@ public class EleDonate extends Fragment {
     private ListView heartyList;
     public  static String teamNumber,teamTitle;
     private Button returnSH;
+    private ProgressBar progressbar;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -123,8 +126,34 @@ public class EleDonate extends Fragment {
 
     public void cancelDialog()
     {
+
         progressDialog.cancel();
+        progressbar.setVisibility(View.GONE);
     }
+
+
+    public void setlistTeam(String jsonin)
+    {
+            cancelDialog();
+        try {
+
+            if(jsonin.indexOf("details")!=-1)
+            {
+                Gson gson =new Gson();
+                JsonObject jFS=gson.fromJson(jsonin,JsonObject.class);
+                String jFSDT=jFS.get("details").toString();
+                Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
+                List<JsonObject> jSS=gson.fromJson(jFSDT,cdType);
+                heartyList.setAdapter(new HeartyAdapter(getActivity(),jSS));
+            }else{
+                Common.showToast(getActivity(),"查無資料");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void setlayout()
     {
         cancelDialog();
@@ -140,7 +169,6 @@ public class EleDonate extends Fragment {
             showmonth.setVisibility(View.VISIBLE);
             return;
         }
-
         message.setVisibility(View.GONE);
         listinviuce.setVisibility(View.VISIBLE);
         showmonth.setVisibility(View.VISIBLE);
@@ -166,6 +194,7 @@ public class EleDonate extends Fragment {
         searchRL=view.findViewById(R.id.searchRL);
         heartyList=view.findViewById(R.id.heartyList);
         returnSH=view.findViewById(R.id.returnSH);
+        progressbar=view.findViewById(R.id.progressbar);
     }
 
 
@@ -287,25 +316,8 @@ public class EleDonate extends Fragment {
     private class searchHeartyTeam implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            try {
-                String jsonin= new GetSQLDate(this,chargeAPPDB).execute("searchHeartyTeam",inputH.getText().toString()).get();
-                if(jsonin.indexOf("details")!=-1)
-                {
-                    Gson gson =new Gson();
-                    JsonObject jFS=gson.fromJson(jsonin,JsonObject.class);
-                    String jFSDT=jFS.get("details").toString();
-                    Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
-                    List<JsonObject> jSS=gson.fromJson(jFSDT,cdType);
-                    heartyList.setAdapter(new HeartyAdapter(getActivity(),jSS));
-                }else{
-                    Common.showToast(getActivity(),"查無資料");
-                }
-                Log.d("XXXXXXXX",jsonin);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+            new GetSQLDate(EleDonate.this,chargeAPPDB).execute("searchHeartyTeam",inputH.getText().toString());
+            progressbar.setVisibility(View.VISIBLE);
         }
     }
     private class HeartyAdapter extends BaseAdapter {
@@ -387,7 +399,7 @@ public class EleDonate extends Fragment {
         public void onClick(DialogInterface dialog, int which) {
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
-                    new SetupDateBase64().execute("DonateTeam");
+                    new GetSQLDate123().execute("DonateTeam");
                     break;
                 default:
                     dialog.cancel();

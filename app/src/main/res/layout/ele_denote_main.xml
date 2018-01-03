@@ -12,21 +12,13 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:text="圖表"
+        android:text="捐獻發票"
         android:background="#FFA488"
         android:textAlignment="center"
         android:textColor="#000000"
         android:layout_centerVertical="true"
         android:gravity="center"
         android:textSize="30dp" />
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="切換"
-        android:layout_alignParentRight="true"
-        android:textSize="20sp"
-        android:gravity="center"
-        />
     <HorizontalScrollView
         android:id="@+id/choiceitem"
         android:layout_width="match_parent"
@@ -48,7 +40,7 @@
                 android:layout_toRightOf="@+id/exportD"
                 android:background="#000000"
                 android:textSize="25sp"
-                android:text="收入" />
+                android:text="紀錄" />
             <Button
                 android:id="@+id/exportD"
                 android:layout_width="wrap_content"
@@ -57,7 +49,7 @@
                 android:background="#f5f5f5"
                 android:textColor="#000000"
                 android:textSize="25sp"
-                android:text="總覽" />
+                android:text="捐獻" />
             <Button
                 android:id="@+id/showD"
                 android:layout_width="wrap_content"
@@ -65,15 +57,7 @@
                 android:layout_toRightOf="@+id/exportD"
                 android:background="#000000"
                 android:textSize="25sp"
-                android:text="支出" />
-            <Button
-                android:id="@+id/getMoney"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/exportD"
-                android:background="#000000"
-                android:textSize="25sp"
-                android:text="收入" />
+                android:text="紀錄" />
         </LinearLayout>
     </HorizontalScrollView>
     <android.support.v4.view.ViewPager

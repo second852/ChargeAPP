@@ -108,18 +108,17 @@ public class EleActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                Fragment fragment=null;
                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("Elemain");
-               elefunction.setOnItemClickListener(null);
+
                if(i==0)
                {
+                   elefunction.setOnItemClickListener(null);
                   fragment=new EleSetCarrier();
                   fragmentTransaction.replace(R.id.elemain, fragment);
                   fragmentTransaction.commit();
                }else if(i==1)
                {
-
-                   fragment=new EleDonate();
-                   fragmentTransaction.replace(R.id.elemain, fragment);
-                   fragmentTransaction.commit();
+                   Intent intent = new Intent(EleActivity.this, EleDonateMain.class);
+                   startActivity(intent);
                }else if(i==2)
                {
 

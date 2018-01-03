@@ -34,15 +34,15 @@
             android:id="@+id/text"
             >
             <Button
-                android:id="@+id/goneMoney"
+                android:id="@+id/goneD"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/exportMoney"
+                android:layout_toRightOf="@+id/exportD"
                 android:background="#000000"
                 android:textSize="25sp"
                 android:text="收入" />
             <Button
-                android:id="@+id/exportMoney"
+                android:id="@+id/exportD"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -51,10 +51,10 @@
                 android:textSize="25sp"
                 android:text="支出" />
             <Button
-                android:id="@+id/importMoney"
+                android:id="@+id/showD"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/exportMoney"
+                android:layout_toRightOf="@+id/exportD"
                 android:background="#000000"
                 android:textSize="25sp"
                 android:text="收入" />

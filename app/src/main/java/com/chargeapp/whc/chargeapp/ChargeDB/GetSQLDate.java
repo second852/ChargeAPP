@@ -47,6 +47,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private CarrierDB carrierDB;
     private String user, password;
     private SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
+    private String action;
 
     public GetSQLDate(Object object, ChargeAPPDB chargeAPPDB) {
         this.object = object;
@@ -54,13 +55,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         invoiceDB = new InvoiceDB(chargeAPPDB.getReadableDatabase());
         carrierDB = new CarrierDB(chargeAPPDB.getReadableDatabase());
     }
-    public GetSQLDate() {}
-
-
 
     @Override
     protected String doInBackground(Object... params) {
-        String action = params[0].toString();
+        action = params[0].toString();
         String jsonIn = null;
         String url;
         HashMap<String, String> data;
@@ -378,7 +376,14 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 eleDonate.cancelDialog();
               return;
             }
-            eleDonate.setlayout();
+            if(action.equals("GetToday"))
+            {
+                eleDonate.setlayout(); eleDonate.setlayout();
+            }
+            if(action.equals("searchHeartyTeam"))
+            {
+                eleDonate.setlistTeam(s);
+            }
         }
     }
 

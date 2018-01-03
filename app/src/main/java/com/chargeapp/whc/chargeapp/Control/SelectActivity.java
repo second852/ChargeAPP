@@ -29,10 +29,10 @@ public class SelectActivity extends AppCompatActivity implements ViewPager.OnPag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_main);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        exportMoney=findViewById(R.id.exportMoney);
-        importMoney=findViewById(R.id.importMoney);
+        exportMoney=findViewById(R.id.exportD);
+        importMoney=findViewById(R.id.showD);
         choiceitem=findViewById(R.id.choiceitem);
-        goneMoney=findViewById(R.id.goneMoney);
+        goneMoney=findViewById(R.id.goneD);
         getMoney=findViewById(R.id.getMoney);
         mAdapterViewPager = new MainPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapterViewPager);

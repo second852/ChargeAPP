@@ -22,6 +22,15 @@ public class InvoiceVO {
     private String carrier;
     private String maintype;
     private String secondtype;
+    private String heartyteam;
+
+    public String getHeartyteam() {
+        return heartyteam;
+    }
+
+    public void setHeartyteam(String heartyteam) {
+        this.heartyteam = heartyteam;
+    }
 
     public String getMaintype() {
         return maintype;

@@ -4,63 +4,16 @@
     android:layout_height="match_parent"
     android:background="#f5f5f5"
     >
-    <Button
-        android:id="@+id/today"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="今天"
-        android:background="#99FFFF"
-        android:textSize="25sp"
-        android:textColor="#000000"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        />
-    <Button
-        android:id="@+id/thisweek"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:textSize="25sp"
-        android:textColor="#000000"
-        android:background="#99FFFF"
-        android:text="這禮拜"
-        android:layout_toRightOf="@+id/today"
-        />
-    <Button
-        android:id="@+id/thismonth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="25sp"
-        android:textColor="#000000"
-        android:background="#99FFFF"
-        android:layout_marginLeft="20dp"
-        android:text="這個月"
-        android:layout_toRightOf="@+id/thisweek"
-        />
-    <Button
-        android:id="@+id/thisyear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:textSize="25sp"
-        android:textColor="#000000"
-        android:background="#99FFFF"
-        android:text="今年"
-        android:layout_toRightOf="@+id/thismonth"
-        />
-
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/message"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="迄日"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:textSize="40sp"
+        android:textColor="#FF3333"
+        android:gravity="center"
+        android:visibility="gone"
         />
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/chart_line"

@@ -47,12 +47,13 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
             if(action.equals("DonateTeam"))
             {
                HashMap<String,String> data;
+               int seria=0;
                for(String s:EleDonate.donateMap.keySet())
                {
                    url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/CarInv/Donate?";
-                   data=updateTeamNumber(EleDonate.donateMap.get(s));
-                   data=getTeamhearty(data);
+                   data=getupdateHeartyTeam(seria,EleDonate.donateMap.get(s));
                    jsonIn=getRemoteData(url,data);
+                   seria++;
                }
             }
         } catch (Exception e) {
@@ -62,24 +63,26 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
         return jsonIn;
     }
 
-    private HashMap<String,String> getTeamhearty(HashMap<String, String> data) throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException {
-        HashMap<String,String> params=new HashMap<>();
-        params.put("version",data.get("version"));
-        params.put("serial",data.get("serial"));
-        params.put("cardType",data.get("cardType"));
-        params.put("cardNo",data.get("cardNo"));
-        params.put("expTimeStamp",data.get("expTimeStamp"));
-        params.put("action",data.get("action"));
-        params.put("timeStamp",data.get("timeStamp"));
-        params.put("invDate",data.get("invDate"));
-        params.put("invNum",data.get("invNum"));
-        params.put("npoBan",data.get("npoBan"));
-        params.put("uuid",data.get("uuid"));
-        params.put("appID",data.get("appID"));
-        params.put("cardEncrypt",data.get("cardEncrypt"));
-        params.put("signature",sha1(getPostDataString(data)));
-        return params;
+    private HashMap<String,String> getupdateHeartyTeam(int seriel,InvoiceVO invoiceVO) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
+        HashMap<String,String> data=new HashMap<>();
+        data.put("version","0.1");
+        data.put("serial",String.valueOf(seriel));
+        data.put("cardType",invoiceVO.getCardType());
+        data.put("cardNo",invoiceVO.getCardNo());
+        data.put("expTimeStamp","2147483647");
+        data.put("action","carrierInvDnt");
+        data.put("timeStamp",String.valueOf(System.currentTimeMillis()+100));
+        data.put("invDate",sd.format(new Date(invoiceVO.getTime().getTime())));
+        data.put("invNum",invoiceVO.getInvNum());
+        data.put("npoBan",EleDonate.teamNumber);
+        data.put("uuid","second");
+        data.put("appID",appId);
+        data.put("cardEncrypt",invoiceVO.getCardEncrypt());
+        data.put("signature",sha1(singure(data)));
+        return data;
     }
+
+
 
     @Override
     protected void onPostExecute(String s) {
@@ -87,69 +90,43 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
 
     }
 
-    private HashMap<String,String> updateTeamNumber(InvoiceVO invoiceVO) {
-        String jsonin="";
-        long timstamp=System.currentTimeMillis();
-        long timestamp=timstamp+100;
-        HashMap<String, String> data = new HashMap<>();
-        data.put("action","carrierInvDnt");
-        data.put("appID",appId);
-        data.put("cardEncrypt",invoiceVO.getCardEncrypt());
-        data.put("cardNo",invoiceVO.getCardNo());
-        data.put("cardType",invoiceVO.getCardType());
-        data.put("expTimeStamp","2147483647");
-        data.put("invDate",sd.format(new Date(invoiceVO.getTime().getTime())));
-        data.put("invNum",invoiceVO.getInvNum());
-        data.put("npoBan",EleDonate.teamNumber);
-        data.put("serial",String.valueOf(seriel));
-        data.put("timeStamp",String.valueOf(timestamp));
-        data.put("uuid","secod852");
-        data.put("version","0.1");
-        return data;
+
+
+    public String singure(Map<String,String> data)
+    {
+        StringBuffer sb=new StringBuffer();
+        String[] ss = new String[data.size()];
+        for (String d : data.keySet()) {
+            int i = 0;
+            for (String dd : data.keySet()) {
+                if (compareA(d, dd)) {
+                    i++;
+                }
+            }
+            ss[i - 1] = d;
+        }
+        for (int i = 0; i < ss.length; i++) {
+            sb.append(ss[i] + "=" + data.get(ss[i]));
+            if ((i + 1) < ss.length) {
+                sb.append("&");
+            }
+        }
+        return sb.toString();
     }
 
-    private void showCarrierAll()
-    {
-        String h="";
-        HashMap<String, String> data = new HashMap<>();
-        long a = System.currentTimeMillis();
-        a = a + 100;
-        String date ="action=qryCarrierAgg&appID=EINV3201711184648&cardEncrypt=531d&cardNo=/2RDO8+P&cardType=3J0002&serial=0000001001&timeStamp="+String.valueOf(a)+"&uuid=second&version=1.0";
-        try {
-            HashMap<String, String> hash = new HashMap<>();
-            hash.put("action","qryCarrierAgg");
-            hash.put("appID","EINV3201711184648");
-            hash.put("cardEncrypt","531d");
-            hash.put("cardNo","/2RDO8+P");
-            hash.put("cardType","3J0002");
-            hash.put("serial","0000000001");
-            hash.put("timeStamp",String.valueOf(a));
-            hash.put("uuid","second");
-            hash.put("version","1.0");
-            h=sha1(getPostDataString(hash));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
+    public boolean compareA(String s1, String s2) {
+        int length = (s1.length() > s2.length()) ? s2.length() : s1.length();
+        for (int i = 0; i < length; i++) {
+            if (s1.charAt(i) > s2.charAt(i)) {
+                return true;
+            }
+            if (s1.charAt(i) < s2.charAt(i)) {
+                return false;
+            }
         }
-        try{
-            data.put("version","1.0");
-            data.put("serial","0000001001");
-            data.put("action","qryCarrierAgg");
-            data.put("cardType","3J0002");
-            data.put("cardNo","/2RDO8+P");
-            data.put("cardEncrypt","531d");
-            data.put("appID","EINV3201711184648");
-            data.put("timeStamp",String.valueOf(a));
-            data.put("uuid","second");
-            data.put("signature",sha1(date));
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        return true;
     }
+
 
 
     private String getRemoteData(String url,HashMap<String,String> data) throws IOException {

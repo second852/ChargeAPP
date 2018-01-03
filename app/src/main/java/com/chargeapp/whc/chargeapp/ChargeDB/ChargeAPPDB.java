@@ -36,6 +36,10 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
             "CREATE TABLE CARRIER ( id INTEGER PRIMARY KEY AUTOINCREMENT, CARNUL TEXT NOT NULL," +
                     "PASSWORD TEXT) ;";
 
+    private static final String TABLE_HERATYTEAM =
+            "CREATE TABLE HEARTYTEAM ( id INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT NOT NULL," +
+                    "NUMBER TEXT) ;";
+
     private static final String TYPE_DETAIL=" CREATE TABLE TypeDetail ( id INTEGER PRIMARY KEY AUTOINCREMENT, groupNumber TEXT NOT NULL," +
             "name TEXT, image INTEGER ); ";
 
@@ -52,7 +56,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
 
     private static final String TABLE_INVOICE =
             "CREATE TABLE INVOICE ( id INTEGER PRIMARY KEY AUTOINCREMENT, invNum TEXT NOT NULL," +
-                    "cardType TEXT, cardNo TEXT, cardEncrypt TEXT, time DATETIME, amount TEXT, detail TEXT, sellerName TEXT, invDonatable TEXT , donateMark TEXT, carrier TEXT, maintype TEXT, secondtype TEXT);";
+                    "cardType TEXT, cardNo TEXT, cardEncrypt TEXT, time DATETIME, amount TEXT, detail TEXT, sellerName TEXT, invDonatable TEXT , donateMark TEXT, carrier TEXT, maintype TEXT, secondtype TEXT ,heartyteam TEXT);";
 
     public ChargeAPPDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -67,6 +71,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
         db.execSQL(TABLE_BANK_TYPE);
         db.execSQL(TABLE_INVOICE);
         db.execSQL(TABLE_CARRIER);
+        db.execSQL(TABLE_HERATYTEAM);
     }
 
     @Override
@@ -78,6 +83,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + "BNKTYPE");
         db.execSQL("DROP TABLE IF EXISTS " + "INVOICE");
         db.execSQL("DROP TABLE IF EXISTS " + "CARRIER");
+        db.execSQL("DROP TABLE IF EXISTS " + "HEARTYTEAM");
         onCreate(db);
     }
 

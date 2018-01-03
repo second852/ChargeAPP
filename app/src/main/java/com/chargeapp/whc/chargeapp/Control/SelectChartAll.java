@@ -1,12 +1,20 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
+import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.Model.CarrierVO;
+import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -24,18 +32,33 @@ import java.util.List;
 public class SelectChartAll extends Fragment{
 
     private LineChart lineChart;
+    private ChargeAPPDB chargeAPPDB;
+    private InvoiceDB invoiceDB;
+    private CarrierDB carrierDB;
+    private TextView message;
+    private ProgressDialog progressDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.select_chart_all, container, false);
         findViewById(view);
+//        download();
         return view;
+    }
+
+    private void setTypeIn()
+    {
+        List<InvoiceVO> invoiceVOS=invoiceDB.findIVTypenull();
+        for(InvoiceVO invoiceVO:invoiceVOS)
+        {
+
+        }
     }
 
     private void findViewById(View view) {
         lineChart=view.findViewById(R.id.chart_line);
         lineChart.setData(getLinedate());
-
+        message=view.findViewById(R.id.message);
     }
 
     private LineData getLinedate() {
@@ -64,4 +87,25 @@ public class SelectChartAll extends Fragment{
         }
         return chartLabels;
     }
+
+    private void download()
+    {
+        if(chargeAPPDB==null)
+        {
+            chargeAPPDB=new ChargeAPPDB(getActivity());
+        }
+        invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
+        carrierDB=new CarrierDB(chargeAPPDB.getReadableDatabase());
+        List<CarrierVO> carrierVOList=carrierDB.getAll();
+        if(carrierVOList==null||carrierVOList.size()<=0)
+        {
+            message.setText("請新增載具!");
+            message.setVisibility(View.VISIBLE);
+            return;
+        }
+        new GetSQLDate(this,chargeAPPDB).execute("GetToday");
+        progressDialog.setMessage("正在更新資料,請稍候...");
+        progressDialog.show();
+    }
+
 }

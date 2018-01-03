@@ -23,6 +23,8 @@
             android:name=".Control.SelectActivity"/>
         <activity
             android:name=".Control.EleActivity"/>
+        <activity
+            android:name=".Control.EleDonateMain"/>
     </application>
 
 </manifest>

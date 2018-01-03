@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 
 import com.chargeapp.whc.chargeapp.R;
 
-public class InsertActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class EleDonateMain extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button exportMoney,importMoney,goneMoney;
@@ -27,7 +27,7 @@ public class InsertActivity extends AppCompatActivity implements ViewPager.OnPag
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.insert_main);
+        setContentView(R.layout.ele_denote_main);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         exportMoney=findViewById(R.id.exportD);
         importMoney=findViewById(R.id.showD);
@@ -65,9 +65,9 @@ public class InsertActivity extends AppCompatActivity implements ViewPager.OnPag
         public Fragment getItem(int position) {
             int currentpoition=position%2;
             if (currentpoition == 0) {
-                return new InsertSpend();
+                return new EleDonate();
             } else  {
-                return new InsertIncome();
+                return new EleDonateRecord();
             }
         }
     }
@@ -80,15 +80,15 @@ public class InsertActivity extends AppCompatActivity implements ViewPager.OnPag
         if(currentpoition==0)
         {
             setcurrentpage();
-            goneMoney.setText("收入");
-            exportMoney.setText("支出");
-            importMoney.setText("收入");
+            goneMoney.setText("紀錄");
+            exportMoney.setText("捐獻");
+            importMoney.setText("紀錄");
         }else
         {
             setcurrentpage();
-            goneMoney.setText("支出");
-            exportMoney.setText("收入");
-            importMoney.setText("支出");
+            goneMoney.setText("捐獻");
+            exportMoney.setText("紀錄");
+            importMoney.setText("捐獻");
         }
     }
     @Override
