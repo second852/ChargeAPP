@@ -35,6 +35,7 @@ public class GetSQLDate123 extends AsyncTask<Object, Integer, String> {
     protected String doInBackground(Object... params) {
 
         String url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/Carrier/Aggregate?";
+        url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/CarInv/Donate?";
         String jsonIn;
         try {
             jsonIn = getRemoteData(url);
@@ -67,28 +68,28 @@ public class GetSQLDate123 extends AsyncTask<Object, Integer, String> {
         String key = "YzQ4R1gzaTRIbTRJMzNnOA==";
 
         try {
-            data.put("version", "1.0");
-            data.put("serial", "0000001001");
-            data.put("action", "qryCarrierAgg");
-            data.put("cardType", "3J0002");
-            data.put("cardNo", "/2RDO8+P");
-            data.put("cardEncrypt", "531d");
-            data.put("appID", "EINV3201711184648");
-            data.put("timeStamp", String.valueOf(a));
-            data.put("uuid", "second");
-//            data.put("version","0.1");
+//            data.put("version", "1.0");
 //            data.put("serial", "0000001001");
+//            data.put("action", "qryCarrierAgg");
 //            data.put("cardType", "3J0002");
 //            data.put("cardNo", "/2RDO8+P");
-//            data.put("expTimeStamp","2147483647");
-//            data.put("action","carrierInvDnt");
-//            data.put("timeStamp",String.valueOf(System.currentTimeMillis()+100));
-//            data.put("invDate","2017/12/13");
-//            data.put("invNum","XT23921547");
-//            data.put("npoBan","05200169");
-//            data.put("uuid","second");
+//            data.put("cardEncrypt", "531d");
 //            data.put("appID", "EINV3201711184648");
-//            data.put("cardEncrypt","531d");
+//            data.put("timeStamp", String.valueOf(a));
+//            data.put("uuid", "second");
+            data.put("version","0.1");
+            data.put("serial", "0000001001");
+            data.put("cardType", "3J0002");
+            data.put("cardNo", "/2RDO8+P");
+            data.put("expTimeStamp","2147483647");
+            data.put("action","carrierInvDnt");
+            data.put("timeStamp",String.valueOf(System.currentTimeMillis()+100));
+            data.put("invDate","2017/12/13");
+            data.put("invNum","XT23921547");
+            data.put("npoBan","05200169");
+            data.put("uuid","second");
+            data.put("appID", "EINV3201711184648");
+            data.put("cardEncrypt","531d");
             data.put("signature", sha1(singure(data), key));
         } catch (Exception e) {
             e.printStackTrace();

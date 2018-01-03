@@ -103,7 +103,7 @@ public class SelectChartAll extends Fragment{
             message.setVisibility(View.VISIBLE);
             return;
         }
-        new GetSQLDate(this,chargeAPPDB).execute("GetToday");
+        new GetSQLDate(this).execute("GetToday");
         progressDialog.setMessage("正在更新資料,請稍候...");
         progressDialog.show();
     }

@@ -11,6 +11,7 @@ import android.util.Log;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
+import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.google.gson.Gson;
@@ -41,7 +42,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private final static String TAG = "GetSQLDate";
     private Object object;
     private Gson gson = new Gson();
-    private ChargeAPPDB chargeAPPDB;
     private int isNoExist = 0, year, month, day;
     private InvoiceDB invoiceDB;
     private CarrierDB carrierDB;
@@ -49,11 +49,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
     private String action;
 
-    public GetSQLDate(Object object, ChargeAPPDB chargeAPPDB) {
+    public GetSQLDate(Object object) {
         this.object = object;
-        this.chargeAPPDB = chargeAPPDB;
-        invoiceDB = new InvoiceDB(chargeAPPDB.getReadableDatabase());
-        carrierDB = new CarrierDB(chargeAPPDB.getReadableDatabase());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
     @Override

@@ -38,7 +38,6 @@ public class EleSetCarrier extends Fragment {
     private EditText cellphone,certcode;
     private ListView listcarrier;
     private Button confirm;
-    private ChargeAPPDB chargeAPPDB;
     private InvoiceDB invoiceDB;
     public AsyncTask getIvnum;
     private List<CarrierVO> carrierlist;
@@ -60,12 +59,9 @@ public class EleSetCarrier extends Fragment {
         listtiitle=view.findViewById(R.id.listtiitle);
         progressDialog=new ProgressDialog(getActivity());
         confirm.setOnClickListener(new Confirmlisten());
-        if (chargeAPPDB == null) {
-            chargeAPPDB = new ChargeAPPDB(getActivity());
-        }
-        invoiceDB = new InvoiceDB(chargeAPPDB.getReadableDatabase());
-        carrierDB=new CarrierDB(chargeAPPDB.getReadableDatabase());
-        consumerDB=new ConsumerDB(chargeAPPDB.getReadableDatabase());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumerDB=new ConsumerDB(MainActivity.chargeAPPDB.getReadableDatabase());
         setListAdapt();
         return view;
     }
@@ -160,7 +156,7 @@ public class EleSetCarrier extends Fragment {
                 return;
             }
             time=System.currentTimeMillis();
-            getIvnum=new GetSQLDate(EleSetCarrier.this,chargeAPPDB).execute("getInvoice",user,password);
+            getIvnum=new GetSQLDate(EleSetCarrier.this).execute("getInvoice",user,password);
             progressDialog.setMessage("正在下載資料,請稍候...");
             progressDialog.show();
         }

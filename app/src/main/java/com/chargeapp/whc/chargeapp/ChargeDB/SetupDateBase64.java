@@ -4,8 +4,10 @@ import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
+import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.EleActivity;
 import com.chargeapp.whc.chargeapp.Control.EleDonate;
+import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 
 import java.io.BufferedReader;
@@ -34,6 +36,15 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
     private final static String appId="EINV3201711184648";
     private SimpleDateFormat sd=new SimpleDateFormat("yyyy/MM/dd");
     private int seriel=0;
+    private Object object;
+    private InvoiceDB invoiceDB= new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+
+
+    public SetupDateBase64(Object object)
+    {
+          this.object=object;
+    }
+
 
 
 
@@ -48,11 +59,20 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
             {
                HashMap<String,String> data;
                int seria=0;
+               InvoiceVO invoiceVO;
                for(String s:EleDonate.donateMap.keySet())
                {
+                   invoiceVO=EleDonate.donateMap.get(s);
                    url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/CarInv/Donate?";
-                   data=getupdateHeartyTeam(seria,EleDonate.donateMap.get(s));
+                   data=getupdateHeartyTeam(seria,invoiceVO);
                    jsonIn=getRemoteData(url,data);
+                   if(jsonIn.indexOf("200")!=-1)
+                   {
+                       invoiceVO.setDonateMark(String.valueOf(true));
+                       invoiceVO.setInvDonatable(String.valueOf(true));
+                       invoiceVO.setHeartyteam(EleDonate.teamTitle);
+                       invoiceDB.update(invoiceVO);
+                   }
                    seria++;
                }
             }
@@ -87,6 +107,17 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        if(object instanceof EleDonate)
+        {
+            EleDonate eleDonate= (EleDonate) object;
+           if(s.indexOf("200")!=-1)
+           {
+               eleDonate.setlayout();
+               Common.showLongToast(eleDonate.getActivity(),"捐贈成功");
+           }else {
+                Common.showLongToast(eleDonate.getActivity(),"捐贈失敗");
+            }
+        }
 
     }
 

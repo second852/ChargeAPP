@@ -29,7 +29,7 @@ import java.util.Set;
 public class MainActivity extends AppCompatActivity {
 
     private GridView gridView;
-    private ChargeAPPDB chargeAPPDB;
+    public static ChargeAPPDB chargeAPPDB;
     private int[] image = {
             R.drawable.book, R.drawable.goal, R.drawable.chart, R.drawable.ele,R.drawable.setting
     };
