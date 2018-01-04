@@ -65,11 +65,16 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                    invoiceVO=EleDonate.donateMap.get(s);
                    url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/CarInv/Donate?";
                    data=getupdateHeartyTeam(seria,invoiceVO);
+
+//                   for(String b:data.keySet())
+//                   {
+//                       Log.d("XXXXX",b+" : "+ data.get(b));
+//                   }
                    jsonIn=getRemoteData(url,data);
                    if(jsonIn.indexOf("200")!=-1)
                    {
-                       invoiceVO.setDonateMark(String.valueOf(true));
-                       invoiceVO.setInvDonatable(String.valueOf(true));
+                       invoiceVO.setDonateMark(String.valueOf(false));
+                       invoiceVO.setInvDonatable(String.valueOf(false));
                        invoiceVO.setHeartyteam(EleDonate.teamTitle);
                        invoiceDB.update(invoiceVO);
                    }
@@ -87,8 +92,8 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
         HashMap<String,String> data=new HashMap<>();
         data.put("version","0.1");
         data.put("serial",String.valueOf(seriel));
-        data.put("cardType",invoiceVO.getCardType());
-        data.put("cardNo",invoiceVO.getCardNo());
+        data.put("cardType","3J0002");
+        data.put("cardNo",invoiceVO.getCarrier());
         data.put("expTimeStamp","2147483647");
         data.put("action","carrierInvDnt");
         data.put("timeStamp",String.valueOf(System.currentTimeMillis()+100));
@@ -116,6 +121,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                Common.showLongToast(eleDonate.getActivity(),"捐贈成功");
            }else {
                 Common.showLongToast(eleDonate.getActivity(),"捐贈失敗");
+                eleDonate.cancelDialog();
             }
         }
 

@@ -71,15 +71,15 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 user = params[1].toString();
                 password = params[2].toString();
                 String endDate = sf.format(new Date(cal.getTimeInMillis()));
-                cal.set(year, month, 1);
+                cal.set(year, month-6, 1);
                 String startDate = sf.format(new Date(cal.getTimeInMillis()));
                 while (isNoExist < 3) {
                     Log.d(TAG, "startDate: " + startDate + "endDate" + endDate + "isNoExist" + isNoExist);
                     data = getInvoice(user, password, startDate, endDate);
-                    month = month - 1;
-                    if (month <= 0) {
-                        month = 11;
-                        year = year - 1;
+                    month = month+1;
+                    if (month >=11) {
+                        month = 0;
+                        year = year + 1;
                     }
                     cal.set(year, month, 1);
                     startDate = sf.format(new Date(cal.getTimeInMillis()));
@@ -100,6 +100,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         continue;
                     }
                     getjsonIn(jsonIn, password, user);
+
                     if(first)
                     {
                         CarrierVO carrierVO = new CarrierVO();

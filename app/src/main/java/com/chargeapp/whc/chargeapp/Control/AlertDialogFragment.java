@@ -2,14 +2,14 @@ package com.chargeapp.whc.chargeapp.Control;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
+
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.text.Html;
 
-import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
+
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 
 /**
@@ -55,7 +55,6 @@ public class AlertDialogFragment extends DialogFragment implements  DialogInterf
             case DialogInterface.BUTTON_POSITIVE:
                 EleDonate eleDonate= (EleDonate) object;
                 new SetupDateBase64(eleDonate).execute("DonateTeam");
-
                 break;
             default:
                 dialog.cancel();
