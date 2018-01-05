@@ -1,17 +1,11 @@
 package com.chargeapp.whc.chargeapp.Control;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,11 +22,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
-import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate123;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -42,12 +33,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by 1709008NB01 on 2017/12/22.
@@ -102,10 +90,12 @@ public class EleDonate extends Fragment {
 
 //        invoiceDB.deleteBytime(Timestamp.valueOf("2017-12-17 00:00:00"));
 //        setlayout();
-//        for(InvoiceVO i:invoiceVOList)
-//        {
-//            Log.d("XXXXXXXXX",i.getInvNum());
-//        }
+        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
+        invoiceVOList=invoiceDB.getAll();
+        for(InvoiceVO i:invoiceVOList)
+        {
+            Log.d("XXXXXXXXX",sf.format(i.getTime())+" : "+i.getInvDonatable()+" :"+ i.getDonateMark());
+        }
         carrierVOList = carrierDB.getAll();
         if (carrierVOList == null || carrierVOList.size() <= 0) {
             message.setText("請新增載具!");
@@ -146,9 +136,9 @@ public class EleDonate extends Fragment {
         }
     }
 
-
     public void setlayout() {
         cancelDialog();
+        EleDonateMain.goneMoney.setVisibility(View.VISIBLE);
         carrierVO = carrierVOList.get(choiceca);
         listinviuce.removeAllViews();
         invoiceVOList = invoiceDB.getCarrierDoAll(carrierVO.getCarNul());
@@ -169,12 +159,12 @@ public class EleDonate extends Fragment {
 
 
     private void findviewbyid(View view) {
-        carrier = view.findViewById(R.id.carrier);
-        add = view.findViewById(R.id.add);
-        cut = view.findViewById(R.id.cut);
+        carrier = view.findViewById(R.id.DRcarrier);
+        add = view.findViewById(R.id.DRadd);
+        cut = view.findViewById(R.id.DRcut);
         listinviuce = view.findViewById(R.id.recyclenul);
         message = view.findViewById(R.id.message);
-        showmonth = view.findViewById(R.id.showmonth);
+        showmonth = view.findViewById(R.id.DRshow);
         choiceall = view.findViewById(R.id.choiceall);
         save = view.findViewById(R.id.save);
         cancel = view.findViewById(R.id.cancel);
@@ -207,9 +197,9 @@ public class EleDonate extends Fragment {
 
             MyViewHolder(View itemView) {
                 super(itemView);
-                checkdonate = itemView.findViewById(R.id.elechecktitle);
-                day = itemView.findViewById(R.id.eleday);
-                nul = itemView.findViewById(R.id.elenul);
+                checkdonate = itemView.findViewById(R.id.DRdate);
+                day = itemView.findViewById(R.id.DRnul);
+                nul = itemView.findViewById(R.id.DRamout);
                 amount = itemView.findViewById(R.id.eleamount);
             }
         }

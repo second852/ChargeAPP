@@ -56,7 +56,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
 
     private static final String TABLE_INVOICE =
             "CREATE TABLE INVOICE ( id INTEGER PRIMARY KEY AUTOINCREMENT, invNum TEXT NOT NULL," +
-                    "cardType TEXT, cardNo TEXT, cardEncrypt TEXT, time DATETIME, amount TEXT, detail TEXT, sellerName TEXT, invDonatable TEXT , donateMark TEXT, carrier TEXT, maintype TEXT, secondtype TEXT ,heartyteam TEXT);";
+                    "cardType TEXT, cardNo TEXT, cardEncrypt TEXT, time DATETIME, amount TEXT, detail TEXT, sellerName TEXT, invDonatable TEXT , donateMark TEXT, carrier TEXT, maintype TEXT, secondtype TEXT ,heartyteam TEXT,donateTime DATETIME);";
 
     public ChargeAPPDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);

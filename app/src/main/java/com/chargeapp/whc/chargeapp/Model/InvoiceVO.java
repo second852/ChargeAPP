@@ -23,6 +23,15 @@ public class InvoiceVO {
     private String maintype;
     private String secondtype;
     private String heartyteam;
+    private Timestamp donateTime;
+
+    public Timestamp getDonateTime() {
+        return donateTime;
+    }
+
+    public void setDonateTime(Timestamp donateTime) {
+        this.donateTime = donateTime;
+    }
 
     public String getHeartyteam() {
         return heartyteam;

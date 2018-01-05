@@ -16,7 +16,8 @@ import com.chargeapp.whc.chargeapp.R;
 public class EleDonateMain extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
-    private Button exportMoney,importMoney,goneMoney;
+    private Button importMoney,exportMoney;
+    public static  Button goneMoney;
     private HorizontalScrollView choiceitem;
     private LinearLayout text;
     private int nowpoint=0;
@@ -27,7 +28,7 @@ public class EleDonateMain extends AppCompatActivity implements ViewPager.OnPage
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ele_denote_main);
+        setContentView(R.layout.ele_setdenote_main);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         exportMoney=findViewById(R.id.exportD);
         importMoney=findViewById(R.id.showD);
@@ -109,6 +110,7 @@ public class EleDonateMain extends AppCompatActivity implements ViewPager.OnPage
         super.onWindowFocusChanged(hasFocus);
         movefirst=-exportMoney.getX();
         text.setX(movefirst);
+
     }
     private class ChangePage implements View.OnClickListener{
         private int page;

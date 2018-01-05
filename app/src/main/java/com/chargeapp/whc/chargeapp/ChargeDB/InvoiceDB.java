@@ -10,6 +10,7 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -45,6 +46,7 @@ public class InvoiceDB {
             invoiceVO.setMaintype(cursor.getString(12));
             invoiceVO.setSecondtype(cursor.getString(13));
             invoiceVO.setHeartyteam(cursor.getString(14));
+            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -74,6 +76,7 @@ public class InvoiceDB {
             invoiceVO.setMaintype(cursor.getString(12));
             invoiceVO.setSecondtype(cursor.getString(13));
             invoiceVO.setHeartyteam(cursor.getString(14));
+            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -103,6 +106,83 @@ public class InvoiceDB {
             invoiceVO.setMaintype(cursor.getString(12));
             invoiceVO.setSecondtype(cursor.getString(13));
             invoiceVO.setHeartyteam(cursor.getString(14));
+            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
+            invoiceVOSList.add(invoiceVO);
+        }
+        cursor.close();
+        return invoiceVOSList;
+    }
+
+    public List<InvoiceVO> getisDonated(String carrrier) {
+        Calendar cal=Calendar.getInstance();
+        int year=cal.get(Calendar.YEAR);
+        cal.set(year,0,25);
+        long one25=cal.getTimeInMillis();
+        cal.set(year,2,25);
+        long three25=cal.getTimeInMillis();
+        cal.set(year,4,25);
+        long five25=cal.getTimeInMillis();
+        cal.set(year,6,25);
+        long seven25=cal.getTimeInMillis();
+        cal.set(year,8,25);
+        long night25=cal.getTimeInMillis();
+        cal.set(year,10,25);
+        long ele25=cal.getTimeInMillis();
+        long showtime;
+        long now=System.currentTimeMillis();
+        if(now>one25&&now<three25)
+        {
+            showtime=Timestamp.valueOf(String.valueOf(year)+"-01-01 00:00:00").getTime();
+        }
+        else if(now>three25&&now<five25)
+        {
+            showtime=Timestamp.valueOf(String.valueOf(year)+"-03-01 00:00:00").getTime();
+        }
+        else if(now>five25&&now<seven25)
+        {
+            showtime=Timestamp.valueOf(String.valueOf(year)+"-05-01 00:00:00").getTime();
+        }
+        else if(now>seven25&&now<night25)
+        {
+            showtime=Timestamp.valueOf(String.valueOf(year)+"-07-01 00:00:00").getTime();
+        }
+        else if(now>night25&&now<ele25)
+        {
+            showtime=Timestamp.valueOf(String.valueOf(year)+"-09-01 00:00:00").getTime();
+        }
+        else
+        {
+            Calendar nc=Calendar.getInstance();
+            if(nc.get(Calendar.MONTH)==0)
+            {
+                showtime=Timestamp.valueOf(String.valueOf(year-1)+"-11-01 00:00:00").getTime();
+            }else{
+                showtime=Timestamp.valueOf(String.valueOf(year)+"-11-01 00:00:00").getTime();
+            }
+        }
+        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and donateMark='false' and invDonatable = 'false' and time >'"+showtime+"'order by donateTime desc;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<InvoiceVO> invoiceVOSList = new ArrayList<>();
+        InvoiceVO invoiceVO;
+        while (cursor.moveToNext()) {
+            invoiceVO=new InvoiceVO();
+            invoiceVO.setId(cursor.getInt(0));
+            invoiceVO.setInvNum(cursor.getString(1));
+            invoiceVO.setCardType(cursor.getString(2));
+            invoiceVO.setCardNo(cursor.getString(3));
+            invoiceVO.setCardEncrypt(cursor.getString(4));
+            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
+            invoiceVO.setAmount(cursor.getString(6));
+            invoiceVO.setDetail(cursor.getString(7));
+            invoiceVO.setSellerName(cursor.getString(8));
+            invoiceVO.setInvDonatable(cursor.getString(9));
+            invoiceVO.setDonateMark(cursor.getString(10));
+            invoiceVO.setCarrier(cursor.getString(11));
+            invoiceVO.setMaintype(cursor.getString(12));
+            invoiceVO.setSecondtype(cursor.getString(13));
+            invoiceVO.setHeartyteam(cursor.getString(14));
+            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -132,6 +212,7 @@ public class InvoiceDB {
             invoiceVO.setMaintype(cursor.getString(12));
             invoiceVO.setSecondtype(cursor.getString(13));
             invoiceVO.setHeartyteam(cursor.getString(14));
+            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -173,6 +254,7 @@ public class InvoiceDB {
             invoiceVO.setMaintype(cursor.getString(12));
             invoiceVO.setSecondtype(cursor.getString(13));
             invoiceVO.setHeartyteam(cursor.getString(14));
+            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -208,6 +290,7 @@ public class InvoiceDB {
             invoiceVO.setMaintype(cursor.getString(12));
             invoiceVO.setSecondtype(cursor.getString(13));
             invoiceVO.setHeartyteam(cursor.getString(14));
+            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
         }
         cursor.close();
         return invoiceVO;
@@ -229,6 +312,7 @@ public class InvoiceDB {
         values.put("maintype",invoiceVO.getMaintype());
         values.put("secondtype",invoiceVO.getSecondtype());
         values.put("heartyteam",invoiceVO.getHeartyteam());
+        values.put("donateTime",invoiceVO.getDonateTime().getTime());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -248,6 +332,7 @@ public class InvoiceDB {
         values.put("maintype",invoiceVO.getMaintype());
         values.put("secondtype",invoiceVO.getSecondtype());
         values.put("heartyteam",invoiceVO.getHeartyteam());
+        values.put("donateTime",invoiceVO.getDonateTime().getTime());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(invoiceVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

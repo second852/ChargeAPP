@@ -121,9 +121,17 @@ public class EleActivity extends AppCompatActivity {
                    startActivity(intent);
                }else if(i==2)
                {
+                   elefunction.setOnItemClickListener(null);
+                   fragment=new EleAddCarrier();
+                   fragmentTransaction.replace(R.id.elemain, fragment);
+                   fragmentTransaction.commit();
 
                }else if(i==3)
                {
+                   elefunction.setOnItemClickListener(null);
+                   fragment=new EleNewCarrier();
+                   fragmentTransaction.replace(R.id.elemain, fragment);
+                   fragmentTransaction.commit();
 
                }else if(i==4)
                {

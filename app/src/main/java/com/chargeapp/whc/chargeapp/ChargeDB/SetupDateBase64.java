@@ -22,6 +22,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -65,17 +66,13 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                    invoiceVO=EleDonate.donateMap.get(s);
                    url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/CarInv/Donate?";
                    data=getupdateHeartyTeam(seria,invoiceVO);
-
-//                   for(String b:data.keySet())
-//                   {
-//                       Log.d("XXXXX",b+" : "+ data.get(b));
-//                   }
                    jsonIn=getRemoteData(url,data);
                    if(jsonIn.indexOf("200")!=-1)
                    {
                        invoiceVO.setDonateMark(String.valueOf(false));
                        invoiceVO.setInvDonatable(String.valueOf(false));
                        invoiceVO.setHeartyteam(EleDonate.teamTitle);
+                       invoiceVO.setDonateTime(new Timestamp(System.currentTimeMillis()));
                        invoiceDB.update(invoiceVO);
                    }
                    seria++;

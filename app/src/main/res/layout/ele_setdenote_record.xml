@@ -4,25 +4,23 @@
     android:layout_height="match_parent"
     android:background="#ffffff"
     >
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/showmonth"
-        android:layout_below="@+id/title"
+        android:id="@+id/DRshow"
         android:layout_marginTop="10dp"
         >
         <ImageView
-            android:id="@+id/add"
+            android:id="@+id/DRadd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/arrow"
             android:rotation="90"
-            android:layout_toLeftOf="@+id/carrier"
+            android:layout_toLeftOf="@+id/DRcarrier"
             />
         <TextView
-            android:id="@+id/carrier"
+            android:id="@+id/DRcarrier"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"
@@ -35,23 +33,23 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/cut"
+            android:id="@+id/DRcut"
             android:src="@drawable/arrow"
             android:rotation="270"
-            android:layout_toRightOf="@+id/carrier"
+            android:layout_toRightOf="@+id/DRcarrier"
             />
     </RelativeLayout>
     <RelativeLayout
-        android:id="@+id/eletitle"
+        android:id="@+id/DRtittle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/choice"
+        android:layout_below="@+id/DRshow"
         android:layout_marginTop="10dp"
         android:background="#FFBB66"
         android:padding="6dp">
         <TextView
-            android:id="@+id/elechecktitle"
+            android:id="@+id/DRdate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -59,44 +57,33 @@
             android:textColor="#000000"
             android:text="日期"
             android:textSize="20sp"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="40dp"
             />
         <TextView
-            android:id="@+id/eleday"
+            android:id="@+id/DRnul"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"
             android:textSize="20sp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="50dp"
             android:text="統一編號"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/elechecktitle"
+            android:layout_toRightOf="@+id/DRdate"
             />
-        <TextView
-            android:id="@+id/elenul"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/eleday"
-            android:layout_marginLeft="40dp"
-            android:textColor="#000000"
-            android:text="金額"
-            android:textSize="20sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/eleamount"
             android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
+            android:layout_toRightOf="@+id/DRnul"
+            android:layout_marginLeft="50dp"
             android:textColor="#000000"
             android:text="捐獻機構"
-            android:textSize="18sp"
+            android:textSize="20sp"
             />
     </RelativeLayout>
     <TextView
-        android:id="@+id/message"
+        android:id="@+id/DRmessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -106,10 +93,17 @@
         android:gravity="center"
         android:visibility="gone"
         />
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclenul"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_below="@+id/eletitle"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/DRtittle"
+        >
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/donateRL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </android.support.v7.widget.RecyclerView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 </RelativeLayout>
