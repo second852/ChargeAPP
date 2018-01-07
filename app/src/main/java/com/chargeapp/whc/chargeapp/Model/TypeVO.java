@@ -19,6 +19,25 @@ public class TypeVO {
     private String groupNumber;
     private int image;
 
+    private String keyword;
+
+
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
+    public TypeVO(String name, String groupNumber, int image, String keyword) {
+        this.name = name;
+        this.groupNumber = groupNumber;
+        this.image = image;
+        this.keyword = keyword;
+    }
+
     public int getImage() {
         return image;
     }

@@ -55,8 +55,11 @@ public class EleActivity extends AppCompatActivity {
         List<EleMainItemVO> list=new ArrayList<>();
         list.add(new EleMainItemVO("綁訂/取消通用性載具",R.drawable.cellphone));
         list.add(new EleMainItemVO("捐贈發票",R.drawable.health));
-        list.add(new EleMainItemVO("綁定載具",R.drawable.easygo));
+        list.add(new EleMainItemVO("如何綁定載具",R.drawable.easygo));
         list.add(new EleMainItemVO("申請通用性載具",R.drawable.barcode));
+        list.add(new EleMainItemVO("手機條碼綁定金融帳戶",R.drawable.bank));
+        list.add(new EleMainItemVO("電子發票如何兌獎",R.drawable.invent));
+        list.add(new EleMainItemVO("電子發票好處",R.drawable.invent));
         return list;
     }
 
@@ -135,6 +138,10 @@ public class EleActivity extends AppCompatActivity {
 
                }else if(i==4)
                {
+                   elefunction.setOnItemClickListener(null);
+                   fragment=new EleAddBank();
+                   fragmentTransaction.replace(R.id.elemain, fragment);
+                   fragmentTransaction.commit();
 
                }else{
 

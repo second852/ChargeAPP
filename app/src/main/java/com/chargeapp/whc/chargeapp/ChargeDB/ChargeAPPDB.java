@@ -36,12 +36,16 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
             "CREATE TABLE CARRIER ( id INTEGER PRIMARY KEY AUTOINCREMENT, CARNUL TEXT NOT NULL," +
                     "PASSWORD TEXT) ;";
 
+    private static final String TABLE_PRICE =
+            "CREATE TABLE PRICE ( id INTEGER PRIMARY KEY AUTOINCREMENT, number TEXT NOT NULL," +
+                    "level TEXT, period TEXT) ;";
+
     private static final String TABLE_HERATYTEAM =
             "CREATE TABLE HEARTYTEAM ( id INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT NOT NULL," +
                     "NUMBER TEXT) ;";
 
     private static final String TYPE_DETAIL=" CREATE TABLE TypeDetail ( id INTEGER PRIMARY KEY AUTOINCREMENT, groupNumber TEXT NOT NULL," +
-            "name TEXT, image INTEGER ); ";
+            "name TEXT, image INTEGER , keyword text); ";
 
     private static final String TYPE_COMSUMER=" CREATE TABLE Consumer ( id INTEGER PRIMARY KEY AUTOINCREMENT, maintype TEXT NOT NULL," +
             "secondtype TEXT, money TEXT, date Date , number TEXT , fixdate TEXT , fixdatedetail TEXT ,notify TEXT, detailname TEXT, carNul TEXT" +
@@ -56,7 +60,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
 
     private static final String TABLE_INVOICE =
             "CREATE TABLE INVOICE ( id INTEGER PRIMARY KEY AUTOINCREMENT, invNum TEXT NOT NULL," +
-                    "cardType TEXT, cardNo TEXT, cardEncrypt TEXT, time DATETIME, amount TEXT, detail TEXT, sellerName TEXT, invDonatable TEXT , donateMark TEXT, carrier TEXT, maintype TEXT, secondtype TEXT ,heartyteam TEXT,donateTime DATETIME);";
+                    "cardType TEXT, cardNo TEXT, cardEncrypt TEXT, time DATETIME, amount TEXT, detail TEXT, sellerName TEXT, invDonatable TEXT , donateMark TEXT, carrier TEXT, maintype TEXT, secondtype TEXT ,heartyteam TEXT,donateTime DATETIME,isWin TEXT);";
 
     public ChargeAPPDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -72,6 +76,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
         db.execSQL(TABLE_INVOICE);
         db.execSQL(TABLE_CARRIER);
         db.execSQL(TABLE_HERATYTEAM);
+        db.execSQL(TABLE_PRICE);
     }
 
     @Override
@@ -84,6 +89,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + "INVOICE");
         db.execSQL("DROP TABLE IF EXISTS " + "CARRIER");
         db.execSQL("DROP TABLE IF EXISTS " + "HEARTYTEAM");
+        db.execSQL("DROP TABLE IF EXISTS " + "PRICE");
         onCreate(db);
     }
 
@@ -156,7 +162,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
     public List<TypeDetailVO> getTypdAll() {
         SQLiteDatabase db = getReadableDatabase();
         String[] columns = {
-                COL_id, COL_groupNumber, COL_name,COL_image
+                COL_id, COL_groupNumber, COL_name,COL_image,"keyword"
         };
         Cursor cursor = db.query("TypeDetail", columns, null, null, null, null,
                 COL_id);
@@ -167,7 +173,8 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
             String groupNumber = cursor.getString(1);
             String name = cursor.getString(2);
             int image=cursor.getInt(3);
-            typeDetailVO=new TypeDetailVO(id,groupNumber,name,image);
+            String keyword=cursor.getString(4);
+            typeDetailVO=new TypeDetailVO(id,groupNumber,name,image,keyword);
             typeDetailList.add(typeDetailVO);
         }
         cursor.close();
@@ -177,7 +184,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
     public TypeDetailVO findTypeDetailById(int id) {
         SQLiteDatabase db = getWritableDatabase();
         String[] columns = {
-                COL_id, COL_groupNumber, COL_name,COL_image
+                COL_id, COL_groupNumber, COL_name,COL_image,"keyword"
         };
         String selection = COL_id + " = ?;";
         String[] selectionArgs = {String.valueOf(id)};
@@ -189,7 +196,8 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
             String groupNumber = cursor.getString(1);
             String name = cursor.getString(2);
             int image=cursor.getInt(3);
-            typeDetailVO=new TypeDetailVO(id,groupNumber,name,image);
+            String keyword=cursor.getString(4);
+            typeDetailVO=new TypeDetailVO(id,groupNumber,name,image,keyword);
         }
         cursor.close();
         return typeDetailVO;
@@ -198,7 +206,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
     public ArrayList<TypeDetailVO> findByGroupname(String groupname) {
         SQLiteDatabase db = getWritableDatabase();
         String[] columns = {
-                COL_id, COL_groupNumber, COL_name,COL_image
+                COL_id, COL_groupNumber, COL_name,COL_image,"keyword"
         };
         String selection = COL_groupNumber + " = ?;";
         String[] selectionArgs = {String.valueOf(groupname)};
@@ -211,7 +219,8 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
             String groupNumber = cursor.getString(1);
             String name = cursor.getString(2);
             int image=cursor.getInt(3);
-            typeDetailVO=new TypeDetailVO(id,groupNumber,name,image);
+            String keyword=cursor.getString(4);
+            typeDetailVO=new TypeDetailVO(id,groupNumber,name,image,keyword);
             typeDetailVOlist.add(typeDetailVO);
         }
         cursor.close();
@@ -224,6 +233,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
         values.put(COL_name, typeDetailVO.getName());
         values.put(COL_groupNumber,typeDetailVO.getGroupNumber());
         values.put(COL_image,typeDetailVO.getImage());
+        values.put("keyword",typeDetailVO.getKeyword());
         return db.insert("TypeDetail", null, values);
     }
 
@@ -233,6 +243,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
         values.put(COL_name, typeDetailVO.getName());
         values.put(COL_groupNumber,typeDetailVO.getGroupNumber());
         values.put(COL_image,typeDetailVO.getImage());
+        values.put("keyword",typeDetailVO.getKeyword());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(typeDetailVO.getId())};
         return db.update("TypeDetail", values, whereClause, whereArgs);

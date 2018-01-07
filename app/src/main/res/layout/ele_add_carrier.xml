@@ -18,13 +18,59 @@
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="30dp" />
+    <TextView
+        android:layout_marginTop="15dp"
+        android:id="@+id/carrierT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:text="請選擇載具"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:layout_toLeftOf="@+id/carrier"
+        android:layout_below="@+id/mainTitle"
+        />
+    <Spinner
+        android:layout_marginTop="15dp"
+        android:id="@+id/carrier"
+        android:theme="@style/spinner"
+        android:layout_below="@+id/mainTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </Spinner>
+    <TextView
+        android:id="@+id/enter"
+        android:layout_marginTop="15dp"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_toRightOf="@+id/carrier"
+        android:layout_below="@+id/mainTitle"
+        android:text="確定"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:background="#33CCFF"
+        android:layout_marginLeft="25dp"
+        />
     <WebView
         android:id="@+id/webView"
+        android:layout_marginTop="15dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/mainTitle"
+        android:layout_below="@+id/carrier"
         >
     </WebView>
+    <TextView
+        android:id="@+id/showError"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="#FF3333"
+        android:textSize="30sp"
+        android:text="財政部電子發票整合服務平台忙線中!"
+        android:visibility="gone"
+        />
     <ProgressBar
         android:id="@+id/myProgressBar"
         android:layout_width="100dp"

@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,26 +34,31 @@ import java.util.List;
 public class SelectChartAll extends Fragment{
 
     private LineChart lineChart;
-    private ChargeAPPDB chargeAPPDB;
     private InvoiceDB invoiceDB;
     private CarrierDB carrierDB;
     private TextView message;
     private ProgressDialog progressDialog;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.select_chart_all, container, false);
         findViewById(view);
+        invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        setTypeIn();
 //        download();
         return view;
     }
 
     private void setTypeIn()
     {
+        String detail;
         List<InvoiceVO> invoiceVOS=invoiceDB.findIVTypenull();
+        SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd");
         for(InvoiceVO invoiceVO:invoiceVOS)
         {
-
+            Log.d("XXXXXXXXXX",sd.format(invoiceVO.getTime())+" : "+invoiceVO.getDetail());
         }
     }
 
@@ -90,12 +97,8 @@ public class SelectChartAll extends Fragment{
 
     private void download()
     {
-        if(chargeAPPDB==null)
-        {
-            chargeAPPDB=new ChargeAPPDB(getActivity());
-        }
-        invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
-        carrierDB=new CarrierDB(chargeAPPDB.getReadableDatabase());
+
+
         List<CarrierVO> carrierVOList=carrierDB.getAll();
         if(carrierVOList==null||carrierVOList.size()<=0)
         {

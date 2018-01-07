@@ -24,6 +24,15 @@ public class InvoiceVO {
     private String secondtype;
     private String heartyteam;
     private Timestamp donateTime;
+    private String iswin;
+
+    public String getIswin() {
+        return iswin;
+    }
+
+    public void setIswin(String iswin) {
+        this.iswin = iswin;
+    }
 
     public Timestamp getDonateTime() {
         return donateTime;

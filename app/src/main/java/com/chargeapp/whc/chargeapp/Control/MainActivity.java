@@ -31,10 +31,10 @@ public class MainActivity extends AppCompatActivity {
     private GridView gridView;
     public static ChargeAPPDB chargeAPPDB;
     private int[] image = {
-            R.drawable.book, R.drawable.goal, R.drawable.chart, R.drawable.ele,R.drawable.setting
+            R.drawable.book, R.drawable.goal, R.drawable.chart, R.drawable.ele,R.drawable.lotto,R.drawable.setting
     };
     private String[] imgText = {
-            "記帳", "目標", "圖表", "電子發票","設定"
+            "記帳", "目標", "圖表", "電子發票","發票兌獎","設定"
     };
 
     public static int[] imageAll = {
@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
             ,R.drawable.salary,R.drawable.lotto,R.drawable.bouns,R.drawable.interest,R.drawable.fund,R.drawable.bank
     };
 
+    private String food="堡 三明治 優酪乳 肉 飯 雙手卷 腿 麵 麵包 熱狗 雞 手卷 肉 粉 蔬菜 牛 豬 起司 花生 豆 蛋 魚 菜 瓜 黑胡椒 土司 泡芙 排";
+    private String drink="咖啡 茶 豆漿 拿鐵 乳 飲 ml 罐 酒 杯 水";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +88,10 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, EleActivity.class);
                     startActivity(intent);
                 }
+                if (position == 4) {
+                    Intent intent = new Intent(MainActivity.this, PriceActivity.class);
+                    startActivity(intent);
+                }
 
 
 
@@ -105,20 +111,20 @@ public class MainActivity extends AppCompatActivity {
         chargeAPPDB.insert(new TypeVO("home", "住宿", 6));
         chargeAPPDB.insert(new TypeVO("medical", "醫療", 7));
         chargeAPPDB.insert(new TypeVO("invent", "投資", 8));
-        chargeAPPDB.insert(new TypeDetailVO("食物","早餐", indexOfIntArray(imageAll,R.drawable.breakfast)));
-        chargeAPPDB.insert(new TypeDetailVO("食物","午餐", indexOfIntArray(imageAll,R.drawable.lunch)));
-        chargeAPPDB.insert(new TypeDetailVO("食物","晚餐", indexOfIntArray(imageAll,R.drawable.dinner)));
-        chargeAPPDB.insert(new TypeDetailVO("食物","飲料", indexOfIntArray(imageAll,R.drawable.drink)));
-        chargeAPPDB.insert(new TypeDetailVO("食物","水果", indexOfIntArray(imageAll,R.drawable.fruit)));
-        chargeAPPDB.insert(new TypeDetailVO("手機","電話費", indexOfIntArray(imageAll,R.drawable.phonet)));
-        chargeAPPDB.insert(new TypeDetailVO("手機","月租費", indexOfIntArray(imageAll,R.drawable.cellphone)));
-        chargeAPPDB.insert(new TypeDetailVO("手機","易付卡", indexOfIntArray(imageAll,R.drawable.easycard)));
-        chargeAPPDB.insert(new TypeDetailVO("手機","網路費",indexOfIntArray(imageAll,R.drawable.internet)));
+        chargeAPPDB.insert(new TypeDetailVO("食物","早餐", indexOfIntArray(imageAll,R.drawable.breakfast),food));
+        chargeAPPDB.insert(new TypeDetailVO("食物","午餐", indexOfIntArray(imageAll,R.drawable.lunch),food));
+        chargeAPPDB.insert(new TypeDetailVO("食物","晚餐", indexOfIntArray(imageAll,R.drawable.dinner),food));
+        chargeAPPDB.insert(new TypeDetailVO("食物","飲料", indexOfIntArray(imageAll,R.drawable.drink),drink));
+        chargeAPPDB.insert(new TypeDetailVO("食物","水果", indexOfIntArray(imageAll,R.drawable.fruit),"蘋果 鳳梨 瓜 蕉 葡萄 蓮霧 番石榴 李 果 檬 橙 莓 椰子 桃 橘 柚 姆 柑 棗 蓮"));
+        chargeAPPDB.insert(new TypeDetailVO("手機","電話費", indexOfIntArray(imageAll,R.drawable.phonet),"中華 市話"));
+        chargeAPPDB.insert(new TypeDetailVO("手機","月租費", indexOfIntArray(imageAll,R.drawable.cellphone),"月租費"));
+        chargeAPPDB.insert(new TypeDetailVO("手機","易付卡", indexOfIntArray(imageAll,R.drawable.easycard),"易付卡 卡"));
+        chargeAPPDB.insert(new TypeDetailVO("手機","網路費",indexOfIntArray(imageAll,R.drawable.internet),"M 上網 寬頻 光纖"));
         chargeAPPDB.insert(new TypeDetailVO("交通","火車", indexOfIntArray(imageAll,R.drawable.train)));
         chargeAPPDB.insert(new TypeDetailVO("交通","高鐵", indexOfIntArray(imageAll,R.drawable.highspeedtrain)));
         chargeAPPDB.insert(new TypeDetailVO("交通","捷運", indexOfIntArray(imageAll,R.drawable.subway)));
         chargeAPPDB.insert(new TypeDetailVO("交通","客運", indexOfIntArray(imageAll,R.drawable.bus)));
-        chargeAPPDB.insert(new TypeDetailVO("交通","加油",indexOfIntArray(imageAll,R.drawable.gasstation)));
+        chargeAPPDB.insert(new TypeDetailVO("交通","加油",indexOfIntArray(imageAll,R.drawable.gasstation),"汽油 92 95 98"));
         chargeAPPDB.insert(new TypeDetailVO("教育","補習費", indexOfIntArray(imageAll,R.drawable.training)));
         chargeAPPDB.insert(new TypeDetailVO("教育","學雜費", indexOfIntArray(imageAll,R.drawable.university)));
         chargeAPPDB.insert(new TypeDetailVO("娛樂","電影",indexOfIntArray(imageAll,R.drawable.movie)));
@@ -135,9 +141,10 @@ public class MainActivity extends AppCompatActivity {
         chargeAPPDB.insert(new TypeDetailVO("醫療","保健食品", indexOfIntArray(imageAll,R.drawable.supplement)));
         chargeAPPDB.insert(new TypeDetailVO("投資","保險", indexOfIntArray(imageAll,R.drawable.treatment)));
         chargeAPPDB.insert(new TypeDetailVO("投資","投資損失", indexOfIntArray(imageAll,R.drawable.losemoney)));
-        chargeAPPDB.insert(new TypeDetailVO("衣服","衣服", indexOfIntArray(imageAll,R.drawable.jacket)));
-        chargeAPPDB.insert(new TypeDetailVO("衣服","褲子",indexOfIntArray(imageAll,R.drawable.trousers)));
-        chargeAPPDB.insert(new TypeDetailVO("衣服","內衣褲", indexOfIntArray(imageAll,R.drawable.clothe)));
+        chargeAPPDB.insert(new TypeDetailVO("衣服","衣服", indexOfIntArray(imageAll,R.drawable.jacket),"衣 外套 套 袖 shirt 棉"));
+        chargeAPPDB.insert(new TypeDetailVO("衣服","褲子",indexOfIntArray(imageAll,R.drawable.trousers),"褲"));
+        chargeAPPDB.insert(new TypeDetailVO("衣服","內衣褲", indexOfIntArray(imageAll,R.drawable.clothe),"罩 內褲"));
+        chargeAPPDB.insert(new TypeDetailVO("衣服","鞋子", indexOfIntArray(imageAll,R.drawable.shose),"鞋"));
         chargeAPPDB.insert(new TypeDetailVO("衣服","化妝品", indexOfIntArray(imageAll,R.drawable.lipgloss)));
         BankTybeDB bankTybeDB=new BankTybeDB(chargeAPPDB.getReadableDatabase());
         bankTybeDB.insert(new BankTypeVO("薪水","薪水",indexOfIntArray(imageAll,R.drawable.salary)));

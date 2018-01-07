@@ -21,10 +21,20 @@
     <WebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/mainTitle"
         >
     </WebView>
+    <TextView
+        android:id="@+id/showError"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="#FF3333"
+        android:textSize="30sp"
+        android:text="財政部電子發票整合服務平台忙線中!"
+        android:visibility="gone"
+        />
     <ProgressBar
         android:id="@+id/myProgressBar"
         android:layout_width="100dp"

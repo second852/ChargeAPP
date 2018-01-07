@@ -74,7 +74,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 day = cal.get(Calendar.DAY_OF_MONTH);
                 user = params[1].toString();
                 password = params[2].toString();
-
                 while (isNoExist < 3) {
                     cal.set(year, month, 1);
                     startDate = sf.format(new Date(cal.getTimeInMillis()));
@@ -144,11 +143,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         } catch (Exception e) {
             e.printStackTrace();
             jsonIn="InternerError";
-        }
+            }
         return jsonIn;
     }
-
-
 
     private String searchHeartyTeam(String keyworld) throws IOException {
         String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/loveCodeapp/qryLoveCode?";
@@ -177,12 +174,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             Log.d(TAG, "GetToday" + startDay + ":" + endDay);
             url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
             jsonIn = getRemoteData(url, data);
-            if(jsonIn.equals("InternerError"))
-            {
-                return jsonIn;
-            }
             if (jsonIn.indexOf("919") != -1 || jsonIn.indexOf("200") == -1) {
-                jsonIn = "error";
+                jsonIn = "InternerError";
                 return jsonIn;
             }
             getjsonIn(jsonIn, password, user);
@@ -214,12 +207,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         data = getInvoice(user, password, startday, endday);
         String url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
         String jsonIn = getRemoteData(url, data);
-        if(jsonIn.equals("InternerError"))
-        {
-            return jsonIn;
-        }
         if (jsonIn.indexOf("919") != -1 || jsonIn.indexOf("200") == -1) {
-            jsonIn = "error";
+            jsonIn = "InternerError";
             return jsonIn;
         }
         Calendar cal = last;
@@ -305,13 +294,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         invoiceVO.setTime(Timestamp.valueOf(time));
         invoiceVO.setCarrier(user);
         invoiceVO.setCardEncrypt(password);
-        HashMap<String, String> data = getInvoicedetail(invoiceVO);
-        String urldetail = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
-        String detailjs = getRemoteData(urldetail, data);
-        JsonObject jsonObject = gson.fromJson(detailjs, JsonObject.class);
-        invoiceVO.setDetail(jsonObject.get("details").toString());
+        invoiceVO.setDetail("0");
         invoiceVO.setMaintype("0");
         invoiceVO.setSecondtype("0");
+        invoiceVO.setIswin("0");
         return invoiceVO;
     }
 
@@ -342,10 +328,16 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 }
                 Log.d(TAG, "jsonin " + jsonIn);
             }
-
         }catch (Exception e)
         {
             jsonIn=new StringBuilder();
+            jsonIn.append("InternerError");
+            if(object instanceof EleSetCarrier) {
+                List<CarrierVO> carrierVOS = carrierDB.getAll();
+                if (carrierVOS != null) {
+                    jsonIn.append("setCarrier");
+                }
+            }
             jsonIn.append("InternerError");
         }finally {
             conn.disconnect();
@@ -356,59 +348,74 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        if (object instanceof EleSetCarrier) {
-            EleSetCarrier eleSetCarrier = (EleSetCarrier) object;
-            if (s.equals("error")) {
-                Common.showLongToast(eleSetCarrier.getActivity(), "手機條碼或驗證碼有誤");
-                eleSetCarrier.closeDialog();
-                return;
-            } else if(s.equals("InternerError"))
+        try {
+            if (object instanceof EleSetCarrier) {
+                EleSetCarrier eleSetCarrier = (EleSetCarrier) object;
+                if (s.equals("error")) {
+                    Common.showLongToast(eleSetCarrier.getActivity(), "手機條碼或驗證碼有誤");
+                    eleSetCarrier.closeDialog();
+                    return;
+                } else if(s.equals("InternerError"))
+                {
+                    Common.showLongToast(eleSetCarrier.getActivity(), "財政部網路忙線中，請稍候使用!");
+                    eleSetCarrier.closeDialog();
+                    return;
+                }
+                else{
+                    eleSetCarrier.setListAdapt();
+                    Common.showToast(eleSetCarrier.getActivity(), "新增成功");
+                    return;
+                }
+            }if(object instanceof EleDonate)
             {
-                Common.showLongToast(eleSetCarrier.getActivity(), "財政部網路忙線中，請稍候使用!");
-                eleSetCarrier.closeDialog();
-                return;
+                EleDonate eleDonate= (EleDonate) object;
+                if(s.equals("InternerError"))
+                {
+                    Common.showLongToast(eleDonate.getActivity(), "財政部網路忙線中，請稍候使用!");
+                    eleDonate.cancelDialog();
+                    return;
+                }
+                if(action.equals("GetToday"))
+                {
+                    eleDonate.setlayout(); eleDonate.setlayout();
+                }
+                if(action.equals("searchHeartyTeam"))
+                {
+                    eleDonate.setlistTeam(s);
+                }
             }
-            else{
-                eleSetCarrier.setListAdapt();
-                Common.showToast(eleSetCarrier.getActivity(), "新增成功");
-                return;
-            }
-        }if(object instanceof EleDonate)
+        }catch (Exception e)
         {
-            EleDonate eleDonate= (EleDonate) object;
-            if(s.equals("InternerError"))
-            {
-                Common.showLongToast(eleDonate.getActivity(), "財政部網路忙線中，請稍候使用!");
-                eleDonate.cancelDialog();
-              return;
-            }
-            if(action.equals("GetToday"))
-            {
-                eleDonate.setlayout(); eleDonate.setlayout();
-            }
-            if(action.equals("searchHeartyTeam"))
-            {
-                eleDonate.setlistTeam(s);
-            }
+            this.cancel(true);
         }
     }
 
-    private HashMap<String, String> getInvoicedetail(InvoiceVO invoiceVO) {
-        HashMap<String, String> hashMap = new HashMap();
-        hashMap.put("version", "0.3");
-        hashMap.put("cardType", "3J0002");
-        hashMap.put("cardNo", invoiceVO.getCarrier());
-        hashMap.put("expTimeStamp", "2147483647");
-        hashMap.put("action", "carrierInvDetail");
-        hashMap.put("timeStamp", String.valueOf(System.currentTimeMillis()));
-        hashMap.put("invNum", invoiceVO.getInvNum());
-        hashMap.put("invDate", sf.format(new Date(invoiceVO.getTime().getTime())));
-        hashMap.put("uuid", "second");
-        hashMap.put("sellerName", invoiceVO.getSellerName());
-        hashMap.put("amount", invoiceVO.getAmount());
-        hashMap.put("appID", "EINV3201711184648");
-        hashMap.put("cardEncrypt", invoiceVO.getCardEncrypt());
-        return hashMap;
+    private String getInvoicedetail(InvoiceVO invoiceVO) {
+        try {
+            String urldetail = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
+            HashMap<String, String> hashMap = new HashMap();
+            hashMap.put("version", "0.3");
+            hashMap.put("cardType", "3J0002");
+            hashMap.put("cardNo", invoiceVO.getCarrier());
+            hashMap.put("expTimeStamp", "2147483647");
+            hashMap.put("action", "carrierInvDetail");
+            hashMap.put("timeStamp", String.valueOf(System.currentTimeMillis()));
+            hashMap.put("invNum", invoiceVO.getInvNum());
+            hashMap.put("invDate", sf.format(new Date(invoiceVO.getTime().getTime())));
+            hashMap.put("uuid", "second");
+            hashMap.put("sellerName", invoiceVO.getSellerName());
+            hashMap.put("amount", invoiceVO.getAmount());
+            hashMap.put("appID", "EINV3201711184648");
+            hashMap.put("cardEncrypt", invoiceVO.getCardEncrypt());
+            String detailjs = getRemoteData(urldetail, hashMap);
+            JsonObject jsonObject = gson.fromJson(detailjs, JsonObject.class);
+            invoiceVO.setDetail(jsonObject.get("details").toString());
+            invoiceDB.update(invoiceVO);
+        }catch (Exception e)
+        {
+            return "InternerError";
+        }
+        return "Susscess";
     }
 
     private HashMap<String, String> getInvoice(String user, String password, String startDate, String endDate) {

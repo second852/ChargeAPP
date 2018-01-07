@@ -20,6 +20,9 @@ public class TypeDetailVO {
 
     private int image;
 
+    private String keyword;
+
+
 
 
     public TypeDetailVO(int id, String groupNumber, String name,int image) {
@@ -35,7 +38,28 @@ public class TypeDetailVO {
         this.image = image;
     }
 
+    public TypeDetailVO(String name, String groupNumber, int image, String keyword) {
+        this.name = name;
+        this.groupNumber = groupNumber;
+        this.image = image;
+        this.keyword = keyword;
+    }
 
+    public TypeDetailVO(int id, String groupNumber, String name, int image, String keyword) {
+        this.id = id;
+        this.name = name;
+        this.groupNumber = groupNumber;
+        this.image=image;
+        this.keyword=keyword;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
 
     public int getImage() {
         return image;

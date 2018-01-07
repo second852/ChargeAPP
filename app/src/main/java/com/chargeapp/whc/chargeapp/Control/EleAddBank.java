@@ -7,9 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -24,14 +21,13 @@ import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.R;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**
  * Created by 1709008NB01 on 2018/1/5.
  */
 
-public class EleAddCarrier extends Fragment {
+public class EleAddBank extends Fragment {
 
     private WebView webView;
     protected ProgressBar myProgressBar;
@@ -122,12 +118,12 @@ public class EleAddCarrier extends Fragment {
     private class CliientListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            String url="https://www.i-pass.com.tw/News/Detail/337";
-//            url=url+"CardNo="+carrierVO.getCarNul()+"&VerifyCode="+carrierVO.getPassword();
+            String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierBankAccBlank?UUID=second&appID=EINV3201711184648&CardCode=3J0002&";
+            url=url+"CardNo="+carrierVO.getCarNul()+"&VerifyCode="+carrierVO.getPassword();
             webViewSetting(url);
         }
     }
-    private class choiceStateItem implements android.widget.AdapterView.OnItemSelectedListener {
+    private class choiceStateItem implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             carrierVO=carrierVOS.get(position);

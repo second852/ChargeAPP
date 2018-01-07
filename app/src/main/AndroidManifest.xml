@@ -25,6 +25,8 @@
             android:name=".Control.EleActivity"/>
         <activity
             android:name=".Control.EleDonateMain"/>
+        <activity
+            android:name=".Control.PriceActivity"/>
     </application>
 
 </manifest>
