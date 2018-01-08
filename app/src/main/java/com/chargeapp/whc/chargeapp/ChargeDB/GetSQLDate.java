@@ -14,6 +14,7 @@ import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
+import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -139,6 +140,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             {
                 String keyworld = params[1].toString();
                 jsonIn=searchHeartyTeam(keyworld);
+            }else if(action.equals("getAllPriceNul"))
+            {
+                 jsonIn=searchPriceNul();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -146,6 +150,94 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             }
         return jsonIn;
     }
+
+    private String searchPriceNul() {
+        PriceDB priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp?";
+        String jsonin="";
+        Calendar calendar=Calendar.getInstance();
+        int year=calendar.get(Calendar.YEAR);
+        int month=calendar.get(Calendar.MONTH)+1;
+        if(month%2==1)
+        {
+           month=month-1;
+        }
+        StringBuffer period;
+       for (int i=0;i<6;i++)
+       {
+           period=new StringBuffer();
+           if(month<=0)
+           {
+               month=12+month;
+               year=year-1;
+           }
+           period.append((year-1911));
+           if(String.valueOf(month).length()==1)
+           {
+               period.append("0");
+           }
+           period.append(month);
+           HashMap<String,String> data=getPriceMap(period.toString());
+           jsonin=getRemoteData(url,data);
+           if(jsonin.indexOf("200")!=-1)
+           {
+               PriceVO priceVO=jsonToPriceVO(jsonin);
+               priceDB.insert(priceVO);
+           }
+           month=month-2;
+       }
+       Log.d("XXXXXx", String.valueOf(priceDB.getAll().size()));
+        return jsonin;
+    }
+
+    private PriceVO jsonToPriceVO(String jsonin) {
+        Gson gson=new Gson();
+        JsonObject js=gson.fromJson(jsonin,JsonObject.class);
+        PriceVO priceVO=new PriceVO();
+        priceVO.setInvoYm(js.get("invoYm").getAsString());
+        priceVO.setSuperPrizeNo(js.get("superPrizeNo").getAsString());
+        priceVO.setSpcPrizeNo(js.get("spcPrizeNo").getAsString());
+        priceVO.setFirstPrizeNo1(js.get("firstPrizeNo1").getAsString());
+        priceVO.setFirstPrizeNo2(js.get("firstPrizeNo2").getAsString());
+        priceVO.setFirstPrizeNo3(js.get("firstPrizeNo3").getAsString());
+        priceVO.setSixthPrizeNo1(ifnull(js.get("sixthPrizeNo1").getAsString()));
+        priceVO.setSixthPrizeNo2(ifnull(js.get("sixthPrizeNo2").getAsString()));
+        priceVO.setSixthPrizeNo3(ifnull(js.get("sixthPrizeNo3").getAsString()));
+        priceVO.setSuperPrizeAmt(js.get("superPrizeAmt").getAsString());
+        priceVO.setSpcPrizeAmt(js.get("spcPrizeAmt").getAsString());
+        priceVO.setFirstPrizeAmt(js.get("firstPrizeAmt").getAsString());
+        priceVO.setSecondPrizeAmt(js.get("secondPrizeAmt").getAsString());
+        priceVO.setThirdPrizeAmt(js.get("thirdPrizeAmt").getAsString());
+        priceVO.setFourthPrizeAmt(js.get("fourthPrizeAmt").getAsString());
+        priceVO.setFifthPrizeAmt(js.get("fifthPrizeAmt").getAsString());
+        priceVO.setSixthPrizeAmt(js.get("sixthPrizeAmt").getAsString());
+        priceVO.setSixthPrizeNo4(ifnull(js.get("sixthPrizeNo4").getAsString()));
+        priceVO.setSixthPrizeNo5(ifnull(js.get("sixthPrizeNo5").getAsString()));
+        priceVO.setSixthPrizeNo6(ifnull(js.get("sixthPrizeNo6").getAsString()));
+        return priceVO;
+    }
+
+    private String ifnull(String a)
+    {
+        if(a==null||a.trim().length()==0)
+        {
+            return "0";
+        }
+        return a;
+    }
+
+
+    private HashMap<String,String> getPriceMap(String date)
+    {
+        HashMap<String,String> data=new HashMap();
+        data.put("version","0.2");
+        data.put("action","QryWinningList");
+        data.put("invTerm",date);
+        data.put("UUID","second");
+        data.put("appID","EINV3201711184648");
+        return data;
+    }
+
 
     private String searchHeartyTeam(String keyworld) throws IOException {
         String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/loveCodeapp/qryLoveCode?";

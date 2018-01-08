@@ -37,8 +37,9 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
                     "PASSWORD TEXT) ;";
 
     private static final String TABLE_PRICE =
-            "CREATE TABLE PRICE ( id INTEGER PRIMARY KEY AUTOINCREMENT, number TEXT NOT NULL," +
-                    "level TEXT, period TEXT) ;";
+            "CREATE TABLE PRICE ( invoYm TEXT PRIMARY KEY,superPrizeNo TEXT,spcPrizeNo TEXT,firstPrizeNo1 TEXT," +
+                    "firstPrizeNo2 TEXT, firstPrizeNo3 TEXT,sixthPrizeNo1 TEXT, sixthPrizeNo2 TEXT, sixthPrizeNo3 TEXT, superPrizeAmt TEXT, spcPrizeAmt TEXT, firstPrizeAmt TEXT ,secondPrizeAmt TEXT, thirdPrizeAmt TEXT, fourthPrizeAmt TEXT, " +
+                    "fifthPrizeAmt TEXT, sixthPrizeAmt TEXT, sixthPrizeNo4 TEXT, sixthPrizeNo5 TEXT, sixthPrizeNo6 TEXT);";
 
     private static final String TABLE_HERATYTEAM =
             "CREATE TABLE HEARTYTEAM ( id INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT NOT NULL," +

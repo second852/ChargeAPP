@@ -12,7 +12,7 @@
         android:layout_marginTop="10dp"
         >
         <ImageView
-            android:id="@+id/DRadd"
+            android:id="@+id/DRcut"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/arrow"
@@ -33,7 +33,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/DRcut"
+            android:id="@+id/DRadd"
             android:src="@drawable/arrow"
             android:rotation="270"
             android:layout_toRightOf="@+id/DRcarrier"
@@ -48,7 +48,7 @@
         android:layout_marginTop="10dp"
         >
         <ImageView
-            android:id="@+id/PIdateAdd"
+            android:id="@+id/PIdateCut"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/arrow"
@@ -69,7 +69,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/PIdateCut"
+            android:id="@+id/PIdateAdd"
             android:src="@drawable/arrow"
             android:rotation="270"
             android:layout_toRightOf="@+id/PIdateTittle"
