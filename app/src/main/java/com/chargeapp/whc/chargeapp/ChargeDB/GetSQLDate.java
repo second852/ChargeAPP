@@ -143,6 +143,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             }else if(action.equals("getAllPriceNul"))
             {
                  jsonIn=searchPriceNul();
+            }else if(action.equals("getNeWPrice"))
+            {
+                jsonIn=searchNewPriceNul();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -151,6 +154,54 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         return jsonIn;
     }
 
+
+
+    private String searchNewPriceNul() {
+        boolean end=true;
+        PriceDB priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp?";
+        String jsonin="";
+        Calendar calendar=Calendar.getInstance();
+        int year=calendar.get(Calendar.YEAR);
+        int month=calendar.get(Calendar.MONTH)+1;
+        if(month%2==1)
+        {
+            month=month-1;
+        }
+        StringBuffer period;
+        String max=priceDB.findMaxPeriod();
+        while (end)
+        {
+            period=new StringBuffer();
+            if(month<=0)
+            {
+                month=12+month;
+                year=year-1;
+            }
+            period.append((year-1911));
+            if(String.valueOf(month).length()==1)
+            {
+                period.append("0");
+            }
+            period.append(month);
+            Log.d("XXXXXXXX",max+" "+period.toString()+" "+period.toString().equals(max));
+            if(max.equals(period.toString().trim()))
+            {
+                end=false;
+                break;
+            }
+            HashMap<String,String> data=getPriceMap(period.toString());
+            jsonin=getRemoteData(url,data);
+            if(jsonin.indexOf("200")!=-1)
+            {
+                PriceVO priceVO=jsonToPriceVO(jsonin);
+                priceDB.insert(priceVO);
+            }
+            month=month-2;
+        }
+        Log.d("XXXXXx", String.valueOf(priceDB.getAll().size()));
+        return jsonin;
+    }
     private String searchPriceNul() {
         PriceDB priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp?";

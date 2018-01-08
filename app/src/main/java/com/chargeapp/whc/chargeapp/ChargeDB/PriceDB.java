@@ -13,23 +13,22 @@ import java.util.List;
 
 public class PriceDB {
     private SQLiteDatabase db;
-    private String TABLE_NAME="PRICE";
-    private String COL_id="invoYm";
-    public PriceDB(SQLiteDatabase db)
-    {
-        this.db=db;
-    }
+    private String TABLE_NAME = "PRICE";
+    private String COL_id = "invoYm";
 
+    public PriceDB(SQLiteDatabase db) {
+        this.db = db;
+    }
 
 
     public List<PriceVO> getAll() {
         String sql = "SELECT * FROM PRICE order by invoYm;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
-        List<PriceVO> priceVOS=new ArrayList<>();
+        List<PriceVO> priceVOS = new ArrayList<>();
         PriceVO priceVO;
         while (cursor.moveToNext()) {
-            priceVO=new PriceVO();
+            priceVO = new PriceVO();
             priceVO.setInvoYm(cursor.getString(0));
             priceVO.setSuperPrizeNo(cursor.getString(1));
             priceVO.setSpcPrizeNo(cursor.getString(2));
@@ -50,60 +49,72 @@ public class PriceDB {
             priceVO.setSixthPrizeNo4(cursor.getString(17));
             priceVO.setSixthPrizeNo5(cursor.getString(18));
             priceVO.setSixthPrizeNo6(cursor.getString(19));
+            priceVOS.add(priceVO);
         }
         cursor.close();
         return priceVOS;
     }
 
+    public String findMaxPeriod() {
+        String sql = "SELECT MAX(invoYm) FROM PRICE ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        String max = null;
+        if (cursor.moveToNext()) {
+            max = cursor.getString(0);
+        }
+        cursor.close();
+        return max;
+    }
 
 
     public long insert(PriceVO priceVO) {
         ContentValues values = new ContentValues();
-        values.put("invoYm",priceVO.getInvoYm());
-        values.put("superPrizeNo",priceVO.getSuperPrizeNo());
-        values.put("spcPrizeNo",priceVO.getSpcPrizeNo());
-        values.put("firstPrizeNo1",priceVO.getFirstPrizeNo1());
-        values.put("firstPrizeNo2",priceVO.getFirstPrizeNo2());
-        values.put("firstPrizeNo3",priceVO.getFirstPrizeNo3());
-        values.put("sixthPrizeNo1",priceVO.getSixthPrizeNo1());
-        values.put("sixthPrizeNo2",priceVO.getSixthPrizeNo2());
-        values.put("sixthPrizeNo3",priceVO.getSixthPrizeNo3());
-        values.put("superPrizeAmt",priceVO.getSuperPrizeAmt());
-        values.put("spcPrizeAmt",priceVO.getSpcPrizeAmt());
-        values.put("firstPrizeAmt",priceVO.getFirstPrizeAmt());
-        values.put("secondPrizeAmt",priceVO.getSecondPrizeAmt());
-        values.put("thirdPrizeAmt",priceVO.getThirdPrizeAmt());
-        values.put("fourthPrizeAmt",priceVO.getFourthPrizeAmt());
-        values.put("fifthPrizeAmt",priceVO.getFifthPrizeAmt());
-        values.put("sixthPrizeAmt",priceVO.getSixthPrizeAmt());
-        values.put("sixthPrizeNo4",priceVO.getSixthPrizeNo4());
-        values.put("sixthPrizeNo5",priceVO.getSixthPrizeNo5());
-        values.put("sixthPrizeNo6",priceVO.getSixthPrizeNo6());
+        values.put("invoYm", priceVO.getInvoYm());
+        values.put("superPrizeNo", priceVO.getSuperPrizeNo());
+        values.put("spcPrizeNo", priceVO.getSpcPrizeNo());
+        values.put("firstPrizeNo1", priceVO.getFirstPrizeNo1());
+        values.put("firstPrizeNo2", priceVO.getFirstPrizeNo2());
+        values.put("firstPrizeNo3", priceVO.getFirstPrizeNo3());
+        values.put("sixthPrizeNo1", priceVO.getSixthPrizeNo1());
+        values.put("sixthPrizeNo2", priceVO.getSixthPrizeNo2());
+        values.put("sixthPrizeNo3", priceVO.getSixthPrizeNo3());
+        values.put("superPrizeAmt", priceVO.getSuperPrizeAmt());
+        values.put("spcPrizeAmt", priceVO.getSpcPrizeAmt());
+        values.put("firstPrizeAmt", priceVO.getFirstPrizeAmt());
+        values.put("secondPrizeAmt", priceVO.getSecondPrizeAmt());
+        values.put("thirdPrizeAmt", priceVO.getThirdPrizeAmt());
+        values.put("fourthPrizeAmt", priceVO.getFourthPrizeAmt());
+        values.put("fifthPrizeAmt", priceVO.getFifthPrizeAmt());
+        values.put("sixthPrizeAmt", priceVO.getSixthPrizeAmt());
+        values.put("sixthPrizeNo4", priceVO.getSixthPrizeNo4());
+        values.put("sixthPrizeNo5", priceVO.getSixthPrizeNo5());
+        values.put("sixthPrizeNo6", priceVO.getSixthPrizeNo6());
         return db.insert(TABLE_NAME, null, values);
     }
 
     public int update(PriceVO priceVO) {
         ContentValues values = new ContentValues();
-        values.put("invoYm",priceVO.getInvoYm());
-        values.put("superPrizeNo",priceVO.getSuperPrizeNo());
-        values.put("spcPrizeNo",priceVO.getSpcPrizeNo());
-        values.put("firstPrizeNo1",priceVO.getFirstPrizeNo1());
-        values.put("firstPrizeNo2",priceVO.getFirstPrizeNo2());
-        values.put("firstPrizeNo3",priceVO.getFirstPrizeNo3());
-        values.put("sixthPrizeNo1",priceVO.getSixthPrizeNo1());
-        values.put("sixthPrizeNo2",priceVO.getSixthPrizeNo2());
-        values.put("sixthPrizeNo3",priceVO.getSixthPrizeNo3());
-        values.put("superPrizeAmt",priceVO.getSuperPrizeAmt());
-        values.put("spcPrizeAmt",priceVO.getSpcPrizeAmt());
-        values.put("firstPrizeAmt",priceVO.getFirstPrizeAmt());
-        values.put("secondPrizeAmt",priceVO.getSecondPrizeAmt());
-        values.put("thirdPrizeAmt",priceVO.getThirdPrizeAmt());
-        values.put("fourthPrizeAmt",priceVO.getFourthPrizeAmt());
-        values.put("fifthPrizeAmt",priceVO.getFifthPrizeAmt());
-        values.put("sixthPrizeAmt",priceVO.getSixthPrizeAmt());
-        values.put("sixthPrizeNo4",priceVO.getSixthPrizeNo4());
-        values.put("sixthPrizeNo5",priceVO.getSixthPrizeNo5());
-        values.put("sixthPrizeNo6",priceVO.getSixthPrizeNo6());
+        values.put("invoYm", priceVO.getInvoYm());
+        values.put("superPrizeNo", priceVO.getSuperPrizeNo());
+        values.put("spcPrizeNo", priceVO.getSpcPrizeNo());
+        values.put("firstPrizeNo1", priceVO.getFirstPrizeNo1());
+        values.put("firstPrizeNo2", priceVO.getFirstPrizeNo2());
+        values.put("firstPrizeNo3", priceVO.getFirstPrizeNo3());
+        values.put("sixthPrizeNo1", priceVO.getSixthPrizeNo1());
+        values.put("sixthPrizeNo2", priceVO.getSixthPrizeNo2());
+        values.put("sixthPrizeNo3", priceVO.getSixthPrizeNo3());
+        values.put("superPrizeAmt", priceVO.getSuperPrizeAmt());
+        values.put("spcPrizeAmt", priceVO.getSpcPrizeAmt());
+        values.put("firstPrizeAmt", priceVO.getFirstPrizeAmt());
+        values.put("secondPrizeAmt", priceVO.getSecondPrizeAmt());
+        values.put("thirdPrizeAmt", priceVO.getThirdPrizeAmt());
+        values.put("fourthPrizeAmt", priceVO.getFourthPrizeAmt());
+        values.put("fifthPrizeAmt", priceVO.getFifthPrizeAmt());
+        values.put("sixthPrizeAmt", priceVO.getSixthPrizeAmt());
+        values.put("sixthPrizeNo4", priceVO.getSixthPrizeNo4());
+        values.put("sixthPrizeNo5", priceVO.getSixthPrizeNo5());
+        values.put("sixthPrizeNo6", priceVO.getSixthPrizeNo6());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {priceVO.getInvoYm()};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

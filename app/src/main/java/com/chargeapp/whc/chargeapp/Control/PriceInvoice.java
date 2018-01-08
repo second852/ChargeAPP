@@ -56,7 +56,6 @@ public class PriceInvoice extends Fragment {
         download();
         findViewById(view);
         setMonText(now);
-        setlayout();
         DRadd.setOnClickListener(new addOnClick());
         DRcut.setOnClickListener(new cutOnClick());
         PIdateAdd.setOnClickListener(new addMonth());
@@ -79,8 +78,20 @@ public class PriceInvoice extends Fragment {
         if(priceVOS==null||priceVOS.size()<=0)
         {
             new GetSQLDate(this).execute("getAllPriceNul");
+            return;
         }
-
+        new GetSQLDate(this).execute("getNeWPrice");
+        carrierVOS = carrierDB.getAll();
+        if (carrierVOS == null || carrierVOS.size() <= 0) {
+            DRmessage.setText("請新增載具!");
+            DRmessage.setVisibility(View.VISIBLE);
+            return;
+        }
+        new GetSQLDate(this).execute("GetToday");
+//        for (PriceVO p:priceVOS)
+//        {
+//            Log.d("xxx",p.getInvoYm());
+//        }
     }
 
     private void setMonText(Calendar time) {
@@ -138,6 +149,7 @@ public class PriceInvoice extends Fragment {
                 showtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"年9-10月";
             }
         }
+
         PIdateTittle.setText(showtime);
     }
 
@@ -165,12 +177,6 @@ public class PriceInvoice extends Fragment {
 
 
     private void setlayout() {
-        carrierVOS = carrierDB.getAll();
-        if (carrierVOS == null || carrierVOS.size() <= 0) {
-            DRmessage.setText("請新增載具!");
-            DRmessage.setVisibility(View.VISIBLE);
-            return;
-        }
         DRcarrier.setText(carrierVOS.get(choiceca).getCarNul());
         invoiceVOS = invoiceDB.getisDonated(carrierVOS.get(choiceca).getCarNul());
         if (invoiceVOS == null || invoiceVOS.size() <= 0) {
