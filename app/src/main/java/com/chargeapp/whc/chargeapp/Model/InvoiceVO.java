@@ -26,6 +26,8 @@ public class InvoiceVO {
     private Timestamp donateTime;
     private String iswin;
 
+
+
     public String getIswin() {
         return iswin;
     }

@@ -24,7 +24,6 @@ import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.R;
 
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,9 +34,9 @@ import java.util.List;
  * Created by 1709008NB01 on 2017/12/22.
  */
 
-public class PriceInvoice extends Fragment {
-    private ImageView DRadd, DRcut, PIdateAdd, PIdateCut;
-    private TextView DRcarrier, DRmessage, PIdateTittle;
+public class PriceHand extends Fragment {
+    private ImageView  PIdateAdd, PIdateCut;
+    private TextView DRmessage, PIdateTittle;
     private RecyclerView donateRL;
     private InvoiceDB invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private CarrierDB carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -51,52 +50,18 @@ public class PriceInvoice extends Fragment {
     private int month, year;
     private SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd");
     private String[] level={"first","second","third","fourth","fifth","sixth"};
+    private PriceVO priceVO;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.price_invoice, container, false);
+        View view = inflater.inflate(R.layout.price_hand, container, false);
         findViewById(view);
-        download();
-
-
-        List<InvoiceVO> invoiceVOS=invoiceDB.getIsWin("/2RDO8+P");
-
-        for (InvoiceVO i:invoiceVOS)
-        {
-            Log.d("XXXXXXX",i.getIswin()+":"+i.getInvNum());
-        }
-
-        setMonText(now);
-        DRadd.setOnClickListener(new addOnClick());
-        DRcut.setOnClickListener(new cutOnClick());
+        setMonText(now,"in");
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
-        swipeRefreshLayout =
-                (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
-                setlayout();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
         return view;
     }
-
-    private void download() {
-        List<PriceVO> priceVOS=priceDB.getAll();
-        if(priceVOS==null||priceVOS.size()<=0)
-        {
-            new GetSQLDate(this).execute("getAllPriceNul");
-            return;
-        }
-        AutoSetPrice();
-//        new GetSQLDate(this).execute("getNeWPrice");
-    }
-
-
 
     private void AutoSetPrice()
     {
@@ -116,12 +81,6 @@ public class PriceInvoice extends Fragment {
         }
     }
 
-    public List<InvoiceVO> getTest()
-    {
-        List<InvoiceVO> i=new ArrayList<>();
-        InvoiceVO re=new InvoiceVO();
-        return i;
-    }
 
 
     private void autoSetInWin(long startTime, long endTime, PriceVO priceVO) {
@@ -215,12 +174,8 @@ public class PriceInvoice extends Fragment {
         return false;
     }
 
-    private void getPeriod(long time)
-    {
 
-
-    }
-    private void setMonText(Calendar time) {
+    private void setMonText(Calendar time,String action) {
         Log.d("XXXX",  sd.format(new Date(time.getTimeInMillis())));
         Calendar cal=Calendar.getInstance();
         cal.setTime(new Date(time.getTimeInMillis()));
@@ -237,7 +192,7 @@ public class PriceInvoice extends Fragment {
         long night25=cal.getTimeInMillis();
         cal.set(year,10,25);
         long ele25=cal.getTimeInMillis();
-        String showtime;
+        String showtime,searchtime;
         long now=this.now.getTimeInMillis();
         Log.d("XXXX",  sd.format(new Date(now)));
         Log.d("XXXX",  sd.format(new Date(one25)));
@@ -249,77 +204,61 @@ public class PriceInvoice extends Fragment {
         if(now>one25&&now<three25)
         {
             showtime=String.valueOf(time.get(Calendar.YEAR)-1911-1)+"年11-12月";
+            searchtime=String.valueOf(time.get(Calendar.YEAR)-1911-1)+"12";
         }
         else if(now>three25&&now<five25)
         {
             showtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"年1-2月";
+            searchtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"02";
         }
         else if(now>five25&&now<seven25)
         {
             showtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"年3-4月";
+            searchtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"04";
         }
         else if(now>seven25&&now<night25)
         {
             showtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"年5-6月";
+            searchtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"06";
         }
         else if(now>night25&&now<ele25)
         {
             showtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"年7-8月";
+            searchtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"08";
         }
         else
         {
             if(this.now.get(Calendar.MONTH)==0)
             {
                 showtime=String.valueOf(time.get(Calendar.YEAR)-1911-1)+"年9-10月";
+                searchtime=String.valueOf(time.get(Calendar.YEAR)-1911-1)+"10";
             }else {
                 showtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"年9-10月";
+                searchtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"10";
             }
+        }
+        priceVO=priceDB.getPeriodAll(searchtime);
+        Log.d("XXXXXXX",searchtime);
+        if(priceVO==null&&action.equals("add"))
+        {
+            month=month-2;
+            Common.showLongToast(getActivity(),"尚未開獎");
+            return;
+        }
+        if(priceVO==null&&action.equals("cut"))
+        {
+            month=month+2;
+            Common.showLongToast(getActivity(),"沒有資料");
+            return;
         }
 
         PIdateTittle.setText(showtime);
     }
 
-    private class cutOnClick implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            choiceca--;
-            if (choiceca < 0) {
-                choiceca = carrierVOS.size() - 1;
-            }
-            setlayout();
-        }
-    }
-
-    private class addOnClick implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            choiceca++;
-            if (choiceca > (carrierVOS.size() - 1)) {
-                choiceca = 0;
-            }
-            setlayout();
-        }
-    }
-
-
-    private void setlayout() {
-        DRcarrier.setText(carrierVOS.get(choiceca).getCarNul());
-        invoiceVOS = invoiceDB.getisDonated(carrierVOS.get(choiceca).getCarNul());
-        if (invoiceVOS == null || invoiceVOS.size() <= 0) {
-            DRmessage.setText("沒有捐贈發票~");
-            DRmessage.setVisibility(View.VISIBLE);
-            return;
-        }
-        donateRL.setLayoutManager(new LinearLayoutManager(getActivity()));
-        donateRL.setAdapter(new PriceInvoice.InvoiceAdapter(getActivity(), invoiceVOS));
-    }
 
     private void findViewById(View view) {
         month = now.get(Calendar.MONTH);
         year = now.get(Calendar.YEAR);
-        DRadd = view.findViewById(R.id.DRadd);
-        DRcut = view.findViewById(R.id.DRcut);
-        DRcarrier = view.findViewById(R.id.DRcarrier);
         donateRL = view.findViewById(R.id.donateRL);
         DRmessage = view.findViewById(R.id.DRmessage);
         PIdateAdd = view.findViewById(R.id.PIdateAdd);
@@ -327,67 +266,18 @@ public class PriceInvoice extends Fragment {
         PIdateTittle = view.findViewById(R.id.PIdateTittle);
     }
 
-    private class InvoiceAdapter extends
-            RecyclerView.Adapter<PriceInvoice.InvoiceAdapter.MyViewHolder> {
-        private Context context;
-        private List<InvoiceVO> invoiceVOList;
-
-
-        InvoiceAdapter(Context context, List<InvoiceVO> memberList) {
-            this.context = context;
-            this.invoiceVOList = memberList;
-        }
-
-        class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView day, nul, checkdonate;
-
-
-            MyViewHolder(View itemView) {
-                super(itemView);
-                checkdonate = itemView.findViewById(R.id.DRdate);
-                day = itemView.findViewById(R.id.DRnul);
-                nul = itemView.findViewById(R.id.DRamout);
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return invoiceVOList.size();
-        }
-
-        @Override
-        public PriceInvoice.InvoiceAdapter.MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(context);
-            View itemView = layoutInflater.inflate(R.layout.ele_setdenote_record_item, viewGroup, false);
-            return new PriceInvoice.InvoiceAdapter.MyViewHolder(itemView);
-        }
-
-        @Override
-        public void onBindViewHolder(PriceInvoice.InvoiceAdapter.MyViewHolder viewHolder, int position) {
-            final InvoiceVO invoiceVO = invoiceVOList.get(position);
-            viewHolder.checkdonate.setText(sf.format(new Date(invoiceVO.getTime().getTime())));
-            viewHolder.day.setText(invoiceVO.getInvNum());
-            viewHolder.nul.setText(invoiceVO.getHeartyteam());
-        }
-    }
 
     private class addMonth implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             month+=2;
             Calendar calendar=Calendar.getInstance();
-            if(month>calendar.get(Calendar.MONTH)&&year==calendar.get(Calendar.YEAR))
-            {
-                month=month-2;
-                Common.showLongToast(getActivity(),"尚未開獎");
-                return;
-            }
             if (month >11) {
                 month = month-11;
                 year++;
             }
             now.set(year, month, 1);
-            setMonText(now);
+            setMonText(now,"add");
         }
     }
 
@@ -400,7 +290,7 @@ public class PriceInvoice extends Fragment {
                 year--;
             }
             now.set(year, month, 1);
-            setMonText(now);
+            setMonText(now,"cut");
         }
     }
 

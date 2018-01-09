@@ -70,7 +70,7 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
                 return new PriceInvoice();
             } else  if(currentpoition == 1)
             {
-                return new InsertSpend();
+                return new PriceHand();
             }
             else{
                 return new InsertIncome();

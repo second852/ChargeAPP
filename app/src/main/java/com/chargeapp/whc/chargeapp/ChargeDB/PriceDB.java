@@ -36,8 +36,8 @@ public class PriceDB {
             priceVO.setFirstPrizeNo2(cursor.getString(4));
             priceVO.setFirstPrizeNo3(cursor.getString(5));
             priceVO.setSixthPrizeNo1(cursor.getString(6));
-            priceVO.setFirstPrizeNo2(cursor.getString(7));
-            priceVO.setFirstPrizeNo3(cursor.getString(8));
+            priceVO.setSixthPrizeNo2(cursor.getString(7));
+            priceVO.setSixthPrizeNo3(cursor.getString(8));
             priceVO.setSuperPrizeAmt(cursor.getString(9));
             priceVO.setSpcPrizeAmt(cursor.getString(10));
             priceVO.setFirstPrizeAmt(cursor.getString(11));
@@ -53,6 +53,39 @@ public class PriceDB {
         }
         cursor.close();
         return priceVOS;
+    }
+
+
+    public PriceVO getPeriodAll(String period) {
+        String sql = "SELECT * FROM PRICE where invoYm ='"+period+"'order by invoYm;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        PriceVO priceVO=null;
+        if (cursor.moveToNext()) {
+            priceVO = new PriceVO();
+            priceVO.setInvoYm(cursor.getString(0));
+            priceVO.setSuperPrizeNo(cursor.getString(1));
+            priceVO.setSpcPrizeNo(cursor.getString(2));
+            priceVO.setFirstPrizeNo1(cursor.getString(3));
+            priceVO.setFirstPrizeNo2(cursor.getString(4));
+            priceVO.setFirstPrizeNo3(cursor.getString(5));
+            priceVO.setSixthPrizeNo1(cursor.getString(6));
+            priceVO.setSixthPrizeNo2(cursor.getString(7));
+            priceVO.setSixthPrizeNo3(cursor.getString(8));
+            priceVO.setSuperPrizeAmt(cursor.getString(9));
+            priceVO.setSpcPrizeAmt(cursor.getString(10));
+            priceVO.setFirstPrizeAmt(cursor.getString(11));
+            priceVO.setSecondPrizeAmt(cursor.getString(12));
+            priceVO.setThirdPrizeAmt(cursor.getString(13));
+            priceVO.setFourthPrizeAmt(cursor.getString(14));
+            priceVO.setFifthPrizeAmt(cursor.getString(15));
+            priceVO.setSixthPrizeAmt(cursor.getString(16));
+            priceVO.setSixthPrizeNo4(cursor.getString(17));
+            priceVO.setSixthPrizeNo5(cursor.getString(18));
+            priceVO.setSixthPrizeNo6(cursor.getString(19));
+        }
+        cursor.close();
+        return priceVO;
     }
 
     public String findMaxPeriod() {
