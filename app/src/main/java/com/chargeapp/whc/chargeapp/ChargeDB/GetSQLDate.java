@@ -81,7 +81,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     cal.set(year, month, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
                     endDate = sf.format(new Date(cal.getTimeInMillis()));
                     Log.d(TAG, "startDate: " + startDate + "endDate" + endDate + "isNoExist" + isNoExist);
-                    data = getInvoice(user, password, startDate, endDate);
+                    data = getInvoice(user, password, startDate, endDate,"N");
                     month = month+1;
                     if (month >11) {
                         month = 0;
@@ -102,6 +102,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         continue;
                     }
                     getjsonIn(jsonIn, password, user);
+
                     if(first)
                     {
                         CarrierVO carrierVO = new CarrierVO();
@@ -214,7 +215,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
            month=month-1;
         }
         StringBuffer period;
-       for (int i=0;i<6;i++)
+       for (int i=0;i<7;i++)
        {
            period=new StringBuffer();
            if(month<=0)
@@ -236,6 +237,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                priceDB.insert(priceVO);
            }
            month=month-2;
+           Log.d("XXXXXX", period.toString());
        }
        Log.d("XXXXXx", String.valueOf(priceDB.getAll().size()));
         return jsonin;
@@ -313,7 +315,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         today.set(todayYear, todayMonth, 1);
         startDay = sf.format(new Date(today.getTimeInMillis()));
         while (isNoExist < 3) {
-            data = getInvoice(user, password, startDay, endDay);
+            data = getInvoice(user, password, startDay, endDay,"N");
             Log.d(TAG, "GetToday" + startDay + ":" + endDay);
             url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
             jsonIn = getRemoteData(url, data);
@@ -347,7 +349,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         String endday = sf.format(today.getTime());
         HashMap data;
         Log.d(TAG, "startDate: " + startday + "endDate" + endday + "user" + user);
-        data = getInvoice(user, password, startday, endday);
+        data = getInvoice(user, password, startday, endday,"N");
         String url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
         String jsonIn = getRemoteData(url, data);
         if (jsonIn.indexOf("919") != -1 || jsonIn.indexOf("200") == -1) {
@@ -561,7 +563,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         return "Susscess";
     }
 
-    private HashMap<String, String> getInvoice(String user, String password, String startDate, String endDate) {
+    private HashMap<String, String> getInvoice(String user, String password, String startDate, String endDate,String iswin) {
         HashMap<String, String> hashMap = new HashMap();
         hashMap.put("version", "0.3");
         hashMap.put("cardType", "3J0002");
@@ -571,7 +573,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         hashMap.put("timeStamp", String.valueOf(System.currentTimeMillis()));
         hashMap.put("startDate", startDate);
         hashMap.put("endDate", endDate);
-        hashMap.put("onlyWinningInv", "N");
+        hashMap.put("onlyWinningInv",iswin);
         hashMap.put("uuid", "second");
         hashMap.put("appID", "EINV3201711184648");
         hashMap.put("cardEncrypt", password);

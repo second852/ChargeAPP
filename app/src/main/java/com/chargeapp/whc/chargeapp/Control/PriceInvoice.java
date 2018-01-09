@@ -27,6 +27,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -48,13 +49,23 @@ public class PriceInvoice extends Fragment {
     private Calendar now = Calendar.getInstance();
     private int month, year;
     private SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd");
+    private String[] level={"first","second","third","fourth","fifth","sixth"};
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_invoice, container, false);
-        download();
         findViewById(view);
+        download();
+
+
+        List<InvoiceVO> invoiceVOS=invoiceDB.getIsWin("/2RDO8+P");
+
+//        for (InvoiceVO i:invoiceVOS)
+//        {
+//            Log.d("XXXXXXX",i.getIswin()+":"+i.getInvNum());
+//        }
+
         setMonText(now);
         DRadd.setOnClickListener(new addOnClick());
         DRcut.setOnClickListener(new cutOnClick());
@@ -80,20 +91,123 @@ public class PriceInvoice extends Fragment {
             new GetSQLDate(this).execute("getAllPriceNul");
             return;
         }
-        new GetSQLDate(this).execute("getNeWPrice");
-        carrierVOS = carrierDB.getAll();
-        if (carrierVOS == null || carrierVOS.size() <= 0) {
-            DRmessage.setText("請新增載具!");
-            DRmessage.setVisibility(View.VISIBLE);
-            return;
-        }
-        new GetSQLDate(this).execute("GetToday");
-//        for (PriceVO p:priceVOS)
-//        {
-//            Log.d("xxx",p.getInvoYm());
-//        }
+        AutoSetPrice();
+//        new GetSQLDate(this).execute("getNeWPrice");
     }
 
+
+
+    private void AutoSetPrice()
+    {
+        List<PriceVO> priceVOS=priceDB.getAll();
+        int month;
+        int year;
+        for(PriceVO priceVO:priceVOS)
+        {
+            SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd");
+            long startTime,endTime;
+           String invoYM = priceVO.getInvoYm();
+           month=Integer.valueOf(invoYM.substring(invoYM.length()-2));
+           year=Integer.valueOf(invoYM.substring(0,invoYM.length()-2))+1911;
+           startTime=(new GregorianCalendar(year,month-2,1)).getTimeInMillis();
+           endTime=(new GregorianCalendar(year,month,1)).getTimeInMillis();
+           autoSetInWin(startTime,endTime,priceVO);
+        }
+    }
+
+
+    private void autoSetInWin(long startTime, long endTime, PriceVO priceVO) {
+        List<CarrierVO> carrierVOS=carrierDB.getAll();
+        for(CarrierVO c:carrierVOS)
+        {
+            List<InvoiceVO> invoiceVOS=invoiceDB.getNotSetWin(c.getCarNul(),startTime,endTime);
+            for(InvoiceVO i:invoiceVOS)
+            {
+                String nul=i.getInvNum().substring(2);
+                if(nul.equals(priceVO.getSuperPrizeNo()))
+                {
+                    i.setIswin("super");
+                    invoiceDB.update(i);
+                    return;
+                }
+                if(nul.equals(priceVO.getSpcPrizeNo())){
+                    i.setIswin("spc");
+                    invoiceDB.update(i);
+                    return;
+                }
+                if(firsttofourprice(i,priceVO.getFirstPrizeNo1()))
+                {
+                    return;
+                }
+                if(firsttofourprice(i,priceVO.getFirstPrizeNo2()))
+                {
+                    return;
+                }
+                if(firsttofourprice(i,priceVO.getFirstPrizeNo3()))
+                {
+                    return;
+                }
+                nul=nul.substring(5);
+                if(nul.equals(priceVO.getSixthPrizeNo1()))
+                {
+                    i.setIswin("sixth");
+                    invoiceDB.update(i);
+                    return;
+                }
+                if(nul.equals(priceVO.getSixthPrizeNo2()))
+                {
+                    i.setIswin("sixth");
+                    invoiceDB.update(i);
+                    return;
+                }
+                if(nul.equals(priceVO.getSixthPrizeNo3()))
+                {
+                    i.setIswin("sixth");
+                    invoiceDB.update(i);
+                    return;
+                }
+                if(nul.equals(priceVO.getSixthPrizeNo4()))
+                {
+                    i.setIswin("sixth");
+                    invoiceDB.update(i);
+                    return;
+                }
+                if(nul.equals(priceVO.getSixthPrizeNo5()))
+                {
+                    i.setIswin("sixth");
+                    invoiceDB.update(i);
+                    return;
+                }
+                if(nul.equals(priceVO.getSixthPrizeNo6()))
+                {
+                    i.setIswin("sixth");
+                    invoiceDB.update(i);
+                    return;
+                }
+            }
+        }
+    }
+
+    private boolean firsttofourprice(InvoiceVO iv,String pricenul)
+    {
+        String nul=iv.getInvNum().substring(2);
+        for(int i=0;i<6;i++)
+        {
+            if(nul.substring(i).equals(pricenul.substring(i)))
+            {
+               iv.setIswin(level[i]);
+               invoiceDB.update(iv);
+               return true;
+            }
+        }
+        return false;
+    }
+
+    private void getPeriod(long time)
+    {
+
+
+    }
     private void setMonText(Calendar time) {
         Log.d("XXXX",  sd.format(new Date(time.getTimeInMillis())));
         Calendar cal=Calendar.getInstance();
