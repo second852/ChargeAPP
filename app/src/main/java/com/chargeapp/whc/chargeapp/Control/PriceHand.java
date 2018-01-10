@@ -104,42 +104,38 @@ public class PriceHand extends Fragment {
             String nul=gnul;
             message=null;
             if (priceVO != null) {
-                if (nul.equals(priceVO.getSuperPrizeNo())) {
-                   message="可能中特別獎"+priceVO.getSuperPrizeNo()+"\n獎金一千萬";
+                if (nul.equals(priceVO.getSuperPrizeNo().substring(5))) {
+                   message="特別獎?\n"+priceVO.getSuperPrizeNo()+"\n獎金一千萬";
                 }
-                if (nul.equals(priceVO.getSpcPrizeNo())) {
-                    message="特獎"+priceVO.getSuperPrizeNo()+"\n獎金兩百萬";
+                if (nul.equals(priceVO.getSpcPrizeNo().substring(5))) {
+                    message="特獎?\n"+priceVO.getSuperPrizeNo()+"\n獎金兩百萬";
                 }
-                Log.d("XXXXXXXX",priceVO.getInvoYm()+":"+priceVO.getFirstPrizeNo1()+":"+nul);
-                if (firsttofourprice(nul, priceVO.getFirstPrizeNo1()) != null) {
-                    message="頭獎"+firsttofourprice(nul, priceVO.getFirstPrizeNo1());
+                if ( nul.equals(priceVO.getFirstPrizeNo1().substring(5))) {
+                    message="頭獎?\n"+priceVO.getFirstPrizeNo1()+"\n獎金20萬";
                 }
-                Log.d("XXXXXXXX",priceVO.getInvoYm()+":"+priceVO.getFirstPrizeNo2());
-                if (firsttofourprice(nul, priceVO.getFirstPrizeNo2()) != null) {
-                    message="頭獎"+firsttofourprice(nul, priceVO.getFirstPrizeNo2());
+                if (nul.equals(priceVO.getFirstPrizeNo2().substring(5))) {
+                    message="頭獎?\n"+priceVO.getFirstPrizeNo2()+"\n獎金20萬";;
                 }
-                Log.d("XXXXXXXX",priceVO.getInvoYm()+":"+priceVO.getFirstPrizeNo3());
-                if (firsttofourprice(nul, priceVO.getFirstPrizeNo3()) != null) {
-                   message="頭獎"+firsttofourprice(nul, priceVO.getFirstPrizeNo3());
+                if (nul.equals(priceVO.getFirstPrizeNo3().substring(5))) {
+                   message="頭獎?\n"+priceVO.getFirstPrizeNo3()+"\n獎金20萬";
                 }
-                nul = nul.substring(5);
                 if (nul.equals(priceVO.getSixthPrizeNo1())) {
-                   message="六獎"+priceVO.getSixthPrizeNo1()+"\n獎金200";
+                   message="六獎\n"+priceVO.getSixthPrizeNo1()+"\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo2())) {
-                    message="六獎"+priceVO.getSixthPrizeNo2()+"\n獎金200";
+                    message="六獎\n"+priceVO.getSixthPrizeNo2()+"\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo3())) {
-                    message="六獎"+priceVO.getSixthPrizeNo3()+"\n獎金200";
+                    message="六獎\n"+priceVO.getSixthPrizeNo3()+"\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo4())) {
-                    message="六獎"+priceVO.getSixthPrizeNo4()+"\n獎金200";
+                    message="六獎\n"+priceVO.getSixthPrizeNo4()+"\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo5())) {
-                    message="六獎"+priceVO.getSixthPrizeNo5()+"\n獎金200";
+                    message="六獎\n"+priceVO.getSixthPrizeNo5()+"\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo6())) {
-                    message="六獎"+priceVO.getSixthPrizeNo6()+"\n獎金200";
+                    message="六獎\n"+priceVO.getSixthPrizeNo6()+"\n獎金200";
                 }
             }
             allMessage.put(i,message);
@@ -151,11 +147,9 @@ public class PriceHand extends Fragment {
         String year,month;
         if(allMessage.get(0)!=null)
         {
-            year=priceVO.getInvoYm().substring(0,priceVO.getInvoYm().length()-2);
-            month=priceVO.getInvoYm().substring(priceVO.getInvoYm().length()-2);
-            totalmessage="恭喜中"+year+"年"+levelPrice.get(month)+"\n"+allMessage.get(0);
-            redE=totalmessage.indexOf("獎")+1;
+            totalmessage=allMessage.get(0);
             redF=totalmessage.lastIndexOf("獎");
+            redE=redF-4;
         }
         if(allMessage.get(1)!=null)
         {
@@ -164,9 +158,9 @@ public class PriceHand extends Fragment {
             String old;
             year=oldPriceVO.getInvoYm().substring(0,oldPriceVO.getInvoYm().length()-2);
             month=oldPriceVO.getInvoYm().substring(oldPriceVO.getInvoYm().length()-2);
-            old="可能中"+year+"年"+levelPrice.get(month)+"\n"+allMessage.get(1);
-            printF=old.indexOf("獎")+length+1;
+            old="上一期"+year+"年"+levelPrice.get(month)+allMessage.get(1);
             printE=old.lastIndexOf("獎")+length;
+            printF=printE-4;
             totalmessage=totalmessage+old;
         }
         if(totalmessage!=null)
@@ -180,17 +174,6 @@ public class PriceHand extends Fragment {
             priceMessage.setText("沒有中獎!再接再厲!");
         }
 
-    }
-
-
-    private String firsttofourprice(String nul, String pricenul) {
-
-        for (int i = 0; i < 6; i++) {
-            if (nul.substring(i).equals(pricenul.substring(i))) {
-                return pricenul.substring(i)+"\n獎金"+levelPrice.get(level[i]);
-            }
-        }
-        return null;
     }
 
 
@@ -251,21 +234,32 @@ public class PriceHand extends Fragment {
                 searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "08";
             }
         }
-        priceVOS = new ArrayList<>();
+        Log.d("XXXXXXsearchtime",searchtime);
+        Log.d("XXXXXsearcholdtime",searcholdtime);
+
         priceVO = priceDB.getPeriodAll(searchtime);
         oldPriceVO = priceDB.getPeriodAll(searcholdtime);
+        priceVOS = new ArrayList<>();
         priceVOS.add(priceVO);
         priceVOS.add(oldPriceVO);
+
         if (priceVO == null && action.equals("add")) {
             month = month - 2;
-            Common.showLongToast(getActivity(), "尚未開獎");
+            this.now.set(this.year,month,1);
+            setMonText(this.now,"add");
+            Common.showToast(getActivity(), showtime+"尚未開獎");
             return;
         }
         if (priceVO == null && action.equals("cut")) {
             month = month + 2;
-            Common.showLongToast(getActivity(), "沒有資料");
+            this.now.set(this.year,month,1);
+            setMonText(this.now,"cut");
+            Common.showToast(getActivity(), "沒有資料");
             return;
         }
+
+        Log.d("XXXXXX",priceVO.getInvoYm());
+//        Log.d("XXXXXXold",oldPriceVO.getInvoYm());
         PIdateTittle.setText(showtime);
     }
 
@@ -294,6 +288,8 @@ public class PriceHand extends Fragment {
             }
             now.set(year, month, 1);
             setMonText(now, "add");
+            inputNul.setText("");
+
         }
     }
 
@@ -307,6 +303,7 @@ public class PriceHand extends Fragment {
             }
             now.set(year, month, 1);
             setMonText(now, "cut");
+            inputNul.setText("");
         }
     }
 
@@ -379,10 +376,10 @@ public class PriceHand extends Fragment {
                         return;
                     }
                     message = message + number;
-                    if (message.length() == 8) {
+                    if (message.length() == 3) {
                         autoSetInWin(message);
                     }
-                    if (message.length() > 8) {
+                    if (message.length() > 3) {
                         message = number;
                     }
                     content = new SpannableString(message);

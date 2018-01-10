@@ -209,17 +209,10 @@ public class PriceInvoice extends Fragment {
                 invoiceDB.update(iv);
                 return true;
             }
-//            Log.d("XXXXXnul",nul.substring(i));
-//            Log.d("XXXXXpnul",pnul.substring(i));
         }
         return false;
     }
 
-    private void getPeriod(long time)
-    {
-
-
-    }
     private void setMonText(Calendar time) {
         Log.d("XXXX",  sd.format(new Date(time.getTimeInMillis())));
         Calendar cal=Calendar.getInstance();
