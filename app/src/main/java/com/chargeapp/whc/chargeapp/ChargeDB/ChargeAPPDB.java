@@ -49,7 +49,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
             "name TEXT, image INTEGER , keyword text); ";
 
     private static final String TYPE_COMSUMER=" CREATE TABLE Consumer ( id INTEGER PRIMARY KEY AUTOINCREMENT, maintype TEXT NOT NULL," +
-            "secondtype TEXT, money TEXT, date Date , number TEXT , fixdate TEXT , fixdatedetail TEXT ,notify TEXT, detailname TEXT, carNul TEXT" +
+            "secondtype TEXT, money TEXT, date Date , number TEXT , fixdate TEXT , fixdatedetail TEXT ,notify TEXT, detailname TEXT, iswin TEXT" +
             "); ";
 
     private static final String TYPE_BANK=" CREATE TABLE BANK ( id INTEGER PRIMARY KEY AUTOINCREMENT, maintype TEXT NOT NULL," +

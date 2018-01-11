@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
+import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
@@ -476,7 +477,17 @@ public class InsertSpend extends Fragment {
             c.set(datePicker.getYear(),datePicker.getMonth(),datePicker.getDayOfMonth());
             Date d= new Date(c.getTimeInMillis());
             ConsumerDB consumerDB=new ConsumerDB(chargeAPPDB.getReadableDatabase());
-            consumerDB.insert(new ConsumeVO(detailname.getText().toString(),money.getText().toString(),d,number.getText().toString(),name.getText().toString(),secondname.getText().toString(),fixdate.getText().toString(),fixdatedetail,notify.isChecked()));
+            ConsumeVO consumeVO=new ConsumeVO();
+            consumeVO.setMaintype(name.getText().toString());
+            consumeVO.setSecondType(secondname.getText().toString());
+            consumeVO.setMoney(money.getText().toString());
+            consumeVO.setDate(d);
+            consumeVO.setNumber(number.getText().toString());
+            consumeVO.setFixDate(fixdate.getText().toString());
+            consumeVO.setFixDateDetail(fixdatedetail);
+            consumeVO.setNotify(notify.isChecked());
+            consumeVO.setDetailname(detailname.getText().toString());
+            consumeVO.setIsWin("0");
             Common.showToast(getActivity(),"新增成功");
         }
     }

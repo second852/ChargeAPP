@@ -1,6 +1,8 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
@@ -42,7 +45,6 @@ public class PriceInvoice extends Fragment {
     private InvoiceDB invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private CarrierDB carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private PriceDB priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-    private List<CarrierVO> carrierVOS;
     private List<InvoiceVO> invoiceVOS;
     private SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
     public int choiceca = 0;
@@ -51,22 +53,20 @@ public class PriceInvoice extends Fragment {
     private int month, year;
     private SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd");
     private String[] level={"first","second","third","fourth","fifth","sixth"};
+    private static AsyncTask<Object, Integer, String> getGetSQLDate1;
+    private static AsyncTask<Object, Integer, String> getGetSQLDate2;
+    private ProgressDialog progressDialog;
+    private List<CarrierVO> carrierVOS;
 
+    /***
+     *  自動對自己發票還沒寫好
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_invoice, container, false);
         findViewById(view);
         download();
-
-
-        List<InvoiceVO> invoiceVOS=invoiceDB.getIsWin("/2RDO8+P");
-
-        for (InvoiceVO i:invoiceVOS)
-        {
-            Log.d("XXXXXXX",i.getIswin()+":"+i.getInvNum());
-        }
-
         setMonText(now);
         DRadd.setOnClickListener(new addOnClick());
         DRcut.setOnClickListener(new cutOnClick());
@@ -87,18 +87,29 @@ public class PriceInvoice extends Fragment {
 
     private void download() {
         List<PriceVO> priceVOS=priceDB.getAll();
+        carrierVOS=carrierDB.getAll();
         if(priceVOS==null||priceVOS.size()<=0)
         {
             new GetSQLDate(this).execute("getAllPriceNul");
             return;
+        }else
+        {
+            if(getGetSQLDate1==null)
+            {
+                getGetSQLDate1=new GetSQLDate(this).execute("getNeWPrice");
+            }
         }
-        AutoSetPrice();
-//        new GetSQLDate(this).execute("getNeWPrice");
+        progressDialog.setMessage("正在更新資料,請稍候...");
+        progressDialog.show();
+        if(getGetSQLDate2==null&&carrierVOS!=null)
+        {
+            getGetSQLDate2=new GetSQLDate(this).execute("GetToday");
+        }
     }
 
 
 
-    private void AutoSetPrice()
+    public void AutoSetPrice()
     {
         List<PriceVO> priceVOS=priceDB.getAll();
         int month;
@@ -113,15 +124,11 @@ public class PriceInvoice extends Fragment {
            startTime=(new GregorianCalendar(year,month-2,1)).getTimeInMillis();
            endTime=(new GregorianCalendar(year,month,1)).getTimeInMillis();
            autoSetInWin(startTime,endTime,priceVO);
+
         }
     }
 
-    public List<InvoiceVO> getTest()
-    {
-        List<InvoiceVO> i=new ArrayList<>();
-        InvoiceVO re=new InvoiceVO();
-        return i;
-    }
+
 
 
     private void autoSetInWin(long startTime, long endTime, PriceVO priceVO) {
@@ -318,6 +325,7 @@ public class PriceInvoice extends Fragment {
         PIdateAdd = view.findViewById(R.id.PIdateAdd);
         PIdateCut = view.findViewById(R.id.PIdateCut);
         PIdateTittle = view.findViewById(R.id.PIdateTittle);
+        progressDialog=new ProgressDialog(getActivity());
     }
 
     private class InvoiceAdapter extends

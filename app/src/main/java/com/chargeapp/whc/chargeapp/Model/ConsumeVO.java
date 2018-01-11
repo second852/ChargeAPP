@@ -46,39 +46,14 @@ public class ConsumeVO {
     * */
     private Boolean  notify;
 
-    private String carNul;
+    private String isWin;
 
-    public String getCarNul() {
-        return carNul;
+    public String getIsWin() {
+        return isWin;
     }
 
-    public void setCarNul(String carNul) {
-        this.carNul = carNul;
-    }
-
-    public ConsumeVO(String detailname, String money, Date date, String number, String maintype, String secondType, String fixDate, String fixDateDetail, Boolean notify) {
-        this.detailname = detailname;
-        this.money = money;
-        this.date = date;
-        this.number = number;
-        this.maintype = maintype;
-        this.secondType = secondType;
-        this.fixDate = fixDate;
-        this.fixDateDetail = fixDateDetail;
-        this.notify = notify;
-    }
-
-    public ConsumeVO(int id, String name, String money, Date date, String number, String maintype, String secondType, String fixDate, String fixDateDetail, Boolean notify) {
-        this.id = id;
-        this.detailname = name;
-        this.money = money;
-        this.date = date;
-        this.number = number;
-        this.maintype = maintype;
-        this.secondType = secondType;
-        this.fixDate = fixDate;
-        this.fixDateDetail = fixDateDetail;
-        this.notify = notify;
+    public void setIsWin(String isWin) {
+        this.isWin = isWin;
     }
 
     public int getId() {

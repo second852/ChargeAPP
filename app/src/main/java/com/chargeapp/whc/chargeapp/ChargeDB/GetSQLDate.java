@@ -12,6 +12,7 @@ import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.PriceInvoice;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
@@ -528,6 +529,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 {
                     eleDonate.setlistTeam(s);
                 }
+            }else if(object instanceof PriceInvoice)
+            {
+
+
             }
         }catch (Exception e)
         {

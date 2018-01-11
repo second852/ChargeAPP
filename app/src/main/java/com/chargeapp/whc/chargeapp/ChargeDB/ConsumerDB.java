@@ -28,17 +28,18 @@ public class ConsumerDB {
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String maintype =cursor.getString(1);
-            String secondtype=cursor.getString(2);
-            String money=cursor.getString(2);
-            Date date=new Date(cursor.getLong(3));
-            String number=cursor.getString(4);
-            String fixdate=cursor.getString(5);
-            String fixdatedetail=cursor.getString(6);
-            String notify=cursor.getString(7);
-            String detailname=cursor.getString(8);
-            consumeVO=new ConsumeVO(id,detailname,money,date,number,maintype,secondtype,fixdate,fixdatedetail,Boolean.valueOf(notify));
+            consumeVO=new ConsumeVO();
+            consumeVO.setId(cursor.getInt(0));
+            consumeVO.setMaintype(cursor.getString(1));
+            consumeVO.setSecondType(cursor.getString(2));
+            consumeVO.setMoney(cursor.getString(2));
+            consumeVO.setDate(new Date(cursor.getLong(3)));
+            consumeVO.setNumber(cursor.getString(4));
+            consumeVO.setFixDate(cursor.getString(5));
+            consumeVO.setFixDateDetail(cursor.getString(6));
+            consumeVO.setNotify(Boolean.valueOf(cursor.getString(7)));
+            consumeVO.setDetailname(cursor.getString(8));
+            consumeVO.setIsWin(cursor.getString(9));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -55,16 +56,18 @@ public class ConsumerDB {
                 null, null, null);
         ConsumeVO consumeVO = null;
         if (cursor.moveToNext()) {
-            String maintype =cursor.getString(1);
-            String secondtype=cursor.getString(2);
-            String money=cursor.getString(2);
-            Date date=new Date(cursor.getLong(3));
-            String number=cursor.getString(4);
-            String fixdate=cursor.getString(5);
-            String fixdatedetail=cursor.getString(6);
-            String notify=cursor.getString(7);
-            String detailname=cursor.getString(8);
-            consumeVO=new ConsumeVO(id,detailname,money,date,number,maintype,secondtype,fixdate,fixdatedetail,Boolean.valueOf(notify));
+            consumeVO=new ConsumeVO();
+            consumeVO.setId(cursor.getInt(0));
+            consumeVO.setMaintype(cursor.getString(1));
+            consumeVO.setSecondType(cursor.getString(2));
+            consumeVO.setMoney(cursor.getString(2));
+            consumeVO.setDate(new Date(cursor.getLong(3)));
+            consumeVO.setNumber(cursor.getString(4));
+            consumeVO.setFixDate(cursor.getString(5));
+            consumeVO.setFixDateDetail(cursor.getString(6));
+            consumeVO.setNotify(Boolean.valueOf(cursor.getString(7)));
+            consumeVO.setDetailname(cursor.getString(8));
+            consumeVO.setIsWin(cursor.getString(9));
         }
         cursor.close();
         return consumeVO;
@@ -81,7 +84,7 @@ public class ConsumerDB {
         values.put("fixdatedetail",consumeVO.getFixDateDetail());
         values.put("notify",consumeVO.getNotify());
         values.put("detailname",consumeVO.getDetailname());
-        values.put("carNul",consumeVO.getCarNul());
+        values.put("iswin",consumeVO.getIsWin());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -96,7 +99,7 @@ public class ConsumerDB {
         values.put("fixdatedetail",consumeVO.getFixDateDetail());
         values.put("notify",consumeVO.getNotify());
         values.put("detailname",consumeVO.getDetailname());
-        values.put("carNul",consumeVO.getCarNul());
+        values.put("iswin",consumeVO.getIsWin());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(consumeVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

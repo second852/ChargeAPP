@@ -102,6 +102,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void setdate() {
         chargeAPPDB =new ChargeAPPDB(this);
+        List<TypeVO> typeVOS=chargeAPPDB.getAll();
+        if(typeVOS!=null||typeVOS.size()>1)
+        {
+          return;
+        }
         chargeAPPDB.insert(new TypeVO("food", "食物",0));
         chargeAPPDB.insert(new TypeVO("phone", "手機", 1));
         chargeAPPDB.insert(new TypeVO("clothes", "衣服", 2));
