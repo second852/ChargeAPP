@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.chargeapp.whc.chargeapp.Model.BankVO;
+import com.chargeapp.whc.chargeapp.Model.TypeVO;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -20,70 +21,59 @@ public class TypeDB {
         this.db=db;
     }
 
-    public List<BankVO> getAll() {
-        String sql = "SELECT * FROM Consumer order by id;";
+    public List<TypeVO> getAll() {
+        String sql = "SELECT * FROM Type order by id;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
-        List<BankVO> BankVOList = new ArrayList<>();
-        BankVO bankVO;
+        List<TypeVO> typeList = new ArrayList<>();
+        TypeVO typeVO;
         while (cursor.moveToNext()) {
             int id = cursor.getInt(0);
-            String maintype =cursor.getString(1);
-            String money=cursor.getString(2);
-            Date date=new Date(cursor.getLong(3));
-            String fixdate=cursor.getString(4);
-            String fixdatedetail=cursor.getString(5);
-            String detailname=cursor.getString(6);
-            bankVO=new BankVO(maintype,detailname,money,date,fixdate,id,detailname);
-            BankVOList.add(bankVO);
+            String groupNumber = cursor.getString(1);
+            String name = cursor.getString(2);
+            int image=cursor.getInt(3);
+            typeVO=new TypeVO(id,groupNumber,name,image);
+            typeList.add(typeVO);
         }
         cursor.close();
-        return BankVOList;
+        return typeList;
     }
 
-    public BankVO findById(int id) {
+    public TypeVO findById(int id) {
         String[] columns = {
-          "id,maintype,money,date,fixdate,fixdatedetail,detailname"
+                COL_id,"groupNumber","name", "image"
         };
-        String selection = "id = ?;";
+        String selection = COL_id + " = ?;";
         String[] selectionArgs = {String.valueOf(id)};
-        Cursor cursor = db.query("Consumer", columns, selection, selectionArgs,
+        Cursor cursor = db.query(TABLE_NAME, columns, selection, selectionArgs,
                 null, null, null);
-        BankVO bankVO = null;
+        TypeVO typeVO = null;
         if (cursor.moveToNext()) {
-            String maintype =cursor.getString(1);
-            String money=cursor.getString(2);
-            Date date=new Date(cursor.getLong(3));
-            String fixdate=cursor.getString(4);
-            String fixdatedetail=cursor.getString(5);
-            String detailname=cursor.getString(6);
-            bankVO=new BankVO(maintype,detailname,money,date,fixdate,id,detailname);
+            id = cursor.getInt(0);
+            String groupNumber = cursor.getString(1);
+            String name = cursor.getString(2);
+            int image=cursor.getInt(3);
+            typeVO=new TypeVO(id,groupNumber,name,image);
         }
         cursor.close();
-        return bankVO;
+        return typeVO;
     }
 
-    public long insert(BankVO bankVO) {
+    public long insert(TypeVO typeVO) {
         ContentValues values = new ContentValues();
-        values.put("maintype",bankVO.getMaintype());
-        values.put("money",bankVO.getMoney());
-        values.put("date",bankVO.getDate().getTime());
-        values.put("fixdate",bankVO.getFixDate());
-        values.put("fixdatedetail",bankVO.getFixDateDetail());
-        values.put("detailname",bankVO.getDetailname());
+        values.put("groupNumber",typeVO.getGroupNumber());
+        values.put("name", typeVO.getName());
+        values.put("image",typeVO.getImage());
         return db.insert(TABLE_NAME, null, values);
     }
 
-    public int update(BankVO bankVO) {
+    public int update(TypeVO typeVO) {
         ContentValues values = new ContentValues();
-        values.put("maintype",bankVO.getMaintype());
-        values.put("money",bankVO.getMoney());
-        values.put("date",bankVO.getDate().getTime());
-        values.put("fixdate",bankVO.getFixDate());
-        values.put("fixdatedetail",bankVO.getFixDateDetail());
-        values.put("detailname",bankVO.getDetailname());
+        values.put("groupNumber",typeVO.getGroupNumber());
+        values.put("name", typeVO.getName());
+        values.put("image",typeVO.getImage());
         String whereClause = COL_id + " = ?;";
-        String[] whereArgs = {Integer.toString(bankVO.getId())};
+        String[] whereArgs = {Integer.toString(typeVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);
     }
     public int deleteById(int id) {

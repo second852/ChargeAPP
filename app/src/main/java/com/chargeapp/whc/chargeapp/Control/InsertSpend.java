@@ -28,6 +28,8 @@ import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetail;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
@@ -46,7 +48,7 @@ import java.util.Map;
 
 public class InsertSpend extends Fragment {
     private EditText money, newtype, inserttypeDetail,number,detailname;
-    private CheckBox fixdate,notify;
+    private CheckBox fixdate,notify,noWek;
     private EditText secondname,name;
     private TextView save, clear, date, saveType, clearType, showTitle,datesave;
     private GridView gridView,showAllpicture;
@@ -66,6 +68,9 @@ public class InsertSpend extends Fragment {
     private Spinner choiceStatue,choiceday;
     private Gson gson;
     private SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
+    private TypeDB typeDB;
+    private TypeDetail typeDetail;
+    private boolean noweek=false;
 
 
 
@@ -75,10 +80,11 @@ public class InsertSpend extends Fragment {
         View view = inflater.inflate(R.layout.insert_spend, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         findviewByid(view);
-        if (chargeAPPDB == null) {
-            chargeAPPDB = new ChargeAPPDB(getActivity());
-        }
-        typeVOList = chargeAPPDB.getAll();
+        typeDB=new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetail=new TypeDetail(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeVOList = typeDB.getAll();
+        Log.d("XXXXXXX", String.valueOf(typeVOList.size()));
+
         Detailitems=new ArrayList<Map<String, Object>>();
         items = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < typeVOList.size(); i++) {
@@ -103,6 +109,7 @@ public class InsertSpend extends Fragment {
         choiceStatue.setOnItemSelectedListener(new choiceStateItem());
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new savecomsumer());
+        noWek.setOnCheckedChangeListener(new nowWekchange());
         return view;
     }
 
@@ -136,6 +143,7 @@ public class InsertSpend extends Fragment {
         number=view.findViewById(R.id.number);
         detailname=view.findViewById(R.id.detailname);
         notify=view.findViewById(R.id.notify);
+        noWek=view.findViewById(R.id.noWek);
         ArrayList<String> spinneritem=new ArrayList<>();
         spinneritem.add("每天");
         spinneritem.add("每周");
@@ -176,8 +184,8 @@ public class InsertSpend extends Fragment {
             {
                 imageDetatilId=MainActivity.imageAll.length-1;
             }
-            chargeAPPDB.insert(new TypeVO("other",newtype.getText().toString(),imageTitleId));
-            chargeAPPDB.insert(new TypeDetailVO(newtype.getText().toString().trim(),inserttypeDetail.getText().toString().toString(),imageDetatilId));
+            typeDB.insert(new TypeVO("other",newtype.getText().toString(),imageTitleId));
+            typeDetail.insert(new TypeDetailVO(newtype.getText().toString().trim(),inserttypeDetail.getText().toString().toString(),imageDetatilId));
             if(isType)
             {
                 items.remove(items.size() - 1);
@@ -291,13 +299,16 @@ public class InsertSpend extends Fragment {
             if(b)
             {
                 notify.setVisibility(View.VISIBLE);
-                notify.setX(showfixdate.getWidth()/3-150);
-                choiceStatue.setX(showfixdate.getWidth()/3+200);
+                noWek.setVisibility(View.VISIBLE);
+                notify.setX(showfixdate.getWidth()/3-250);
+                choiceStatue.setX(showfixdate.getWidth()/3+110);
+                noWek.setX(showfixdate.getWidth()/3+400);
                 choiceStatue.setVisibility(View.VISIBLE);
             }else{
                 notify.setVisibility(View.GONE);
                 choiceStatue.setVisibility(View.GONE);
                 choiceday.setVisibility(View.GONE);
+                noWek.setVisibility(View.GONE);
 
             }
         }
@@ -311,8 +322,10 @@ public class InsertSpend extends Fragment {
             if(choiceitem.equals("每天"))
             {
                 choiceday.setVisibility(View.GONE);
-                notify.setX(showfixdate.getWidth()/3-150);
-                choiceStatue.setX(showfixdate.getWidth()/3+200);
+                notify.setX(showfixdate.getWidth()/3-250);
+                choiceStatue.setX(showfixdate.getWidth()/3+110);
+                noWek.setX(showfixdate.getWidth()/3+400);
+                noWek.setVisibility(View.VISIBLE);
                 choiceStatue.setVisibility(View.VISIBLE);
                 return;
             }
@@ -345,6 +358,7 @@ public class InsertSpend extends Fragment {
             notify.setX(showfixdate.getWidth()/3-250);
             choiceStatue.setX(showfixdate.getWidth()/3+110);
             choiceday.setX(showfixdate.getWidth()/3+400);
+            noWek.setVisibility(View.GONE);
         }
 
         @Override
@@ -370,7 +384,7 @@ public class InsertSpend extends Fragment {
             showTitle.setText("選擇次項目種類");
             Detailitems=new ArrayList<>();
             HashMap detailitem;
-            ArrayList<TypeDetailVO> typeDetailVOS= chargeAPPDB.findByGroupname(t.getText().toString().trim());
+            ArrayList<TypeDetailVO> typeDetailVOS= typeDetail.findByGroupname(t.getText().toString().trim());
             for (int i = 0; i < typeDetailVOS.size(); i++) {
                 detailitem = new HashMap<String, Object>();
                 detailitem.put("image", MainActivity.imageAll[typeDetailVOS.get(i).getImage()]);
@@ -472,11 +486,11 @@ public class InsertSpend extends Fragment {
             Map<String,String> g=new HashMap<>();
             g.put("choicestatue",isnull(choiceStatue.getSelectedItem().toString()));
             g.put("choicedate",isnull(choiceday.getSelectedItem()));
+            g.put("noweek",String.valueOf(noweek));
             String fixdatedetail=gson.toJson(g);
             Calendar c=Calendar.getInstance();
             c.set(datePicker.getYear(),datePicker.getMonth(),datePicker.getDayOfMonth());
             Date d= new Date(c.getTimeInMillis());
-            ConsumerDB consumerDB=new ConsumerDB(chargeAPPDB.getReadableDatabase());
             ConsumeVO consumeVO=new ConsumeVO();
             consumeVO.setMaintype(name.getText().toString());
             consumeVO.setSecondType(secondname.getText().toString());
@@ -524,6 +538,19 @@ public class InsertSpend extends Fragment {
                     insertType.setVisibility(View.GONE);
                 }
             });
+        }
+    }
+
+    private class nowWekchange implements CompoundButton.OnCheckedChangeListener {
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            if(noWek.isChecked())
+            {
+                noweek=true;
+
+            }else{
+                noweek=false;
+            }
         }
     }
 }

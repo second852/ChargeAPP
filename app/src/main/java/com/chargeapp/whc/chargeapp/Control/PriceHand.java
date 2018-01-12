@@ -257,9 +257,6 @@ public class PriceHand extends Fragment {
             Common.showToast(getActivity(), "沒有資料");
             return;
         }
-
-        Log.d("XXXXXX",priceVO.getInvoYm());
-//        Log.d("XXXXXXold",oldPriceVO.getInvoYm());
         PIdateTittle.setText(showtime);
     }
 
