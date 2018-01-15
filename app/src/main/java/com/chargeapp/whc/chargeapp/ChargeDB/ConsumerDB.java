@@ -46,6 +46,32 @@ public class ConsumerDB {
         return consumeList;
     }
 
+
+    public List<ConsumeVO> getNotify() {
+        String sql = "SELECT * FROM Consumer where notify = 'true' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<ConsumeVO> consumeList = new ArrayList<>();
+        ConsumeVO consumeVO;
+        while (cursor.moveToNext()) {
+            consumeVO=new ConsumeVO();
+            consumeVO.setId(cursor.getInt(0));
+            consumeVO.setMaintype(cursor.getString(1));
+            consumeVO.setSecondType(cursor.getString(2));
+            consumeVO.setMoney(cursor.getString(2));
+            consumeVO.setDate(new Date(cursor.getLong(3)));
+            consumeVO.setNumber(cursor.getString(4));
+            consumeVO.setFixDate(cursor.getString(5));
+            consumeVO.setFixDateDetail(cursor.getString(6));
+            consumeVO.setNotify(Boolean.valueOf(cursor.getString(7)));
+            consumeVO.setDetailname(cursor.getString(8));
+            consumeVO.setIsWin(cursor.getString(9));
+            consumeList.add(consumeVO);
+        }
+        cursor.close();
+        return consumeList;
+    }
+
     public ConsumeVO findById(int id) {
         String[] columns = {
           "id,maintype,secondtype,money,date,number,fixdate,fixdatedetail,notify,detailname"

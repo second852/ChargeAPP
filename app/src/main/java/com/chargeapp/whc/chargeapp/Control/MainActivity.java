@@ -1,18 +1,10 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.Manifest;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.os.Messenger;
-import android.support.v4.BuildConfig;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -38,11 +30,9 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
-    private JobScheduler mJobScheduler;
-    public static final String MESSENGER_INTENT_KEY
-            = BuildConfig.APPLICATION_ID + ".MESSENGER_INTENT_KEY";
+
+
     private GridView gridView;
-    private BootReceiver myReceiver;
     public static ChargeAPPDB chargeAPPDB;
     private int[] image = {
             R.drawable.book, R.drawable.goal, R.drawable.chart, R.drawable.ele,R.drawable.lotto,R.drawable.setting
@@ -69,9 +59,6 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         askPermissions();
-        registerMyReceiver();
-        Intent intent=new Intent(this,MainService.class);
-        startService(intent);
 //        deleteDatabase("ChargeAPP");
         if (chargeAPPDB == null) {
             setdate();
@@ -109,23 +96,10 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, PriceActivity.class);
                     startActivity(intent);
                 }
-
-
-
             }
         });
-
     }
 
-
-    private void registerMyReceiver() {
-        mJobScheduler = (JobScheduler) getSystemService( Context.JOB_SCHEDULER_SERVICE );
-        JobInfo.Builder builder = new JobInfo.Builder( 1,
-                new ComponentName( getPackageName(), MainService.class.getName() ) );
-
-        builder.setPeriodic( 3000 );
-        mJobScheduler.schedule( builder.build() );
-    }
 
     private void setdate() {
         chargeAPPDB =new ChargeAPPDB(this);
