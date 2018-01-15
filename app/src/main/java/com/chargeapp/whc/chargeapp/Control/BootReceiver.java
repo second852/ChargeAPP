@@ -20,6 +20,8 @@ import android.widget.Toast;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -37,7 +39,7 @@ public class BootReceiver extends BroadcastReceiver {
     private  NotificationManager notificationManager;
     private int i=0;
     private SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+    private Gson gson=new Gson();
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals("android.intent.action.DATE_CHANGED")||
@@ -51,14 +53,45 @@ public class BootReceiver extends BroadcastReceiver {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
             AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Bundle bundle;
-            for(ConsumeVO consumeVO:consumerVOS)
+            JsonObject jsonObject;
+            Calendar cal=Calendar.getInstance();
+            long settime=0;
+            if(consumerVOS.size()>0&&consumerVOS!=null)
             {
-                String detail=consumeVO.getFixDateDetail();
-                bundle=new Bundle();
-                manager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(),pendingIntent);
+                for(ConsumeVO consumeVO:consumerVOS)
+                {
+                    String detail=consumeVO.getFixDateDetail();
+                    jsonObject=gson.fromJson(detail,JsonObject.class);
+                    String action=jsonObject.get("choicestatue").getAsString();
+                    if("每天".equals(action))
+                    {
+                        boolean nowwek=jsonObject.get("noweek").getAsBoolean();
+                        if(nowwek)
+                        {
+
+                        }else {
+                            settime=cal.getTimeInMillis()+1000*60*8;
+
+                        }
+                    }else if("每周".equals(action)){
+
+                    }else if("每個月".equals(action)){
+
+                    }else {
+
+                    }
+
+
+
+                    manager.set(AlarmManager.RTC_WAKEUP, settime,pendingIntent);
+                }
             }
+
         }
     }
+
+
+
 }
 
 
