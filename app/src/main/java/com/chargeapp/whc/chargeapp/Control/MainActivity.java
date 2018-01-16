@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.jacket, R.drawable.water, R.drawable.university, R.drawable.trousers, R.drawable.treatment, R.drawable.training,
             R.drawable.ticket, R.drawable.supplement, R.drawable.subway, R.drawable.rent, R.drawable.rentfilled, R.drawable.phonet,
             R.drawable.origin, R.drawable.movie, R.drawable.microphone, R.drawable.lunch, R.drawable.losemoney, R.drawable.lipgloss,R.drawable.train
-            ,R.drawable.salary,R.drawable.lotto,R.drawable.bouns,R.drawable.interest,R.drawable.fund,R.drawable.bank
+            ,R.drawable.salary,R.drawable.lotto,R.drawable.bouns,R.drawable.interest,R.drawable.fund,R.drawable.bank,R.drawable.health,R.drawable.shose
     };
 
     private String food="堡 三明治 優酪乳 肉 飯 雙手卷 腿 麵 麵包 熱狗 雞 手卷 肉 粉 蔬菜 牛 豬 起司 花生 豆 蛋 魚 菜 瓜 黑胡椒 土司 泡芙 排";
@@ -72,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
 
         for (ConsumeVO c:consumerVOS)
         {
-            Log.d("XXXXXXXXXXX",c.getFixDateDetail());
-            Log.d("XXXXXXXXXXX", String.valueOf(c.getNotify()));
+            Log.d("XXXXXXXXXXX",c.getNotify());
+            Log.d("XXXXXXXXXXX",c.getSecondType());
+            Log.d("XXXXXXXXXXX", String.valueOf(c.getId()));
         }
 
 
@@ -125,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
           return;
         }
         typeDB.insert(new TypeVO("food", "食物",0));
-        typeDB.insert(new TypeVO("phone", "手機", 1));
+        typeDB.insert(new TypeVO("phone", "通訊", 1));
         typeDB.insert(new TypeVO("clothes", "衣服", 2));
         typeDB.insert(new TypeVO("traffic", "交通", 3));
         typeDB.insert(new TypeVO("teach", "教育", 4));
@@ -138,10 +139,10 @@ public class MainActivity extends AppCompatActivity {
         typeDetail.insert(new TypeDetailVO("食物","晚餐", indexOfIntArray(imageAll,R.drawable.dinner),food));
         typeDetail.insert(new TypeDetailVO("食物","飲料", indexOfIntArray(imageAll,R.drawable.drink),drink));
         typeDetail.insert(new TypeDetailVO("食物","水果", indexOfIntArray(imageAll,R.drawable.fruit),"蘋果 鳳梨 瓜 蕉 葡萄 蓮霧 番石榴 李 果 檬 橙 莓 椰子 桃 橘 柚 姆 柑 棗 蓮"));
-        typeDetail.insert(new TypeDetailVO("手機","電話費", indexOfIntArray(imageAll,R.drawable.phonet),"中華 市話"));
-        typeDetail.insert(new TypeDetailVO("手機","月租費", indexOfIntArray(imageAll,R.drawable.cellphone),"月租費"));
-        typeDetail.insert(new TypeDetailVO("手機","易付卡", indexOfIntArray(imageAll,R.drawable.easycard),"易付卡 卡"));
-        typeDetail.insert(new TypeDetailVO("手機","網路費",indexOfIntArray(imageAll,R.drawable.internet),"M 上網 寬頻 光纖"));
+        typeDetail.insert(new TypeDetailVO("通訊","電話費", indexOfIntArray(imageAll,R.drawable.phonet),"中華 市話"));
+        typeDetail.insert(new TypeDetailVO("通訊","月租費", indexOfIntArray(imageAll,R.drawable.cellphone),"月租費"));
+        typeDetail.insert(new TypeDetailVO("通訊","易付卡", indexOfIntArray(imageAll,R.drawable.easycard),"易付卡 卡"));
+        typeDetail.insert(new TypeDetailVO("通訊","網路費",indexOfIntArray(imageAll,R.drawable.internet),"M 上網 寬頻 光纖"));
         typeDetail.insert(new TypeDetailVO("交通","火車", indexOfIntArray(imageAll,R.drawable.train)));
         typeDetail.insert(new TypeDetailVO("交通","高鐵", indexOfIntArray(imageAll,R.drawable.highspeedtrain)));
         typeDetail.insert(new TypeDetailVO("交通","捷運", indexOfIntArray(imageAll,R.drawable.subway)));
@@ -158,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         typeDetail.insert(new TypeDetailVO("住宿","房租", indexOfIntArray(imageAll,R.drawable.rent)));
         typeDetail.insert(new TypeDetailVO("住宿","房貸",indexOfIntArray(imageAll,R.drawable.rentfilled)));
         typeDetail.insert(new TypeDetailVO("醫療","健保",indexOfIntArray(imageAll,R.drawable.health)));
-        typeDetail.insert(new TypeDetailVO("醫療","勞保", indexOfIntArray(imageAll,R.drawable.water)));
+        typeDetail.insert(new TypeDetailVO("醫療","勞保", indexOfIntArray(imageAll,R.drawable.worker)));
         typeDetail.insert(new TypeDetailVO("醫療","醫療", indexOfIntArray(imageAll,R.drawable.medical)));
         typeDetail.insert(new TypeDetailVO("醫療","保健食品", indexOfIntArray(imageAll,R.drawable.supplement)));
         typeDetail.insert(new TypeDetailVO("投資","保險", indexOfIntArray(imageAll,R.drawable.treatment)));

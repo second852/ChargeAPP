@@ -38,7 +38,7 @@ public class TypeDetailVO {
         this.image = image;
     }
 
-    public TypeDetailVO(String name, String groupNumber, int image, String keyword) {
+    public TypeDetailVO(String groupNumber, String name, int image, String keyword) {
         this.name = name;
         this.groupNumber = groupNumber;
         this.image = image;

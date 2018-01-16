@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.os.Bundle;
+import android.util.Log;
 
 
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
@@ -28,12 +29,9 @@ import java.util.List;
 
 
 public class BootReceiver extends BroadcastReceiver {
-    private final static String TAG = "BootReceiver";
+
     private ChargeAPPDB chargeAPPDB;
     private ConsumerDB consumerDB;
-    private  NotificationManager notificationManager;
-    private int i=0;
-    private SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private Gson gson=new Gson();
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -46,7 +44,6 @@ public class BootReceiver extends BroadcastReceiver {
             JsonObject jsonObject;
             long settime=0;
             long setnewtime=0;
-            int i=0;
             if(consumerVOS.size()>0&&consumerVOS!=null)
             {
                 for(ConsumeVO consumeVO:consumerVOS)
@@ -61,7 +58,7 @@ public class BootReceiver extends BroadcastReceiver {
                     {
                         boolean nowwek=jsonObject.get("noweek").getAsBoolean();
                         setnewtime = date.getTimeInMillis();
-                        settime=date.getTimeInMillis()+1000*60*60*19+i;
+                        settime=date.getTimeInMillis()+1000*60*60*19;
                         int today=date.get(Calendar.DAY_OF_WEEK);
                         if(nowwek&&today==7)
                         {
@@ -88,7 +85,7 @@ public class BootReceiver extends BroadcastReceiver {
                             consumeVO.setFixDate("false");
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumerDB.insert(consumeVO);
-                            settime=date.getTimeInMillis()+1000*60*60*19+i;
+                            settime=date.getTimeInMillis()+1000*60*60*19;
                             if(notify)
                             {
                                 NotifyUse(consumeVO,context,settime);
@@ -104,7 +101,7 @@ public class BootReceiver extends BroadcastReceiver {
                             consumeVO.setFixDate("false");
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumerDB.insert(consumeVO);
-                            settime=date.getTimeInMillis()+1000*60*60*19+i;
+                            settime=date.getTimeInMillis()+1000*60*60*19;
                             if(notify)
                             {
                                 NotifyUse(consumeVO,context,settime);
@@ -116,7 +113,7 @@ public class BootReceiver extends BroadcastReceiver {
                             consumeVO.setFixDate("false");
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumerDB.insert(consumeVO);
-                            settime=date.getTimeInMillis()+1000*60*60*19+i;
+                            settime=date.getTimeInMillis()+1000*60*60*19;
                             if(notify)
                             {
                                 NotifyUse(consumeVO,context,settime);
@@ -132,7 +129,7 @@ public class BootReceiver extends BroadcastReceiver {
                             consumeVO.setFixDate("false");
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumerDB.insert(consumeVO);
-                            settime=date.getTimeInMillis()+1000*60*60*19+i;
+                            settime=date.getTimeInMillis()+1000*60*60*19;
                             if(notify)
                             {
                                 NotifyUse(consumeVO,context,settime);
@@ -141,7 +138,6 @@ public class BootReceiver extends BroadcastReceiver {
                     }
                 }
             }
-
         }
     }
 
@@ -164,14 +160,17 @@ public class BootReceiver extends BroadcastReceiver {
 
     private void NotifyUse(ConsumeVO consumeVO,Context context,long settime)
     {
+        String  message="繳納"+consumeVO.getSecondType()+"費用:"+consumeVO.getMoney();
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Bundle bundle=new Bundle();
         bundle.putSerializable("action","notifyC");
-        bundle.putSerializable("comsumer",consumeVO);
+        bundle.putSerializable("comsumer",message);
+        bundle.putSerializable("id",consumeVO.getId());
         Intent alarmIntent = new Intent(context, secondReceiver.class);
         alarmIntent.putExtras(bundle);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
         manager.set(AlarmManager.RTC_WAKEUP, settime,pendingIntent);
+        Log.d("xxxx",message);
     }
 
 

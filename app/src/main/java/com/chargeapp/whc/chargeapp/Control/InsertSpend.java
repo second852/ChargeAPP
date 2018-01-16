@@ -237,8 +237,6 @@ public class InsertSpend extends Fragment {
             gridView.setAdapter(adapter);
             showPicture.setVisibility(View.VISIBLE);
             gridView.setOnItemClickListener(new choiceTypeitem());
-
-
         }
     }
 

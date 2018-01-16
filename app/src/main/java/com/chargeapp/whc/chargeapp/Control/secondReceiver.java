@@ -33,12 +33,14 @@ public class secondReceiver extends BroadcastReceiver {
         Bundle bundle=intent.getExtras();
         String action= (String) bundle.get("action");
         String message,title;
+        int id;
         if(action.equals("notifyC"))
         {
-            ConsumeVO consumeVO= (ConsumeVO) bundle.get("comsumer");
+
+             message= (String) bundle.getSerializable("comsumer");
+             id= (int) bundle.getSerializable("id");
             title="繳費提醒";
-            message="繳納"+consumeVO.getSecondType()+"費用:"+consumeVO.getMoney();
-            showNotification(title,message,context,consumeVO.getId());
+            showNotification(title,message,context,id);
         }
 
         if(action.equals("notifyNul"))
