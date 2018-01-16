@@ -1,12 +1,13 @@
 package com.chargeapp.whc.chargeapp.Model;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 /**
  * Created by 1709008NB01 on 2017/11/9.
  */
 
-public class ConsumeVO {
+public class ConsumeVO implements Serializable{
 
     private int id;
     /*
@@ -44,7 +45,7 @@ public class ConsumeVO {
     /*
     *  繳費通知確認
     * */
-    private Boolean  notify;
+    private String  notify;
 
     private String isWin;
 
@@ -112,11 +113,11 @@ public class ConsumeVO {
         this.secondType = secondType;
     }
 
-    public Boolean getNotify() {
+    public String getNotify() {
         return notify;
     }
 
-    public void setNotify(Boolean notify) {
+    public void setNotify(String notify) {
         this.notify = notify;
     }
 

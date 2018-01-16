@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.ChargeDB;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
@@ -32,14 +33,15 @@ public class ConsumerDB {
             consumeVO.setId(cursor.getInt(0));
             consumeVO.setMaintype(cursor.getString(1));
             consumeVO.setSecondType(cursor.getString(2));
-            consumeVO.setMoney(cursor.getString(2));
-            consumeVO.setDate(new Date(cursor.getLong(3)));
-            consumeVO.setNumber(cursor.getString(4));
-            consumeVO.setFixDate(cursor.getString(5));
-            consumeVO.setFixDateDetail(cursor.getString(6));
-            consumeVO.setNotify(Boolean.valueOf(cursor.getString(7)));
-            consumeVO.setDetailname(cursor.getString(8));
-            consumeVO.setIsWin(cursor.getString(9));
+            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setDate(new Date(cursor.getLong(4)));
+            consumeVO.setNumber(cursor.getString(5));
+            consumeVO.setFixDate(cursor.getString(6));
+            consumeVO.setFixDateDetail(cursor.getString(7));
+            consumeVO.setNotify(cursor.getString(8));
+            Log.d("XXXXXXXXXXX",cursor.getString(8));
+            consumeVO.setDetailname(cursor.getString(9));
+            consumeVO.setIsWin(cursor.getString(10));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -47,8 +49,8 @@ public class ConsumerDB {
     }
 
 
-    public List<ConsumeVO> getNotify() {
-        String sql = "SELECT * FROM Consumer where notify = 'true' order by id;";
+    public List<ConsumeVO> getFixdate() {
+        String sql = "SELECT * FROM Consumer where fixdate = 'true' order by id;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
@@ -58,14 +60,15 @@ public class ConsumerDB {
             consumeVO.setId(cursor.getInt(0));
             consumeVO.setMaintype(cursor.getString(1));
             consumeVO.setSecondType(cursor.getString(2));
-            consumeVO.setMoney(cursor.getString(2));
-            consumeVO.setDate(new Date(cursor.getLong(3)));
-            consumeVO.setNumber(cursor.getString(4));
-            consumeVO.setFixDate(cursor.getString(5));
-            consumeVO.setFixDateDetail(cursor.getString(6));
-            consumeVO.setNotify(Boolean.valueOf(cursor.getString(7)));
-            consumeVO.setDetailname(cursor.getString(8));
-            consumeVO.setIsWin(cursor.getString(9));
+            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setDate(new Date(cursor.getLong(4)));
+            consumeVO.setNumber(cursor.getString(5));
+            consumeVO.setFixDate(cursor.getString(6));
+            consumeVO.setFixDateDetail(cursor.getString(7));
+            consumeVO.setNotify(cursor.getString(8));
+            Log.d("XXXXXXXXXXX",cursor.getString(8));
+            consumeVO.setDetailname(cursor.getString(9));
+            consumeVO.setIsWin(cursor.getString(10));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -86,14 +89,14 @@ public class ConsumerDB {
             consumeVO.setId(cursor.getInt(0));
             consumeVO.setMaintype(cursor.getString(1));
             consumeVO.setSecondType(cursor.getString(2));
-            consumeVO.setMoney(cursor.getString(2));
-            consumeVO.setDate(new Date(cursor.getLong(3)));
-            consumeVO.setNumber(cursor.getString(4));
-            consumeVO.setFixDate(cursor.getString(5));
-            consumeVO.setFixDateDetail(cursor.getString(6));
-            consumeVO.setNotify(Boolean.valueOf(cursor.getString(7)));
-            consumeVO.setDetailname(cursor.getString(8));
-            consumeVO.setIsWin(cursor.getString(9));
+            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setDate(new Date(cursor.getLong(4)));
+            consumeVO.setNumber(cursor.getString(5));
+            consumeVO.setFixDate(cursor.getString(6));
+            consumeVO.setFixDateDetail(cursor.getString(7));
+            consumeVO.setNotify(cursor.getString(8));
+            consumeVO.setDetailname(cursor.getString(9));
+            consumeVO.setIsWin(cursor.getString(10));
         }
         cursor.close();
         return consumeVO;

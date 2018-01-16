@@ -36,6 +36,7 @@ import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public class InsertSpend extends Fragment {
     private TypeDB typeDB;
     private TypeDetail typeDetail;
     private boolean noweek=false;
+    private ConsumerDB consumerDB;
 
 
 
@@ -82,6 +84,7 @@ public class InsertSpend extends Fragment {
         findviewByid(view);
         typeDB=new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetail=new TypeDetail(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumerDB=new ConsumerDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeVOList = typeDB.getAll();
         Log.d("XXXXXXX", String.valueOf(typeVOList.size()));
 
@@ -296,6 +299,7 @@ public class InsertSpend extends Fragment {
     private class showfixdateClick implements CompoundButton.OnCheckedChangeListener {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            Log.d("XXXXXXXXXXX", String.valueOf(notify.isChecked()));
             if(b)
             {
                 notify.setVisibility(View.VISIBLE);
@@ -497,12 +501,14 @@ public class InsertSpend extends Fragment {
             consumeVO.setMoney(money.getText().toString());
             consumeVO.setDate(d);
             consumeVO.setNumber(number.getText().toString());
-            consumeVO.setFixDate(fixdate.getText().toString());
+            consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
             consumeVO.setFixDateDetail(fixdatedetail);
-            consumeVO.setNotify(notify.isChecked());
+            consumeVO.setNotify(String.valueOf(notify.isChecked()));
             consumeVO.setDetailname(detailname.getText().toString());
             consumeVO.setIsWin("0");
+            consumerDB.insert(consumeVO);
             Common.showToast(getActivity(),"新增成功");
+            Log.d("XXXXXXXXXXX", String.valueOf(consumeVO.getNotify()));
         }
     }
 

@@ -25,9 +25,6 @@
             </intent-filter>
         </receiver>
         <receiver android:name=".Control.secondReceiver">
-            <intent-filter>
-                <action android:name="intent_alarm_log"/>
-            </intent-filter>
         </receiver>
         <activity
             android:name=".Control.InsertActivity"/>

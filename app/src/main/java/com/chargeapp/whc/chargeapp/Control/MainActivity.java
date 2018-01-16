@@ -7,6 +7,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -14,9 +15,11 @@ import android.widget.SimpleAdapter;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetail;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
+import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -58,11 +61,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         askPermissions();
 //        deleteDatabase("ChargeAPP");
         if (chargeAPPDB == null) {
             setdate();
         }
+        ConsumerDB consumerDB=new ConsumerDB(chargeAPPDB.getReadableDatabase());
+        List<ConsumeVO> consumerVOS=consumerDB.getFixdate();
+
+        for (ConsumeVO c:consumerVOS)
+        {
+            Log.d("XXXXXXXXXXX",c.getFixDateDetail());
+            Log.d("XXXXXXXXXXX", String.valueOf(c.getNotify()));
+        }
+
+
         setContentView(R.layout.activity_main);
         List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < image.length; i++) {
