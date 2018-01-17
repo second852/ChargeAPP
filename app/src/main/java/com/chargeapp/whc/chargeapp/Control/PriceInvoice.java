@@ -120,6 +120,9 @@ public class PriceInvoice extends Fragment {
         {
             progressDialog.setMessage("正在更新資料,請稍候...");
             progressDialog.show();
+        }else{
+            AutoSetCMPrice();
+            AutoSetInPrice();
         }
     }
 
