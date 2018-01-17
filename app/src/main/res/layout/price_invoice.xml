@@ -10,6 +10,7 @@
         android:orientation="horizontal"
         android:id="@+id/DRshow"
         android:layout_marginTop="10dp"
+        android:visibility="gone"
         >
         <ImageView
             android:id="@+id/DRcut"
@@ -129,17 +130,11 @@
         android:gravity="center"
         android:visibility="gone"
         />
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/DRtittle"
-        >
         <android.support.v7.widget.RecyclerView
             android:id="@+id/donateRL"
             android:layout_width="match_parent"
+            android:layout_below="@+id/DRtittle"
             android:layout_height="wrap_content">
         </android.support.v7.widget.RecyclerView>
-    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

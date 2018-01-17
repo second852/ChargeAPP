@@ -117,9 +117,8 @@ public class InvoiceDB {
         return invoiceVOSList;
     }
 
-    public List<InvoiceVO> getIsWin(String carrrier) {
-        long showtime=getStartTime();
-        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and iswin !='0' order by time desc;";
+    public List<InvoiceVO> getWinIn(String carrrier,long startTime,long endTime) {
+        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and iswin != 'N' and time >= '"+startTime+"' and time <'"+endTime+"' order by time desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
@@ -148,6 +147,7 @@ public class InvoiceDB {
         cursor.close();
         return invoiceVOSList;
     }
+
 
     public List<InvoiceVO> getNotSetWin(String carrrier,long startTime,long endTime) {
         String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and iswin = '0' and time >= '"+startTime+"' and time <'"+endTime+"' order by time desc;";

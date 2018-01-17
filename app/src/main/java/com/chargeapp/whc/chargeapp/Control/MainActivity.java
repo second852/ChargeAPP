@@ -1,6 +1,9 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
@@ -70,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
         ConsumerDB consumerDB=new ConsumerDB(chargeAPPDB.getReadableDatabase());
         List<ConsumeVO> consumerVOS=consumerDB.getFixdate();
 
-        for (ConsumeVO c:consumerVOS)
+        for (ConsumeVO consumeVO:consumerVOS)
         {
-            Log.d("XXXXXXXXXXX",c.getNotify());
-            Log.d("XXXXXXXXXXX",c.getSecondType());
-            Log.d("XXXXXXXXXXX", String.valueOf(c.getId()));
+            Log.d("XXXXXXXXXXX",consumeVO.getNotify());
+            Log.d("XXXXXXXXXXX",consumeVO.getSecondType());
+            Log.d("XXXXXXXXXXX", String.valueOf(consumeVO.getId()));
         }
 
 

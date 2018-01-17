@@ -33,6 +33,7 @@ public class BootReceiver extends BroadcastReceiver {
     private ChargeAPPDB chargeAPPDB;
     private ConsumerDB consumerDB;
     private Gson gson=new Gson();
+    private SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals("android.intent.action.DATE_CHANGED")||
@@ -75,6 +76,7 @@ public class BootReceiver extends BroadcastReceiver {
                         if(notify)
                         {
                             NotifyUse(consumeVO,context,settime);
+                            Log.d("XXXXX",sf.format(settime));
                         }
                     }else if("每周".equals(action)){
                         String fixdetail=jsonObject.get("choicedate").getAsString();
@@ -153,7 +155,7 @@ public class BootReceiver extends BroadcastReceiver {
             bundle.putSerializable("action","notifyNul");
             Intent alarmIntent = new Intent(context, secondReceiver.class);
             alarmIntent.putExtras(bundle);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 99);
             manager.set(AlarmManager.RTC_WAKEUP,settime,pendingIntent);
         }
     }
@@ -168,7 +170,7 @@ public class BootReceiver extends BroadcastReceiver {
         bundle.putSerializable("id",consumeVO.getId());
         Intent alarmIntent = new Intent(context, secondReceiver.class);
         alarmIntent.putExtras(bundle);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, consumeVO.getId());
         manager.set(AlarmManager.RTC_WAKEUP, settime,pendingIntent);
         Log.d("xxxx",message);
     }

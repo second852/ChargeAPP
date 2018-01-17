@@ -15,13 +15,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
+import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -32,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -44,239 +48,297 @@ public class PriceInvoice extends Fragment {
     private RecyclerView donateRL;
     private InvoiceDB invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private CarrierDB carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-    private PriceDB priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-    private List<InvoiceVO> invoiceVOS;
-    private SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
+    private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     public int choiceca = 0;
-    private SwipeRefreshLayout swipeRefreshLayout;
     private Calendar now = Calendar.getInstance();
     private int month, year;
-    private SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd");
-    private String[] level={"first","second","third","fourth","fifth","sixth"};
-    private static AsyncTask<Object, Integer, String> getGetSQLDate1;
-    private static AsyncTask<Object, Integer, String> getGetSQLDate2;
+    private SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+    private String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
+    public static AsyncTask<Object, Integer, String> getGetSQLDate1;
+    public static AsyncTask<Object, Integer, String> getGetSQLDate2;
     private ProgressDialog progressDialog;
     private List<CarrierVO> carrierVOS;
+    private ConsumerDB consumerDB;
+    private HashMap<String,String> levelprice;
+    private long start,end;
+    private RelativeLayout DRshow;
 
-    /***
-     *  自動對自己發票還沒寫好
-     */
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_invoice, container, false);
         findViewById(view);
         download();
-        setMonText(now);
+        levelprice=getHashLP();
         DRadd.setOnClickListener(new addOnClick());
         DRcut.setOnClickListener(new cutOnClick());
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
-        swipeRefreshLayout =
-                (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
-                setlayout();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
         return view;
     }
 
+
+
+    private HashMap<String,String> getHashLP() {
+        HashMap<String,String> hashMap=new HashMap<>();
+        hashMap.put("super","特別獎 : 一千萬元");
+        hashMap.put("spc","特獎 : 兩百萬元");
+        hashMap.put("first","頭獎 : 20萬元");
+        hashMap.put("second","二獎 : 4萬元");
+        hashMap.put("third","三獎 : 1萬元");
+        hashMap.put("fourth","四獎 : 4千元");
+        hashMap.put("fifth","五獎 : 1千元");
+        hashMap.put("sixth","六獎 : 200元");
+        return hashMap;
+    }
+
     private void download() {
-        List<PriceVO> priceVOS=priceDB.getAll();
-        carrierVOS=carrierDB.getAll();
-        if(priceVOS==null||priceVOS.size()<=0)
+        boolean showcircle=false;
+        List<PriceVO> priceVOS = priceDB.getAll();
+        carrierVOS = carrierDB.getAll();
+        if(carrierVOS!=null&&carrierVOS.size()>0)
         {
+            DRshow.setVisibility(View.VISIBLE);
+        }else {
+            DRshow.setVisibility(View.GONE);
+        }
+        if (priceVOS == null || priceVOS.size() <= 0) {
             new GetSQLDate(this).execute("getAllPriceNul");
-            return;
-        }else
-        {
-            if(getGetSQLDate1==null)
-            {
-                getGetSQLDate1=new GetSQLDate(this).execute("getNeWPrice");
+        } else {
+            if (PriceInvoice.getGetSQLDate1 == null) {
+                PriceInvoice.getGetSQLDate1 = new GetSQLDate(this).execute("getNeWPrice");
+                showcircle=true;
             }
         }
-        progressDialog.setMessage("正在更新資料,請稍候...");
-        progressDialog.show();
-        if(getGetSQLDate2==null&&carrierVOS!=null)
+
+        if (PriceInvoice.getGetSQLDate2 == null && carrierVOS != null&&carrierVOS.size()>0) {
+            PriceInvoice.getGetSQLDate2 = new GetSQLDate(this).execute("GetToday");
+            showcircle=true;
+        }
+        if(showcircle)
         {
-            getGetSQLDate2=new GetSQLDate(this).execute("GetToday");
+            progressDialog.setMessage("正在更新資料,請稍候...");
+            progressDialog.show();
         }
     }
 
-
-
-    public void AutoSetPrice()
-    {
-        List<PriceVO> priceVOS=priceDB.getAll();
+    public void AutoSetCMPrice() {
+        List<PriceVO> priceVOS = priceDB.getAll();
         int month;
         int year;
-        for(PriceVO priceVO:priceVOS)
-        {
-            SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd");
-            long startTime,endTime;
-           String invoYM = priceVO.getInvoYm();
-           month=Integer.valueOf(invoYM.substring(invoYM.length()-2));
-           year=Integer.valueOf(invoYM.substring(0,invoYM.length()-2))+1911;
-           startTime=(new GregorianCalendar(year,month-2,1)).getTimeInMillis();
-           endTime=(new GregorianCalendar(year,month,1)).getTimeInMillis();
-           autoSetInWin(startTime,endTime,priceVO);
+        for (PriceVO priceVO : priceVOS) {
+            long startTime, endTime;
+            String invoYM = priceVO.getInvoYm();
+            month = Integer.valueOf(invoYM.substring(invoYM.length() - 2));
+            year = Integer.valueOf(invoYM.substring(0, invoYM.length() - 2)) + 1911;
+            startTime = (new GregorianCalendar(year, month - 2, 1)).getTimeInMillis();
+            endTime = (new GregorianCalendar(year, month, 1)).getTimeInMillis();
+            autoSetCRWin(startTime, endTime, priceVO);
+            if(getGetSQLDate2==null)
+            {
+                progressDialog.cancel();
+                setMonText(now,"in");
+            }
+        }
+    }
 
+    public void AutoSetInPrice() {
+        List<PriceVO> priceVOS = priceDB.getAll();
+        int month;
+        int year;
+        for (PriceVO priceVO : priceVOS) {
+            long startTime, endTime;
+            String invoYM = priceVO.getInvoYm();
+            month = Integer.valueOf(invoYM.substring(invoYM.length() - 2));
+            year = Integer.valueOf(invoYM.substring(0, invoYM.length() - 2)) + 1911;
+            startTime = (new GregorianCalendar(year, month - 2, 1)).getTimeInMillis();
+            endTime = (new GregorianCalendar(year, month, 1)).getTimeInMillis();
+            autoSetInWin(startTime, endTime, priceVO);
+            progressDialog.cancel();
+            setMonText(now,"in");
         }
     }
 
 
+    private void autoSetCRWin(long startTime, long endTime, PriceVO priceVO) {
+        List<ConsumeVO> consumeVOS = consumerDB.getNoWinAll(startTime, endTime);
+        for (ConsumeVO consumeVO : consumeVOS) {
+            String nul = consumeVO.getNumber().trim();
+            consumeVO.setIsWin("N");
+            if (nul != null && nul.trim().length() == 10) {
+                nul = nul.substring(2);
+                String aw = anwswer(nul, priceVO);
+                consumeVO.setIsWin(aw);
+            }
+            consumerDB.update(consumeVO);
+        }
+    }
+
+    private String anwswer(String nul, PriceVO priceVO) {
+        String threenul = nul.substring(5);
+        String s;
+        if (nul.equals(priceVO.getSuperPrizeNo())) {
+            return "super";
+        }
+        if (nul.equals(priceVO.getSpcPrizeNo())) {
+            return "spc";
+        }
+        s = firsttofourprice(nul, priceVO.getFirstPrizeNo1());
+        if (!s.equals("0")) {
+            return s;
+        }
+        s = firsttofourprice(nul, priceVO.getFirstPrizeNo2());
+        if (!s.equals("0")) {
+            return s;
+        }
+        s = firsttofourprice(nul, priceVO.getFirstPrizeNo3());
+        if (!s.equals("0")) {
+            return s;
+        }
+        if (threenul.equals(priceVO.getSixthPrizeNo1())) {
+            return "sixth";
+        }
+        if (threenul.equals(priceVO.getSixthPrizeNo2())) {
+            return "sixth";
+        }
+        if (threenul.equals(priceVO.getSixthPrizeNo3())) {
+            return "sixth";
+        }
+        if (threenul.equals(priceVO.getSixthPrizeNo4())) {
+            return "sixth";
+        }
+        if (threenul.equals(priceVO.getSixthPrizeNo5())) {
+            return "sixth";
+        }
+        if (threenul.equals(priceVO.getSixthPrizeNo6())) {
+            return "sixth";
+        }
+        return "N";
+    }
 
 
     private void autoSetInWin(long startTime, long endTime, PriceVO priceVO) {
-        List<CarrierVO> carrierVOS=carrierDB.getAll();
-        for(CarrierVO c:carrierVOS)
-        {
-            List<InvoiceVO> invoiceVOS=invoiceDB.getNotSetWin(c.getCarNul(),startTime,endTime);
-            for(InvoiceVO i:invoiceVOS)
-            {
-                String nul=i.getInvNum().substring(2);
-                if(nul.equals(priceVO.getSuperPrizeNo()))
-                {
-                    i.setIswin("super");
-                    invoiceDB.update(i);
-                    return;
-                }
-                if(nul.equals(priceVO.getSpcPrizeNo())){
-                    i.setIswin("spc");
-                    invoiceDB.update(i);
-                    return;
-                }
-                if(firsttofourprice(i,priceVO.getFirstPrizeNo1()))
-                {
-                    return;
-                }
-                if(firsttofourprice(i,priceVO.getFirstPrizeNo2()))
-                {
-                    return;
-                }
-                if(firsttofourprice(i,priceVO.getFirstPrizeNo3()))
-                {
-                    return;
-                }
-                nul=nul.substring(5);
-                if(nul.equals(priceVO.getSixthPrizeNo1()))
-                {
-                    i.setIswin("sixth");
-                    invoiceDB.update(i);
-                    return;
-                }
-                if(nul.equals(priceVO.getSixthPrizeNo2()))
-                {
-                    i.setIswin("sixth");
-                    invoiceDB.update(i);
-                    return;
-                }
-                if(nul.equals(priceVO.getSixthPrizeNo3()))
-                {
-                    i.setIswin("sixth");
-                    invoiceDB.update(i);
-                    return;
-                }
-                if(nul.equals(priceVO.getSixthPrizeNo4()))
-                {
-                    i.setIswin("sixth");
-                    invoiceDB.update(i);
-                    return;
-                }
-                if(nul.equals(priceVO.getSixthPrizeNo5()))
-                {
-                    i.setIswin("sixth");
-                    invoiceDB.update(i);
-                    return;
-                }
-                if(nul.equals(priceVO.getSixthPrizeNo6()))
-                {
-                    i.setIswin("sixth");
-                    invoiceDB.update(i);
-                    return;
-                }
-                i.setIswin("N");
+        List<CarrierVO> carrierVOS = carrierDB.getAll();
+        for (CarrierVO c : carrierVOS) {
+            List<InvoiceVO> invoiceVOS = invoiceDB.getNotSetWin(c.getCarNul(), startTime, endTime);
+            for (InvoiceVO i : invoiceVOS) {
+                String nul = i.getInvNum().substring(2);
+                String inWin = anwswer(nul, priceVO);
+                i.setIswin(inWin);
                 invoiceDB.update(i);
             }
         }
     }
 
-    private boolean firsttofourprice(InvoiceVO iv,String pricenul)
-    {
-        String nul=iv.getInvNum().substring(2);
-        for(int i=0;i<6;i++)
-        {
-            if(nul.substring(i).equals(pricenul.substring(i)))
-            {
-                iv.setIswin(level[i]);
-                invoiceDB.update(iv);
-                return true;
+    private String firsttofourprice(String nul, String pricenul) {
+        for (int i = 0; i < 6; i++) {
+            if (nul.substring(i).equals(pricenul.substring(i))) {
+                return level[i];
             }
         }
-        return false;
+        return "0";
     }
 
-    private void setMonText(Calendar time) {
-        Log.d("XXXX",  sd.format(new Date(time.getTimeInMillis())));
-        Calendar cal=Calendar.getInstance();
+    private void setMonText(Calendar time, String action) {
+        Log.d("XXXX", sd.format(new Date(time.getTimeInMillis())));
+        Calendar cal = Calendar.getInstance();
+        Calendar searchTime=Calendar.getInstance();
         cal.setTime(new Date(time.getTimeInMillis()));
-        int year=cal.get(Calendar.YEAR);
-        cal.set(year,0,25);
-        long one25=cal.getTimeInMillis();
-        cal.set(year,2,25);
-        long three25=cal.getTimeInMillis();
-        cal.set(year,4,25);
-        long five25=cal.getTimeInMillis();
-        cal.set(year,6,25);
-        long seven25=cal.getTimeInMillis();
-        cal.set(year,8,25);
-        long night25=cal.getTimeInMillis();
-        cal.set(year,10,25);
-        long ele25=cal.getTimeInMillis();
-        String showtime;
-        long now=this.now.getTimeInMillis();
-        Log.d("XXXX",  sd.format(new Date(now)));
-        Log.d("XXXX",  sd.format(new Date(one25)));
-        Log.d("XXXX",  sd.format(new Date(three25)));
-        Log.d("XXXX",  sd.format(new Date(five25)));
-        Log.d("XXXX",  sd.format(new Date(seven25)));
-        Log.d("XXXX",  sd.format(new Date(night25)));
-        Log.d("XXXX",  sd.format(new Date(ele25)));
-        if(now>one25&&now<three25)
-        {
-            showtime=String.valueOf(time.get(Calendar.YEAR)-1911-1)+"年11-12月";
-        }
-        else if(now>three25&&now<five25)
-        {
-            showtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"年1-2月";
-        }
-        else if(now>five25&&now<seven25)
-        {
-            showtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"年3-4月";
-        }
-        else if(now>seven25&&now<night25)
-        {
-            showtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"年5-6月";
-        }
-        else if(now>night25&&now<ele25)
-        {
-            showtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"年7-8月";
-        }
-        else
-        {
-            if(this.now.get(Calendar.MONTH)==0)
-            {
-                showtime=String.valueOf(time.get(Calendar.YEAR)-1911-1)+"年9-10月";
-            }else {
-                showtime=String.valueOf(time.get(Calendar.YEAR)-1911)+"年9-10月";
+        int year = cal.get(Calendar.YEAR);
+        cal.set(year, 0, 25);
+        long one25 = cal.getTimeInMillis();
+        cal.set(year, 2, 25);
+        long three25 = cal.getTimeInMillis();
+        cal.set(year, 4, 25);
+        long five25 = cal.getTimeInMillis();
+        cal.set(year, 6, 25);
+        long seven25 = cal.getTimeInMillis();
+        cal.set(year, 8, 25);
+        long night25 = cal.getTimeInMillis();
+        cal.set(year, 10, 25);
+        long ele25 = cal.getTimeInMillis();
+        String showtime,searchtime;
+        long now = this.now.getTimeInMillis();
+        Log.d("XXXX", sd.format(new Date(now)));
+        Log.d("XXXX", sd.format(new Date(one25)));
+        Log.d("XXXX", sd.format(new Date(three25)));
+        Log.d("XXXX", sd.format(new Date(five25)));
+        Log.d("XXXX", sd.format(new Date(seven25)));
+        Log.d("XXXX", sd.format(new Date(night25)));
+        Log.d("XXXX", sd.format(new Date(ele25)));
+        if (now > one25 && now < three25) {
+            showtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "年11-12月";
+            searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "12";
+            searchTime.set(time.get(Calendar.YEAR)-1,10,1);
+            start=searchTime.getTimeInMillis();
+            searchTime.set(time.get(Calendar.YEAR)-1,11,31);
+            end=searchTime.getTimeInMillis();
+        } else if (now > three25 && now < five25) {
+            showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年1-2月";
+            searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "02";
+            searchTime.set(time.get(Calendar.YEAR),0,1);
+            start=searchTime.getTimeInMillis();
+            searchTime.set(time.get(Calendar.YEAR),1,1);
+            int maxday=searchTime.getActualMaximum(Calendar.DAY_OF_MONTH);
+            searchTime.set(time.get(Calendar.YEAR),1,maxday);
+            end=searchTime.getTimeInMillis();
+        } else if (now > five25 && now < seven25) {
+            showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年3-4月";
+            searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "04";
+            searchTime.set(time.get(Calendar.YEAR),2,1);
+            start=searchTime.getTimeInMillis();
+            searchTime.set(time.get(Calendar.YEAR),3,30);
+            end=searchTime.getTimeInMillis();
+        } else if (now > seven25 && now < night25) {
+            showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年5-6月";
+            searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "06";
+            searchTime.set(time.get(Calendar.YEAR),4,1);
+            start=searchTime.getTimeInMillis();
+            searchTime.set(time.get(Calendar.YEAR),5,30);
+            end=searchTime.getTimeInMillis();
+        } else if (now > night25 && now < ele25) {
+            showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年7-8月";
+            searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "08";
+            searchTime.set(time.get(Calendar.YEAR),6,1);
+            start=searchTime.getTimeInMillis();
+            searchTime.set(time.get(Calendar.YEAR),7,31);
+            end=searchTime.getTimeInMillis();
+        } else {
+            if (this.now.get(Calendar.MONTH) == 0) {
+                showtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "年9-10月";
+                searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "10";
+                searchTime.set(time.get(Calendar.YEAR)-1,8,1);
+                start=searchTime.getTimeInMillis();
+                searchTime.set(time.get(Calendar.YEAR)-1,9,31);
+                end=searchTime.getTimeInMillis();
+            } else {
+                showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年9-10月";
+                searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "10";
+                searchTime.set(time.get(Calendar.YEAR),8,1);
+                start=searchTime.getTimeInMillis();
+                searchTime.set(time.get(Calendar.YEAR),9,31);
+                end=searchTime.getTimeInMillis();
             }
         }
 
+        PriceVO priceVO = priceDB.getPeriodAll(searchtime);
+        if (priceVO == null && action.equals("add")) {
+            month = month - 2;
+            this.now.set(this.year,month,1);
+            setMonText(this.now,"add");
+            Common.showToast(getActivity(), showtime+"尚未開獎");
+            return;
+        }
+        if (priceVO == null && action.equals("cut")) {
+            month = month + 2;
+            this.now.set(this.year,month,1);
+            setMonText(this.now,"cut");
+            Common.showToast(getActivity(), "沒有資料");
+            return;
+        }
         PIdateTittle.setText(showtime);
+        setlayout();
     }
 
     private class cutOnClick implements View.OnClickListener {
@@ -301,17 +363,29 @@ public class PriceInvoice extends Fragment {
         }
     }
 
-
+////////////////////////////////////////////////////////////////////////////////////////
     private void setlayout() {
-        DRcarrier.setText(carrierVOS.get(choiceca).getCarNul());
-        invoiceVOS = invoiceDB.getisDonated(carrierVOS.get(choiceca).getCarNul());
-        if (invoiceVOS == null || invoiceVOS.size() <= 0) {
-            DRmessage.setText("沒有捐贈發票~");
-            DRmessage.setVisibility(View.VISIBLE);
-            return;
+        List<Object> objectList=new ArrayList<>();
+        if(carrierVOS.size()>0&&carrierVOS!=null)
+        {
+            String carrier=carrierVOS.get(choiceca).getCarNul();
+            List<InvoiceVO> invoiceVOS=invoiceDB.getWinIn(carrier,start,end);
+            objectList.addAll(invoiceVOS);
+            DRcarrier.setText(carrier);
         }
-        donateRL.setLayoutManager(new LinearLayoutManager(getActivity()));
-        donateRL.setAdapter(new PriceInvoice.InvoiceAdapter(getActivity(), invoiceVOS));
+        List<ConsumeVO> consumeVOS=consumerDB.getWinAll(start,end);
+        objectList.addAll(consumeVOS);
+        if(objectList.size()>0)
+        {
+            donateRL.setVisibility(View.VISIBLE);
+            donateRL.setLayoutManager(new LinearLayoutManager(getActivity()));
+            donateRL.setAdapter(new InvoiceAdapter(getActivity(),objectList));
+            DRmessage.setVisibility(View.GONE);
+        }else {
+            DRmessage.setVisibility(View.VISIBLE);
+            DRmessage.setText("本期發票沒有中獎!");
+            donateRL.setVisibility(View.GONE);
+        }
     }
 
     private void findViewById(View view) {
@@ -325,16 +399,18 @@ public class PriceInvoice extends Fragment {
         PIdateAdd = view.findViewById(R.id.PIdateAdd);
         PIdateCut = view.findViewById(R.id.PIdateCut);
         PIdateTittle = view.findViewById(R.id.PIdateTittle);
-        progressDialog=new ProgressDialog(getActivity());
+        DRshow=view.findViewById(R.id.DRshow);
+        progressDialog = new ProgressDialog(getActivity());
+        consumerDB = new ConsumerDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
     private class InvoiceAdapter extends
             RecyclerView.Adapter<PriceInvoice.InvoiceAdapter.MyViewHolder> {
         private Context context;
-        private List<InvoiceVO> invoiceVOList;
+        private List<Object> invoiceVOList;
 
 
-        InvoiceAdapter(Context context, List<InvoiceVO> memberList) {
+        InvoiceAdapter(Context context, List<Object> memberList) {
             this.context = context;
             this.invoiceVOList = memberList;
         }
@@ -365,44 +441,49 @@ public class PriceInvoice extends Fragment {
 
         @Override
         public void onBindViewHolder(PriceInvoice.InvoiceAdapter.MyViewHolder viewHolder, int position) {
-            final InvoiceVO invoiceVO = invoiceVOList.get(position);
-            viewHolder.checkdonate.setText(sf.format(new Date(invoiceVO.getTime().getTime())));
-            viewHolder.day.setText(invoiceVO.getInvNum());
-            viewHolder.nul.setText(invoiceVO.getHeartyteam());
+            final Object object = invoiceVOList.get(position);
+            String title,nul,message;
+            if (object instanceof InvoiceVO)
+            {
+                InvoiceVO invoiceVO= (InvoiceVO) object;
+                title="電子發票"+(invoiceVO.getDonateMark().equals("true")?"已捐贈":"未捐贈");
+                nul=invoiceVO.getInvNum();
+                message=levelprice.get(invoiceVO.getIswin());
+            }else{
+                ConsumeVO consumeVO= (ConsumeVO) object;
+                title="實體發票";
+                nul=consumeVO.getNumber();
+                message=levelprice.get(consumeVO.getIsWin());
+            }
+            viewHolder.checkdonate.setText(title);
+            viewHolder.day.setText(nul);
+            viewHolder.nul.setText(message);
         }
     }
 
     private class addMonth implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            month+=2;
-            Calendar calendar=Calendar.getInstance();
-            if(month>calendar.get(Calendar.MONTH)&&year==calendar.get(Calendar.YEAR))
-            {
-                month=month-2;
-                Common.showLongToast(getActivity(),"尚未開獎");
-                return;
-            }
-            if (month >11) {
-                month = month-11;
+            month += 2;
+            if (month > 11) {
+                month = month - 11;
                 year++;
             }
             now.set(year, month, 1);
-            setMonText(now);
+            setMonText(now, "add");
         }
     }
 
     private class cutMonth implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            month-=2;
+            month -= 2;
             if (month < 0) {
-                month = 11+month;
+                month = 11 + month;
                 year--;
             }
             now.set(year, month, 1);
-            setMonText(now);
+            setMonText(now, "cut");
         }
     }
-
 }

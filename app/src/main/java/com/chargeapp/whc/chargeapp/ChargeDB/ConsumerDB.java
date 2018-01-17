@@ -48,6 +48,55 @@ public class ConsumerDB {
         return consumeList;
     }
 
+    public List<ConsumeVO> getWinAll(long startTime,long endTime) {
+        String sql = "SELECT * FROM Consumer where iswin != 'N' and date between '"+startTime+"' and '"+endTime+"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<ConsumeVO> consumeList = new ArrayList<>();
+        ConsumeVO consumeVO;
+        while (cursor.moveToNext()) {
+            consumeVO=new ConsumeVO();
+            consumeVO.setId(cursor.getInt(0));
+            consumeVO.setMaintype(cursor.getString(1));
+            consumeVO.setSecondType(cursor.getString(2));
+            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setDate(new Date(cursor.getLong(4)));
+            consumeVO.setNumber(cursor.getString(5));
+            consumeVO.setFixDate(cursor.getString(6));
+            consumeVO.setFixDateDetail(cursor.getString(7));
+            consumeVO.setNotify(cursor.getString(8));
+            consumeVO.setDetailname(cursor.getString(9));
+            consumeVO.setIsWin(cursor.getString(10));
+            consumeList.add(consumeVO);
+        }
+        cursor.close();
+        return consumeList;
+    }
+    public List<ConsumeVO> getNoWinAll(long startTime,long endTime) {
+        String sql = "SELECT * FROM Consumer where iswin = '0' and date between '"+startTime+"' and '"+endTime+"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<ConsumeVO> consumeList = new ArrayList<>();
+        ConsumeVO consumeVO;
+        while (cursor.moveToNext()) {
+            consumeVO=new ConsumeVO();
+            consumeVO.setId(cursor.getInt(0));
+            consumeVO.setMaintype(cursor.getString(1));
+            consumeVO.setSecondType(cursor.getString(2));
+            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setDate(new Date(cursor.getLong(4)));
+            consumeVO.setNumber(cursor.getString(5));
+            consumeVO.setFixDate(cursor.getString(6));
+            consumeVO.setFixDateDetail(cursor.getString(7));
+            consumeVO.setNotify(cursor.getString(8));
+            consumeVO.setDetailname(cursor.getString(9));
+            consumeVO.setIsWin(cursor.getString(10));
+            consumeList.add(consumeVO);
+        }
+        cursor.close();
+        return consumeList;
+    }
+
 
     public List<ConsumeVO> getFixdate() {
         String sql = "SELECT * FROM Consumer where fixdate = 'true' order by id;";

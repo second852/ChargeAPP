@@ -278,7 +278,6 @@ public class PriceHand extends Fragment {
         @Override
         public void onClick(View view) {
             month += 2;
-            Calendar calendar = Calendar.getInstance();
             if (month > 11) {
                 month = month - 11;
                 year++;

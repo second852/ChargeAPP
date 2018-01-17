@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
@@ -86,5 +87,6 @@ public class secondReceiver extends BroadcastReceiver {
                 .setContentIntent(pendingIntent)
                 .build();
         notificationManager.notify(NOTIFICATION_ID, notification);
+        Log.d("XXXXXXXXxx", String.valueOf(NOTIFICATION_ID));
     }
 }

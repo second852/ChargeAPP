@@ -531,8 +531,13 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 }
             }else if(object instanceof PriceInvoice)
             {
-
-
+                PriceInvoice priceInvoice= (PriceInvoice) object;
+                if(action.equals("getNeWPrice"))
+                {
+                    priceInvoice.AutoSetCMPrice();
+                }else{
+                    priceInvoice.AutoSetInPrice();
+                }
             }
         }catch (Exception e)
         {

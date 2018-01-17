@@ -333,11 +333,9 @@
             android:id="@+id/newTypeTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_toRightOf="@+id/imageTitle"
+            android:layout_centerHorizontal="true"
             android:gravity="center"
-            android:layout_above="@+id/newtype"
-            android:layout_marginBottom="15dp"
+            android:layout_marginTop="55dp"
             android:text="新增主要項目"
             android:textColor="#000000"
             android:textSize="20dp" />
@@ -346,19 +344,38 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/add"
-            android:layout_above="@+id/newStandard"
-            android:layout_marginLeft="25dp"
-            android:layout_marginBottom="70dp"
+            android:layout_below="@+id/newTypeTitle"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="45dp"
             />
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="新增圖片"
+            android:textColor="#000000"
+            android:layout_below="@+id/newTypeTitle"
+            android:layout_marginLeft="38dp"
+            android:layout_marginTop="20dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="新增種類"
+            android:textColor="#000000"
+            android:layout_below="@+id/newTypeTitle"
+            android:layout_toRightOf="@+id/imageTitle"
+            android:layout_marginLeft="110dp"
+            android:layout_marginTop="20dp"
+            />
         <EditText
             android:id="@+id/newtype"
             android:layout_width="200dp"
             android:layout_height="30dp"
-            android:layout_above="@+id/newStandard"
+            android:layout_marginTop="45dp"
             android:layout_toRightOf="@+id/imageTitle"
-            android:layout_marginBottom="70dp"
-            android:layout_marginLeft="25dp"
+            android:layout_marginLeft="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/newTypeTitle"
             android:background="#FFEE99"
             android:inputType="text"
             android:singleLine="true"
@@ -369,23 +386,30 @@
             android:id="@+id/newTypeDetil"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/imageTitle"
-            android:layout_marginLeft="25dp"
-            android:layout_below="@+id/newTypeTitle"
-            android:layout_marginTop="75dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/newtype"
+            android:layout_marginTop="60dp"
             android:gravity="center"
             android:text="新增次要項目"
             android:textColor="#000000"
             android:textSize="20dp" />
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="新增圖片"
+            android:textColor="#000000"
+            android:layout_marginLeft="38dp"
+            android:layout_below="@+id/newTypeDetil"
+            android:layout_marginTop="20dp"
+            />
         <ImageView
             android:id="@+id/imageDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="25dp"
+            android:layout_below="@+id/newTypeDetil"
+            android:layout_marginLeft="45dp"
+            android:layout_marginTop="45dp"
             android:src="@drawable/add" />
-
         <EditText
             android:id="@+id/inserttypeDetail"
             android:layout_width="200dp"
@@ -393,12 +417,22 @@
             android:layout_below="@+id/newTypeDetil"
             android:layout_toRightOf="@+id/imageDetail"
             android:background="#FFEE99"
-            android:layout_marginLeft="25dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="45dp"
             android:inputType="text"
             android:singleLine="true"
             android:textColor="#000000"
             android:textColorHint="#AAAAAA" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="新增種類"
+            android:textColor="#000000"
+            android:layout_below="@+id/newTypeDetil"
+            android:layout_toRightOf="@+id/imageTitle"
+            android:layout_marginLeft="110dp"
+            android:layout_marginTop="20dp"
+            />
 
         <TextView
             android:id="@+id/saveType"
