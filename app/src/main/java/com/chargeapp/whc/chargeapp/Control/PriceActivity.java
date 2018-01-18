@@ -103,7 +103,7 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
                 return new PriceHand();
             }
             else{
-                return new InsertIncome();
+                return new PriceNumber();
             }
         }
     }

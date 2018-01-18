@@ -11,10 +11,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
-import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;

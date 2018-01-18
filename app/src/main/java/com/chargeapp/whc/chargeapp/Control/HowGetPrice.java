@@ -17,7 +17,7 @@ import com.chargeapp.whc.chargeapp.R;
 
 public class HowGetPrice extends AppCompatActivity {
   private TextView needcarrier;
-  private TextView local,setbank,goWeb;
+  private TextView local,setbank,goWeb,goprintWeb;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,17 +28,28 @@ public class HowGetPrice extends AppCompatActivity {
         local=findViewById(R.id.local);
         setbank=findViewById(R.id.setbank);
         goWeb=findViewById(R.id.goWeb);
+        goprintWeb=findViewById(R.id.goprintWeb);
+        goprintWeb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("http://event.family.com.tw/2016_invoice/invoice.html"));
+                startActivity(intent);
+            }
+        });
         local.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://www.post.gov.tw/post/internet/B_saving/index.jsp?ID=30306#localpost"));
+                startActivity(intent);
             }
         });
         setbank.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 setbank.setOnClickListener(null);
                 goWeb.setOnClickListener(null);
                 local.setOnClickListener(null);

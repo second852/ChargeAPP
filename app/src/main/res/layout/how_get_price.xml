@@ -31,10 +31,21 @@
         android:textSize="25sp"
         />
     <TextView
+        android:layout_marginTop="15dp"
         android:gravity="center"
         android:layout_below="@+id/needcarrier"
+        android:id="@+id/goprintWeb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="如何印無實體中獎發票"
+        android:textColor="#000000"
+        android:background="#00BBFF"
+        />
+    <TextView
+        android:gravity="center"
+        android:layout_below="@+id/goprintWeb"
         android:id="@+id/local"
-        android:layout_marginTop="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"

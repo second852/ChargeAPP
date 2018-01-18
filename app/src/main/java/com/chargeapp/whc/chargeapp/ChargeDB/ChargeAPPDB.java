@@ -23,10 +23,6 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
     private static final String DB_NAME = "ChargeAPP";
     private static final int DB_VERSION = 1;
     private static final String TABLE_NAME = "Type";
-    private static final String COL_id = "id";
-    private static final String COL_name = "name";
-    private static final String COL_groupNumber= "groupNumber";
-    private static final String COL_image = "image";
 
 
     private static final String TABLE_CREATE =
