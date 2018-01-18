@@ -54,7 +54,6 @@ public class InsertSpend extends Fragment {
     private TextView save, clear, date, saveType, clearType, showTitle,datesave;
     private GridView gridView,showAllpicture;
     private RelativeLayout insertType;
-    private ChargeAPPDB chargeAPPDB;
     private List<TypeVO> typeVOList;
     private SimpleAdapter adapter;
     private List<Map<String, Object>> items;
@@ -483,6 +482,29 @@ public class InsertSpend extends Fragment {
             if(showdate.getVisibility()==View.VISIBLE||showPicture.getVisibility()==View.VISIBLE||showAllPL.getVisibility()==View.VISIBLE)
             {
                 return;
+            }
+            String CheckNul=number.getText().toString();
+            if(CheckNul.trim().length()>0)
+            {
+                if(CheckNul.length()!=10)
+                {
+                    number.setError("統一發票中英文10個號碼");
+                    return;
+                }
+                try {
+                    new Integer(CheckNul.substring(2));
+                }catch (NumberFormatException e)
+                {
+                   number.setError("統一發票後8碼為數字");
+                    return;
+                }
+                int sN=(int)CheckNul.charAt(0);
+                int eN=(int)CheckNul.charAt(1);
+                if(sN<65||sN>90||eN<65||eN>90)
+                {
+                    number.setError("統一發票號前2碼為大寫英文字母");
+                    return;
+                }
             }
             gson=new Gson();
             Map<String,String> g=new HashMap<>();

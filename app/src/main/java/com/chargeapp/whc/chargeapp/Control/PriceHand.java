@@ -57,6 +57,7 @@ public class PriceHand extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_hand, container, false);
         findViewById(view);
+        priceMessage.setText("中獎訊息");
         setMonText(now, "in");
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
@@ -307,8 +308,6 @@ public class PriceHand extends Fragment {
             RecyclerView.Adapter<PriceHand.InputAdapter.MyViewHolder> {
         private Context context;
         private List<String> numberList;
-
-
         InputAdapter(Context context, List<String> memberList) {
             this.context = context;
             this.numberList = memberList;
@@ -377,6 +376,7 @@ public class PriceHand extends Fragment {
                     }
                     if (message.length() > 3) {
                         message = number;
+                        priceMessage.setText("中獎訊息");
                     }
                     content = new SpannableString(message);
                     content.setSpan(new UnderlineSpan(), message.length() - 1, content.length(), 0);

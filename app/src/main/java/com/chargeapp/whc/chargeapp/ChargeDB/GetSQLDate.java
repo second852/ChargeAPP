@@ -5,13 +5,15 @@ import android.os.AsyncTask;
 
 
 import android.util.Log;
-
+import android.view.View;
 
 
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.PriceActivity;
+import com.chargeapp.whc.chargeapp.Control.PriceHand;
 import com.chargeapp.whc.chargeapp.Control.PriceInvoice;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
@@ -453,8 +455,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         HttpURLConnection conn=null;
         try {
             conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(1500);
+            conn.setConnectTimeout(1500);
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);
@@ -484,7 +486,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     jsonIn.append("setCarrier");
                 }
             }
-            jsonIn.append("InternerError");
         }finally {
             conn.disconnect();
         }
@@ -532,6 +533,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             }else if(object instanceof PriceInvoice)
             {
                 PriceInvoice priceInvoice= (PriceInvoice) object;
+                PriceActivity.goneMoney.setVisibility(View.VISIBLE);
+                if(s.equals("InternerError"))
+                {
+                    priceInvoice.noconnect();
+                    return;
+                }
                 if(action.equals("getNeWPrice"))
                 {
                     priceInvoice.AutoSetCMPrice();

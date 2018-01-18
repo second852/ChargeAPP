@@ -36,6 +36,8 @@
             android:name=".Control.EleDonateMain"/>
         <activity
             android:name=".Control.PriceActivity"/>
+        <activity
+            android:name=".Control.HowGetPrice"/>
     </application>
 
 </manifest>

@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
     >
+    <TextView
+        android:layout_marginTop="10dp"
+        android:textStyle="bold"
+        android:background="#ffffff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/choiceitem"
+        android:gravity="center"
+        android:textSize="18dp"
+        android:id="@+id/showRemain"
+        android:textColor="#FF0000"
+        />
     <RelativeLayout
+        android:layout_below="@+id/showRemain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

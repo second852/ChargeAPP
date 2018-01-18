@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,17 +11,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.R;
 
 public class PriceActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
-    private Button exportMoney,importMoney,goneMoney,showN;
+    private Button exportMoney,importMoney,showN,howtogetprice;
+    public static  Button goneMoney;
     private HorizontalScrollView choiceitem;
     private LinearLayout text;
     private int nowpoint=0;
     private float movefirst;
+
+
 
 
 
@@ -34,22 +39,47 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
         choiceitem=findViewById(R.id.choiceitem);
         goneMoney=findViewById(R.id.goneD);
         showN=findViewById(R.id.showN);
+        howtogetprice=findViewById(R.id.howtogetprice);
         mAdapterViewPager = new MainPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
         mViewPager.setCurrentItem(30);
         setcurrentpage();
         text=findViewById(R.id.text);
+
+        howtogetprice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PriceActivity.this, HowGetPrice.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void setcurrentpage()
     {
+
         int page=mViewPager.getCurrentItem();
         exportMoney.setOnClickListener(new ChangePage(page));
         importMoney.setOnClickListener(new ChangePage(page+1));
         showN.setOnClickListener(new ChangePage(page-1));
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(PriceInvoice.getGetSQLDate1!=null)
+        {
+            PriceInvoice.getGetSQLDate1.cancel(true);
+            PriceInvoice.getGetSQLDate1=null;
+        }
+        if(PriceInvoice.getGetSQLDate2!=null)
+        {
+            PriceInvoice.getGetSQLDate2.cancel(true);
+            PriceInvoice.getGetSQLDate2=null;
+        }
+    }
 
     public static class MainPagerAdapter extends FragmentPagerAdapter {
         private static int NUM_ITEMS = 60;

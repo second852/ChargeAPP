@@ -102,6 +102,7 @@ public class EleDonate extends Fragment {
             message.setVisibility(View.VISIBLE);
             listinviuce.setVisibility(View.GONE);
             showmonth.setVisibility(View.GONE);
+            EleDonateMain.goneMoney.setVisibility(View.VISIBLE);
             return;
         }
         new GetSQLDate(this).execute("GetToday");

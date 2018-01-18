@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
@@ -18,7 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -34,7 +32,6 @@ import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.R;
 
 import java.sql.Date;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,7 +43,7 @@ import java.util.List;
  * Created by 1709008NB01 on 2017/12/22.
  */
 
-public class PriceInvoice extends Fragment {
+public class FiftiveL extends Fragment {
     private ImageView DRadd, DRcut, PIdateAdd, PIdateCut;
     private TextView DRcarrier, DRmessage, PIdateTittle;
     private RecyclerView donateRL;
@@ -75,30 +72,9 @@ public class PriceInvoice extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_invoice, container, false);
         findViewById(view);
-        download();
-        levelprice=getHashLP();
-        levellength=getlevellength();
-        DRadd.setOnClickListener(new addOnClick());
-        DRcut.setOnClickListener(new cutOnClick());
-        PIdateAdd.setOnClickListener(new addMonth());
-        PIdateCut.setOnClickListener(new cutMonth());
-        Calendar calendar=new GregorianCalendar(2017,8,1);
-        long s=calendar.getTimeInMillis();
-        String show=sd.format(new Date(s));
-        Date dd=new Date(s);
-        long a=dd.getTime();
-        calendar=new GregorianCalendar(2017,9,31);
-        long e=calendar.getTimeInMillis();
-        show=sd.format(new Date(e));
-        dd=new Date(e);
-        a=dd.getTime();
-        List<ConsumeVO> consumeVOS=consumerDB.getAll();
-        int i=1;
-        for (ConsumeVO c:consumeVOS)
-        {
+        showRemain.setVisibility(View.GONE);
 
-            Log.d("XXXXXXX",sd.format(c.getDate())+":"+c.getIsWin()+":"+c.getNumber());
-        }
+
         return view;
     }
 
@@ -150,14 +126,14 @@ public class PriceInvoice extends Fragment {
         if (priceVOS == null || priceVOS.size() <= 0) {
             new GetSQLDate(this).execute("getAllPriceNul");
         } else {
-            if (PriceInvoice.getGetSQLDate1 == null) {
-                PriceInvoice.getGetSQLDate1 = new GetSQLDate(this).execute("getNeWPrice");
+            if (FiftiveL.getGetSQLDate1 == null) {
+                FiftiveL.getGetSQLDate1 = new GetSQLDate(this).execute("getNeWPrice");
                 showcircle=true;
             }
         }
 
-        if (PriceInvoice.getGetSQLDate2 == null && carrierVOS != null&&carrierVOS.size()>0) {
-            PriceInvoice.getGetSQLDate2 = new GetSQLDate(this).execute("GetToday");
+        if (FiftiveL.getGetSQLDate2 == null && carrierVOS != null&&carrierVOS.size()>0) {
+            FiftiveL.getGetSQLDate2 = new GetSQLDate(this).execute("GetToday");
             showcircle=true;
         }
         if(showcircle)
@@ -459,7 +435,7 @@ public class PriceInvoice extends Fragment {
     }
 
     private class InvoiceAdapter extends
-            RecyclerView.Adapter<PriceInvoice.InvoiceAdapter.MyViewHolder> {
+            RecyclerView.Adapter<FiftiveL.InvoiceAdapter.MyViewHolder> {
         private Context context;
         private List<Object> invoiceVOList;
 
@@ -487,14 +463,14 @@ public class PriceInvoice extends Fragment {
         }
 
         @Override
-        public PriceInvoice.InvoiceAdapter.MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        public FiftiveL.InvoiceAdapter.MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             View itemView = layoutInflater.inflate(R.layout.ele_setdenote_record_item, viewGroup, false);
-            return new PriceInvoice.InvoiceAdapter.MyViewHolder(itemView);
+            return new FiftiveL.InvoiceAdapter.MyViewHolder(itemView);
         }
 
         @Override
-        public void onBindViewHolder(PriceInvoice.InvoiceAdapter.MyViewHolder viewHolder, int position) {
+        public void onBindViewHolder(FiftiveL.InvoiceAdapter.MyViewHolder viewHolder, int position) {
             final Object object = invoiceVOList.get(position);
             String title,nul,message,iswin;
             if (object instanceof InvoiceVO)
