@@ -124,4 +124,13 @@ public class EleDonateMain extends AppCompatActivity implements ViewPager.OnPage
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(EleDonate.get1!=null)
+        {
+            EleDonate.get1.cancel(true);
+            EleDonate.get1=null;
+        }
+    }
 }

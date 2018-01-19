@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -59,7 +60,7 @@ public class EleActivity extends AppCompatActivity {
         list.add(new EleMainItemVO("申請通用性載具",R.drawable.barcode));
         list.add(new EleMainItemVO("手機條碼綁定金融帳戶",R.drawable.bank));
         list.add(new EleMainItemVO("電子發票如何兌獎",R.drawable.invent));
-        list.add(new EleMainItemVO("電子發票好處",R.drawable.invent));
+        list.add(new EleMainItemVO("電子發票是什麼?",R.drawable.image));
         return list;
     }
 
@@ -124,10 +125,10 @@ public class EleActivity extends AppCompatActivity {
                    startActivity(intent);
                }else if(i==2)
                {
-                   elefunction.setOnItemClickListener(null);
-                   fragment=new EleAddCarrier();
-                   fragmentTransaction.replace(R.id.elemain, fragment);
-                   fragmentTransaction.commit();
+                   Intent intent = new Intent();
+                   intent.setAction(Intent.ACTION_VIEW);
+                   intent.setData(Uri.parse("http://www.teach.ltu.edu.tw/public/News/11503/201412041535091.pdf"));
+                   startActivity(intent);
 
                }else if(i==3)
                {
@@ -143,8 +144,14 @@ public class EleActivity extends AppCompatActivity {
                    fragmentTransaction.replace(R.id.elemain, fragment);
                    fragmentTransaction.commit();
 
+               }else if(i==5){
+                   Intent intent = new Intent(EleActivity.this, HowGetPrice.class);
+                   startActivity(intent);
                }else{
-
+                   Intent intent = new Intent();
+                   intent.setAction(Intent.ACTION_VIEW);
+                   intent.setData(Uri.parse("http://www.nknu.edu.tw/~psl/new.file/103/08/1030825reciept1.pdf"));
+                   startActivity(intent);
                }
 
         }

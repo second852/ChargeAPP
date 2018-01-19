@@ -1,6 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -51,7 +52,7 @@ public class EleDonate extends Fragment {
     private List<CarrierVO> carrierVOList;
     public static CarrierVO carrierVO;
     private SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
-    private RelativeLayout showmonth, searchRL;
+    private RelativeLayout showmonth, searchRL,choice;
     public static int choiceca = 0;
     private ProgressDialog progressDialog;
     public static HashMap<String, InvoiceVO> donateMap;
@@ -64,6 +65,7 @@ public class EleDonate extends Fragment {
     public static String teamNumber, teamTitle;
     private Button returnSH;
     private ProgressBar progressbar;
+    public static AsyncTask get1=null;
 
     @Nullable
     @Override
@@ -102,12 +104,19 @@ public class EleDonate extends Fragment {
             message.setVisibility(View.VISIBLE);
             listinviuce.setVisibility(View.GONE);
             showmonth.setVisibility(View.GONE);
+            choice.setVisibility(View.GONE);
             EleDonateMain.goneMoney.setVisibility(View.VISIBLE);
             return;
         }
-        new GetSQLDate(this).execute("GetToday");
-        progressDialog.setMessage("正在更新資料,請稍候...");
-        progressDialog.show();
+
+
+        if(EleDonate.get1==null)
+        {
+            get1= new GetSQLDate(this).execute("GetToday");
+            progressDialog.setMessage("正在更新資料,請稍候...");
+            progressDialog.show();
+        }
+
     }
 
     public void cancelDialog() {
@@ -175,6 +184,7 @@ public class EleDonate extends Fragment {
         heartyList = view.findViewById(R.id.heartyList);
         returnSH = view.findViewById(R.id.returnSH);
         progressbar = view.findViewById(R.id.progressbar);
+        choice=view.findViewById(R.id.choice);
     }
 
 

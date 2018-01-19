@@ -50,7 +50,7 @@
 
         <TextView
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="1dp"
             android:background="#77DDFF"
             android:gravity="center"
@@ -60,13 +60,19 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/superN"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="2dp"
+
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="0.5dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginLeft="1dp"
+
                 android:background="#ffffff"
                 android:gravity="center"
                 android:text="XXXXXXX"
@@ -75,7 +81,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="2dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="0.5dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginLeft="1dp"
                 android:background="#dddddd"
                 android:gravity="center"
                 android:text="與上列號碼相同者獎金 1,000 萬元"
@@ -93,7 +102,7 @@
 
         <TextView
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="1dp"
             android:background="#77DDFF"
             android:gravity="center"
@@ -107,9 +116,13 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/spcN"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="0.5dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginLeft="1dp"
                 android:background="#ffffff"
                 android:gravity="center"
                 android:text="XXXXXXX"
@@ -118,7 +131,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="0.5dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginLeft="1dp"
                 android:background="#dddddd"
                 android:gravity="center"
                 android:text="與上列號碼相同者獎金 200 萬元"
@@ -136,7 +152,7 @@
 
         <TextView
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="1dp"
             android:background="#77DDFF"
             android:gravity="center"
@@ -150,9 +166,13 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/firstN"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="0.5dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginLeft="1dp"
                 android:background="#ffffff"
                 android:gravity="center"
                 android:text="XXXXXXX"
@@ -161,7 +181,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="0.5dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginLeft="1dp"
                 android:background="#dddddd"
                 android:gravity="center"
                 android:text="與上列號碼相同者獎金 20 萬元"
@@ -189,7 +212,7 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="1dp"
             android:background="#dddddd"
             android:gravity="center"
@@ -217,7 +240,7 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="1dp"
             android:background="#dddddd"
             android:gravity="center"
@@ -244,7 +267,7 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="1dp"
             android:background="#dddddd"
             android:gravity="center"
@@ -272,7 +295,7 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="1dp"
             android:background="#dddddd"
             android:gravity="center"
@@ -299,7 +322,7 @@
             android:textSize="25sp" />
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="1dp"
             android:background="#dddddd"
             android:gravity="center"
@@ -316,22 +339,26 @@
         android:orientation="horizontal">
         <TextView
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_margin="1dp"
             android:background="#77DDFF"
             android:gravity="center"
             android:text="增開六獎"
             android:textColor="#000000"
-            android:textSize="25sp" />
+            android:textSize="20sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
+                android:id="@+id/addsixN"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="2dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="0.5dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginLeft="1dp"
                 android:background="#ffffff"
                 android:gravity="center"
                 android:text="XXXXXXX"
@@ -339,7 +366,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="2dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="0.5dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginLeft="1dp"
                 android:background="#dddddd"
                 android:gravity="center"
                 android:text="與上列號碼相同者獎金200元"

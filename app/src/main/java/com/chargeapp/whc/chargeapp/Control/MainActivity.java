@@ -1,31 +1,37 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.Manifest;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.media.Image;
+import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetail;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
-import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private GridView gridView;
+    private ImageView carrB;
     public static ChargeAPPDB chargeAPPDB;
     private int[] image = {
             R.drawable.book, R.drawable.goal, R.drawable.chart, R.drawable.ele,R.drawable.lotto,R.drawable.setting
@@ -64,23 +71,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         askPermissions();
 //        deleteDatabase("ChargeAPP");
         if (chargeAPPDB == null) {
             setdate();
         }
-        ConsumerDB consumerDB=new ConsumerDB(chargeAPPDB.getReadableDatabase());
-        List<ConsumeVO> consumerVOS=consumerDB.getFixdate();
-
-        for (ConsumeVO consumeVO:consumerVOS)
-        {
-            Log.d("XXXXXXXXXXX",consumeVO.getNotify());
-            Log.d("XXXXXXXXXXX",consumeVO.getSecondType());
-            Log.d("XXXXXXXXXXX", String.valueOf(consumeVO.getId()));
-        }
-
-
         setContentView(R.layout.activity_main);
         List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < image.length; i++) {
@@ -93,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 items, R.layout.main_item, new String[]{"image", "text"},
                 new int[]{R.id.image, R.id.text});
         gridView = findViewById(R.id.mainGrid);
+        carrB=findViewById(R.id.carrB);
         gridView.setNumColumns(2);
         gridView.setAdapter(adapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -116,6 +112,58 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        try {
+            setBarCode();
+        } catch (WriterException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int desiredWidth, int desiredHeight) throws WriterException
+    {
+        if (contents.length() == 0) return null;
+        final int WHITE = 0xFFFFFFFF;
+        final int BLACK = 0xFF000000;
+        HashMap<EncodeHintType, String> hints = null;
+        String encoding = null;
+        for (int i = 0; i < contents.length(); i++)
+        {
+            if (contents.charAt(i) > 0xFF)
+            {
+                encoding = "UTF-8";
+                break;
+            }
+        }
+        if (encoding != null)
+        {
+            hints = new HashMap<EncodeHintType, String>(2);
+            hints.put(EncodeHintType.CHARACTER_SET, encoding);
+        }
+        MultiFormatWriter writer = new MultiFormatWriter();
+        BitMatrix result = writer.encode(contents, format, desiredWidth, desiredHeight, hints);
+        int width = result.getWidth();
+        int height = result.getHeight();
+        int[] pixels = new int[width * height];
+        for (int y = 0; y < height; y++)
+        {
+            int offset = y * width;
+            for (int x = 0; x < width; x++)
+            {
+                pixels[offset + x] = result.get(x, y) ? BLACK : WHITE;
+            }
+        }
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+        return bitmap;
+    }
+
+    private void setBarCode() throws WriterException {
+    try {
+        carrB.setImageBitmap(encodeAsBitmap("/2RDO8+P", BarcodeFormat.CODE_39, 600, 100));
+    }catch (Exception e) {
+    }
     }
 
 

@@ -40,13 +40,10 @@ public class PriceNumber extends Fragment {
     private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private Calendar now = Calendar.getInstance();
     private int month, year;
-    private TextView PIdateTittle;
+    private TextView PIdateTittle,superN,spcN,firstN,addsixN;
     private SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     private PriceVO priceVO;
-    private String message = "";
-    private List<PriceVO> priceVOS;
-    private HashMap<String,String> levelPrice;
-    private String[] level={"first","second","third","fourth","fifth","sixth"};
+
 
 
     @Nullable
@@ -57,39 +54,9 @@ public class PriceNumber extends Fragment {
         setMonText(now, "in");
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
-        List<String> number = getInputN();
         return view;
     }
 
-    private List<String> getInputN() {
-        levelPrice=new HashMap<>();
-        List<String> number = new ArrayList<>();
-        number.add("7");
-        number.add("8");
-        number.add("9");
-        number.add("4");
-        number.add("5");
-        number.add("6");
-        number.add("1");
-        number.add("2");
-        number.add("3");
-        number.add("C");
-        number.add("0");
-        number.add("Del");
-        levelPrice.put("first","20萬");
-        levelPrice.put("second","4萬");
-        levelPrice.put("third","1萬");
-        levelPrice.put("fourth","4000");
-        levelPrice.put("fifth","1000");
-        levelPrice.put("sixth","200");
-        levelPrice.put("02","01-02月");
-        levelPrice.put("04","03-04月");
-        levelPrice.put("06","05-06月");
-        levelPrice.put("08","07-08月");
-        levelPrice.put("10","09-10月");
-        levelPrice.put("12","11-12月");
-        return number;
-    }
 
     private void setMonText(Calendar time, String action) {
         Log.d("XXXX", sd.format(new Date(time.getTimeInMillis())));
@@ -108,7 +75,7 @@ public class PriceNumber extends Fragment {
         long night25 = cal.getTimeInMillis();
         cal.set(year, 10, 25);
         long ele25 = cal.getTimeInMillis();
-        String showtime, searchtime, searcholdtime;
+        String showtime, searchtime;
         long now = this.now.getTimeInMillis();
         Log.d("XXXX", sd.format(new Date(now)));
         Log.d("XXXX", sd.format(new Date(one25)));
@@ -120,40 +87,30 @@ public class PriceNumber extends Fragment {
         if (now > one25 && now < three25) {
             showtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "年11-12月";
             searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "12";
-            searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "10";
         } else if (now > three25 && now < five25) {
             showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年1-2月";
             searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "02";
-            searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "12";
         } else if (now > five25 && now < seven25) {
             showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年3-4月";
             searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "04";
-            searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "02";
         } else if (now > seven25 && now < night25) {
             showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年5-6月";
             searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "06";
-            searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "04";
         } else if (now > night25 && now < ele25) {
             showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年7-8月";
             searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "08";
-            searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "06";
         } else {
             if (this.now.get(Calendar.MONTH) == 0) {
                 showtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "年9-10月";
                 searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "10";
-                searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "08";
             } else {
                 showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年9-10月";
                 searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "10";
-                searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "08";
             }
         }
         Log.d("XXXXXXsearchtime",searchtime);
-        Log.d("XXXXXsearcholdtime",searcholdtime);
 
         priceVO = priceDB.getPeriodAll(searchtime);
-        priceVOS = new ArrayList<>();
-        priceVOS.add(priceVO);
 
         if (priceVO == null && action.equals("add")) {
             month = month - 2;
@@ -170,6 +127,47 @@ public class PriceNumber extends Fragment {
             return;
         }
         PIdateTittle.setText(showtime);
+        setNul();
+    }
+
+    private void setNul() {
+        superN.setText(priceVO.getSuperPrizeNo());
+        spcN.setText(priceVO.getSpcPrizeNo());
+        firstN.setText(priceVO.getFirstPrizeNo1()+"\n"+priceVO.getFirstPrizeNo2()+"\n"+priceVO.getFirstPrizeNo3());
+        StringBuffer sb=new StringBuffer();
+        if(!priceVO.getSixthPrizeNo1().equals("0"))
+        {
+            sb.append(priceVO.getSixthPrizeNo1());
+        }
+        if(!priceVO.getSixthPrizeNo2().equals("0"))
+        {
+            sb.append(","+priceVO.getSixthPrizeNo2());
+        }
+        if(!priceVO.getSixthPrizeNo3().equals("0"))
+        {
+            sb.append(","+priceVO.getSixthPrizeNo3());
+        }
+        if(!priceVO.getSixthPrizeNo3().equals("0"))
+        {
+            sb.append(","+priceVO.getSixthPrizeNo1());
+        }
+        if(!priceVO.getSixthPrizeNo4().equals("0"))
+        {
+            sb.append(","+priceVO.getSixthPrizeNo4());
+        }
+        if(!priceVO.getSixthPrizeNo5().equals("0"))
+        {
+            sb.append(","+priceVO.getSixthPrizeNo5());
+        }
+        if(!priceVO.getSixthPrizeNo6().equals("0"))
+        {
+            sb.append(","+priceVO.getSixthPrizeNo6());
+        }
+        if(sb.toString().trim().length()<=0)
+        {
+            sb.append("本期無加開號碼");
+        }
+        addsixN.setText(sb.toString());
     }
 
 
@@ -179,6 +177,10 @@ public class PriceNumber extends Fragment {
         PIdateAdd = view.findViewById(R.id.PIdateAdd);
         PIdateCut = view.findViewById(R.id.PIdateCut);
         PIdateTittle = view.findViewById(R.id.PIdateTittle);
+        superN=view.findViewById(R.id.superN);
+        spcN=view.findViewById(R.id.spcN);
+        firstN=view.findViewById(R.id.firstN);
+        addsixN=view.findViewById(R.id.addsixN);
     }
 
 
