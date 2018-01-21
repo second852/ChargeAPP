@@ -86,14 +86,13 @@
     <TextView
         android:id="@+id/priceTitle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_below="@+id/DRtittle"
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="請輸入後三碼"
         android:textColor="#000000"
-        android:textSize="20sp" />
-
+        android:textSize="15sp" />
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/cardview"
         android:layout_width="match_parent"
@@ -118,24 +117,12 @@
                 android:textColor="#000000"
                 android:textSize="40sp" />
     </android.support.v7.widget.CardView>
-    <TextView
-        android:id="@+id/priceMessage"
-        android:layout_width="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/cardview"
-        android:textColor="#000000"
-        android:gravity="center"
-        android:textSize="20sp"
-        />
     <android.support.v7.widget.RecyclerView
-        android:layout_below="@+id/priceMessage"
+        android:layout_below="@+id/cardview"
         android:id="@+id/donateRL"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </android.support.v7.widget.RecyclerView>

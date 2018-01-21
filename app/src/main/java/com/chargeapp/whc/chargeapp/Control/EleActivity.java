@@ -112,7 +112,6 @@ public class EleActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                Fragment fragment=null;
                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("Elemain");
-
                if(i==0)
                {
                    elefunction.setOnItemClickListener(null);
@@ -143,7 +142,6 @@ public class EleActivity extends AppCompatActivity {
                    fragment=new EleAddBank();
                    fragmentTransaction.replace(R.id.elemain, fragment);
                    fragmentTransaction.commit();
-
                }else if(i==5){
                    Intent intent = new Intent(EleActivity.this, HowGetPrice.class);
                    startActivity(intent);
@@ -153,7 +151,6 @@ public class EleActivity extends AppCompatActivity {
                    intent.setData(Uri.parse("http://www.nknu.edu.tw/~psl/new.file/103/08/1030825reciept1.pdf"));
                    startActivity(intent);
                }
-
         }
     }
 

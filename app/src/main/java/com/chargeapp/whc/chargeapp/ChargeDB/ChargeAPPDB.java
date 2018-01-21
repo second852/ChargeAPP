@@ -82,7 +82,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + "TypeDetail");
         db.execSQL("DROP TABLE IF EXISTS " + "Consumer");
         db.execSQL("DROP TABLE IF EXISTS " + "Bank");
-        db.execSQL("DROP TABLE IF EXISTS " + "BNKTYPE");
+        db.execSQL("DROP TABLE IF EXISTS " + "BANKTYPE");
         db.execSQL("DROP TABLE IF EXISTS " + "INVOICE");
         db.execSQL("DROP TABLE IF EXISTS " + "CARRIER");
         db.execSQL("DROP TABLE IF EXISTS " + "HEARTYTEAM");

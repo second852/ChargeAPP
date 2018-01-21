@@ -1,11 +1,12 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
-
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,20 +25,23 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetail;
-import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
+import com.chargeapp.whc.chargeapp.ui.BarcodeTrackerFactory;
+import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.sql.Date;
@@ -46,48 +50,52 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+
 
 public class InsertSpend extends Fragment {
-    private EditText money, newtype, inserttypeDetail,number,detailname;
-    private CheckBox fixdate,notify,noWek;
-    private EditText secondname,name;
-    private TextView save, clear, date, saveType, clearType, showTitle,datesave;
-    private GridView gridView,showAllpicture;
+    private EditText money, newtype, inserttypeDetail, number, detailname;
+    private CheckBox fixdate, notify, noWek;
+    private EditText secondname, name;
+    private TextView save, clear, date, saveType, clearType, showTitle, datesave;
+    private GridView gridView, showAllpicture;
     private RelativeLayout insertType;
     private List<TypeVO> typeVOList;
     private SimpleAdapter adapter;
     private List<Map<String, Object>> items;
     private List<Map<String, Object>> Detailitems;
     private Map<String, Object> item;
-    private LinearLayout showPicture,showdate,showAllPL,showfixdate;
+    private LinearLayout showPicture, showdate, showAllPL, showfixdate;
     private ImageView imageTitle, imageDetatil;
-    private int imageTitleId =999,imageDetatilId =999;
+    private int imageTitleId = 999, imageDetatilId = 999;
     private boolean isType;
     private DatePicker datePicker;
     private String choicedate;
-    private Spinner choiceStatue,choiceday;
+    private Spinner choiceStatue, choiceday;
     private Gson gson;
-    private SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
     private TypeDB typeDB;
     private TypeDetail typeDetail;
-    private boolean noweek=false;
+    private boolean noweek = false;
     private ConsumerDB consumerDB;
-
+    private RelativeLayout qrcode;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.insert_spend, container, false);
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         findviewByid(view);
-        typeDB=new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetail=new TypeDetail(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumerDB=new ConsumerDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        if (MainActivity.chargeAPPDB == null) {
+            MainActivity.chargeAPPDB = new ChargeAPPDB(getActivity());
+        }
+        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetail = new TypeDetail(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumerDB = new ConsumerDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeVOList = typeDB.getAll();
         Log.d("XXXXXXX", String.valueOf(typeVOList.size()));
-
-        Detailitems=new ArrayList<Map<String, Object>>();
+        Detailitems = new ArrayList<Map<String, Object>>();
         items = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < typeVOList.size(); i++) {
             item = new HashMap<String, Object>();
@@ -112,6 +120,7 @@ public class InsertSpend extends Fragment {
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new savecomsumer());
         noWek.setOnCheckedChangeListener(new nowWekchange());
+        qrcode.setOnClickListener(new QrCodeClick());
         return view;
     }
 
@@ -134,24 +143,25 @@ public class InsertSpend extends Fragment {
         imageDetatil = view.findViewById(R.id.imageDetail);
         imageTitle = view.findViewById(R.id.imageTitle);
         showTitle = view.findViewById(R.id.showTitle);
-        showAllpicture=view.findViewById(R.id.showAllpicture);
-        datesave=view.findViewById(R.id.datesave);
-        showdate=view.findViewById(R.id.showdate);
-        datePicker=view.findViewById(R.id.datePicker);
-        showfixdate=view.findViewById(R.id.showfixdate);
-        choiceStatue=view.findViewById(R.id.choiceStatue);
-        choiceday=view.findViewById(R.id.choiceday);
-        showAllPL=view.findViewById(R.id.showAllPL);
-        number=view.findViewById(R.id.number);
-        detailname=view.findViewById(R.id.detailname);
-        notify=view.findViewById(R.id.notify);
-        noWek=view.findViewById(R.id.noWek);
-        ArrayList<String> spinneritem=new ArrayList<>();
+        showAllpicture = view.findViewById(R.id.showAllpicture);
+        datesave = view.findViewById(R.id.datesave);
+        showdate = view.findViewById(R.id.showdate);
+        datePicker = view.findViewById(R.id.datePicker);
+        showfixdate = view.findViewById(R.id.showfixdate);
+        choiceStatue = view.findViewById(R.id.choiceStatue);
+        choiceday = view.findViewById(R.id.choiceday);
+        showAllPL = view.findViewById(R.id.showAllPL);
+        number = view.findViewById(R.id.number);
+        detailname = view.findViewById(R.id.detailname);
+        notify = view.findViewById(R.id.notify);
+        noWek = view.findViewById(R.id.noWek);
+        qrcode = view.findViewById(R.id.qrcode);
+        ArrayList<String> spinneritem = new ArrayList<>();
         spinneritem.add("每天");
         spinneritem.add("每周");
         spinneritem.add("每個月");
         spinneritem.add("每年");
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, spinneritem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setAdapter(arrayAdapter);
     }
@@ -178,21 +188,18 @@ public class InsertSpend extends Fragment {
                 return;
             }
             Common.showToast(getActivity(), "新增成功");
-            if(imageTitleId==999)
-            {
-                imageTitleId=MainActivity.imageAll.length-1;
+            if (imageTitleId == 999) {
+                imageTitleId = MainActivity.imageAll.length - 1;
             }
-            if(imageDetatilId==999)
-            {
-                imageDetatilId=MainActivity.imageAll.length-1;
+            if (imageDetatilId == 999) {
+                imageDetatilId = MainActivity.imageAll.length - 1;
             }
-            typeDB.insert(new TypeVO("other",newtype.getText().toString(),imageTitleId));
-            typeDetail.insert(new TypeDetailVO(newtype.getText().toString().trim(),inserttypeDetail.getText().toString().toString(),imageDetatilId));
-            if(isType)
-            {
+            typeDB.insert(new TypeVO("other", newtype.getText().toString(), imageTitleId));
+            typeDetail.insert(new TypeDetailVO(newtype.getText().toString().trim(), inserttypeDetail.getText().toString().toString(), imageDetatilId));
+            if (isType) {
                 items.remove(items.size() - 1);
                 Map<String, Object> newitem = new HashMap<String, Object>();
-                newitem.put("image",MainActivity.imageAll[imageTitleId]);
+                newitem.put("image", MainActivity.imageAll[imageTitleId]);
                 newitem.put("text", newtype.getText().toString());
                 items.add(newitem);
                 items.add(item);
@@ -201,15 +208,15 @@ public class InsertSpend extends Fragment {
                         new int[]{R.id.image, R.id.text});
                 gridView.setAdapter(adapter);
 
-            }else{
+            } else {
                 Detailitems.remove(Detailitems.size() - 1);
                 Detailitems.remove(Detailitems.size() - 1);
                 Map<String, Object> newitem = new HashMap<String, Object>();
-                newitem.put("image",MainActivity.imageAll[imageDetatilId]);
+                newitem.put("image", MainActivity.imageAll[imageDetatilId]);
                 newitem.put("text", inserttypeDetail.getText().toString());
                 Detailitems.add(newitem);
                 newitem = new HashMap<String, Object>();
-                newitem.put("image",R.drawable.returnt);
+                newitem.put("image", R.drawable.returnt);
                 newitem.put("text", "返回");
                 Detailitems.add(newitem);
                 Detailitems.add(item);
@@ -242,10 +249,11 @@ public class InsertSpend extends Fragment {
     private class dateClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-          showdate.setVisibility(View.VISIBLE);
+            showdate.setVisibility(View.VISIBLE);
         }
 
     }
+
     private class choicePicture implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -272,11 +280,10 @@ public class InsertSpend extends Fragment {
                     setimg.setImageDrawable(image.getDrawable());
                     showAllPL.setVisibility(View.GONE);
                     insertType.setVisibility(View.VISIBLE);
-                    if(setimg.getId()==R.id.imageTitle)
-                    {
-                        imageTitleId=position;
-                    }else{
-                        imageDetatilId=position;
+                    if (setimg.getId() == R.id.imageTitle) {
+                        imageTitleId = position;
+                    } else {
+                        imageDetatilId = position;
                     }
                 }
             });
@@ -286,7 +293,7 @@ public class InsertSpend extends Fragment {
     private class choicedateClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            choicedate=datePicker.getYear()+"-"+String.valueOf(datePicker.getMonth()+1)+"-"+datePicker.getDayOfMonth();
+            choicedate = datePicker.getYear() + "-" + String.valueOf(datePicker.getMonth() + 1) + "-" + datePicker.getDayOfMonth();
             date.setText(choicedate);
             showdate.setVisibility(View.GONE);
         }
@@ -297,15 +304,11 @@ public class InsertSpend extends Fragment {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             Log.d("XXXXXXXXXXX", String.valueOf(notify.isChecked()));
-            if(b)
-            {
+            if (b) {
                 notify.setVisibility(View.VISIBLE);
                 noWek.setVisibility(View.VISIBLE);
-                notify.setX(showfixdate.getWidth()/3-250);
-                choiceStatue.setX(showfixdate.getWidth()/3+110);
-                noWek.setX(showfixdate.getWidth()/3+400);
                 choiceStatue.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 notify.setVisibility(View.GONE);
                 choiceStatue.setVisibility(View.GONE);
                 choiceday.setVisibility(View.GONE);
@@ -318,20 +321,15 @@ public class InsertSpend extends Fragment {
     private class choiceStateItem implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-            String choiceitem=adapterView.getItemAtPosition(position).toString();
-            ArrayList<String> spinneritem=new ArrayList<>();
-            if(choiceitem.equals("每天"))
-            {
+            String choiceitem = adapterView.getItemAtPosition(position).toString();
+            ArrayList<String> spinneritem = new ArrayList<>();
+            if (choiceitem.equals("每天")) {
                 choiceday.setVisibility(View.GONE);
-                notify.setX(showfixdate.getWidth()/3-250);
-                choiceStatue.setX(showfixdate.getWidth()/3+110);
-                noWek.setX(showfixdate.getWidth()/3+400);
                 noWek.setVisibility(View.VISIBLE);
                 choiceStatue.setVisibility(View.VISIBLE);
                 return;
             }
-            if(choiceitem.equals("每周"))
-            {
+            if (choiceitem.equals("每周")) {
                 spinneritem.add("星期一");
                 spinneritem.add("星期二");
                 spinneritem.add("星期三");
@@ -340,25 +338,20 @@ public class InsertSpend extends Fragment {
                 spinneritem.add("星期六");
                 spinneritem.add("星期日");
             }
-            if(choiceitem.equals("每個月"))
-            {
-                for(int i=1;i<=31;i++) {
-                    spinneritem.add("    "+String.valueOf(i)+"   ");
+            if (choiceitem.equals("每個月")) {
+                for (int i = 1; i <= 31; i++) {
+                    spinneritem.add("    " + String.valueOf(i) + "   ");
                 }
             }
-            if(choiceitem.equals("每年"))
-            {
-                for(int i=1;i<=12;i++) {
-                    spinneritem.add(" "+String.valueOf(i)+"月");
+            if (choiceitem.equals("每年")) {
+                for (int i = 1; i <= 12; i++) {
+                    spinneritem.add(" " + String.valueOf(i) + "月");
                 }
             }
-            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, spinneritem);
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
-            notify.setX(showfixdate.getWidth()/3-250);
-            choiceStatue.setX(showfixdate.getWidth()/3+110);
-            choiceday.setX(showfixdate.getWidth()/3+400);
             noWek.setVisibility(View.GONE);
         }
 
@@ -372,20 +365,20 @@ public class InsertSpend extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
             TextView t = view.findViewById(R.id.text);
-            Log.d("one",t.getText().toString());
+            Log.d("one", t.getText().toString());
             if (t.getText().toString().equals("新增種類")) {
                 showPicture.setVisibility(View.GONE);
                 insertType.setVisibility(View.VISIBLE);
                 newtype.setText(" ");
                 inserttypeDetail.setText(" ");
-                isType=true;
+                isType = true;
                 return;
             }
             name.setText(t.getText());
             showTitle.setText("選擇次項目種類");
-            Detailitems=new ArrayList<>();
+            Detailitems = new ArrayList<>();
             HashMap detailitem;
-            ArrayList<TypeDetailVO> typeDetailVOS= typeDetail.findByGroupname(t.getText().toString().trim());
+            ArrayList<TypeDetailVO> typeDetailVOS = typeDetail.findByGroupname(t.getText().toString().trim());
             for (int i = 0; i < typeDetailVOS.size(); i++) {
                 detailitem = new HashMap<String, Object>();
                 detailitem.put("image", MainActivity.imageAll[typeDetailVOS.get(i).getImage()]);
@@ -394,8 +387,8 @@ public class InsertSpend extends Fragment {
             }
             secondname.setOnClickListener(new secondnameonclick());
             detailitem = new HashMap<String, Object>();
-            detailitem.put("image",R.drawable.returnt);
-            detailitem.put("text","返回");
+            detailitem.put("image", R.drawable.returnt);
+            detailitem.put("text", "返回");
             Detailitems.add(detailitem);
             Detailitems.add(item);
             SimpleAdapter detailAdapter = new SimpleAdapter(getActivity(),
@@ -406,13 +399,13 @@ public class InsertSpend extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     TextView t = view.findViewById(R.id.text);
-                    Log.d("two",t.getText().toString());
+                    Log.d("two", t.getText().toString());
                     if (t.getText().toString().equals("新增種類")) {
                         showPicture.setVisibility(View.GONE);
                         insertType.setVisibility(View.VISIBLE);
                         newtype.setText(name.getText());
                         inserttypeDetail.setText(" ");
-                        isType=false;
+                        isType = false;
                         return;
                     }
                     if (t.getText().toString().equals("返回")) {
@@ -440,10 +433,8 @@ public class InsertSpend extends Fragment {
         }
     }
 
-    private String isnull(Object text)
-    {
-        if(text==null||text.toString().length()<=0)
-        {
+    private String isnull(Object text) {
+        if (text == null || text.toString().length() <= 0) {
             return " ";
         }
         return text.toString();
@@ -456,66 +447,57 @@ public class InsertSpend extends Fragment {
 
             name.setBackgroundColor(Color.parseColor("#FFEE99"));
             secondname.setBackgroundColor(Color.parseColor("#FFEE99"));
-            if(name.getText().toString().trim()==null||name.getText().toString().trim().length()==0)
-            {
+            if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(),"主項目不能空白");
+                Common.showToast(getActivity(), "主項目不能空白");
                 return;
             }
-            if(secondname.getText().toString().trim()==null||secondname.getText().toString().trim().length()==0)
-            {
+            if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
                 secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(),"次項目不能空白");
+                Common.showToast(getActivity(), "次項目不能空白");
                 return;
             }
-            if(money.getText().toString().trim()==null||money.getText().toString().trim().length()==0)
-            {
+            if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
                 money.setError("金額不能空白");
                 return;
             }
-            if(date.getText().toString().trim()==null||date.getText().toString().trim().length()==0)
-            {
+            if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
                 name.setError(" ");
-                Common.showToast(getActivity(),"日期不能空白");
+                Common.showToast(getActivity(), "日期不能空白");
                 return;
             }
-            if(showdate.getVisibility()==View.VISIBLE||showPicture.getVisibility()==View.VISIBLE||showAllPL.getVisibility()==View.VISIBLE)
-            {
+            if (showdate.getVisibility() == View.VISIBLE || showPicture.getVisibility() == View.VISIBLE || showAllPL.getVisibility() == View.VISIBLE) {
                 return;
             }
-            String CheckNul=number.getText().toString();
-            if(CheckNul.trim().length()>0)
-            {
-                if(CheckNul.length()!=10)
-                {
+            String CheckNul = number.getText().toString();
+            if (CheckNul.trim().length() > 0) {
+                if (CheckNul.length() != 10) {
                     number.setError("統一發票中英文10個號碼");
                     return;
                 }
                 try {
                     new Integer(CheckNul.substring(2));
-                }catch (NumberFormatException e)
-                {
-                   number.setError("統一發票後8碼為數字");
+                } catch (NumberFormatException e) {
+                    number.setError("統一發票後8碼為數字");
                     return;
                 }
-                int sN=(int)CheckNul.charAt(0);
-                int eN=(int)CheckNul.charAt(1);
-                if(sN<65||sN>90||eN<65||eN>90)
-                {
+                int sN = (int) CheckNul.charAt(0);
+                int eN = (int) CheckNul.charAt(1);
+                if (sN < 65 || sN > 90 || eN < 65 || eN > 90) {
                     number.setError("統一發票號前2碼為大寫英文字母");
                     return;
                 }
             }
-            gson=new Gson();
-            Map<String,String> g=new HashMap<>();
-            g.put("choicestatue",isnull(choiceStatue.getSelectedItem().toString()));
-            g.put("choicedate",isnull(choiceday.getSelectedItem()));
-            g.put("noweek",String.valueOf(noweek));
-            String fixdatedetail=gson.toJson(g);
-            Calendar c=Calendar.getInstance();
-            c.set(datePicker.getYear(),datePicker.getMonth(),datePicker.getDayOfMonth());
-            Date d= new Date(c.getTimeInMillis());
-            ConsumeVO consumeVO=new ConsumeVO();
+            gson = new Gson();
+            Map<String, String> g = new HashMap<>();
+            g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString()));
+            g.put("choicedate", isnull(choiceday.getSelectedItem()));
+            g.put("noweek", String.valueOf(noweek));
+            String fixdatedetail = gson.toJson(g);
+            Calendar c = Calendar.getInstance();
+            c.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+            Date d = new Date(c.getTimeInMillis());
+            ConsumeVO consumeVO = new ConsumeVO();
             consumeVO.setMaintype(name.getText().toString());
             consumeVO.setSecondType(secondname.getText().toString());
             consumeVO.setMoney(money.getText().toString());
@@ -527,7 +509,7 @@ public class InsertSpend extends Fragment {
             consumeVO.setDetailname(detailname.getText().toString());
             consumeVO.setIsWin("0");
             consumerDB.insert(consumeVO);
-            Common.showToast(getActivity(),"新增成功");
+            Common.showToast(getActivity(), "新增成功");
             Log.d("XXXXXXXXXXX", String.valueOf(consumeVO.getNotify()));
         }
     }
@@ -544,13 +526,13 @@ public class InsertSpend extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     TextView t = view.findViewById(R.id.text);
-                    Log.d("two",t.getText().toString());
+                    Log.d("two", t.getText().toString());
                     if (t.getText().toString().equals("新增種類")) {
                         showPicture.setVisibility(View.GONE);
                         insertType.setVisibility(View.VISIBLE);
                         newtype.setText(name.getText());
                         inserttypeDetail.setText(" ");
-                        isType=false;
+                        isType = false;
                         return;
                     }
                     if (t.getText().toString().equals("返回")) {
@@ -570,14 +552,74 @@ public class InsertSpend extends Fragment {
     private class nowWekchange implements CompoundButton.OnCheckedChangeListener {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            if(noWek.isChecked())
-            {
-                noweek=true;
+            if (noWek.isChecked()) {
+                noweek = true;
 
-            }else{
-                noweek=false;
+            } else {
+                noweek = false;
             }
         }
     }
+
+    private class QrCodeClick implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            BarcodeGraphic.hashMap = new HashMap<>();
+            Intent intent = new Intent(InsertSpend.this.getActivity(), MultiTrackerActivity.class);
+            startActivityForResult(intent, 0);
+        }
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                HashMap<Integer, String> contents = BarcodeGraphic.hashMap;
+                String all = BarcodeGraphic.hashMap.get(1).trim() + BarcodeGraphic.hashMap.get(2).trim();
+                String[] EleNulAll = all.split(":");
+                String EleNul = EleNulAll[0].substring(0, 10);
+                String day = EleNulAll[0].substring(10, 17);
+                String m = EleNulAll[0].substring(29, 37);
+                String westday = (Integer.valueOf(day.substring(0, 3)) + 1911) + "-" + day.substring(3, 5) + "-" + day.substring(5);
+                money.setText(String.valueOf(Integer.parseInt(m, 16)));
+                number.setText(EleNul);
+                date.setText(westday);
+                StringBuffer sb = new StringBuffer();
+                if (EleNulAll[4].equals("2")) {
+                    try {
+                        String base64 = EleNulAll[5];
+                        byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
+                        if (EleNulAll[3].equals("1")) {
+                            sb.append(new String(bytes, "UTF-8") + "/1/" + money.getText().toString());
+                        } else {
+                            String debase64 = new String(bytes, "UTF-8");
+                            String[] ddd = debase64.trim().split(":");
+                            for (int j = 0; j < ddd.length; j = j + 2) {
+                                sb.append(ddd[j] + "/" + ddd[j + 1] + "/" + ddd[j + 2] + " ");
+                            }
+                        }
+                    } catch (Exception e) {
+                        Common.showToast(getActivity(), e.getMessage());
+                    }
+                } else {
+                    if (EleNulAll[3].equals("1")) {
+                        sb.append(EleNulAll[5] + "/1/" + money.getText().toString());
+                    } else {
+                        for (int i = 5; i < EleNulAll.length; i = i + 3) {
+                            sb.append(EleNulAll[i]+"/"+EleNulAll[i+1]+"/"+EleNulAll[i+2]+" ");
+                        }
+                    }
+                }
+                detailname.setText(sb.toString());
+            }
+        } else if (resultCode == RESULT_CANCELED) {
+            // To Handle cancel
+            Log.i("App", "Scan unsuccessful");
+        }
+    }
 }
+
+
+
 

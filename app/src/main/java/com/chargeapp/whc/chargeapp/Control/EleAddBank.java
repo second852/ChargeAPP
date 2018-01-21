@@ -1,12 +1,16 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.PendingIntent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JsResult;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -37,6 +41,8 @@ public class EleAddBank extends Fragment {
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOS;
     private CarrierVO carrierVO;
+    public String url;
+    private SwipeRefreshLayout reSw;
 
 
     @Nullable
@@ -47,6 +53,15 @@ public class EleAddBank extends Fragment {
         setSpinner();
         myProgressBar.setVisibility(View.GONE);
         enter.setOnClickListener(new CliientListener());
+        reSw.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierBankAccBlank?UUID=second&appID=EINV3201711184648&CardCode=3J0002&";
+                url=url+"CardNo="+carrierVO.getCarNul()+"&VerifyCode="+carrierVO.getPassword();
+                webViewSetting();
+                showError.setVisibility(View.GONE);
+            }
+        });
         return view;
     }
 
@@ -69,23 +84,52 @@ public class EleAddBank extends Fragment {
     }
 
 
-    private void webViewSetting(String url) {
+    private void webViewSetting() {
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setBuiltInZoomControls(true);//设置缩放按钮
         webView.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setAllowContentAccess(true);
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+                webView.loadUrl(EleAddBank.this.url);
+                return super.onJsAlert(view, url, message, result);
+            }
+        });
         webView.setWebViewClient(new WebViewClient(){
             boolean showerror= false;
+            boolean first=true;
+            boolean seconderror=false;
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                myProgressBar.setVisibility(View.VISIBLE);
-                webView.setVisibility(View.GONE);
-                Common.showToast(getActivity(),"正在連線");
+                if(first)
+                {
+                    myProgressBar.setVisibility(View.VISIBLE);
+                    webView.setVisibility(View.GONE);
+                    Common.showToast(getActivity(),"正在連線!");
+                }else {
+                    myProgressBar.setVisibility(View.VISIBLE);
+                    webView.setVisibility(View.GONE);
+                    Common.showToast(getActivity(),"正在更新!");
+                }
+
             }
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
-                showerror=true;
+                if(first)
+                {
+                    showerror=true;
+                }else {
+                    showerror=false;
+                    seconderror=true;
+                }
+
+
             }
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -95,12 +139,28 @@ public class EleAddBank extends Fragment {
                 {
                     showError.setVisibility(View.VISIBLE);
                     webView.setVisibility(View.GONE);
-                    Common.showLongToast(getActivity(),"連線失敗");
+                    Common.showLongToast(getActivity(),"連線失敗!請確認網路狀態!");
                     return;
                 }
-                myProgressBar.setVisibility(View.GONE);
-                webView.setVisibility(View.VISIBLE);
-                Common.showLongToast(getActivity(),"連線成功");
+                if(seconderror)
+                {
+                    showError.setVisibility(View.VISIBLE);
+                    webView.setVisibility(View.GONE);
+                    Common.showLongToast(getActivity(),"更新失敗!請確認網路狀態!");
+                    return;
+                }
+                if(first)
+                {
+                    myProgressBar.setVisibility(View.GONE);
+                    webView.setVisibility(View.VISIBLE);
+                    Common.showLongToast(getActivity(),"連線成功!");
+                    first=false;
+                }else{
+                    myProgressBar.setVisibility(View.GONE);
+                    webView.setVisibility(View.VISIBLE);
+                    Common.showLongToast(getActivity(),"更新成功!");
+                }
+
             }
         });
         webView.loadUrl(url);
@@ -113,14 +173,16 @@ public class EleAddBank extends Fragment {
         showError=view.findViewById(R.id.showError);
         carrier=view.findViewById(R.id.carrier);
         enter=view.findViewById(R.id.enter);
+        reSw=view.findViewById(R.id.reSw);
     }
 
     private class CliientListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierBankAccBlank?UUID=second&appID=EINV3201711184648&CardCode=3J0002&";
+            url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierBankAccBlank?UUID=second&appID=EINV3201711184648&CardCode=3J0002&";
             url=url+"CardNo="+carrierVO.getCarNul()+"&VerifyCode="+carrierVO.getPassword();
-            webViewSetting(url);
+            webViewSetting();
+            showError.setVisibility(View.GONE);
         }
     }
     private class choiceStateItem implements AdapterView.OnItemSelectedListener {

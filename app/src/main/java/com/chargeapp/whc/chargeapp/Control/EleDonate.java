@@ -82,6 +82,7 @@ public class EleDonate extends Fragment {
         save.setOnClickListener(new uploadheraty());
         searchI.setOnClickListener(new searchHeartyTeam());
         returnSH.setOnClickListener(new retrinDonateM());
+
         return view;
     }
 
@@ -115,6 +116,8 @@ public class EleDonate extends Fragment {
             get1= new GetSQLDate(this).execute("GetToday");
             progressDialog.setMessage("正在更新資料,請稍候...");
             progressDialog.show();
+        }else {
+            setlayout();
         }
 
     }

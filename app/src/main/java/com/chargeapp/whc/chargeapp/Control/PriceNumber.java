@@ -44,8 +44,6 @@ public class PriceNumber extends Fragment {
     private SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     private PriceVO priceVO;
 
-
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -131,43 +129,46 @@ public class PriceNumber extends Fragment {
     }
 
     private void setNul() {
-        superN.setText(priceVO.getSuperPrizeNo());
-        spcN.setText(priceVO.getSpcPrizeNo());
-        firstN.setText(priceVO.getFirstPrizeNo1()+"\n"+priceVO.getFirstPrizeNo2()+"\n"+priceVO.getFirstPrizeNo3());
-        StringBuffer sb=new StringBuffer();
-        if(!priceVO.getSixthPrizeNo1().equals("0"))
+        if(priceVO!=null)
         {
-            sb.append(priceVO.getSixthPrizeNo1());
+            superN.setText(priceVO.getSuperPrizeNo());
+            spcN.setText(priceVO.getSpcPrizeNo());
+            firstN.setText(priceVO.getFirstPrizeNo1()+"\n"+priceVO.getFirstPrizeNo2()+"\n"+priceVO.getFirstPrizeNo3());
+            StringBuffer sb=new StringBuffer();
+            if(!priceVO.getSixthPrizeNo1().equals("0"))
+            {
+                sb.append(priceVO.getSixthPrizeNo1());
+            }
+            if(!priceVO.getSixthPrizeNo2().equals("0"))
+            {
+                sb.append(","+priceVO.getSixthPrizeNo2());
+            }
+            if(!priceVO.getSixthPrizeNo3().equals("0"))
+            {
+                sb.append(","+priceVO.getSixthPrizeNo3());
+            }
+            if(!priceVO.getSixthPrizeNo3().equals("0"))
+            {
+                sb.append(","+priceVO.getSixthPrizeNo1());
+            }
+            if(!priceVO.getSixthPrizeNo4().equals("0"))
+            {
+                sb.append(","+priceVO.getSixthPrizeNo4());
+            }
+            if(!priceVO.getSixthPrizeNo5().equals("0"))
+            {
+                sb.append(","+priceVO.getSixthPrizeNo5());
+            }
+            if(!priceVO.getSixthPrizeNo6().equals("0"))
+            {
+                sb.append(","+priceVO.getSixthPrizeNo6());
+            }
+            if(sb.toString().trim().length()<=0)
+            {
+                sb.append("本期無加開號碼");
+            }
+            addsixN.setText(sb.toString());
         }
-        if(!priceVO.getSixthPrizeNo2().equals("0"))
-        {
-            sb.append(","+priceVO.getSixthPrizeNo2());
-        }
-        if(!priceVO.getSixthPrizeNo3().equals("0"))
-        {
-            sb.append(","+priceVO.getSixthPrizeNo3());
-        }
-        if(!priceVO.getSixthPrizeNo3().equals("0"))
-        {
-            sb.append(","+priceVO.getSixthPrizeNo1());
-        }
-        if(!priceVO.getSixthPrizeNo4().equals("0"))
-        {
-            sb.append(","+priceVO.getSixthPrizeNo4());
-        }
-        if(!priceVO.getSixthPrizeNo5().equals("0"))
-        {
-            sb.append(","+priceVO.getSixthPrizeNo5());
-        }
-        if(!priceVO.getSixthPrizeNo6().equals("0"))
-        {
-            sb.append(","+priceVO.getSixthPrizeNo6());
-        }
-        if(sb.toString().trim().length()<=0)
-        {
-            sb.append("本期無加開號碼");
-        }
-        addsixN.setText(sb.toString());
     }
 
 

@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/choiceitem"
         android:scrollbars="vertical"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         >
 
         <LinearLayout
@@ -23,6 +23,55 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <RelativeLayout
+                android:id="@+id/qrcode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/qrcode"
+                    android:layout_toLeftOf="@+id/qrText"
+                    />
+                <TextView
+                    android:id="@+id/qrText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:text="QRCode輸入"
+                    android:textColor="#000000"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="20sp" />
+            </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:text="發票輸入"
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/number"
+                    android:layout_width="200dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="25dp"
+                    android:background="#FFEE99"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:hint="HF12345678"
+                    android:textColorHint="#AAAAAA" />
+            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -144,15 +193,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:orientation="horizontal">
-
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="65dp"
-                    android:text="明細"
-                    android:textColor="#000000"
-                    android:textSize="20sp" />
-
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="65dp"
+                        android:text="明細"
+                        android:textColor="#000000"
+                        android:textSize="20sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="26dp"
+                        android:text="(名/數量/單價)"
+                        android:textColor="#e60000"
+                        android:textSize="12sp" />
+                </LinearLayout>
                 <EditText
                     android:id="@+id/detailname"
                     android:layout_width="200dp"
@@ -162,35 +222,10 @@
                     android:inputType="text"
                     android:singleLine="true"
                     android:textColor="#000000"
+                    android:layout_gravity="center"
                     android:textColorHint="#AAAAAA" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:text="發票輸入"
-                    android:textColor="#000000"
-                    android:textSize="20sp" />
-
-                <EditText
-                    android:id="@+id/number"
-                    android:layout_width="200dp"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="25dp"
-                    android:background="#FFEE99"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:textColor="#000000"
-                    android:hint="HF12345678"
-                    android:textColorHint="#AAAAAA" />
-            </LinearLayout>
 
 
             <LinearLayout
@@ -216,17 +251,21 @@
                     >
                     <CheckBox
                         android:id="@+id/notify"
+                        android:layout_centerVertical="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:buttonTint="#000000"
                         android:text="提醒繳費"
+                        android:layout_toLeftOf="@+id/choiceStatue"
+                        android:layout_alignParentLeft="true"
                         android:visibility="gone"
                         android:textColor="#000000"
                         android:textSize="20sp" />
                     <Spinner
                         android:id="@+id/choiceStatue"
                         android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
                         android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -238,15 +277,18 @@
                         android:layout_centerVertical="true"
                         android:visibility="gone"
                         android:theme="@style/spinner"
+                        android:layout_toRightOf="@+id/choiceStatue"
                         android:layout_height="wrap_content"/>
                     <CheckBox
                         android:id="@+id/noWek"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
                         android:buttonTint="#000000"
                         android:text="假日除外"
                         android:visibility="gone"
+                        android:layout_toRightOf="@+id/choiceStatue"
                         android:textColor="#000000"
                         android:textSize="20sp" />
                 </RelativeLayout>

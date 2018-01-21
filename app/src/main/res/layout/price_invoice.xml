@@ -6,14 +6,13 @@
     android:background="#ffffff"
     >
     <TextView
-        android:layout_marginTop="10dp"
-        android:textStyle="bold"
+        android:layout_marginTop="2dp"
         android:background="#ffffff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/choiceitem"
         android:gravity="center"
-        android:textSize="18dp"
+        android:textSize="15dp"
         android:id="@+id/showRemain"
         android:textColor="#FF0000"
         />
@@ -93,10 +92,10 @@
     <RelativeLayout
         android:id="@+id/DRtittle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="35dp"
         android:orientation="horizontal"
         android:layout_below="@+id/PIdateL"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:background="#FFBB66"
         android:padding="6dp">
         <TextView
@@ -106,17 +105,17 @@
             android:layout_gravity="center"
             android:layout_centerVertical="true"
             android:textColor="#000000"
-            android:text="日期"
-            android:textSize="20sp"
-            android:layout_marginLeft="40dp"
+            android:text="種類/日期"
+            android:textSize="18sp"
+            android:layout_marginLeft="30dp"
             />
         <TextView
             android:id="@+id/DRnul"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"
-            android:textSize="20sp"
-            android:layout_marginLeft="50dp"
+            android:textSize="18sp"
+            android:layout_marginLeft="30dp"
             android:text="統一編號"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/DRdate"
@@ -127,10 +126,10 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/DRnul"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="30dp"
             android:textColor="#000000"
-            android:text="獎項"
-            android:textSize="20sp"
+            android:text="獎項/獎金"
+            android:textSize="18sp"
             />
     </RelativeLayout>
     <TextView

@@ -389,8 +389,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         try {
             InvoiceVO invoiceVO;
             JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
-            Type cdType = new TypeToken<List<JsonObject>>() {
-            }.getType();
+            Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
             String s = js.get("details").toString();
             List<JsonObject> b = gson.fromJson(s, cdType);
             for (JsonObject j : b) {
@@ -455,8 +454,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         HttpURLConnection conn=null;
         try {
             conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setReadTimeout(1500);
-            conn.setConnectTimeout(1500);
+            conn.setReadTimeout(5000);
+            conn.setConnectTimeout(5000);
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);

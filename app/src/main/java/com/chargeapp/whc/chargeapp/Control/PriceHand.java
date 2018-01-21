@@ -39,7 +39,7 @@ import java.util.List;
 
 public class PriceHand extends Fragment {
     private ImageView PIdateAdd, PIdateCut;
-    private TextView priceMessage, PIdateTittle, inputNul;
+    private TextView priceTitle, PIdateTittle, inputNul;
     private RecyclerView donateRL;
     private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private Calendar now = Calendar.getInstance();
@@ -49,7 +49,6 @@ public class PriceHand extends Fragment {
     private String message = "";
     private List<PriceVO> priceVOS;
     private HashMap<String,String> levelPrice;
-    private String[] level={"first","second","third","fourth","fifth","sixth"};
 
 
     @Nullable
@@ -57,7 +56,6 @@ public class PriceHand extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_hand, container, false);
         findViewById(view);
-        priceMessage.setText("中獎訊息");
         setMonText(now, "in");
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
@@ -106,37 +104,37 @@ public class PriceHand extends Fragment {
             message=null;
             if (priceVO != null) {
                 if (nul.equals(priceVO.getSuperPrizeNo().substring(5))) {
-                   message="特別獎?\n"+priceVO.getSuperPrizeNo()+"\n獎金一千萬";
+                   message="特別獎?"+priceVO.getSuperPrizeNo()+"\n獎金一千萬";
                 }
                 if (nul.equals(priceVO.getSpcPrizeNo().substring(5))) {
-                    message="特獎?\n"+priceVO.getSuperPrizeNo()+"\n獎金兩百萬";
+                    message="特獎?"+priceVO.getSpcPrizeNo()+"\n獎金兩百萬";
                 }
                 if ( nul.equals(priceVO.getFirstPrizeNo1().substring(5))) {
-                    message="頭獎?\n"+priceVO.getFirstPrizeNo1()+"\n獎金20萬";
+                    message="頭獎?"+priceVO.getFirstPrizeNo1()+"\n獎金20萬";
                 }
                 if (nul.equals(priceVO.getFirstPrizeNo2().substring(5))) {
-                    message="頭獎?\n"+priceVO.getFirstPrizeNo2()+"\n獎金20萬";;
+                    message="頭獎?"+priceVO.getFirstPrizeNo2()+"\n獎金20萬";;
                 }
                 if (nul.equals(priceVO.getFirstPrizeNo3().substring(5))) {
-                   message="頭獎?\n"+priceVO.getFirstPrizeNo3()+"\n獎金20萬";
+                   message="頭獎?"+priceVO.getFirstPrizeNo3()+"\n獎金20萬";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo1())) {
-                   message="六獎\n"+priceVO.getSixthPrizeNo1()+"\n獎金200";
+                   message="六獎"+priceVO.getSixthPrizeNo1()+"\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo2())) {
-                    message="六獎\n"+priceVO.getSixthPrizeNo2()+"\n獎金200";
+                    message="六獎"+priceVO.getSixthPrizeNo2()+"\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo3())) {
-                    message="六獎\n"+priceVO.getSixthPrizeNo3()+"\n獎金200";
+                    message="六獎"+priceVO.getSixthPrizeNo3()+"\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo4())) {
-                    message="六獎\n"+priceVO.getSixthPrizeNo4()+"\n獎金200";
+                    message="六獎"+priceVO.getSixthPrizeNo4()+"\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo5())) {
-                    message="六獎\n"+priceVO.getSixthPrizeNo5()+"\n獎金200";
+                    message="六獎"+priceVO.getSixthPrizeNo5()+"\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo6())) {
-                    message="六獎\n"+priceVO.getSixthPrizeNo6()+"\n獎金200";
+                    message="六獎"+priceVO.getSixthPrizeNo6()+"\n獎金200";
                 }
             }
             allMessage.put(i,message);
@@ -169,10 +167,10 @@ public class PriceHand extends Fragment {
             Spannable content = new SpannableString(totalmessage);
             content.setSpan(new ForegroundColorSpan(Color.RED), redE, redF, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             content.setSpan(new ForegroundColorSpan(Color.MAGENTA), printF, printE, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            priceMessage.setText(content);
+            priceTitle.setText(content);
             return;
         }else {
-            priceMessage.setText("沒有中獎!再接再厲!");
+            priceTitle.setText("沒有中獎!再接再厲!");
         }
 
     }
@@ -266,7 +264,7 @@ public class PriceHand extends Fragment {
         month = now.get(Calendar.MONTH);
         year = now.get(Calendar.YEAR);
         donateRL = view.findViewById(R.id.donateRL);
-        priceMessage = view.findViewById(R.id.priceMessage);
+        priceTitle = view.findViewById(R.id.priceTitle);
         PIdateAdd = view.findViewById(R.id.PIdateAdd);
         PIdateCut = view.findViewById(R.id.PIdateCut);
         PIdateTittle = view.findViewById(R.id.PIdateTittle);
@@ -376,7 +374,7 @@ public class PriceHand extends Fragment {
                     }
                     if (message.length() > 3) {
                         message = number;
-                        priceMessage.setText("中獎訊息");
+                        priceTitle.setText("請輸入末三碼");
                     }
                     content = new SpannableString(message);
                     content.setSpan(new UnderlineSpan(), message.length() - 1, content.length(), 0);

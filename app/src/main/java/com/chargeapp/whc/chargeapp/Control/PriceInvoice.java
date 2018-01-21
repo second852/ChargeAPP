@@ -57,6 +57,7 @@ public class PriceInvoice extends Fragment {
     private Calendar now = Calendar.getInstance();
     private int month, year;
     private SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+    private SimpleDateFormat sf = new SimpleDateFormat("M/dd");
     private String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
     public static AsyncTask<Object, Integer, String> getGetSQLDate1;
     public static AsyncTask<Object, Integer, String> getGetSQLDate2;
@@ -118,14 +119,14 @@ public class PriceInvoice extends Fragment {
 
     private HashMap<String,String> getHashLP() {
         HashMap<String,String> hashMap=new HashMap<>();
-        hashMap.put("super","特別獎 :1000萬元");
-        hashMap.put("spc","特獎 : 200萬元");
-        hashMap.put("first","頭獎 : 20萬元");
-        hashMap.put("second","二獎 : 4萬元");
-        hashMap.put("third","三獎 : 1萬元");
-        hashMap.put("fourth","四獎 : 4千元");
-        hashMap.put("fifth","五獎 : 1千元");
-        hashMap.put("sixth","六獎 : 200元");
+        hashMap.put("super","特別獎\n1000萬元");
+        hashMap.put("spc","特獎\n200萬元");
+        hashMap.put("first","頭獎\n20萬元");
+        hashMap.put("second","二獎\n4萬元");
+        hashMap.put("third","三獎\n1萬元");
+        hashMap.put("fourth","四獎\n4千元");
+        hashMap.put("fifth","五獎\n1千元");
+        hashMap.put("sixth","六獎\n200元");
         return hashMap;
     }
 
@@ -506,7 +507,9 @@ public class PriceInvoice extends Fragment {
                 iswin=invoiceVO.getIswin();
             }else{
                 ConsumeVO consumeVO= (ConsumeVO) object;
-                title="實體發票";
+                Calendar calendar=Calendar.getInstance();
+                calendar.setTime(consumeVO.getDate());
+                title=sf.format(consumeVO.getDate())+"\n實體發票";
                 nul=consumeVO.getNumber();
                 message=levelprice.get(consumeVO.getIsWin());
                 iswin=consumeVO.getIsWin();
