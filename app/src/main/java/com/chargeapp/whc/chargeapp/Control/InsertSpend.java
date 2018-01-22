@@ -564,6 +564,7 @@ public class InsertSpend extends Fragment {
     private class QrCodeClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            MultiTrackerActivity.refresh=true;
             BarcodeGraphic.hashMap = new HashMap<>();
             Intent intent = new Intent(InsertSpend.this.getActivity(), MultiTrackerActivity.class);
             startActivityForResult(intent, 0);

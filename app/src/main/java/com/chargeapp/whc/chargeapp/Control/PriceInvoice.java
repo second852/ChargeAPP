@@ -83,23 +83,6 @@ public class PriceInvoice extends Fragment {
         DRcut.setOnClickListener(new cutOnClick());
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
-        Calendar calendar=new GregorianCalendar(2017,8,1);
-        long s=calendar.getTimeInMillis();
-        String show=sd.format(new Date(s));
-        Date dd=new Date(s);
-        long a=dd.getTime();
-        calendar=new GregorianCalendar(2017,9,31);
-        long e=calendar.getTimeInMillis();
-        show=sd.format(new Date(e));
-        dd=new Date(e);
-        a=dd.getTime();
-        List<ConsumeVO> consumeVOS=consumerDB.getAll();
-        int i=1;
-        for (ConsumeVO c:consumeVOS)
-        {
-
-            Log.d("XXXXXXX",sd.format(c.getDate())+":"+c.getIsWin()+":"+c.getNumber());
-        }
         return view;
     }
 
