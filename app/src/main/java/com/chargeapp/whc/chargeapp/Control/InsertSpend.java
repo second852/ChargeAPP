@@ -30,6 +30,8 @@ import android.widget.Toast;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
+import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetail;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
@@ -603,7 +605,9 @@ public class InsertSpend extends Fragment {
                     } catch (Exception e) {
                         Common.showToast(getActivity(), e.getMessage());
                     }
-                } else {
+                } else if(EleNulAll[4].equals("0")) {
+                    new SetupDateBase64(this).execute("getThisDetail");
+                }else {
                     if (EleNulAll[3].equals("1")) {
                         sb.append(EleNulAll[5] + "/1/" + money.getText().toString());
                     } else {

@@ -17,6 +17,7 @@ import android.widget.SimpleAdapter;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetail;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
@@ -67,9 +68,11 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         askPermissions();
+
 //        deleteDatabase("ChargeAPP");
         if (chargeAPPDB == null) {
             setdate();
+            new SetupDateBase64(this).execute("getThisDetail");
         }
         setContentView(R.layout.activity_main);
         List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();

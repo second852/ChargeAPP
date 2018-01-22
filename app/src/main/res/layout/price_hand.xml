@@ -62,7 +62,7 @@
             android:textSize="20sp" />
 
         <TextView
-            android:id="@+id/DRnul"
+            android:id="@+id/QrCodeA"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -77,7 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="50dp"
-            android:layout_toRightOf="@+id/DRnul"
+            android:layout_toRightOf="@+id/QrCodeA"
             android:text="聲音"
             android:textColor="#000000"
             android:textSize="20sp" />

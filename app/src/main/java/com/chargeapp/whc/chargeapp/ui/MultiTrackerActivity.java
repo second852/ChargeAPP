@@ -25,11 +25,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chargeapp.whc.chargeapp.R;
@@ -57,7 +61,7 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     private CameraSource mCameraSource = null;
     private CameraSourcePreview mPreview;
     private GraphicOverlay mGraphicOverlay;
-
+    public static TextView answer;
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -65,9 +69,15 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.main);
-
+        answer=findViewById(R.id.answer);
         mPreview = (CameraSourcePreview) findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
+        if(refresh)
+        {
+            answer.setVisibility(View.GONE);
+        }else {
+            answer.setVisibility(View.VISIBLE);
+        }
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
@@ -108,6 +118,8 @@ public final class MultiTrackerActivity extends AppCompatActivity {
                 .setAction("ok", listener)
                 .show();
     }
+
+
 
 
 
@@ -270,4 +282,5 @@ public final class MultiTrackerActivity extends AppCompatActivity {
             }
         }
     }
+
 }

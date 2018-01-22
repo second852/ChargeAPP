@@ -1,6 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -39,7 +41,7 @@ import java.util.List;
 
 public class PriceHand extends Fragment {
     private ImageView PIdateAdd, PIdateCut;
-    private TextView priceTitle, PIdateTittle, inputNul;
+    private TextView priceTitle, PIdateTittle, inputNul,QrCodeA;
     private RecyclerView donateRL;
     private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private Calendar now = Calendar.getInstance();
@@ -59,6 +61,14 @@ public class PriceHand extends Fragment {
         setMonText(now, "in");
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
+        QrCodeA.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MultiTrackerActivity.refresh=false;
+                Intent intent = new Intent(getActivity(), MultiTrackerActivity.class);
+                startActivity(intent);
+            }
+        });
         donateRL.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         List<String> number = getInputN();
         donateRL.setAdapter(new InputAdapter(getActivity(), number));
@@ -270,6 +280,7 @@ public class PriceHand extends Fragment {
         PIdateTittle = view.findViewById(R.id.PIdateTittle);
         donateRL = view.findViewById(R.id.donateRL);
         inputNul = view.findViewById(R.id.inputNul);
+        QrCodeA=view.findViewById(R.id.QrCodeA);
     }
 
 
@@ -318,7 +329,7 @@ public class PriceHand extends Fragment {
 
             MyViewHolder(View itemView) {
                 super(itemView);
-                day = itemView.findViewById(R.id.DRnul);
+                day = itemView.findViewById(R.id.QrCodeA);
                 cardview = itemView.findViewById(R.id.cardview);
             }
         }

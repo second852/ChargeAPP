@@ -77,12 +77,34 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                    }
                    seria++;
                }
+            }else if("getThisDetail".equals(action))
+            {
+                jsonIn=getThisDate();
             }
         } catch (Exception e) {
             Log.e(TAG, e.toString());
             return "InterError";
         }
         return jsonIn;
+    }
+
+    private String getThisDate() throws IOException {
+        HashMap<String,String> data=new HashMap<>();
+        data.put("version","0.3");
+        data.put("type","Barcode");
+        data.put("invNum","ZK18917231");
+        data.put("action","qryInvDetail");
+        data.put("generation","V2");
+        data.put("invTerm","10702");
+        data.put("invDate","2018/01/09");
+        data.put("encrypt"," ");
+        data.put("sellerID","02610485");
+        data.put("UUID","second");
+        data.put("randomNumber","7456");
+        data.put("appID",appId);
+        String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp?";
+        String j=getRemoteData(url,data);
+       return j;
     }
 
     private HashMap<String,String> getupdateHeartyTeam(int seriel,InvoiceVO invoiceVO) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {

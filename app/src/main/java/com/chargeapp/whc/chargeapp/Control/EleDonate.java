@@ -212,7 +212,7 @@ public class EleDonate extends Fragment {
             MyViewHolder(View itemView) {
                 super(itemView);
                 checkdonate = itemView.findViewById(R.id.DRdate);
-                day = itemView.findViewById(R.id.DRnul);
+                day = itemView.findViewById(R.id.QrCodeA);
                 nul = itemView.findViewById(R.id.DRamout);
                 amount = itemView.findViewById(R.id.eleamount);
             }

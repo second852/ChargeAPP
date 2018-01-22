@@ -110,7 +110,7 @@
             android:layout_marginLeft="30dp"
             />
         <TextView
-            android:id="@+id/DRnul"
+            android:id="@+id/QrCodeA"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#000000"
@@ -125,7 +125,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/DRnul"
+            android:layout_toRightOf="@+id/QrCodeA"
             android:layout_marginLeft="30dp"
             android:textColor="#000000"
             android:text="獎項/獎金"
