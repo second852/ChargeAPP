@@ -122,6 +122,10 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
      * relevant portions of the overlay to trigger a redraw.
      */
     void updateItem(Barcode barcode) {
+        if(barcode.format!=256)
+        {
+            return;
+        }
         mBarcode = barcode;
         Log.d("XXXXXX1", barcode.rawValue);
         if (MultiTrackerActivity.refresh) {

@@ -15,9 +15,11 @@ import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.PriceActivity;
 import com.chargeapp.whc.chargeapp.Control.PriceHand;
 import com.chargeapp.whc.chargeapp.Control.PriceInvoice;
+import com.chargeapp.whc.chargeapp.Control.SelectChartAll;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
+import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -51,12 +53,16 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private CarrierDB carrierDB;
     private String user, password;
     private SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
+    private TypeDetail typeDetail;
     private String action;
+    private List<TypeDetailVO> typeDetailVOS;
 
     public GetSQLDate(Object object) {
         this.object = object;
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetail=new TypeDetail(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetailVOS=typeDetail.getHaveDetailTypdAll();
     }
 
     @Override
@@ -150,6 +156,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             }else if(action.equals("getNeWPrice"))
             {
                 jsonIn=searchNewPriceNul();
+            }else if(action.equals("GetAllInvoice"))
+            {
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -532,7 +541,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             }else if(object instanceof PriceInvoice)
             {
                 PriceInvoice priceInvoice= (PriceInvoice) object;
-                PriceActivity.goneMoney.setVisibility(View.VISIBLE);
                 if(s.equals("InternerError"))
                 {
                     priceInvoice.noconnect();
@@ -544,6 +552,13 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 }else{
                     priceInvoice.AutoSetInPrice();
                 }
+            }else if(object instanceof SelectChartAll)
+            {
+                SelectChartAll selectChartAll= (SelectChartAll) object;
+                if(action.equals("GetToday"))
+                {
+                    selectChartAll.getAllInvoiceDetail();
+                }
             }
         }catch (Exception e)
         {
@@ -551,8 +566,18 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         }
     }
 
+    public String getAllInvoiceDetail()
+    {
+        String a=null;
+        List<InvoiceVO> invoiceVOS=invoiceDB.getNoDetailAll();
+        for (InvoiceVO i:invoiceVOS)
+        {
+            a=getInvoicedetail(i);
+        }
+        return a;
+    }
+
     private String getInvoicedetail(InvoiceVO invoiceVO) {
-        try {
             String urldetail = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
             HashMap<String, String> hashMap = new HashMap();
             hashMap.put("version", "0.3");
@@ -571,12 +596,50 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             String detailjs = getRemoteData(urldetail, hashMap);
             JsonObject jsonObject = gson.fromJson(detailjs, JsonObject.class);
             invoiceVO.setDetail(jsonObject.get("details").toString());
-            invoiceDB.update(invoiceVO);
-        }catch (Exception e)
+            InvoiceVO type=getType(invoiceVO);
+            invoiceDB.update(type);
+        return detailjs;
+    }
+    private SimpleDateFormat sd=new SimpleDateFormat("HH");
+    private InvoiceVO getType(InvoiceVO invoiceVO) {
+        String main="O",second="O";
+        int x=0,total=0;
+        for(TypeDetailVO t:typeDetailVOS)
         {
-            return "InternerError";
+            x=0;
+            main="O";
+            second="O";
+            String[] key=t.getKeyword().split(" ");
+            for(int i=0;i<key.length;i++)
+            {
+                if(invoiceVO.getDetail().indexOf(key[i])!=-1)
+                {
+                    x++;
+                }
+            }
+            if(x>total)
+            {
+                total=x;
+                main=t.getGroupNumber();
+                second=t.getName();
+            }
         }
-        return "Susscess";
+        if(second.indexOf("餐")!=-1)
+        {
+            int hour=Integer.valueOf(sd.format(new Date(invoiceVO.getTime().getTime())));
+            if(hour>0&&hour<11)
+            {
+                second="早餐";
+            }else if(hour>=11&&hour<18)
+            {
+                second="午餐";
+            }else {
+                second="晚餐";
+            }
+        }
+        invoiceVO.setMaintype(main);
+        invoiceVO.setSecondtype(second);
+        return invoiceVO;
     }
 
     private HashMap<String, String> getInvoice(String user, String password, String startDate, String endDate,String iswin) {

@@ -23,11 +23,28 @@ public class TypeDetail {
     }
 
     public List<TypeDetailVO> getTypdAll() {
-        String[] columns = {
-                COL_id,"groupNumber","name", "image","keyword"
-        };
-        Cursor cursor = db.query("TypeDetail", columns, null, null, null, null,
-                COL_id);
+        String sql = "SELECT * FROM TypeDetail ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<TypeDetailVO> typeDetailList = new ArrayList<>();
+        TypeDetailVO typeDetailVO;
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            String groupNumber = cursor.getString(1);
+            String name = cursor.getString(2);
+            int image=cursor.getInt(3);
+            String keyword=cursor.getString(4);
+            typeDetailVO=new TypeDetailVO(id,groupNumber,name,image,keyword);
+            typeDetailList.add(typeDetailVO);
+        }
+        cursor.close();
+        return typeDetailList;
+    }
+
+    public List<TypeDetailVO> getHaveDetailTypdAll() {
+        String sql = "SELECT * FROM TypeDetail where keyword != '0';";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
         List<TypeDetailVO> typeDetailList = new ArrayList<>();
         TypeDetailVO typeDetailVO;
         while (cursor.moveToNext()) {

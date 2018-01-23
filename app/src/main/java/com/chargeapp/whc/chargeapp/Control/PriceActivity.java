@@ -18,12 +18,14 @@ import com.chargeapp.whc.chargeapp.R;
 public class PriceActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
-    private Button exportMoney,importMoney,showN,howtogetprice;
+    private Button importMoney,showN,howtogetprice;
     public static  Button goneMoney;
     private HorizontalScrollView choiceitem;
     private LinearLayout text;
     private int nowpoint=0;
     private float movefirst;
+    private Button exportMoney;
+
 
 
 
@@ -43,7 +45,7 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
         mAdapterViewPager = new MainPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(30);
+        mViewPager.setCurrentItem(6);
         setcurrentpage();
         text=findViewById(R.id.text);
 
@@ -82,7 +84,7 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
     }
 
     public static class MainPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 60;
+        private static int NUM_ITEMS = 12;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -140,9 +142,9 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if(nowpoint>position)
         {
-            text.setX(movefirst+(1-positionOffset)*320);
+            text.setX(movefirst+(1-positionOffset)*goneMoney.getWidth()*2);
         }else{
-            text.setX(movefirst-(positionOffset*320));
+            text.setX(movefirst-(positionOffset*goneMoney.getWidth()*2));
         }
     }
     @Override
@@ -152,7 +154,8 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        movefirst=-exportMoney.getX();
+        goneMoney.setVisibility(View.VISIBLE);
+        movefirst=-importMoney.getX();
         text.setX(movefirst);
     }
     private class ChangePage implements View.OnClickListener{

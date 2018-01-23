@@ -68,12 +68,13 @@ public class PriceInvoice extends Fragment {
     private TextView showRemain;
 
 
+
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_invoice, container, false);
         findViewById(view);
-        download();
         levelprice=getHashLP();
         levellength=getlevellength();
         DRadd.setOnClickListener(new addOnClick());
@@ -81,6 +82,12 @@ public class PriceInvoice extends Fragment {
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        download();
     }
 
     private HashMap<String,Integer> getlevellength() {
@@ -146,7 +153,6 @@ public class PriceInvoice extends Fragment {
             progressDialog.setMessage("正在更新資料,請稍候...");
             progressDialog.show();
         }else{
-            PriceActivity.goneMoney.setVisibility(View.VISIBLE);
             AutoSetCMPrice();
             AutoSetInPrice();
         }
@@ -374,6 +380,7 @@ public class PriceInvoice extends Fragment {
         setlayout();
     }
 
+
     private class cutOnClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -395,8 +402,7 @@ public class PriceInvoice extends Fragment {
             setlayout();
         }
     }
-
-////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////
     private void setlayout() {
         List<Object> objectList=new ArrayList<>();
         if(carrierVOS.size()>0&&carrierVOS!=null)

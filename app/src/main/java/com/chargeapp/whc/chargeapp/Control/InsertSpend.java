@@ -42,8 +42,11 @@ import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
 import com.chargeapp.whc.chargeapp.ui.BarcodeTrackerFactory;
 import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.sql.Date;
@@ -606,7 +609,25 @@ public class InsertSpend extends Fragment {
                         Common.showToast(getActivity(), e.getMessage());
                     }
                 } else if(EleNulAll[4].equals("0")) {
-                    new SetupDateBase64(this).execute("getThisDetail");
+                    try {
+                        String a=new SetupDateBase64(this).execute("getThisDetail").get();
+                        if(a.equals("InternetError"))
+                        {
+                            Common.showToast(getActivity(),"連線逾時,請從新掃QRCODE");
+                            return;
+                        }
+                        Gson gson=new Gson();
+                        JsonObject jFT=gson.fromJson(a,JsonObject.class);
+                        String s = jFT.get("details").toString();
+                        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
+                        List<JsonObject> b = gson.fromJson(s, cdType);
+                        for (JsonObject j : b) {
+                           sb.append(j.get("description").getAsString()+"/"+j.get("quantity").getAsString()+"/"+j.get("unitPrice").getAsString()+" ");
+                        }
+                    }catch (Exception e)
+                    {
+                        Common.showToast(getActivity(), e.getMessage());
+                    }
                 }else {
                     if (EleNulAll[3].equals("1")) {
                         sb.append(EleNulAll[5] + "/1/" + money.getText().toString());

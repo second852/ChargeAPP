@@ -40,14 +40,14 @@ public class SelectChartAll extends Fragment{
     private ProgressDialog progressDialog;
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.select_chart_all, container, false);
         findViewById(view);
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        setTypeIn();
-//        download();
+        download();
         return view;
     }
 
@@ -97,18 +97,19 @@ public class SelectChartAll extends Fragment{
 
     private void download()
     {
-
-
         List<CarrierVO> carrierVOList=carrierDB.getAll();
         if(carrierVOList==null||carrierVOList.size()<=0)
         {
-            message.setText("請新增載具!");
-            message.setVisibility(View.VISIBLE);
-            return;
+          return;
         }
         new GetSQLDate(this).execute("GetToday");
         progressDialog.setMessage("正在更新資料,請稍候...");
         progressDialog.show();
+    }
+
+    public void getAllInvoiceDetail()
+    {
+        new GetSQLDate(this).execute("GetAllInvoice");
     }
 
 }
