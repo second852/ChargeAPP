@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.LongSparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -18,10 +19,12 @@ import android.widget.SimpleAdapter;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetail;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
+import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -35,6 +38,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,6 +82,18 @@ public class MainActivity extends AppCompatActivity {
         if (chargeAPPDB == null) {
             setdate();
         }
+        InvoiceDB invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
+        List<InvoiceVO> invoiceVOS=invoiceDB.getAll();
+        Log.d("ssss", String.valueOf(invoiceVOS.size()));
+        for(int i=0;i<invoiceVOS.size()-1;i++)
+        {
+            if(invoiceVOS.get(i).getInvNum().equals(invoiceVOS.get(i+1).getInvNum()))
+            {
+                Log.d("ssss",invoiceVOS.get(i).getInvNum());
+            }
+        }
+
+
         setContentView(R.layout.activity_main);
         List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < image.length; i++) {

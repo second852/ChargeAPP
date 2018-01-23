@@ -16,7 +16,6 @@ public class InvoiceVO {
     private Timestamp time;
     private String amount;
     private String detail;
-    private String sellerName;
     private String invDonatable;
     private String donateMark;
     private String carrier;
@@ -25,8 +24,25 @@ public class InvoiceVO {
     private String heartyteam;
     private Timestamp donateTime;
     private String iswin;
+    private String sellerBan;
+    private String sellerName;
+    private String sellerAddress;
 
+    public String getSellerBan() {
+        return sellerBan;
+    }
 
+    public void setSellerBan(String sellerBan) {
+        this.sellerBan = sellerBan;
+    }
+
+    public String getSellerAddress() {
+        return sellerAddress;
+    }
+
+    public void setSellerAddress(String sellerAddress) {
+        this.sellerAddress = sellerAddress;
+    }
 
     public String getIswin() {
         return iswin;

@@ -84,12 +84,14 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 day = cal.get(Calendar.DAY_OF_MONTH);
                 user = params[1].toString();
                 password = params[2].toString();
-                while (isNoExist < 3) {
+//                while (isNoExist < 3) {
                     cal.set(year, month, 1);
                     startDate = sf.format(new Date(cal.getTimeInMillis()));
                     cal.set(year, month, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
                     endDate = sf.format(new Date(cal.getTimeInMillis()));
                     Log.d(TAG, "startDate: " + startDate + "endDate" + endDate + "isNoExist" + isNoExist);
+                    startDate="2017/08/01";
+                    endDate="2017/08/31";
                     data = getInvoice(user, password, startDate, endDate,"N");
                     month = month+1;
                     if (month >11) {
@@ -98,18 +100,18 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     }
                     url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
                     jsonIn = getRemoteData(url, data);
-                    if(jsonIn.equals("InternerError"))
-                    {
-                        break;
-                    }
-                    if (jsonIn.indexOf("919") != -1) {
-                        jsonIn = "error";
-                        break;
-                    }
-                    if (jsonIn.indexOf("200") == -1) {
-                        isNoExist++;
-                        continue;
-                    }
+//                    if(jsonIn.equals("InternerError"))
+//                    {
+//                        break;
+//                    }
+//                    if (jsonIn.indexOf("919") != -1) {
+//                        jsonIn = "error";
+//                        break;
+//                    }
+//                    if (jsonIn.indexOf("200") == -1) {
+//                        isNoExist++;
+//                        continue;
+//                    }
                     getjsonIn(jsonIn, password, user);
 
                     if(first)
@@ -120,12 +122,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         carrierDB.insert(carrierVO);
                     }
                     first=false;
-                    if(year==nowyear&&month>nowmonth)
-                    {
-                        Log.d(TAG, "End startDate: " + startDate + "endDate" + endDate + "isNoExist" + isNoExist);
-                        break;
-                    }
-                }
+//                    if(year==nowyear&&month>nowmonth)
+//                    {
+//                        Log.d(TAG, "End startDate: " + startDate + "endDate" + endDate + "isNoExist" + isNoExist);
+//                        break;
+//                    }
+//                }
 
             } else if (action.equals("GetToday")) {
                 List<CarrierVO> carrierVOS = carrierDB.getAll();
@@ -158,7 +160,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 jsonIn=searchNewPriceNul();
             }else if(action.equals("GetAllInvoice"))
             {
-
+                jsonIn=getAllInvoiceDetail();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -440,22 +442,42 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         invoiceVO.setInvNum(j.get("invNum").getAsString());
         invoiceVO.setInvDonatable(String.valueOf(j.get("invDonatable").getAsBoolean()));
         invoiceVO.setSellerName(j.get("sellerName").getAsString());
+        String ass="0";
+        if(j.get("sellerAddress")!=null)
+        {
+            ass=j.get("sellerAddress").getAsString();
+        }
+        invoiceVO.setSellerAddress(ass);
+        invoiceVO.setSellerBan(j.get("sellerBan").getAsString());
         JsonObject jtime = gson.fromJson(j.get("invDate").toString(), JsonObject.class);
         String hhmmss=j.get("invoiceTime").getAsString();
         if(hhmmss.indexOf("null")!=-1)
         {
             hhmmss="00:00:00";
         }
-        String time = String.valueOf(jtime.get("year").getAsInt() + 1911) + "-" + jtime.get("month").getAsString() + "-" + jtime.get("date").getAsString() + " " +hhmmss;
+        String time = String.valueOf(jtime.get("year").getAsInt() + 1911) + "-" + lengthlowtwo(jtime.get("month").getAsString()) + "-" + lengthlowtwo(jtime.get("date").getAsString()) + " " +hhmmss;
         invoiceVO.setTime(Timestamp.valueOf(time));
+        invoiceVO.setDonateTime(Timestamp.valueOf(time));
         invoiceVO.setCarrier(user);
         invoiceVO.setCardEncrypt(password);
         invoiceVO.setDetail("0");
         invoiceVO.setMaintype("0");
         invoiceVO.setSecondtype("0");
         invoiceVO.setIswin("0");
+        Log.d("sss",invoiceVO.getInvNum());
         return invoiceVO;
     }
+
+    public String lengthlowtwo(String a)
+    {
+
+        if(a.length()<2)
+        {
+            a="0"+a;
+        }
+        return a;
+    }
+
 
 
     private String getRemoteData(String url, HashMap data)  {
@@ -558,6 +580,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 if(action.equals("GetToday"))
                 {
                     selectChartAll.getAllInvoiceDetail();
+                }else {
+                    selectChartAll.cancel();
                 }
             }
         }catch (Exception e)

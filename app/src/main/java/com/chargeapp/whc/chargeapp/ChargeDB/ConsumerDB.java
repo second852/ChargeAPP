@@ -188,10 +188,4 @@ public class ConsumerDB {
         return db.delete(TABLE_NAME, whereClause, whereArgs);
     }
 
-    public int deletecarNul(String carNul) {
-        String whereClause = "carNul" + " = ?;";
-        String[] whereArgs = {carNul};
-        return db.delete(TABLE_NAME, whereClause, whereArgs);
-    }
-
 }

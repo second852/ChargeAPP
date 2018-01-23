@@ -5,7 +5,6 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.chargeapp.whc.chargeapp.Control.Common;
-import com.chargeapp.whc.chargeapp.Control.EleActivity;
 import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
@@ -28,7 +27,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeoutException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -38,7 +36,6 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
     private final static String key ="YzQ4R1gzaTRIbTRJMzNnOA==";
     private final static String appId="EINV3201711184648";
     private SimpleDateFormat sd=new SimpleDateFormat("yyyy/MM/dd");
-    private int seriel=0;
     private Object object;
     private InvoiceDB invoiceDB= new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
 
@@ -81,7 +78,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                }
             }else if("getThisDetail".equals(action))
             {
-                jsonIn=getThisDate();
+                jsonIn=getThisInvoiceDate();
             }
         } catch (Exception e) {
             Log.e(TAG, e.toString());
@@ -125,6 +122,26 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
         String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp?";
         String j=getRemoteData(url,data);
        return j;
+    }
+
+
+    private String getThisInvoiceDate() throws IOException {
+        HashMap<String,String> data=new HashMap<>();
+        data.put("version","0.3");
+        data.put("type","Barcode");
+        data.put("invNum","XY62329070");
+        data.put("action","qryInvDetail");
+        data.put("generation","V2");
+        data.put("invTerm","10612");
+        data.put("invDate","2017/12/14");
+        data.put("encrypt"," ");
+        data.put("sellerID","23526999");
+        data.put("UUID","second");
+        data.put("randomNumber","0204");
+        data.put("appID",appId);
+        String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp?";
+        String j=getRemoteData(url,data);
+        return j;
     }
 
     private HashMap<String,String> getupdateHeartyTeam(int seriel,InvoiceVO invoiceVO) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {

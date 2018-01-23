@@ -47,6 +47,7 @@ public class SelectChartAll extends Fragment{
         findViewById(view);
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        progressDialog=new ProgressDialog(getActivity());
         download();
         return view;
     }
@@ -110,6 +111,10 @@ public class SelectChartAll extends Fragment{
     public void getAllInvoiceDetail()
     {
         new GetSQLDate(this).execute("GetAllInvoice");
+    }
+
+    public void cancel(){
+        progressDialog.cancel();
     }
 
 }

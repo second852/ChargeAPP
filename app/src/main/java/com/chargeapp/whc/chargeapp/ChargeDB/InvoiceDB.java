@@ -48,6 +48,8 @@ public class InvoiceDB {
             invoiceVO.setHeartyteam(cursor.getString(14));
             invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -79,6 +81,8 @@ public class InvoiceDB {
             invoiceVO.setHeartyteam(cursor.getString(14));
             invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -110,6 +114,8 @@ public class InvoiceDB {
             invoiceVO.setHeartyteam(cursor.getString(14));
             invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -142,6 +148,8 @@ public class InvoiceDB {
             invoiceVO.setHeartyteam(cursor.getString(14));
             invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -173,6 +181,8 @@ public class InvoiceDB {
             invoiceVO.setHeartyteam(cursor.getString(14));
             invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -205,6 +215,8 @@ public class InvoiceDB {
             invoiceVO.setHeartyteam(cursor.getString(14));
             invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -289,6 +301,8 @@ public class InvoiceDB {
             invoiceVO.setHeartyteam(cursor.getString(14));
             invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -320,6 +334,8 @@ public class InvoiceDB {
             invoiceVO.setHeartyteam(cursor.getString(14));
             invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -363,6 +379,8 @@ public class InvoiceDB {
             invoiceVO.setHeartyteam(cursor.getString(14));
             invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
             invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -393,6 +411,8 @@ public class InvoiceDB {
         values.put("heartyteam",invoiceVO.getHeartyteam());
         values.put("donateTime",invoiceVO.getDonateTime().getTime());
         values.put("iswin",invoiceVO.getIswin());
+        values.put("sellerBan",invoiceVO.getSellerBan());
+        values.put("sellerAddress",invoiceVO.getSellerAddress());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -414,6 +434,8 @@ public class InvoiceDB {
         values.put("heartyteam",invoiceVO.getHeartyteam());
         values.put("donateTime",invoiceVO.getDonateTime().getTime());
         values.put("iswin",invoiceVO.getIswin());
+        values.put("sellerBan",invoiceVO.getSellerBan());
+        values.put("sellerAddress",invoiceVO.getSellerAddress());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(invoiceVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

@@ -405,15 +405,22 @@ public class PriceInvoice extends Fragment {
     ////////////////////////////////////////////////////////////////////////////////////////
     private void setlayout() {
         List<Object> objectList=new ArrayList<>();
+        Log.d("ssss", String.valueOf(objectList.size()));
         if(carrierVOS.size()>0&&carrierVOS!=null)
         {
             String carrier=carrierVOS.get(choiceca).getCarNul();
             List<InvoiceVO> invoiceVOS=invoiceDB.getWinIn(carrier,start,end);
+            for (InvoiceVO i:invoiceVOS)
+            {
+                Log.d("ssss",i.getInvNum());
+            }
             objectList.addAll(invoiceVOS);
             DRcarrier.setText(carrier);
         }
+        Log.d("ssss", String.valueOf(objectList.size()));
         List<ConsumeVO> consumeVOS=consumerDB.getWinAll(start,end);
         objectList.addAll(consumeVOS);
+        Log.d("ssss", String.valueOf(objectList.size()));
         if(objectList.size()>0)
         {
             donateRL.setVisibility(View.VISIBLE);

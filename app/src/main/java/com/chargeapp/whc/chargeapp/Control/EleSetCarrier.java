@@ -115,7 +115,6 @@ public class EleSetCarrier extends Fragment {
                 public void onClick(View view) {
                     carrierDB.deleteByCarNul(carrierVO.getCarNul());
                     invoiceDB.deleteById(carrierVO.getCarNul());
-                    consumerDB.deletecarNul(carrierVO.getCarNul());
                     setListAdapt();
                 }
             });
