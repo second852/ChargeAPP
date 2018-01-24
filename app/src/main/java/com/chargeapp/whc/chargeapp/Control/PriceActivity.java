@@ -155,7 +155,7 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         goneMoney.setVisibility(View.VISIBLE);
-        movefirst=-importMoney.getX();
+        movefirst=-importMoney.getWidth();
         text.setX(movefirst);
     }
     private class ChangePage implements View.OnClickListener{

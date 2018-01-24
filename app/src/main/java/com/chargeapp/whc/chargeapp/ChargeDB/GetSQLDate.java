@@ -84,14 +84,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 day = cal.get(Calendar.DAY_OF_MONTH);
                 user = params[1].toString();
                 password = params[2].toString();
-//                while (isNoExist < 3) {
+                while (isNoExist < 3) {
                     cal.set(year, month, 1);
                     startDate = sf.format(new Date(cal.getTimeInMillis()));
                     cal.set(year, month, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
                     endDate = sf.format(new Date(cal.getTimeInMillis()));
                     Log.d(TAG, "startDate: " + startDate + "endDate" + endDate + "isNoExist" + isNoExist);
-                    startDate="2017/08/01";
-                    endDate="2017/08/31";
                     data = getInvoice(user, password, startDate, endDate,"N");
                     month = month+1;
                     if (month >11) {
@@ -100,18 +98,18 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     }
                     url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
                     jsonIn = getRemoteData(url, data);
-//                    if(jsonIn.equals("InternerError"))
-//                    {
-//                        break;
-//                    }
-//                    if (jsonIn.indexOf("919") != -1) {
-//                        jsonIn = "error";
-//                        break;
-//                    }
-//                    if (jsonIn.indexOf("200") == -1) {
-//                        isNoExist++;
-//                        continue;
-//                    }
+                    if(jsonIn.equals("InternerError"))
+                    {
+                        break;
+                    }
+                    if (jsonIn.indexOf("919") != -1) {
+                        jsonIn = "error";
+                        break;
+                    }
+                    if (jsonIn.indexOf("200") == -1) {
+                        isNoExist++;
+                        continue;
+                    }
                     getjsonIn(jsonIn, password, user);
 
                     if(first)
@@ -122,12 +120,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         carrierDB.insert(carrierVO);
                     }
                     first=false;
-//                    if(year==nowyear&&month>nowmonth)
-//                    {
-//                        Log.d(TAG, "End startDate: " + startDate + "endDate" + endDate + "isNoExist" + isNoExist);
-//                        break;
-//                    }
-//                }
+                    if(year==nowyear&&month>nowmonth)
+                    {
+                        Log.d(TAG, "End startDate: " + startDate + "endDate" + endDate + "isNoExist" + isNoExist);
+                        break;
+                    }
+                }
 
             } else if (action.equals("GetToday")) {
                 List<CarrierVO> carrierVOS = carrierDB.getAll();
@@ -417,15 +415,21 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private void getjsonIn(String jsonIn, String password, String user) {
         try {
             InvoiceVO invoiceVO;
+            HashMap<String,InvoiceVO> hashMap=new HashMap<>();
             JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
             Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
             String s = js.get("details").toString();
             List<JsonObject> b = gson.fromJson(s, cdType);
             for (JsonObject j : b) {
-                    invoiceVO = jsonToInVoice(j, password, user);
-                    invoiceVO.setDonateTime(invoiceVO.getTime());
-                    invoiceDB.insert(invoiceVO);
-                    Log.d("insert",invoiceVO.getInvNum());
+                invoiceVO = jsonToInVoice(j, password, user);
+                invoiceVO.setDonateTime(invoiceVO.getTime());
+                hashMap.put(invoiceVO.getInvNum(),invoiceVO);
+
+            }
+            for (String key:hashMap.keySet())
+            {
+                invoiceDB.insert(hashMap.get(key));
+                Log.d("insert",hashMap.get(key).getInvNum());
             }
         } catch (Exception e) {
            e.printStackTrace();

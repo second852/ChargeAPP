@@ -17,7 +17,7 @@ public class EleDonateMain extends AppCompatActivity implements ViewPager.OnPage
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button importMoney,exportMoney;
-    public static  Button goneMoney;
+    public  Button goneMoney;
     private HorizontalScrollView choiceitem;
     private LinearLayout text;
     private int nowpoint=0;
@@ -108,7 +108,8 @@ public class EleDonateMain extends AppCompatActivity implements ViewPager.OnPage
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        movefirst=-exportMoney.getX();
+        goneMoney.setVisibility(View.VISIBLE);
+        movefirst=-importMoney.getWidth();
         text.setX(movefirst);
 
     }

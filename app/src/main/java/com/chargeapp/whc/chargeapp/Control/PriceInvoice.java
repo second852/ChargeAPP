@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -81,14 +82,26 @@ public class PriceInvoice extends Fragment {
         DRcut.setOnClickListener(new cutOnClick());
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
+        final ViewTreeObserver viewTreeObserver = view.getViewTreeObserver();
+        viewTreeObserver.addOnWindowFocusChangeListener(new ViewTreeObserver.OnWindowFocusChangeListener() {
+            @Override
+            public void onWindowFocusChanged(final boolean hasFocus) {
+                // do your stuff here
+                download();
+            }
+        });
+        carrierVOS = carrierDB.getAll();
+        if(carrierVOS.size()>0&&carrierVOS!=null)
+        {
+            String carrier=carrierVOS.get(choiceca).getCarNul();
+            DRcarrier.setText(carrier);
+            DRshow.setVisibility(View.VISIBLE);
+        }else{
+            DRshow.setVisibility(View.GONE);
+        }
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        download();
-    }
 
     private HashMap<String,Integer> getlevellength() {
         HashMap<String,Integer> hashMap=new HashMap<>();
@@ -128,13 +141,6 @@ public class PriceInvoice extends Fragment {
     private void download() {
         boolean showcircle=false;
         List<PriceVO> priceVOS = priceDB.getAll();
-        carrierVOS = carrierDB.getAll();
-        if(carrierVOS!=null&&carrierVOS.size()>0)
-        {
-            DRshow.setVisibility(View.VISIBLE);
-        }else {
-            DRshow.setVisibility(View.GONE);
-        }
         if (priceVOS == null || priceVOS.size() <= 0) {
             new GetSQLDate(this).execute("getAllPriceNul");
         } else {
@@ -143,7 +149,6 @@ public class PriceInvoice extends Fragment {
                 showcircle=true;
             }
         }
-
         if (PriceInvoice.getGetSQLDate2 == null && carrierVOS != null&&carrierVOS.size()>0) {
             PriceInvoice.getGetSQLDate2 = new GetSQLDate(this).execute("GetToday");
             showcircle=true;

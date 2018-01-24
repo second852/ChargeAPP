@@ -1,6 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,12 +9,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetail;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -38,6 +43,10 @@ public class SelectChartAll extends Fragment{
     private CarrierDB carrierDB;
     private TextView message;
     private ProgressDialog progressDialog;
+    private AsyncTask first=null;
+    private TextView PIdateTittle;
+    private ImageView PIdateCut,PIdateAdd;
+    private Button Byear,Bmonth,Bday,Bweek;
 
 
 
@@ -48,25 +57,32 @@ public class SelectChartAll extends Fragment{
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         progressDialog=new ProgressDialog(getActivity());
-        download();
+        final ViewTreeObserver viewTreeObserver = view.getViewTreeObserver();
+        viewTreeObserver.addOnWindowFocusChangeListener(new ViewTreeObserver.OnWindowFocusChangeListener() {
+            @Override
+            public void onWindowFocusChanged(final boolean hasFocus) {
+                // do your stuff here
+                 download();
+            }
+        });
         return view;
     }
 
-    private void setTypeIn()
-    {
-        String detail;
-        List<InvoiceVO> invoiceVOS=invoiceDB.findIVTypenull();
-        SimpleDateFormat sd=new SimpleDateFormat("yyyy-MM-dd");
-        for(InvoiceVO invoiceVO:invoiceVOS)
-        {
-            Log.d("XXXXXXXXXX",sd.format(invoiceVO.getTime())+" : "+invoiceVO.getDetail());
-        }
-    }
+
+
+
 
     private void findViewById(View view) {
         lineChart=view.findViewById(R.id.chart_line);
         lineChart.setData(getLinedate());
         message=view.findViewById(R.id.message);
+        PIdateTittle=view.findViewById(R.id.PIdateTittle);
+        PIdateCut=view.findViewById(R.id.PIdateCut);
+        PIdateAdd=view.findViewById(R.id.PIdateAdd);
+        Byear=view.findViewById(R.id.year);
+        Bmonth=view.findViewById(R.id.month);
+        Bday=view.findViewById(R.id.day);
+        Bweek=view.findViewById(R.id.week);
     }
 
     private LineData getLinedate() {
@@ -103,9 +119,12 @@ public class SelectChartAll extends Fragment{
         {
           return;
         }
-        new GetSQLDate(this).execute("GetToday");
-        progressDialog.setMessage("正在更新資料,請稍候...");
-        progressDialog.show();
+        if(first==null)
+        {
+            first=new GetSQLDate(this).execute("GetToday");
+            progressDialog.setMessage("正在更新資料,請稍候...");
+            progressDialog.show();
+        }
     }
 
     public void getAllInvoiceDetail()
@@ -115,6 +134,9 @@ public class SelectChartAll extends Fragment{
 
     public void cancel(){
         progressDialog.cancel();
+
     }
+
+
 
 }

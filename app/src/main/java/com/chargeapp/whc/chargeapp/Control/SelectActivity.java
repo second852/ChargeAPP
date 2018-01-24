@@ -42,6 +42,12 @@ public class SelectActivity extends AppCompatActivity implements ViewPager.OnPag
         text=findViewById(R.id.text);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
     public void setcurrentpage()
     {
         int page=mViewPager.getCurrentItem();
@@ -115,9 +121,11 @@ public class SelectActivity extends AppCompatActivity implements ViewPager.OnPag
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        movefirst=-exportMoney.getX();
+        goneMoney.setVisibility(View.VISIBLE);
+        movefirst=-importMoney.getWidth();
         text.setX(movefirst);
     }
+
     private class ChangePage implements View.OnClickListener{
         private int page;
         public ChangePage(int page)

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -74,7 +75,6 @@ public class EleDonate extends Fragment {
         progressDialog = new ProgressDialog(getActivity());
         donateMap = new HashMap<>();
         findviewbyid(view);
-        download();
         add.setOnClickListener(new addOnClick());
         cut.setOnClickListener(new cutOnClick());
         choiceall.setOnClickListener(new choiceallchecked());
@@ -82,7 +82,14 @@ public class EleDonate extends Fragment {
         save.setOnClickListener(new uploadheraty());
         searchI.setOnClickListener(new searchHeartyTeam());
         returnSH.setOnClickListener(new retrinDonateM());
-
+        final ViewTreeObserver viewTreeObserver = view.getViewTreeObserver();
+        viewTreeObserver.addOnWindowFocusChangeListener(new ViewTreeObserver.OnWindowFocusChangeListener() {
+            @Override
+            public void onWindowFocusChanged(final boolean hasFocus) {
+                // do your stuff here
+                download();
+            }
+        });
         return view;
     }
 
@@ -90,15 +97,8 @@ public class EleDonate extends Fragment {
 
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-
-//        invoiceDB.deleteBytime(Timestamp.valueOf("2017-12-17 00:00:00"));
-//        setlayout();
         SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
         invoiceVOList=invoiceDB.getAll();
-        for(InvoiceVO i:invoiceVOList)
-        {
-            Log.d("XXXXXXXXX",sf.format(i.getTime())+" : "+i.getInvDonatable()+" :"+ i.getDonateMark());
-        }
         carrierVOList = carrierDB.getAll();
         if (carrierVOList == null || carrierVOList.size() <= 0) {
             message.setText("請新增載具!");
@@ -106,11 +106,8 @@ public class EleDonate extends Fragment {
             listinviuce.setVisibility(View.GONE);
             showmonth.setVisibility(View.GONE);
             choice.setVisibility(View.GONE);
-            EleDonateMain.goneMoney.setVisibility(View.VISIBLE);
             return;
         }
-
-
         if(EleDonate.get1==null)
         {
             get1= new GetSQLDate(this).execute("GetToday");
@@ -119,7 +116,6 @@ public class EleDonate extends Fragment {
         }else {
             setlayout();
         }
-
     }
 
     public void cancelDialog() {
@@ -151,7 +147,6 @@ public class EleDonate extends Fragment {
 
     public void setlayout() {
         cancelDialog();
-        EleDonateMain.goneMoney.setVisibility(View.VISIBLE);
         carrierVO = carrierVOList.get(choiceca);
         listinviuce.removeAllViews();
         invoiceVOList = invoiceDB.getCarrierDoAll(carrierVO.getCarNul());
