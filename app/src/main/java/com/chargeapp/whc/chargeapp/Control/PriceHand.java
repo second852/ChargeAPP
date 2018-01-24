@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -41,7 +44,7 @@ import java.util.List;
 
 public class PriceHand extends Fragment {
     private ImageView PIdateAdd, PIdateCut;
-    private TextView priceTitle, PIdateTittle, inputNul,QrCodeA;
+    private TextView priceTitle, PIdateTittle, inputNul,QrCodeA,voice;
     private RecyclerView donateRL;
     private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private Calendar now = Calendar.getInstance();
@@ -51,6 +54,13 @@ public class PriceHand extends Fragment {
     private String message = "";
     private List<PriceVO> priceVOS;
     private HashMap<String,String> levelPrice;
+
+
+    private static SpeechRecognizer speech = null;
+    private static Intent recognizerIntent;
+    private String LOG_TAG = "CommandVoiceListner";
+    private List<String> mResults;
+    private boolean isRecognitionServiceAvailable = false;
 
 
     @Nullable
@@ -72,6 +82,13 @@ public class PriceHand extends Fragment {
         donateRL.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         List<String> number = getInputN();
         donateRL.setAdapter(new InputAdapter(getActivity(), number));
+
+        voice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startListening();
+            }
+        });
         return view;
     }
 
@@ -281,6 +298,7 @@ public class PriceHand extends Fragment {
         donateRL = view.findViewById(R.id.donateRL);
         inputNul = view.findViewById(R.id.inputNul);
         QrCodeA=view.findViewById(R.id.QrCodeA);
+        voice=view.findViewById(R.id.voice);
     }
 
 
@@ -395,5 +413,117 @@ public class PriceHand extends Fragment {
         }
     }
 
+    public void startListening(){
+        if (SpeechRecognizer.isRecognitionAvailable(getActivity())) {
+            if (isRecognitionServiceAvailable){//(speech!=null){
+                speech.startListening(recognizerIntent);
+                mResults = new ArrayList<String>();
+            }
+            else
+                startSR();
+        }
+    }
 
+    public void startSR(){
+        isRecognitionServiceAvailable = true;
+        speech = SpeechRecognizer.createSpeechRecognizer(getActivity());
+        speech.setRecognitionListener(new listener());
+        recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
+                "en");
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
+                getActivity().getPackageName());
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
+        speech.startListening(recognizerIntent);
+    }
+
+
+
+    private class listener implements RecognitionListener {
+
+        public void onReadyForSpeech(Bundle params)	{
+            Log.d("XXX", "onReadyForSpeech");
+        }
+        public void onBeginningOfSpeech(){
+            Log.d("XXX", "onBeginningOfSpeech");
+        }
+        public void onRmsChanged(float rmsdB){
+            Log.d("XXX", "onRmsChanged");
+        }
+        public void onBufferReceived(byte[] buffer)	{
+            Log.d("XXX", "onBufferReceived");
+        }
+        public void onEndOfSpeech()	{
+            Log.d("XXX", "onEndofSpeech");
+
+        }
+        public void onError(int error)	{
+            String e=getErrorText(error);
+            Log.d("XXX",  "error " +  e);
+        }
+        public void onResults(Bundle results) {
+
+            Log.d("XXX", "onResults " + results);
+            // Fill the list view with the strings the recognizer thought it could have heard, there should be 5, based on the call
+            ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+            //display results.
+            inputNul.setText(matches.get(0));
+            startListening();
+        }
+        public void onPartialResults(Bundle partialResults)
+        {
+            Log.d("XXX", "onPartialResults");
+        }
+        public void onEvent(int eventType, Bundle params)
+        {
+            Log.d("XXX", "onEvent " + eventType);
+        }
+
+        public String getErrorText(int errorCode) {
+            String message;
+            switch (errorCode) {
+                case SpeechRecognizer.ERROR_AUDIO:
+                    message = "Audio recording error";
+                    break;
+                case SpeechRecognizer.ERROR_CLIENT:
+                    message = "Client side error";
+                    startListening();
+                    break;
+                case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
+                    message = "Insufficient permissions";
+                    break;
+                case SpeechRecognizer.ERROR_NETWORK:
+                    message = "Network error";
+                    startListening();
+                    break;
+                case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
+                    message = "Network timeout";
+                    startListening();
+                    break;
+                case SpeechRecognizer.ERROR_NO_MATCH:
+                    message = "No match";
+                    speech.startListening(recognizerIntent);
+                    break;
+                case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
+                    message = "RecognitionService busy";
+                    //startListening();
+                    break;
+                case SpeechRecognizer.ERROR_SERVER:
+                    message = "error from server";
+                    startListening();
+                    break;
+                case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
+                    message = "No speech input";
+                    startListening();
+                    break;
+                default:
+                    message = "Didn't understand, please try again.";
+                    startListening();
+                    break;
+            }
+            return message;
+        }
+    }
 }
