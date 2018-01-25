@@ -36,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -220,17 +221,17 @@ public class PriceHand extends Fragment {
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date(time.getTimeInMillis()));
         int year = cal.get(Calendar.YEAR);
-        cal.set(year, 0, 25);
+        cal=new GregorianCalendar(year,0,25,12,0,0);
         long one25 = cal.getTimeInMillis();
-        cal.set(year, 2, 25);
+        cal=new GregorianCalendar(year,2,25,12,0,0);
         long three25 = cal.getTimeInMillis();
-        cal.set(year, 4, 25);
+        cal=new GregorianCalendar(year,4,25,12,0,0);
         long five25 = cal.getTimeInMillis();
-        cal.set(year, 6, 25);
+        cal=new GregorianCalendar(year,6,25,12,0,0);
         long seven25 = cal.getTimeInMillis();
-        cal.set(year, 8, 25);
+        cal=new GregorianCalendar(year,8,25,12,0,0);
         long night25 = cal.getTimeInMillis();
-        cal.set(year, 10, 25);
+        cal=new GregorianCalendar(year,10,25,12,0,0);
         long ele25 = cal.getTimeInMillis();
         String showtime, searchtime, searcholdtime;
         long now = this.now.getTimeInMillis();
