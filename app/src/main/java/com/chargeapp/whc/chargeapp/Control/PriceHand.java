@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -54,11 +55,11 @@ public class PriceHand extends Fragment {
     private String message = "";
     private List<PriceVO> priceVOS;
     private HashMap<String,String> levelPrice;
+    private RelativeLayout showMi;
 
 
     private static SpeechRecognizer speech = null;
     private static Intent recognizerIntent;
-    private String LOG_TAG = "CommandVoiceListner";
     private List<String> mResults;
     private boolean isRecognitionServiceAvailable = false;
 
@@ -82,10 +83,21 @@ public class PriceHand extends Fragment {
         donateRL.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         List<String> number = getInputN();
         donateRL.setAdapter(new InputAdapter(getActivity(), number));
-
+        showMi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                donateRL.setVisibility(View.VISIBLE);
+                showMi.setVisibility(View.GONE);
+                speech.stopListening();
+                speech.cancel();
+            }
+        });
         voice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                priceTitle.setText("請念後三碼");
+                showMi.setVisibility(View.VISIBLE);
+                donateRL.setVisibility(View.GONE);
                 startListening();
             }
         });
@@ -299,6 +311,7 @@ public class PriceHand extends Fragment {
         inputNul = view.findViewById(R.id.inputNul);
         QrCodeA=view.findViewById(R.id.QrCodeA);
         voice=view.findViewById(R.id.voice);
+        showMi=view.findViewById(R.id.showMi);
     }
 
 
@@ -470,6 +483,7 @@ public class PriceHand extends Fragment {
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             //display results.
             inputNul.setText(matches.get(0));
+            autoSetInWin(matches.get(0));
             startListening();
         }
         public void onPartialResults(Bundle partialResults)

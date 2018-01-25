@@ -8,6 +8,7 @@ import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,28 @@ public class BankDB {
     }
 
     public List<BankVO> getAll() {
-        String sql = "SELECT * FROM Consumer order by id;";
+        String sql = "SELECT * FROM BANK order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<BankVO> BankVOList = new ArrayList<>();
+        BankVO bankVO;
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            String maintype =cursor.getString(1);
+            String money=cursor.getString(2);
+            Date date=new Date(cursor.getLong(3));
+            String fixdate=cursor.getString(4);
+            String fixdatedetail=cursor.getString(5);
+            String detailname=cursor.getString(6);
+            bankVO=new BankVO(maintype,detailname,money,date,fixdate,id,detailname);
+            BankVOList.add(bankVO);
+        }
+        cursor.close();
+        return BankVOList;
+    }
+
+    public List<BankVO> getTimeAll(Timestamp start,Timestamp end) {
+        String sql = "SELECT * FROM BANK where date between '"+start.getTime()+"' and '"+end.getTime()+"' order by id;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();

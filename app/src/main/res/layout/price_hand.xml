@@ -127,4 +127,31 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </android.support.v7.widget.RecyclerView>
+    <RelativeLayout
+        android:id="@+id/showMi"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:background="#99FFFF"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"
+        >
+      <ImageView
+          android:id="@+id/microIG"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:src="@drawable/microphone"
+          />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="取消"
+            android:layout_below="@+id/microIG"
+            android:textColor="#000000"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:background="#77DDFF"
+            android:layout_margin="5dp"
+            />
+    </RelativeLayout>
 </RelativeLayout>
