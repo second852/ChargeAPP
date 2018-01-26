@@ -77,10 +77,10 @@ public class EleSetCarrier extends Fragment {
         if(carrierlist!=null&&carrierlist.size()>0)
         {
             listtiitle.setVisibility(View.VISIBLE);
+            listcarrier.setAdapter(new EleSetCarrierAdapter(getActivity(),carrierlist));
         }else{
             listtiitle.setVisibility(View.GONE);
         }
-        listcarrier.setAdapter(new EleSetCarrierAdapter(getActivity(),carrierlist));
         closeDialog();
     }
 

@@ -70,7 +70,10 @@ public class PriceHand extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_hand, container, false);
         findViewById(view);
-        setMonText(now, "in");
+        String period=priceDB.findMaxPeriod();
+        this.month=Integer.valueOf(period.substring(period.length() - 2));
+        this.year= Integer.valueOf(period.substring(0, period.length() - 2));
+        setMonText("in");
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
         QrCodeA.setOnClickListener(new View.OnClickListener() {
@@ -216,83 +219,58 @@ public class PriceHand extends Fragment {
     }
 
 
-    private void setMonText(Calendar time, String action) {
-        Log.d("XXXX", sd.format(new Date(time.getTimeInMillis())));
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date(time.getTimeInMillis()));
-        int year = cal.get(Calendar.YEAR);
-        cal=new GregorianCalendar(year,0,25,12,0,0);
-        long one25 = cal.getTimeInMillis();
-        cal=new GregorianCalendar(year,2,25,12,0,0);
-        long three25 = cal.getTimeInMillis();
-        cal=new GregorianCalendar(year,4,25,12,0,0);
-        long five25 = cal.getTimeInMillis();
-        cal=new GregorianCalendar(year,6,25,12,0,0);
-        long seven25 = cal.getTimeInMillis();
-        cal=new GregorianCalendar(year,8,25,12,0,0);
-        long night25 = cal.getTimeInMillis();
-        cal=new GregorianCalendar(year,10,25,12,0,0);
-        long ele25 = cal.getTimeInMillis();
-        String showtime, searchtime, searcholdtime;
-        long now = this.now.getTimeInMillis();
-        Log.d("XXXX", sd.format(new Date(now)));
-        Log.d("XXXX", sd.format(new Date(one25)));
-        Log.d("XXXX", sd.format(new Date(three25)));
-        Log.d("XXXX", sd.format(new Date(five25)));
-        Log.d("XXXX", sd.format(new Date(seven25)));
-        Log.d("XXXX", sd.format(new Date(night25)));
-        Log.d("XXXX", sd.format(new Date(ele25)));
-        if (now > one25 && now < three25) {
-            showtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "年11-12月";
-            searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "12";
-            searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "10";
-        } else if (now > three25 && now < five25) {
-            showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年1-2月";
-            searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "02";
-            searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "12";
-        } else if (now > five25 && now < seven25) {
-            showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年3-4月";
-            searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "04";
-            searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "02";
-        } else if (now > seven25 && now < night25) {
-            showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年5-6月";
-            searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "06";
-            searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "04";
-        } else if (now > night25 && now < ele25) {
-            showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年7-8月";
-            searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "08";
-            searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "06";
+    private void setMonText(String action) {
+        String showtime,searchtime,searcholdtime;
+        if (month==2) {
+            showtime =year+"年1-2月";
+            searchtime =year+"02";
+            searcholdtime = (year-1)+"12";
+        } else if (month==4) {
+            showtime = year+"年3-4月";
+            searchtime = year+"04";
+            searcholdtime = year+"02";
+        } else if (month==6) {
+            showtime = year+"年5-6月";
+            searchtime = year+"06";
+            searcholdtime = year+"04";
+        } else if (month==8) {
+            showtime = year+"年7-8月";
+            searchtime = year+"08";
+            searcholdtime = year+"06";
+        } else if (month==10) {
+            showtime = year+"年9-10月";
+            searchtime = year+"10";
+            searcholdtime = year+"08";
         } else {
-            if (this.now.get(Calendar.MONTH) == 0) {
-                showtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "年9-10月";
-                searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "10";
-                searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911 - 1) + "08";
-            } else {
-                showtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "年9-10月";
-                searchtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "10";
-                searcholdtime = String.valueOf(time.get(Calendar.YEAR) - 1911) + "08";
-            }
+            showtime = year+"年11-12月";
+            searchtime = year+"12";
+            searcholdtime = year+"10";
         }
         Log.d("XXXXXXsearchtime",searchtime);
         Log.d("XXXXXsearcholdtime",searcholdtime);
-
         priceVO = priceDB.getPeriodAll(searchtime);
         oldPriceVO = priceDB.getPeriodAll(searcholdtime);
         priceVOS = new ArrayList<>();
         priceVOS.add(priceVO);
         priceVOS.add(oldPriceVO);
-
         if (priceVO == null && action.equals("add")) {
             month = month - 2;
-            this.now.set(this.year,month,1);
-            setMonText(this.now,"add");
+            if(month==0)
+            {
+                month=12;
+                year=year-1;
+            }
+            setMonText("add");
             Common.showToast(getActivity(), showtime+"尚未開獎");
             return;
         }
         if (priceVO == null && action.equals("cut")) {
             month = month + 2;
-            this.now.set(this.year,month,1);
-            setMonText(this.now,"cut");
+            if(month>12)
+            {
+                month=2;
+                year=year+1;
+            }
             Common.showToast(getActivity(), "沒有資料");
             return;
         }
@@ -320,14 +298,12 @@ public class PriceHand extends Fragment {
         @Override
         public void onClick(View view) {
             month += 2;
-            if (month > 11) {
-                month = month - 11;
+            if (month > 12) {
+                month =2;
                 year++;
             }
-            now.set(year, month, 1);
-            setMonText(now, "add");
+            setMonText("add");
             inputNul.setText("");
-
         }
     }
 
@@ -335,12 +311,11 @@ public class PriceHand extends Fragment {
         @Override
         public void onClick(View view) {
             month -= 2;
-            if (month < 0) {
-                month = 11 + month;
+            if (month == 0) {
+                month = 12;
                 year--;
             }
-            now.set(year, month, 1);
-            setMonText(now, "cut");
+            setMonText("cut");
             inputNul.setText("");
         }
     }

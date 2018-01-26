@@ -76,11 +76,6 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
             PriceInvoice.getGetSQLDate1.cancel(true);
             PriceInvoice.getGetSQLDate1=null;
         }
-        if(PriceInvoice.getGetSQLDate2!=null)
-        {
-            PriceInvoice.getGetSQLDate2.cancel(true);
-            PriceInvoice.getGetSQLDate2=null;
-        }
     }
 
     public static class MainPagerAdapter extends FragmentPagerAdapter {

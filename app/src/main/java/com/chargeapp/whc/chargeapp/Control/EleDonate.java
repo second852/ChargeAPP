@@ -82,15 +82,13 @@ public class EleDonate extends Fragment {
         save.setOnClickListener(new uploadheraty());
         searchI.setOnClickListener(new searchHeartyTeam());
         returnSH.setOnClickListener(new retrinDonateM());
-        final ViewTreeObserver viewTreeObserver = view.getViewTreeObserver();
-        viewTreeObserver.addOnWindowFocusChangeListener(new ViewTreeObserver.OnWindowFocusChangeListener() {
-            @Override
-            public void onWindowFocusChanged(final boolean hasFocus) {
-                // do your stuff here
-                download();
-            }
-        });
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        download();
     }
 
     private void download() {

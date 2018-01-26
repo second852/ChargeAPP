@@ -52,12 +52,10 @@ public class PriceInvoice extends Fragment {
     private CarrierDB carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     public int choiceca = 0;
-    private Calendar now = Calendar.getInstance();
     private SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
     private SimpleDateFormat sf = new SimpleDateFormat("M/dd");
     private String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
     public static AsyncTask<Object, Integer, String> getGetSQLDate1;
-    public static AsyncTask<Object, Integer, String> getGetSQLDate2;
     private ProgressDialog progressDialog;
     private List<CarrierVO> carrierVOS;
     private ConsumerDB consumerDB;
@@ -66,7 +64,7 @@ public class PriceInvoice extends Fragment {
     private long start,end;
     private RelativeLayout DRshow;
     private TextView showRemain;
-    private String period;
+    private int month,year;
 
 
 
@@ -130,9 +128,7 @@ public class PriceInvoice extends Fragment {
     public  void noconnect()
     {
         progressDialog.cancel();
-        Common.showLongToast(getActivity(),"沒有網路，更新失敗~");
-        AutoSetCMPrice();
-        AutoSetInPrice();
+        AutoSetPrice();
     }
 
     private void download() {
@@ -146,21 +142,24 @@ public class PriceInvoice extends Fragment {
                 showcircle=true;
             }
         }
-        if (PriceInvoice.getGetSQLDate2 == null && carrierVOS != null&&carrierVOS.size()>0) {
-            PriceInvoice.getGetSQLDate2 = new GetSQLDate(this).execute("GetToday");
-            showcircle=true;
-        }
         if(showcircle)
         {
             progressDialog.setMessage("正在更新資料,請稍候...");
             progressDialog.show();
         }else{
-            AutoSetCMPrice();
-            AutoSetInPrice();
+            AutoSetPrice();
+        }
+    }
+    public void newInvoice()
+    {
+        if (carrierVOS != null&&carrierVOS.size()>0) {
+            PriceInvoice.getGetSQLDate1.cancel(true);
+            PriceInvoice.getGetSQLDate1 = new GetSQLDate(this).execute("GetToday");
         }
     }
 
-    public void AutoSetCMPrice() {
+
+    public void AutoSetPrice() {
         List<PriceVO> priceVOS = priceDB.getAll();
         int month;
         int year;
@@ -172,35 +171,13 @@ public class PriceInvoice extends Fragment {
             startTime = (new GregorianCalendar(year, month - 2, 1,0,0,0)).getTimeInMillis();
             Calendar endC=new GregorianCalendar(year, month-1, 1);
             endTime = (new GregorianCalendar(year, month-1, endC.getActualMaximum(Calendar.DAY_OF_MONTH),59,59)).getTimeInMillis();
-            String show=sd.format(new Date(startTime));
-            String shod=sd.format(new Date(endTime));
             autoSetCRWin(startTime, endTime, priceVO);
-        }
-        if(getGetSQLDate2==null)
-        {
-            progressDialog.cancel();
-            period=priceDB.findMaxPeriod();
-            setMonText(period,"in");
-        }
-    }
-
-    public void AutoSetInPrice() {
-        List<PriceVO> priceVOS = priceDB.getAll();
-        int month;
-        int year;
-        for (PriceVO priceVO : priceVOS) {
-            long startTime, endTime;
-            String invoYM = priceVO.getInvoYm();
-            month = Integer.valueOf(invoYM.substring(invoYM.length() - 2));
-            year = Integer.valueOf(invoYM.substring(0, invoYM.length() - 2)) + 1911;
-            startTime = (new GregorianCalendar(year, month - 2, 1,0,0,0)).getTimeInMillis();
-            Calendar endC=new GregorianCalendar(year, month-1, 1);
-            endTime = (new GregorianCalendar(year, month-1, endC.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59)).getTimeInMillis();
             autoSetInWin(startTime, endTime, priceVO);
-            progressDialog.cancel();
-            period=priceDB.findMaxPeriod();
-            setMonText(period,"in");
         }
+        String max=priceDB.findMaxPeriod();
+        this.month=Integer.valueOf(max.substring(max.length() - 2));
+        this.year= Integer.valueOf(max.substring(0, max.length() - 2));
+        setMonText("in");
     }
 
 
@@ -283,76 +260,65 @@ public class PriceInvoice extends Fragment {
         return "N";
     }
 
-    private void setMonText(String time, String action) {
-         String showtime;
-         String month=time.substring(time.length() - 2);
-         int addmonth= Integer.parseInt(time.substring(time.length() - 2));
-         int year= Integer.parseInt(time.substring(0, time.length() - 2))+1911;
-        if (month.equals("02")) {
-            showtime =time.substring(0, time.length() - 2)  + "年1-2月";
-            start=(new GregorianCalendar(year,0,1,0,0,0)).getTimeInMillis();
-            end=(new GregorianCalendar(year,2,1,0,0,0)).getTimeInMillis()-1000;
-        } else if (month.equals("04")) {
-            showtime = time.substring(0, time.length() - 2) + "年3-4月";
-            start=(new GregorianCalendar(year,2,1,0,0,0)).getTimeInMillis();
-            end=(new GregorianCalendar(year,4,1,0,0,0)).getTimeInMillis()-1000;
-        } else if (month.equals("06")) {
-            showtime = time.substring(0, time.length() - 2) + "年5-6月";
-            start=(new GregorianCalendar(year,4,1,0,0,0)).getTimeInMillis();
-            end=(new GregorianCalendar(year,6,1,0,0,0)).getTimeInMillis()-1000;
-        } else if (month.equals("08")) {
-            showtime = time.substring(0, time.length() - 2) + "年7-8月";
-            start=(new GregorianCalendar(year,6,1,0,0,0)).getTimeInMillis();
-            end=(new GregorianCalendar(year,8,1,0,0,0)).getTimeInMillis()-1000;
-        } else if (month.equals("10")) {
-            showtime =time.substring(0, time.length() - 2) + "年9-10月";
-            start=(new GregorianCalendar(year,8,1,0,0,0)).getTimeInMillis();
-            end=(new GregorianCalendar(year,10,1,0,0,0)).getTimeInMillis()-1000;
+    private void setMonText(String action) {
+        String showtime,period;
+        if (month==2) {
+            showtime =year+"年1-2月";
+            period=year+"02";
+            start=(new GregorianCalendar(year+1911,0,1,0,0,0)).getTimeInMillis();
+            end=(new GregorianCalendar(year+1911,2,1,0,0,0)).getTimeInMillis()-1000;
+        } else if (month==4) {
+            showtime =year+"年3-4月";
+            period=year+"04";
+            start=(new GregorianCalendar(year+1911,2,1,0,0,0)).getTimeInMillis();
+            end=(new GregorianCalendar(year+1911,4,1,0,0,0)).getTimeInMillis()-1000;
+        } else if (month==6) {
+            showtime = year+"年5-6月";
+            period=year+"06";
+            start=(new GregorianCalendar(year+1911,4,1,0,0,0)).getTimeInMillis();
+            end=(new GregorianCalendar(year+1911,6,1,0,0,0)).getTimeInMillis()-1000;
+        } else if (month==8) {
+            showtime = year +"年7-8月";
+            period=year+"08";
+            start=(new GregorianCalendar(year+1911,6,1,0,0,0)).getTimeInMillis();
+            end=(new GregorianCalendar(year+1911,8,1,0,0,0)).getTimeInMillis()-1000;
+        } else if (month==10) {
+            showtime =year + "年9-10月";
+            period=year+"10";
+            start=(new GregorianCalendar(year+1911,8,1,0,0,0)).getTimeInMillis();
+            end=(new GregorianCalendar(year+1911,10,1,0,0,0)).getTimeInMillis()-1000;
         } else {
-            showtime =time.substring(0, time.length() - 2) + "年11-12月";
-            start=(new GregorianCalendar(year,10,1,0,0,0)).getTimeInMillis();
-            end=(new GregorianCalendar(year+1,0,1,0,0,0)).getTimeInMillis()-1000;
+            showtime =year +"年11-12月";
+            period=year+"12";
+            start=(new GregorianCalendar(year+1911,10,1,0,0,0)).getTimeInMillis();
+            end=(new GregorianCalendar(year+1912,0,1,0,0,0)).getTimeInMillis()-1000;
         }
-        PriceVO priceVO = priceDB.getPeriodAll(time);
-        String period;
+        PriceVO priceVO = priceDB.getPeriodAll(period);
         if (priceVO == null && action.equals("add")) {
-            addmonth = addmonth - 2;
-            if(addmonth<=0)
+            month=month- 2;
+            if(month<=0)
             {
-                period=String.valueOf(year-1911-1)+"12";
-            }else{
-                month=String.valueOf(addmonth);
-                for(int i=month.length();i<2;i++)
-                {
-                    month="0"+month;
-                }
-                period=time.substring(0, time.length() - 2)+month;
+               month=12;
+               year=year-1;
             }
-            setMonText(period,"add");
+            setMonText("add");
             Common.showToast(getActivity(), showtime+"尚未開獎");
             return;
         }
         if (priceVO == null && action.equals("cut")) {
-            addmonth = addmonth + 2;
-            if(addmonth>12)
+            month = month + 2;
+            if(month>12)
             {
-                period=String.valueOf(year-1911+1)+"02";
-            }else{
-                month=String.valueOf(addmonth);
-                for(int i=month.length();i<2;i++)
-                {
-                    month="0"+month;
-                }
-                period=time.substring(0, time.length() - 2)+month;
+              month=2;
+              year=year+1;
             }
-            setMonText(period,"cut");
+            setMonText("cut");
             Common.showToast(getActivity(), "沒有資料");
             return;
         }
         PIdateTittle.setText(showtime);
         setlayout();
     }
-
 
     private class cutOnClick implements View.OnClickListener {
         @Override
@@ -375,7 +341,7 @@ public class PriceInvoice extends Fragment {
             setlayout();
         }
     }
-    ////////////////////////////////////////////////////////////////////////////////////////
+
     private void setlayout() {
         Log.d("ssss",sd.format(new Date(start))+":"+sd.format(new Date(end)));
         List<Object> objectList=new ArrayList<>();
@@ -484,44 +450,26 @@ public class PriceInvoice extends Fragment {
     private class addMonth implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            int addmonth= Integer.parseInt(period.substring(period.length() - 2));
-            int year= Integer.parseInt(period.substring(0, period.length() - 2))+1911;
-            String month;
-             addmonth = addmonth + 2;
-            if(addmonth>12)
+            month=month+2;
+            if(month>12)
             {
-                period=String.valueOf(year-1911+1)+"02";
-            }else{
-                month=String.valueOf(addmonth);
-                for(int i=month.length();i<2;i++)
-                {
-                    month="0"+month;
-                }
-                period=period.substring(0, period.length() - 2)+month;
+                month=2;
+                year=year+1;
             }
-            setMonText(period, "add");
+            setMonText("add");
         }
     }
 
     private class cutMonth implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            int addmonth= Integer.parseInt(period.substring(period.length() - 2));
-            int year= Integer.parseInt(period.substring(0, period.length() - 2))+1911;
-            String month;
-            addmonth = addmonth - 2;
-            if(addmonth<=0)
+            month = month - 2;
+            if(month<=0)
             {
-                period=String.valueOf(year-1911-1)+"12";
-            }else{
-                month=String.valueOf(addmonth);
-                for(int i=month.length();i<2;i++)
-                {
-                    month="0"+month;
-                }
-                period=period.substring(0, period.length() - 2)+month;
+                month=12;
+                year=year-1;
             }
-            setMonText(period, "cut");
+            setMonText("cut");
         }
     }
 }

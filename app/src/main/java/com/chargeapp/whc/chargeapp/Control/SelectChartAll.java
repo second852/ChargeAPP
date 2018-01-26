@@ -154,6 +154,7 @@ public class SelectChartAll extends Fragment {
         for(int i=0;i<allComsume.size();i++){
             Object o=allComsume.get(i);
             String amout=(o instanceof ConsumeVO)?((ConsumeVO) o).getMoney():((InvoiceVO)o).getAmount();
+            long time=(o instanceof ConsumeVO)?((ConsumeVO) o).getDate().getTime():((InvoiceVO)o).getTime().getTime();
             chartData.add(new Entry(Integer.valueOf(amout), i));
         }
         return chartData;

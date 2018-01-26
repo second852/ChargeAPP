@@ -33,6 +33,7 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
@@ -98,12 +99,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     }
                     url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
                     jsonIn = getRemoteData(url, data);
-                    if(jsonIn.equals("InternerError"))
-                    {
-                        break;
-                    }
                     if (jsonIn.indexOf("919") != -1) {
-                        jsonIn = "error";
+                        jsonIn = "noUser";
                         break;
                     }
                     if (jsonIn.indexOf("200") == -1) {
@@ -111,7 +108,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         continue;
                     }
                     getjsonIn(jsonIn, password, user);
-
                     if(first)
                     {
                         CarrierVO carrierVO = new CarrierVO();
@@ -123,10 +119,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     if(year==nowyear&&month>nowmonth)
                     {
                         Log.d(TAG, "End startDate: " + startDate + "endDate" + endDate + "isNoExist" + isNoExist);
-                        break;
+                        return jsonIn;
                     }
                 }
-
+                return jsonIn;
             } else if (action.equals("GetToday")) {
                 List<CarrierVO> carrierVOS = carrierDB.getAll();
                 int todayyear, todaymonth, todayday, lastyear, lastmonth, lastday;
@@ -142,28 +138,34 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     lastmonth = last.get(Calendar.MONTH);
                     if (todayyear == lastyear && todaymonth == lastmonth) {
                         jsonIn=searchTodayDate(last, today, c.getCarNul(), c.getPassword());
+                        return jsonIn;
                     } else {
                         jsonIn=searchtomonth(last, today, c.getCarNul(), c.getPassword());
+                        return jsonIn;
                     }
                 }
             }else if(action.equals("searchHeartyTeam"))
             {
                 String keyworld = params[1].toString();
                 jsonIn=searchHeartyTeam(keyworld);
+                return jsonIn;
             }else if(action.equals("getAllPriceNul"))
             {
                  jsonIn=searchPriceNul();
+                return jsonIn;
             }else if(action.equals("getNeWPrice"))
             {
                 jsonIn=searchNewPriceNul();
+                return jsonIn;
             }else if(action.equals("GetAllInvoice"))
             {
                 jsonIn=getAllInvoiceDetail();
+                return jsonIn;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            jsonIn="InternerError";
-            }
+            jsonIn="error";
+        }
         return jsonIn;
     }
 
@@ -200,8 +202,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             Log.d("XXXXXXXX",max+" "+period.toString()+" "+period.toString().equals(max));
             if(max.equals(period.toString().trim()))
             {
-                end=false;
-                break;
+                return "isNew";
             }
             HashMap<String,String> data=getPriceMap(period.toString());
             jsonin=getRemoteData(url,data);
@@ -365,7 +366,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         String url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
         String jsonIn = getRemoteData(url, data);
         if (jsonIn.indexOf("919") != -1 || jsonIn.indexOf("200") == -1) {
-            jsonIn = "InternerError";
             return jsonIn;
         }
         Calendar cal = last;
@@ -424,7 +424,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 invoiceVO = jsonToInVoice(j, password, user);
                 invoiceVO.setDonateTime(invoiceVO.getTime());
                 hashMap.put(invoiceVO.getInvNum(),invoiceVO);
-
             }
             for (String key:hashMap.keySet())
             {
@@ -510,16 +509,13 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 }
                 Log.d(TAG, "jsonin " + jsonIn);
             }
-        }catch (Exception e)
+        }catch (SocketTimeoutException e)
         {
             jsonIn=new StringBuilder();
-            jsonIn.append("InternerError");
-            if(object instanceof EleSetCarrier) {
-                List<CarrierVO> carrierVOS = carrierDB.getAll();
-                if (carrierVOS != null) {
-                    jsonIn.append("setCarrier");
-                }
-            }
+            jsonIn.append("timeout");
+        }catch (Exception e) {
+            jsonIn=new StringBuilder();
+            jsonIn.append("error");
         }finally {
             conn.disconnect();
         }
@@ -532,11 +528,11 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         try {
             if (object instanceof EleSetCarrier) {
                 EleSetCarrier eleSetCarrier = (EleSetCarrier) object;
-                if (s.equals("error")) {
+                if (s.equals("noUser")) {
                     Common.showLongToast(eleSetCarrier.getActivity(), "手機條碼或驗證碼有誤");
                     eleSetCarrier.closeDialog();
                     return;
-                } else if(s.equals("InternerError"))
+                } else if(s.equals("timeout"))
                 {
                     Common.showLongToast(eleSetCarrier.getActivity(), "財政部網路忙線中，請稍候使用!");
                     eleSetCarrier.closeDialog();
@@ -550,7 +546,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             }if(object instanceof EleDonate)
             {
                 EleDonate eleDonate= (EleDonate) object;
-                if(s.equals("InternerError"))
+                if(s.equals("timeout"))
                 {
                     Common.showLongToast(eleDonate.getActivity(), "財政部網路忙線中，請稍候使用!");
                     eleDonate.cancelDialog();
@@ -567,16 +563,19 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             }else if(object instanceof PriceInvoice)
             {
                 PriceInvoice priceInvoice= (PriceInvoice) object;
-                if(s.equals("InternerError"))
+                if(s.equals("timeout")||s.equals("error"))
                 {
+                    Common.showLongToast(priceInvoice.getActivity(), "財政部網路忙線中，請稍候使用!");
                     priceInvoice.noconnect();
                     return;
                 }
                 if(action.equals("getNeWPrice"))
                 {
-                    priceInvoice.AutoSetCMPrice();
-                }else{
-                    priceInvoice.AutoSetInPrice();
+                    priceInvoice.newInvoice();
+                }
+                if(action.equals("GetToday"))
+                {
+                    priceInvoice.AutoSetPrice();
                 }
             }else if(object instanceof SelectChartAll)
             {

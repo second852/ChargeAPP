@@ -36,8 +36,7 @@ public class BootReceiver extends BroadcastReceiver {
     private SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals("android.intent.action.DATE_CHANGED")||
-                intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+        if (intent.getAction().equals(Intent.ACTION_DATE_CHANGED)) {
             notifyLottery(context);
             chargeAPPDB=new ChargeAPPDB(context);
             consumerDB=new ConsumerDB(chargeAPPDB.getReadableDatabase());
@@ -57,8 +56,11 @@ public class BootReceiver extends BroadcastReceiver {
                     Calendar date=Calendar.getInstance();
                     if("每天".equals(action))
                     {
+                        int year=date.get(Calendar.YEAR);
+                        int month=date.get(Calendar.MONTH);
+                        int day=date.get(Calendar.DAY_OF_MONTH);
                         boolean nowwek=jsonObject.get("noweek").getAsBoolean();
-                        setnewtime = date.getTimeInMillis();
+                        setnewtime = (new GregorianCalendar(year,month,day,18,0,0)).getTimeInMillis();
                         settime=date.getTimeInMillis()+1000*60*60*19;
                         int today=date.get(Calendar.DAY_OF_WEEK);
                         if(nowwek&&today==7)
@@ -83,11 +85,14 @@ public class BootReceiver extends BroadcastReceiver {
                         HashMap<String,Integer> change=getStringtoInt();
                         if(date.get(Calendar.DAY_OF_WEEK)==change.get(fixdetail))
                         {
+                            int year=date.get(Calendar.YEAR);
+                            int month=date.get(Calendar.MONTH);
+                            int day=date.get(Calendar.DAY_OF_MONTH);
                             consumeVO.setNotify("false");
                             consumeVO.setFixDate("false");
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumerDB.insert(consumeVO);
-                            settime=date.getTimeInMillis()+1000*60*60*19;
+                            settime=(new GregorianCalendar(year,month,day,18,0,0)).getTimeInMillis();
                             if(notify)
                             {
                                 NotifyUse(consumeVO,context,settime);
@@ -96,14 +101,17 @@ public class BootReceiver extends BroadcastReceiver {
                     }else if("每個月".equals(action)){
                         int day=date.get(Calendar.DAY_OF_MONTH);
                         int Maxday=date.getActualMaximum(Calendar.DAY_OF_MONTH);
+                        int year=date.get(Calendar.YEAR);
+                        int month=date.get(Calendar.MONTH);
                         String fixdate=jsonObject.get("choicedate").getAsString().trim();
                         if(fixdate.equals(String.valueOf(day)))
                         {
+
                             consumeVO.setNotify("false");
                             consumeVO.setFixDate("false");
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumerDB.insert(consumeVO);
-                            settime=date.getTimeInMillis()+1000*60*60*19;
+                            settime=(new GregorianCalendar(year,month,day,18,0,0)).getTimeInMillis();
                             if(notify)
                             {
                                 NotifyUse(consumeVO,context,settime);
@@ -115,7 +123,7 @@ public class BootReceiver extends BroadcastReceiver {
                             consumeVO.setFixDate("false");
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumerDB.insert(consumeVO);
-                            settime=date.getTimeInMillis()+1000*60*60*19;
+                            settime=(new GregorianCalendar(year,month,day,18,0,0)).getTimeInMillis();
                             if(notify)
                             {
                                 NotifyUse(consumeVO,context,settime);
@@ -127,11 +135,13 @@ public class BootReceiver extends BroadcastReceiver {
                         int day=date.get(Calendar.DAY_OF_MONTH);
                         if(Integer.valueOf(fixdate)==month&&day==1)
                         {
+                            month=date.get(Calendar.MONTH);
+                            int year=date.get(Calendar.YEAR);
                             consumeVO.setNotify("false");
                             consumeVO.setFixDate("false");
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumerDB.insert(consumeVO);
-                            settime=date.getTimeInMillis()+1000*60*60*19;
+                            settime=(new GregorianCalendar(year,month,day,18,0,0)).getTimeInMillis();
                             if(notify)
                             {
                                 NotifyUse(consumeVO,context,settime);
@@ -149,13 +159,15 @@ public class BootReceiver extends BroadcastReceiver {
         int month=calendar.get(Calendar.MONTH)+1;
         if(day==25&&month==1||month==3||month==5||month==7||month==9||month==11)
         {
-            long settime=calendar.getTimeInMillis()+1000*60*60*20;
+            int year=calendar.get(Calendar.YEAR);
+            month=calendar.get(Calendar.MONTH);
+            long settime=(new GregorianCalendar(year,month,day,18,0,0)).getTimeInMillis();;
             AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Bundle bundle=new Bundle();
             bundle.putSerializable("action","notifyNul");
             Intent alarmIntent = new Intent(context, secondReceiver.class);
             alarmIntent.putExtras(bundle);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 99);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
             manager.set(AlarmManager.RTC_WAKEUP,settime,pendingIntent);
         }
     }
