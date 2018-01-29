@@ -1,19 +1,23 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 import com.chargeapp.whc.chargeapp.R;
 
-public class InsertActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class InsertActivity extends Fragment implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button exportMoney,importMoney,goneMoney;
@@ -25,20 +29,27 @@ public class InsertActivity extends AppCompatActivity implements ViewPager.OnPag
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.insert_main);
-        mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        exportMoney=findViewById(R.id.exportD);
-        importMoney=findViewById(R.id.showD);
-        choiceitem=findViewById(R.id.choiceitem);
-        goneMoney=findViewById(R.id.goneD);
-        mAdapterViewPager = new MainPagerAdapter(getSupportFragmentManager());
+        View view = inflater.inflate(R.layout.insert_main, container, false);
+        mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        exportMoney=view.findViewById(R.id.exportD);
+        importMoney=view.findViewById(R.id.showD);
+        choiceitem=view.findViewById(R.id.choiceitem);
+        goneMoney=view.findViewById(R.id.goneD);
+        mAdapterViewPager = new MainPagerAdapter(getActivity().getSupportFragmentManager());
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
         mViewPager.setCurrentItem(30);
         setcurrentpage();
-        text=findViewById(R.id.text);
+        text=view.findViewById(R.id.text);
+        return  view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        movefirst=-exportMoney.getX();
     }
 
     public void setcurrentpage()
@@ -104,12 +115,7 @@ public class InsertActivity extends AppCompatActivity implements ViewPager.OnPag
     public void onPageScrollStateChanged(int state) {
     }
     //畫面呈現完抓取距離
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        movefirst=-exportMoney.getX();
-        text.setX(movefirst);
-    }
+
     private class ChangePage implements View.OnClickListener{
         private int page;
         public ChangePage(int page)

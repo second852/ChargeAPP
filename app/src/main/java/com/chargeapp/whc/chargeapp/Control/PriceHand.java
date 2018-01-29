@@ -46,7 +46,7 @@ import java.util.List;
 
 public class PriceHand extends Fragment {
     private ImageView PIdateAdd, PIdateCut;
-    private TextView priceTitle, PIdateTittle, inputNul,QrCodeA,voice;
+    private TextView priceTitle, PIdateTittle, inputNul,QrCodeA,voice,showRemain;
     private RecyclerView donateRL;
     private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private Calendar now = Calendar.getInstance();
@@ -58,7 +58,7 @@ public class PriceHand extends Fragment {
     private HashMap<String,String> levelPrice;
     private RelativeLayout showMi;
 
-
+    private CardView cardview;
     private static SpeechRecognizer speech = null;
     private static Intent recognizerIntent;
     private List<String> mResults;
@@ -71,6 +71,14 @@ public class PriceHand extends Fragment {
         View view = inflater.inflate(R.layout.price_hand, container, false);
         findViewById(view);
         String period=priceDB.findMaxPeriod();
+        if(period==null)
+        {
+            cardview.setVisibility(View.GONE);
+            priceTitle.setVisibility(View.GONE);
+            showRemain.setVisibility(View.VISIBLE);
+            showRemain.setText("財政部網路忙線中~\n請稍後使用~");
+            return view;
+        }
         this.month=Integer.valueOf(period.substring(period.length() - 2));
         this.year= Integer.valueOf(period.substring(0, period.length() - 2));
         setMonText("in");
@@ -291,6 +299,8 @@ public class PriceHand extends Fragment {
         QrCodeA=view.findViewById(R.id.QrCodeA);
         voice=view.findViewById(R.id.voice);
         showMi=view.findViewById(R.id.showMi);
+        showRemain=view.findViewById(R.id.showRemain);
+        cardview=view.findViewById(R.id.cardview);
     }
 
 

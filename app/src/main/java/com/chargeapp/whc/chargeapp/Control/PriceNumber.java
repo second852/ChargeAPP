@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
@@ -41,9 +42,10 @@ public class PriceNumber extends Fragment {
     private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private Calendar now = Calendar.getInstance();
     private int month, year;
-    private TextView PIdateTittle,superN,spcN,firstN,addsixN;
+    private TextView PIdateTittle,superN,spcN,firstN,addsixN,showRemain;
     private SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     private PriceVO priceVO;
+    private RelativeLayout showNul;
 
     @Nullable
     @Override
@@ -51,6 +53,13 @@ public class PriceNumber extends Fragment {
         View view = inflater.inflate(R.layout.price_number, container, false);
         findViewById(view);
         String period=priceDB.findMaxPeriod();
+        if(period==null)
+        {
+            showNul.setVisibility(View.GONE);
+            showRemain.setVisibility(View.VISIBLE);
+            showRemain.setText("財政部網路忙線中~\n請稍後使用~");
+            return view;
+        }
         this.month=Integer.valueOf(period.substring(period.length() - 2));
         this.year= Integer.valueOf(period.substring(0, period.length() - 2));
         setMonText("in");
@@ -163,6 +172,8 @@ public class PriceNumber extends Fragment {
         spcN=view.findViewById(R.id.spcN);
         firstN=view.findViewById(R.id.firstN);
         addsixN=view.findViewById(R.id.addsixN);
+        showRemain=view.findViewById(R.id.showRemain);
+        showNul=view.findViewById(R.id.showNul);
     }
 
 

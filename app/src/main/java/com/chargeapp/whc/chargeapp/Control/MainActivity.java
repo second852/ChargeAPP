@@ -4,12 +4,20 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.LongSparseArray;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -20,7 +28,6 @@ import android.widget.SimpleAdapter;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetail;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
@@ -28,17 +35,11 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-
-import java.lang.reflect.Type;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,9 +50,8 @@ import java.util.Set;
 public class MainActivity extends AppCompatActivity {
 
 
-
-    private GridView gridView;
-    private ImageView carrB;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
     public static ChargeAPPDB chargeAPPDB;
     private int[] image = {
             R.drawable.book, R.drawable.goal, R.drawable.chart, R.drawable.ele,R.drawable.lotto,R.drawable.setting
@@ -77,66 +77,76 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         askPermissions();
-//        deleteDatabase("ChargeAPP");
+        deleteDatabase("ChargeAPP");
         if (chargeAPPDB == null) {
             setdate();
         }
-        InvoiceDB invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
-        List<InvoiceVO> invoiceVOS=invoiceDB.getAll();
-        Log.d("ssss", String.valueOf(invoiceVOS.size()));
-        for(int i=0;i<invoiceVOS.size()-1;i++)
-        {
-            if(invoiceVOS.get(i).getInvNum().equals(invoiceVOS.get(i+1).getInvNum()))
-            {
-                Log.d("ssss",invoiceVOS.get(i).getInvNum());
-            }
+        setUpActionBar();
+        initDrawer();
+    }
+
+    @Override
+    public void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // home icon will keep still without calling syncState()
+        actionBarDrawerToggle.syncState();
+    }
+    private void initDrawer() {
+        drawerLayout = findViewById(R.id.drawer_layout);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.text_Open, R.string.text_Close);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        NavigationView navigationView = findViewById(R.id.navigation);
+        if (navigationView != null) {
+            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    menuItem.setChecked(true);
+                    drawerLayout.closeDrawers();
+                    Fragment fragment;
+                    switch (menuItem.getItemId()) {
+                        case R.id.update:
+                            setTitle(R.string.text_News);
+                            fragment = new InsertActivity();
+                            switchFragment(fragment);
+                            break;
+                        default:
+                            break;
+                    }
+                    return true;
+                }
+            });
         }
+    }
+    private void switchFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction =
+                getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
+    }
 
 
-        setContentView(R.layout.activity_main);
-        List<Map<String, Object>> items = new ArrayList<Map<String, Object>>();
-        for (int i = 0; i < image.length; i++) {
-            Map<String, Object> item = new HashMap<String, Object>();
-            item.put("image", image[i]);
-            item.put("text", imgText[i]);
-            items.add(item);
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+                return true;
         }
-        SimpleAdapter adapter = new SimpleAdapter(this,
-                items, R.layout.main_item, new String[]{"image", "text"},
-                new int[]{R.id.image, R.id.text});
-        gridView = findViewById(R.id.mainGrid);
-        carrB=findViewById(R.id.carrB);
-        gridView.setNumColumns(2);
-        gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    Intent intent = new Intent(MainActivity.this, InsertActivity.class);
-                    startActivity(intent);
-                }
-                if (position == 2) {
-                    Intent intent = new Intent(MainActivity.this, SelectActivity.class);
-                    startActivity(intent);
-                }
-                if (position == 3) {
-                    Intent intent = new Intent(MainActivity.this, EleActivity.class);
-                    startActivity(intent);
-                }
-                if (position == 4) {
-                    Intent intent = new Intent(MainActivity.this, PriceActivity.class);
-                    startActivity(intent);
-                }
-            }
-        });
+        return super.onOptionsItemSelected(item);
+    }
 
-        try {
-            setBarCode();
-        } catch (WriterException e) {
-            e.printStackTrace();
+    private void setUpActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
     }
 
     public static Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int desiredWidth, int desiredHeight) throws WriterException
@@ -179,9 +189,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setBarCode() throws WriterException {
     try {
-        carrB.setImageBitmap(encodeAsBitmap("/2RDO8+P", BarcodeFormat.CODE_39, 600, 100));
+//        carrB.setImageBitmap(encodeAsBitmap("/2RDO8+P", BarcodeFormat.CODE_39, 600, 100));
     }catch (Exception e) {
-    }
+       }
     }
 
 

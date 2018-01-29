@@ -56,7 +56,6 @@ public class PriceInvoice extends Fragment {
     private SimpleDateFormat sf = new SimpleDateFormat("M/dd");
     private String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
     public static AsyncTask<Object, Integer, String> getGetSQLDate1;
-    private ProgressDialog progressDialog;
     private List<CarrierVO> carrierVOS;
     private ConsumerDB consumerDB;
     private HashMap<String,String> levelprice;
@@ -76,11 +75,21 @@ public class PriceInvoice extends Fragment {
         findViewById(view);
         levelprice=getHashLP();
         levellength=getlevellength();
+        carrierVOS = carrierDB.getAll();
+        String period=priceDB.findMaxPeriod();
+        if(period==null)
+        {
+            showRemain.setVisibility(View.VISIBLE);
+            showRemain.setText("財政部網路忙線中~\n請稍後使用~");
+            return view;
+        }
         DRadd.setOnClickListener(new addOnClick());
         DRcut.setOnClickListener(new cutOnClick());
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
-        carrierVOS = carrierDB.getAll();
+        this.month=Integer.valueOf(period.substring(period.length() - 2));
+        this.year= Integer.valueOf(period.substring(0, period.length() - 2));
+        setMonText("in");
         if(carrierVOS.size()>0&&carrierVOS!=null)
         {
             String carrier=carrierVOS.get(choiceca).getCarNul();
@@ -90,12 +99,6 @@ public class PriceInvoice extends Fragment {
             DRshow.setVisibility(View.GONE);
         }
         return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        download();
     }
 
     private HashMap<String,Integer> getlevellength() {
@@ -123,141 +126,6 @@ public class PriceInvoice extends Fragment {
         hashMap.put("fifth","五獎\n1千元");
         hashMap.put("sixth","六獎\n200元");
         return hashMap;
-    }
-
-    public  void noconnect()
-    {
-        progressDialog.cancel();
-        AutoSetPrice();
-    }
-
-    private void download() {
-        boolean showcircle=false;
-        List<PriceVO> priceVOS = priceDB.getAll();
-        if (priceVOS == null || priceVOS.size() <= 0) {
-            new GetSQLDate(this).execute("getAllPriceNul");
-        } else {
-            if (PriceInvoice.getGetSQLDate1 == null) {
-                PriceInvoice.getGetSQLDate1 = new GetSQLDate(this).execute("getNeWPrice");
-                showcircle=true;
-            }
-        }
-        if(showcircle)
-        {
-            progressDialog.setMessage("正在更新資料,請稍候...");
-            progressDialog.show();
-        }else{
-            AutoSetPrice();
-        }
-    }
-    public void newInvoice()
-    {
-        if (carrierVOS != null&&carrierVOS.size()>0) {
-            PriceInvoice.getGetSQLDate1.cancel(true);
-            PriceInvoice.getGetSQLDate1 = new GetSQLDate(this).execute("GetToday");
-        }
-    }
-
-
-    public void AutoSetPrice() {
-        List<PriceVO> priceVOS = priceDB.getAll();
-        int month;
-        int year;
-        for (PriceVO priceVO : priceVOS) {
-            long startTime, endTime;
-            String invoYM = priceVO.getInvoYm();
-            month = Integer.valueOf(invoYM.substring(invoYM.length() - 2));
-            year = Integer.valueOf(invoYM.substring(0, invoYM.length() - 2)) + 1911;
-            startTime = (new GregorianCalendar(year, month - 2, 1,0,0,0)).getTimeInMillis();
-            Calendar endC=new GregorianCalendar(year, month-1, 1);
-            endTime = (new GregorianCalendar(year, month-1, endC.getActualMaximum(Calendar.DAY_OF_MONTH),59,59)).getTimeInMillis();
-            autoSetCRWin(startTime, endTime, priceVO);
-            autoSetInWin(startTime, endTime, priceVO);
-        }
-        String max=priceDB.findMaxPeriod();
-        this.month=Integer.valueOf(max.substring(max.length() - 2));
-        this.year= Integer.valueOf(max.substring(0, max.length() - 2));
-        setMonText("in");
-    }
-
-
-    private void autoSetCRWin(long startTime, long endTime, PriceVO priceVO) {
-        List<ConsumeVO> consumeVOS = consumerDB.getNoWinAll(startTime, endTime);
-        for (ConsumeVO consumeVO : consumeVOS) {
-            String nul = consumeVO.getNumber().trim();
-            consumeVO.setIsWin("N");
-            if (nul != null && nul.trim().length() == 10) {
-                nul = nul.substring(2);
-                String aw = anwswer(nul, priceVO);
-                consumeVO.setIsWin(aw);
-            }
-            consumerDB.update(consumeVO);
-        }
-    }
-
-    private String anwswer(String nul, PriceVO priceVO) {
-        String threenul = nul.substring(5);
-        String s;
-        if (nul.equals(priceVO.getSuperPrizeNo())) {
-            return "super";
-        }
-        if (nul.equals(priceVO.getSpcPrizeNo())) {
-            return "spc";
-        }
-        s = firsttofourprice(nul, priceVO.getFirstPrizeNo1());
-        if (!s.equals("N")) {
-            return s;
-        }
-        s = firsttofourprice(nul, priceVO.getFirstPrizeNo2());
-        if (!s.equals("N")) {
-            return s;
-        }
-        s = firsttofourprice(nul, priceVO.getFirstPrizeNo3());
-        if (!s.equals("N")) {
-            return s;
-        }
-        if (threenul.equals(priceVO.getSixthPrizeNo1())) {
-            return "sixth";
-        }
-        if (threenul.equals(priceVO.getSixthPrizeNo2())) {
-            return "sixth";
-        }
-        if (threenul.equals(priceVO.getSixthPrizeNo3())) {
-            return "sixth";
-        }
-        if (threenul.equals(priceVO.getSixthPrizeNo4())) {
-            return "sixth";
-        }
-        if (threenul.equals(priceVO.getSixthPrizeNo5())) {
-            return "sixth";
-        }
-        if (threenul.equals(priceVO.getSixthPrizeNo6())) {
-            return "sixth";
-        }
-        return "N";
-    }
-
-
-    private void autoSetInWin(long startTime, long endTime, PriceVO priceVO) {
-        List<CarrierVO> carrierVOS = carrierDB.getAll();
-        for (CarrierVO c : carrierVOS) {
-            List<InvoiceVO> invoiceVOS = invoiceDB.getNotSetWin(c.getCarNul(), startTime, endTime);
-            for (InvoiceVO i : invoiceVOS) {
-                String nul = i.getInvNum().substring(2);
-                String inWin = anwswer(nul, priceVO);
-                i.setIswin(inWin);
-                invoiceDB.update(i);
-            }
-        }
-    }
-
-    private String firsttofourprice(String nul, String pricenul) {
-        for (int i = 0; i < 6; i++) {
-            if (nul.substring(i).equals(pricenul.substring(i))) {
-                return level[i];
-            }
-        }
-        return "N";
     }
 
     private void setMonText(String action) {
@@ -379,7 +247,6 @@ public class PriceInvoice extends Fragment {
         DRshow=view.findViewById(R.id.DRshow);
         showRemain=view.findViewById(R.id.showRemain);
         showRemain.setText("(無實體電子發票專屬獎中獎清單\n請到財政部網站確認)");
-        progressDialog = new ProgressDialog(getActivity());
         consumerDB = new ConsumerDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 

@@ -5,19 +5,8 @@
     android:layout_height="match_parent"
     android:background="#ffffff"
     >
-    <TextView
-        android:layout_marginTop="2dp"
-        android:background="#ffffff"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/choiceitem"
-        android:gravity="center"
-        android:textSize="15dp"
-        android:id="@+id/showRemain"
-        android:textColor="#FF0000"
-        />
+
     <RelativeLayout
-        android:layout_below="@+id/showRemain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -132,6 +121,17 @@
             android:textSize="18sp"
             />
     </RelativeLayout>
+    <TextView
+        android:background="#ffffff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:id="@+id/showRemain"
+        android:textColor="#FF0000"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        />
     <TextView
         android:id="@+id/DRmessage"
         android:layout_width="match_parent"

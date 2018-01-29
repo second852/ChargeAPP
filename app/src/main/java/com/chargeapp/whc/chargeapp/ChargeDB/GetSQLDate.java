@@ -9,6 +9,7 @@ import android.view.View;
 
 
 import com.chargeapp.whc.chargeapp.Control.Common;
+import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
@@ -244,16 +245,20 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
            period.append(month);
            HashMap<String,String> data=getPriceMap(period.toString());
            jsonin=getRemoteData(url,data);
+           Log.d("XXXXXXjsonin",jsonin);
            if(jsonin.indexOf("200")!=-1)
            {
                PriceVO priceVO=jsonToPriceVO(jsonin);
                priceDB.insert(priceVO);
+               Log.d("XXXXXXinsert", priceVO.getInvoYm());
+           }else {
+              break;
            }
-           month=month-2;
            Log.d("XXXXXX", period.toString());
+           month=month-2;
        }
        Log.d("XXXXXx", String.valueOf(priceDB.getAll().size()));
-        return jsonin;
+       return jsonin;
     }
 
     private PriceVO jsonToPriceVO(String jsonin) {
@@ -514,6 +519,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             jsonIn=new StringBuilder();
             jsonIn.append("timeout");
         }catch (Exception e) {
+            Log.d("error",e.getMessage());
             jsonIn=new StringBuilder();
             jsonIn.append("error");
         }finally {
@@ -560,22 +566,22 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 {
                     eleDonate.setlistTeam(s);
                 }
-            }else if(object instanceof PriceInvoice)
+            }else if(object instanceof Download)
             {
-                PriceInvoice priceInvoice= (PriceInvoice) object;
+                Download download= (Download) object;
                 if(s.equals("timeout")||s.equals("error"))
                 {
-                    Common.showLongToast(priceInvoice.getActivity(), "財政部網路忙線中，請稍候使用!");
-                    priceInvoice.noconnect();
+                    download.AutoSetPrice();
+                    Common.showLongToast(download, "財政部網路忙線中，請稍候使用!");
                     return;
                 }
-                if(action.equals("getNeWPrice"))
+                if(action.equals("getNeWPrice")||action.equals("getAllPriceNul"))
                 {
-                    priceInvoice.newInvoice();
+                    download.newInvoice();
                 }
                 if(action.equals("GetToday"))
                 {
-                    priceInvoice.AutoSetPrice();
+                    download.AutoSetPrice();
                 }
             }else if(object instanceof SelectChartAll)
             {
