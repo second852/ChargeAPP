@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -39,17 +40,17 @@ import java.util.List;
 import java.util.Set;
 
 
-public class EleActivity extends AppCompatActivity {
+public class EleActivity extends Fragment {
     private ListView elefunction;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.ele_main);
-        elefunction=findViewById(R.id.elefunction);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.ele_main, container, false);
+        elefunction=view.findViewById(R.id.elefunction);
         List<EleMainItemVO> eleMainItemVOList=getElemainItemList();
-        elefunction.setAdapter(new EleMainItemVOAdapter(this,eleMainItemVOList));
+        elefunction.setAdapter(new EleMainItemVOAdapter(getActivity(),eleMainItemVOList));
         elefunction.setOnItemClickListener(new choiceItemFramgent());
+        return view;
     }
 
     private List<EleMainItemVO> getElemainItemList() {
@@ -111,17 +112,18 @@ public class EleActivity extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                Fragment fragment=null;
-               FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction().addToBackStack("Elemain");
+               FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction().addToBackStack("Elemain");
                if(i==0)
                {
                    elefunction.setOnItemClickListener(null);
                   fragment=new EleSetCarrier();
-                  fragmentTransaction.replace(R.id.elemain, fragment);
+                  fragmentTransaction.add(R.id.elemain,fragment);
                   fragmentTransaction.commit();
                }else if(i==1)
                {
-                   Intent intent = new Intent(EleActivity.this, EleDonateMain.class);
-                   startActivity(intent);
+                   fragment=new EleDonateMain();
+                   fragmentTransaction.replace(R.id.body, fragment);
+                   fragmentTransaction.commit();
                }else if(i==2)
                {
                    Intent intent = new Intent();
@@ -131,19 +133,17 @@ public class EleActivity extends AppCompatActivity {
 
                }else if(i==3)
                {
-                   elefunction.setOnItemClickListener(null);
                    fragment=new EleNewCarrier();
-                   fragmentTransaction.replace(R.id.elemain, fragment);
+                   fragmentTransaction.replace(R.id.body, fragment);
                    fragmentTransaction.commit();
 
                }else if(i==4)
                {
-                   elefunction.setOnItemClickListener(null);
                    fragment=new EleAddBank();
-                   fragmentTransaction.replace(R.id.elemain, fragment);
+                   fragmentTransaction.replace(R.id.body, fragment);
                    fragmentTransaction.commit();
                }else if(i==5){
-                   Intent intent = new Intent(EleActivity.this, HowGetPrice.class);
+                   Intent intent = new Intent(getActivity(), HowGetPrice.class);
                    startActivity(intent);
                }else{
                    Intent intent = new Intent();
@@ -153,30 +153,4 @@ public class EleActivity extends AppCompatActivity {
                }
         }
     }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        int index = getSupportFragmentManager().getBackStackEntryCount() - 1;
-        if(index!=-1)
-        {
-            FragmentManager.BackStackEntry backEntry = getSupportFragmentManager().getBackStackEntryAt(index);
-            String tag = backEntry.getName();
-            if(tag!=null)
-            {
-                if (tag.equals("Elemain")) {
-                    Intent intent = new Intent(EleActivity.this, EleActivity.class);
-                    startActivity(intent);
-                    return true;
-                }
-            }
-        }else {
-            Intent intent = new Intent(EleActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-
-
-
 }

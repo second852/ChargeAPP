@@ -1,19 +1,30 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuWrapperFactory;
 import android.view.View;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
+import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
+import com.chargeapp.whc.chargeapp.Model.CarrierVO;
+import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.R;
+
+import java.util.List;
 
 public class PriceActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
@@ -25,7 +36,11 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
     private int nowpoint=0;
     private float movefirst;
     private Button exportMoney;
-
+    private CarrierDB carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+    private PriceDB priceDB= new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+    private ProgressDialog progressDialog;
+    private List<CarrierVO> carrierVOS;
+    public static AsyncTask<Object, Integer, String> getGetSQLDate1;
 
 
 
@@ -36,19 +51,61 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
         super.onCreate(savedInstanceState);
         setContentView(R.layout.price_main);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        mAdapterViewPager = new MainPagerAdapter(getSupportFragmentManager());
         exportMoney=findViewById(R.id.exportD);
         importMoney=findViewById(R.id.showD);
         choiceitem=findViewById(R.id.choiceitem);
         goneMoney=findViewById(R.id.goneD);
         showN=findViewById(R.id.showN);
         howtogetprice=findViewById(R.id.howtogetprice);
-        mAdapterViewPager = new MainPagerAdapter(getSupportFragmentManager());
+        text=findViewById(R.id.text);
+        progressDialog = new ProgressDialog(this);
+        carrierVOS=carrierDB.getAll();
+        download();
+    }
+
+
+    public void newInvoice()
+    {
+        if (carrierVOS != null&&carrierVOS.size()>0) {
+            getGetSQLDate1.cancel(true);
+            getGetSQLDate1 = new GetSQLDate(this).execute("GetToday");
+        }else {
+            setloyout();
+        }
+    }
+
+
+
+    private void download() {
+        boolean showcircle=false;
+        List<PriceVO> priceVOS = priceDB.getAll();
+        if (priceVOS == null || priceVOS.size() <= 0) {
+            getGetSQLDate1 =new GetSQLDate(this).execute("getAllPriceNul");
+            showcircle=true;
+        } else {
+            if (getGetSQLDate1 == null) {
+                getGetSQLDate1 = new GetSQLDate(this).execute("getNeWPrice");
+                showcircle=true;
+            }
+        }
+        if(showcircle)
+        {
+            progressDialog.setMessage("正在更新資料,請稍候...");
+            progressDialog.show();
+        }else{
+            setloyout();
+        }
+    }
+
+
+    public void setloyout()
+    {
+        progressDialog.cancel();
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
         mViewPager.setCurrentItem(6);
         setcurrentpage();
-        text=findViewById(R.id.text);
-
         howtogetprice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,7 +117,6 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
 
     public void setcurrentpage()
     {
-
         int page=mViewPager.getCurrentItem();
         exportMoney.setOnClickListener(new ChangePage(page));
         importMoney.setOnClickListener(new ChangePage(page+1));
@@ -71,10 +127,10 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(PriceInvoice.getGetSQLDate1!=null)
+        if(getGetSQLDate1!=null)
         {
-            PriceInvoice.getGetSQLDate1.cancel(true);
-            PriceInvoice.getGetSQLDate1=null;
+           getGetSQLDate1.cancel(true);
+           getGetSQLDate1=null;
         }
     }
 

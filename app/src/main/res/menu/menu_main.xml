@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/insertC"
+        android:icon="@drawable/book"
+        android:title="@string/text_Com" />
+    <item
+        android:id="@+id/carrier"
+        android:icon="@drawable/invent"
+        android:title="@string/text_Ele" />
+    <item
+        android:id="@+id/price"
+        android:icon="@drawable/bouns"
+        android:title="@string/text_Price" />
+    <item
+        android:id="@+id/picture"
+        android:icon="@drawable/chart"
+        android:title="@string/text_Picture" />
+    <item
+        android:id="@+id/goal"
+        android:icon="@drawable/goal"
+        android:title="@string/text_Goal" />
+    <item
+        android:id="@+id/setting"
+        android:icon="@drawable/setting"
+        android:title="@string/text_Setting" />
+</menu>

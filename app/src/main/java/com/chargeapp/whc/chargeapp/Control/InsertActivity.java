@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,15 +33,15 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.insert_main, container, false);
-        mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        mViewPager = (ViewPager) view.findViewById(R.id.insert_viewPager);
         exportMoney=view.findViewById(R.id.exportD);
         importMoney=view.findViewById(R.id.showD);
         choiceitem=view.findViewById(R.id.choiceitem);
         goneMoney=view.findViewById(R.id.goneD);
-        mAdapterViewPager = new MainPagerAdapter(getActivity().getSupportFragmentManager());
+        mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(30);
+        Log.d("XXXXX", String.valueOf(mViewPager.getCurrentItem()));
         setcurrentpage();
         text=view.findViewById(R.id.text);
         return  view;
@@ -61,7 +62,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
 
 
     public static class MainPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 60;
+        private static int NUM_ITEMS = 2;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -75,6 +76,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         @Override
         public Fragment getItem(int position) {
             int currentpoition=position%2;
+            Log.d("XXXXX", String.valueOf(position));
             if (currentpoition == 0) {
                 return new InsertSpend();
             } else  {
@@ -114,7 +116,6 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     @Override
     public void onPageScrollStateChanged(int state) {
     }
-    //畫面呈現完抓取距離
 
     private class ChangePage implements View.OnClickListener{
         private int page;

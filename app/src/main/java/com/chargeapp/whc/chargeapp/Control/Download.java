@@ -4,8 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
@@ -27,7 +31,7 @@ import java.util.List;
  * Created by 1709008NB01 on 2018/1/29.
  */
 
-public class Download extends AppCompatActivity {
+public class Download extends Fragment {
     private PriceDB priceDB;
     private CarrierDB carrierDB;
     private String TAG="Download";
@@ -39,15 +43,16 @@ public class Download extends AppCompatActivity {
 
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.download_main);
+        View view = inflater.inflate(R.layout.download_main, container, false);
         priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumerDB=new ConsumerDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierVOS=carrierDB.getAll();
-        download();
+//        download();
+        return view;
     }
 
     private void download() {
@@ -168,9 +173,8 @@ public class Download extends AppCompatActivity {
 
     public void tonewActivity()
     {
-        Intent intent = new Intent(Download.this, PriceActivity.class);
+        Intent intent = new Intent(getContext(), PriceActivity.class);
         startActivity(intent);
-        finish();
     }
 
 }

@@ -40,20 +40,13 @@
         <receiver android:name=".Control.secondReceiver">
         </receiver>
         <activity
-            android:name=".Control.Download"/>
-        <activity
             android:name=".Control.SelectActivity"/>
-        <activity
-            android:name=".Control.EleActivity"/>
-        <activity
-            android:name=".Control.EleDonateMain"/>
         <activity
             android:name=".Control.PriceActivity"/>
         <activity
             android:name=".Control.HowGetPrice"/>
         <activity
             android:name=".ui.MultiTrackerActivity"/>
-
     </application>
 
 </manifest>

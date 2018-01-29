@@ -572,7 +572,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 if(s.equals("timeout")||s.equals("error"))
                 {
                     download.AutoSetPrice();
-                    Common.showLongToast(download, "財政部網路忙線中，請稍候使用!");
+                    Common.showLongToast(download.getActivity(), "財政部網路忙線中，請稍候使用!");
                     return;
                 }
                 if(action.equals("getNeWPrice")||action.equals("getAllPriceNul"))

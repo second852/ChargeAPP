@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="#000000"
+        android:layout_marginLeft="-60dp"
         android:layout_below="@+id/mainTitle"
         >
         <LinearLayout
@@ -34,17 +35,17 @@
             android:id="@+id/text"
             >
             <Button
-                android:visibility="gone"
                 android:id="@+id/goneD"
-                android:layout_width="wrap_content"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/exportD"
                 android:background="#000000"
+                android:textColor="#ffffff"
                 android:textSize="25sp"
                 android:text="紀錄" />
             <Button
                 android:id="@+id/exportD"
-                android:layout_width="wrap_content"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:background="#f5f5f5"
@@ -53,10 +54,11 @@
                 android:text="捐獻" />
             <Button
                 android:id="@+id/showD"
-                android:layout_width="wrap_content"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/exportD"
                 android:background="#000000"
+                android:textColor="#ffffff"
                 android:textSize="25sp"
                 android:text="紀錄" />
         </LinearLayout>
