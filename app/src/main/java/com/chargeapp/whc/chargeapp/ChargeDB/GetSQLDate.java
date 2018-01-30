@@ -578,10 +578,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 if(action.equals("getNeWPrice")||action.equals("getAllPriceNul"))
                 {
                     download.newInvoice();
+                    return;
                 }
                 if(action.equals("GetToday"))
                 {
                     download.AutoSetPrice();
+                    return;
                 }
             }else if(object instanceof SelectChartAll)
             {

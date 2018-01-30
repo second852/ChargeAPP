@@ -1,116 +1,87 @@
 package com.chargeapp.whc.chargeapp.Control;
 
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.os.AsyncTask;
+
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuWrapperFactory;
+import android.support.v7.app.ActionBar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
-import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
-import com.chargeapp.whc.chargeapp.Model.CarrierVO;
-import com.chargeapp.whc.chargeapp.Model.PriceVO;
+
+
 import com.chargeapp.whc.chargeapp.R;
 
 import java.util.List;
 
-public class PriceActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class PriceActivity extends Fragment implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button importMoney,showN,howtogetprice;
-    public static  Button goneMoney;
+    public  Button goneMoney;
     private HorizontalScrollView choiceitem;
     private LinearLayout text;
     private int nowpoint=0;
     private float movefirst;
     private Button exportMoney;
-    private CarrierDB carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-    private PriceDB priceDB= new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-    private ProgressDialog progressDialog;
-    private List<CarrierVO> carrierVOS;
-    public static AsyncTask<Object, Integer, String> getGetSQLDate1;
+
 
 
 
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.price_main);
-        mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        mAdapterViewPager = new MainPagerAdapter(getSupportFragmentManager());
-        exportMoney=findViewById(R.id.exportD);
-        importMoney=findViewById(R.id.showD);
-        choiceitem=findViewById(R.id.choiceitem);
-        goneMoney=findViewById(R.id.goneD);
-        showN=findViewById(R.id.showN);
-        howtogetprice=findViewById(R.id.howtogetprice);
-        text=findViewById(R.id.text);
-        progressDialog = new ProgressDialog(this);
-        carrierVOS=carrierDB.getAll();
-        download();
-    }
-
-
-    public void newInvoice()
-    {
-        if (carrierVOS != null&&carrierVOS.size()>0) {
-            getGetSQLDate1.cancel(true);
-            getGetSQLDate1 = new GetSQLDate(this).execute("GetToday");
-        }else {
-            setloyout();
-        }
-    }
-
-
-
-    private void download() {
-        boolean showcircle=false;
-        List<PriceVO> priceVOS = priceDB.getAll();
-        if (priceVOS == null || priceVOS.size() <= 0) {
-            getGetSQLDate1 =new GetSQLDate(this).execute("getAllPriceNul");
-            showcircle=true;
-        } else {
-            if (getGetSQLDate1 == null) {
-                getGetSQLDate1 = new GetSQLDate(this).execute("getNeWPrice");
-                showcircle=true;
-            }
-        }
-        if(showcircle)
-        {
-            progressDialog.setMessage("正在更新資料,請稍候...");
-            progressDialog.show();
-        }else{
-            setloyout();
-        }
+        View view = inflater.inflate(R.layout.price_main, container, false);
+        mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
+        exportMoney=view.findViewById(R.id.exportD);
+        importMoney=view.findViewById(R.id.showD);
+        choiceitem=view.findViewById(R.id.choiceitem);
+        goneMoney=view.findViewById(R.id.goneD);
+        showN=view.findViewById(R.id.showN);
+        text=view.findViewById(R.id.text);
+        setloyout();
+        return view;
     }
 
 
     public void setloyout()
     {
-        progressDialog.cancel();
+        ActionBar actionBar=((AppCompatActivity)getActivity()).getSupportActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        View actionbarLayout = LayoutInflater.from(getActivity()).inflate(R.layout.actionbar_layout, null);
+        actionBar.setCustomView(actionbarLayout);
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
         mViewPager.setCurrentItem(6);
         setcurrentpage();
+        howtogetprice=actionbarLayout.findViewById(R.id.howtogetprice);
         howtogetprice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(PriceActivity.this, HowGetPrice.class);
-                startActivity(intent);
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction().addToBackStack("Elemain");
+                List<Fragment> fragments=getFragmentManager().getFragments();
+                for(Fragment f:fragments)
+                {
+                    fragmentTransaction.remove(f);
+                }
+                fragmentTransaction.addToBackStack(null);
+                getActivity().setTitle(R.string.text_HowGet);
+                Fragment fragment=new HowGetPrice();
+                fragmentTransaction.replace(R.id.body, fragment);
+                fragmentTransaction.commit();
             }
         });
     }
@@ -124,15 +95,7 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
     }
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(getGetSQLDate1!=null)
-        {
-           getGetSQLDate1.cancel(true);
-           getGetSQLDate1=null;
-        }
-    }
+
 
     public static class MainPagerAdapter extends FragmentPagerAdapter {
         private static int NUM_ITEMS = 12;
@@ -201,14 +164,7 @@ public class PriceActivity extends AppCompatActivity implements ViewPager.OnPage
     @Override
     public void onPageScrollStateChanged(int state) {
     }
-    //畫面呈現完抓取距離
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        goneMoney.setVisibility(View.VISIBLE);
-        movefirst=-importMoney.getWidth();
-        text.setX(movefirst);
-    }
+
     private class ChangePage implements View.OnClickListener{
         private int page;
         public ChangePage(int page)

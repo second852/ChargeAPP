@@ -6,7 +6,22 @@ package com.chargeapp.whc.chargeapp.Model;
 
 public class EleMainItemVO {
     private String name;
+    private int idstring;
     private int image;
+
+
+    public EleMainItemVO(int idstring, int image) {
+        this.idstring = idstring;
+        this.image = image;
+    }
+
+    public int getIdstring() {
+        return idstring;
+    }
+
+    public void setIdstring(int idstring) {
+        this.idstring = idstring;
+    }
 
     public EleMainItemVO(String name, int image) {
         this.name = name;

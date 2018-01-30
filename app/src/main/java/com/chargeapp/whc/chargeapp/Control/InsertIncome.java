@@ -267,8 +267,8 @@ public class InsertIncome extends Fragment {
             if(b)
             {
                 fixdate.setVisibility(View.VISIBLE);
-                fixdate.setX(showfixdate.getWidth()/3-150);
-                choiceStatue.setX(showfixdate.getWidth()/3+200);
+                fixdate.setX(showfixdate.getWidth()/10);
+                choiceStatue.setX(showfixdate.getWidth()/2+showfixdate.getWidth()/10);
                 choiceStatue.setVisibility(View.VISIBLE);
             }else{
                 choiceStatue.setVisibility(View.GONE);
@@ -286,8 +286,8 @@ public class InsertIncome extends Fragment {
             if(choiceitem.equals("每天"))
             {
                 choiceday.setVisibility(View.GONE);
-                fixdate.setX(showfixdate.getWidth()/3-150);
-                choiceStatue.setX(showfixdate.getWidth()/3+200);
+                fixdate.setX(showfixdate.getWidth()/10);
+                choiceStatue.setX(showfixdate.getWidth()/2+showfixdate.getWidth()/10);
                 choiceStatue.setVisibility(View.VISIBLE);
                 return;
             }
@@ -317,9 +317,9 @@ public class InsertIncome extends Fragment {
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
-            fixdate.setX(showfixdate.getWidth()/3-250);
-            choiceStatue.setX(showfixdate.getWidth()/3+110);
-            choiceday.setX(showfixdate.getWidth()/3+400);
+            fixdate.setX(showfixdate.getWidth()/20);
+            choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/20);
+            choiceday.setX((showfixdate.getWidth()*2/3)+showfixdate.getWidth()/20);
         }
 
 

@@ -6,10 +6,17 @@
         <item>每個月</item>
         <item>每年</item>
     </string-array>
+    <string name="text_Open">open</string>
+    <string name="text_Close">close</string>
     <string name="text_Com">記一筆</string>
     <string name="text_Ele">電子發票</string>
     <string name="text_Price">發票兌獎</string>
     <string name="text_Picture">數據分析</string>
     <string name="text_Goal">目標</string>
     <string name="text_Setting">設定</string>
+    <string name="text_SetCarrier">綁定/取消載具</string>
+    <string name="text_DonateMain">捐獻發票</string>
+    <string name="text_NewCarrier">新增載具</string>
+    <string name="text_EleBank">新增/修改帳戶</string>
+    <string name="text_HowGet">如何領獎</string>
 </resources>

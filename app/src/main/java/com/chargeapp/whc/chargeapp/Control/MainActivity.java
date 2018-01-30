@@ -1,9 +1,12 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -18,8 +21,19 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
@@ -27,6 +41,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetail;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
+import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -36,6 +51,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -89,38 +105,26 @@ public class MainActivity extends AppCompatActivity {
     }
     private void initDrawer() {
         drawerLayout = findViewById(R.id.drawer_layout);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.text_Picture, R.string.text_Price);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.text_Open, R.string.text_Close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         NavigationView navigationView = findViewById(R.id.navigation);
-        if (navigationView != null) {
-            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                    menuItem.setChecked(true);
-                    drawerLayout.closeDrawers();
-                    Fragment fragment;
-                    switch (menuItem.getItemId()) {
-                        case R.id.insertC:
-                            setTitle(R.string.text_Com);
-                            fragment = new InsertActivity();
-                            switchFragment(fragment);
-                            break;
-                        case R.id.carrier:
-                            setTitle(R.string.text_Ele);
-                            fragment = new EleActivity();
-                            switchFragment(fragment);
-                            break;
-                        default:
-                            setTitle(R.string.text_Price);
-                            fragment = new Download();
-                            switchFragment(fragment);
-                            break;
-                    }
-                    return true;
-                }
-            });
-        }
+        ListView listView=findViewById(R.id.list_menu);
+        List<EleMainItemVO> itemVOS=getNewItem();
+        listView.setAdapter(new MainItemAdapter(this,itemVOS));
+        listView.setOnItemClickListener(new choiceItemFramgent());
     }
+
+    private List<EleMainItemVO> getNewItem() {
+        List<EleMainItemVO> eleMainItemVOList=new ArrayList<>();
+        eleMainItemVOList.add(new EleMainItemVO(R.string.text_Com,R.drawable.book));
+        eleMainItemVOList.add(new EleMainItemVO(R.string.text_Ele,R.drawable.barcode));
+        eleMainItemVOList.add(new EleMainItemVO(R.string.text_Price,R.drawable.bouns));
+        eleMainItemVOList.add(new EleMainItemVO(R.string.text_Picture,R.drawable.chart));
+        eleMainItemVOList.add(new EleMainItemVO(R.string.text_Goal,R.drawable.goal));
+        eleMainItemVOList.add(new EleMainItemVO(R.string.text_Setting,R.drawable.settings));
+        return eleMainItemVOList;
+    }
+
     private void switchFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         List<Fragment> f=getSupportFragmentManager().getFragments();
@@ -136,7 +140,33 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.context_menu, menu);
+    }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.clear:
+                tvMessage.setText("");
+                break;
+            case R.id.yellow:
+                tvMessage.setBackgroundColor(Color.YELLOW);
+                break;
+            case R.id.green:
+                tvMessage.setBackgroundColor(Color.GREEN);
+                break;
+            case R.id.cyan:
+                tvMessage.setBackgroundColor(Color.CYAN);
+                break;
+            default:
+                return super.onContextItemSelected(item);
+        }
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -303,6 +333,83 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private class MainItemAdapter extends BaseAdapter {
+        Context context;
+        List<EleMainItemVO> eleMainItemVOList;
+
+        MainItemAdapter(Context context, List<EleMainItemVO> eleMainItemVOList) {
+            this.context = context;
+            this.eleMainItemVOList = eleMainItemVOList;
+        }
+
+        @Override
+        public int getCount() {
+            return eleMainItemVOList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return eleMainItemVOList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View itemView, ViewGroup parent) {
+            if (itemView == null) {
+                LayoutInflater layoutInflater = LayoutInflater.from(context);
+                itemView = layoutInflater.inflate(R.layout.ele_main_item, parent, false);
+            }
+            if(position==1)
+            {
+                registerForContextMenu(itemView);
+            }
+            EleMainItemVO member = eleMainItemVOList.get(position);
+            ImageView ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
+            ivImage.setImageResource(member.getImage());
+            String mystring = getResources().getString(member.getIdstring());
+            TextView tvId = (TextView) itemView.findViewById(R.id.tvId);
+            tvId.setText(mystring);
+            return itemView;
+        }
+
+
+
+    private class choiceItemFramgent implements android.widget.AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            Fragment fragment;
+            drawerLayout.closeDrawer(GravityCompat.START);
+            if(i==0)
+            {
+                fragment=new InsertActivity();
+                setTitle(R.string.text_Com);
+                switchFragment(fragment);
+            }else if(i==1)
+            {
+
+            }else if(i==2)
+            {
+                fragment=new Download();
+                setTitle(R.string.text_Price);
+                switchFragment(fragment);
+
+            }else if(i==3)
+            {
+                fragment=new SelectActivity();
+                setTitle(R.string.text_Price);
+                switchFragment(fragment);
+            }else if(i==4)
+            {
+
+            }else{
+
+            }
+        }
+    }
 
 //    @Override
 //    public boolean onKeyDown(int keyCode, KeyEvent event) {

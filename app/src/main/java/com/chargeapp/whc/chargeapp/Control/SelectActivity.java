@@ -1,19 +1,22 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 import com.chargeapp.whc.chargeapp.R;
 
-public class SelectActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class SelectActivity extends Fragment implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button exportMoney,importMoney,goneMoney,getMoney;
@@ -25,27 +28,22 @@ public class SelectActivity extends AppCompatActivity implements ViewPager.OnPag
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.select_main);
-        mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        exportMoney=findViewById(R.id.exportD);
-        importMoney=findViewById(R.id.showD);
-        choiceitem=findViewById(R.id.choiceitem);
-        goneMoney=findViewById(R.id.goneD);
-        getMoney=findViewById(R.id.getMoney);
-        mAdapterViewPager = new MainPagerAdapter(getSupportFragmentManager());
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
+        View view = inflater.inflate(R.layout.select_main, container, false);
+        mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        exportMoney=view.findViewById(R.id.exportD);
+        importMoney=view.findViewById(R.id.showD);
+        choiceitem=view.findViewById(R.id.choiceitem);
+        goneMoney=view.findViewById(R.id.goneD);
+        getMoney=view.findViewById(R.id.getMoney);
+        mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
         mViewPager.setCurrentItem(15);
         setcurrentpage();
-        text=findViewById(R.id.text);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
+        text=view.findViewById(R.id.text);
+        movefirst=-importMoney.getWidth();
+        return view;
     }
 
     public void setcurrentpage()
@@ -116,14 +114,6 @@ public class SelectActivity extends AppCompatActivity implements ViewPager.OnPag
     }
     @Override
     public void onPageScrollStateChanged(int state) {
-    }
-    //畫面呈現完抓取距離
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        goneMoney.setVisibility(View.VISIBLE);
-        movefirst=-importMoney.getWidth();
-        text.setX(movefirst);
     }
 
     private class ChangePage implements View.OnClickListener{

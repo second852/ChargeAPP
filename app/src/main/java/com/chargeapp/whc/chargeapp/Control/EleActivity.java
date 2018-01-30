@@ -78,7 +78,6 @@ public class EleActivity extends Fragment {
             EleMainItemVO member = eleMainItemVOList.get(position);
             ImageView ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
             ivImage.setImageResource(member.getImage());
-
             TextView tvId = (TextView) itemView.findViewById(R.id.tvId);
             tvId.setText(String.valueOf(member.getName()));
             return itemView;
@@ -106,14 +105,16 @@ public class EleActivity extends Fragment {
                {
                    fragmentTransaction.remove(f);
                }
+               fragmentTransaction.addToBackStack(null);
                if(i==0)
                {
-//                   elefunction.setOnItemClickListener(null);
                   fragment=new EleSetCarrier();
+                  getActivity().setTitle(R.string.text_SetCarrier);
                   fragmentTransaction.add(R.id.body,fragment);
                   fragmentTransaction.commit();
                }else if(i==1)
                {
+                   getActivity().setTitle(R.string.text_DonateMain);
                    fragment=new EleDonateMain();
                    fragmentTransaction.replace(R.id.body, fragment);
                    fragmentTransaction.commit();
@@ -126,18 +127,21 @@ public class EleActivity extends Fragment {
 
                }else if(i==3)
                {
+                   getActivity().setTitle(R.string.text_NewCarrier);
                    fragment=new EleNewCarrier();
                    fragmentTransaction.replace(R.id.body, fragment);
                    fragmentTransaction.commit();
-
                }else if(i==4)
                {
+                   getActivity().setTitle(R.string.text_EleBank);
                    fragment=new EleAddBank();
                    fragmentTransaction.replace(R.id.body, fragment);
                    fragmentTransaction.commit();
                }else if(i==5){
-                   Intent intent = new Intent(getActivity(), HowGetPrice.class);
-                   startActivity(intent);
+                   getActivity().setTitle(R.string.text_HowGet);
+                   fragment=new HowGetPrice();
+                   fragmentTransaction.replace(R.id.body, fragment);
+                   fragmentTransaction.commit();
                }else{
                    Intent intent = new Intent();
                    intent.setAction(Intent.ACTION_VIEW);

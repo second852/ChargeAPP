@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,7 +52,7 @@ public class Download extends Fragment {
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumerDB=new ConsumerDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierVOS=carrierDB.getAll();
-//        download();
+        download();
         return view;
     }
 
@@ -60,9 +61,7 @@ public class Download extends Fragment {
         if (priceVOS == null || priceVOS.size() <= 0) {
             new GetSQLDate(this).execute("getAllPriceNul");
         } else {
-            if (PriceInvoice.getGetSQLDate1 == null) {
-               new GetSQLDate(this).execute("getNeWPrice");
-            }
+            new GetSQLDate(this).execute("getNeWPrice");
         }
     }
 
@@ -173,8 +172,17 @@ public class Download extends Fragment {
 
     public void tonewActivity()
     {
-        Intent intent = new Intent(getContext(), PriceActivity.class);
-        startActivity(intent);
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction().addToBackStack("Elemain");
+        List<Fragment> fragments=getFragmentManager().getFragments();
+        for(Fragment f:fragments)
+        {
+            fragmentTransaction.remove(f);
+        }
+        fragmentTransaction.addToBackStack(null);
+        getActivity().setTitle(R.string.text_Price);
+        Fragment fragment=new PriceActivity();
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
     }
 
 }
