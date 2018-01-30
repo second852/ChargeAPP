@@ -52,7 +52,6 @@ public class EleAddBank extends Fragment {
         findViewById(view);
         setSpinner();
         myProgressBar.setVisibility(View.GONE);
-        enter.setOnClickListener(new CliientListener());
         reSw.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -69,8 +68,10 @@ public class EleAddBank extends Fragment {
         carrierVOS=carrierDB.getAll();
         if(carrierVOS==null||carrierVOS.size()<=0)
         {
+            webView.setVisibility(View.GONE);
             showError.setVisibility(View.VISIBLE);
             showError.setText("目前沒有載具，請新增載具!");
+            return;
         }
         ArrayList<String> carrierNul=new ArrayList<>();
         for (CarrierVO c:carrierVOS)
@@ -81,6 +82,7 @@ public class EleAddBank extends Fragment {
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         carrier.setAdapter(arrayAdapter);
         carrier.setOnItemSelectedListener(new choiceStateItem());
+        enter.setOnClickListener(new CliientListener());
     }
 
 

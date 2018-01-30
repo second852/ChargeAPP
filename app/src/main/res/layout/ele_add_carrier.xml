@@ -5,20 +5,6 @@
     android:background="#f5f5f5"
     android:orientation="vertical">
     <TextView
-        android:id="@+id/mainTitle"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerVertical="true"
-        android:background="#FFA488"
-        android:gravity="center"
-        android:text="記帳小助手"
-        android:textAlignment="center"
-        android:textColor="#000000"
-        android:textSize="30dp" />
-    <TextView
         android:layout_marginTop="15dp"
         android:id="@+id/carrierT"
         android:layout_width="wrap_content"
@@ -28,7 +14,6 @@
         android:textSize="20sp"
         android:textColor="#000000"
         android:layout_toLeftOf="@+id/carrier"
-        android:layout_below="@+id/mainTitle"
         />
     <Spinner
         android:layout_marginTop="15dp"
@@ -65,18 +50,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/carrier"
+            android:visibility="visible"
             >
         </WebView>
-        <TextView
-            android:id="@+id/showError"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="#FF3333"
-            android:textSize="30sp"
-            android:text="財政部電子發票整合服務平台忙線中!"
-            android:visibility="gone"
-            />
         <ProgressBar
             android:id="@+id/myProgressBar"
             android:layout_width="100dp"
@@ -85,4 +61,14 @@
             android:layout_centerVertical="true"
             />
     </android.support.v4.widget.SwipeRefreshLayout>
+    <TextView
+        android:id="@+id/showError"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="#FF3333"
+        android:textSize="30sp"
+        android:text="財政部電子發票整合服務平台忙線中!"
+        android:visibility="gone"
+        />
 </RelativeLayout>

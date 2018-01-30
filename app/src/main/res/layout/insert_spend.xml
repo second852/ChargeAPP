@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/comsumer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,12 +24,13 @@
 
             <RelativeLayout
                 android:id="@+id/qrcode"
-                android:layout_width="match_parent"
+                android:layout_marginLeft="100dp"
+                android:layout_width="200dp"
+                android:background="#CCEEFF"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="5dp">
                 <ImageView
-                    android:layout_width="25dp"
+                    android:layout_width="24dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
                     android:src="@drawable/qrcode"
@@ -40,7 +40,7 @@
                     android:id="@+id/qrText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginLeft="5dp"
                     android:text="QRCode輸入"
                     android:textColor="#000000"
                     android:layout_centerVertical="true"
@@ -247,7 +247,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="15dp"
                     >
                     <CheckBox
                         android:id="@+id/notify"
@@ -257,16 +257,18 @@
                         android:layout_centerHorizontal="true"
                         android:buttonTint="#000000"
                         android:text="提醒繳費"
-                        android:layout_toLeftOf="@+id/choiceStatue"
+                        android:layout_marginLeft="15dp"
                         android:layout_alignParentLeft="true"
                         android:visibility="gone"
                         android:textColor="#000000"
                         android:textSize="20sp" />
                     <Spinner
                         android:id="@+id/choiceStatue"
-                        android:layout_centerVertical="true"
-                        android:layout_centerHorizontal="true"
                         android:visibility="gone"
+                        android:layout_marginLeft="15dp"
+                        android:layout_toRightOf="@+id/notify"
+                        android:layout_centerVertical="true"
+                        android:gravity="center"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:entries="@array/fixday"
@@ -278,61 +280,64 @@
                         android:visibility="gone"
                         android:theme="@style/spinner"
                         android:layout_toRightOf="@+id/choiceStatue"
+                        android:layout_marginLeft="15dp"
                         android:layout_height="wrap_content"/>
                     <CheckBox
                         android:id="@+id/noWek"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:buttonTint="#000000"
+                        android:gravity="center"
                         android:text="假日除外"
                         android:visibility="gone"
+                        android:layout_marginLeft="15dp"
                         android:layout_toRightOf="@+id/choiceStatue"
                         android:textColor="#000000"
                         android:textSize="20sp" />
                 </RelativeLayout>
             </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                >
+                <TextView
+                    android:id="@+id/standard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    />
+                <TextView
+                    android:id="@+id/save"
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_toLeftOf="@+id/standard"
+                    android:background="#33CCFF"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="儲存"
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+                <TextView
+                    android:id="@+id/clear"
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_toRightOf="@+id/standard"
+                    android:background="#FF8888"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="清除"
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+            </RelativeLayout>
         </LinearLayout>
     </ScrollView>
 
-    <TextView
-        android:id="@+id/standard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        />
 
-    <TextView
-        android:id="@+id/save"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/scroll"
-        android:layout_marginRight="30dp"
-        android:layout_marginTop="30dp"
-        android:layout_toLeftOf="@+id/standard"
-        android:background="#33CCFF"
-        android:gravity="center"
-        android:padding="5dp"
-        android:text="儲存"
-        android:textColor="#000000"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/clear"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/scroll"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="30dp"
-        android:layout_toRightOf="@+id/standard"
-        android:background="#FF8888"
-        android:gravity="center"
-        android:padding="5dp"
-        android:text="清除"
-        android:textColor="#000000"
-        android:textSize="20sp" />
 
     <LinearLayout
         android:id="@+id/showPicture"

@@ -2,25 +2,14 @@ package com.chargeapp.whc.chargeapp.Control;
 
 
 
-import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Dialog;
+
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,9 +24,8 @@ import com.chargeapp.whc.chargeapp.R;
 
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 
 public class EleActivity extends Fragment {
@@ -113,11 +101,16 @@ public class EleActivity extends Fragment {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                Fragment fragment=null;
                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction().addToBackStack("Elemain");
+               List<Fragment> fragments=getFragmentManager().getFragments();
+               for(Fragment f:fragments)
+               {
+                   fragmentTransaction.remove(f);
+               }
                if(i==0)
                {
-                   elefunction.setOnItemClickListener(null);
+//                   elefunction.setOnItemClickListener(null);
                   fragment=new EleSetCarrier();
-                  fragmentTransaction.add(R.id.elemain,fragment);
+                  fragmentTransaction.add(R.id.body,fragment);
                   fragmentTransaction.commit();
                }else if(i==1)
                {

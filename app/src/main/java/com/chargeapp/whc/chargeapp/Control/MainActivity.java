@@ -17,6 +17,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
@@ -121,8 +122,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void switchFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction =
-                getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        List<Fragment> f=getSupportFragmentManager().getFragments();
+        Log.d("XXXXX", String.valueOf(f.size()));
+        if(f.size()>0)
+        {
+            for(Fragment fragment1:f)
+            {
+                fragmentTransaction.remove(fragment1);
+            }
+        }
         fragmentTransaction.replace(R.id.body, fragment);
         fragmentTransaction.commit();
     }
@@ -295,25 +304,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        int index = getSupportFragmentManager().getBackStackEntryCount() - 1;
-        if(index!=-1)
-        {
-            FragmentManager.BackStackEntry backEntry = getSupportFragmentManager().getBackStackEntryAt(index);
-            String tag = backEntry.getName();
-            if(tag!=null)
-            {
-                if (tag.equals("Elemain")) {
-                    Intent intent = new Intent(MainActivity.this, EleActivity.class);
-                    startActivity(intent);
-                    return true;
-                }
-            }
-        }else {
-            Intent intent = new Intent(MainActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
-        return super.onKeyDown(keyCode, event);
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        int index = getSupportFragmentManager().getBackStackEntryCount() - 1;
+//        if(index!=-1)
+//        {
+//            FragmentManager.BackStackEntry backEntry = getSupportFragmentManager().getBackStackEntryAt(index);
+//            String tag = backEntry.getName();
+//            if(tag!=null)
+//            {
+//                if (tag.equals("Elemain")) {
+//                    Intent intent = new Intent(MainActivity.this, EleActivity.class);
+//                    startActivity(intent);
+//                    return true;
+//                }
+//            }
+//        }else {
+//            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+//            startActivity(intent);
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
 }

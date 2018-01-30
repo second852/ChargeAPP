@@ -42,6 +42,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
         Log.d("XXXXX", String.valueOf(mViewPager.getCurrentItem()));
+        mViewPager.setCurrentItem(6);
         setcurrentpage();
         text=view.findViewById(R.id.text);
         return  view;
@@ -62,7 +63,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
 
 
     public static class MainPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 2;
+        private static int NUM_ITEMS = 12;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
