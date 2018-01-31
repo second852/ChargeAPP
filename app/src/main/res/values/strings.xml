@@ -18,5 +18,7 @@
     <string name="text_DonateMain">捐獻發票</string>
     <string name="text_NewCarrier">新增載具</string>
     <string name="text_EleBank">新增/修改帳戶</string>
-    <string name="text_HowGet">如何領獎</string>
+    <string name="text_HowGet">如何領獎?</string>
+    <string name="text_HowSetC">如何綁定載具?</string>
+    <string name="text_EleWhat">電子發票是什麼?</string>
 </resources>
