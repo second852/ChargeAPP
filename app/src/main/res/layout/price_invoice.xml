@@ -122,14 +122,14 @@
             />
     </RelativeLayout>
     <TextView
+        android:layout_below="@+id/DRtittle"
         android:background="#ffffff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="30dp"
+        android:textSize="20dp"
         android:id="@+id/showRemain"
         android:textColor="#FF0000"
-        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         />
     <TextView

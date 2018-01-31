@@ -315,7 +315,7 @@
                 android:layout_margin="1dp"
                 android:background="#dddddd"
                 android:gravity="center"
-                android:text="與上列末四碼相同者獎金4仟元"
+                android:text="與上列末四碼相同者獎金1仟元"
                 android:textColor="#000000" />
         </LinearLayout>
 

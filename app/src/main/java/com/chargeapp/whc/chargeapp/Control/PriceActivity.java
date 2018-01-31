@@ -59,7 +59,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
 
     public void setloyout()
     {
-        ActionBar actionBar=((AppCompatActivity)getActivity()).getSupportActionBar();
+        final ActionBar actionBar=((AppCompatActivity)getActivity()).getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         View actionbarLayout = LayoutInflater.from(getActivity()).inflate(R.layout.actionbar_layout, null);
         actionBar.setCustomView(actionbarLayout);
@@ -71,13 +71,13 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
         howtogetprice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction().addToBackStack("Elemain");
+                actionBar.setDisplayShowCustomEnabled(false);
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 List<Fragment> fragments=getFragmentManager().getFragments();
                 for(Fragment f:fragments)
                 {
                     fragmentTransaction.remove(f);
                 }
-                fragmentTransaction.addToBackStack(null);
                 getActivity().setTitle(R.string.text_HowGet);
                 Fragment fragment=new HowGetPrice();
                 fragmentTransaction.replace(R.id.body, fragment);

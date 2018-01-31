@@ -52,15 +52,12 @@ public class HowGetPrice extends Fragment {
         setbank.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setbank.setOnClickListener(null);
-                goWeb.setOnClickListener(null);
-                local.setOnClickListener(null);
+                getActivity().setTitle(R.string.text_EleBank);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 for (Fragment f: getFragmentManager().getFragments())
                 {
                     fragmentTransaction.remove(f);
                 }
-                fragmentTransaction.addToBackStack(null);
                 Fragment fragment=new EleAddBank();
                 fragmentTransaction.replace(R.id.body, fragment);
                 fragmentTransaction.commit();
@@ -75,8 +72,6 @@ public class HowGetPrice extends Fragment {
                 startActivity(intent);
             }
         });
-
-
      return view;
     }
 

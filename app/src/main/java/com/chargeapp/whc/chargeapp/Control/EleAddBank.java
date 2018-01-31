@@ -55,10 +55,17 @@ public class EleAddBank extends Fragment {
         reSw.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                reSw.setRefreshing(true);
+                if(carrierVOS==null||carrierVOS.size()<=0)
+                {
+                    reSw.setRefreshing(false);
+                    return;
+                }
                 url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierBankAccBlank?UUID=second&appID=EINV3201711184648&CardCode=3J0002&";
                 url=url+"CardNo="+carrierVO.getCarNul()+"&VerifyCode="+carrierVO.getPassword();
                 webViewSetting();
                 showError.setVisibility(View.GONE);
+                reSw.setRefreshing(false);
             }
         });
         return view;

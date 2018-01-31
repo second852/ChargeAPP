@@ -56,6 +56,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,10 +65,12 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
-
     private DrawerLayout drawerLayout;
+    private  ExpandableListView listView;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     public static ChargeAPPDB chargeAPPDB;
+    private int position=6;
+    private View oldview;
     private int[] image = {
             R.drawable.book, R.drawable.goal, R.drawable.chart, R.drawable.ele, R.drawable.lotto, R.drawable.setting
     };
@@ -95,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         askPermissions();
-        deleteDatabase("ChargeAPP");
+//        deleteDatabase("ChargeAPP");
         if (chargeAPPDB == null) {
             setdate();
         }
@@ -114,8 +117,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.text_Open, R.string.text_Close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        NavigationView navigationView = findViewById(R.id.navigation);
-        final ExpandableListView listView = findViewById(R.id.list_menu);
+        listView = findViewById(R.id.list_menu);
         List<EleMainItemVO> itemVOS = getNewItem();
         final List<EleMainItemVO> itemSon= getElemainItemList();
         listView.setAdapter(new ExpandableAdapter(this,itemVOS,itemSon));
@@ -123,52 +125,54 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onGroupExpand(int groupPosition) {
                 Fragment fragment;
-
+                position=groupPosition;
+                getSupportActionBar().setDisplayShowCustomEnabled(false);
                 if (groupPosition == 0) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);
                     listView.collapseGroup(1);
                     fragment = new InsertActivity();
                     setTitle(R.string.text_Com);
                     switchFragment(fragment);
                 } else if (groupPosition == 1) {
-
+                    View view;
+                    for(int i=0;i<listView.getChildCount();i++)
+                    {
+                        view=listView.getChildAt(i);
+                        view.setBackgroundColor(Color.parseColor("#f5f5f5"));
+                    }
+                    view=listView.getChildAt(position);
+                    view.setBackgroundColor(Color.parseColor("#FFEE99"));
                 } else if (groupPosition == 2) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);
                     listView.collapseGroup(1);
                     fragment = new Download();
                     setTitle(R.string.text_Price);
                     switchFragment(fragment);
                 } else if (groupPosition == 3) {
+                    setTitle(R.string.text_Picture);
+                    drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);
                     listView.collapseGroup(1);
                     fragment = new SelectActivity();
-                    setTitle(R.string.text_Price);
                     switchFragment(fragment);
                 } else if (groupPosition == 4) {
+                    setTitle(R.string.text_Goal);
+                    drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);
                     listView.collapseGroup(1);
-                } else {
+                } else if (groupPosition == 5){
+                    setTitle(R.string.text_Setting);
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                    listView.collapseGroup(groupPosition);
+                    listView.collapseGroup(1);
+                }else {
+                    setTitle(R.string.text_Home);
+                    drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);
                     listView.collapseGroup(1);
                 }
-                Log.d("getChildCount", String.valueOf(listView.getChildCount()));
-                Log.d("getCount", String.valueOf(listView.getCount()));
-                View view;
-                for(int i=0;i<listView.getChildCount();i++)
-                {
-                    view=listView.getChildAt(i);
-                    view.setBackgroundColor(Color.parseColor("#f5f5f5"));
-                }
-                if(listView.getChildCount()==8&&groupPosition>1)
-                {
-                    view=listView.getChildAt(1);
-                    view.setBackgroundColor(Color.parseColor("#f5f5f5"));
-                    view=listView.getChildAt(groupPosition+2);
-                    view.setBackgroundColor(Color.parseColor("#FFEE99"));
-                    return;
-                }
-                view=listView.getChildAt(groupPosition);
-                view.setBackgroundColor(Color.parseColor("#FFEE99"));
             }
         });
     }
@@ -192,16 +196,14 @@ public class MainActivity extends AppCompatActivity {
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Picture, R.drawable.chart));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Goal, R.drawable.goal));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Setting, R.drawable.settings));
+        eleMainItemVOList.add(new EleMainItemVO(R.string.text_Home,R.drawable.home));
         return eleMainItemVOList;
     }
 
     private void switchFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        List<Fragment> f = getSupportFragmentManager().getFragments();
-        if (f.size() > 0) {
-            for (Fragment fragment1 : f) {
+        for (Fragment fragment1 :  getSupportFragmentManager().getFragments()) {
                 fragmentTransaction.remove(fragment1);
-            }
         }
         fragmentTransaction.replace(R.id.body, fragment);
         fragmentTransaction.commit();
@@ -213,6 +215,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if(position!=1)
+        {
+            View view;
+            for(int i=0;i<this.listView.getChildCount();i++)
+            {
+                view=listView.getChildAt(i);
+                view.setBackgroundColor(Color.parseColor("#f5f5f5"));
+            }
+            view=listView.getChildAt(position);
+            view.setBackgroundColor(Color.parseColor("#FFEE99"));
+        }
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -458,7 +471,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     Fragment fragment;
                     drawerLayout.closeDrawer(GravityCompat.START);
-                    Log.d("XXX", String.valueOf(viewGroup.getChildCount()));
                     if(i1==0)
                     {
                         fragment=new EleSetCarrier();
@@ -495,6 +507,16 @@ public class MainActivity extends AppCompatActivity {
                         intent.setData(Uri.parse("http://www.nknu.edu.tw/~psl/new.file/103/08/1030825reciept1.pdf"));
                         startActivity(intent);
                     }
+                    if(i1==2||i1==6)
+                    {
+                        return;
+                    }
+                    if(oldview!=null)
+                    {
+                        oldview.setBackgroundColor(Color.WHITE);
+                    }
+                    oldview=view;
+                    view.setBackgroundColor(Color.parseColor("#EEFFBB"));
                 }
             });
             return view;

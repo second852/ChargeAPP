@@ -52,7 +52,8 @@ public class Download extends Fragment {
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumerDB=new ConsumerDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierVOS=carrierDB.getAll();
-        download();
+        tonewActivity();
+//        download();
         return view;
     }
 
@@ -172,13 +173,12 @@ public class Download extends Fragment {
 
     public void tonewActivity()
     {
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction().addToBackStack("Elemain");
-        List<Fragment> fragments=getFragmentManager().getFragments();
+        FragmentTransaction fragmentTransaction =getActivity().getSupportFragmentManager().beginTransaction();
+        List<Fragment> fragments=getActivity().getSupportFragmentManager().getFragments();
         for(Fragment f:fragments)
         {
             fragmentTransaction.remove(f);
         }
-        fragmentTransaction.addToBackStack(null);
         getActivity().setTitle(R.string.text_Price);
         Fragment fragment=new PriceActivity();
         fragmentTransaction.replace(R.id.body, fragment);

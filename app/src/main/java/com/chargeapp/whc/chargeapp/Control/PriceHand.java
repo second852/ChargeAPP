@@ -468,6 +468,14 @@ public class PriceHand extends Fragment {
             // Fill the list view with the strings the recognizer thought it could have heard, there should be 5, based on the call
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             //display results.
+            for(int i=0; i<matches.size();i++)
+             {
+                String m=matches.get(i);
+                for(int j=0;j<m.length();j++)
+                {
+
+                }
+             }
             inputNul.setText(matches.get(0));
             autoSetInWin(matches.get(0));
             startListening();
