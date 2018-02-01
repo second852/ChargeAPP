@@ -3,4 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="chart_color_US">#576F86</color>
+    <color name="chart_color_JP">#E7655A</color>
+    <color name="chart_color_KR">#F6CE5D</color>
+    <color name="chart_color_Others">#BAE6FB</color>
 </resources>

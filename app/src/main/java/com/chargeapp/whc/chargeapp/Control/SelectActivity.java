@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +38,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(15);
+        mViewPager.setCurrentItem(4);
         setcurrentpage();
         text=view.findViewById(R.id.text);
         movefirst=-importMoney.getWidth();
@@ -56,7 +55,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
 
 
     public static class MainPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 30;
+        private static int NUM_ITEMS = 8;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -71,7 +70,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
         public Fragment getItem(int position) {
             int currentpoition=position%3;
             if (currentpoition == 0) {
-                return new SelectChartAll();
+                return new SelectConsume();
             } else  {
                 return new InsertIncome();
             }

@@ -1,20 +1,16 @@
 package com.chargeapp.whc.chargeapp.Control;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
@@ -37,7 +33,7 @@ public class Download extends Fragment {
     private CarrierDB carrierDB;
     private String TAG="Download";
     private InvoiceDB invoiceDB;
-    private ConsumerDB consumerDB;
+    private ConsumeDB consumeDB;
     private List<CarrierVO> carrierVOS;
     private String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
 
@@ -50,10 +46,10 @@ public class Download extends Fragment {
         priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumerDB=new ConsumerDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB =new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierVOS=carrierDB.getAll();
-        tonewActivity();
-//        download();
+//        tonewActivity();
+        download();
         return view;
     }
 
@@ -157,7 +153,7 @@ public class Download extends Fragment {
     }
 
     private void autoSetCRWin(long startTime, long endTime, PriceVO priceVO) {
-        List<ConsumeVO> consumeVOS = consumerDB.getNoWinAll(startTime, endTime);
+        List<ConsumeVO> consumeVOS = consumeDB.getNoWinAll(startTime, endTime);
         for (ConsumeVO consumeVO : consumeVOS) {
             String nul = consumeVO.getNumber().trim();
             consumeVO.setIsWin("N");
@@ -166,7 +162,7 @@ public class Download extends Fragment {
                 String aw = anwswer(nul, priceVO);
                 consumeVO.setIsWin(aw);
             }
-            consumerDB.update(consumeVO);
+            consumeDB.update(consumeVO);
         }
     }
 

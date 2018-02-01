@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -26,16 +25,14 @@ import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetail;
+import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
 
-import java.lang.reflect.Type;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,7 +66,7 @@ public class InsertIncome extends Fragment {
     private BankTybeDB bankTybeDB;
     private BankDB bankDB;
     private TypeDB typeDB;
-    private TypeDetail typeDetail;
+    private TypeDetailDB typeDetailDB;
 
 
 
@@ -82,7 +79,7 @@ public class InsertIncome extends Fragment {
         bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDB=new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetail=new TypeDetail(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetailDB =new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankTypeVOSList = bankTybeDB.getAll();
         Detailitems=new ArrayList<Map<String, Object>>();
         items = new ArrayList<Map<String, Object>>();

@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ConsumerDB {
+public class ConsumeDB {
     private SQLiteDatabase db;
     private String TABLE_NAME="Consumer";
     private String COL_id="id";
-    public ConsumerDB(SQLiteDatabase db)
+    public ConsumeDB(SQLiteDatabase db)
     {
         this.db=db;
     }

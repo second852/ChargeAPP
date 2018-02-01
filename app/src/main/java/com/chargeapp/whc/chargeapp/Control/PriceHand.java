@@ -46,7 +46,7 @@ import java.util.List;
 
 public class PriceHand extends Fragment {
     private ImageView PIdateAdd, PIdateCut;
-    private TextView priceTitle, PIdateTittle, inputNul,QrCodeA,voice,showRemain;
+    private TextView priceTitle, PIdateTittle, inputNul, QrCodeA, voice, showRemain;
     private RecyclerView donateRL;
     private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private Calendar now = Calendar.getInstance();
@@ -55,7 +55,7 @@ public class PriceHand extends Fragment {
     private PriceVO priceVO, oldPriceVO;
     private String message = "";
     private List<PriceVO> priceVOS;
-    private HashMap<String,String> levelPrice;
+    private HashMap<String, String> levelPrice;
     private RelativeLayout showMi;
 
     private CardView cardview;
@@ -70,24 +70,23 @@ public class PriceHand extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_hand, container, false);
         findViewById(view);
-        String period=priceDB.findMaxPeriod();
-        if(period==null)
-        {
+        String period = priceDB.findMaxPeriod();
+        if (period == null) {
             cardview.setVisibility(View.GONE);
             priceTitle.setVisibility(View.GONE);
             showRemain.setVisibility(View.VISIBLE);
             showRemain.setText("財政部網路忙線中~\n請稍後使用~");
             return view;
         }
-        this.month=Integer.valueOf(period.substring(period.length() - 2));
-        this.year= Integer.valueOf(period.substring(0, period.length() - 2));
+        this.month = Integer.valueOf(period.substring(period.length() - 2));
+        this.year = Integer.valueOf(period.substring(0, period.length() - 2));
         setMonText("in");
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
         QrCodeA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MultiTrackerActivity.refresh=false;
+                MultiTrackerActivity.refresh = false;
                 Intent intent = new Intent(getActivity(), MultiTrackerActivity.class);
                 startActivity(intent);
             }
@@ -117,7 +116,7 @@ public class PriceHand extends Fragment {
     }
 
     private List<String> getInputN() {
-        levelPrice=new HashMap<>();
+        levelPrice = new HashMap<>();
         List<String> number = new ArrayList<>();
         number.add("7");
         number.add("8");
@@ -131,96 +130,94 @@ public class PriceHand extends Fragment {
         number.add("C");
         number.add("0");
         number.add("Del");
-        levelPrice.put("first","20萬");
-        levelPrice.put("second","4萬");
-        levelPrice.put("third","1萬");
-        levelPrice.put("fourth","4000");
-        levelPrice.put("fifth","1000");
-        levelPrice.put("sixth","200");
-        levelPrice.put("02","01-02月");
-        levelPrice.put("04","03-04月");
-        levelPrice.put("06","05-06月");
-        levelPrice.put("08","07-08月");
-        levelPrice.put("10","09-10月");
-        levelPrice.put("12","11-12月");
+        levelPrice.put("first", "20萬");
+        levelPrice.put("second", "4萬");
+        levelPrice.put("third", "1萬");
+        levelPrice.put("fourth", "4000");
+        levelPrice.put("fifth", "1000");
+        levelPrice.put("sixth", "200");
+        levelPrice.put("02", "01-02月");
+        levelPrice.put("04", "03-04月");
+        levelPrice.put("06", "05-06月");
+        levelPrice.put("08", "07-08月");
+        levelPrice.put("10", "09-10月");
+        levelPrice.put("12", "11-12月");
         return number;
     }
 
     private void autoSetInWin(String gnul) {
-        String message=null;
-        HashMap<Integer,String> allMessage=new HashMap<>();
-        int i=0;
+        String message = null;
+        HashMap<Integer, String> allMessage = new HashMap<>();
+        int i = 0;
         for (PriceVO priceVO : priceVOS) {
-            String nul=gnul;
-            message=null;
+            String nul = gnul;
+            message = null;
             if (priceVO != null) {
                 if (nul.equals(priceVO.getSuperPrizeNo().substring(5))) {
-                   message="特別獎?"+priceVO.getSuperPrizeNo()+"\n獎金一千萬";
+                    message = "特別獎?" + priceVO.getSuperPrizeNo() + "\n獎金一千萬";
                 }
                 if (nul.equals(priceVO.getSpcPrizeNo().substring(5))) {
-                    message="特獎?"+priceVO.getSpcPrizeNo()+"\n獎金兩百萬";
+                    message = "特獎?" + priceVO.getSpcPrizeNo() + "\n獎金兩百萬";
                 }
-                if ( nul.equals(priceVO.getFirstPrizeNo1().substring(5))) {
-                    message="頭獎?"+priceVO.getFirstPrizeNo1()+"\n獎金20萬";
+                if (nul.equals(priceVO.getFirstPrizeNo1().substring(5))) {
+                    message = "頭獎?" + priceVO.getFirstPrizeNo1() + "\n獎金20萬";
                 }
                 if (nul.equals(priceVO.getFirstPrizeNo2().substring(5))) {
-                    message="頭獎?"+priceVO.getFirstPrizeNo2()+"\n獎金20萬";;
+                    message = "頭獎?" + priceVO.getFirstPrizeNo2() + "\n獎金20萬";
+                    ;
                 }
                 if (nul.equals(priceVO.getFirstPrizeNo3().substring(5))) {
-                   message="頭獎?"+priceVO.getFirstPrizeNo3()+"\n獎金20萬";
+                    message = "頭獎?" + priceVO.getFirstPrizeNo3() + "\n獎金20萬";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo1())) {
-                   message="六獎"+priceVO.getSixthPrizeNo1()+"\n獎金200";
+                    message = "六獎" + priceVO.getSixthPrizeNo1() + "\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo2())) {
-                    message="六獎"+priceVO.getSixthPrizeNo2()+"\n獎金200";
+                    message = "六獎" + priceVO.getSixthPrizeNo2() + "\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo3())) {
-                    message="六獎"+priceVO.getSixthPrizeNo3()+"\n獎金200";
+                    message = "六獎" + priceVO.getSixthPrizeNo3() + "\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo4())) {
-                    message="六獎"+priceVO.getSixthPrizeNo4()+"\n獎金200";
+                    message = "六獎" + priceVO.getSixthPrizeNo4() + "\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo5())) {
-                    message="六獎"+priceVO.getSixthPrizeNo5()+"\n獎金200";
+                    message = "六獎" + priceVO.getSixthPrizeNo5() + "\n獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo6())) {
-                    message="六獎"+priceVO.getSixthPrizeNo6()+"\n獎金200";
+                    message = "六獎" + priceVO.getSixthPrizeNo6() + "\n獎金200";
                 }
             }
-            allMessage.put(i,message);
+            allMessage.put(i, message);
             i++;
         }
 
-        String totalmessage=null;
-        int redF=0,redE=0,printF=0,printE=0;
-        String year,month;
-        if(allMessage.get(0)!=null)
-        {
-            totalmessage=allMessage.get(0);
-            redF=totalmessage.lastIndexOf("獎");
-            redE=redF-4;
+        String totalmessage = null;
+        int redF = 0, redE = 0, printF = 0, printE = 0;
+        String year, month;
+        if (allMessage.get(0) != null) {
+            totalmessage = allMessage.get(0);
+            redF = totalmessage.lastIndexOf("獎");
+            redE = redF - 4;
         }
-        if(allMessage.get(1)!=null)
-        {
-            int length=(totalmessage==null?0:totalmessage.length());
-            totalmessage=(totalmessage==null?"":totalmessage);
+        if (allMessage.get(1) != null) {
+            int length = (totalmessage == null ? 0 : totalmessage.length());
+            totalmessage = (totalmessage == null ? "" : totalmessage);
             String old;
-            year=oldPriceVO.getInvoYm().substring(0,oldPriceVO.getInvoYm().length()-2);
-            month=oldPriceVO.getInvoYm().substring(oldPriceVO.getInvoYm().length()-2);
-            old="上一期"+year+"年"+levelPrice.get(month)+allMessage.get(1);
-            printE=old.lastIndexOf("獎")+length;
-            printF=printE-4;
-            totalmessage=totalmessage+old;
+            year = oldPriceVO.getInvoYm().substring(0, oldPriceVO.getInvoYm().length() - 2);
+            month = oldPriceVO.getInvoYm().substring(oldPriceVO.getInvoYm().length() - 2);
+            old = "上一期" + year + "年" + levelPrice.get(month) + allMessage.get(1);
+            printE = old.lastIndexOf("獎") + length;
+            printF = printE - 4;
+            totalmessage = totalmessage + old;
         }
-        if(totalmessage!=null)
-        {
+        if (totalmessage != null) {
             Spannable content = new SpannableString(totalmessage);
             content.setSpan(new ForegroundColorSpan(Color.RED), redE, redF, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             content.setSpan(new ForegroundColorSpan(Color.MAGENTA), printF, printE, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             priceTitle.setText(content);
             return;
-        }else {
+        } else {
             priceTitle.setText("沒有中獎!再接再厲!");
         }
 
@@ -228,34 +225,34 @@ public class PriceHand extends Fragment {
 
 
     private void setMonText(String action) {
-        String showtime,searchtime,searcholdtime;
-        if (month==2) {
-            showtime =year+"年1-2月";
-            searchtime =year+"02";
-            searcholdtime = (year-1)+"12";
-        } else if (month==4) {
-            showtime = year+"年3-4月";
-            searchtime = year+"04";
-            searcholdtime = year+"02";
-        } else if (month==6) {
-            showtime = year+"年5-6月";
-            searchtime = year+"06";
-            searcholdtime = year+"04";
-        } else if (month==8) {
-            showtime = year+"年7-8月";
-            searchtime = year+"08";
-            searcholdtime = year+"06";
-        } else if (month==10) {
-            showtime = year+"年9-10月";
-            searchtime = year+"10";
-            searcholdtime = year+"08";
+        String showtime, searchtime, searcholdtime;
+        if (month == 2) {
+            showtime = year + "年1-2月";
+            searchtime = year + "02";
+            searcholdtime = (year - 1) + "12";
+        } else if (month == 4) {
+            showtime = year + "年3-4月";
+            searchtime = year + "04";
+            searcholdtime = year + "02";
+        } else if (month == 6) {
+            showtime = year + "年5-6月";
+            searchtime = year + "06";
+            searcholdtime = year + "04";
+        } else if (month == 8) {
+            showtime = year + "年7-8月";
+            searchtime = year + "08";
+            searcholdtime = year + "06";
+        } else if (month == 10) {
+            showtime = year + "年9-10月";
+            searchtime = year + "10";
+            searcholdtime = year + "08";
         } else {
-            showtime = year+"年11-12月";
-            searchtime = year+"12";
-            searcholdtime = year+"10";
+            showtime = year + "年11-12月";
+            searchtime = year + "12";
+            searcholdtime = year + "10";
         }
-        Log.d("XXXXXXsearchtime",searchtime);
-        Log.d("XXXXXsearcholdtime",searcholdtime);
+        Log.d("XXXXXXsearchtime", searchtime);
+        Log.d("XXXXXsearcholdtime", searcholdtime);
         priceVO = priceDB.getPeriodAll(searchtime);
         oldPriceVO = priceDB.getPeriodAll(searcholdtime);
         priceVOS = new ArrayList<>();
@@ -263,21 +260,19 @@ public class PriceHand extends Fragment {
         priceVOS.add(oldPriceVO);
         if (priceVO == null && action.equals("add")) {
             month = month - 2;
-            if(month==0)
-            {
-                month=12;
-                year=year-1;
+            if (month == 0) {
+                month = 12;
+                year = year - 1;
             }
             setMonText("add");
-            Common.showToast(getActivity(), showtime+"尚未開獎");
+            Common.showToast(getActivity(), showtime + "尚未開獎");
             return;
         }
         if (priceVO == null && action.equals("cut")) {
             month = month + 2;
-            if(month>12)
-            {
-                month=2;
-                year=year+1;
+            if (month > 12) {
+                month = 2;
+                year = year + 1;
             }
             Common.showToast(getActivity(), "沒有資料");
             return;
@@ -296,11 +291,11 @@ public class PriceHand extends Fragment {
         PIdateTittle = view.findViewById(R.id.PIdateTittle);
         donateRL = view.findViewById(R.id.donateRL);
         inputNul = view.findViewById(R.id.inputNul);
-        QrCodeA=view.findViewById(R.id.QrCodeA);
-        voice=view.findViewById(R.id.voice);
-        showMi=view.findViewById(R.id.showMi);
-        showRemain=view.findViewById(R.id.showRemain);
-        cardview=view.findViewById(R.id.cardview);
+        QrCodeA = view.findViewById(R.id.QrCodeA);
+        voice = view.findViewById(R.id.voice);
+        showMi = view.findViewById(R.id.showMi);
+        showRemain = view.findViewById(R.id.showRemain);
+        cardview = view.findViewById(R.id.cardview);
     }
 
 
@@ -309,7 +304,7 @@ public class PriceHand extends Fragment {
         public void onClick(View view) {
             month += 2;
             if (month > 12) {
-                month =2;
+                month = 2;
                 year++;
             }
             setMonText("add");
@@ -334,6 +329,7 @@ public class PriceHand extends Fragment {
             RecyclerView.Adapter<PriceHand.InputAdapter.MyViewHolder> {
         private Context context;
         private List<String> numberList;
+
         InputAdapter(Context context, List<String> memberList) {
             this.context = context;
             this.numberList = memberList;
@@ -412,18 +408,17 @@ public class PriceHand extends Fragment {
         }
     }
 
-    public void startListening(){
+    public void startListening() {
         if (SpeechRecognizer.isRecognitionAvailable(getActivity())) {
-            if (isRecognitionServiceAvailable){//(speech!=null){
+            if (isRecognitionServiceAvailable) {//(speech!=null){
                 speech.startListening(recognizerIntent);
                 mResults = new ArrayList<String>();
-            }
-            else
+            } else
                 startSR();
         }
     }
 
-    public void startSR(){
+    public void startSR() {
         isRecognitionServiceAvailable = true;
         speech = SpeechRecognizer.createSpeechRecognizer(getActivity());
         speech.setRecognitionListener(new listener());
@@ -439,53 +434,65 @@ public class PriceHand extends Fragment {
     }
 
 
-
     private class listener implements RecognitionListener {
 
-        public void onReadyForSpeech(Bundle params)	{
+        public void onReadyForSpeech(Bundle params) {
             Log.d("XXX", "onReadyForSpeech");
         }
-        public void onBeginningOfSpeech(){
+
+        public void onBeginningOfSpeech() {
             Log.d("XXX", "onBeginningOfSpeech");
         }
-        public void onRmsChanged(float rmsdB){
+
+        public void onRmsChanged(float rmsdB) {
             Log.d("XXX", "onRmsChanged");
         }
-        public void onBufferReceived(byte[] buffer)	{
+
+        public void onBufferReceived(byte[] buffer) {
             Log.d("XXX", "onBufferReceived");
         }
-        public void onEndOfSpeech()	{
+
+        public void onEndOfSpeech() {
             Log.d("XXX", "onEndofSpeech");
 
         }
-        public void onError(int error)	{
-            String e=getErrorText(error);
-            Log.d("XXX",  "error " +  e);
+
+        public void onError(int error) {
+            String e = getErrorText(error);
+            Log.d("XXX", "error " + e);
         }
+
         public void onResults(Bundle results) {
 
             Log.d("XXX", "onResults " + results);
             // Fill the list view with the strings the recognizer thought it could have heard, there should be 5, based on the call
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             //display results.
-            for(int i=0; i<matches.size();i++)
-             {
-                String m=matches.get(i);
-                for(int j=0;j<m.length();j++)
-                {
-
+            int matchNul = 0,y = 0;
+            for (int i = 0; i < matches.size(); i++) {
+                String m = matches.get(i);
+                int as, x = 0;
+                for (int j = 0; j < m.length(); j++) {
+                    as = (int) m.charAt(j);
+                    if (as >= 48 && as <= 57) {
+                        x++;
+                    }
                 }
-             }
-            inputNul.setText(matches.get(0));
-            autoSetInWin(matches.get(0));
+                if (x > y) {
+                    y = x;
+                    matchNul = i;
+                }
+            }
+            inputNul.setText(matches.get(matchNul));
+            autoSetInWin(matches.get(matchNul));
             startListening();
         }
-        public void onPartialResults(Bundle partialResults)
-        {
+
+        public void onPartialResults(Bundle partialResults) {
             Log.d("XXX", "onPartialResults");
         }
-        public void onEvent(int eventType, Bundle params)
-        {
+
+        public void onEvent(int eventType, Bundle params) {
             Log.d("XXX", "onEvent " + eventType);
         }
 

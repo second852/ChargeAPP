@@ -1,6 +1,5 @@
 package com.chargeapp.whc.chargeapp.Control;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -16,14 +15,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
@@ -57,7 +54,7 @@ public class PriceInvoice extends Fragment {
     private String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
     public static AsyncTask<Object, Integer, String> getGetSQLDate1;
     private List<CarrierVO> carrierVOS;
-    private ConsumerDB consumerDB;
+    private ConsumeDB consumeDB;
     private HashMap<String,String> levelprice;
     private HashMap<String,Integer> levellength;
     private long start,end;
@@ -220,7 +217,7 @@ public class PriceInvoice extends Fragment {
             objectList.addAll(invoiceVOS);
             DRcarrier.setText(carrier);
         }
-        List<ConsumeVO> consumeVOS=consumerDB.getWinAll(start,end);
+        List<ConsumeVO> consumeVOS= consumeDB.getWinAll(start,end);
         objectList.addAll(consumeVOS);
         if(objectList.size()>0)
         {
@@ -247,7 +244,7 @@ public class PriceInvoice extends Fragment {
         DRshow=view.findViewById(R.id.DRshow);
         showRemain=view.findViewById(R.id.showRemain);
         showRemain.setText("(無實體電子發票專屬獎中獎清單\n請到財政部網站確認)");
-        consumerDB = new ConsumerDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
     private class InvoiceAdapter extends

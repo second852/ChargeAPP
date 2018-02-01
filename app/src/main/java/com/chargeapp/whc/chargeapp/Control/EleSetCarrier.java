@@ -6,27 +6,22 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
-import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -43,7 +38,7 @@ public class EleSetCarrier extends Fragment {
     private List<CarrierVO> carrierlist;
     public CarrierDB carrierDB;
     public TextView listtiitle;
-    private ConsumerDB consumerDB;
+    private ConsumeDB consumeDB;
     private ProgressDialog progressDialog;
     private long time;
 
@@ -61,7 +56,7 @@ public class EleSetCarrier extends Fragment {
         confirm.setOnClickListener(new Confirmlisten());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumerDB=new ConsumerDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB =new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         setListAdapt();
         return view;
     }

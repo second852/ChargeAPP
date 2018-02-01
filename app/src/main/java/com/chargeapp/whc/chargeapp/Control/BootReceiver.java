@@ -2,7 +2,6 @@ package com.chargeapp.whc.chargeapp.Control;
 
 
 import android.app.AlarmManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,7 +12,7 @@ import android.util.Log;
 
 
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -31,7 +30,7 @@ import java.util.List;
 public class BootReceiver extends BroadcastReceiver {
 
     private ChargeAPPDB chargeAPPDB;
-    private ConsumerDB consumerDB;
+    private ConsumeDB consumeDB;
     private Gson gson=new Gson();
     private SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     @Override
@@ -39,8 +38,8 @@ public class BootReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(Intent.ACTION_DATE_CHANGED)) {
             notifyLottery(context);
             chargeAPPDB=new ChargeAPPDB(context);
-            consumerDB=new ConsumerDB(chargeAPPDB.getReadableDatabase());
-            List<ConsumeVO> consumerVOS=consumerDB.getFixdate();
+            consumeDB =new ConsumeDB(chargeAPPDB.getReadableDatabase());
+            List<ConsumeVO> consumerVOS= consumeDB.getFixdate();
             JsonObject jsonObject;
             long settime=0;
             long setnewtime=0;
@@ -74,7 +73,7 @@ public class BootReceiver extends BroadcastReceiver {
                         consumeVO.setNotify("false");
                         consumeVO.setFixDate("false");
                         consumeVO.setDate(new Date(setnewtime));
-                        consumerDB.insert(consumeVO);
+                        consumeDB.insert(consumeVO);
                         if(notify)
                         {
                             NotifyUse(consumeVO,context,settime);
@@ -91,7 +90,7 @@ public class BootReceiver extends BroadcastReceiver {
                             consumeVO.setNotify("false");
                             consumeVO.setFixDate("false");
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
-                            consumerDB.insert(consumeVO);
+                            consumeDB.insert(consumeVO);
                             settime=(new GregorianCalendar(year,month,day,18,0,0)).getTimeInMillis();
                             if(notify)
                             {
@@ -110,7 +109,7 @@ public class BootReceiver extends BroadcastReceiver {
                             consumeVO.setNotify("false");
                             consumeVO.setFixDate("false");
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
-                            consumerDB.insert(consumeVO);
+                            consumeDB.insert(consumeVO);
                             settime=(new GregorianCalendar(year,month,day,18,0,0)).getTimeInMillis();
                             if(notify)
                             {
@@ -122,7 +121,7 @@ public class BootReceiver extends BroadcastReceiver {
                             consumeVO.setNotify("false");
                             consumeVO.setFixDate("false");
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
-                            consumerDB.insert(consumeVO);
+                            consumeDB.insert(consumeVO);
                             settime=(new GregorianCalendar(year,month,day,18,0,0)).getTimeInMillis();
                             if(notify)
                             {
@@ -140,7 +139,7 @@ public class BootReceiver extends BroadcastReceiver {
                             consumeVO.setNotify("false");
                             consumeVO.setFixDate("false");
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
-                            consumerDB.insert(consumeVO);
+                            consumeDB.insert(consumeVO);
                             settime=(new GregorianCalendar(year,month,day,18,0,0)).getTimeInMillis();
                             if(notify)
                             {

@@ -13,11 +13,11 @@ import java.util.List;
  * Created by 1709008NB01 on 2018/1/12.
  */
 
-public class TypeDetail {
+public class TypeDetailDB {
     private SQLiteDatabase db;
     private String TABLE_NAME="TypeDetail";
     private String COL_id="id";
-    public TypeDetail(SQLiteDatabase db)
+    public TypeDetailDB(SQLiteDatabase db)
     {
         this.db=db;
     }

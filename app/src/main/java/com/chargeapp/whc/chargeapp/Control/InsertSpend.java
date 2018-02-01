@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -25,27 +24,23 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ConsumerDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetail;
+import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
-import com.chargeapp.whc.chargeapp.ui.BarcodeTrackerFactory;
 import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -81,9 +76,9 @@ public class InsertSpend extends Fragment {
     private Gson gson;
     private SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
     private TypeDB typeDB;
-    private TypeDetail typeDetail;
+    private TypeDetailDB typeDetailDB;
     private boolean noweek = false;
-    private ConsumerDB consumerDB;
+    private ConsumeDB consumeDB;
     private RelativeLayout qrcode;
 
 
@@ -96,8 +91,8 @@ public class InsertSpend extends Fragment {
             MainActivity.chargeAPPDB = new ChargeAPPDB(getActivity());
         }
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetail = new TypeDetail(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumerDB = new ConsumerDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeVOList = typeDB.getAll();
         Log.d("XXXXXXX", String.valueOf(typeVOList.size()));
         Detailitems = new ArrayList<Map<String, Object>>();
@@ -200,7 +195,7 @@ public class InsertSpend extends Fragment {
                 imageDetatilId = MainActivity.imageAll.length - 1;
             }
             typeDB.insert(new TypeVO("other", newtype.getText().toString(), imageTitleId));
-            typeDetail.insert(new TypeDetailVO(newtype.getText().toString().trim(), inserttypeDetail.getText().toString().toString(), imageDetatilId));
+            typeDetailDB.insert(new TypeDetailVO(newtype.getText().toString().trim(), inserttypeDetail.getText().toString().toString(), imageDetatilId));
             if (isType) {
                 items.remove(items.size() - 1);
                 Map<String, Object> newitem = new HashMap<String, Object>();
@@ -383,7 +378,7 @@ public class InsertSpend extends Fragment {
             showTitle.setText("選擇次項目種類");
             Detailitems = new ArrayList<>();
             HashMap detailitem;
-            ArrayList<TypeDetailVO> typeDetailVOS = typeDetail.findByGroupname(t.getText().toString().trim());
+            ArrayList<TypeDetailVO> typeDetailVOS = typeDetailDB.findByGroupname(t.getText().toString().trim());
             for (int i = 0; i < typeDetailVOS.size(); i++) {
                 detailitem = new HashMap<String, Object>();
                 detailitem.put("image", MainActivity.imageAll[typeDetailVOS.get(i).getImage()]);
@@ -513,7 +508,7 @@ public class InsertSpend extends Fragment {
             consumeVO.setNotify(String.valueOf(notify.isChecked()));
             consumeVO.setDetailname(detailname.getText().toString());
             consumeVO.setIsWin("0");
-            consumerDB.insert(consumeVO);
+            consumeDB.insert(consumeVO);
             Common.showToast(getActivity(), "新增成功");
             Log.d("XXXXXXXXXXX", String.valueOf(consumeVO.getNotify()));
         }
