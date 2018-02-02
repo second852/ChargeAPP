@@ -331,17 +331,23 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         endDay = sf.format(new Date(today.getTimeInMillis()));
         today.set(todayYear, todayMonth, 1);
         startDay = sf.format(new Date(today.getTimeInMillis()));
-        while (isNoExist < 3) {
+        while (true) {
             data = getInvoice(user, password, startDay, endDay,"N");
             Log.d(TAG, "GetToday" + startDay + ":" + endDay);
             url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
             jsonIn = getRemoteData(url, data);
             if (jsonIn.indexOf("919") != -1 || jsonIn.indexOf("200") == -1) {
-                return jsonIn;
+                isNoExist++;
+                continue;
+            }
+            if(isNoExist>3)
+            {
+                jsonIn="timeout";
+                break;
             }
             getjsonIn(jsonIn, password, user);
             todayMonth = todayMonth - 1;
-            if (todayMonth <= 0) {
+            if (todayMonth < 0) {
                 todayMonth = 11;
                 todayYear = todayYear - 1;
             }
@@ -557,7 +563,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 }
                 if(action.equals("GetToday"))
                 {
-                    eleDonate.setlayout(); eleDonate.setlayout();
+                    eleDonate.setlayout();
                 }
                 if(action.equals("searchHeartyTeam"))
                 {
@@ -589,7 +595,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 {
                     selectConsume.getAllInvoiceDetail();
                 }else {
-//                    selectConsume.cancel();
+                    selectConsume.dataAnalyze();
                 }
             }
         }catch (Exception e)

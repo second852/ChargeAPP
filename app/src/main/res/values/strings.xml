@@ -22,9 +22,5 @@
     <string name="text_HowSetC">如何綁定載具?</string>
     <string name="text_EleWhat">電子發票是什麼?</string>
     <string name="text_Home">首頁</string>
-    <string name="chart_label_Others">other</string>
-    <string name="chart_label_KR">ko</string>
-    <string name="chart_label_JP">Jp</string>
-    <string name="chart_label_US">US</string>
-    <string name="chart_title">pocture</string>
+    <string name="chart_title">支出</string>
 </resources>
