@@ -55,6 +55,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private TypeDetailDB typeDetailDB;
     private String action;
     private List<TypeDetailVO> typeDetailVOS;
+    private SimpleDateFormat sd=new SimpleDateFormat("HH");
 
     public GetSQLDate(Object object) {
         this.object = object;
@@ -642,48 +643,44 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             invoiceDB.update(type);
         return detailjs;
     }
-    private SimpleDateFormat sd=new SimpleDateFormat("HH");
+
+
 
     private InvoiceVO getType(InvoiceVO invoiceVO) {
-        String main="O",second="O";
-        int x=0,total=0;
-        for(TypeDetailVO t:typeDetailVOS)
-        {
-            x=0;
-            main="O";
-            second="O";
-            String[] key=t.getKeyword().split(" ");
-            for(int i=0;i<key.length;i++)
-            {
-                if(invoiceVO.getDetail().indexOf(key[i])!=-1)
-                {
-                    x++;
+        List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
+        String main = "O", second = "O";
+        int x = 0, total = 0;
+        for (TypeDetailVO t : typeDetailVOS) {
+            x = 0;
+            String[] key = t.getKeyword().split(" ");
+            for (int i = 0; i < key.length; i++) {
+                if (invoiceVO.getDetail().indexOf(key[i].trim()) != -1) {
+                    x=x+key[i].length();
                 }
             }
-            if(x>total)
-            {
-                total=x;
-                main=t.getGroupNumber();
-                second=t.getName();
+            if (x > total) {
+                total = x;
+                main = t.getGroupNumber();
+                second = t.getName();
             }
         }
-        if(second.indexOf("餐")!=-1)
-        {
-            int hour=Integer.valueOf(sd.format(new Date(invoiceVO.getTime().getTime())));
-            if(hour>0&&hour<11)
-            {
-                second="早餐";
-            }else if(hour>=11&&hour<18)
-            {
-                second="午餐";
-            }else {
-                second="晚餐";
+        if (second.indexOf("餐") != -1) {
+            int hour = Integer.valueOf(sd.format(new Date(invoiceVO.getTime().getTime())));
+            if (hour > 0 && hour < 11) {
+                second = "早餐";
+            } else if (hour >= 11 && hour < 18) {
+                second = "午餐";
+            } else {
+                second = "晚餐";
             }
         }
         invoiceVO.setMaintype(main);
         invoiceVO.setSecondtype(second);
+        invoiceDB.update(invoiceVO);
+        Log.d(TAG, invoiceVO.getInvNum() + " : " + main + " : " + second);
         return invoiceVO;
     }
+
 
     private HashMap<String, String> getInvoice(String user, String password, String startDate, String endDate,String iswin) {
         HashMap<String, String> hashMap = new HashMap();

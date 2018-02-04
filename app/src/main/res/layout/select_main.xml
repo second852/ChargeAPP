@@ -29,7 +29,7 @@
                 android:textColor="#ffffff"
                 android:textSize="25sp"
                 android:visibility="visible"
-                android:text="收入" />
+                android:text="存款" />
             <Button
                 android:id="@+id/exportD"
                 android:layout_width="80dp"
@@ -38,7 +38,7 @@
                 android:background="#f5f5f5"
                 android:textColor="#000000"
                 android:textSize="25sp"
-                android:text="總覽" />
+                android:text="支出" />
             <Button
                 android:id="@+id/showD"
                 android:layout_width="80dp"
@@ -47,7 +47,7 @@
                 android:background="#000000"
                 android:textColor="#ffffff"
                 android:textSize="25sp"
-                android:text="支出" />
+                android:text="收入" />
             <Button
                 android:id="@+id/getMoney"
                 android:layout_width="80dp"
@@ -56,7 +56,7 @@
                 android:background="#000000"
                 android:textColor="#ffffff"
                 android:textSize="25sp"
-                android:text="收入" />
+                android:text="存款" />
         </LinearLayout>
     </HorizontalScrollView>
     <android.support.v4.view.ViewPager
