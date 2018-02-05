@@ -90,6 +90,7 @@ public class SelectConsume extends Fragment {
     private TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private SimpleDateFormat sc = new SimpleDateFormat("HH");
     private SimpleDateFormat sY = new SimpleDateFormat("yyyy");
+    private SimpleDateFormat sM = new SimpleDateFormat("MM");
     private int total,period;
     private int Statue=1;
     private String DesTittle;
@@ -214,13 +215,16 @@ public class SelectConsume extends Fragment {
             PIdateTittle.setText(syear.format(new Date(start.getTimeInMillis()))+" ~ "+syear.format(new Date(end.getTimeInMillis())));
         }else if(Statue==2)
         {
+            DesTittle="本月花費";
+            start = new GregorianCalendar(year, month,  1,0,0,0);
+            end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
+            PIdateTittle.setText(sM.format(new Date(start.getTimeInMillis())));
+
+        }else{
             DesTittle="本年花費";
             start = new GregorianCalendar(year, 0,  1,0,0,0);
             end = new GregorianCalendar(year, 11, 31,23,59,59);
             PIdateTittle.setText(sY.format(new Date(start.getTimeInMillis())));
-        }else{
-            start = new GregorianCalendar(year, 0, 1,0,0,0);
-            end = new GregorianCalendar(year, 11, 31,23,59,59);
         }
 
         Log.d(TAG,"start"+syear.format(new Date(start.getTimeInMillis()))+"end"+syear.format(new Date(end.getTimeInMillis())));
@@ -291,16 +295,13 @@ public class SelectConsume extends Fragment {
         }else if(Statue==2)
         {
             for (int i = 0; i < period; i++) {
+                chartLabels.add(i+1+"周");
+            }
+
+        }else{
+            for (int i = 0; i < period; i++) {
                 chartLabels.add(i+1+"月");
             }
-        }else{
-            for (int i = 0; i < year; i++) {
-                chartLabels.add(i+1+"年");
-            }
-        }
-        for(String s:chartLabels)
-        {
-            Log.d(TAG,s);
         }
         return chartLabels;
     }
@@ -327,17 +328,35 @@ public class SelectConsume extends Fragment {
             }
         }else if(Statue==2)
         {
+            Calendar calendar =  new GregorianCalendar(year, month,1, 0, 0, 0);
+            start = new GregorianCalendar(year, month,1, 0, 0, 0);
+            calendar.set(Calendar.WEEK_OF_MONTH,1);
+            calendar.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
+            end=new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+            BarEntry barEntry;
+            for(int i=2;i<=period;i++)
+            {
+
+                barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), i-2);
+                chartData.add(barEntry);
+                calendar.set(Calendar.WEEK_OF_MONTH,i);
+                calendar.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
+                start = new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+                calendar.set(Calendar.WEEK_OF_MONTH,i);
+                calendar.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
+                end=new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+            }
+            calendar.set(Calendar.WEEK_OF_MONTH,period);
+            calendar.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
+            start = new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+            end=new GregorianCalendar(year, month,start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
+            barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), period-1);
+            chartData.add(barEntry);
+
+        }else{
             for (int i = 0; i < period; i++) {
                 start = new GregorianCalendar(year, month+i, 1, 0, 0, 0);
                 end = new GregorianCalendar(year, month+i, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
-                BarEntry barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), i);
-                chartData.add(barEntry);
-                Log.d(TAG, "chartData"+sd.format(new Date(start.getTimeInMillis()))+" : "+i+" : "+barEntry.getVal());
-            }
-        }else{
-            for (int i = 0; i < 10; i++) {
-                start = new GregorianCalendar(year, month, day- dweek +i+1, 0, 0, 0);
-                end = new GregorianCalendar(year, month, day- dweek +i+1, 23, 59, 59);
                 BarEntry barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), i);
                 chartData.add(barEntry);
                 Log.d(TAG, "chartData"+sd.format(new Date(start.getTimeInMillis()))+" : "+i+" : "+barEntry.getVal());
@@ -571,6 +590,10 @@ public class SelectConsume extends Fragment {
                 period=7;
             }else if(Statue==2)
             {
+                month=month+1;
+                Calendar calendar = new GregorianCalendar(year,month,1);
+                period=calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
+            }else{
                 year=year+1;
                 period=12;
             }
@@ -590,8 +613,12 @@ public class SelectConsume extends Fragment {
                 period=7;
             }else if(Statue==2)
             {
-               year=year-1;
-               period=12;
+                month=month-1;
+                Calendar calendar = new GregorianCalendar(year,month,1);
+                period=calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
+            }else{
+                year=year-1;
+                period=12;
             }
             dataAnalyze();
         }
@@ -619,6 +646,9 @@ public class SelectConsume extends Fragment {
                  dataAnalyze();
              }else if(position==2)
             {
+                dataAnalyze();
+
+            }else{
                 period=month+1;
                 month=month-1;
                 Log.d(TAG,"month"+month);
