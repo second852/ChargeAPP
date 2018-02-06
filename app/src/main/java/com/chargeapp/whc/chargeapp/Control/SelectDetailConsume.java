@@ -43,7 +43,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -57,23 +57,19 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 
 /**
  * Created by 1709008NB01 on 2017/12/7.
  */
 
-public class SelectConsume extends Fragment {
+public class SelectDetailConsume extends Fragment {
 
     //    private LineChart lineChart;
     private InvoiceDB invoiceDB;
     private CarrierDB carrierDB;
     private ConsumeDB consumeDB;
-    private ProgressDialog progressDialog;
-    private static AsyncTask first = null;
-    private TextView PIdateTittle,describe;
-    private ImageView PIdateCut, PIdateAdd;
+    private TextView describe;
     private int choiceD = 0;
     private List<CarrierVO> carrierVOS;
     private List<InvoiceVO> invoiceVOS;
@@ -87,7 +83,6 @@ public class SelectConsume extends Fragment {
     private List<Map.Entry<String, Integer>> list_Data;
     private int month,year,day, dweek;
     private Calendar end;
-    private Spinner choicePeriod,choiceCarrier;
     private PieChart chart_pie;
     private TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private SimpleDateFormat sc = new SimpleDateFormat("HH");
@@ -100,7 +95,6 @@ public class SelectConsume extends Fragment {
     private boolean ShowAllCarrier=true;
     private boolean noShowCarrier=false;
     private  List<String> chartLabels;
-    private boolean retry=false;
 
 
 
@@ -108,6 +102,7 @@ public class SelectConsume extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_consume, container, false);
         setDB();
+        findViewById(view);
         end=Calendar.getInstance();
         month=end.get(Calendar.MONTH);
         year=end.get(Calendar.YEAR);
@@ -115,15 +110,7 @@ public class SelectConsume extends Fragment {
         day=end.get(Calendar.DAY_OF_MONTH);
         day=day-dweek+1;
         period=dweek;
-        findViewById(view);
         typeList = typeDB.getAll();
-        progressDialog = new ProgressDialog(getActivity());
-        PIdateAdd.setOnClickListener(new AddOnClick());
-        PIdateCut.setOnClickListener(new CutOnClick());
-        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
-        choiceCarrier.setOnItemSelectedListener(new ChoiceCarrier());
-        chart_bar.setOnChartValueSelectedListener(new charvalue());
-        chart_pie.setOnChartValueSelectedListener(new pievalue());
         return view;
     }
 
@@ -132,60 +119,18 @@ public class SelectConsume extends Fragment {
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-
-//        InvoiceVO I;
-//        for(int i=0;i<100;i++)
-//        {
-//            Calendar calendar=new GregorianCalendar(2018,0,i+2);
-//            I=new InvoiceVO();
-//            I.setTime(new Timestamp(calendar.getTimeInMillis()));
-//            I.setDonateTime(new Timestamp(calendar.getTimeInMillis()));
-//            I.setMaintype("O");
-//            I.setAmount("250");
-//            I.setInvNum("1");
-//            I.setCarrier("/2RDO8+P");
-//            invoiceDB.insert(I);
-//        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
          dataAnalyze();
-//        for(InvoiceVO i:invoiceDB.getAll())
-//        {
-//           getType(i);
-//        }
     }
 
     private void findViewById(View view) {
-        PIdateTittle = view.findViewById(R.id.PIdateTittle);
-        PIdateCut = view.findViewById(R.id.PIdateCut);
-        PIdateAdd = view.findViewById(R.id.PIdateAdd);
         chart_bar = view.findViewById(R.id.chart_bar);
-        choicePeriod=view.findViewById(R.id.choicePeriod);
-        choiceCarrier=view.findViewById(R.id.choiceCarrier);
         chart_pie=view.findViewById(R.id.chart_pie);
         describe=view.findViewById(R.id.describe);
-        ArrayList<String> SpinnerItem1=new ArrayList<>();
-        SpinnerItem1.add(" 日 ");
-        SpinnerItem1.add(" 周 ");
-        SpinnerItem1.add(" 月 ");
-        SpinnerItem1.add(" 年 ");
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,SpinnerItem1);
-        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        ArrayList<String> SpinnerItem2=new ArrayList<>();
-        choicePeriod.setAdapter(arrayAdapter);
-        choicePeriod.setSelection(1);
-        carrierVOS = carrierDB.getAll();
-        SpinnerItem2.add(" 全部 ");
-        SpinnerItem2.add(" 本地 ");
-        for(CarrierVO c:carrierVOS)
-        {
-            SpinnerItem2.add(" "+c.getCarNul()+" ");
-        }
-        arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,SpinnerItem2);
-        choiceCarrier.setAdapter(arrayAdapter);
     }
 
 
@@ -238,24 +183,23 @@ public class SelectConsume extends Fragment {
             DesTittle="當天花費";
             start = new GregorianCalendar(year, month, day,0,0,0);
             end = new GregorianCalendar(year, month, day,23,59,59);
-            PIdateTittle.setText(syear.format(new Date(start.getTimeInMillis())));
+
         }else if(Statue==1)
         {
             DesTittle="這周花費";
             start = new GregorianCalendar(year, month, day,0,0,0);
             end = new GregorianCalendar(year, month, day +6,23,59,59);
-            PIdateTittle.setText(syear.format(new Date(start.getTimeInMillis()))+" ~ "+syear.format(new Date(end.getTimeInMillis())));
         }else if(Statue==2)
         {
             DesTittle="本月花費";
             start = new GregorianCalendar(year, month,  1,0,0,0);
             end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
-            PIdateTittle.setText(sM.format(new Date(start.getTimeInMillis())));
+
         }else{
             DesTittle="本年花費";
             start = new GregorianCalendar(year, 0,  1,0,0,0);
             end = new GregorianCalendar(year, 11, 31,23,59,59);
-            PIdateTittle.setText(sY.format(new Date(start.getTimeInMillis())));
+
         }
         if(!noShowCarrier)
         {
@@ -506,25 +450,6 @@ public class SelectConsume extends Fragment {
        return f;
     }
 
-
-
-
-    private void download() {
-        List<CarrierVO> carrierVOList = carrierDB.getAll();
-        if (carrierVOList == null || carrierVOList.size() <= 0) {
-            return;
-        }
-        if (first == null) {
-            first = new GetSQLDate(this).execute("GetToday");
-            progressDialog.setMessage("正在更新資料,請稍候...");
-            progressDialog.show();
-        }else{
-            dataAnalyze();
-        }
-    }
-
-
-
     private InvoiceVO getType(InvoiceVO invoiceVO) {
         List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
         String main = "O", second = "O";
@@ -700,43 +625,35 @@ public class SelectConsume extends Fragment {
     private class ChoicePeriodStatue implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            Log.d(TAG,"retry"+retry);
-            if(!retry)
+            Statue=position;
+            end=Calendar.getInstance();
+            month=end.get(Calendar.MONTH);
+            year=end.get(Calendar.YEAR);
+            dweek =end.get(Calendar.DAY_OF_WEEK);
+            day=end.get(Calendar.DAY_OF_MONTH);
+            if(position==0)
             {
-                Statue=position;
-                end=Calendar.getInstance();
-                month=end.get(Calendar.MONTH);
-                year=end.get(Calendar.YEAR);
-                dweek =end.get(Calendar.DAY_OF_WEEK);
-                day=end.get(Calendar.DAY_OF_MONTH);
-                if(position==0)
-                {
-                    period=1;
-                    dataAnalyze();
-                }
-                else if(position==1)
-                {
-                    day=day-dweek+1;
-                    period=dweek;
-                    dataAnalyze();
-                }else if(position==2)
-                {
-                    period=end.getActualMaximum(Calendar.WEEK_OF_MONTH);
-                    dataAnalyze();
-                }else{
-                    period=month+1;
-                    month=month-1;
-                    Log.d(TAG,"month"+month);
-                    dataAnalyze();
-                }
-            }else {
-                retry = false;
+                period=1;
+                dataAnalyze();
             }
-
+            else if(position==1)
+             {
+                 day=day-dweek+1;
+                 period=dweek;
+                 dataAnalyze();
+             }else if(position==2)
+            {
+                period=end.getActualMaximum(Calendar.WEEK_OF_MONTH);
+                dataAnalyze();
+            }else{
+                period=month+1;
+                month=month-1;
+                Log.d(TAG,"month"+month);
+                dataAnalyze();
+            }
         }
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-            retry = false;
         }
     }
 
@@ -772,41 +689,13 @@ public class SelectConsume extends Fragment {
     private class charvalue implements OnChartValueSelectedListener {
         @Override
         public void onValueSelected(Entry entry, int i, Highlight highlight) {
-            retry=true;
-            if(Statue==2)
-            {
-                int week=entry.getXIndex()+1;
-                Statue=1;
-                choicePeriod.setSelection(1);
-                if(week==1)
-                {
-                    Calendar calendar=new GregorianCalendar(year,month,1,0,0,0);
-                    dweek =calendar.get(Calendar.DAY_OF_WEEK);
-                    day=calendar.get(Calendar.DAY_OF_MONTH);
-                    day=day-dweek+1;
-                    period=dweek;
-                }else if(week==period){
-                    Calendar calendar=new GregorianCalendar(year,month,1);
-                    calendar.set(Calendar.WEEK_OF_MONTH,week);
-                    calendar.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
-                    day=calendar.get(Calendar.DAY_OF_MONTH);
-                    period=calendar.getActualMaximum(Calendar.DAY_OF_MONTH)-day+1;
-                } else {
-                    Calendar calendar=new GregorianCalendar(year,month,1);
-                    calendar.set(Calendar.WEEK_OF_MONTH,week);
-                    calendar.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
-                    day=calendar.get(Calendar.DAY_OF_MONTH);
-                    period=7;
-                }
-                dataAnalyze();
-            }
-//           Bundle bundle=new Bundle();
-//           bundle.putSerializable("period",period);
-//           bundle.putSerializable("year",year);
-//           bundle.putSerializable("year",month);
-//           bundle.putSerializable("year",day);
-//           bundle.putSerializable("Statue",Statue);
-//           bundle.putSerializable("label",chartLabels.get(entry.getXIndex()));
+           Bundle bundle=new Bundle();
+           bundle.putSerializable("period",period);
+           bundle.putSerializable("year",year);
+           bundle.putSerializable("year",month);
+           bundle.putSerializable("year",day);
+           bundle.putSerializable("Statue",Statue);
+           bundle.putSerializable("label",chartLabels.get(entry.getXIndex()));
 
         }
         @Override
