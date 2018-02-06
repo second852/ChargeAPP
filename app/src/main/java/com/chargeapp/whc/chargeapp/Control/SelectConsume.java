@@ -41,6 +41,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
 
@@ -56,6 +57,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 
 /**
@@ -81,7 +83,7 @@ public class SelectConsume extends Fragment {
     private BarChart chart_bar;
     private TypeDB typeDB;
     private List<TypeVO> typeList;
-    private int[] colorlist = {Color.parseColor("#FF8888"), Color.parseColor("#FFDD55"), Color.parseColor("#66FF66"), Color.parseColor("#77DDFF"), Color.parseColor("#D28EFF")};
+    private int[] colorlist = {Color.parseColor("#FF8888"), Color.parseColor("#FFDD55"), Color.parseColor("#66FF66"), Color.parseColor("#77DDFF"), Color.parseColor("#D28EFF"),Color.parseColor("#aaaaaa")};
     private List<Map.Entry<String, Integer>> list_Data;
     private int month,year,day, dweek;
     private Calendar end;
@@ -89,11 +91,15 @@ public class SelectConsume extends Fragment {
     private PieChart chart_pie;
     private TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private SimpleDateFormat sc = new SimpleDateFormat("HH");
-    private SimpleDateFormat sY = new SimpleDateFormat("yyyy");
-    private SimpleDateFormat sM = new SimpleDateFormat("MM");
+    private SimpleDateFormat sY = new SimpleDateFormat("yyyy年");
+    private SimpleDateFormat sM = new SimpleDateFormat("yyyy年MM月");
     private int total,period;
     private int Statue=1;
     private String DesTittle;
+    private boolean ShowConsume = true;
+    private boolean ShowAllCarrier=true;
+    private boolean noShowCarrier=false;
+
 
 
     @Override
@@ -113,6 +119,9 @@ public class SelectConsume extends Fragment {
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
         choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
+        choiceCarrier.setOnItemSelectedListener(new ChoiceCarrier());
+        chart_bar.setOnChartValueSelectedListener(new charvalue());
+        chart_pie.setOnChartValueSelectedListener(new pievalue());
         return view;
     }
 
@@ -121,12 +130,30 @@ public class SelectConsume extends Fragment {
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+
+//        InvoiceVO I;
+//        for(int i=0;i<100;i++)
+//        {
+//            Calendar calendar=new GregorianCalendar(2018,0,i+2);
+//            I=new InvoiceVO();
+//            I.setTime(new Timestamp(calendar.getTimeInMillis()));
+//            I.setDonateTime(new Timestamp(calendar.getTimeInMillis()));
+//            I.setMaintype("O");
+//            I.setAmount("250");
+//            I.setInvNum("1");
+//            I.setCarrier("/2RDO8+P");
+//            invoiceDB.insert(I);
+//        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
          dataAnalyze();
+//        for(InvoiceVO i:invoiceDB.getAll())
+//        {
+//           getType(i);
+//        }
     }
 
     private void findViewById(View view) {
@@ -149,6 +176,8 @@ public class SelectConsume extends Fragment {
         choicePeriod.setAdapter(arrayAdapter);
         choicePeriod.setSelection(1);
         carrierVOS = carrierDB.getAll();
+        SpinnerItem2.add(" 全部 ");
+        SpinnerItem2.add(" 本地 ");
         for(CarrierVO c:carrierVOS)
         {
             SpinnerItem2.add(" "+c.getCarNul()+" ");
@@ -172,7 +201,7 @@ public class SelectConsume extends Fragment {
 
     private int[] getColor() {
         int[] c=new int[list_Data.size()+1];
-        for(int i=0;i<=list_Data.size();i++)
+        for(int i=0;i<list_Data.size();i++)
         {
             c[i]=colorlist[i];
         }
@@ -201,6 +230,7 @@ public class SelectConsume extends Fragment {
         total=0;
         HashMap<String, Integer> hashMap = new HashMap<>();
         Calendar start,end;
+        ChartEntry other=new ChartEntry("other",0);
         if(Statue==0)
         {
             DesTittle="當天花費";
@@ -219,42 +249,49 @@ public class SelectConsume extends Fragment {
             start = new GregorianCalendar(year, month,  1,0,0,0);
             end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
             PIdateTittle.setText(sM.format(new Date(start.getTimeInMillis())));
-
         }else{
             DesTittle="本年花費";
             start = new GregorianCalendar(year, 0,  1,0,0,0);
             end = new GregorianCalendar(year, 11, 31,23,59,59);
             PIdateTittle.setText(sY.format(new Date(start.getTimeInMillis())));
         }
-
-        Log.d(TAG,"start"+syear.format(new Date(start.getTimeInMillis()))+"end"+syear.format(new Date(end.getTimeInMillis())));
-        List<InvoiceVO> invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrierVOS.get(choiceD).getCarNul());
-        List<ConsumeVO> consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-        for (InvoiceVO I : invoiceVOS) {
-            if(I.getMaintype().equals("O"))
+        if(!noShowCarrier)
+        {
+            List<InvoiceVO> invoiceVOS;
+            if(ShowAllCarrier)
             {
-                if (hashMap.get("other") == null) {
-                    hashMap.put("other", Integer.valueOf(I.getAmount()));
-                } else {
-                    hashMap.put("other", Integer.valueOf(I.getAmount()) + hashMap.get("other"));
+                invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+            }else{
+                invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrierVOS.get(choiceD).getCarNul());
+            }
+            for (InvoiceVO I : invoiceVOS) {
+                if(I.getMaintype().equals("O"))
+                {
+                    other.setValue(other.getValue()+Integer.valueOf(I.getAmount()));
+                    continue;
                 }
-                continue;
+                if (hashMap.get(I.getMaintype()) == null) {
+                    hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()));
+                } else {
+                    hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()) + hashMap.get(I.getMaintype()));
+                }
+                total=total+Integer.valueOf(I.getAmount());
             }
-            if (hashMap.get(I.getMaintype()) == null) {
-                hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()));
-            } else {
-                hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()) + hashMap.get(I.getMaintype()));
-            }
-            total=total+Integer.valueOf(I.getAmount());
         }
-        for (ConsumeVO c : consumeVOS) {
-            if (hashMap.get(c.getMaintype()) == null) {
-                hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()));
-            } else {
-                hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()) + hashMap.get(c.getMaintype()));
+
+        if(ShowConsume)
+        {
+            List<ConsumeVO> consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+            for (ConsumeVO c : consumeVOS) {
+                if (hashMap.get(c.getMaintype()) == null) {
+                    hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()));
+                } else {
+                    hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()) + hashMap.get(c.getMaintype()));
+                }
+                total=total+Integer.valueOf(c.getMoney());
             }
-            total=total+Integer.valueOf(c.getMoney());
         }
+
         list_Data =new ArrayList<Map.Entry<String, Integer>>(hashMap.entrySet());
         Collections.sort(list_Data, new Comparator<Map.Entry<String, Integer>>(){
             public int compare(Map.Entry<String, Integer> entry1,
@@ -263,20 +300,25 @@ public class SelectConsume extends Fragment {
             }
         });
 
+//        for(Map.Entry m:list_Data)
+//        {
+//            Log.d(TAG,"1"+m.getKey()+" : "+m.getValue());
+//        }
         if(list_Data.size()>4)
         {
             for(int i=4;i<list_Data.size();i++)
             {
-                if(hashMap.get("other")==null)
-                {
-                    hashMap.put("other",list_Data.get(i).getValue());
-                }else{
-                    hashMap.put("other",hashMap.get("other")+list_Data.get(i).getValue());
-                }
+                other.setValue(other.getValue()+list_Data.get(i).getValue());
                 list_Data.remove(i);
             }
-            list_Data.add(new ChartEntry("other",hashMap.get("other")));
         }
+        list_Data.add(other);
+        total=total+other.getValue();
+//        for(Map.Entry m:list_Data)
+//        {
+//            Log.d(TAG,"2"+m.getKey()+" : "+m.getValue());
+//        }
+
     }
 
     private List<String> getLabels() {
@@ -294,8 +336,8 @@ public class SelectConsume extends Fragment {
             }
         }else if(Statue==2)
         {
-            for (int i = 0; i < period; i++) {
-                chartLabels.add(i+1+"周");
+            for (int i = 0; i <period; i++) {
+                chartLabels.add("第"+(i+1)+"周");
             }
 
         }else{
@@ -334,9 +376,9 @@ public class SelectConsume extends Fragment {
             calendar.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
             end=new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
             BarEntry barEntry;
-            for(int i=2;i<=period;i++)
+            for(int i=2;i<period;i++)
             {
-
+                Log.d(TAG,"time"+syear.format(new Date(start.getTimeInMillis()))+":"+syear.format(new Date(end.getTimeInMillis()))+" : "+i);
                 barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), i-2);
                 chartData.add(barEntry);
                 calendar.set(Calendar.WEEK_OF_MONTH,i);
@@ -346,13 +388,16 @@ public class SelectConsume extends Fragment {
                 calendar.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
                 end=new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
             }
+            barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), period-1);
+            chartData.add(barEntry);
+            Log.d(TAG,"end"+syear.format(new Date(start.getTimeInMillis()))+":"+syear.format(new Date(end.getTimeInMillis())));
             calendar.set(Calendar.WEEK_OF_MONTH,period);
             calendar.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
             start = new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
             end=new GregorianCalendar(year, month,start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
             barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), period-1);
             chartData.add(barEntry);
-
+            Log.d(TAG,"end"+syear.format(new Date(start.getTimeInMillis()))+":"+syear.format(new Date(end.getTimeInMillis())));
         }else{
             for (int i = 0; i < period; i++) {
                 start = new GregorianCalendar(year, month+i, 1, 0, 0, 0);
@@ -367,51 +412,76 @@ public class SelectConsume extends Fragment {
 
     private float[] Periodfloat(Calendar start, Calendar end, String carrier) {
         Map<String, Integer> hashMap = new LinkedHashMap<>();
-        boolean isOther=true;
+        boolean isOther;
         float[] f = new float[list_Data.size()+1];
-        List<InvoiceVO> periodInvoice = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrier);
-        List<ConsumeVO> periodConsume = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-           for (InvoiceVO I : periodInvoice) {
-               isOther=true;
-               for(Map.Entry e:list_Data )
-               {
-                   if(I.getMaintype().equals(e.getKey()))
-                   {
-                       if(hashMap.get(I.getMaintype())==null)
-                       {
-                          hashMap.put(I.getMaintype(),Integer.valueOf(I.getAmount()));
-                       }else{
-                           hashMap.put(I.getMaintype(),Integer.valueOf(I.getAmount())+hashMap.get(I.getMaintype()));
-                       }
-                       isOther=false;
-                      break;
-                   }
-               }
-               if(isOther||I.getMaintype().equals("O"))
-               {
-                   if(hashMap.get("other")==null)
-                   {
-                       hashMap.put("other",Integer.valueOf(I.getAmount()));
-                   }else{
-                       hashMap.put("other",hashMap.get("other")+Integer.valueOf(I.getAmount()));
-                   }
-               }
-           }
-           for (ConsumeVO c : periodConsume) {
-               for(Map.Entry e:list_Data )
-               {
-                   if(c.getMaintype().equals(e.getKey()))
-                   {
-                       if(hashMap.get(c.getMaintype())==null)
-                       {
-                           hashMap.put(c.getMaintype(),Integer.valueOf(c.getMoney()));
-                       }else{
-                           hashMap.put(c.getMaintype(),Integer.valueOf(c.getMoney())+hashMap.get(c.getMaintype()));
-                       }
-                       break;
-                   }
-               }
-           }
+        if(!noShowCarrier)
+        {
+            List<InvoiceVO> periodInvoice;
+            if(ShowAllCarrier)
+            {
+                periodInvoice = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+            }else{
+                periodInvoice = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()),carrier);
+            }
+            for (InvoiceVO I : periodInvoice) {
+                isOther=true;
+                for(Map.Entry e:list_Data )
+                {
+                    if(I.getMaintype().equals(e.getKey()))
+                    {
+                        if(hashMap.get(I.getMaintype())==null)
+                        {
+                            hashMap.put(I.getMaintype(),Integer.valueOf(I.getAmount()));
+                        }else{
+                            hashMap.put(I.getMaintype(),Integer.valueOf(I.getAmount())+hashMap.get(I.getMaintype()));
+                        }
+                        isOther=false;
+                        break;
+                    }
+                }
+                if(isOther||I.getMaintype().equals("O"))
+                {
+                    if(hashMap.get("other")==null)
+                    {
+                        hashMap.put("other",Integer.valueOf(I.getAmount()));
+                    }else{
+                        hashMap.put("other",hashMap.get("other")+Integer.valueOf(I.getAmount()));
+                    }
+                }
+            }
+
+        }
+        if(ShowConsume)
+        {
+            List<ConsumeVO> periodConsume = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+            for (ConsumeVO c : periodConsume) {
+                isOther=true;
+                for(Map.Entry e:list_Data )
+                {
+                    if(c.getMaintype().equals(e.getKey()))
+                    {
+                        if(hashMap.get(c.getMaintype())==null)
+                        {
+                            hashMap.put(c.getMaintype(),Integer.valueOf(c.getMoney()));
+                        }else{
+                            hashMap.put(c.getMaintype(),Integer.valueOf(c.getMoney())+hashMap.get(c.getMaintype()));
+                        }
+                        isOther=false;
+                        break;
+                    }
+                }
+                if(isOther)
+                {
+                    if(hashMap.get("other")==null)
+                    {
+                        hashMap.put("other",Integer.valueOf(c.getMoney()));
+                    }else{
+                        hashMap.put("other",hashMap.get("other")+Integer.valueOf(c.getMoney()));
+                    }
+                }
+            }
+        }
+
 
         boolean OtherExist=false;
        for(int i=0;i<list_Data.size();i++)
@@ -562,7 +632,7 @@ public class SelectConsume extends Fragment {
             dataSet.setDrawValues(true);
         }
 
-        dataSet.setSliceSpace(1);
+        dataSet.setSliceSpace(0);
         dataSet.setSelectionShift(5);
         // instantiate pie data object now
         PieData data = new PieData(xVals, dataSet);
@@ -646,8 +716,8 @@ public class SelectConsume extends Fragment {
                  dataAnalyze();
              }else if(position==2)
             {
+                period=end.getActualMaximum(Calendar.WEEK_OF_MONTH);
                 dataAnalyze();
-
             }else{
                 period=month+1;
                 month=month-1;
@@ -657,6 +727,59 @@ public class SelectConsume extends Fragment {
         }
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
+        }
+    }
+
+    private class ChoiceCarrier implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            if(i==0)
+            {
+                ShowConsume = true;
+                ShowAllCarrier=true;
+                noShowCarrier=false;
+                dataAnalyze();
+            }else if(i==1)
+            {
+                ShowConsume = true;
+                ShowAllCarrier=false;
+                noShowCarrier=true;
+                dataAnalyze();
+            }else{
+                choiceD=i-2;
+                ShowConsume = false;
+                ShowAllCarrier=false;
+                noShowCarrier=false;
+                dataAnalyze();
+            }
+        }
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+    }
+
+    private class charvalue implements OnChartValueSelectedListener {
+        @Override
+        public void onValueSelected(Entry entry, int i, Highlight highlight) {
+            Common.showToast(getActivity(),entry.getXIndex()+":"+entry.getVal());
+
+        }
+        @Override
+        public void onNothingSelected() {
+
+        }
+    }
+
+    private class pievalue implements OnChartValueSelectedListener {
+        @Override
+        public void onValueSelected(Entry entry, int i, Highlight highlight) {
+
+        }
+
+        @Override
+        public void onNothingSelected() {
+
         }
     }
 }

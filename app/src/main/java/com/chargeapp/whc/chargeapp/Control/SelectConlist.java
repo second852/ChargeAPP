@@ -13,17 +13,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
+import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 1709008NB01 on 2017/12/22.
@@ -35,6 +41,7 @@ public class SelectConlist extends Fragment {
     private RecyclerView donateRL;
     private InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private CarrierDB carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+    private ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private List<CarrierVO> carrierVOS;
     private List<InvoiceVO> invoiceVOS;
     private SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
@@ -117,10 +124,30 @@ public class SelectConlist extends Fragment {
             donateRL.setVisibility(View.GONE);
             return ;
         }
+        List<ConsumeVO> consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+        List<Object> objectList=new ArrayList<>();
+        objectList.addAll(consumeVOS);
+        objectList.addAll(invoiceVOS);
+        Collections.sort(objectList, new Comparator<Object>() {
+            @Override
+            public int compare(Object o, Object t1) {
+                long time1=(o instanceof ConsumeVO)?((ConsumeVO)o).getDate().getTime():((InvoiceVO)o).getTime().getTime();
+                long time2=(t1 instanceof ConsumeVO)?((ConsumeVO)t1).getDate().getTime():((InvoiceVO)t1).getTime().getTime();
+                if((time1-time2)>0)
+                {
+                    return 1 ;
+                }else if((time1-time2)==0)
+                {
+                    return 0 ;
+                }else{
+                    return -1 ;
+                }
+            }
+        });
         DRmessage.setVisibility(View.GONE);
         donateRL.setVisibility(View.VISIBLE);
         donateRL.setLayoutManager(new LinearLayoutManager(getActivity()));
-        donateRL.setAdapter(new SelectConlist.InvoiceAdapter(getActivity(), invoiceVOS));
+        donateRL.setAdapter(new SelectConlist.InvoiceAdapter(getActivity(), objectList));
     }
 
     private void findViewById(View view) {
@@ -135,10 +162,10 @@ public class SelectConlist extends Fragment {
     private class InvoiceAdapter extends
             RecyclerView.Adapter<SelectConlist.InvoiceAdapter.MyViewHolder> {
         private Context context;
-        private List<InvoiceVO> invoiceVOList;
+        private List<Object> invoiceVOList;
 
 
-        InvoiceAdapter(Context context, List<InvoiceVO> memberList) {
+        InvoiceAdapter(Context context, List<Object> memberList) {
             this.context = context;
             this.invoiceVOList = memberList;
         }
@@ -169,10 +196,18 @@ public class SelectConlist extends Fragment {
 
         @Override
         public void onBindViewHolder(SelectConlist.InvoiceAdapter.MyViewHolder viewHolder, int position) {
-            final InvoiceVO invoiceVO = invoiceVOList.get(position);
-            viewHolder.checkdonate.setText(sf.format(new Date(invoiceVO.getTime().getTime())));
-            viewHolder.day.setText(invoiceVO.getMaintype());
-            viewHolder.nul.setText(invoiceVO.getAmount());
+            final Object o = invoiceVOList.get(position);
+            if(o instanceof InvoiceVO)
+            {   InvoiceVO invoiceVO= (InvoiceVO) o;
+                viewHolder.checkdonate.setText(sf.format(new Date(invoiceVO.getTime().getTime())));
+                viewHolder.day.setText(invoiceVO.getMaintype());
+                viewHolder.nul.setText(invoiceVO.getAmount());
+            }else{
+                ConsumeVO consumeVO= (ConsumeVO) o;
+                viewHolder.checkdonate.setText(sf.format(new Date(consumeVO.getDate().getTime())));
+                viewHolder.day.setText(consumeVO.getMaintype());
+                viewHolder.nul.setText(consumeVO.getMoney());
+            }
         }
     }
 }

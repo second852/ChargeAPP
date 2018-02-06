@@ -49,7 +49,7 @@
             android:layout_marginLeft="50dp"
             android:background="#aaaaaa"
             android:layout_centerHorizontal="true"
-            android:layout_height="30dp"
+            android:layout_height="40dp"
             >
             <Spinner
                 android:gravity="center"
