@@ -127,7 +127,7 @@ public class SelectConsume extends Fragment {
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-
+//        invoiceDB.DeleteError();
 //        InvoiceVO I;
 //        for(int i=0;i<100;i++)
 //        {
@@ -771,6 +771,10 @@ public class SelectConsume extends Fragment {
         @Override
         public void onValueSelected(Entry entry, int i, Highlight highlight) {
             retry=true;
+            if(entry.getVal()<=0)
+            {
+                return;
+            }
             if(Statue==2)
             {
                 int week=entry.getXIndex()+1;
@@ -805,7 +809,7 @@ public class SelectConsume extends Fragment {
                 Calendar calendar=new GregorianCalendar(year,month,1);
                 period=calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
                 dataAnalyze();
-            }else if(Statue==1){
+            }else{
                 Fragment fragment=new SelectDetCircle();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("ShowConsume",ShowConsume);

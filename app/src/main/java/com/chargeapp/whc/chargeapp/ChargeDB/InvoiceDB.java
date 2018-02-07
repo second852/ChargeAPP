@@ -488,5 +488,12 @@ public class InvoiceDB {
         String[] whereArgs = {String.valueOf(timestamp.getTime())};
         return db.delete(TABLE_NAME, whereClause, whereArgs);
     }
+    public void DeleteError() {
+        String sql = "Delete from INVOICE where maintype = '0' and secondtype is null;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<InvoiceVO> invoiceVOSList = new ArrayList<>();
+        InvoiceVO invoiceVO;
+    }
 
 }

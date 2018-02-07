@@ -1,9 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,55 +11,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
-import com.chargeapp.whc.chargeapp.Model.CarrierVO;
-import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
-import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
-import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -180,14 +151,14 @@ public class SelectDetCircle extends Fragment {
         HashMap<String,Integer> second=hashMap.get(key);
         int i=0;
         String details="key";
-        for(String s:second.keySet())
-        {
-            yVals1.add(new Entry(second.get(s),i));
-            xVals.add(s);
-            Log.d("XXXXXXX",s);
-            details=details+" : "+second.get(s)+"元\n";
-            i++;
-        }
+            for(String s:second.keySet())
+            {
+                yVals1.add(new Entry(second.get(s),i));
+                xVals.add(s);
+                Log.d("XXXXXXX",s);
+                details=details+" : "+second.get(s)+"元\n";
+                i++;
+            }
         detail.setText(details);
         // create pie data set
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
@@ -230,7 +201,7 @@ public class SelectDetCircle extends Fragment {
         @Override
         public ChartAdapter.MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
-            View itemView = layoutInflater.inflate(R.layout.select_con_detail, viewGroup, false);
+            View itemView = layoutInflater.inflate(R.layout.select_con_detail_item, viewGroup, false);
             return new ChartAdapter.MyViewHolder(itemView);
         }
 
