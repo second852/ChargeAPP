@@ -1,11 +1,13 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,13 +110,6 @@ public class SelectConsume extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_consume, container, false);
         setDB();
-        end=Calendar.getInstance();
-        month=end.get(Calendar.MONTH);
-        year=end.get(Calendar.YEAR);
-        dweek =end.get(Calendar.DAY_OF_WEEK);
-        day=end.get(Calendar.DAY_OF_MONTH);
-        day=day-dweek+1;
-        period=dweek;
         findViewById(view);
         typeList = typeDB.getAll();
         progressDialog = new ProgressDialog(getActivity());
@@ -581,6 +576,9 @@ public class SelectConsume extends Fragment {
         yAxis.setAxisMinValue(0);
         chart_bar.setData(getBarData());
         chart_bar.invalidate();
+        chart_bar.setDrawBarShadow(false);
+        chart_bar.setDoubleTapToZoomEnabled(false);
+
         chart_pie.setUsePercentValues(true);
         chart_pie.setDescription(" ");
         // enable hole and configure
@@ -799,20 +797,43 @@ public class SelectConsume extends Fragment {
                     period=7;
                 }
                 dataAnalyze();
+            }else if(Statue==3)
+            {
+                Statue=2;
+                choicePeriod.setSelection(2);
+                month=entry.getXIndex();
+                Calendar calendar=new GregorianCalendar(year,month,1);
+                period=calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
+                dataAnalyze();
+            }else if(Statue==1){
+                Fragment fragment=new SelectDetCircle();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("ShowConsume",ShowConsume);
+                bundle.putSerializable("ShowAllCarrier",ShowAllCarrier);
+                bundle.putSerializable("noShowCarrier",noShowCarrier);
+                bundle.putSerializable("year",year);
+                bundle.putSerializable("month",month);
+                bundle.putSerializable("day",day);
+                bundle.putSerializable("index",entry.getXIndex());
+                bundle.putSerializable("carrier",carrierVOS.get(choiceD).getCarNul());
+                fragment.setArguments(bundle);
+                switchFragment(fragment);
             }
-//           Bundle bundle=new Bundle();
-//           bundle.putSerializable("period",period);
-//           bundle.putSerializable("year",year);
-//           bundle.putSerializable("year",month);
-//           bundle.putSerializable("year",day);
-//           bundle.putSerializable("Statue",Statue);
-//           bundle.putSerializable("label",chartLabels.get(entry.getXIndex()));
-
         }
         @Override
         public void onNothingSelected() {
 
         }
+
+    }
+
+    private void switchFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        for (Fragment fragment1 :  getFragmentManager().getFragments()) {
+            fragmentTransaction.remove(fragment1);
+        }
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
     }
 
     private class pievalue implements OnChartValueSelectedListener {
