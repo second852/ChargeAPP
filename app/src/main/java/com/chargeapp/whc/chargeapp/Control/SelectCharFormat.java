@@ -1,25 +1,22 @@
 package com.chargeapp.whc.chargeapp.Control;
 
-import com.github.mikephil.charting.components.YAxis;
+
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.YAxisValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+
 
 /**
  * Created by 1709008NB01 on 2018/2/2.
  */
 
-public class SelectCharFormat  implements ValueFormatter, YAxisValueFormatter {
-    @Override
-    public String getFormattedValue(float v, Entry entry, int i, ViewPortHandler viewPortHandler) {
-
-
-        return String.valueOf((int)v);
-    }
+public class SelectCharFormat extends PercentFormatter implements YAxisValueFormatter {
 
     @Override
-    public String getFormattedValue(float v, YAxis yAxis) {
-        return String.valueOf((int)v);
+    public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+        return this.mFormat.format((double)value) + " %  ("+(int)entry.getVal()+"元)";
     }
+
+
 }

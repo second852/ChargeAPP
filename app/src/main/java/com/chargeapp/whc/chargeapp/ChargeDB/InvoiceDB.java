@@ -489,11 +489,10 @@ public class InvoiceDB {
         return db.delete(TABLE_NAME, whereClause, whereArgs);
     }
     public void DeleteError() {
-        String sql = "Delete from INVOICE where maintype = '0' and secondtype is null;";
+        String sql = "Delete from INVOICE where maintype = 'O';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
-        List<InvoiceVO> invoiceVOSList = new ArrayList<>();
-        InvoiceVO invoiceVO;
+        db.execSQL(sql);
     }
 
 }

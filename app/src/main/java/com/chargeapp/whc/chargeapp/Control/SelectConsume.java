@@ -127,15 +127,17 @@ public class SelectConsume extends Fragment {
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-//        invoiceDB.DeleteError();
+
 //        InvoiceVO I;
-//        for(int i=0;i<100;i++)
+//        for(int i=0;i<10;i++)
 //        {
-//            Calendar calendar=new GregorianCalendar(2018,0,i+2);
+//            Calendar calendar=new GregorianCalendar(2018,1,i+2);
 //            I=new InvoiceVO();
 //            I.setTime(new Timestamp(calendar.getTimeInMillis()));
 //            I.setDonateTime(new Timestamp(calendar.getTimeInMillis()));
 //            I.setMaintype("O");
+//            I.setSecondtype("O");
+//            I.setDetail("其他");
 //            I.setAmount("250");
 //            I.setInvNum("1");
 //            I.setCarrier("/2RDO8+P");
@@ -188,7 +190,6 @@ public class SelectConsume extends Fragment {
         BarDataSet dataSetA = new BarDataSet(getChartData(), " ");
         dataSetA.setColors(getColor());
         dataSetA.setStackLabels(getStackLabels());
-        dataSetA.setValueFormatter(new SelectCharFormat());
         dataSetA.setDrawValues(false);
         dataSetA.setHighLightAlpha(20);
         List<IBarDataSet> dataSets = new ArrayList<>();
