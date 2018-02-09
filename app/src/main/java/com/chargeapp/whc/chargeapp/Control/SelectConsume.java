@@ -127,7 +127,7 @@ public class SelectConsume extends Fragment {
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-
+//        invoiceDB.DeleteError();
 //        InvoiceVO I;
 //        for(int i=0;i<10;i++)
 //        {

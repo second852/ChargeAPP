@@ -14,6 +14,7 @@ import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectConsume;
+import com.chargeapp.whc.chargeapp.Control.SelectDetList;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
@@ -56,9 +57,19 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private String action;
     private List<TypeDetailVO> typeDetailVOS;
     private SimpleDateFormat sd=new SimpleDateFormat("HH");
+    private InvoiceVO invoiceVO;
 
     public GetSQLDate(Object object) {
         this.object = object;
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetailDB =new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetailVOS= typeDetailDB.getHaveDetailTypdAll();
+    }
+
+    public GetSQLDate(Object object,InvoiceVO invoiceVO) {
+        this.object = object;
+        this.invoiceVO=invoiceVO;
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB =new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -165,6 +176,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             {
                 jsonIn=getAllInvoiceDetail();
                 return jsonIn;
+            }else if(action.equals("reDownload"))
+            {
+                jsonIn=getInvoicedetail(invoiceVO);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -597,6 +611,15 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     selectConsume.getAllInvoiceDetail();
                 }else {
                     selectConsume.dataAnalyze();
+                }
+            }else if(object instanceof SelectDetList)
+            {
+                SelectDetList selectDetList= (SelectDetList) object;
+                if(s.equals("timeout")||s.equals("error"))
+                {
+                    selectDetList.cancelshow();
+                }else{
+                    selectDetList.setLayout();
                 }
             }
         }catch (Exception e)

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -63,6 +64,7 @@ public class SelectDetCircle extends Fragment {
     private HashMap<String,HashMap<String,Integer>> hashMap;
     private int[] colorlist = {Color.parseColor("#FF8888"), Color.parseColor("#FFDD55"), Color.parseColor("#66FF66"), Color.parseColor("#77DDFF"), Color.parseColor("#D28EFF"),Color.parseColor("#aaaaaa")};
     private int size;
+
 
 
 
@@ -256,6 +258,7 @@ public class SelectDetCircle extends Fragment {
             }else{
                 String key=KeyList.get((size==1)?position:position-1);
                 pieChart.setData(addData(key,detail));
+                pieChart.setOnChartValueSelectedListener(new changeToNewF(key));
             }
             pieChart.highlightValues(null);
             pieChart.setUsePercentValues(true);
@@ -296,5 +299,41 @@ public class SelectDetCircle extends Fragment {
         @Override
         public void onNothingSelected() {
         }
+    }
+
+    private class changeToNewF implements com.github.mikephil.charting.listener.OnChartValueSelectedListener {
+        private String key;
+        changeToNewF(String key)
+        {
+            this.key=key;
+        }
+        @Override
+        public void onValueSelected(Entry entry, int i, Highlight highlight) {
+            Fragment fragment=new SelectDetList();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("ShowConsume",ShowConsume);
+            bundle.putSerializable("ShowAllCarrier",ShowAllCarrier);
+            bundle.putSerializable("noShowCarrier",noShowCarrier);
+            bundle.putSerializable("year",year);
+            bundle.putSerializable("month",month);
+            bundle.putSerializable("day",day+index);
+            bundle.putSerializable("key",key);
+            bundle.putSerializable("carrier",carrier);
+            fragment.setArguments(bundle);
+            switchFragment(fragment);
+        }
+
+        @Override
+        public void onNothingSelected() {
+
+        }
+    }
+    private void switchFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        for (Fragment fragment1 :  getFragmentManager().getFragments()) {
+            fragmentTransaction.remove(fragment1);
+        }
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
     }
 }
