@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,7 +78,6 @@ public class SelectDetList extends Fragment {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
         setDB();
         findViewById(view);
-
         main=new HashMap<>();
         progressDialog=new ProgressDialog(getActivity());
         ShowConsume= (boolean) getArguments().getSerializable("ShowConsume");
@@ -181,8 +181,8 @@ public class SelectDetList extends Fragment {
             if(o instanceof InvoiceVO)
             {
                 final InvoiceVO I= (InvoiceVO) o;
-                sbTitle.append(I.getSecondtype()+" ");
-                sbTitle.append("共"+I.getAmount()+"元");
+                sbTitle.append(I.getSecondtype().equals("O")?"其他":I.getSecondtype());
+                sbTitle.append("  共"+I.getAmount()+"元");
                 if(I.getDetail().equals("0"))
                 {
                     update.setText("下載");
@@ -199,20 +199,46 @@ public class SelectDetList extends Fragment {
                     update.setText("修改");
                     Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                     List<JsonObject> js=gson.fromJson(I.getDetail(), cdType);
-                    int price=0,n=0;
-                    for(JsonObject j:js)
-                    {
-                        n=j.get("quantity").getAsInt();
-                        price=j.get("unitPrice").getAsInt();
-                        sbDecribe.append(j.get("description").getAsString()+" : "+price+"X"+n+"="+n*price+"元\n");
-                    }
+                    int price,n;
+                        for(JsonObject j:js)
+                        {
+                            try {
+                                n=j.get("amount").getAsInt();
+                                price=j.get("unitPrice").getAsInt();
+                                sbDecribe.append(j.get("description").getAsString()+" : \n"+price+"X"+n/price+"="+n+"元\n");
+                            }catch (Exception e)
+                            {
+                                sbDecribe.append(j.get("description").getAsString()+" : \n"+0+"X"+0+"="+0+"元\n");
+                            }
+                        }
+                    update.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Fragment fragment=new UpdateInvoice();
+                            Bundle bundle=new Bundle();
+                            bundle.putSerializable("invoiceVO",I);
+                            fragment.setArguments(bundle);
+                            switchFragment(fragment);
+                        }
+                    });
                 }
             }else{
                 update.setText("修改");
-                ConsumeVO c= (ConsumeVO) o;
+                final ConsumeVO c= (ConsumeVO) o;
                 sbTitle.append(c.getSecondType()+" ");
                 sbTitle.append("共"+c.getMoney()+"元");
                 sbDecribe.append((c.getDetailname()==null)?"無資料\n  \n":c.getDetailname());
+                update.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Fragment fragment=new InsertSpend();
+                        Bundle bundle=new Bundle();
+                        bundle.putSerializable("consumeVO",c);
+                        bundle.putSerializable("action","update");
+                        fragment.setArguments(bundle);
+                        switchFragment(fragment);
+                    }
+                });
             }
             title.setText(sbTitle.toString());
             decribe.setText(sbDecribe.toString());
@@ -237,6 +263,25 @@ public class SelectDetList extends Fragment {
         public long getItemId(int position) {
             return 0;
         }
+    }
+
+    private int isNull(String s)
+    {
+        if(s.length()<=0||s==null)
+        {
+            return 0;
+        }else{
+            return Integer.valueOf(s);
+        }
+    }
+
+    private void switchFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        for (Fragment fragment1 :  getFragmentManager().getFragments()) {
+            fragmentTransaction.remove(fragment1);
+        }
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
     }
 
 }

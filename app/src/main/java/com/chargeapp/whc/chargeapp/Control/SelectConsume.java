@@ -376,9 +376,9 @@ public class SelectConsume extends Fragment {
             BarEntry barEntry;
             for(int i=2;i<period;i++)
             {
-                Log.d(TAG,"time"+syear.format(new Date(start.getTimeInMillis()))+":"+syear.format(new Date(end.getTimeInMillis()))+" : "+i);
                 barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), i-2);
                 chartData.add(barEntry);
+                Log.d(TAG,"time"+syear.format(new Date(start.getTimeInMillis()))+":"+syear.format(new Date(end.getTimeInMillis()))+":"+ barEntry.getVal()+" : "+barEntry.getXIndex());
                 calendar.set(Calendar.WEEK_OF_MONTH,i);
                 calendar.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
                 start = new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
@@ -386,16 +386,16 @@ public class SelectConsume extends Fragment {
                 calendar.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
                 end=new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
             }
-            barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), period-1);
+            barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), period-2);
             chartData.add(barEntry);
-            Log.d(TAG,"end"+syear.format(new Date(start.getTimeInMillis()))+":"+syear.format(new Date(end.getTimeInMillis())));
+            Log.d(TAG,"end"+syear.format(new Date(start.getTimeInMillis()))+":"+syear.format(new Date(end.getTimeInMillis()))+":"+ barEntry.getVal()+" : "+barEntry.getXIndex());
             calendar.set(Calendar.WEEK_OF_MONTH,period);
             calendar.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
             start = new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
             end=new GregorianCalendar(year, month,start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
             barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), period-1);
             chartData.add(barEntry);
-            Log.d(TAG,"end"+syear.format(new Date(start.getTimeInMillis()))+":"+syear.format(new Date(end.getTimeInMillis())));
+            Log.d(TAG,"end"+syear.format(new Date(start.getTimeInMillis()))+":"+syear.format(new Date(end.getTimeInMillis()))+":"+ barEntry.getVal()+" : "+barEntry.getXIndex());
         }else{
             for (int i = 0; i < period; i++) {
                 start = new GregorianCalendar(year, month+i, 1, 0, 0, 0);
@@ -447,7 +447,6 @@ public class SelectConsume extends Fragment {
                     }
                 }
             }
-
         }
         if(ShowConsume)
         {
@@ -652,6 +651,7 @@ public class SelectConsume extends Fragment {
     private class AddOnClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            retry=false;
             if(Statue==0)
             {
                 day=day+1;
@@ -675,6 +675,7 @@ public class SelectConsume extends Fragment {
     private class CutOnClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            retry=false;
             if(Statue==0)
             {
                 day=day-1;
@@ -786,8 +787,7 @@ public class SelectConsume extends Fragment {
                     Calendar calendar=new GregorianCalendar(year,month,1,0,0,0);
                     dweek =calendar.get(Calendar.DAY_OF_WEEK);
                     day=calendar.get(Calendar.DAY_OF_MONTH);
-                    day=day-dweek+1;
-                    period=dweek;
+                    period=7-dweek+1;
                 }else if(week==period){
                     Calendar calendar=new GregorianCalendar(year,month,1);
                     calendar.set(Calendar.WEEK_OF_MONTH,week);

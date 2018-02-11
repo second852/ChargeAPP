@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -7,7 +8,7 @@ import java.util.Date;
  * Created by 1709008NB01 on 2017/12/20.
  */
 
-public class InvoiceVO {
+public class InvoiceVO implements Serializable{
     private int id;
     private String invNum;
     private String cardType;

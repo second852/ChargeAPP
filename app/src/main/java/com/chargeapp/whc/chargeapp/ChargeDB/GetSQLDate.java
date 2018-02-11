@@ -15,6 +15,7 @@ import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectConsume;
 import com.chargeapp.whc.chargeapp.Control.SelectDetList;
+import com.chargeapp.whc.chargeapp.Control.UpdateInvoice;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
@@ -620,6 +621,15 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     selectDetList.cancelshow();
                 }else{
                     selectDetList.setLayout();
+                }
+            }else if(object instanceof UpdateInvoice)
+            {
+                UpdateInvoice updateInvoice= (UpdateInvoice) object;
+                if(s.equals("timeout")||s.equals("error"))
+                {
+                    updateInvoice.cancelshow();
+                }else{
+                    updateInvoice.setLayout();
                 }
             }
         }catch (Exception e)

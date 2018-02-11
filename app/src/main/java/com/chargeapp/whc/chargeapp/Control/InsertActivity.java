@@ -79,7 +79,11 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
             int currentpoition=position%2;
             Log.d("XXXXX", String.valueOf(position));
             if (currentpoition == 0) {
-                return new InsertSpend();
+                Fragment fragment=new InsertSpend();
+                Bundle bundle=new Bundle();
+                bundle.putSerializable("action","insert");
+                fragment.setArguments(bundle);
+                return fragment;
             } else  {
                 return new InsertIncome();
             }
