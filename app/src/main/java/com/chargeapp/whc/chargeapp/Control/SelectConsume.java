@@ -844,7 +844,19 @@ public class SelectConsume extends Fragment {
     private class pievalue implements OnChartValueSelectedListener {
         @Override
         public void onValueSelected(Entry entry, int i, Highlight highlight) {
-
+            Fragment fragment=new SelectDetCircle();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("ShowConsume",ShowConsume);
+            bundle.putSerializable("ShowAllCarrier",ShowAllCarrier);
+            bundle.putSerializable("noShowCarrier",noShowCarrier);
+            bundle.putSerializable("year",year);
+            bundle.putSerializable("month",month);
+            bundle.putSerializable("day",day);
+            bundle.putSerializable("index",list_Data.get(entry.getXIndex()).getKey());
+            bundle.putSerializable("carrier",carrierVOS.get(choiceD).getCarNul());
+            bundle.putSerializable("statue",Statue);
+            fragment.setArguments(bundle);
+            switchFragment(fragment);
         }
 
         @Override

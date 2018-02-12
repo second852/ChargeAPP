@@ -82,7 +82,8 @@ public class InsertSpend extends Fragment {
     private RelativeLayout qrcode;
     private ConsumeVO consumeVO;
     private int updateChoice;
-
+    private String action;
+    private boolean first=true;
 
     @Nullable
     @Override
@@ -123,7 +124,7 @@ public class InsertSpend extends Fragment {
         save.setOnClickListener(new savecomsumer());
         noWek.setOnCheckedChangeListener(new nowWekchange());
         qrcode.setOnClickListener(new QrCodeClick());
-        String action= (String) getArguments().getSerializable("action");
+        action= (String) getArguments().getSerializable("action");
         if(action.equals("update"))
         {
             setUpdate();
@@ -414,7 +415,11 @@ public class InsertSpend extends Fragment {
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
-            choiceday.setSelection(updateChoice);
+            if(first)
+            {
+                choiceday.setSelection(updateChoice);
+                first=false;
+            }
             noWek.setVisibility(View.GONE);
         }
 
@@ -556,22 +561,39 @@ public class InsertSpend extends Fragment {
             g.put("choicedate", isnull(choiceday.getSelectedItem()));
             g.put("noweek", String.valueOf(noweek));
             String fixdatedetail = gson.toJson(g);
+            String[] dates = date.getText().toString().split("-");
             Calendar c = Calendar.getInstance();
-            c.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+            c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
             Date d = new Date(c.getTimeInMillis());
-            ConsumeVO consumeVO = new ConsumeVO();
-            consumeVO.setMaintype(name.getText().toString());
-            consumeVO.setSecondType(secondname.getText().toString());
-            consumeVO.setMoney(money.getText().toString());
-            consumeVO.setDate(d);
-            consumeVO.setNumber(number.getText().toString());
-            consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
-            consumeVO.setFixDateDetail(fixdatedetail);
-            consumeVO.setNotify(String.valueOf(notify.isChecked()));
-            consumeVO.setDetailname(detailname.getText().toString());
-            consumeVO.setIsWin("0");
-            consumeDB.insert(consumeVO);
-            Common.showToast(getActivity(), "新增成功");
+            if(action.equals("update"))
+            {
+                consumeVO.setMaintype(name.getText().toString());
+                consumeVO.setSecondType(secondname.getText().toString());
+                consumeVO.setMoney(money.getText().toString());
+                consumeVO.setDate(d);
+                consumeVO.setNumber(number.getText().toString());
+                consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
+                consumeVO.setFixDateDetail(fixdatedetail);
+                consumeVO.setNotify(String.valueOf(notify.isChecked()));
+                consumeVO.setDetailname(detailname.getText().toString());
+                consumeDB.update(consumeVO);
+                Common.showToast(getActivity(), "修改成功");
+            }else{
+                ConsumeVO consumeVO= new ConsumeVO();
+                consumeVO.setMaintype(name.getText().toString());
+                consumeVO.setSecondType(secondname.getText().toString());
+                consumeVO.setMoney(money.getText().toString());
+                consumeVO.setDate(d);
+                consumeVO.setNumber(number.getText().toString());
+                consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
+                consumeVO.setFixDateDetail(fixdatedetail);
+                consumeVO.setNotify(String.valueOf(notify.isChecked()));
+                consumeVO.setDetailname(detailname.getText().toString());
+                consumeVO.setIsWin("0");
+                consumeDB.insert(consumeVO);
+                Common.showToast(getActivity(), "新增成功");
+            }
+
             Log.d("XXXXXXXXXXX", String.valueOf(consumeVO.getNotify()));
         }
     }
