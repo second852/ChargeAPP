@@ -811,7 +811,7 @@ public class SelectConsume extends Fragment {
                 period=calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
                 dataAnalyze();
             }else{
-                Fragment fragment=new SelectDetCircle();
+                Fragment fragment=new SelectShowCircleDe();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("ShowConsume",ShowConsume);
                 bundle.putSerializable("ShowAllCarrier",ShowAllCarrier);
@@ -855,6 +855,7 @@ public class SelectConsume extends Fragment {
             bundle.putSerializable("index",list_Data.get(entry.getXIndex()).getKey());
             bundle.putSerializable("carrier",carrierVOS.get(choiceD).getCarNul());
             bundle.putSerializable("statue",Statue);
+            bundle.putSerializable("period",period);
             fragment.setArguments(bundle);
             switchFragment(fragment);
         }

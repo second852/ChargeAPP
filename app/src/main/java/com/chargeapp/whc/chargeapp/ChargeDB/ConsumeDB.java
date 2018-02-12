@@ -98,6 +98,30 @@ public class ConsumeDB {
         return consumeList;
     }
 
+    public List<ConsumeVO> getTimePeriod(Timestamp startTime, Timestamp endTime,String maintyppe) {
+        String sql = "SELECT * FROM Consumer where  date between '"+startTime.getTime()+"' and '"+endTime.getTime()+"' and maintype ='"+maintyppe+"' order by date ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<ConsumeVO> consumeList = new ArrayList<>();
+        ConsumeVO consumeVO;
+        while (cursor.moveToNext()) {
+            consumeVO=new ConsumeVO();
+            consumeVO.setId(cursor.getInt(0));
+            consumeVO.setMaintype(cursor.getString(1));
+            consumeVO.setSecondType(cursor.getString(2));
+            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setDate(new Date(cursor.getLong(4)));
+            consumeVO.setNumber(cursor.getString(5));
+            consumeVO.setFixDate(cursor.getString(6));
+            consumeVO.setFixDateDetail(cursor.getString(7));
+            consumeVO.setNotify(cursor.getString(8));
+            consumeVO.setDetailname(cursor.getString(9));
+            consumeVO.setIsWin(cursor.getString(10));
+            consumeList.add(consumeVO);
+        }
+        cursor.close();
+        return consumeList;
+    }
     public List<ConsumeVO> getTimePeriod(Timestamp startTime, Timestamp endTime) {
         String sql = "SELECT * FROM Consumer where  date between '"+startTime.getTime()+"' and '"+endTime.getTime()+"' order by date ;";
         String[] args = {};
