@@ -38,7 +38,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(6);
+        mViewPager.setCurrentItem(4);
         setcurrentpage();
         text=view.findViewById(R.id.text);
         movefirst=-importMoney.getWidth();
@@ -55,7 +55,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
 
 
     public static class MainPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 12;
+        private static int NUM_ITEMS = 8;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -68,13 +68,11 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
 
         @Override
         public Fragment getItem(int position) {
-            int currentpoition = position % 3;
+            int currentpoition = position % 2;
             if (currentpoition == 0) {
                 return new SelectConsume();
-            } else if (currentpoition == 1) {
-                return new SelectConlist();
-            } else {
-                return new SelectConlist();
+            }  else {
+                return new SelectIncome();
             }
         }
     }
@@ -82,26 +80,19 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
 
     @Override
     public void onPageSelected(int position) {
-        int currentpoition=position%3;
+        int currentpoition=position%2;
         nowpoint=position;
         setcurrentpage();
         if(currentpoition==0)
         {
-            goneMoney.setText("存款");
+            goneMoney.setText("收入");
             exportMoney.setText("支出");
             importMoney.setText("收入");
-            getMoney.setText("存款");
-        }else if(currentpoition==1)
+        }else
         {
             goneMoney.setText("支出");
             exportMoney.setText("收入");
-            importMoney.setText("存款");
             getMoney.setText("支出");
-        }else{
-            goneMoney.setText("收入");
-            exportMoney.setText("存款");
-            importMoney.setText("支出");
-            getMoney.setText("收入");
         }
     }
     @Override

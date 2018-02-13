@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
@@ -45,7 +46,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -59,37 +60,29 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 
 /**
  * Created by 1709008NB01 on 2017/12/7.
  */
 
-public class SelectConsume extends Fragment {
+public class SelectIncome extends Fragment {
 
-    //    private LineChart lineChart;
-    private InvoiceDB invoiceDB;
-    private CarrierDB carrierDB;
-    private ConsumeDB consumeDB;
+
+
     private ProgressDialog progressDialog;
     private static AsyncTask first = null;
     private TextView PIdateTittle,describe;
     private ImageView PIdateCut, PIdateAdd;
     private int choiceD = 0;
-    private List<CarrierVO> carrierVOS;
-    private List<InvoiceVO> invoiceVOS;
     private SimpleDateFormat sd = new SimpleDateFormat("MM/dd");
     private SimpleDateFormat syear = new SimpleDateFormat("yyyy/MM/dd");
     private String TAG = "SelectConsume";
     private BarChart chart_bar;
-    private TypeDB typeDB;
-    private List<TypeVO> typeList;
     private int[] colorlist = {Color.parseColor("#FF8888"), Color.parseColor("#FFDD55"), Color.parseColor("#66FF66"), Color.parseColor("#77DDFF"), Color.parseColor("#D28EFF"),Color.parseColor("#aaaaaa")};
-    private List<Map.Entry<String, Integer>> list_Data;
     private int month,year,day, dweek;
     private Calendar end;
-    private Spinner choicePeriod,choiceCarrier;
+    private Spinner choicePeriod;
     private PieChart chart_pie;
     private TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private SimpleDateFormat sc = new SimpleDateFormat("HH");
@@ -98,61 +91,32 @@ public class SelectConsume extends Fragment {
     private int total,period;
     private int Statue=1;
     private String DesTittle;
-    private boolean ShowConsume = true;
-    private boolean ShowAllCarrier=true;
-    private boolean noShowCarrier=false;
     private  List<String> chartLabels;
     private boolean retry=false;
+    private BankDB bankDB;
+    private HashMap<String,String> hashMap;
+
 
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_consume, container, false);
-        setDB();
+        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
-        typeList = typeDB.getAll();
         progressDialog = new ProgressDialog(getActivity());
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
         choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
-        choiceCarrier.setOnItemSelectedListener(new ChoiceCarrier());
         chart_bar.setOnChartValueSelectedListener(new charvalue());
         chart_pie.setOnChartValueSelectedListener(new pievalue());
         return view;
-    }
-
-    private void setDB() {
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-//        invoiceDB.DeleteError();
-//        InvoiceVO I;
-//        for(int i=0;i<10;i++)
-//        {
-//            Calendar calendar=new GregorianCalendar(2018,1,i+2);
-//            I=new InvoiceVO();
-//            I.setTime(new Timestamp(calendar.getTimeInMillis()));
-//            I.setDonateTime(new Timestamp(calendar.getTimeInMillis()));
-//            I.setMaintype("O");
-//            I.setSecondtype("O");
-//            I.setDetail("其他");
-//            I.setAmount("250");
-//            I.setInvNum("1");
-//            I.setCarrier("/2RDO8+P");
-//            invoiceDB.insert(I);
-//        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
          dataAnalyze();
-//        for(InvoiceVO i:invoiceDB.getAll())
-//        {
-//           getType(i);
-//        }
     }
 
     private void findViewById(View view) {
@@ -161,28 +125,14 @@ public class SelectConsume extends Fragment {
         PIdateAdd = view.findViewById(R.id.PIdateAdd);
         chart_bar = view.findViewById(R.id.chart_bar);
         choicePeriod=view.findViewById(R.id.choicePeriod);
-        choiceCarrier=view.findViewById(R.id.choiceCarrier);
         chart_pie=view.findViewById(R.id.chart_pie);
         describe=view.findViewById(R.id.describe);
         ArrayList<String> SpinnerItem1=new ArrayList<>();
-        SpinnerItem1.add(" 日 ");
-        SpinnerItem1.add(" 周 ");
         SpinnerItem1.add(" 月 ");
         SpinnerItem1.add(" 年 ");
         ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,SpinnerItem1);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        ArrayList<String> SpinnerItem2=new ArrayList<>();
         choicePeriod.setAdapter(arrayAdapter);
-        choicePeriod.setSelection(1);
-        carrierVOS = carrierDB.getAll();
-        SpinnerItem2.add(" 全部 ");
-        SpinnerItem2.add(" 本地 ");
-        for(CarrierVO c:carrierVOS)
-        {
-            SpinnerItem2.add(" "+c.getCarNul()+" ");
-        }
-        arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,SpinnerItem2);
-        choiceCarrier.setAdapter(arrayAdapter);
     }
 
 
@@ -228,94 +178,18 @@ public class SelectConsume extends Fragment {
         total=0;
         HashMap<String, Integer> hashMap = new HashMap<>();
         Calendar start,end;
-        ChartEntry other=new ChartEntry("other",0);
         if(Statue==0)
         {
-            DesTittle="當天花費";
-            start = new GregorianCalendar(year, month, day,0,0,0);
-            end = new GregorianCalendar(year, month, day,23,59,59);
-            PIdateTittle.setText(syear.format(new Date(start.getTimeInMillis())));
-        }else if(Statue==1)
-        {
-            DesTittle="這周花費";
-            start = new GregorianCalendar(year, month, day,0,0,0);
-            end = new GregorianCalendar(year, month, day +6,23,59,59);
-            PIdateTittle.setText(syear.format(new Date(start.getTimeInMillis()))+" ~ "+syear.format(new Date(end.getTimeInMillis())));
-        }else if(Statue==2)
-        {
-            DesTittle="本月花費";
+            DesTittle="本月收入";
             start = new GregorianCalendar(year, month,  1,0,0,0);
             end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
             PIdateTittle.setText(sM.format(new Date(start.getTimeInMillis())));
         }else{
-            DesTittle="本年花費";
+            DesTittle="本年收入";
             start = new GregorianCalendar(year, 0,  1,0,0,0);
             end = new GregorianCalendar(year, 11, 31,23,59,59);
             PIdateTittle.setText(sY.format(new Date(start.getTimeInMillis())));
         }
-        if(!noShowCarrier)
-        {
-            List<InvoiceVO> invoiceVOS;
-            if(ShowAllCarrier)
-            {
-                invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-            }else{
-                invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrierVOS.get(choiceD).getCarNul());
-            }
-            for (InvoiceVO I : invoiceVOS) {
-                if(I.getMaintype().equals("O"))
-                {
-                    other.setValue(other.getValue()+Integer.valueOf(I.getAmount()));
-                    continue;
-                }
-                if (hashMap.get(I.getMaintype()) == null) {
-                    hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()));
-                } else {
-                    hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()) + hashMap.get(I.getMaintype()));
-                }
-                total=total+Integer.valueOf(I.getAmount());
-            }
-        }
-
-        if(ShowConsume)
-        {
-            List<ConsumeVO> consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-            for (ConsumeVO c : consumeVOS) {
-                if (hashMap.get(c.getMaintype()) == null) {
-                    hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()));
-                } else {
-                    hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()) + hashMap.get(c.getMaintype()));
-                }
-                total=total+Integer.valueOf(c.getMoney());
-            }
-        }
-
-        list_Data =new ArrayList<Map.Entry<String, Integer>>(hashMap.entrySet());
-        Collections.sort(list_Data, new Comparator<Map.Entry<String, Integer>>(){
-            public int compare(Map.Entry<String, Integer> entry1,
-                               Map.Entry<String, Integer> entry2){
-                return (entry2.getValue() - entry1.getValue());
-            }
-        });
-
-//        for(Map.Entry m:list_Data)
-//        {
-//            Log.d(TAG,"1"+m.getKey()+" : "+m.getValue());
-//        }
-        if(list_Data.size()>4)
-        {
-            for(int i=4;i<list_Data.size();i++)
-            {
-                other.setValue(other.getValue()+list_Data.get(i).getValue());
-                list_Data.remove(i);
-            }
-        }
-        list_Data.add(other);
-        total=total+other.getValue();
-//        for(Map.Entry m:list_Data)
-//        {
-//            Log.d(TAG,"2"+m.getKey()+" : "+m.getValue());
-//        }
 
     }
 
@@ -740,34 +614,6 @@ public class SelectConsume extends Fragment {
         }
     }
 
-    private class ChoiceCarrier implements AdapterView.OnItemSelectedListener {
-        @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            if(i==0)
-            {
-                ShowConsume = true;
-                ShowAllCarrier=true;
-                noShowCarrier=false;
-                dataAnalyze();
-            }else if(i==1)
-            {
-                ShowConsume = true;
-                ShowAllCarrier=false;
-                noShowCarrier=true;
-                dataAnalyze();
-            }else{
-                choiceD=i-2;
-                ShowConsume = false;
-                ShowAllCarrier=false;
-                noShowCarrier=false;
-                dataAnalyze();
-            }
-        }
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-
-        }
-    }
 
     private class charvalue implements OnChartValueSelectedListener {
         @Override

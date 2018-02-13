@@ -265,15 +265,7 @@ public class SelectDetList extends Fragment {
         }
     }
 
-    private int isNull(String s)
-    {
-        if(s.length()<=0||s==null)
-        {
-            return 0;
-        }else{
-            return Integer.valueOf(s);
-        }
-    }
+
 
     private void switchFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

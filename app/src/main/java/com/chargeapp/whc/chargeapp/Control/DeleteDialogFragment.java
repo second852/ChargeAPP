@@ -71,6 +71,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
+
                 if(object instanceof InvoiceVO)
                 {
                     InvoiceVO I= (InvoiceVO) object;
@@ -79,8 +80,14 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                     ConsumeVO c= (ConsumeVO) object;
                     consumeDB.deleteById(c.getId());
                 }
-                SelectDetList selectDetList= (SelectDetList) fragement;
-                selectDetList.setLayout();
+                if(fragement instanceof SelectShowCircleDe)
+                {
+                    SelectShowCircleDe selectShowCircleDe= (SelectShowCircleDe) fragement;
+                    selectShowCircleDe.setLayout();
+                }else{
+                    SelectDetList selectDetList= (SelectDetList) fragement;
+                    selectDetList.setLayout();
+                }
                 break;
             default:
                 dialog.cancel();

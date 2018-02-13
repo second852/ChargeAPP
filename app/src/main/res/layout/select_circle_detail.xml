@@ -26,6 +26,7 @@
         android:layout_height="250dp">
     </com.github.mikephil.charting.charts.PieChart>
     <ListView
+        android:layout_marginTop="10dp"
         android:id="@+id/listDetail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

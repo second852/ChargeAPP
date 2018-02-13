@@ -593,8 +593,6 @@ public class InsertSpend extends Fragment {
                 consumeDB.insert(consumeVO);
                 Common.showToast(getActivity(), "新增成功");
             }
-
-            Log.d("XXXXXXXXXXX", String.valueOf(consumeVO.getNotify()));
         }
     }
 
