@@ -63,11 +63,13 @@ public class SelectDetList extends Fragment {
     private List<InvoiceVO> invoiceVOS;
     private List<ConsumeVO> consumeVOS;
     private HashMap<String,Integer> main;
-    private String mainTitle,key;
+    private String key;
     private List<Object> objects;
     private Gson gson=new Gson();
     private ProgressDialog progressDialog;
     private Calendar start,end;
+    private int Statue;
+    private String title;
 
 
 
@@ -88,8 +90,25 @@ public class SelectDetList extends Fragment {
         day= (int) getArguments().getSerializable("day");
         key= (String) getArguments().getSerializable("key");
         carrier= (String) getArguments().getSerializable("carrier");
-        start=new GregorianCalendar(year,month,day,0,0,0);
-        end=new GregorianCalendar(year,month,day,23,59,59);
+        Statue=(int) getArguments().getSerializable("Statue");
+        if (Statue == 0) {
+            start = new GregorianCalendar(year, month, day, 0, 0, 0);
+            end = new GregorianCalendar(year, month, day, 23, 59, 59);
+            title = Common.sOne.format(new Date(start.getTimeInMillis()));
+        } else if (Statue == 1) {
+            start = new GregorianCalendar(year, month, day, 0, 0, 0);
+            end = new GregorianCalendar(year, month, day + 6, 23, 59, 59);
+            title = Common.sTwo.format(new Date(start.getTimeInMillis())) + "~" + Common.sTwo.format(new Date(end.getTimeInMillis()));
+        } else if (Statue == 2) {
+            start = new GregorianCalendar(year, month, 1, 0, 0, 0);
+            end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
+            title = Common.sThree.format(new Date(start.getTimeInMillis()));
+        } else {
+            start = new GregorianCalendar(year, 0, 1, 0, 0, 0);
+            end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
+            title = Common.sFour.format(new Date(start.getTimeInMillis()));
+        }
+        getActivity().setTitle(title);
         setLayout();
         return view;
     }
@@ -107,7 +126,7 @@ public class SelectDetList extends Fragment {
         Log.d("XXXXXX",sf.format(new Date(start.getTimeInMillis()))+" / "+sf.format(new Date(end.getTimeInMillis())));
         if(ShowConsume)
         {
-            consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+            consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
             objects.addAll(consumeVOS);
         }
         if(!noShowCarrier)
@@ -120,7 +139,6 @@ public class SelectDetList extends Fragment {
             }
             objects.addAll(invoiceVOS);
         }
-        mainTitle=sf.format(new Date(start.getTimeInMillis()))+key;
         if(listView.getAdapter()!=null)
         {
             ListAdapter adapter= (ListAdapter) listView.getAdapter();
@@ -129,7 +147,6 @@ public class SelectDetList extends Fragment {
         }else {
             listView.setAdapter(new ListAdapter(getActivity(),objects));
         }
-        getActivity().setTitle(mainTitle);
         progressDialog.cancel();
     }
 

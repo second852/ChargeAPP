@@ -200,12 +200,12 @@ public class SelectConlist extends Fragment {
             if(o instanceof InvoiceVO)
             {   InvoiceVO invoiceVO= (InvoiceVO) o;
                 viewHolder.checkdonate.setText(sf.format(new Date(invoiceVO.getTime().getTime())));
-                viewHolder.day.setText(invoiceVO.getMaintype());
+                viewHolder.day.setText("電子"+invoiceVO.getMaintype());
                 viewHolder.nul.setText(invoiceVO.getAmount());
             }else{
                 ConsumeVO consumeVO= (ConsumeVO) o;
                 viewHolder.checkdonate.setText(sf.format(new Date(consumeVO.getDate().getTime())));
-                viewHolder.day.setText(consumeVO.getMaintype());
+                viewHolder.day.setText("本地"+consumeVO.getMaintype());
                 viewHolder.nul.setText(consumeVO.getMoney());
             }
         }

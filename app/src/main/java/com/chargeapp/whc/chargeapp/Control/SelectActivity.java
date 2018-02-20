@@ -38,7 +38,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(4);
+        mViewPager.setCurrentItem(6);
         setcurrentpage();
         text=view.findViewById(R.id.text);
         movefirst=-importMoney.getWidth();
@@ -48,6 +48,10 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
     public void setcurrentpage()
     {
         int page=mViewPager.getCurrentItem();
+        if(page==8||page==0)
+        {
+            page=6;
+        }
         exportMoney.setOnClickListener(new ChangePage(page));
         importMoney.setOnClickListener(new ChangePage(page+1));
         getMoney.setOnClickListener(new ChangePage(page-1));
@@ -55,7 +59,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
 
 
     public static class MainPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 8;
+        private static int NUM_ITEMS = 9;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -68,11 +72,13 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
 
         @Override
         public Fragment getItem(int position) {
-            int currentpoition = position % 2;
+            int currentpoition = position % 3;
             if (currentpoition == 0) {
                 return new SelectConsume();
-            }  else {
+            }  else if(currentpoition==1){
                 return new SelectIncome();
+            }else{
+                return new SelectConlist();
             }
         }
     }
@@ -80,20 +86,28 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
 
     @Override
     public void onPageSelected(int position) {
-        int currentpoition=position%2;
+        int currentpoition=position%3;
         nowpoint=position;
         setcurrentpage();
         if(currentpoition==0)
         {
-            goneMoney.setText("收入");
+            goneMoney.setText("存款");
             exportMoney.setText("支出");
             importMoney.setText("收入");
-        }else
+            getMoney.setText("存款");
+        } else if(currentpoition==1)
         {
             goneMoney.setText("支出");
             exportMoney.setText("收入");
+            importMoney.setText("存款");
             getMoney.setText("支出");
+        }else{
+            goneMoney.setText("收入");
+            exportMoney.setText("存款");
+            importMoney.setText("支出");
+            getMoney.setText("收入");
         }
+
     }
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

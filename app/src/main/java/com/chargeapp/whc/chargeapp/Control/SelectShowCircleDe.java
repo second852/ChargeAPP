@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
@@ -24,11 +23,15 @@ import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -50,7 +53,7 @@ import java.util.List;
 
 public class SelectShowCircleDe extends Fragment {
 
-    //    private LineChart lineChart;
+
     private InvoiceDB invoiceDB;
     private ConsumeDB consumeDB;
     private ListView listView;
@@ -63,7 +66,6 @@ public class SelectShowCircleDe extends Fragment {
     private List<ConsumeVO> consumeVOS;
     private String mainTitle;
     private HashMap<String,Integer> hashMap;
-    private int[] colorlist = {Color.parseColor("#FF8888"), Color.parseColor("#FFDD55"), Color.parseColor("#66FF66"), Color.parseColor("#77DDFF"), Color.parseColor("#D28EFF"),Color.parseColor("#aaaaaa")};
     private String key;
     private int Statue;
     private Calendar start,end;
@@ -141,41 +143,43 @@ public class SelectShowCircleDe extends Fragment {
     }
 
     private PieData addData() {
-        ArrayList<Entry> yVals1 = new ArrayList<Entry>();
-        ArrayList<String> xVals = new ArrayList<String>();
+        List<PieEntry> yVals1 = new ArrayList<PieEntry>();
         int i=0;
         for(String s:hashMap.keySet())
         {
             if(s.equals("O"))
             {
-                yVals1.add(new Entry(hashMap.get("O"),i));
-                xVals.add("其他");
+                yVals1.add(new PieEntry(hashMap.get(s),"其他"));
             }else{
-                yVals1.add(new Entry(hashMap.get(s),i));
-                xVals.add(s);
+                yVals1.add(new PieEntry(hashMap.get(s),s));
             }
             i++;
         }
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
-        if(yVals1.size()<=0)
+        int size=yVals1.size();
+        if(size<=0)
         {
             dataSet.setDrawValues(false);
-            yVals1.add(new Entry(1, 0));
-            xVals.add("無花費");
+            yVals1.add(new PieEntry(1, "無花費"));
             int[] c={Color.parseColor("#CCEEFF")};
             dataSet.setColors(c);
         }else{
-            dataSet.setColors(colorlist);
+            dataSet.setColors(Common.getColor(size));
             dataSet.setDrawValues(true);
+            dataSet.setValueLinePart1OffsetPercentage(90.f);
+            dataSet.setValueLinePart1Length(1f);
+            dataSet.setValueLinePart2Length(.2f);
+            dataSet.setValueTextColor(Color.BLACK);
+            dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         }
 
 
         // create pie data set
         dataSet.setSliceSpace(0);
-        dataSet.setSelectionShift(5);
+        dataSet.setSelectionShift(20);
         // instantiate pie data object now
-        PieData data = new PieData(xVals, dataSet);
-        data.setValueFormatter(new SelectCharFormat());
+        PieData data = new PieData(dataSet);
+        data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(12f);
         data.setValueTextColor(Color.BLACK);
         return data;
@@ -220,21 +224,18 @@ public class SelectShowCircleDe extends Fragment {
             }
             objects.addAll(invoiceVOS);
         }
+
         pieChart.setData(addData());
         pieChart.highlightValues(null);
         pieChart.setUsePercentValues(true);
-        pieChart.setDescription(" ");
-        // enable hole and configure
         pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleRadius(7);
         pieChart.setTransparentCircleRadius(10);
-        // enable rotation of the chart by touch
-        pieChart.setRotationAngle(0);
+        pieChart.setRotationAngle(30);
         pieChart.setRotationEnabled(true);
-        Legend l =  pieChart.getLegend();
-        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
-        l.setXEntrySpace(7);
-        l.setYEntrySpace(5);
+        pieChart.setEntryLabelColor(Color.BLACK);
+        pieChart.setDescription(Common.getDeescription());
+        pieChart.getLegend().setEnabled(false);
         pieChart.invalidate();
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
         getActivity().setTitle(title);

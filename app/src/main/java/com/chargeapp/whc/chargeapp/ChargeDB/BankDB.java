@@ -29,14 +29,14 @@ public class BankDB {
         List<BankVO> BankVOList = new ArrayList<>();
         BankVO bankVO;
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String maintype =cursor.getString(1);
-            String money=cursor.getString(2);
-            Date date=new Date(cursor.getLong(3));
-            String fixdate=cursor.getString(4);
-            String fixdatedetail=cursor.getString(5);
-            String detailname=cursor.getString(6);
-            bankVO=new BankVO(maintype,detailname,money,date,fixdate,id,detailname);
+            bankVO=new BankVO();
+            bankVO.setId(cursor.getInt(0));
+            bankVO.setMaintype(cursor.getString(1));
+            bankVO.setMoney(cursor.getString(2));
+            bankVO.setDate(new Date(cursor.getLong(3)));
+            bankVO.setFixDate(cursor.getString(4));
+            bankVO.setFixDateDetail(cursor.getString(5));
+            bankVO.setDetailname(cursor.getString(6));
             BankVOList.add(bankVO);
         }
         cursor.close();
@@ -50,19 +50,41 @@ public class BankDB {
         List<BankVO> BankVOList = new ArrayList<>();
         BankVO bankVO;
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String maintype =cursor.getString(1);
-            String money=cursor.getString(2);
-            Date date=new Date(cursor.getLong(3));
-            String fixdate=cursor.getString(4);
-            String fixdatedetail=cursor.getString(5);
-            String detailname=cursor.getString(6);
-            bankVO=new BankVO(maintype,detailname,money,date,fixdate,id,detailname);
+            bankVO=new BankVO();
+            bankVO.setId(cursor.getInt(0));
+            bankVO.setMaintype(cursor.getString(1));
+            bankVO.setMoney(cursor.getString(2));
+            bankVO.setDate(new Date(cursor.getLong(3)));
+            bankVO.setFixDate(cursor.getString(4));
+            bankVO.setFixDateDetail(cursor.getString(5));
+            bankVO.setDetailname(cursor.getString(6));
             BankVOList.add(bankVO);
         }
         cursor.close();
         return BankVOList;
     }
+
+    public List<BankVO> getTimeAll(Timestamp start,Timestamp end,String type) {
+        String sql = "SELECT * FROM BANK where date between '"+start.getTime()+"' and '"+end.getTime()+"' and maintype = '"+type+"'order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<BankVO> BankVOList = new ArrayList<>();
+        BankVO bankVO;
+        while (cursor.moveToNext()) {
+            bankVO=new BankVO();
+            bankVO.setId(cursor.getInt(0));
+            bankVO.setMaintype(cursor.getString(1));
+            bankVO.setMoney(cursor.getString(2));
+            bankVO.setDate(new Date(cursor.getLong(3)));
+            bankVO.setFixDate(cursor.getString(4));
+            bankVO.setFixDateDetail(cursor.getString(5));
+            bankVO.setDetailname(cursor.getString(6));
+            BankVOList.add(bankVO);
+        }
+        cursor.close();
+        return BankVOList;
+    }
+
 
     public BankVO findById(int id) {
         String[] columns = {
@@ -74,13 +96,14 @@ public class BankDB {
                 null, null, null);
         BankVO bankVO = null;
         if (cursor.moveToNext()) {
-            String maintype =cursor.getString(1);
-            String money=cursor.getString(2);
-            Date date=new Date(cursor.getLong(3));
-            String fixdate=cursor.getString(4);
-            String fixdatedetail=cursor.getString(5);
-            String detailname=cursor.getString(6);
-            bankVO=new BankVO(maintype,detailname,money,date,fixdate,id,detailname);
+            bankVO=new BankVO();
+            bankVO.setId(cursor.getInt(0));
+            bankVO.setMaintype(cursor.getString(1));
+            bankVO.setMoney(cursor.getString(2));
+            bankVO.setDate(new Date(cursor.getLong(3)));
+            bankVO.setFixDate(cursor.getString(4));
+            bankVO.setFixDateDetail(cursor.getString(5));
+            bankVO.setDetailname(cursor.getString(6));
         }
         cursor.close();
         return bankVO;

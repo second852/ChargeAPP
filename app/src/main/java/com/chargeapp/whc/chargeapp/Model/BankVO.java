@@ -1,12 +1,13 @@
 package com.chargeapp.whc.chargeapp.Model;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 /**
  * Created by 1709008NB01 on 2017/11/9.
  */
 
-public class BankVO {
+public class BankVO implements Serializable{
 
     /*
        * 種類
@@ -35,24 +36,9 @@ public class BankVO {
 
     private String fixDateDetail;
 
-    public BankVO(String maintype, String detailname, String money, Date date, String fixDate, int id, String fixDateDetail) {
-        this.maintype = maintype;
-        this.detailname = detailname;
-        this.money = money;
-        this.date = date;
-        this.fixDate = fixDate;
-        this.id = id;
-        this.fixDateDetail = fixDateDetail;
-    }
 
-    public BankVO(String maintype, String detailname, String money, Date date, String fixDate, String fixDateDetail) {
-        this.maintype = maintype;
-        this.detailname = detailname;
-        this.money = money;
-        this.date = date;
-        this.fixDate = fixDate;
-        this.fixDateDetail = fixDateDetail;
-    }
+
+
 
     public String getFixDateDetail() {
         return fixDateDetail;

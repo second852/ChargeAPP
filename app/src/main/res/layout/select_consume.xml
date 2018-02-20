@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="5dp">
             <ImageView
                 android:id="@+id/PIdateCut"
                 android:layout_width="wrap_content"
@@ -58,7 +58,6 @@
                 android:layout_centerVertical="true"
                 android:theme="@style/spinner"
                 android:backgroundTint="#000000"
-                android:foregroundTint="#000000"
                 android:layout_margin="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent">
@@ -94,7 +93,6 @@
             />
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/chart_pie"
-            android:layout_marginTop="10dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:background="#f5f5f5"
@@ -104,7 +102,7 @@
         </com.github.mikephil.charting.charts.PieChart>
         <com.github.mikephil.charting.charts.BarChart
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:id="@+id/chart_bar"
             android:layout_width="match_parent"
             android:layout_height="300dp"/>

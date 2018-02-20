@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -42,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class InsertIncome extends Fragment {
+public class UpdateIncome extends Fragment {
     private EditText money, newtype,number,detailname;
     private CheckBox fixdate;
     private EditText name;
@@ -67,7 +69,10 @@ public class InsertIncome extends Fragment {
     private BankDB bankDB;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
-
+    private BankVO bankVO;
+    private int updateChoice,year,month,day,Statue;
+    private String key;
+    private boolean first=true;
 
 
 
@@ -76,6 +81,11 @@ public class InsertIncome extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.insert_income, container, false);
         findviewByid(view);
+        year= (int) getArguments().getSerializable("year");
+        month= (int) getArguments().getSerializable("month");
+        day= (int) getArguments().getSerializable("day");
+        key= (String) getArguments().getSerializable("type");
+        Statue= (int) getArguments().getSerializable("statue");
         bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDB=new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -104,11 +114,62 @@ public class InsertIncome extends Fragment {
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new savecomsumer());
         fixdate.setOnCheckedChangeListener(new showfixdateClick());
+        setUpdate();
         return view;
+    }
+
+    private void setUpdate() {
+         bankVO= (BankVO) getArguments().getSerializable("bankVO");
+         name.setText(bankVO.getMaintype());
+         money.setText(bankVO.getMoney());
+         date.setText(sf.format(bankVO.getDate()));
+         detailname.setText(bankVO.getDetailname());
+         fixdate.setChecked(Boolean.valueOf(bankVO.getFixDate()));
+        if(bankVO.getFixDate().equals("true"))
+        {
+            JsonObject js = gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
+            String choicestatue= js.get("choicestatue").getAsString().trim();
+            String choicedate=js.get("choicedate").getAsString().trim();
+            if(choicestatue.trim().equals("每天"))
+            {
+                choiceStatue.setSelection(0);
+            }else if(choicestatue.trim().equals("每周")){
+                choiceStatue.setSelection(1);
+                if(choicedate.equals("星期一"))
+                {
+                    updateChoice=0;
+                }else if(choicedate.equals("星期二"))
+                {
+                    updateChoice=1;
+                }else if(choicedate.equals("星期三"))
+                {
+                    updateChoice=2;
+                }else if(choicedate.equals("星期四"))
+                {
+                    updateChoice=3;
+                }else if(choicedate.equals("星期五"))
+                {
+                    updateChoice=4;
+                }else if(choicedate.equals("星期六"))
+                {
+                    updateChoice=5;
+                }else{
+                    updateChoice=6;
+                }
+            }else if(choicestatue.trim().equals("每個月")){
+                choiceStatue.setSelection(2);
+                updateChoice= Integer.valueOf(choicedate)-1;
+            }else{
+                choiceStatue.setSelection(3);
+                updateChoice=Integer.valueOf(choicedate.substring(0,choicedate.indexOf("月")))-1;
+            }
+        }
+
     }
 
 
     public void findviewByid(View view) {
+        gson=new Gson();
         name = view.findViewById(R.id.name);
         money = view.findViewById(R.id.money);
         date = view.findViewById(R.id.date);
@@ -141,6 +202,7 @@ public class InsertIncome extends Fragment {
         ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setAdapter(arrayAdapter);
+        getActivity().setTitle("修改資料");
     }
 
     private class cancelinsert implements View.OnClickListener {
@@ -314,6 +376,11 @@ public class InsertIncome extends Fragment {
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
+            if(first)
+            {
+                choiceday.setSelection(updateChoice);
+                first=false;
+            }
             fixdate.setX(showfixdate.getWidth()/20);
             choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/20);
             choiceday.setX((showfixdate.getWidth()*2/3)+showfixdate.getWidth()/20);
@@ -397,15 +464,38 @@ public class InsertIncome extends Fragment {
             Calendar c=Calendar.getInstance();
             c.set(datePicker.getYear(),datePicker.getMonth(),datePicker.getDayOfMonth());
             Date d= new Date(c.getTimeInMillis());
-            BankVO bankVO=new BankVO();
             bankVO.setMaintype(name.getText().toString());
             bankVO.setMoney(money.getText().toString());
             bankVO.setDate(d);
             bankVO.setFixDate(String.valueOf(fixdate.isChecked()));
             bankVO.setFixDateDetail(fixdatedetail);
             bankVO.setDetailname(detailname.getText().toString());
-            bankDB.insert(bankVO);
-            Common.showToast(getActivity(),"新增成功");
+            bankDB.update(bankVO);
+            Fragment fragment;
+            Bundle bundle = new Bundle();
+            if(key.equals("bar"))
+            {
+                fragment=new SelectListBarIncome();
+
+            }else{
+                fragment=new SelectListPieIncome();
+                ArrayList<String> Okey=getArguments().getStringArrayList("OKey");
+                bundle.putStringArrayList("OKey",Okey);
+            }
+
+            bundle.putSerializable("year",year);
+            bundle.putSerializable("month",month);
+            bundle.putSerializable("day",day);
+            bundle.putSerializable("statue",Statue);
+            bundle.putSerializable("type",key);
+            fragment.setArguments(bundle);
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            for (Fragment fragment1 :  getFragmentManager().getFragments()) {
+                fragmentTransaction.remove(fragment1);
+            }
+            fragmentTransaction.replace(R.id.body, fragment);
+            fragmentTransaction.commit();
+            Common.showToast(getActivity(),"修改成功");
         }
     }
 }

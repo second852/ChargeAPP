@@ -14,13 +14,13 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -43,7 +43,7 @@ import java.util.List;
  * Created by 1709008NB01 on 2017/12/7.
  */
 
-public class SelectDetCircle extends Fragment {
+public class SelectOtherCircle extends Fragment {
 
 
     private InvoiceDB invoiceDB;
@@ -52,85 +52,125 @@ public class SelectDetCircle extends Fragment {
     private boolean ShowConsume;
     private boolean ShowAllCarrier;
     private boolean noShowCarrier;
-    private int year, month, day, index;
+    private int year, month, day;
     private String carrier;
     private List<InvoiceVO> invoiceVOS;
     private List<ConsumeVO> consumeVOS;
-    private String mainTitle;
-    private HashMap<String, HashMap<String, Integer>> hashMap;
-    private int size;
+    private ArrayList<String> Okey;
+    private Calendar start, end;
+    private int Statue;
+    private int total;
+    private List<Integer> totalList;
+    private HashMap<String, HashMap<String, Integer>> mapHashMap;
+    private int countOther;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
         setDB();
-        findViewById(view);
-        hashMap = new HashMap<>();
+        listView = view.findViewById(R.id.listCircle);
         ShowConsume = (boolean) getArguments().getSerializable("ShowConsume");
         ShowAllCarrier = (boolean) getArguments().getSerializable("ShowAllCarrier");
         noShowCarrier = (boolean) getArguments().getSerializable("noShowCarrier");
         year = (int) getArguments().getSerializable("year");
         month = (int) getArguments().getSerializable("month");
         day = (int) getArguments().getSerializable("day");
-        index = (int) getArguments().getSerializable("index");
         carrier = (String) getArguments().getSerializable("carrier");
-        Calendar start = new GregorianCalendar(year, month, day + index, 0, 0, 0);
-        Calendar end = new GregorianCalendar(year, month, day + index, 23, 59, 59);
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy 年 MM 月 dd 日");
-        Log.d("XXXXXX", sf.format(new Date(start.getTimeInMillis())) + " / " + sf.format(new Date(end.getTimeInMillis())));
-        int total = 0;
-        if (ShowConsume) {
-            consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-            for (ConsumeVO c : consumeVOS) {
-                if (hashMap.get(c.getMaintype()) == null) {
-                    HashMap<String, Integer> second = new HashMap<>();
-                    second.put(c.getSecondType(), Integer.valueOf(c.getMoney()));
-                    hashMap.put(c.getMaintype(), second);
-                } else {
-                    HashMap<String, Integer> second = hashMap.get(c.getMaintype());
-                    if (second.get(c.getSecondType()) == null) {
-                        second.put(c.getSecondType(), Integer.valueOf(c.getMoney()));
-                    } else {
-                        second.put(c.getSecondType(), second.get(c.getSecondType()) + Integer.valueOf(c.getMoney()));
-                    }
-                }
-                total = total + Integer.parseInt(c.getMoney());
-            }
-        }
-        if (!noShowCarrier) {
-            if (ShowAllCarrier) {
-                invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-            } else {
-                invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrier);
-            }
-            for (InvoiceVO I : invoiceVOS) {
-                if (hashMap.get(I.getMaintype()) == null) {
-                    HashMap<String, Integer> second = new HashMap<>();
-                    second.put(I.getSecondtype(), Integer.valueOf(I.getAmount()));
-                    hashMap.put(I.getMaintype(), second);
-                } else {
-                    HashMap<String, Integer> second = hashMap.get(I.getMaintype());
-                    if (second.get(I.getSecondtype()) == null) {
-                        second.put(I.getSecondtype(), Integer.valueOf(I.getAmount()));
-                    } else {
-                        second.put(I.getSecondtype(), second.get(I.getSecondtype()) + Integer.valueOf(I.getAmount()));
-                    }
-                }
+        Okey = getArguments().getStringArrayList("OKey");
+        Statue = (int) getArguments().getSerializable("statue");
+        countOther = (int) getArguments().getSerializable("total");
+        String title;
+        if (Statue == 0) {
+            start = new GregorianCalendar(year, month, day, 0, 0, 0);
+            end = new GregorianCalendar(year, month, day, 23, 59, 59);
+            title = Common.sOne.format(new Date(start.getTimeInMillis()));
 
-                total = total + Integer.parseInt(I.getAmount());
-            }
+        } else if (Statue == 1) {
+            start = new GregorianCalendar(year, month, day, 0, 0, 0);
+            end = new GregorianCalendar(year, month, day + 6, 23, 59, 59);
+            title = Common.sTwo.format(new Date(start.getTimeInMillis())) + "~" + Common.sTwo.format(new Date(end.getTimeInMillis()));
+        } else if (Statue == 2) {
+            start = new GregorianCalendar(year, month, 1, 0, 0, 0);
+            end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
+            title = Common.sThree.format(new Date(start.getTimeInMillis()));
+        } else {
+            start = new GregorianCalendar(year, 0, 1, 0, 0, 0);
+            end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
+            title = Common.sFour.format(new Date(start.getTimeInMillis()));
         }
-        getActivity().setTitle(sf.format(new Date(start.getTimeInMillis())));
-        List<String> stringList = new ArrayList<>(hashMap.keySet());
-        size = stringList.size();
-        listView.setAdapter(new ListAdapter(getActivity(), stringList));
+        Okey.add("O");
+        getActivity().setTitle(title);
+        setLayout();
+
         return view;
     }
 
-    private void findViewById(View view) {
-        listView = view.findViewById(R.id.listCircle);
+    private void setLayout() {
+        totalList = new ArrayList<>();
+        mapHashMap = new HashMap<>();
+        HashMap<String, Integer> second;
+        HashMap<String, Integer> totalOther = new HashMap<>();
+        for (String key : Okey) {
+            total = 0;
+            if (ShowConsume) {
+                consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key);
+                for (ConsumeVO c : consumeVOS) {
+                    if(mapHashMap.get(c.getMaintype())==null)
+                    {
+                        second = new HashMap<>();
+                        second.put(c.getSecondType(),Integer.valueOf(c.getMoney()));
+                    }else{
+                        second=mapHashMap.get(c.getMaintype());
+                        if(second.get(c.getSecondType())==null)
+                        {
+                            second.put(c.getSecondType(),Integer.valueOf(c.getMoney()));
+                        }else{
+                            second.put(c.getSecondType(), second.get(c.getSecondType()) + Integer.valueOf(c.getMoney()));
+                        }
+                    }
+                    mapHashMap.put(c.getMaintype(),second);
+                    total = total + Integer.parseInt(c.getMoney());
+                }
+            }
+            if (!noShowCarrier) {
+                if (ShowAllCarrier) {
+                    invoiceVOS = invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key);
+                } else {
+                    invoiceVOS = invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key, carrier);
+                }
+                for (InvoiceVO I : invoiceVOS) {
+                    if(mapHashMap.get(I.getMaintype())==null)
+                    {
+                        second = new HashMap<>();
+                        second.put(I.getSecondtype(),Integer.valueOf(I.getAmount()));
+                    }else{
+                        second=mapHashMap.get(I.getMaintype());
+                        if(second.get(I.getSecondtype())==null)
+                        {
+                            second.put(I.getSecondtype(), Integer.valueOf(I.getAmount()));
+                        }else{
+                            second.put(I.getSecondtype(), second.get(I.getSecondtype()) + Integer.valueOf(I.getAmount()));
+                        }
+                    }
+                    mapHashMap.put(I.getMaintype(),second);
+                    total = total + Integer.parseInt(I.getAmount());
+                }
+            }
+            if (total <= 0) {
+                Okey.remove(key);
+                continue;
+            }
+            totalOther.put(key, total);
+        }
+        if(Okey.size()>1)
+        {
+            Okey.add(0, "total");
+            mapHashMap.put("total", totalOther);
+        }
+        listView.setAdapter(new ListAdapter(getActivity(), Okey));
     }
+
 
     private void setDB() {
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -139,34 +179,35 @@ public class SelectDetCircle extends Fragment {
 
     private PieData addData(String key, TextView detail) {
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
-        HashMap<String, Integer> second = hashMap.get(key);
+        HashMap<String, Integer> hashMap = mapHashMap.get(key);
         int i = 0;
-        int total = 0;
-        for (String s : second.keySet()) {
+        int total=0;
+        for (String s : hashMap.keySet()) {
             if (s.equals("O")) {
-                yVals1.add(new PieEntry(second.get(s), "其他"));
+                yVals1.add(new PieEntry(hashMap.get(s), "其他"));
             } else {
-                yVals1.add(new PieEntry(second.get(s), s));
+                yVals1.add(new PieEntry(hashMap.get(s), s));
             }
-            total = total + second.get(s);
+            total=total+hashMap.get(s);
             i++;
         }
         if (key.equals("O")) {
-            detail.setText("其他 : " + total + "元");
+            detail.setText("其他" + " : 總共" + total + "元");
+        } else if (key.equals("total")) {
+            detail.setText("其他細項 : 總共" + countOther + "元");
         } else {
-            detail.setText(key + " : " + total + "元");
+            detail.setText(key + " : 總共" + total + "元");
         }
-        // create pie data set
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
-        dataSet.setSliceSpace(0);
-        dataSet.setSelectionShift(30);
-        dataSet.setColors(Common.getColor(yVals1.size()));
+        dataSet.setDrawValues(true);
         dataSet.setValueLinePart1OffsetPercentage(90.f);
         dataSet.setValueLinePart1Length(1f);
         dataSet.setValueLinePart2Length(.2f);
-        dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setColors(Common.getColor(yVals1.size()));
         dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
-        // instantiate pie data object now
+        dataSet.setSliceSpace(0);
+        dataSet.setSelectionShift(30);
+        dataSet.setValueTextColor(Color.BLACK);
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(14f);
@@ -185,7 +226,7 @@ public class SelectDetCircle extends Fragment {
 
         @Override
         public int getCount() {
-           return size;
+            return KeyList.size();
         }
 
         @Override
@@ -198,21 +239,23 @@ public class SelectDetCircle extends Fragment {
             TextView detail = itemView.findViewById(R.id.detail);
             String key = KeyList.get(position);
             pieChart.setData(addData(key, detail));
-            pieChart.setOnChartValueSelectedListener(new changeToNewF(key));
-            pieChart.setDescription(Common.getDeescription());
+            if(key.equals("total"))
+            {
+                pieChart.setOnChartValueSelectedListener(new choiceTotal());
+            }else{
+                pieChart.setOnChartValueSelectedListener(new changeToNewF(key));
+            }
             pieChart.highlightValues(null);
             pieChart.setUsePercentValues(true);
-            // enable hole and configure
             pieChart.setDrawHoleEnabled(true);
             pieChart.setHoleRadius(7);
             pieChart.setTransparentCircleRadius(10);
-            // enable rotation of the chart by touch
             pieChart.setRotationAngle(30);
             pieChart.setRotationEnabled(true);
-            Legend l = pieChart.getLegend();
-            l.setEnabled(false);
-            pieChart.invalidate();
             pieChart.setEntryLabelColor(Color.BLACK);
+            pieChart.getLegend().setEnabled(false);
+            pieChart.setDescription(Common.getDeescription());
+            pieChart.invalidate();
             pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
             return itemView;
         }
@@ -228,6 +271,16 @@ public class SelectDetCircle extends Fragment {
         }
     }
 
+    private class choiceTotal implements com.github.mikephil.charting.listener.OnChartValueSelectedListener {
+
+        @Override
+        public void onValueSelected(Entry e, Highlight h) {
+            listView.smoothScrollToPosition((int) (h.getX()+1));
+        }
+        @Override
+        public void onNothingSelected() {
+        }
+    }
 
     private class changeToNewF implements com.github.mikephil.charting.listener.OnChartValueSelectedListener {
         private String key;
@@ -235,6 +288,8 @@ public class SelectDetCircle extends Fragment {
         changeToNewF(String key) {
             this.key = key;
         }
+
+
 
         @Override
         public void onValueSelected(Entry e, Highlight h) {
@@ -245,10 +300,10 @@ public class SelectDetCircle extends Fragment {
             bundle.putSerializable("noShowCarrier", noShowCarrier);
             bundle.putSerializable("year", year);
             bundle.putSerializable("month", month);
-            bundle.putSerializable("day", day + index);
             bundle.putSerializable("key", key);
+            bundle.putSerializable("day", day);
             bundle.putSerializable("carrier", carrier);
-            bundle.putSerializable("Statue", 0);
+            bundle.putSerializable("Statue",Statue);
             fragment.setArguments(bundle);
             switchFragment(fragment);
         }

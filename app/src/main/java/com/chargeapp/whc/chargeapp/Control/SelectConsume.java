@@ -33,18 +33,23 @@ import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+
+import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 
 
 import java.sql.Timestamp;
@@ -59,6 +64,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 
@@ -68,47 +75,49 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 public class SelectConsume extends Fragment {
 
-    //    private LineChart lineChart;
+
     private InvoiceDB invoiceDB;
     private CarrierDB carrierDB;
     private ConsumeDB consumeDB;
     private ProgressDialog progressDialog;
     private static AsyncTask first = null;
-    private TextView PIdateTittle,describe;
+    private TextView PIdateTittle, describe;
     private ImageView PIdateCut, PIdateAdd;
     private int choiceD = 0;
     private List<CarrierVO> carrierVOS;
-    private List<InvoiceVO> invoiceVOS;
-    private SimpleDateFormat sd = new SimpleDateFormat("MM/dd");
-    private SimpleDateFormat syear = new SimpleDateFormat("yyyy/MM/dd");
     private String TAG = "SelectConsume";
     private BarChart chart_bar;
     private TypeDB typeDB;
     private List<TypeVO> typeList;
-    private int[] colorlist = {Color.parseColor("#FF8888"), Color.parseColor("#FFDD55"), Color.parseColor("#66FF66"), Color.parseColor("#77DDFF"), Color.parseColor("#D28EFF"),Color.parseColor("#aaaaaa")};
+    private int[] colorlist = {Color.parseColor("#FF8888"), Color.parseColor("#FFDD55"), Color.parseColor("#66FF66"), Color.parseColor("#77DDFF"), Color.parseColor("#D28EFF"), Color.parseColor("#aaaaaa")};
     private List<Map.Entry<String, Integer>> list_Data;
-    private int month,year,day, dweek;
+    private int month, year,day,dweek,extra;
     private Calendar end;
-    private Spinner choicePeriod,choiceCarrier;
+    private Spinner choicePeriod, choiceCarrier;
     private PieChart chart_pie;
     private TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-    private SimpleDateFormat sc = new SimpleDateFormat("HH");
-    private SimpleDateFormat sY = new SimpleDateFormat("yyyy年");
-    private SimpleDateFormat sM = new SimpleDateFormat("yyyy年MM月");
-    private int total,period;
-    private int Statue=1;
+    private int total, period;
+    private int Statue = 1;
     private String DesTittle;
     private boolean ShowConsume = true;
-    private boolean ShowAllCarrier=true;
-    private boolean noShowCarrier=false;
-    private  List<String> chartLabels;
-    private boolean retry=false;
+    private boolean ShowAllCarrier = true;
+    private boolean noShowCarrier = false;
+    private List<String> chartLabels;
+    private boolean ShowZero;
+    private ArrayList<String> OKey;
+    private XAxis xAxis;
+    private int week;
 
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_consume, container, false);
+        end = Calendar.getInstance();
+        month = end.get(Calendar.MONTH);
+        year = end.get(Calendar.YEAR);
+        dweek = end.get(Calendar.DAY_OF_WEEK);
+        day = end.get(Calendar.DAY_OF_MONTH);
         setDB();
         findViewById(view);
         typeList = typeDB.getAll();
@@ -127,61 +136,38 @@ public class SelectConsume extends Fragment {
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-//        invoiceDB.DeleteError();
-//        InvoiceVO I;
-//        for(int i=0;i<10;i++)
-//        {
-//            Calendar calendar=new GregorianCalendar(2018,1,i+2);
-//            I=new InvoiceVO();
-//            I.setTime(new Timestamp(calendar.getTimeInMillis()));
-//            I.setDonateTime(new Timestamp(calendar.getTimeInMillis()));
-//            I.setMaintype("O");
-//            I.setSecondtype("O");
-//            I.setDetail("其他");
-//            I.setAmount("250");
-//            I.setInvNum("1");
-//            I.setCarrier("/2RDO8+P");
-//            invoiceDB.insert(I);
-//        }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-         dataAnalyze();
-//        for(InvoiceVO i:invoiceDB.getAll())
-//        {
-//           getType(i);
-//        }
-    }
 
     private void findViewById(View view) {
         PIdateTittle = view.findViewById(R.id.PIdateTittle);
         PIdateCut = view.findViewById(R.id.PIdateCut);
         PIdateAdd = view.findViewById(R.id.PIdateAdd);
         chart_bar = view.findViewById(R.id.chart_bar);
-        choicePeriod=view.findViewById(R.id.choicePeriod);
-        choiceCarrier=view.findViewById(R.id.choiceCarrier);
-        chart_pie=view.findViewById(R.id.chart_pie);
-        describe=view.findViewById(R.id.describe);
-        ArrayList<String> SpinnerItem1=new ArrayList<>();
+        choicePeriod = view.findViewById(R.id.choicePeriod);
+        choiceCarrier = view.findViewById(R.id.choiceCarrier);
+        chart_pie = view.findViewById(R.id.chart_pie);
+        describe = view.findViewById(R.id.describe);
+        ArrayList<String> SpinnerItem1 = new ArrayList<>();
         SpinnerItem1.add(" 日 ");
         SpinnerItem1.add(" 周 ");
         SpinnerItem1.add(" 月 ");
         SpinnerItem1.add(" 年 ");
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,SpinnerItem1);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, SpinnerItem1);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        ArrayList<String> SpinnerItem2=new ArrayList<>();
+        ArrayList<String> SpinnerItem2 = new ArrayList<>();
         choicePeriod.setAdapter(arrayAdapter);
         choicePeriod.setSelection(1);
         carrierVOS = carrierDB.getAll();
+        if (carrierVOS == null || carrierVOS.size() <= 0) {
+            ShowAllCarrier = false;
+        }
         SpinnerItem2.add(" 全部 ");
         SpinnerItem2.add(" 本地 ");
-        for(CarrierVO c:carrierVOS)
-        {
-            SpinnerItem2.add(" "+c.getCarNul()+" ");
+        for (CarrierVO c : carrierVOS) {
+            SpinnerItem2.add(" " + c.getCarNul() + " ");
         }
-        arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,SpinnerItem2);
+        arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, SpinnerItem2);
         choiceCarrier.setAdapter(arrayAdapter);
     }
 
@@ -191,81 +177,66 @@ public class SelectConsume extends Fragment {
         dataSetA.setColors(getColor());
         dataSetA.setStackLabels(getStackLabels());
         dataSetA.setDrawValues(false);
-        dataSetA.setHighLightAlpha(20);
-        List<IBarDataSet> dataSets = new ArrayList<>();
-        dataSets.add(dataSetA);
-        return new BarData(getLabels(), dataSets);
+        BarData barData = new BarData(dataSetA);
+        barData.setBarWidth(0.9f);
+        return barData;
     }
 
     private int[] getColor() {
-        int[] c=new int[list_Data.size()+1];
-        for(int i=0;i<list_Data.size();i++)
-        {
-            c[i]=colorlist[i];
+        int[] c = new int[list_Data.size()];
+        for (int i = 0; i < list_Data.size(); i++) {
+            c[i] = colorlist[i];
         }
         return c;
     }
+
     private String[] getStackLabels() {
-        boolean OtherExist=false;
-        String[] s = new String[list_Data.size()+1];
-        for (int i = 0; i <list_Data.size(); i++) {
-            if(list_Data.get(i).getKey().equals("other"))
-            {
-                s[i]="其他";
-                OtherExist=true;
-                continue;
-            }
+        String[] s = new String[list_Data.size()];
+        for (int i = 0; i < list_Data.size(); i++) {
             s[i] = list_Data.get(i).getKey();
-        }
-        if(!OtherExist)
-        {
-            s[list_Data.size()]="其他";
+            Log.d("XXXx", s[i]);
         }
         return s;
     }
 
     private void findMaxFive() {
-        total=0;
+        total = 0;
+        OKey = new ArrayList<>();
         HashMap<String, Integer> hashMap = new HashMap<>();
-        Calendar start,end;
-        ChartEntry other=new ChartEntry("other",0);
-        if(Statue==0)
-        {
-            DesTittle="當天花費";
-            start = new GregorianCalendar(year, month, day,0,0,0);
-            end = new GregorianCalendar(year, month, day,23,59,59);
-            PIdateTittle.setText(syear.format(new Date(start.getTimeInMillis())));
-        }else if(Statue==1)
-        {
-            DesTittle="這周花費";
-            start = new GregorianCalendar(year, month, day,0,0,0);
-            end = new GregorianCalendar(year, month, day +6,23,59,59);
-            PIdateTittle.setText(syear.format(new Date(start.getTimeInMillis()))+" ~ "+syear.format(new Date(end.getTimeInMillis())));
-        }else if(Statue==2)
-        {
-            DesTittle="本月花費";
-            start = new GregorianCalendar(year, month,  1,0,0,0);
-            end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
-            PIdateTittle.setText(sM.format(new Date(start.getTimeInMillis())));
-        }else{
-            DesTittle="本年花費";
-            start = new GregorianCalendar(year, 0,  1,0,0,0);
-            end = new GregorianCalendar(year, 11, 31,23,59,59);
-            PIdateTittle.setText(sY.format(new Date(start.getTimeInMillis())));
+        Calendar start, end;
+        ChartEntry other = new ChartEntry("其他", 0);
+        if (Statue == 0) {
+            DesTittle = "當天花費";
+            start = new GregorianCalendar(year, month, day, 0, 0, 0);
+            end = new GregorianCalendar(year, month, day, 23, 59, 59);
+            PIdateTittle.setText(Common.sOne.format(new Date(start.getTimeInMillis())));
+        } else if (Statue == 1) {
+            DesTittle = "這周花費";
+            start = new GregorianCalendar(year, month, day - dweek + 1 , 0, 0, 0);
+            end = new GregorianCalendar(year, month, day - dweek + 1 + period-1, 23, 59, 59);
+            PIdateTittle.setText(Common.sTwo.format(new Date(start.getTimeInMillis())) + " ~ " + Common.sTwo.format(new Date(end.getTimeInMillis())));
+        } else if (Statue == 2) {
+            DesTittle = "本月花費";
+            start = new GregorianCalendar(year, month, 1, 0, 0, 0);
+            end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
+            PIdateTittle.setText(Common.sThree.format(new Date(start.getTimeInMillis())));
+        } else {
+            DesTittle = "本年花費";
+            start = new GregorianCalendar(year, 0, 1, 0, 0, 0);
+            end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
+            PIdateTittle.setText(Common.sFour.format(new Date(start.getTimeInMillis())));
         }
-        if(!noShowCarrier)
-        {
+
+        if (!noShowCarrier) {
             List<InvoiceVO> invoiceVOS;
-            if(ShowAllCarrier)
-            {
+            if (ShowAllCarrier) {
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-            }else{
+            } else {
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrierVOS.get(choiceD).getCarNul());
             }
             for (InvoiceVO I : invoiceVOS) {
-                if(I.getMaintype().equals("O"))
-                {
-                    other.setValue(other.getValue()+Integer.valueOf(I.getAmount()));
+                if (I.getMaintype().equals("O")) {
+                    other.setValue(other.getValue() + Integer.valueOf(I.getAmount()));
                     continue;
                 }
                 if (hashMap.get(I.getMaintype()) == null) {
@@ -273,74 +244,72 @@ public class SelectConsume extends Fragment {
                 } else {
                     hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()) + hashMap.get(I.getMaintype()));
                 }
-                total=total+Integer.valueOf(I.getAmount());
+                total = total + Integer.valueOf(I.getAmount());
             }
         }
+        total = total + other.getValue();
 
-        if(ShowConsume)
-        {
-            List<ConsumeVO> consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+
+        if (ShowConsume) {
+            List<ConsumeVO> consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
             for (ConsumeVO c : consumeVOS) {
                 if (hashMap.get(c.getMaintype()) == null) {
                     hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()));
                 } else {
                     hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()) + hashMap.get(c.getMaintype()));
                 }
-                total=total+Integer.valueOf(c.getMoney());
+                total = total + Integer.valueOf(c.getMoney());
             }
         }
 
-        list_Data =new ArrayList<Map.Entry<String, Integer>>(hashMap.entrySet());
-        Collections.sort(list_Data, new Comparator<Map.Entry<String, Integer>>(){
+        list_Data = new ArrayList<Map.Entry<String, Integer>>(hashMap.entrySet());
+        Collections.sort(list_Data, new Comparator<Map.Entry<String, Integer>>() {
             public int compare(Map.Entry<String, Integer> entry1,
-                               Map.Entry<String, Integer> entry2){
+                               Map.Entry<String, Integer> entry2) {
                 return (entry2.getValue() - entry1.getValue());
             }
         });
-
-//        for(Map.Entry m:list_Data)
-//        {
-//            Log.d(TAG,"1"+m.getKey()+" : "+m.getValue());
-//        }
-        if(list_Data.size()>4)
-        {
-            for(int i=4;i<list_Data.size();i++)
-            {
-                other.setValue(other.getValue()+list_Data.get(i).getValue());
+        for (int i = 0; i < list_Data.size(); i++) {
+            Double percent = ((double) list_Data.get(i).getValue() / total) * 100;
+            if (percent < 4) {
+                OKey.add(list_Data.get(i).getKey());
+                other.setValue(other.getValue() + list_Data.get(i).getValue());
                 list_Data.remove(i);
+                i--;
+                Log.d(TAG,i+" : "+list_Data.size());
+                continue;
+            }
+            if (i >= 4) {
+                other.setValue(other.getValue() + list_Data.get(4).getValue());
+                OKey.add(list_Data.get(4).getKey());
+                Log.d(TAG, list_Data.get(4).getKey());
+                list_Data.remove(4);
+                Log.d(TAG,"over"+i+" : "+list_Data.size());
+                i--;
             }
         }
         list_Data.add(other);
-        total=total+other.getValue();
-//        for(Map.Entry m:list_Data)
-//        {
-//            Log.d(TAG,"2"+m.getKey()+" : "+m.getValue());
-//        }
-
     }
 
     private List<String> getLabels() {
         chartLabels = new ArrayList<>();
         Calendar time;
-        if(Statue==0)
-        {
-            time = new GregorianCalendar(year, month, day,0,0,0);
-            chartLabels.add(sd.format(new Date(time.getTimeInMillis())));
-        }else if(Statue==1)
-        {
+        if (Statue == 0) {
+            time = new GregorianCalendar(year, month, day, 0, 0, 0);
+            chartLabels.add(Common.sDay.format(new Date(time.getTimeInMillis())));
+        } else if (Statue == 1) {
             for (int i = 0; i < period; i++) {
-                time = new GregorianCalendar(year, month, day+i);
-                chartLabels.add(sd.format(new Date(time.getTimeInMillis())));
+                time = new GregorianCalendar(year, month, day - dweek + 1 + i);
+                chartLabels.add(Common.sDay.format(new Date(time.getTimeInMillis())));
             }
-        }else if(Statue==2)
-        {
-            for (int i = 0; i <period; i++) {
-                chartLabels.add("第"+(i+1)+"周");
+        } else if (Statue == 2) {
+            for (int i = 0; i < period; i++) {
+                chartLabels.add("第" + (i + 1) + "周");
             }
 
-        }else{
+        } else {
             for (int i = 0; i < period; i++) {
-                chartLabels.add(i+1+"月");
+                chartLabels.add(i + 1 + "月");
             }
         }
         return chartLabels;
@@ -350,59 +319,54 @@ public class SelectConsume extends Fragment {
     private List<BarEntry> getChartData() {
         List<BarEntry> chartData = new ArrayList<>();
         Calendar start, end;
-        if(Statue==0)
-        {
-                start = new GregorianCalendar(year, month, day, 0, 0, 0);
-                end = new GregorianCalendar(year, month, day, 23, 59, 59);
-                BarEntry barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), 0);
-                chartData.add(barEntry);
+        if (Statue == 0) {
+            start = new GregorianCalendar(year, month, day, 0, 0, 0);
+            end = new GregorianCalendar(year, month, day, 23, 59, 59);
+            BarEntry barEntry = new BarEntry(0, Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()));
+            chartData.add(barEntry);
 
-        }else if(Statue==1)
-        {
+        } else if (Statue == 1) {
             for (int i = 0; i < period; i++) {
-                start = new GregorianCalendar(year, month, day+i, 0, 0, 0);
-                end = new GregorianCalendar(year, month, day+i, 23, 59, 59);
-                BarEntry barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), i);
+                start = new GregorianCalendar(year, month, day - dweek + 1 + i, 0, 0, 0);
+                end = new GregorianCalendar(year, month, day - dweek + 1 + i, 23, 59, 59);
+                Log.d(TAG,"start"+Common.sDay.format(new Date(start.getTimeInMillis())));
+                BarEntry barEntry = new BarEntry(i, Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()));
                 chartData.add(barEntry);
-                Log.d(TAG, "chartData"+sd.format(new Date(start.getTimeInMillis()))+" : "+i+" : "+barEntry.getVal());
             }
-        }else if(Statue==2)
-        {
-            Calendar calendar =  new GregorianCalendar(year, month,1, 0, 0, 0);
-            start = new GregorianCalendar(year, month,1, 0, 0, 0);
-            calendar.set(Calendar.WEEK_OF_MONTH,1);
-            calendar.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
-            end=new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+        } else if (Statue == 2) {
+            Calendar calendar = new GregorianCalendar(year, month, 1, 0, 0, 0);
+            start = new GregorianCalendar(year, month, 1, 0, 0, 0);
+            calendar.set(Calendar.WEEK_OF_MONTH, 1);
+            calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+            end = new GregorianCalendar(year, month, calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
             BarEntry barEntry;
-            for(int i=2;i<period;i++)
-            {
-                barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), i-2);
+            for (int i = 2; i < period; i++) {
+                barEntry = new BarEntry(i - 2, Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()));
                 chartData.add(barEntry);
-                Log.d(TAG,"time"+syear.format(new Date(start.getTimeInMillis()))+":"+syear.format(new Date(end.getTimeInMillis()))+":"+ barEntry.getVal()+" : "+barEntry.getXIndex());
-                calendar.set(Calendar.WEEK_OF_MONTH,i);
-                calendar.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
-                start = new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
-                calendar.set(Calendar.WEEK_OF_MONTH,i);
-                calendar.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
-                end=new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+                Log.d(TAG,"week "+String.valueOf(i - 2)+":"+Common.sDay.format(new Date(start.getTimeInMillis()))+"~"+Common.sDay.format(new Date(end.getTimeInMillis())));
+                calendar.set(Calendar.WEEK_OF_MONTH, i);
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                start = new GregorianCalendar(year, month, calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+                calendar.set(Calendar.WEEK_OF_MONTH, i);
+                calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+                end = new GregorianCalendar(year, month, calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
             }
-            barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), period-2);
+            barEntry = new BarEntry(period - 2, Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()));
             chartData.add(barEntry);
-            Log.d(TAG,"end"+syear.format(new Date(start.getTimeInMillis()))+":"+syear.format(new Date(end.getTimeInMillis()))+":"+ barEntry.getVal()+" : "+barEntry.getXIndex());
-            calendar.set(Calendar.WEEK_OF_MONTH,period);
-            calendar.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
-            start = new GregorianCalendar(year, month,calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
-            end=new GregorianCalendar(year, month,start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
-            barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), period-1);
+            Log.d(TAG,"week "+String.valueOf(period - 2)+":"+Common.sDay.format(new Date(start.getTimeInMillis()))+"~"+Common.sDay.format(new Date(end.getTimeInMillis())));
+            calendar.set(Calendar.WEEK_OF_MONTH, period);
+            calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+            start = new GregorianCalendar(year, month, calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+            end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
+            barEntry = new BarEntry(period - 1, Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()));
             chartData.add(barEntry);
-            Log.d(TAG,"end"+syear.format(new Date(start.getTimeInMillis()))+":"+syear.format(new Date(end.getTimeInMillis()))+":"+ barEntry.getVal()+" : "+barEntry.getXIndex());
-        }else{
+            Log.d(TAG,"week "+String.valueOf(period - 1)+":"+Common.sDay.format(new Date(start.getTimeInMillis()))+"~"+Common.sDay.format(new Date(end.getTimeInMillis())));
+        } else {
             for (int i = 0; i < period; i++) {
-                start = new GregorianCalendar(year, month+i, 1, 0, 0, 0);
-                end = new GregorianCalendar(year, month+i, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
-                BarEntry barEntry = new BarEntry(Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()), i);
+                start = new GregorianCalendar(year, month + i, 1, 0, 0, 0);
+                end = new GregorianCalendar(year, month + i, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
+                BarEntry barEntry = new BarEntry(i, Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()));
                 chartData.add(barEntry);
-                Log.d(TAG, "chartData"+sd.format(new Date(start.getTimeInMillis()))+" : "+i+" : "+barEntry.getVal());
             }
         }
         return chartData;
@@ -411,97 +375,67 @@ public class SelectConsume extends Fragment {
     private float[] Periodfloat(Calendar start, Calendar end, String carrier) {
         Map<String, Integer> hashMap = new LinkedHashMap<>();
         boolean isOther;
-        float[] f = new float[list_Data.size()+1];
-        if(!noShowCarrier)
-        {
+        float[] f = new float[list_Data.size()];
+        ChartEntry other = new ChartEntry("其他", 0);
+        if (!noShowCarrier) {
             List<InvoiceVO> periodInvoice;
-            if(ShowAllCarrier)
-            {
+            if (ShowAllCarrier) {
                 periodInvoice = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-            }else{
-                periodInvoice = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()),carrier);
+            } else {
+                periodInvoice = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrier);
             }
             for (InvoiceVO I : periodInvoice) {
-                isOther=true;
-                for(Map.Entry e:list_Data )
-                {
-                    if(I.getMaintype().equals(e.getKey()))
-                    {
-                        if(hashMap.get(I.getMaintype())==null)
-                        {
-                            hashMap.put(I.getMaintype(),Integer.valueOf(I.getAmount()));
-                        }else{
-                            hashMap.put(I.getMaintype(),Integer.valueOf(I.getAmount())+hashMap.get(I.getMaintype()));
+                isOther = true;
+                for (Map.Entry e : list_Data) {
+                    if (I.getMaintype().equals(e.getKey())) {
+                        if (hashMap.get(I.getMaintype()) == null) {
+                            hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()));
+                        } else {
+                            hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()) + hashMap.get(I.getMaintype()));
                         }
-                        isOther=false;
+                        isOther = false;
                         break;
                     }
                 }
-                if(isOther||I.getMaintype().equals("O"))
-                {
-                    if(hashMap.get("other")==null)
-                    {
-                        hashMap.put("other",Integer.valueOf(I.getAmount()));
-                    }else{
-                        hashMap.put("other",hashMap.get("other")+Integer.valueOf(I.getAmount()));
-                    }
+                if (isOther) {
+                    other.setValue(other.getValue() + Integer.valueOf(I.getAmount()));
                 }
             }
         }
-        if(ShowConsume)
-        {
+        if (ShowConsume) {
             List<ConsumeVO> periodConsume = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
             for (ConsumeVO c : periodConsume) {
-                isOther=true;
-                for(Map.Entry e:list_Data )
-                {
-                    if(c.getMaintype().equals(e.getKey()))
-                    {
-                        if(hashMap.get(c.getMaintype())==null)
-                        {
-                            hashMap.put(c.getMaintype(),Integer.valueOf(c.getMoney()));
-                        }else{
-                            hashMap.put(c.getMaintype(),Integer.valueOf(c.getMoney())+hashMap.get(c.getMaintype()));
+                isOther = true;
+                for (Map.Entry e : list_Data) {
+                    if (c.getMaintype().equals(e.getKey())) {
+                        if (hashMap.get(c.getMaintype()) == null) {
+                            hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()));
+                        } else {
+                            hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()) + hashMap.get(c.getMaintype()));
                         }
-                        isOther=false;
+                        isOther = false;
                         break;
                     }
                 }
-                if(isOther)
-                {
-                    if(hashMap.get("other")==null)
-                    {
-                        hashMap.put("other",Integer.valueOf(c.getMoney()));
-                    }else{
-                        hashMap.put("other",hashMap.get("other")+Integer.valueOf(c.getMoney()));
-                    }
+                if (isOther) {
+                    other.setValue(other.getValue() + Integer.valueOf(c.getMoney()));
                 }
             }
         }
 
-
-        boolean OtherExist=false;
-       for(int i=0;i<list_Data.size();i++)
-       {
-           if(hashMap.get(list_Data.get(i).getKey())==null)
-           {
-               f[i]=0;
-               continue;
-           }
-           if(list_Data.get(i).getKey().equals("other"))
-           {
-               OtherExist=true;
-           }
-          f[i]=hashMap.get(list_Data.get(i).getKey());
+        for (int i = 0; i < list_Data.size(); i++) {
+            if (list_Data.get(i).getKey().equals("其他")) {
+                f[i] = other.getValue();
+                continue;
+            }
+            if (hashMap.get(list_Data.get(i).getKey()) == null) {
+                f[i] = 0;
+                continue;
+            }
+            f[i] = hashMap.get(list_Data.get(i).getKey());
         }
-        if(hashMap.get("other")!=null&&!OtherExist)
-        {
-            f[list_Data.size()]=hashMap.get("other");
-        }
-       return f;
+        return f;
     }
-
-
 
 
     private void download() {
@@ -513,11 +447,10 @@ public class SelectConsume extends Fragment {
             first = new GetSQLDate(this).execute("GetToday");
             progressDialog.setMessage("正在更新資料,請稍候...");
             progressDialog.show();
-        }else{
+        } else {
             dataAnalyze();
         }
     }
-
 
 
     private InvoiceVO getType(InvoiceVO invoiceVO) {
@@ -529,7 +462,7 @@ public class SelectConsume extends Fragment {
             String[] key = t.getKeyword().split(" ");
             for (int i = 0; i < key.length; i++) {
                 if (invoiceVO.getDetail().indexOf(key[i].trim()) != -1) {
-                    x=x+key[i].length();
+                    x = x + key[i].length();
                 }
             }
             if (x > total) {
@@ -539,7 +472,7 @@ public class SelectConsume extends Fragment {
             }
         }
         if (second.indexOf("餐") != -1) {
-            int hour = Integer.valueOf(sc.format(new Date(invoiceVO.getTime().getTime())));
+            int hour = Integer.valueOf(Common.sHour.format(new Date(invoiceVO.getTime().getTime())));
             if (hour > 0 && hour < 11) {
                 second = "早餐";
             } else if (hour >= 11 && hour < 18) {
@@ -559,90 +492,95 @@ public class SelectConsume extends Fragment {
         new GetSQLDate(this).execute("GetAllInvoice");
     }
 
-    public void dataAnalyze(){
+    public void dataAnalyze() {
+        chart_bar.clear();
         findMaxFive();
+        Description description = new Description();
+        description.setText(" ");
         chart_bar.setDrawGridBackground(false);
         chart_bar.setDragEnabled(true);
         chart_bar.setScaleEnabled(true);
         chart_bar.setEnabled(true);
-        chart_bar.setDescription(" ");
-        XAxis xAxis=chart_bar.getXAxis();
+        xAxis = chart_bar.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setTextSize(12f);
-        xAxis.setSpaceBetweenLabels(1);
-        YAxis yAxis=chart_bar.getAxis(YAxis.AxisDependency.LEFT);
-        YAxis yAxis1=chart_bar.getAxis(YAxis.AxisDependency.RIGHT);
-        yAxis1.setAxisMinValue(0);
-        yAxis.setAxisMinValue(0);
+        xAxis.setGranularity(1f);
+        xAxis.setGranularityEnabled(true);
+        YAxis yAxis = chart_bar.getAxis(YAxis.AxisDependency.LEFT);
+        YAxis yAxis1 = chart_bar.getAxis(YAxis.AxisDependency.RIGHT);
+        yAxis1.setAxisMinimum(0);
+        yAxis.setAxisMinimum(0);
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                try {
+                    List<String> ss = getLabels();
+                    int idex = (int) value;
+                    return ss.get(idex);
+                } catch (Exception e) {
+                    return String.valueOf(value);
+                }
+            }
+        });
+
+
+        xAxis.setLabelCount(period);
         chart_bar.setData(getBarData());
-        chart_bar.invalidate();
+        chart_bar.setFitBars(true);
         chart_bar.setDrawBarShadow(false);
         chart_bar.setDoubleTapToZoomEnabled(false);
+        chart_bar.setDescription(description);
+        chart_bar.setHighlightFullBarEnabled(false);
+        chart_bar.invalidate();
 
+        chart_pie.setEntryLabelColor(Color.BLACK);
         chart_pie.setUsePercentValues(true);
-        chart_pie.setDescription(" ");
-        // enable hole and configure
         chart_pie.setDrawHoleEnabled(true);
         chart_pie.setHoleRadius(7);
         chart_pie.setTransparentCircleRadius(10);
-        // enable rotation of the chart by touch
-        chart_pie.setRotationAngle(0);
-        chart_pie.setRotationEnabled(true);
-        // add data
+        chart_pie.setRotationAngle(30);
+        chart_pie.setRotationEnabled(false);
+        chart_pie.setDescription(description);
         addData();
         // customize legends
         Legend l = chart_pie.getLegend();
-        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
-        l.setXEntrySpace(7);
-        l.setYEntrySpace(5);
+        l.setEnabled(false);
     }
 
     private void addData() {
-        describe.setText(DesTittle+total+"元");
-        ArrayList<Entry> yVals1 = new ArrayList<Entry>();
-        ArrayList<String> xVals = new ArrayList<String>();
-        boolean ShowZero=true;
-        for (int i = 0; i < list_Data.size(); i++)
-        {
-            if(list_Data.get(i).getValue()>0)
-            {
-                ShowZero=false;
-                if(list_Data.get(i).getKey().equals("other"))
-                {
-                    yVals1.add(new Entry(list_Data.get(i).getValue(), i));
-                    xVals.add("其他");
-                }else{
-                    yVals1.add(new Entry(list_Data.get(i).getValue(), i));
-                    xVals.add(list_Data.get(i).getKey());
-                }
+        describe.setText(DesTittle + total + "元");
+        ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
+        ShowZero = true;
+        for (int i = 0; i < list_Data.size(); i++) {
+            if (list_Data.get(i).getValue() > 0) {
+                ShowZero = false;
+                yVals1.add(new PieEntry(list_Data.get(i).getValue(), list_Data.get(i).getKey()));
             }
         }
 
         // create pie data set
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
-        if(ShowZero)
-        {
+        if (ShowZero) {
             dataSet.setDrawValues(false);
-            yVals1.add(new Entry(1, 0));
-            xVals.add("無花費");
-            int[] c={Color.parseColor("#CCEEFF")};
+            yVals1.add(new PieEntry(1, "無花費"));
+            int[] c = {Color.parseColor("#CCEEFF")};
             dataSet.setColors(c);
-        }else{
+        } else {
             dataSet.setColors(getColor());
             dataSet.setDrawValues(true);
+            dataSet.setValueLinePart1OffsetPercentage(90.f);
+            dataSet.setValueLinePart1Length(1f);
+            dataSet.setValueLinePart2Length(.2f);
+            dataSet.setValueTextColor(Color.BLACK);
+            dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         }
-
         dataSet.setSliceSpace(0);
-        dataSet.setSelectionShift(5);
-        // instantiate pie data object now
-        PieData data = new PieData(xVals, dataSet);
+        dataSet.setSelectionShift(20f);
+        PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(11f);
         data.setValueTextColor(Color.BLACK);
         chart_pie.setData(data);
-        // undo all highlights
-        chart_pie.highlightValues(null);
-        // update pie chart
         chart_pie.invalidate();
         chart_pie.setBackgroundColor(Color.parseColor("#f5f5f5"));
     }
@@ -651,22 +589,20 @@ public class SelectConsume extends Fragment {
     private class AddOnClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            retry=false;
-            if(Statue==0)
-            {
-                day=day+1;
-            }else if(Statue==1)
-            {
-                day=day+7;
+            if (Statue == 0) {
+                day = day + 1;
+            } else if (Statue == 1) {
+                day = day + 7;
                 period=7;
-            }else if(Statue==2)
-            {
-                month=month+1;
-                Calendar calendar = new GregorianCalendar(year,month,1);
-                period=calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
-            }else{
-                year=year+1;
-                period=12;
+                end = new GregorianCalendar(year,month,day);
+                dweek=end.get(Calendar.DAY_OF_WEEK);
+            } else if (Statue == 2) {
+                month = month + 1;
+                end = new GregorianCalendar(year,month,day);
+                period=end.getActualMaximum(Calendar.WEEK_OF_MONTH);
+            } else {
+                year = year + 1;
+                period=11;
             }
             dataAnalyze();
         }
@@ -675,22 +611,20 @@ public class SelectConsume extends Fragment {
     private class CutOnClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            retry=false;
-            if(Statue==0)
-            {
-                day=day-1;
-            }else if(Statue==1)
-            {
-                day=day-7;
+            if (Statue == 0) {
+                day = day - 1;
+            } else if (Statue == 1) {
+                day = day - 7;
                 period=7;
-            }else if(Statue==2)
-            {
-                month=month-1;
-                Calendar calendar = new GregorianCalendar(year,month,1);
-                period=calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
-            }else{
-                year=year-1;
-                period=12;
+                end = new GregorianCalendar(year,month,day);
+                dweek=end.get(Calendar.DAY_OF_WEEK);
+            } else if (Statue == 2) {
+                month = month - 1;
+                end = new GregorianCalendar(year,month,day);
+                period=end.getActualMaximum(Calendar.WEEK_OF_MONTH);
+            } else {
+                year = year - 1;
+                period=11;
             }
             dataAnalyze();
         }
@@ -700,69 +634,60 @@ public class SelectConsume extends Fragment {
     private class ChoicePeriodStatue implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            Log.d(TAG,"retry"+retry);
-            if(!retry)
-            {
-                Statue=position;
-                end=Calendar.getInstance();
-                month=end.get(Calendar.MONTH);
-                year=end.get(Calendar.YEAR);
-                dweek =end.get(Calendar.DAY_OF_WEEK);
-                day=end.get(Calendar.DAY_OF_MONTH);
-                if(position==0)
-                {
-                    period=1;
-                    dataAnalyze();
+                Statue = position;
+                end = new GregorianCalendar(year,month,day);
+                month = end.get(Calendar.MONTH);
+                year = end.get(Calendar.YEAR);
+                dweek = end.get(Calendar.DAY_OF_WEEK);
+                day = end.get(Calendar.DAY_OF_MONTH);
+                Log.d(TAG,"day"+Common.sDay.format(new Date(end.getTimeInMillis()))+" : "+dweek);
+                if (position == 0) {
+                    period = 1;
+                } else if (position == 1) {
+                    if(week==1)
+                    {
+                        dweek=1;
+                    }
+                    period =7+extra;
+                    extra=0;
+                    week=0;
+                } else if (position == 2) {
+                    period = end.getActualMaximum(Calendar.WEEK_OF_MONTH);
+                } else {
+                    month=0;
+                    period =12;
                 }
-                else if(position==1)
-                {
-                    day=day-dweek+1;
-                    period=dweek;
-                    dataAnalyze();
-                }else if(position==2)
-                {
-                    period=end.getActualMaximum(Calendar.WEEK_OF_MONTH);
-                    dataAnalyze();
-                }else{
-                    period=month+1;
-                    month=month-1;
-                    Log.d(TAG,"month"+month);
-                    dataAnalyze();
-                }
-            }else {
-                retry = false;
-            }
-
+                dataAnalyze();
         }
+
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-            retry = false;
+
         }
     }
 
     private class ChoiceCarrier implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            if(i==0)
-            {
+            if (i == 0) {
                 ShowConsume = true;
-                ShowAllCarrier=true;
-                noShowCarrier=false;
+                ShowAllCarrier = true;
+                noShowCarrier = false;
                 dataAnalyze();
-            }else if(i==1)
-            {
+            } else if (i == 1) {
                 ShowConsume = true;
-                ShowAllCarrier=false;
-                noShowCarrier=true;
+                ShowAllCarrier = false;
+                noShowCarrier = true;
                 dataAnalyze();
-            }else{
-                choiceD=i-2;
+            } else {
+                choiceD = i - 2;
                 ShowConsume = false;
-                ShowAllCarrier=false;
-                noShowCarrier=false;
+                ShowAllCarrier = false;
+                noShowCarrier = false;
                 dataAnalyze();
             }
         }
+
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
 
@@ -771,60 +696,53 @@ public class SelectConsume extends Fragment {
 
     private class charvalue implements OnChartValueSelectedListener {
         @Override
-        public void onValueSelected(Entry entry, int i, Highlight highlight) {
-            retry=true;
-            if(entry.getVal()<=0)
-            {
+        public void onValueSelected(Entry e, Highlight h) {
+            if (e.getY() <=0) {
                 return;
             }
-            if(Statue==2)
-            {
-                int week=entry.getXIndex()+1;
-                Statue=1;
-                choicePeriod.setSelection(1);
-                if(week==1)
-                {
-                    Calendar calendar=new GregorianCalendar(year,month,1,0,0,0);
-                    dweek =calendar.get(Calendar.DAY_OF_WEEK);
-                    day=calendar.get(Calendar.DAY_OF_MONTH);
-                    period=7-dweek+1;
-                }else if(week==period){
-                    Calendar calendar=new GregorianCalendar(year,month,1);
-                    calendar.set(Calendar.WEEK_OF_MONTH,week);
-                    calendar.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
-                    day=calendar.get(Calendar.DAY_OF_MONTH);
-                    period=calendar.getActualMaximum(Calendar.DAY_OF_MONTH)-day+1;
+            if (Statue == 2) {
+                week = (int) (e.getX() + 1);
+                Statue = 1;
+                if (week == 1) {
+                    Calendar calendar = new GregorianCalendar(year, month, 1, 0, 0, 0);
+                    dweek = calendar.get(Calendar.DAY_OF_WEEK);
+                    day = 1;
+                    extra=-dweek+1;
+                } else if (week == period) {
+                    Calendar calendar = new GregorianCalendar(year, month, 1);
+                    calendar.set(Calendar.WEEK_OF_MONTH, week);
+                    calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                    day = calendar.get(Calendar.DAY_OF_MONTH);
+                    extra=calendar.getMaximum(Calendar.DAY_OF_MONTH)-day-7+1;
                 } else {
-                    Calendar calendar=new GregorianCalendar(year,month,1);
-                    calendar.set(Calendar.WEEK_OF_MONTH,week);
-                    calendar.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
-                    day=calendar.get(Calendar.DAY_OF_MONTH);
-                    period=7;
+                    Calendar calendar = new GregorianCalendar(year, month, 1);
+                    calendar.set(Calendar.WEEK_OF_MONTH, week);
+                    calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+                    day = calendar.get(Calendar.DAY_OF_MONTH);
+                    extra=0;
                 }
-                dataAnalyze();
-            }else if(Statue==3)
-            {
-                Statue=2;
+                choicePeriod.setSelection(1);
+            } else if (Statue == 3) {
+                Statue = 2;
+                month = (int) e.getX();
                 choicePeriod.setSelection(2);
-                month=entry.getXIndex();
-                Calendar calendar=new GregorianCalendar(year,month,1);
-                period=calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
-                dataAnalyze();
-            }else{
-                Fragment fragment=new SelectDetCircle();
+            } else {
+                Fragment fragment = new SelectDetCircle();
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("ShowConsume",ShowConsume);
-                bundle.putSerializable("ShowAllCarrier",ShowAllCarrier);
-                bundle.putSerializable("noShowCarrier",noShowCarrier);
-                bundle.putSerializable("year",year);
-                bundle.putSerializable("month",month);
-                bundle.putSerializable("day",day);
-                bundle.putSerializable("index",entry.getXIndex());
-                bundle.putSerializable("carrier",carrierVOS.get(choiceD).getCarNul());
+                bundle.putSerializable("ShowConsume", ShowConsume);
+                bundle.putSerializable("ShowAllCarrier", ShowAllCarrier);
+                bundle.putSerializable("noShowCarrier", noShowCarrier);
+                bundle.putSerializable("year", year);
+                bundle.putSerializable("month", month);
+                bundle.putSerializable("day", day);
+                bundle.putSerializable("index", (int) e.getX());
+                bundle.putSerializable("carrier", carrierVOS.get(choiceD).getCarNul());
+                bundle.putSerializable("total",(int)e.getY());
                 fragment.setArguments(bundle);
                 switchFragment(fragment);
             }
         }
+
         @Override
         public void onNothingSelected() {
 
@@ -834,7 +752,7 @@ public class SelectConsume extends Fragment {
 
     private void switchFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        for (Fragment fragment1 :  getFragmentManager().getFragments()) {
+        for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);
         }
         fragmentTransaction.replace(R.id.body, fragment);
@@ -843,19 +761,30 @@ public class SelectConsume extends Fragment {
 
     private class pievalue implements OnChartValueSelectedListener {
         @Override
-        public void onValueSelected(Entry entry, int i, Highlight highlight) {
-            Fragment fragment=new SelectShowCircleDe();
+        public void onValueSelected(Entry e, Highlight h) {
+            if (ShowZero) {
+                return;
+            }
+            String key = list_Data.get((int) h.getX()).getKey();
             Bundle bundle = new Bundle();
-            bundle.putSerializable("ShowConsume",ShowConsume);
-            bundle.putSerializable("ShowAllCarrier",ShowAllCarrier);
-            bundle.putSerializable("noShowCarrier",noShowCarrier);
-            bundle.putSerializable("year",year);
-            bundle.putSerializable("month",month);
-            bundle.putSerializable("day",day);
-            bundle.putSerializable("index",list_Data.get(entry.getXIndex()).getKey());
-            bundle.putSerializable("carrier",carrierVOS.get(choiceD).getCarNul());
-            bundle.putSerializable("statue",Statue);
-            bundle.putSerializable("period",period);
+            Fragment fragment;
+            if (key.equals("其他")) {
+                fragment = new SelectOtherCircle();
+                bundle.putStringArrayList("OKey", OKey);
+            } else {
+                fragment = new SelectShowCircleDe();
+            }
+            bundle.putSerializable("ShowConsume", ShowConsume);
+            bundle.putSerializable("ShowAllCarrier", ShowAllCarrier);
+            bundle.putSerializable("noShowCarrier", noShowCarrier);
+            bundle.putSerializable("year", year);
+            bundle.putSerializable("month", month);
+            bundle.putSerializable("day", day);
+            bundle.putSerializable("index", list_Data.get((int) h.getX()).getKey());
+            bundle.putSerializable("carrier", carrierVOS.get(choiceD).getCarNul());
+            bundle.putSerializable("statue", Statue);
+            bundle.putSerializable("period", period);
+            bundle.putSerializable("total",(int)e.getY());
             fragment.setArguments(bundle);
             switchFragment(fragment);
         }
