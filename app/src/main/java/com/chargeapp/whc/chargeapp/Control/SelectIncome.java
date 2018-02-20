@@ -78,6 +78,11 @@ public class SelectIncome extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_income, container, false);
+        end = Calendar.getInstance();
+        month = end.get(Calendar.MONTH);
+        year = end.get(Calendar.YEAR);
+        dweek = end.get(Calendar.DAY_OF_WEEK);
+        day = end.get(Calendar.DAY_OF_MONTH);
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());
@@ -260,6 +265,7 @@ public class SelectIncome extends Fragment {
 
 
     public void dataAnalyze() {
+        chart_bar.clear();
         findMaxFive();
         //ChartBar setting
         chart_bar.setDrawGridBackground(false);
@@ -400,7 +406,7 @@ public class SelectIncome extends Fragment {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             Statue = position;
-            end = Calendar.getInstance();
+            end =new GregorianCalendar(year,month,day);
             month = end.get(Calendar.MONTH);
             year = end.get(Calendar.YEAR);
             dweek = end.get(Calendar.DAY_OF_WEEK);
@@ -409,8 +415,8 @@ public class SelectIncome extends Fragment {
                 period = end.get(Calendar.DAY_OF_MONTH);
                 dataAnalyze();
             } else {
-                period = month + 1;
-                month = month - 1;
+                period = 12;
+                month = 0;
                 Log.d(TAG, "month" + month);
                 dataAnalyze();
             }

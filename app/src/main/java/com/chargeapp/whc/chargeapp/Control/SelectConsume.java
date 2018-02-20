@@ -89,7 +89,6 @@ public class SelectConsume extends Fragment {
     private BarChart chart_bar;
     private TypeDB typeDB;
     private List<TypeVO> typeList;
-    private int[] colorlist = {Color.parseColor("#FF8888"), Color.parseColor("#FFDD55"), Color.parseColor("#66FF66"), Color.parseColor("#77DDFF"), Color.parseColor("#D28EFF"), Color.parseColor("#aaaaaa")};
     private List<Map.Entry<String, Integer>> list_Data;
     private int month, year,day,dweek,extra;
     private Calendar end;
@@ -173,22 +172,17 @@ public class SelectConsume extends Fragment {
 
 
     private BarData getBarData() {
+        String [] stack=getStackLabels();
         BarDataSet dataSetA = new BarDataSet(getChartData(), " ");
-        dataSetA.setColors(getColor());
-        dataSetA.setStackLabels(getStackLabels());
+        dataSetA.setColors(Common.getColor(stack.length));
+        dataSetA.setStackLabels(stack);
         dataSetA.setDrawValues(false);
         BarData barData = new BarData(dataSetA);
         barData.setBarWidth(0.9f);
         return barData;
     }
 
-    private int[] getColor() {
-        int[] c = new int[list_Data.size()];
-        for (int i = 0; i < list_Data.size(); i++) {
-            c[i] = colorlist[i];
-        }
-        return c;
-    }
+
 
     private String[] getStackLabels() {
         String[] s = new String[list_Data.size()];
@@ -566,7 +560,7 @@ public class SelectConsume extends Fragment {
             int[] c = {Color.parseColor("#CCEEFF")};
             dataSet.setColors(c);
         } else {
-            dataSet.setColors(getColor());
+            dataSet.setColors(Common.getColor(yVals1.size()));
             dataSet.setDrawValues(true);
             dataSet.setValueLinePart1OffsetPercentage(90.f);
             dataSet.setValueLinePart1Length(1f);
@@ -602,7 +596,7 @@ public class SelectConsume extends Fragment {
                 period=end.getActualMaximum(Calendar.WEEK_OF_MONTH);
             } else {
                 year = year + 1;
-                period=11;
+                period=12;
             }
             dataAnalyze();
         }
@@ -624,7 +618,7 @@ public class SelectConsume extends Fragment {
                 period=end.getActualMaximum(Calendar.WEEK_OF_MONTH);
             } else {
                 year = year - 1;
-                period=11;
+                period=12;
             }
             dataAnalyze();
         }
