@@ -100,7 +100,7 @@ public class SelectOtherCircle extends Fragment {
             title = Common.sFour.format(new Date(start.getTimeInMillis()));
         }
         Okey.add("O");
-        getActivity().setTitle(title);
+        SelectActivity.mainTitle.setText(title);
         setLayout();
 
         return view;

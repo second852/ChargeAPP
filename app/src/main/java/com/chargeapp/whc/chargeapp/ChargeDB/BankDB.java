@@ -64,6 +64,31 @@ public class BankDB {
         return BankVOList;
     }
 
+
+    public Integer getTimeTotal(Timestamp start,Timestamp end) {
+        String sql = "SELECT money  FROM BANK where date between '"+start.getTime()+"' and '"+end.getTime()+"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        int total=0;
+        while (cursor.moveToNext()) {
+          total=total+Integer.valueOf(cursor.getString(0));
+        }
+        cursor.close();
+        return total;
+    }
+
+    public long getMinTime() {
+        String sql = "SELECT min(date) FROM BANK ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        long minTime=0;
+        if (cursor.moveToNext()) {
+            minTime=cursor.getLong(0);
+        }
+        cursor.close();
+        return minTime;
+    }
+
     public List<BankVO> getTimeAll(Timestamp start,Timestamp end,String type) {
         String sql = "SELECT * FROM BANK where date between '"+start.getTime()+"' and '"+end.getTime()+"' and maintype = '"+type+"'order by id;";
         String[] args = {};

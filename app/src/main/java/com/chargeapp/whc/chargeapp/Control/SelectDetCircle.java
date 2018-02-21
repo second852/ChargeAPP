@@ -121,7 +121,7 @@ public class SelectDetCircle extends Fragment {
                 total = total + Integer.parseInt(I.getAmount());
             }
         }
-        getActivity().setTitle(sf.format(new Date(start.getTimeInMillis())));
+        SelectActivity.mainTitle.setText(sf.format(new Date(start.getTimeInMillis())));
         List<String> stringList = new ArrayList<>(hashMap.keySet());
         size = stringList.size();
         listView.setAdapter(new ListAdapter(getActivity(), stringList));

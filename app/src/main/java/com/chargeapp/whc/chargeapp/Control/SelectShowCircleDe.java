@@ -238,7 +238,7 @@ public class SelectShowCircleDe extends Fragment {
         pieChart.getLegend().setEnabled(false);
         pieChart.invalidate();
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
-        getActivity().setTitle(title);
+        SelectActivity.mainTitle.setText(title);
         detail.setText(mainTitle+" : 共"+total+"元");
         if(listView.getAdapter()!=null)
         {

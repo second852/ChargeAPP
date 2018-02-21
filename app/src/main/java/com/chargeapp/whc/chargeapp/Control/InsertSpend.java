@@ -80,10 +80,8 @@ public class InsertSpend extends Fragment {
     private boolean noweek = false;
     private ConsumeDB consumeDB;
     private RelativeLayout qrcode;
-    private ConsumeVO consumeVO;
-    private int updateChoice;
-    private String action;
-    private boolean first=true;
+
+
 
     @Nullable
     @Override
@@ -124,67 +122,7 @@ public class InsertSpend extends Fragment {
         save.setOnClickListener(new savecomsumer());
         noWek.setOnCheckedChangeListener(new nowWekchange());
         qrcode.setOnClickListener(new QrCodeClick());
-        action= (String) getArguments().getSerializable("action");
-        if(action.equals("update"))
-        {
-            setUpdate();
-        }
         return view;
-    }
-
-    private void setUpdate() {
-        consumeVO= (ConsumeVO) getArguments().getSerializable("consumeVO");
-        name.setText(consumeVO.getMaintype());
-        number.setText(consumeVO.getNumber());
-        secondname.setText(consumeVO.getSecondType());
-        money.setText(consumeVO.getMoney());
-        date.setText(sf.format(consumeVO.getDate()));
-        detailname.setText(consumeVO.getDetailname());
-        Log.d("XXXXXX",consumeVO.getFixDateDetail());
-        if(consumeVO.getFixDate().equals("true"))
-        {
-                fixdate.setChecked(Boolean.valueOf(consumeVO.getFixDate()));
-                notify.setChecked(Boolean.valueOf(consumeVO.getNotify()));
-                JsonObject js = gson.fromJson(consumeVO.getFixDateDetail(),JsonObject.class);
-                String choicestatue= js.get("choicestatue").getAsString().trim();
-                String choicedate=js.get("choicedate").getAsString().trim();
-                String noweek=js.get("noweek").getAsString().trim();
-                noWek.setChecked(Boolean.valueOf(noweek));
-                if(choicestatue.trim().equals("每天"))
-                {
-                    choiceStatue.setSelection(0);
-                }else if(choicestatue.trim().equals("每周")){
-                    choiceStatue.setSelection(1);
-                    if(choicedate.equals("星期一"))
-                    {
-                        updateChoice=0;
-                    }else if(choicedate.equals("星期二"))
-                    {
-                        updateChoice=1;
-                    }else if(choicedate.equals("星期三"))
-                    {
-                        updateChoice=2;
-                    }else if(choicedate.equals("星期四"))
-                    {
-                        updateChoice=3;
-                    }else if(choicedate.equals("星期五"))
-                    {
-                        updateChoice=4;
-                    }else if(choicedate.equals("星期六"))
-                    {
-                        updateChoice=5;
-                    }else{
-                        updateChoice=6;
-                    }
-                }else if(choicestatue.trim().equals("每個月")){
-                    choiceStatue.setSelection(2);
-                    updateChoice= Integer.valueOf(choicedate)-1;
-                }else{
-                    choiceStatue.setSelection(3);
-                    updateChoice=Integer.valueOf(choicedate.substring(0,choicedate.indexOf("月")))-1;
-                }
-            }
-
     }
 
 
@@ -415,11 +353,6 @@ public class InsertSpend extends Fragment {
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
-            if(first)
-            {
-                choiceday.setSelection(updateChoice);
-                first=false;
-            }
             noWek.setVisibility(View.GONE);
         }
 
@@ -565,20 +498,6 @@ public class InsertSpend extends Fragment {
             Calendar c = Calendar.getInstance();
             c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
             Date d = new Date(c.getTimeInMillis());
-            if(action.equals("update"))
-            {
-                consumeVO.setMaintype(name.getText().toString());
-                consumeVO.setSecondType(secondname.getText().toString());
-                consumeVO.setMoney(money.getText().toString());
-                consumeVO.setDate(d);
-                consumeVO.setNumber(number.getText().toString());
-                consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
-                consumeVO.setFixDateDetail(fixdatedetail);
-                consumeVO.setNotify(String.valueOf(notify.isChecked()));
-                consumeVO.setDetailname(detailname.getText().toString());
-                consumeDB.update(consumeVO);
-                Common.showToast(getActivity(), "修改成功");
-            }else{
                 ConsumeVO consumeVO= new ConsumeVO();
                 consumeVO.setMaintype(name.getText().toString());
                 consumeVO.setSecondType(secondname.getText().toString());
@@ -592,7 +511,6 @@ public class InsertSpend extends Fragment {
                 consumeVO.setIsWin("0");
                 consumeDB.insert(consumeVO);
                 Common.showToast(getActivity(), "新增成功");
-            }
         }
     }
 

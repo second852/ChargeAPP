@@ -41,6 +41,7 @@ public class UpdateDetail extends Fragment {
         View view = inflater.inflate(R.layout.updae_detail, container, false);
         detail=view.findViewById(R.id.detail);
         final InvoiceVO invoiceVO= (InvoiceVO) getArguments().getSerializable("invoiceVO");
+
         Gson gson=new Gson();
         Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
         List<JsonObject> js=gson.fromJson(invoiceVO.getDetail(), cdType);
@@ -56,13 +57,15 @@ public class UpdateDetail extends Fragment {
                 detail.append(j.get("description").getAsString()+" : \n"+0+"X"+0+"="+0+"元\n");
             }
         }
-        getActivity().setTitle("細節");
+       SelectActivity.mainTitle.setText("細節");
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Fragment fragment=new UpdateInvoice();
                 Bundle bundle=new Bundle();
                 bundle.putSerializable("invoiceVO",invoiceVO);
+                bundle.putSerializable("action",getArguments().getSerializable("action"));
+                bundle.putSerializable("position",getArguments().getSerializable("position"));
                 fragment.setArguments(bundle);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 for (Fragment fragment1 :  getFragmentManager().getFragments()) {

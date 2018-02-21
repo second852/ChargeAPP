@@ -66,7 +66,7 @@ public class SelectListBarIncome extends Fragment {
             end=new GregorianCalendar(year,month+index,start.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
             title=Common.sThree.format(new Date(start.getTimeInMillis()));
         }
-        getActivity().setTitle(title);
+        SelectActivity.mainTitle.setText(title);
         setLayout();
         return view;
     }

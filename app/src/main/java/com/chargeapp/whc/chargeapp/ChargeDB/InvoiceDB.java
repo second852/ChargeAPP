@@ -309,6 +309,30 @@ public class InvoiceDB {
         return invoiceVOSList;
     }
 
+    public long getMinTime() {
+        String sql = "SELECT min(time) FROM INVOICE ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        long minTime=0;
+        if (cursor.moveToNext()) {
+            minTime=cursor.getLong(0);
+        }
+        cursor.close();
+        return minTime;
+    }
+
+    public Integer getTotalBytime(Timestamp start,Timestamp end) {
+        String sql = "SELECT amount FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' order by time desc;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        int total=0;
+        while (cursor.moveToNext()) {
+           total=total+Integer.valueOf(cursor.getString(0));
+        }
+        cursor.close();
+        return total;
+    }
+
     public List<InvoiceVO> getInvoiceBytime(Timestamp start,Timestamp end) {
         String sql = "SELECT * FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' order by time desc;";
         String[] args = {};

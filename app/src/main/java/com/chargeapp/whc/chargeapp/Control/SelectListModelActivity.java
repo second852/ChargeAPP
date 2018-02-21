@@ -19,9 +19,7 @@ import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.R;
 
-import java.util.Calendar;
-
-public class SelectActivity extends Fragment implements ViewPager.OnPageChangeListener {
+public class SelectListModelActivity extends Fragment implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button exportMoney,importMoney,goneMoney,getMoney;
@@ -62,11 +60,11 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
         Button list=actionbarLayout.findViewById(R.id.howtogetprice);
         mainTitle=actionbarLayout.findViewById(R.id.mainTitle);
         mainTitle.setText("數據統計");
-        list.setText("列表模式");
+        list.setText("圖型模式");
         list.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment=new SelectListModelActivity();
+                Fragment fragment=new SelectActivity();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 for (Fragment fragment1 : getFragmentManager().getFragments()) {
                     fragmentTransaction.remove(fragment1);
@@ -75,9 +73,6 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
                 fragmentTransaction.commit();
             }
         });
-        Calendar calendar=Calendar.getInstance();
-        SelectListModelCom.year=calendar.get(Calendar.YEAR);
-        SelectListModelCom.month=calendar.get(Calendar.MONTH);
     }
 
     public void setcurrentpage()
@@ -109,7 +104,11 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
         public Fragment getItem(int position) {
             int currentpoition = position % 3;
             if (currentpoition == 0) {
-                return new SelectConsume();
+                Fragment fragment=new SelectListModelCom();
+                Bundle bundle=new Bundle();
+                bundle.putSerializable("position",0);
+                fragment.setArguments(bundle);
+                return fragment;
             }  else if(currentpoition==1){
                 return new SelectIncome();
             }else{

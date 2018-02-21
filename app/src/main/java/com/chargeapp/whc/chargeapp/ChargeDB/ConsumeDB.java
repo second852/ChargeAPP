@@ -122,6 +122,31 @@ public class ConsumeDB {
         cursor.close();
         return consumeList;
     }
+
+    public Integer getTimeTotal(Timestamp startTime, Timestamp endTime) {
+        String sql = "SELECT money FROM Consumer where  date between '"+startTime.getTime()+"' and '"+endTime.getTime()+"' order by date ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        int total=0;
+        while (cursor.moveToNext()) {
+            total=total+Integer.valueOf(cursor.getString(0));
+        }
+        cursor.close();
+        return total;
+    }
+
+    public long getMinTime() {
+        String sql = "SELECT min(date) FROM Consumer ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        long minTime=0;
+        if (cursor.moveToNext()) {
+            minTime=cursor.getLong(0);
+        }
+        cursor.close();
+        return minTime;
+    }
+
     public List<ConsumeVO> getTimePeriod(Timestamp startTime, Timestamp endTime) {
         String sql = "SELECT * FROM Consumer where  date between '"+startTime.getTime()+"' and '"+endTime.getTime()+"' order by date ;";
         String[] args = {};
@@ -164,7 +189,6 @@ public class ConsumeDB {
             consumeVO.setFixDate(cursor.getString(6));
             consumeVO.setFixDateDetail(cursor.getString(7));
             consumeVO.setNotify(cursor.getString(8));
-            Log.d("XXXXXXXXXXX",cursor.getString(8));
             consumeVO.setDetailname(cursor.getString(9));
             consumeVO.setIsWin(cursor.getString(10));
             consumeList.add(consumeVO);

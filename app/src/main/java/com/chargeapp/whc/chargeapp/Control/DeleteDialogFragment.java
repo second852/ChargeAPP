@@ -84,9 +84,12 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 {
                     SelectShowCircleDe selectShowCircleDe= (SelectShowCircleDe) fragement;
                     selectShowCircleDe.setLayout();
-                }else{
+                }else if(fragement instanceof SelectDetList){
                     SelectDetList selectDetList= (SelectDetList) fragement;
                     selectDetList.setLayout();
+                }else if(fragement instanceof SelectListModelCom){
+                    SelectListModelCom selectListModelCom= (SelectListModelCom) fragement;
+                    selectListModelCom.setLayout();
                 }
                 break;
             default:

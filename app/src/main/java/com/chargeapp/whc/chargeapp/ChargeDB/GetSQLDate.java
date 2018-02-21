@@ -15,6 +15,7 @@ import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectConsume;
 import com.chargeapp.whc.chargeapp.Control.SelectDetList;
+import com.chargeapp.whc.chargeapp.Control.SelectListModelCom;
 import com.chargeapp.whc.chargeapp.Control.SelectShowCircleDe;
 import com.chargeapp.whc.chargeapp.Control.UpdateInvoice;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
@@ -640,6 +641,15 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     selectShowCircleDe.cancelshow();
                 }else{
                     selectShowCircleDe.setLayout();
+                }
+            }else if(object instanceof SelectListModelCom)
+            {
+                SelectListModelCom selectListModelCom= (SelectListModelCom) object;
+                if(s.equals("timeout")||s.equals("error"))
+                {
+                    selectListModelCom.cancelshow();
+                }else{
+                    selectListModelCom.setLayout();
                 }
             }
         }catch (Exception e)

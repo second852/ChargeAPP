@@ -66,7 +66,7 @@ public class SelectIncome extends Fragment {
     private Spinner choicePeriod;
     private PieChart chart_pie;
     private int total, period;
-    private int Statue = 1;
+    private int Statue = 0;
     private String DesTittle;
     private List<String> chartLabels;
     private BankDB bankDB;
