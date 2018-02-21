@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -84,7 +85,7 @@ public class UpdateSpend extends Fragment {
     private int updateChoice;
     private String action;
     private boolean first = true;
-    private String f;
+
 
     @Nullable
     @Override
@@ -94,6 +95,7 @@ public class UpdateSpend extends Fragment {
         if (MainActivity.chargeAPPDB == null) {
             MainActivity.chargeAPPDB = new ChargeAPPDB(getActivity());
         }
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         gson = new Gson();
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -180,11 +182,9 @@ public class UpdateSpend extends Fragment {
         Fragment fragment = null;
         Bundle bundle = new Bundle();
         if (action.equals("SelectListModelCom")) {
-            fragment = new SelectListModelCom();
+            fragment = new SelectListModelActivity();
         }
 
-
-        bundle.putSerializable("position", getArguments().getSerializable("position"));
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {

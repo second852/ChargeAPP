@@ -65,7 +65,6 @@ public class UpdateDetail extends Fragment {
                 Bundle bundle=new Bundle();
                 bundle.putSerializable("invoiceVO",invoiceVO);
                 bundle.putSerializable("action",getArguments().getSerializable("action"));
-                bundle.putSerializable("position",getArguments().getSerializable("position"));
                 fragment.setArguments(bundle);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 for (Fragment fragment1 :  getFragmentManager().getFragments()) {

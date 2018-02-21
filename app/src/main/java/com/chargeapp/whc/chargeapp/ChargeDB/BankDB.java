@@ -44,7 +44,7 @@ public class BankDB {
     }
 
     public List<BankVO> getTimeAll(Timestamp start,Timestamp end) {
-        String sql = "SELECT * FROM BANK where date between '"+start.getTime()+"' and '"+end.getTime()+"' order by id;";
+        String sql = "SELECT * FROM BANK where date between '"+start.getTime()+"' and '"+end.getTime()+"' order by date;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();

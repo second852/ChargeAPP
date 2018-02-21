@@ -43,6 +43,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -136,6 +137,15 @@ public class MainActivity extends AppCompatActivity {
                     setTitle(R.string.text_Price);
                     switchFragment(fragment);
                 } else if (groupPosition == 3) {
+
+                    Calendar calendar=Calendar.getInstance();
+                    SelectListModelCom.year=calendar.get(Calendar.YEAR);
+                    SelectListModelCom.month=calendar.get(Calendar.MONTH);
+                    SelectListModelCom.p=0;
+                    SelectListModelIM.year=calendar.get(Calendar.YEAR);
+                    SelectListModelIM.month=calendar.get(Calendar.MONTH);
+                    SelectListModelIM.p=0;
+
                     setTitle(R.string.text_Picture);
                     drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);

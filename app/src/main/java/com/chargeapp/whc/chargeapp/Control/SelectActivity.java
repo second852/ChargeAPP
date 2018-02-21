@@ -35,7 +35,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.select_main, container, false);
+        View view = inflater.inflate(R.layout.select_char_main, container, false);
         mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
         exportMoney=view.findViewById(R.id.exportD);
         importMoney=view.findViewById(R.id.showD);
@@ -75,9 +75,6 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
                 fragmentTransaction.commit();
             }
         });
-        Calendar calendar=Calendar.getInstance();
-        SelectListModelCom.year=calendar.get(Calendar.YEAR);
-        SelectListModelCom.month=calendar.get(Calendar.MONTH);
     }
 
     public void setcurrentpage()

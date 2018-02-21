@@ -56,14 +56,13 @@ public class SelectListModelCom extends Fragment {
     public static int month,year;
     private ProgressDialog progressDialog;
     private Gson gson=new Gson();
-    private int p;
+    public static int p;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_list, container, false);
         findViewById(view);
-        p=(int) getArguments().getSerializable("position");
         progressDialog=new ProgressDialog(getActivity());
         DRadd.setOnClickListener(new addOnClick());
         DRcut.setOnClickListener(new cutOnClick());
@@ -114,11 +113,14 @@ public class SelectListModelCom extends Fragment {
         Collections.sort(objects, new Comparator<Object>() {
             @Override
             public int compare(Object o1, Object o2) {
-                long t1=(o1 instanceof ConsumeVO)(((ConsumeVO) o1).getDate().getTime()):(((ConsumeVO) o1).getDate().getTime());
-
-
-
-                return 0;
+                long t1=(o1 instanceof ConsumeVO)?(((ConsumeVO) o1).getDate().getTime()):(((InvoiceVO) o1).getTime().getTime());
+                long t2=(o2 instanceof ConsumeVO)?(((ConsumeVO) o2).getDate().getTime()):(((InvoiceVO) o2).getTime().getTime());
+                if(t1>t2)
+                {
+                    return 1;
+                }else {
+                    return -1;
+                }
             }
         });
         if(listView.getAdapter()!=null)
@@ -210,11 +212,12 @@ public class SelectListModelCom extends Fragment {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            p=position;
+                            SelectListModelActivity.page=4;
                             Fragment fragment=new UpdateInvoice();
                             Bundle bundle=new Bundle();
                             bundle.putSerializable("invoiceVO",I);
                             bundle.putSerializable("action","SelectListModelCom");
-                            bundle.putSerializable("position",position);
                             fragment.setArguments(bundle);
                             switchFragment(fragment);
                         }
@@ -231,11 +234,14 @@ public class SelectListModelCom extends Fragment {
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        p=position;
+                        SelectListModelActivity.page=4;
                         Fragment fragment=new UpdateSpend();
                         Bundle bundle=new Bundle();
                         bundle.putSerializable("consumeVO",c);
                         bundle.putSerializable("action","SelectListModelCom");
                         bundle.putSerializable("position",position);
+                        bundle.putSerializable("page",6);
                         fragment.setArguments(bundle);
                         switchFragment(fragment);
                     }

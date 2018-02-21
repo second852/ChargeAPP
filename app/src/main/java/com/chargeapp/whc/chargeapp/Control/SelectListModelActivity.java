@@ -22,49 +22,48 @@ import com.chargeapp.whc.chargeapp.R;
 public class SelectListModelActivity extends Fragment implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
-    private Button exportMoney,importMoney,goneMoney,getMoney;
+    private Button exportMoney, importMoney, goneMoney;
     private HorizontalScrollView choiceitem;
     private LinearLayout text;
-    private int nowpoint=0;
+    private int nowpoint = 0;
     private float movefirst;
-    public static TextView mainTitle;
-
+    public TextView mainTitle;
+    public static int page = 4;
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.select_main, container, false);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.select_list_main, container, false);
         mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
-        exportMoney=view.findViewById(R.id.exportD);
-        importMoney=view.findViewById(R.id.showD);
-        choiceitem=view.findViewById(R.id.choiceitem);
-        goneMoney=view.findViewById(R.id.goneD);
-        getMoney=view.findViewById(R.id.getMoney);
+        goneMoney = view.findViewById(R.id.goneD);
+        exportMoney = view.findViewById(R.id.exportD);
+        importMoney = view.findViewById(R.id.showD);
+        choiceitem = view.findViewById(R.id.choiceitem);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(6);
+        mViewPager.setCurrentItem(page);
         setcurrentpage();
-        text=view.findViewById(R.id.text);
-        movefirst=-importMoney.getWidth();
+        text = view.findViewById(R.id.text);
+        movefirst = -importMoney.getWidth();
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        ActionBar actionBar=((AppCompatActivity)getActivity()).getSupportActionBar();
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         View actionbarLayout = LayoutInflater.from(getActivity()).inflate(R.layout.actionbar_layout, null);
         actionBar.setCustomView(actionbarLayout);
-        Button list=actionbarLayout.findViewById(R.id.howtogetprice);
-        mainTitle=actionbarLayout.findViewById(R.id.mainTitle);
+        Button list = actionbarLayout.findViewById(R.id.howtogetprice);
+        mainTitle = actionbarLayout.findViewById(R.id.mainTitle);
         mainTitle.setText("數據統計");
         list.setText("圖型模式");
         list.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment=new SelectActivity();
+                Fragment fragment = new SelectActivity();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 for (Fragment fragment1 : getFragmentManager().getFragments()) {
                     fragmentTransaction.remove(fragment1);
@@ -75,21 +74,18 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
         });
     }
 
-    public void setcurrentpage()
-    {
-        int page=mViewPager.getCurrentItem();
-        if(page==8||page==0)
-        {
-            page=6;
+    public void setcurrentpage() {
+        int page = mViewPager.getCurrentItem();
+        if (page == 5 || page == 0) {
+            page = 4;
         }
         exportMoney.setOnClickListener(new ChangePage(page));
-        importMoney.setOnClickListener(new ChangePage(page+1));
-        getMoney.setOnClickListener(new ChangePage(page-1));
+        importMoney.setOnClickListener(new ChangePage(page + 1));
     }
 
 
     public static class MainPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 9;
+        private static int NUM_ITEMS = 6;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -102,17 +98,11 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
 
         @Override
         public Fragment getItem(int position) {
-            int currentpoition = position % 3;
+            int currentpoition = position % 2;
             if (currentpoition == 0) {
-                Fragment fragment=new SelectListModelCom();
-                Bundle bundle=new Bundle();
-                bundle.putSerializable("position",0);
-                fragment.setArguments(bundle);
-                return fragment;
-            }  else if(currentpoition==1){
-                return new SelectIncome();
-            }else{
-                return new SelectDeposit();
+                return new SelectListModelCom();
+            }  else {
+                return new SelectListModelIM();
             }
         }
     }
@@ -120,48 +110,40 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
 
     @Override
     public void onPageSelected(int position) {
-        int currentpoition=position%3;
-        nowpoint=position;
+        int currentpoition = position % 2;
+        nowpoint = position;
         setcurrentpage();
-        if(currentpoition==0)
-        {
-            goneMoney.setText("存款");
+        if (currentpoition == 0) {
+            goneMoney.setText("收入");
             exportMoney.setText("支出");
             importMoney.setText("收入");
-            getMoney.setText("存款");
-        } else if(currentpoition==1)
-        {
+        } else {
             goneMoney.setText("支出");
             exportMoney.setText("收入");
-            importMoney.setText("存款");
-            getMoney.setText("支出");
-        }else{
-            goneMoney.setText("收入");
-            exportMoney.setText("存款");
             importMoney.setText("支出");
-            getMoney.setText("收入");
         }
-
     }
+
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if(nowpoint>position)
-        {
-            text.setX(movefirst+(1-positionOffset)*320);
-        }else{
-            text.setX(movefirst-(positionOffset*320));
+        if (nowpoint > position) {
+            text.setX(movefirst + (1 - positionOffset) * 320);
+        } else {
+            text.setX(movefirst - (positionOffset * 320));
         }
     }
+
     @Override
     public void onPageScrollStateChanged(int state) {
     }
 
-    private class ChangePage implements View.OnClickListener{
+    private class ChangePage implements View.OnClickListener {
         private int page;
-        public ChangePage(int page)
-        {
-            this.page=page;
+
+        public ChangePage(int page) {
+            this.page = page;
         }
+
         @Override
         public void onClick(View view) {
             mViewPager.setCurrentItem(page);

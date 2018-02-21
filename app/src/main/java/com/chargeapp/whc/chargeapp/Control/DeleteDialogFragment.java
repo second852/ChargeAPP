@@ -9,11 +9,15 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 
+import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
+import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
+
+import java.util.Map;
 
 /**
  * Created by Wang on 2018/1/3.
@@ -23,6 +27,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
 
     private ConsumeDB consumeDB;
     private InvoiceDB invoiceDB;
+    private BankDB bankDB;
     private Object object;
     private Fragment fragement;
 
@@ -45,16 +50,20 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        String message;
+        String message=null;
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         if(object instanceof InvoiceVO)
         {
             InvoiceVO I= (InvoiceVO) object;
             message=I.getSecondtype()+" "+I.getAmount()+"元";
-        }else {
+        }else if(object instanceof ConsumeVO){
             ConsumeVO c= (ConsumeVO) object;
             message=c.getSecondType()+" "+c.getMoney()+"元";
+        }else if(object instanceof BankVO){
+            BankVO b= (BankVO) object;
+            message=b.getMaintype()+" "+b.getMoney()+"元";
         }
         String title="確定要刪除這筆資料?";
         return new AlertDialog.Builder(getActivity())
@@ -76,10 +85,16 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 {
                     InvoiceVO I= (InvoiceVO) object;
                     invoiceDB.deleteById(I.getId());
-                }else {
+                }else if(object instanceof ConsumeVO){
                     ConsumeVO c= (ConsumeVO) object;
                     consumeDB.deleteById(c.getId());
+                }else if(object instanceof BankVO)
+                {
+                    BankVO bankVO = (BankVO) object;
+                    bankDB.deleteById(bankVO.getId());
                 }
+
+
                 if(fragement instanceof SelectShowCircleDe)
                 {
                     SelectShowCircleDe selectShowCircleDe= (SelectShowCircleDe) fragement;
@@ -90,6 +105,9 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 }else if(fragement instanceof SelectListModelCom){
                     SelectListModelCom selectListModelCom= (SelectListModelCom) fragement;
                     selectListModelCom.setLayout();
+                }else if(fragement instanceof SelectListModelIM){
+                    SelectListModelIM selectListModelIM= (SelectListModelIM) fragement;
+                    selectListModelIM.setLayout();
                 }
                 break;
             default:

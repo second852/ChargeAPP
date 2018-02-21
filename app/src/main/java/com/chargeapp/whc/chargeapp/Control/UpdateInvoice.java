@@ -2,13 +2,12 @@ package com.chargeapp.whc.chargeapp.Control;
 
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Base64;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,19 +25,12 @@ import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -48,8 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
+
 
 
 public class UpdateInvoice extends Fragment {
@@ -76,7 +67,7 @@ public class UpdateInvoice extends Fragment {
     private InvoiceVO invoiceVO;
     private ProgressDialog progressDialog;
     private String action;
-    private int position;
+
 
 
     @Nullable
@@ -84,7 +75,9 @@ public class UpdateInvoice extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.update_invoice, container, false);
         findviewByid(view);
-        SelectActivity.mainTitle.setText("修改資料");
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        getActivity().setTitle("修改資料");
         setInvoice();
         if (MainActivity.chargeAPPDB == null) {
             MainActivity.chargeAPPDB = new ChargeAPPDB(getActivity());
@@ -120,7 +113,7 @@ public class UpdateInvoice extends Fragment {
     private void setInvoice() {
         invoiceVO = (InvoiceVO) getArguments().getSerializable("invoiceVO");
         action= (String) getArguments().getSerializable("action");
-        position= (int) getArguments().getSerializable("position");
+
 
 
         name.setText(invoiceVO.getMaintype().equals("O")?"其他":invoiceVO.getMaintype());
@@ -184,7 +177,6 @@ public class UpdateInvoice extends Fragment {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("invoiceVO",invoiceVO);
                     bundle.putSerializable("action",action);
-                    bundle.putSerializable("position",position);
                     fragment.setArguments(bundle);
                     FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                     for (Fragment fragment1 : getFragmentManager().getFragments()) {
@@ -458,10 +450,9 @@ public class UpdateInvoice extends Fragment {
         Bundle bundle=new Bundle();
         if(action.equals("SelectListModelCom"))
         {
-            fragment=new SelectListModelCom();
+            fragment=new SelectListModelActivity();
         }
 
-        bundle.putSerializable("position",position);
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 :  getFragmentManager().getFragments()) {

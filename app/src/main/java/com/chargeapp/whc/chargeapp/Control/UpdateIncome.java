@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +74,7 @@ public class UpdateIncome extends Fragment {
     private int updateChoice,year,month,day,Statue;
     private String key;
     private boolean first=true;
+    private String action;
 
 
 
@@ -81,11 +83,11 @@ public class UpdateIncome extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.insert_income, container, false);
         findviewByid(view);
-        year= (int) getArguments().getSerializable("year");
-        month= (int) getArguments().getSerializable("month");
-        day= (int) getArguments().getSerializable("day");
-        key= (String) getArguments().getSerializable("type");
-        Statue= (int) getArguments().getSerializable("statue");
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        getActivity().setTitle("修改資料");
+
+        action= (String) getArguments().getSerializable("action");
+
         bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDB=new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -120,6 +122,7 @@ public class UpdateIncome extends Fragment {
 
     private void setUpdate() {
          bankVO= (BankVO) getArguments().getSerializable("bankVO");
+
          name.setText(bankVO.getMaintype());
          money.setText(bankVO.getMoney());
          date.setText(sf.format(bankVO.getDate()));
@@ -461,8 +464,9 @@ public class UpdateIncome extends Fragment {
             g.put("choicestatue",isnull(choiceStatue.getSelectedItem().toString()));
             g.put("choicedate",isnull(choiceday.getSelectedItem()));
             String fixdatedetail=gson.toJson(g);
-            Calendar c=Calendar.getInstance();
-            c.set(datePicker.getYear(),datePicker.getMonth(),datePicker.getDayOfMonth());
+            String[] dates = date.getText().toString().split("-");
+            Calendar c = Calendar.getInstance();
+            c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
             Date d= new Date(c.getTimeInMillis());
             bankVO.setMaintype(name.getText().toString());
             bankVO.setMoney(money.getText().toString());
@@ -471,23 +475,15 @@ public class UpdateIncome extends Fragment {
             bankVO.setFixDateDetail(fixdatedetail);
             bankVO.setDetailname(detailname.getText().toString());
             bankDB.update(bankVO);
-            Fragment fragment;
+            Fragment fragment=null;
             Bundle bundle = new Bundle();
-            if(key.equals("bar"))
-            {
-                fragment=new SelectListBarIncome();
 
-            }else{
-                fragment=new SelectListPieIncome();
-                ArrayList<String> Okey=getArguments().getStringArrayList("OKey");
-                bundle.putStringArrayList("OKey",Okey);
+            if(action.equals("SelectListModelIM"))
+            {
+                fragment=new SelectListModelActivity();
             }
 
-            bundle.putSerializable("year",year);
-            bundle.putSerializable("month",month);
-            bundle.putSerializable("day",day);
-            bundle.putSerializable("statue",Statue);
-            bundle.putSerializable("type",key);
+
             fragment.setArguments(bundle);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             for (Fragment fragment1 :  getFragmentManager().getFragments()) {
