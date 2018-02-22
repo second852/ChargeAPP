@@ -22,7 +22,6 @@ public class TypeVO {
     private String keyword;
 
 
-
     public String getKeyword() {
         return keyword;
     }
@@ -30,6 +29,11 @@ public class TypeVO {
     public void setKeyword(String keyword) {
         this.keyword = keyword;
     }
+
+    public TypeVO() {
+
+    }
+
 
     public TypeVO(String name, String groupNumber, int image, String keyword) {
         this.name = name;
@@ -46,7 +50,7 @@ public class TypeVO {
         this.image = image;
     }
 
-    public TypeVO(int id, String groupNumber, String name , int image) {
+    public TypeVO(int id, String groupNumber, String name, int image) {
         this.id = id;
         this.name = name;
         this.groupNumber = groupNumber;
@@ -59,10 +63,10 @@ public class TypeVO {
         this.groupNumber = groupNumber;
     }
 
-    public TypeVO( String groupNumber, String name,int image) {
+    public TypeVO(String groupNumber, String name, int image) {
         this.groupNumber = groupNumber;
         this.name = name;
-        this.image=image;
+        this.image = image;
     }
 
     public int getId() {

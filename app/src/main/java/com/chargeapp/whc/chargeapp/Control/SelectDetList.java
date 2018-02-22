@@ -108,7 +108,7 @@ public class SelectDetList extends Fragment {
             end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
             title = Common.sFour.format(new Date(start.getTimeInMillis()));
         }
-        SelectActivity.mainTitle.setText(title);
+        getActivity().setTitle(title);
         setLayout();
         return view;
     }
@@ -232,6 +232,17 @@ public class SelectDetList extends Fragment {
                             Fragment fragment=new UpdateInvoice();
                             Bundle bundle=new Bundle();
                             bundle.putSerializable("invoiceVO",I);
+                            bundle.putSerializable("ShowConsume", ShowConsume);
+                            bundle.putSerializable("ShowAllCarrier", ShowAllCarrier);
+                            bundle.putSerializable("noShowCarrier", noShowCarrier);
+                            bundle.putSerializable("year", year);
+                            bundle.putSerializable("month", month);
+                            bundle.putSerializable("day", day);
+                            bundle.putSerializable("key", key);
+                            bundle.putSerializable("carrier", carrier);
+                            bundle.putSerializable("Statue",Statue);
+                            bundle.putSerializable("action","SelectDetList");
+                            bundle.putSerializable("position",position);
                             fragment.setArguments(bundle);
                             switchFragment(fragment);
                         }

@@ -104,7 +104,7 @@ public class EleNewCarrier extends Fragment {
                 {
                     showError.setVisibility(View.VISIBLE);
                     webView.setVisibility(View.GONE);
-                    Common.showLongToast(getActivity(),"連線失敗!請確認網路狀態!");
+                    Common.showToast(getActivity(),"連線失敗!請確認網路狀態!");
                     return;
                 }
                     myProgressBar.setVisibility(View.GONE);

@@ -354,6 +354,7 @@ public class InsertSpend extends Fragment {
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
             noWek.setVisibility(View.GONE);
+            noWek.setChecked(false);
         }
 
         @Override

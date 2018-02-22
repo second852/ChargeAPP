@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,8 +65,10 @@ public class SelectDetCircle extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         setDB();
         findViewById(view);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         hashMap = new HashMap<>();
         ShowConsume = (boolean) getArguments().getSerializable("ShowConsume");
         ShowAllCarrier = (boolean) getArguments().getSerializable("ShowAllCarrier");
@@ -75,6 +78,7 @@ public class SelectDetCircle extends Fragment {
         day = (int) getArguments().getSerializable("day");
         index = (int) getArguments().getSerializable("index");
         carrier = (String) getArguments().getSerializable("carrier");
+
         Calendar start = new GregorianCalendar(year, month, day + index, 0, 0, 0);
         Calendar end = new GregorianCalendar(year, month, day + index, 23, 59, 59);
         SimpleDateFormat sf = new SimpleDateFormat("yyyy 年 MM 月 dd 日");
@@ -121,7 +125,7 @@ public class SelectDetCircle extends Fragment {
                 total = total + Integer.parseInt(I.getAmount());
             }
         }
-        SelectActivity.mainTitle.setText(sf.format(new Date(start.getTimeInMillis())));
+        getActivity().setTitle(sf.format(new Date(start.getTimeInMillis())));
         List<String> stringList = new ArrayList<>(hashMap.keySet());
         size = stringList.size();
         listView.setAdapter(new ListAdapter(getActivity(), stringList));
@@ -249,6 +253,7 @@ public class SelectDetCircle extends Fragment {
             bundle.putSerializable("key", key);
             bundle.putSerializable("carrier", carrier);
             bundle.putSerializable("Statue", 0);
+            bundle.putSerializable("action", "SelectDetCircle");
             fragment.setArguments(bundle);
             switchFragment(fragment);
         }

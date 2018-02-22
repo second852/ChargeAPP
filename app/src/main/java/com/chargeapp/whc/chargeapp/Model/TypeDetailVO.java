@@ -23,13 +23,15 @@ public class TypeDetailVO {
     private String keyword;
 
 
+    public TypeDetailVO() {
+    }
 
 
-    public TypeDetailVO(int id, String groupNumber, String name,int image) {
+    public TypeDetailVO(int id, String groupNumber, String name, int image) {
         this.id = id;
         this.name = name;
         this.groupNumber = groupNumber;
-        this.image=image;
+        this.image = image;
     }
 
     public TypeDetailVO(String groupNumber, String name, int image) {
@@ -49,8 +51,8 @@ public class TypeDetailVO {
         this.id = id;
         this.name = name;
         this.groupNumber = groupNumber;
-        this.image=image;
-        this.keyword=keyword;
+        this.image = image;
+        this.keyword = keyword;
     }
 
     public String getKeyword() {

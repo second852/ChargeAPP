@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,8 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -60,7 +63,7 @@ public class SelectShowCircleDe extends Fragment {
     private boolean ShowConsume ;
     private boolean ShowAllCarrier;
     private boolean noShowCarrier;
-    private int year,month,day;
+    private int year,month,day,period,dweek;
     private String carrier;
     private  List<InvoiceVO> invoiceVOS;
     private List<ConsumeVO> consumeVOS;
@@ -77,7 +80,7 @@ public class SelectShowCircleDe extends Fragment {
     private String title;
     private SimpleDateFormat sf=new SimpleDateFormat("yyyy/MM/dd");
     private SimpleDateFormat sY=new SimpleDateFormat("yyyy 年 MM 月");
-    private int position=0;
+    private int position;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -85,6 +88,7 @@ public class SelectShowCircleDe extends Fragment {
         setDB();
         findViewById(view);
         gson=new Gson();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         progressDialog=new ProgressDialog(getActivity());
         ShowConsume= (boolean) getArguments().getSerializable("ShowConsume");
         ShowAllCarrier= (boolean) getArguments().getSerializable("ShowAllCarrier");
@@ -96,6 +100,9 @@ public class SelectShowCircleDe extends Fragment {
         carrier= (String) getArguments().getSerializable("carrier");
         Statue= (int) getArguments().getSerializable("statue");
         mainTitle= (String) getArguments().getSerializable("index");
+        period= (int) getArguments().getSerializable("period");
+        dweek= (int) getArguments().getSerializable("dweek");
+        position=(int) getArguments().getSerializable("position");
         if(Statue==0)
         {
            start=new GregorianCalendar(year,month,day,0,0,0);
@@ -103,8 +110,8 @@ public class SelectShowCircleDe extends Fragment {
            title=sf.format(new Date(start.getTimeInMillis()));
         }else if(Statue==1)
         {
-            start=new GregorianCalendar(year,month,day,0,0,0);
-            end=new GregorianCalendar(year,month,day+6,23,59,59);
+            start=new GregorianCalendar(year,month,day - dweek + 1,0,0,0);
+            end=new GregorianCalendar(year,month,day - dweek + 1 + period-1,23,59,59);
             title=sf.format(new Date(start.getTimeInMillis()))+" ~ "+sf.format(new Date(end.getTimeInMillis()));
         }else if(Statue==2)
         {
@@ -225,6 +232,20 @@ public class SelectShowCircleDe extends Fragment {
             objects.addAll(invoiceVOS);
         }
 
+        Collections.sort(objects, new Comparator<Object>() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                long t1=(o1 instanceof ConsumeVO)?(((ConsumeVO) o1).getDate().getTime()):(((InvoiceVO) o1).getTime().getTime());
+                long t2=(o2 instanceof ConsumeVO)?(((ConsumeVO) o2).getDate().getTime()):(((InvoiceVO) o2).getTime().getTime());
+                if(t1>t2)
+                {
+                    return 1;
+                }else {
+                    return -1;
+                }
+            }
+        });
+
         pieChart.setData(addData());
         pieChart.highlightValues(null);
         pieChart.setUsePercentValues(true);
@@ -238,7 +259,7 @@ public class SelectShowCircleDe extends Fragment {
         pieChart.getLegend().setEnabled(false);
         pieChart.invalidate();
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
-        SelectActivity.mainTitle.setText(title);
+        getActivity().setTitle(title);
         detail.setText(mainTitle+" : 共"+total+"元");
         if(listView.getAdapter()!=null)
         {
@@ -328,6 +349,19 @@ public class SelectShowCircleDe extends Fragment {
                             Fragment fragment=new UpdateInvoice();
                             Bundle bundle=new Bundle();
                             bundle.putSerializable("invoiceVO",I);
+                            bundle.putSerializable("ShowConsume", ShowConsume);
+                            bundle.putSerializable("ShowAllCarrier", ShowAllCarrier);
+                            bundle.putSerializable("noShowCarrier", noShowCarrier);
+                            bundle.putSerializable("year", year);
+                            bundle.putSerializable("month", month);
+                            bundle.putSerializable("day", day);
+                            bundle.putSerializable("index", mainTitle);
+                            bundle.putSerializable("carrier", carrier);
+                            bundle.putSerializable("statue", Statue);
+                            bundle.putSerializable("period", period);
+                            bundle.putSerializable("dweek",dweek);
+                            bundle.putSerializable("position",position);
+                            bundle.putSerializable("action","SelectShowCircleDe");
                             fragment.setArguments(bundle);
                             switchFragment(fragment);
                         }
@@ -343,10 +377,22 @@ public class SelectShowCircleDe extends Fragment {
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Fragment fragment=new InsertSpend();
+                        Fragment fragment=new UpdateSpend();
                         Bundle bundle=new Bundle();
                         bundle.putSerializable("consumeVO",c);
-                        bundle.putSerializable("action","update");
+                        bundle.putSerializable("ShowConsume", ShowConsume);
+                        bundle.putSerializable("ShowAllCarrier", ShowAllCarrier);
+                        bundle.putSerializable("noShowCarrier", noShowCarrier);
+                        bundle.putSerializable("year", year);
+                        bundle.putSerializable("month", month);
+                        bundle.putSerializable("day", day);
+                        bundle.putSerializable("index", mainTitle);
+                        bundle.putSerializable("carrier", carrier);
+                        bundle.putSerializable("statue", Statue);
+                        bundle.putSerializable("period", period);
+                        bundle.putSerializable("dweek",dweek);
+                        bundle.putSerializable("position",position);
+                        bundle.putSerializable("action","SelectShowCircleDe");
                         fragment.setArguments(bundle);
                         switchFragment(fragment);
                     }

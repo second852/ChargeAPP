@@ -39,6 +39,21 @@ public class TypeDB {
         return typeList;
     }
 
+    public TypeVO findTypeName(String n) {
+        String sql = "SELECT * FROM Type where name = '"+n+"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        TypeVO typeVO=new TypeVO();
+        if (cursor.moveToNext()) {
+            typeVO.setId(cursor.getInt(0));
+            typeVO.setGroupNumber(cursor.getString(1));
+            typeVO.setName(cursor.getString(2));
+            typeVO.setImage(cursor.getInt(3));
+        }
+        cursor.close();
+        return typeVO;
+    }
+
     public TypeVO findById(int id) {
         String[] columns = {
                 COL_id,"groupNumber","name", "image"

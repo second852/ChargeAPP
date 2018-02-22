@@ -205,7 +205,7 @@ public class UpdateIncome extends Fragment {
         ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setAdapter(arrayAdapter);
-        SelectActivity.mainTitle.setText("修改資料");
+        getActivity().setTitle("修改資料");
     }
 
     private class cancelinsert implements View.OnClickListener {

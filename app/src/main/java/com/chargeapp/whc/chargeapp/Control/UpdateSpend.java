@@ -183,6 +183,21 @@ public class UpdateSpend extends Fragment {
         Bundle bundle = new Bundle();
         if (action.equals("SelectListModelCom")) {
             fragment = new SelectListModelActivity();
+        }else if(action.equals("SelectShowCircleDe"))
+        {
+            fragment = new SelectShowCircleDe();
+            bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
+            bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
+            bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
+            bundle.putSerializable("year", getArguments().getSerializable("year"));
+            bundle.putSerializable("month", getArguments().getSerializable("month"));
+            bundle.putSerializable("day", getArguments().getSerializable("day"));
+            bundle.putSerializable("index", getArguments().getSerializable("index"));
+            bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
+            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
+            bundle.putSerializable("period", getArguments().getSerializable("period"));
+            bundle.putSerializable("dweek",getArguments().getSerializable("dweek"));
+            bundle.putSerializable("position",getArguments().getSerializable("position"));
         }
 
         fragment.setArguments(bundle);
@@ -426,6 +441,7 @@ public class UpdateSpend extends Fragment {
                 first = false;
             }
             noWek.setVisibility(View.GONE);
+            noWek.setChecked(false);
         }
 
         @Override

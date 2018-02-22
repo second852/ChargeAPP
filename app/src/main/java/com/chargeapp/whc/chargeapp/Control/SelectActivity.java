@@ -29,7 +29,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
     private LinearLayout text;
     private int nowpoint=0;
     private float movefirst;
-    public static TextView mainTitle;
+    public TextView mainTitle;
 
 
 

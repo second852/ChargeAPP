@@ -148,26 +148,26 @@ public class EleAddBank extends Fragment {
                 {
                     showError.setVisibility(View.VISIBLE);
                     webView.setVisibility(View.GONE);
-                    Common.showLongToast(getActivity(),"連線失敗!請確認網路狀態!");
+                    Common.showToast(getActivity(),"連線失敗!請確認網路狀態!");
                     return;
                 }
                 if(seconderror)
                 {
                     showError.setVisibility(View.VISIBLE);
                     webView.setVisibility(View.GONE);
-                    Common.showLongToast(getActivity(),"更新失敗!請確認網路狀態!");
+                    Common.showToast(getActivity(),"更新失敗!請確認網路狀態!");
                     return;
                 }
                 if(first)
                 {
                     myProgressBar.setVisibility(View.GONE);
                     webView.setVisibility(View.VISIBLE);
-                    Common.showLongToast(getActivity(),"連線成功!");
+                    Common.showToast(getActivity(),"連線成功!");
                     first=false;
                 }else{
                     myProgressBar.setVisibility(View.GONE);
                     webView.setVisibility(View.VISIBLE);
-                    Common.showLongToast(getActivity(),"更新成功!");
+                    Common.showToast(getActivity(),"更新成功!");
                 }
 
             }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ public class SelectListBarIncome extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         findViewById(view);
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         year= (int) getArguments().getSerializable("year");
@@ -66,7 +68,7 @@ public class SelectListBarIncome extends Fragment {
             end=new GregorianCalendar(year,month+index,start.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
             title=Common.sThree.format(new Date(start.getTimeInMillis()));
         }
-        SelectActivity.mainTitle.setText(title);
+        getActivity().setTitle(title);
         setLayout();
         return view;
     }

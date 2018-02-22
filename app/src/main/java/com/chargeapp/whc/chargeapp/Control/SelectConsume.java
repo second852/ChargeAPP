@@ -765,6 +765,7 @@ public class SelectConsume extends Fragment {
             if (key.equals("其他")) {
                 fragment = new SelectOtherCircle();
                 bundle.putStringArrayList("OKey", OKey);
+                bundle.putSerializable("total",(int)h.getY());
             } else {
                 fragment = new SelectShowCircleDe();
             }
@@ -778,7 +779,8 @@ public class SelectConsume extends Fragment {
             bundle.putSerializable("carrier", carrierVOS.get(choiceD).getCarNul());
             bundle.putSerializable("statue", Statue);
             bundle.putSerializable("period", period);
-            bundle.putSerializable("total",(int)e.getY());
+            bundle.putSerializable("dweek",dweek);
+            bundle.putSerializable("position",0);
             fragment.setArguments(bundle);
             switchFragment(fragment);
         }

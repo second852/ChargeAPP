@@ -57,14 +57,42 @@ public class UpdateDetail extends Fragment {
                 detail.append(j.get("description").getAsString()+" : \n"+0+"X"+0+"="+0+"元\n");
             }
         }
-       SelectActivity.mainTitle.setText("細節");
+      getActivity().setTitle("細節");
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String action= (String) getArguments().getSerializable("action");
                 Fragment fragment=new UpdateInvoice();
                 Bundle bundle=new Bundle();
                 bundle.putSerializable("invoiceVO",invoiceVO);
-                bundle.putSerializable("action",getArguments().getSerializable("action"));
+                bundle.putSerializable("action",action);
+                if(action.equals("SelectDetList"))
+                {
+
+                    bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
+                    bundle.putSerializable("ShowAllCarrier",  getArguments().getSerializable("ShowAllCarrier"));
+                    bundle.putSerializable("noShowCarrier",  getArguments().getSerializable("noShowCarrier"));
+                    bundle.putSerializable("year",  getArguments().getSerializable("year"));
+                    bundle.putSerializable("month",  getArguments().getSerializable("month"));
+                    bundle.putSerializable("day",  getArguments().getSerializable("day"));
+                    bundle.putSerializable("key",  getArguments().getSerializable("key"));
+                    bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
+                    bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
+                }else if(action.equals("SelectShowCircleDe"))
+                {
+                    bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
+                    bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
+                    bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
+                    bundle.putSerializable("year", getArguments().getSerializable("year"));
+                    bundle.putSerializable("month", getArguments().getSerializable("month"));
+                    bundle.putSerializable("day", getArguments().getSerializable("day"));
+                    bundle.putSerializable("index", getArguments().getSerializable("index"));
+                    bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
+                    bundle.putSerializable("statue", getArguments().getSerializable("statue"));
+                    bundle.putSerializable("period", getArguments().getSerializable("period"));
+                    bundle.putSerializable("dweek",getArguments().getSerializable("dweek"));
+                    bundle.putSerializable("position",getArguments().getSerializable("position"));
+                }
                 fragment.setArguments(bundle);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 for (Fragment fragment1 :  getFragmentManager().getFragments()) {

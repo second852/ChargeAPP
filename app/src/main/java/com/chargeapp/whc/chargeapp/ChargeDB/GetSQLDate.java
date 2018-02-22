@@ -556,12 +556,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             if (object instanceof EleSetCarrier) {
                 EleSetCarrier eleSetCarrier = (EleSetCarrier) object;
                 if (s.equals("noUser")) {
-                    Common.showLongToast(eleSetCarrier.getActivity(), "手機條碼或驗證碼有誤");
+                    Common.showToast(eleSetCarrier.getActivity(), "手機條碼或驗證碼有誤");
                     eleSetCarrier.closeDialog();
                     return;
                 } else if(s.equals("timeout"))
                 {
-                    Common.showLongToast(eleSetCarrier.getActivity(), "財政部網路忙線中，請稍候使用!");
+                    Common.showToast(eleSetCarrier.getActivity(), "財政部網路忙線中，請稍候使用!");
                     eleSetCarrier.closeDialog();
                     return;
                 }
@@ -575,7 +575,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 EleDonate eleDonate= (EleDonate) object;
                 if(s.equals("timeout"))
                 {
-                    Common.showLongToast(eleDonate.getActivity(), "財政部網路忙線中，請稍候使用!");
+                    Common.showToast(eleDonate.getActivity(), "財政部網路忙線中，請稍候使用!");
                     eleDonate.cancelDialog();
                     return;
                 }
@@ -593,7 +593,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 if(s.equals("timeout")||s.equals("error"))
                 {
                     download.AutoSetPrice();
-                    Common.showLongToast(download.getActivity(), "財政部網路忙線中，請稍候使用!");
+                    Common.showToast(download.getActivity(), "財政部網路忙線中，請稍候使用!");
                     return;
                 }
                 if(action.equals("getNeWPrice")||action.equals("getAllPriceNul"))
