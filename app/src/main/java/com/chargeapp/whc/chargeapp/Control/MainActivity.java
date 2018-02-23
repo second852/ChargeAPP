@@ -147,6 +147,9 @@ public class MainActivity extends AppCompatActivity {
                     SelectListModelIM.p=0;
                     UpdateInvoice.showsecondgrid=false;
                     UpdateInvoice.showfirstgrid=false;
+                    UpdateSpend.showsecondgrid=false;
+                    UpdateSpend.showfirstgrid=false;
+
                     setTitle(R.string.text_Picture);
                     drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);

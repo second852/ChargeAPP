@@ -139,9 +139,7 @@ public class InsertSpend extends Fragment {
         saveType = view.findViewById(R.id.saveType);
         clearType = view.findViewById(R.id.clearType);
         newtype = view.findViewById(R.id.newtype);
-        inserttypeDetail = view.findViewById(R.id.inserttypeDetail);
         showPicture = view.findViewById(R.id.showPicture);
-        imageDetatil = view.findViewById(R.id.imageDetail);
         imageTitle = view.findViewById(R.id.imageTitle);
         showTitle = view.findViewById(R.id.showTitle);
         showAllpicture = view.findViewById(R.id.showAllpicture);

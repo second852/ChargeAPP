@@ -43,8 +43,9 @@ public class TypeDB {
         String sql = "SELECT * FROM Type where name = '"+n+"' order by id;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
-        TypeVO typeVO=new TypeVO();
+        TypeVO typeVO=null;
         if (cursor.moveToNext()) {
+            typeVO=new TypeVO();
             typeVO.setId(cursor.getInt(0));
             typeVO.setGroupNumber(cursor.getString(1));
             typeVO.setName(cursor.getString(2));

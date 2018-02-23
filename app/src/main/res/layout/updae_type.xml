@@ -208,7 +208,7 @@
                 android:background="#FF8888"
                 android:gravity="center"
                 android:padding="5dp"
-                android:text="清除"
+                android:text="取消"
                 android:textColor="#000000"
                 android:textSize="20sp" />
         </RelativeLayout>

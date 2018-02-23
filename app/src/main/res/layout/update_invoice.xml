@@ -218,8 +218,6 @@
             android:textColor="#000000"
             android:textSize="20sp" />
     </RelativeLayout>
-
-
     <LinearLayout
         android:id="@+id/firstL"
         android:layout_width="match_parent"

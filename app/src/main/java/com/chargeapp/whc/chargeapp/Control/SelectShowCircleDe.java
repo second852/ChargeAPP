@@ -373,7 +373,7 @@ public class SelectShowCircleDe extends Fragment {
                 sbTitle.append(sf.format(c.getDate())+" ");
                 sbTitle.append(c.getSecondType()+" ");
                 sbTitle.append("共"+c.getMoney()+"元");
-                sbDecribe.append((c.getDetailname()==null)?"無資料\n  \n":c.getDetailname());
+                sbDecribe.append(c.getDetailname());
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

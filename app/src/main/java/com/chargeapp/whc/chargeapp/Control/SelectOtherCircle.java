@@ -64,6 +64,7 @@ public class SelectOtherCircle extends Fragment {
     private List<Integer> totalList;
     private HashMap<String, HashMap<String, Integer>> mapHashMap;
     private int countOther;
+    private TextView message;
 
 
     @Override
@@ -72,6 +73,7 @@ public class SelectOtherCircle extends Fragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         setDB();
         listView = view.findViewById(R.id.listCircle);
+        message=view.findViewById(R.id.message);
         ShowConsume = (boolean) getArguments().getSerializable("ShowConsume");
         ShowAllCarrier = (boolean) getArguments().getSerializable("ShowAllCarrier");
         noShowCarrier = (boolean) getArguments().getSerializable("noShowCarrier");
@@ -170,6 +172,7 @@ public class SelectOtherCircle extends Fragment {
             mapHashMap.put("total", totalOther);
         }
         listView.setAdapter(new ListAdapter(getActivity(), Okey));
+
     }
 
 
@@ -183,14 +186,28 @@ public class SelectOtherCircle extends Fragment {
         HashMap<String, Integer> hashMap = mapHashMap.get(key);
         int i = 0;
         int total=0;
-        for (String s : hashMap.keySet()) {
-            if (s.equals("O")) {
-                yVals1.add(new PieEntry(hashMap.get(s), "其他"));
-            } else {
-                yVals1.add(new PieEntry(hashMap.get(s), s));
+        if(key.equals("total"))
+        {
+            for(int j=1;j<Okey.size();j++)
+            {
+                if (Okey.get(j).equals("O")) {
+                    yVals1.add(new PieEntry(hashMap.get(Okey.get(j)), "其他"));
+                } else {
+                    yVals1.add(new PieEntry(hashMap.get(Okey.get(j)), Okey.get(j)));
+                }
+                total=total+hashMap.get(Okey.get(j));
+                i++;
             }
-            total=total+hashMap.get(s);
-            i++;
+        }else{
+            for (String s : hashMap.keySet()) {
+                if (s.equals("O")) {
+                    yVals1.add(new PieEntry(hashMap.get(s), "其他"));
+                } else {
+                    yVals1.add(new PieEntry(hashMap.get(s), s));
+                }
+                total=total+hashMap.get(s);
+                i++;
+            }
         }
         if (key.equals("O")) {
             detail.setText("其他" + " : 總共" + total + "元");
@@ -251,7 +268,7 @@ public class SelectOtherCircle extends Fragment {
             pieChart.setDrawHoleEnabled(true);
             pieChart.setHoleRadius(7);
             pieChart.setTransparentCircleRadius(10);
-            pieChart.setRotationAngle(30);
+            pieChart.setRotationAngle(0);
             pieChart.setRotationEnabled(true);
             pieChart.setEntryLabelColor(Color.BLACK);
             pieChart.getLegend().setEnabled(false);
@@ -276,7 +293,9 @@ public class SelectOtherCircle extends Fragment {
 
         @Override
         public void onValueSelected(Entry e, Highlight h) {
-            listView.smoothScrollToPosition((int) (h.getX()+1));
+            int index= (int) h.getX();
+            index=index+1;
+            listView.smoothScrollToPosition(index);
         }
         @Override
         public void onNothingSelected() {
@@ -286,11 +305,9 @@ public class SelectOtherCircle extends Fragment {
     private class changeToNewF implements com.github.mikephil.charting.listener.OnChartValueSelectedListener {
         private String key;
 
-        changeToNewF(String key) {
+        public changeToNewF(String key) {
             this.key = key;
         }
-
-
 
         @Override
         public void onValueSelected(Entry e, Highlight h) {
@@ -305,6 +322,7 @@ public class SelectOtherCircle extends Fragment {
             bundle.putSerializable("day", day);
             bundle.putSerializable("carrier", carrier);
             bundle.putSerializable("Statue",Statue);
+            bundle.putSerializable("position",0);
             fragment.setArguments(bundle);
             switchFragment(fragment);
         }

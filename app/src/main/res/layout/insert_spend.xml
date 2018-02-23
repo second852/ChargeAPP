@@ -330,11 +330,8 @@
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>
-
-
-
     <LinearLayout
-        android:id="@+id/showPicture"
+        android:id="@+id/firstL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -342,202 +339,61 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:background="#ffffff"
+        android:background="#000000"
         android:orientation="vertical"
         android:visibility="gone">
-
         <TextView
-            android:id="@+id/showTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="1dp"
             android:gravity="center"
             android:text="主項目種類"
+            android:background="#ffffff"
             android:textColor="#000000"
             android:textSize="25dp" />
         <GridView
-            android:id="@+id/choiceType"
+            android:id="@+id/firstG"
+            android:background="#ffffff"
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginBottom="1dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
     </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/insertType"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/choiceitem"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:background="#ffffff"
-        android:visibility="gone">
-
-
-        <TextView
-            android:id="@+id/newTypeTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:layout_marginTop="55dp"
-            android:text="新增主要項目"
-            android:textColor="#000000"
-            android:textSize="20dp" />
-        <ImageView
-            android:id="@+id/imageTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/add"
-            android:layout_below="@+id/newTypeTitle"
-            android:layout_marginTop="40dp"
-            android:layout_marginLeft="45dp"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="新增圖片"
-            android:textColor="#000000"
-            android:layout_below="@+id/newTypeTitle"
-            android:layout_marginLeft="38dp"
-            android:layout_marginTop="20dp"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="新增種類"
-            android:textColor="#000000"
-            android:layout_below="@+id/newTypeTitle"
-            android:layout_toRightOf="@+id/imageTitle"
-            android:layout_marginLeft="110dp"
-            android:layout_marginTop="20dp"
-            />
-        <EditText
-            android:id="@+id/newtype"
-            android:layout_width="200dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="45dp"
-            android:layout_toRightOf="@+id/imageTitle"
-            android:layout_marginLeft="50dp"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/newTypeTitle"
-            android:background="#FFEE99"
-            android:inputType="text"
-            android:singleLine="true"
-            android:textColor="#000000"
-            android:textColorHint="#AAAAAA" />
-
-        <TextView
-            android:id="@+id/newTypeDetil"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/newtype"
-            android:layout_marginTop="60dp"
-            android:gravity="center"
-            android:text="新增次要項目"
-            android:textColor="#000000"
-            android:textSize="20dp" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="新增圖片"
-            android:textColor="#000000"
-            android:layout_marginLeft="38dp"
-            android:layout_below="@+id/newTypeDetil"
-            android:layout_marginTop="20dp"
-            />
-        <ImageView
-            android:id="@+id/imageDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/newTypeDetil"
-            android:layout_marginLeft="45dp"
-            android:layout_marginTop="45dp"
-            android:src="@drawable/add" />
-        <EditText
-            android:id="@+id/inserttypeDetail"
-            android:layout_width="200dp"
-            android:layout_height="30dp"
-            android:layout_below="@+id/newTypeDetil"
-            android:layout_toRightOf="@+id/imageDetail"
-            android:background="#FFEE99"
-            android:layout_marginLeft="50dp"
-            android:layout_marginTop="45dp"
-            android:inputType="text"
-            android:singleLine="true"
-            android:textColor="#000000"
-            android:textColorHint="#AAAAAA" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="新增種類"
-            android:textColor="#000000"
-            android:layout_below="@+id/newTypeDetil"
-            android:layout_toRightOf="@+id/imageTitle"
-            android:layout_marginLeft="110dp"
-            android:layout_marginTop="20dp"
-            />
-
-        <TextView
-            android:id="@+id/saveType"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/inserttypeDetail"
-            android:layout_marginRight="40dp"
-            android:layout_marginTop="40dp"
-            android:layout_toLeftOf="@+id/newStandard"
-            android:background="#33CCFF"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="新增"
-            android:textColor="#000000"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/clearType"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/inserttypeDetail"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="40dp"
-            android:layout_toRightOf="@+id/newStandard"
-            android:background="#FF8888"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="取消"
-            android:textColor="#000000"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/newStandard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            />
-    </RelativeLayout>
     <LinearLayout
-        android:id="@+id/showAllPL"
+        android:id="@+id/secondL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#000000"
         android:orientation="vertical"
-        android:visibility="gone"
-        android:layout_margin="25dp"
-        android:background="#ffffff"
-        >
+        android:visibility="gone">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="30sp"
-            android:text="請選擇圖片"
+            android:text="次要項目種類"
             android:textColor="#000000"
+            android:background="#ffffff"
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="1dp"
             android:gravity="center"
             />
         <GridView
-            android:id="@+id/showAllpicture"
+            android:id="@+id/secondG"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#ffffff"
-            >
-        </GridView>
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginBottom="1dp"
+            android:background="#ffffff" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/showdate"

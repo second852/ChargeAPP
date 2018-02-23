@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,11 +20,13 @@ import android.widget.SimpleAdapter;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
+import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,33 +36,38 @@ import java.util.Map;
  */
 
 public class InsertType extends Fragment {
-    private ImageView mainImage,secondImage,resultI;
-    private EditText mainName,secondName,secondKey;
-    private Button save,clear;
+    private ImageView mainImage, secondImage, resultI;
+    private EditText mainName, secondName, secondKey;
+    private Button save, clear;
     private LinearLayout choiceL;
     private GridView choiceG;
     private TypeVO typeVO;
     private TypeDetailVO typeDetailVO;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
-    private InvoiceVO invoiceVO;
+    private Object object;
     private String action;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.updae_type, container, false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
-        typeDB=new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB=new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceVO = (InvoiceVO) getArguments().getSerializable("invoiceVO");
-        action= (String) getArguments().getSerializable("action");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        object = getArguments().getSerializable("object");
+        action = (String) getArguments().getSerializable("action");
         findViewById(view);
         setGridPicture();
-        if(UpdateInvoice.showsecondgrid)
-        {
+        if (UpdateInvoice.showsecondgrid || UpdateSpend.showsecondgrid) {
             setType();
+            mainImage.setOnClickListener(null);
+            getActivity().setTitle("新增次項目類別");
+        } else {
+            typeVO = new TypeVO();
+            getActivity().setTitle("新增主/次項目類別");
+            mainImage.setOnClickListener(new showImage());
         }
-        mainImage.setOnClickListener(new showImage());
         secondImage.setOnClickListener(new showImage());
         choiceG.setOnItemClickListener(new choicePicture());
         clear.setOnClickListener(new clearOnClick());
@@ -68,20 +76,22 @@ public class InsertType extends Fragment {
     }
 
     private void setType() {
-        Log.d("TAG",invoiceVO.getMaintype());
-        TypeVO typeVO=typeDB.findTypeName(invoiceVO.getMaintype());
+        String type = (object instanceof InvoiceVO) ? ((InvoiceVO) object).getMaintype() : ((ConsumeVO) object).getMaintype();
+        typeVO = typeDB.findTypeName(type);
         mainImage.setImageResource(MainActivity.imageAll[typeVO.getImage()]);
         mainName.setText(typeVO.getName().trim());
+        mainName.setFocusable(false);
+        mainName.setFocusableInTouchMode(false);
+        mainName.setBackgroundColor(Color.parseColor("#DDDDDD"));
     }
 
     private void setGridPicture() {
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
-        for(int i=0;i<MainActivity.imageAll.length;i++)
-        {
+        for (int i = 0; i < MainActivity.imageAll.length; i++) {
             item = new HashMap<String, Object>();
             item.put("image", MainActivity.imageAll[i]);
-            item.put("text"," ");
+            item.put("text", " ");
             items.add(item);
         }
         SimpleAdapter adapter = new SimpleAdapter(getActivity(),
@@ -92,24 +102,23 @@ public class InsertType extends Fragment {
     }
 
     private void findViewById(View view) {
-        typeDetailVO=new TypeDetailVO();
-        typeVO=new TypeVO();
-        mainImage=view.findViewById(R.id.mainImage);
-        secondImage=view.findViewById(R.id.secondImage);
-        mainName=view.findViewById(R.id.mainName);
-        secondName=view.findViewById(R.id.secondName);
-        secondKey=view.findViewById(R.id.secondKey);
-        save=view.findViewById(R.id.save);
-        clear=view.findViewById(R.id.clear);
-        choiceL=view.findViewById(R.id.choiceL);
-        choiceG=view.findViewById(R.id.choiceG);
+        typeDetailVO = new TypeDetailVO();
+        mainImage = view.findViewById(R.id.mainImage);
+        secondImage = view.findViewById(R.id.secondImage);
+        mainName = view.findViewById(R.id.mainName);
+        secondName = view.findViewById(R.id.secondName);
+        secondKey = view.findViewById(R.id.secondKey);
+        save = view.findViewById(R.id.save);
+        clear = view.findViewById(R.id.clear);
+        choiceL = view.findViewById(R.id.choiceL);
+        choiceG = view.findViewById(R.id.choiceG);
     }
 
     private class showImage implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             choiceL.setVisibility(View.VISIBLE);
-            resultI= (ImageView) view;
+            resultI = (ImageView) view;
         }
     }
 
@@ -117,11 +126,10 @@ public class InsertType extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             resultI.setImageResource(MainActivity.imageAll[i]);
-            int id=resultI.getId();
-            if(id==R.id.mainImage)
-            {
+            int id = resultI.getId();
+            if (id == R.id.mainImage) {
                 typeVO.setImage(i);
-            }else {
+            } else {
                 typeDetailVO.setImage(i);
             }
             choiceL.setVisibility(View.GONE);
@@ -142,48 +150,72 @@ public class InsertType extends Fragment {
     private class insertType implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            if (mainName.getText().toString() == null || mainName.getText().toString().isEmpty()) {
+            String mainType = mainName.getText().toString();
+            String secondTitle = secondName.getText().toString().trim();
+            String keyWorld = secondKey.getText().toString().trim();
+            if (mainType == null || mainType.isEmpty()) {
                 mainName.setError("主項目不能空白");
                 return;
             }
-            if (secondName.getText().toString().trim() == null || secondName.getText().toString().trim().isEmpty()) {
+            if (secondTitle == null || secondTitle.isEmpty()) {
                 secondName.setError("次項目不能空白");
                 return;
             }
-            if (secondKey.getText().toString().trim() == null || secondKey.getText().toString().trim().isEmpty()) {
+            if (keyWorld == null || keyWorld.isEmpty()) {
                 secondKey.setError("關鍵字不能空白");
                 return;
             }
+
+
+            TypeDetailVO TDO = typeDetailDB.findByname(secondTitle, mainType);
+            if (TDO != null) {
+                secondName.setError("新增次項目名稱不可重複");
+                return;
+            }
+
+            if (!UpdateInvoice.showsecondgrid &&!UpdateSpend.showsecondgrid) {
+                TypeVO old = typeDB.findTypeName(mainType);
+                if (old != null) {
+                    mainName.setError("新增主項目名稱不可重複");
+                    return;
+                }
+                typeVO.setName(mainType);
+                typeVO.setGroupNumber(mainType);
+                typeDB.insert(typeVO);
+            }
+
             typeDetailVO.setGroupNumber(mainName.getText().toString().trim());
             typeDetailVO.setName(secondName.getText().toString().trim());
             typeDetailVO.setKeyword(secondKey.getText().toString().trim());
-            typeVO.setName(mainName.getText().toString().trim());
-            typeVO.setGroupNumber(mainName.getText().toString().trim());
             typeDetailDB.insert(typeDetailVO);
-            typeDB.insert(typeVO);
-            returnThisFramgent(new UpdateInvoice());
+
+            if (object instanceof InvoiceVO) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("invoiceVO", (InvoiceVO) object);
+                returnThisFramgent(new UpdateInvoice(), bundle);
+            } else {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("consumeVO", (ConsumeVO) object);
+                returnThisFramgent(new UpdateSpend(), bundle);
+            }
             Common.showToast(getActivity(), "新增成功");
         }
     }
-    private void returnThisFramgent(Fragment fragment)
-    {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("invoiceVO",invoiceVO);
-        bundle.putSerializable("action",action);
-        if(action.equals("SelectDetList"))
-        {
 
+    private void returnThisFramgent(Fragment fragment, Bundle bundle) {
+        bundle.putSerializable("action", action);
+        if (action.equals("SelectDetList")) {
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
-            bundle.putSerializable("ShowAllCarrier",  getArguments().getSerializable("ShowAllCarrier"));
-            bundle.putSerializable("noShowCarrier",  getArguments().getSerializable("noShowCarrier"));
-            bundle.putSerializable("year",  getArguments().getSerializable("year"));
-            bundle.putSerializable("month",  getArguments().getSerializable("month"));
-            bundle.putSerializable("day",  getArguments().getSerializable("day"));
-            bundle.putSerializable("key",  getArguments().getSerializable("key"));
-            bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
+            bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
+            bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
+            bundle.putSerializable("year", getArguments().getSerializable("year"));
+            bundle.putSerializable("month", getArguments().getSerializable("month"));
+            bundle.putSerializable("day", getArguments().getSerializable("day"));
+            bundle.putSerializable("key", getArguments().getSerializable("key"));
+            bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
             bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
-        }else if(action.equals("SelectShowCircleDe"))
-        {
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
+        } else if (action.equals("SelectShowCircleDe")) {
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
             bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
             bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
@@ -194,16 +226,16 @@ public class InsertType extends Fragment {
             bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
             bundle.putSerializable("statue", getArguments().getSerializable("statue"));
             bundle.putSerializable("period", getArguments().getSerializable("period"));
-            bundle.putSerializable("dweek",getArguments().getSerializable("dweek"));
-            bundle.putSerializable("position",getArguments().getSerializable("position"));
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);
     }
-    public void switchFramgent(Fragment fragment)
-    {
+
+    public void switchFramgent(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        for (Fragment fragment1 :  getFragmentManager().getFragments()) {
+        for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);
         }
         fragmentTransaction.replace(R.id.body, fragment);

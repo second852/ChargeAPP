@@ -52,7 +52,6 @@ public class SelectDetList extends Fragment {
 
     //    private LineChart lineChart;
     private InvoiceDB invoiceDB;
-    private CarrierDB carrierDB;
     private ConsumeDB consumeDB;
     private ListView listView;
     private boolean ShowConsume ;
@@ -70,6 +69,8 @@ public class SelectDetList extends Fragment {
     private Calendar start,end;
     private int Statue;
     private String title;
+    private TextView message;
+    private int position;
 
 
 
@@ -91,6 +92,7 @@ public class SelectDetList extends Fragment {
         key= (String) getArguments().getSerializable("key");
         carrier= (String) getArguments().getSerializable("carrier");
         Statue=(int) getArguments().getSerializable("Statue");
+        position= (int) getArguments().getSerializable("position");
         if (Statue == 0) {
             start = new GregorianCalendar(year, month, day, 0, 0, 0);
             end = new GregorianCalendar(year, month, day, 23, 59, 59);
@@ -145,16 +147,24 @@ public class SelectDetList extends Fragment {
         }else {
             listView.setAdapter(new ListAdapter(getActivity(),objects));
         }
+        listView.setSelection(position);
+        if(objects.size()<=0)
+        {
+            message.setText(title+"\n"+key+"種類 無資料!");
+            message.setVisibility(View.VISIBLE);
+        }else{
+            message.setVisibility(View.GONE);
+        }
         progressDialog.cancel();
     }
 
     private void findViewById(View view) {
         listView=view.findViewById(R.id.listCircle);
+        message=view.findViewById(R.id.message);
     }
 
     private void setDB() {
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
@@ -232,19 +242,8 @@ public class SelectDetList extends Fragment {
                             Fragment fragment=new UpdateInvoice();
                             Bundle bundle=new Bundle();
                             bundle.putSerializable("invoiceVO",I);
-                            bundle.putSerializable("ShowConsume", ShowConsume);
-                            bundle.putSerializable("ShowAllCarrier", ShowAllCarrier);
-                            bundle.putSerializable("noShowCarrier", noShowCarrier);
-                            bundle.putSerializable("year", year);
-                            bundle.putSerializable("month", month);
-                            bundle.putSerializable("day", day);
-                            bundle.putSerializable("key", key);
-                            bundle.putSerializable("carrier", carrier);
-                            bundle.putSerializable("Statue",Statue);
-                            bundle.putSerializable("action","SelectDetList");
                             bundle.putSerializable("position",position);
-                            fragment.setArguments(bundle);
-                            switchFragment(fragment);
+                            switchFragment(fragment,bundle);
                         }
                     });
                 }
@@ -257,12 +256,12 @@ public class SelectDetList extends Fragment {
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Fragment fragment=new InsertSpend();
+                        Fragment fragment=new UpdateSpend();
                         Bundle bundle=new Bundle();
                         bundle.putSerializable("consumeVO",c);
-                        bundle.putSerializable("action","update");
+                        bundle.putSerializable("position",position);
                         fragment.setArguments(bundle);
-                        switchFragment(fragment);
+                        switchFragment(fragment,bundle);
                     }
                 });
             }
@@ -293,7 +292,19 @@ public class SelectDetList extends Fragment {
 
 
 
-    private void switchFragment(Fragment fragment) {
+    private void switchFragment(Fragment fragment,Bundle bundle) {
+        bundle.putSerializable("action","SelectDetList");
+        bundle.putSerializable("ShowConsume", ShowConsume);
+        bundle.putSerializable("ShowAllCarrier", ShowAllCarrier);
+        bundle.putSerializable("noShowCarrier", noShowCarrier);
+        bundle.putSerializable("year", year);
+        bundle.putSerializable("month", month);
+        bundle.putSerializable("day", day);
+        bundle.putSerializable("key", key);
+        bundle.putSerializable("carrier", carrier);
+        bundle.putSerializable("Statue",Statue);
+        bundle.putSerializable("action","SelectDetList");
+        fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 :  getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

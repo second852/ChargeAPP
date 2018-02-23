@@ -177,7 +177,12 @@ public class UpdateInvoice extends Fragment {
             detailname.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    returnThisFramgent(new UpdateDetail());
+                    invoiceVO.setMaintype(name.getText().toString());
+                    invoiceVO.setSecondtype(secondname.getText().toString());
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("invoiceVO",invoiceVO);
+                    bundle.putSerializable("action",action);
+                    returnThisFramgent(new UpdateDetail(),bundle);
                 }
             });
         } else {
@@ -270,14 +275,10 @@ public class UpdateInvoice extends Fragment {
         }
     }
 
-    private void returnThisFramgent(Fragment fragment)
+    private void returnThisFramgent(Fragment fragment,Bundle bundle)
     {
 
-        invoiceVO.setMaintype(name.getText().toString());
-        invoiceVO.setSecondtype(secondname.getText().toString());
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("invoiceVO",invoiceVO);
-        bundle.putSerializable("action",action);
+
         if(action.equals("SelectDetList"))
         {
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
@@ -289,6 +290,7 @@ public class UpdateInvoice extends Fragment {
             bundle.putSerializable("key",  getArguments().getSerializable("key"));
             bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
             bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
         }else if(action.equals("SelectShowCircleDe"))
         {
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
@@ -328,6 +330,7 @@ public class UpdateInvoice extends Fragment {
             bundle.putSerializable("key",  getArguments().getSerializable("key"));
             bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
             bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
         }else if(action.equals("SelectShowCircleDe"))
         {
             fragment=new SelectShowCircleDe();
@@ -344,7 +347,6 @@ public class UpdateInvoice extends Fragment {
             bundle.putSerializable("dweek",getArguments().getSerializable("dweek"));
             bundle.putSerializable("position",getArguments().getSerializable("position"));
         }
-
         fragment.setArguments(bundle);
         switchFramgent(fragment);
     }
@@ -374,8 +376,13 @@ public class UpdateInvoice extends Fragment {
             String type=textView.getText().toString().trim();
             if(type.equals("新增"))
             {
+                invoiceVO.setMaintype(name.getText().toString());
+                invoiceVO.setSecondtype(secondname.getText().toString());
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("object",invoiceVO);
+                bundle.putSerializable("action",action);
                 showfirstgrid=true;
-                returnThisFramgent(new InsertType());
+                returnThisFramgent(new InsertType(),bundle);
                 return;
             }
             name.setText(type);
@@ -398,8 +405,13 @@ public class UpdateInvoice extends Fragment {
             }
             if(type.equals("新增"))
             {
+                invoiceVO.setMaintype(name.getText().toString());
+                invoiceVO.setSecondtype(secondname.getText().toString());
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("object",invoiceVO);
+                bundle.putSerializable("action",action);
                 showsecondgrid=true;
-                returnThisFramgent(new InsertType());
+                returnThisFramgent(new InsertType(),bundle);
                 return;
             }
             secondname.setText(type);
