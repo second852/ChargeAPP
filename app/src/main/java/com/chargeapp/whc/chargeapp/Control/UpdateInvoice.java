@@ -47,8 +47,7 @@ public class UpdateInvoice extends Fragment {
     private String action;
     private LinearLayout firstL,secondL;
     private GridView firstG,secondG;
-    public static boolean showfirstgrid=false;
-    public static boolean showsecondgrid=false;
+
 
 
 
@@ -77,15 +76,15 @@ public class UpdateInvoice extends Fragment {
         super.onStart();
         setFirstGrid();
         setSecondGrid();
-        if(showfirstgrid)
+        if(Common.showfirstgrid)
         {
             firstL.setVisibility(View.VISIBLE);
-            showfirstgrid=false;
+            Common.showfirstgrid=false;
         }
-        if(showsecondgrid)
+        if(Common.showsecondgrid)
         {
             secondL.setVisibility(View.VISIBLE);
-            showsecondgrid=false;
+            Common.showsecondgrid=false;
         }
     }
 
@@ -291,6 +290,8 @@ public class UpdateInvoice extends Fragment {
             bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
             bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
             bundle.putSerializable("position", getArguments().getSerializable("position"));
+            bundle.putSerializable("period",  getArguments().getSerializable("period"));
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
         }else if(action.equals("SelectShowCircleDe"))
         {
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
@@ -331,6 +332,8 @@ public class UpdateInvoice extends Fragment {
             bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
             bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
             bundle.putSerializable("position", getArguments().getSerializable("position"));
+            bundle.putSerializable("period",  getArguments().getSerializable("period"));
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
         }else if(action.equals("SelectShowCircleDe"))
         {
             fragment=new SelectShowCircleDe();
@@ -346,6 +349,9 @@ public class UpdateInvoice extends Fragment {
             bundle.putSerializable("period", getArguments().getSerializable("period"));
             bundle.putSerializable("dweek",getArguments().getSerializable("dweek"));
             bundle.putSerializable("position",getArguments().getSerializable("position"));
+        }else if(action.equals("SelectListModelCom"))
+        {
+            fragment=new SelectListModelCom();
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);
@@ -381,8 +387,8 @@ public class UpdateInvoice extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("object",invoiceVO);
                 bundle.putSerializable("action",action);
-                showfirstgrid=true;
-                returnThisFramgent(new InsertType(),bundle);
+                Common.showfirstgrid=true;
+                returnThisFramgent(new InsertConsumeType(),bundle);
                 return;
             }
             name.setText(type);
@@ -410,8 +416,8 @@ public class UpdateInvoice extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("object",invoiceVO);
                 bundle.putSerializable("action",action);
-                showsecondgrid=true;
-                returnThisFramgent(new InsertType(),bundle);
+                Common.showsecondgrid=true;
+                returnThisFramgent(new InsertConsumeType(),bundle);
                 return;
             }
             secondname.setText(type);

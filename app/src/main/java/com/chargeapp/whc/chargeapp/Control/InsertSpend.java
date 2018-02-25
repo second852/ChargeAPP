@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,15 +19,11 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-
-import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
@@ -42,7 +39,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.Calendar;
@@ -55,65 +51,39 @@ import static android.app.Activity.RESULT_OK;
 
 
 public class InsertSpend extends Fragment {
-    private EditText money, newtype, inserttypeDetail, number, detailname;
+    private EditText money, number, detailname;
     private CheckBox fixdate, notify, noWek;
     private TextView secondname, name;
-    private TextView save, clear, date, saveType, clearType, showTitle, datesave;
-    private GridView gridView, showAllpicture;
-    private RelativeLayout insertType;
-    private List<TypeVO> typeVOList;
-    private SimpleAdapter adapter;
-    private List<Map<String, Object>> items;
-    private List<Map<String, Object>> Detailitems;
-    private Map<String, Object> item;
-    private LinearLayout showPicture, showdate, showAllPL, showfixdate;
-    private ImageView imageTitle, imageDetatil;
-    private int imageTitleId = 999, imageDetatilId = 999;
-    private boolean isType;
+    private TextView save, clear, date, datesave;
+    private LinearLayout showdate, showfixdate;
     private DatePicker datePicker;
     private String choicedate;
     private Spinner choiceStatue, choiceday;
     private Gson gson;
-    private SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
     private boolean noweek = false;
     private ConsumeDB consumeDB;
     private RelativeLayout qrcode;
-
-
+    private LinearLayout firstL, secondL;
+    private GridView firstG, secondG;
+    private ConsumeVO consumeVO;
+    private boolean needSet;
+    private int updateChoice;
+    private boolean first;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.insert_spend, container, false);
+        needSet= (boolean) getArguments().getSerializable("needSet");
+        consumeVO = new ConsumeVO();
         findviewByid(view);
-        if (MainActivity.chargeAPPDB == null) {
-            MainActivity.chargeAPPDB = new ChargeAPPDB(getActivity());
-        }
         gson = new Gson();
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeVOList = typeDB.getAll();
-        Detailitems = new ArrayList<Map<String, Object>>();
-        items = new ArrayList<Map<String, Object>>();
-        for (int i = 0; i < typeVOList.size(); i++) {
-            item = new HashMap<String, Object>();
-            item.put("image", MainActivity.imageAll[typeVOList.get(i).getImage()]);
-            item.put("text", typeVOList.get(i).getName());
-            items.add(item);
-        }
-        item = new HashMap<String, Object>();
-        item.put("image", R.drawable.add);
-        item.put("text", "新增種類");
-        items.add(item);
-        date.setText(sf.format(new Date(System.currentTimeMillis())));
-        name.setOnClickListener(new choiceType());
-        saveType.setOnClickListener(new insertType());
-        clearType.setOnClickListener(new cancelinsert());
-        imageTitle.setOnClickListener(new choicePicture());
-        imageDetatil.setOnClickListener(new choicePicture());
+        date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
         date.setOnClickListener(new dateClickListener());
         showdate.setOnClickListener(new choicedateClick());
         fixdate.setOnCheckedChangeListener(new showfixdateClick());
@@ -122,11 +92,129 @@ public class InsertSpend extends Fragment {
         save.setOnClickListener(new savecomsumer());
         noWek.setOnCheckedChangeListener(new nowWekchange());
         qrcode.setOnClickListener(new QrCodeClick());
+        name.setOnClickListener(new showFirstG());
+        firstG.setOnItemClickListener(new firstGridOnClick());
+        secondG.setOnItemClickListener(new secondGridOnClick());
+        if(needSet)
+        {
+            setUpdate();
+            secondname.setOnClickListener(new showSecondG());
+        }
         return view;
     }
 
+    private void setUpdate() {
+        consumeVO = (ConsumeVO) getArguments().getSerializable("consumeVO");
+        name.setText(consumeVO.getMaintype());
+        number.setText(consumeVO.getNumber());
+        secondname.setText(consumeVO.getSecondType());
+        money.setText(consumeVO.getMoney());
+        date.setText(Common.sTwo.format(consumeVO.getDate()));
+        detailname.setText(consumeVO.getDetailname());
+        if (consumeVO.getFixDate().equals("true")) {
+            fixdate.setChecked(Boolean.valueOf(consumeVO.getFixDate()));
+            notify.setChecked(Boolean.valueOf(consumeVO.getNotify()));
+            JsonObject js = gson.fromJson(consumeVO.getFixDateDetail(), JsonObject.class);
+            String choicestatue = js.get("choicestatue").getAsString().trim();
+            String choicedate = js.get("choicedate").getAsString().trim();
+            String noweek = js.get("noweek").getAsString().trim();
+            noWek.setChecked(Boolean.valueOf(noweek));
+            if (choicestatue.trim().equals("每天")) {
+                choiceStatue.setSelection(0);
+            } else if (choicestatue.trim().equals("每周")) {
+                choiceStatue.setSelection(1);
+                if (choicedate.equals("星期一")) {
+                    updateChoice = 0;
+                } else if (choicedate.equals("星期二")) {
+                    updateChoice = 1;
+                } else if (choicedate.equals("星期三")) {
+                    updateChoice = 2;
+                } else if (choicedate.equals("星期四")) {
+                    updateChoice = 3;
+                } else if (choicedate.equals("星期五")) {
+                    updateChoice = 4;
+                } else if (choicedate.equals("星期六")) {
+                    updateChoice = 5;
+                } else {
+                    updateChoice = 6;
+                }
+            } else if (choicestatue.trim().equals("每個月")) {
+                choiceStatue.setSelection(2);
+                updateChoice = Integer.valueOf(choicedate) - 1;
+            } else {
+                choiceStatue.setSelection(3);
+                updateChoice = Integer.valueOf(choicedate.substring(0, choicedate.indexOf("月"))) - 1;
+            }
+        }
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        setFirstGrid();
+        setSecondGrid();
+        if (Common.showfirstgrid) {
+            firstL.setVisibility(View.VISIBLE);
+            Common.showfirstgrid = false;
+        }
+        if (Common.showsecondgrid) {
+            secondL.setVisibility(View.VISIBLE);
+            Common.showsecondgrid = false;
+        }
+    }
+
+    private void setSecondGrid() {
+        HashMap item;
+        ArrayList items = new ArrayList<Map<String, Object>>();
+        List<TypeDetailVO> typeDetailVOS = typeDetailDB.findByGroupname(name.getText().toString().trim());
+        for (TypeDetailVO t : typeDetailVOS) {
+            item = new HashMap<String, Object>();
+            item.put("image", MainActivity.imageAll[t.getImage()]);
+            item.put("text", t.getName());
+            items.add(item);
+        }
+        item = new HashMap<String, Object>();
+        item.put("image", R.drawable.returnt);
+        item.put("text", "返回");
+        items.add(item);
+        item = new HashMap<String, Object>();
+        item.put("image", R.drawable.add);
+        item.put("text", "新增");
+        items.add(item);
+        SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+                items, R.layout.main_item, new String[]{"image", "text"},
+                new int[]{R.id.image, R.id.text});
+        secondG.setAdapter(adapter);
+        secondG.setNumColumns(4);
+    }
+
+    private void setFirstGrid() {
+        HashMap item;
+        ArrayList items = new ArrayList<Map<String, Object>>();
+        List<TypeVO> typeVOS = typeDB.getAll();
+        for (TypeVO t : typeVOS) {
+            item = new HashMap<String, Object>();
+            item.put("image", MainActivity.imageAll[t.getImage()]);
+            item.put("text", t.getName());
+            items.add(item);
+        }
+        item = new HashMap<String, Object>();
+        item.put("image", R.drawable.add);
+        item.put("text", "新增");
+        items.add(item);
+        SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+                items, R.layout.main_item, new String[]{"image", "text"},
+                new int[]{R.id.image, R.id.text});
+        firstG.setAdapter(adapter);
+        firstG.setNumColumns(4);
+    }
 
     public void findviewByid(View view) {
+        firstG = view.findViewById(R.id.firstG);
+        firstL = view.findViewById(R.id.firstL);
+        secondG = view.findViewById(R.id.secondG);
+        secondL = view.findViewById(R.id.secondL);
         name = view.findViewById(R.id.name);
         secondname = view.findViewById(R.id.secondname);
         money = view.findViewById(R.id.money);
@@ -134,22 +222,12 @@ public class InsertSpend extends Fragment {
         fixdate = view.findViewById(R.id.fixdate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
-        gridView = view.findViewById(R.id.choiceType);
-        insertType = view.findViewById(R.id.insertType);
-        saveType = view.findViewById(R.id.saveType);
-        clearType = view.findViewById(R.id.clearType);
-        newtype = view.findViewById(R.id.newtype);
-        showPicture = view.findViewById(R.id.showPicture);
-        imageTitle = view.findViewById(R.id.imageTitle);
-        showTitle = view.findViewById(R.id.showTitle);
-        showAllpicture = view.findViewById(R.id.showAllpicture);
         datesave = view.findViewById(R.id.datesave);
         showdate = view.findViewById(R.id.showdate);
         datePicker = view.findViewById(R.id.datePicker);
         showfixdate = view.findViewById(R.id.showfixdate);
         choiceStatue = view.findViewById(R.id.choiceStatue);
         choiceday = view.findViewById(R.id.choiceday);
-        showAllPL = view.findViewById(R.id.showAllPL);
         number = view.findViewById(R.id.number);
         detailname = view.findViewById(R.id.detailname);
         notify = view.findViewById(R.id.notify);
@@ -165,85 +243,6 @@ public class InsertSpend extends Fragment {
         choiceStatue.setAdapter(arrayAdapter);
     }
 
-    private class cancelinsert implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            inserttypeDetail.setText(" ");
-            newtype.setText(" ");
-            insertType.setVisibility(View.GONE);
-            showPicture.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private class insertType implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            if (newtype.getText().toString() == null || newtype.getText().toString().isEmpty()) {
-                Common.showToast(getActivity(), "主項目不能空白");
-                return;
-            }
-            if (inserttypeDetail.getText().toString().trim() == null || inserttypeDetail.getText().toString().trim().isEmpty()) {
-                Common.showToast(getActivity(), "次項目不能空白");
-                return;
-            }
-            Common.showToast(getActivity(), "新增成功");
-            if (imageTitleId == 999) {
-                imageTitleId = MainActivity.imageAll.length - 1;
-            }
-            if (imageDetatilId == 999) {
-                imageDetatilId = MainActivity.imageAll.length - 1;
-            }
-            typeDB.insert(new TypeVO("other", newtype.getText().toString(), imageTitleId));
-            typeDetailDB.insert(new TypeDetailVO(newtype.getText().toString().trim(), inserttypeDetail.getText().toString().toString(), imageDetatilId));
-            if (isType) {
-                items.remove(items.size() - 1);
-                Map<String, Object> newitem = new HashMap<String, Object>();
-                newitem.put("image", MainActivity.imageAll[imageTitleId]);
-                newitem.put("text", newtype.getText().toString());
-                items.add(newitem);
-                items.add(item);
-                adapter = new SimpleAdapter(getActivity(),
-                        items, R.layout.main_item, new String[]{"image", "text"},
-                        new int[]{R.id.image, R.id.text});
-                gridView.setAdapter(adapter);
-
-            } else {
-                Detailitems.remove(Detailitems.size() - 1);
-                Detailitems.remove(Detailitems.size() - 1);
-                Map<String, Object> newitem = new HashMap<String, Object>();
-                newitem.put("image", MainActivity.imageAll[imageDetatilId]);
-                newitem.put("text", inserttypeDetail.getText().toString());
-                Detailitems.add(newitem);
-                newitem = new HashMap<String, Object>();
-                newitem.put("image", R.drawable.returnt);
-                newitem.put("text", "返回");
-                Detailitems.add(newitem);
-                Detailitems.add(item);
-                SimpleAdapter adapter = new SimpleAdapter(getActivity(),
-                        Detailitems, R.layout.main_item, new String[]{"image", "text"},
-                        new int[]{R.id.image, R.id.text});
-                gridView.setAdapter(adapter);
-            }
-            insertType.setVisibility(View.GONE);
-            showPicture.setVisibility(View.VISIBLE);
-            return;
-        }
-    }
-
-    private class choiceType implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            showTitle.setText("選擇主項目種類");
-            adapter = new SimpleAdapter(getActivity(),
-                    items, R.layout.main_item, new String[]{"image", "text"},
-                    new int[]{R.id.image, R.id.text});
-            gridView.setNumColumns(4);
-            gridView.setAdapter(adapter);
-            showPicture.setVisibility(View.VISIBLE);
-            gridView.setOnItemClickListener(new choiceTypeitem());
-        }
-    }
 
     private class dateClickListener implements View.OnClickListener {
         @Override
@@ -253,46 +252,11 @@ public class InsertSpend extends Fragment {
 
     }
 
-    private class choicePicture implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            final ImageView setimg = v.findViewById(v.getId());
-            ArrayList items = new ArrayList<Map<String, Object>>();
-            HashMap item;
-            for (int i = 0; i < MainActivity.imageAll.length; i++) {
-                item = new HashMap<String, Object>();
-                item.put("image", MainActivity.imageAll[i]);
-                item.put("text", " ");
-                items.add(item);
-            }
-            SimpleAdapter adapter = new SimpleAdapter(getActivity(),
-                    items, R.layout.main_item, new String[]{"image", "text"},
-                    new int[]{R.id.image, R.id.text});
-            showAllpicture.setNumColumns(4);
-            showAllpicture.setAdapter(adapter);
-            insertType.setVisibility(View.GONE);
-            showAllPL.setVisibility(View.VISIBLE);
-            showAllpicture.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    ImageView image = view.findViewById(R.id.image);
-                    setimg.setImageDrawable(image.getDrawable());
-                    showAllPL.setVisibility(View.GONE);
-                    insertType.setVisibility(View.VISIBLE);
-                    if (setimg.getId() == R.id.imageTitle) {
-                        imageTitleId = position;
-                    } else {
-                        imageDetatilId = position;
-                    }
-                }
-            });
-        }
-    }
 
     private class choicedateClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            choicedate = datePicker.getYear() + "-" + String.valueOf(datePicker.getMonth() + 1) + "-" + datePicker.getDayOfMonth();
+            choicedate = datePicker.getYear() + "/" + String.valueOf(datePicker.getMonth() + 1) + "/" + datePicker.getDayOfMonth();
             date.setText(choicedate);
             showdate.setVisibility(View.GONE);
         }
@@ -302,7 +266,6 @@ public class InsertSpend extends Fragment {
     private class showfixdateClick implements CompoundButton.OnCheckedChangeListener {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            Log.d("XXXXXXXXXXX", String.valueOf(notify.isChecked()));
             if (b) {
                 notify.setVisibility(View.VISIBLE);
                 noWek.setVisibility(View.VISIBLE);
@@ -353,6 +316,10 @@ public class InsertSpend extends Fragment {
             choiceday.setVisibility(View.VISIBLE);
             noWek.setVisibility(View.GONE);
             noWek.setChecked(false);
+            if (first) {
+                choiceday.setSelection(updateChoice);
+                first = false;
+            }
         }
 
         @Override
@@ -361,66 +328,6 @@ public class InsertSpend extends Fragment {
         }
     }
 
-    private class choiceTypeitem implements AdapterView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-            TextView t = view.findViewById(R.id.text);
-            Log.d("one", t.getText().toString());
-            if (t.getText().toString().equals("新增種類")) {
-                showPicture.setVisibility(View.GONE);
-                insertType.setVisibility(View.VISIBLE);
-                newtype.setText(" ");
-                inserttypeDetail.setText(" ");
-                isType = true;
-                return;
-            }
-            name.setText(t.getText());
-            showTitle.setText("選擇次項目種類");
-            Detailitems = new ArrayList<>();
-            HashMap detailitem;
-            ArrayList<TypeDetailVO> typeDetailVOS = typeDetailDB.findByGroupname(t.getText().toString().trim());
-            for (int i = 0; i < typeDetailVOS.size(); i++) {
-                detailitem = new HashMap<String, Object>();
-                detailitem.put("image", MainActivity.imageAll[typeDetailVOS.get(i).getImage()]);
-                detailitem.put("text", typeDetailVOS.get(i).getName());
-                Detailitems.add(detailitem);
-            }
-            secondname.setOnClickListener(new secondnameonclick());
-            detailitem = new HashMap<String, Object>();
-            detailitem.put("image", R.drawable.returnt);
-            detailitem.put("text", "返回");
-            Detailitems.add(detailitem);
-            Detailitems.add(item);
-            SimpleAdapter detailAdapter = new SimpleAdapter(getActivity(),
-                    Detailitems, R.layout.main_item, new String[]{"image", "text"},
-                    new int[]{R.id.image, R.id.text});
-            gridView.setAdapter(detailAdapter);
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    TextView t = view.findViewById(R.id.text);
-                    Log.d("two", t.getText().toString());
-                    if (t.getText().toString().equals("新增種類")) {
-                        showPicture.setVisibility(View.GONE);
-                        insertType.setVisibility(View.VISIBLE);
-                        newtype.setText(name.getText());
-                        inserttypeDetail.setText(" ");
-                        isType = false;
-                        return;
-                    }
-                    if (t.getText().toString().equals("返回")) {
-                        gridView.setNumColumns(4);
-                        gridView.setAdapter(adapter);
-                        gridView.setOnItemClickListener(new choiceTypeitem());
-                        return;
-                    }
-                    secondname.setText(t.getText());
-                    showPicture.setVisibility(View.GONE);
-                    insertType.setVisibility(View.GONE);
-                }
-            });
-        }
-    }
 
     private class clearAllInput implements View.OnClickListener {
         @Override
@@ -466,9 +373,7 @@ public class InsertSpend extends Fragment {
                 Common.showToast(getActivity(), "日期不能空白");
                 return;
             }
-            if (showdate.getVisibility() == View.VISIBLE || showPicture.getVisibility() == View.VISIBLE || showAllPL.getVisibility() == View.VISIBLE) {
-                return;
-            }
+
             String CheckNul = number.getText().toString();
             if (CheckNul.trim().length() > 0) {
                 if (CheckNul.length() != 10) {
@@ -488,72 +393,18 @@ public class InsertSpend extends Fragment {
                     return;
                 }
             }
-            Map<String, String> g = new HashMap<>();
-            g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString()));
-            g.put("choicedate", isnull(choiceday.getSelectedItem()));
-            g.put("noweek", String.valueOf(noweek));
-            String fixdatedetail = gson.toJson(g);
-            String[] dates = date.getText().toString().split("-");
-            Calendar c = Calendar.getInstance();
-            c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
-            Date d = new Date(c.getTimeInMillis());
-                ConsumeVO consumeVO= new ConsumeVO();
-                consumeVO.setMaintype(name.getText().toString());
-                consumeVO.setSecondType(secondname.getText().toString());
-                consumeVO.setMoney(money.getText().toString());
-                consumeVO.setDate(d);
-                consumeVO.setNumber(number.getText().toString());
-                consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
-                consumeVO.setFixDateDetail(fixdatedetail);
-                consumeVO.setNotify(String.valueOf(notify.isChecked()));
-                consumeVO.setDetailname(detailname.getText().toString());
-                consumeVO.setIsWin("0");
-                consumeDB.insert(consumeVO);
-                Common.showToast(getActivity(), "新增成功");
+            setConsume();
+            consumeDB.insert(consumeVO);
+            Common.showToast(getActivity(), "新增成功");
         }
     }
 
-    private class secondnameonclick implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            showPicture.setVisibility(View.VISIBLE);
-            SimpleAdapter detailAdapter = new SimpleAdapter(getActivity(),
-                    Detailitems, R.layout.main_item, new String[]{"image", "text"},
-                    new int[]{R.id.image, R.id.text});
-            gridView.setAdapter(detailAdapter);
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    TextView t = view.findViewById(R.id.text);
-                    Log.d("two", t.getText().toString());
-                    if (t.getText().toString().equals("新增種類")) {
-                        showPicture.setVisibility(View.GONE);
-                        insertType.setVisibility(View.VISIBLE);
-                        newtype.setText(name.getText());
-                        inserttypeDetail.setText(" ");
-                        isType = false;
-                        return;
-                    }
-                    if (t.getText().toString().equals("返回")) {
-                        gridView.setNumColumns(4);
-                        gridView.setAdapter(adapter);
-                        gridView.setOnItemClickListener(new choiceTypeitem());
-                        return;
-                    }
-                    secondname.setText(t.getText());
-                    showPicture.setVisibility(View.GONE);
-                    insertType.setVisibility(View.GONE);
-                }
-            });
-        }
-    }
 
     private class nowWekchange implements CompoundButton.OnCheckedChangeListener {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             if (noWek.isChecked()) {
                 noweek = true;
-
             } else {
                 noweek = false;
             }
@@ -563,7 +414,7 @@ public class InsertSpend extends Fragment {
     private class QrCodeClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            MultiTrackerActivity.refresh=true;
+            MultiTrackerActivity.refresh = true;
             BarcodeGraphic.hashMap = new HashMap<>();
             Intent intent = new Intent(InsertSpend.this.getActivity(), MultiTrackerActivity.class);
             startActivityForResult(intent, 0);
@@ -602,32 +453,30 @@ public class InsertSpend extends Fragment {
                     } catch (Exception e) {
                         Common.showToast(getActivity(), e.getMessage());
                     }
-                } else if(EleNulAll[4].equals("0")) {
+                } else if (EleNulAll[4].equals("0")) {
                     try {
-                        String a=new SetupDateBase64(this).execute("getThisDetail").get();
-                        if(a.equals("InternetError"))
-                        {
-                            Common.showToast(getActivity(),"連線逾時,請從新掃QRCODE");
+                        String a = new SetupDateBase64(this).execute("getThisDetail").get();
+                        if (a.equals("InternetError")) {
+                            Common.showToast(getActivity(), "連線逾時,請從新掃QRCODE");
                             return;
                         }
-                        Gson gson=new Gson();
-                        JsonObject jFT=gson.fromJson(a,JsonObject.class);
+                        JsonObject jFT = gson.fromJson(a, JsonObject.class);
                         String s = jFT.get("details").toString();
-                        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
+                        Type cdType = new TypeToken<List<JsonObject>>() {
+                        }.getType();
                         List<JsonObject> b = gson.fromJson(s, cdType);
                         for (JsonObject j : b) {
-                           sb.append(j.get("description").getAsString()+"/"+j.get("quantity").getAsString()+"/"+j.get("unitPrice").getAsString()+" ");
+                            sb.append(j.get("description").getAsString() + "/" + j.get("quantity").getAsString() + "/" + j.get("unitPrice").getAsString() + " ");
                         }
-                    }catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         Common.showToast(getActivity(), e.getMessage());
                     }
-                }else {
+                } else {
                     if (EleNulAll[3].equals("1")) {
                         sb.append(EleNulAll[5] + "/1/" + money.getText().toString());
                     } else {
                         for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                            sb.append(EleNulAll[i]+"/"+EleNulAll[i+1]+"/"+EleNulAll[i+2]+" ");
+                            sb.append(EleNulAll[i] + "/" + EleNulAll[i + 1] + "/" + EleNulAll[i + 2] + " ");
                         }
                     }
                 }
@@ -637,6 +486,99 @@ public class InsertSpend extends Fragment {
             // To Handle cancel
             Log.i("App", "Scan unsuccessful");
         }
+    }
+
+    private class showFirstG implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            firstL.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    private class firstGridOnClick implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            TextView textView = view.findViewById(R.id.text);
+            String type = textView.getText().toString().trim();
+            if (type.equals("新增")) {
+                Common.showfirstgrid = true;
+                returnThisFramgent(new InsertConsumeType());
+                return;
+            }
+            name.setText(type);
+            setSecondGrid();
+            firstL.setVisibility(View.GONE);
+            secondL.setVisibility(View.VISIBLE);
+            secondname.setOnClickListener(new showSecondG());
+            Common.showfirstgrid = false;
+        }
+    }
+
+    private class secondGridOnClick implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            TextView textView = view.findViewById(R.id.text);
+            String type = textView.getText().toString().trim();
+            if (type.equals("返回")) {
+                firstL.setVisibility(View.VISIBLE);
+                secondL.setVisibility(View.GONE);
+                return;
+            }
+            if (type.equals("新增")) {
+                Common.showsecondgrid = true;
+                returnThisFramgent(new InsertConsumeType());
+                return;
+            }
+            secondname.setText(type);
+            secondL.setVisibility(View.GONE);
+            Common.showsecondgrid = false;
+        }
+    }
+
+    private class showSecondG implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            secondL.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    private void returnThisFramgent(Fragment fragment) {
+        setConsume();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("object",consumeVO);
+        bundle.putSerializable("action","InsertSpend");
+        bundle.putSerializable("needSet",true);
+        fragment.setArguments(bundle);
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        for (Fragment fragment1 : getFragmentManager().getFragments()) {
+            fragmentTransaction.remove(fragment1);
+        }
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
+    }
+
+
+    private void setConsume() {
+        Map<String, String> g = new HashMap<>();
+        g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString()));
+        g.put("choicedate", isnull(choiceday.getSelectedItem()));
+        g.put("noweek", String.valueOf(noweek));
+        String fixdatedetail = gson.toJson(g);
+        String[] dates = date.getText().toString().split("/");
+        Calendar c = Calendar.getInstance();
+        c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
+        Date d = new Date(c.getTimeInMillis());
+        consumeVO.setMaintype(name.getText().toString());
+        consumeVO.setSecondType(secondname.getText().toString());
+        consumeVO.setMoney(money.getText().toString());
+        consumeVO.setDate(d);
+        consumeVO.setNumber(number.getText().toString());
+        consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
+        consumeVO.setFixDateDetail(fixdatedetail);
+        consumeVO.setNotify(String.valueOf(notify.isChecked()));
+        consumeVO.setDetailname(detailname.getText().toString());
     }
 }
 

@@ -255,6 +255,8 @@ public class SelectDetCircle extends Fragment {
             bundle.putSerializable("Statue", 0);
             bundle.putSerializable("action", "SelectDetCircle");
             bundle.putSerializable("position",0);
+            bundle.putSerializable("period", getArguments().getSerializable("period"));
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
             fragment.setArguments(bundle);
             switchFragment(fragment);
         }

@@ -21,6 +21,8 @@ public class BankTypeVO {
     private int image;
 
 
+    public BankTypeVO() {
+    }
 
     public BankTypeVO(int id, String groupNumber, String name, int image) {
         this.id = id;

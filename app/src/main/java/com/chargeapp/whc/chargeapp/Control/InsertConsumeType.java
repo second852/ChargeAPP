@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +33,7 @@ import java.util.Map;
  * Created by 1709008NB01 on 2018/2/22.
  */
 
-public class InsertType extends Fragment {
+public class InsertConsumeType extends Fragment {
     private ImageView mainImage, secondImage, resultI;
     private EditText mainName, secondName, secondKey;
     private Button save, clear;
@@ -51,7 +49,7 @@ public class InsertType extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.updae_type, container, false);
+        View view = inflater.inflate(R.layout.updae_con_type, container, false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -59,7 +57,7 @@ public class InsertType extends Fragment {
         action = (String) getArguments().getSerializable("action");
         findViewById(view);
         setGridPicture();
-        if (UpdateInvoice.showsecondgrid || UpdateSpend.showsecondgrid) {
+        if (Common.showsecondgrid) {
             setType();
             mainImage.setOnClickListener(null);
             getActivity().setTitle("新增次項目類別");
@@ -165,7 +163,15 @@ public class InsertType extends Fragment {
                 secondKey.setError("關鍵字不能空白");
                 return;
             }
-
+            if(mainType.indexOf(";")!=-1)
+            {
+                mainName.setError("項目種類不能有特殊符號");
+                return;
+            }
+            if (secondTitle.indexOf(";") !=-1) {
+                secondName.setError("次項目不能有特殊符號");
+                return;
+            }
 
             TypeDetailVO TDO = typeDetailDB.findByname(secondTitle, mainType);
             if (TDO != null) {
@@ -173,7 +179,7 @@ public class InsertType extends Fragment {
                 return;
             }
 
-            if (!UpdateInvoice.showsecondgrid &&!UpdateSpend.showsecondgrid) {
+            if (!Common.showsecondgrid ) {
                 TypeVO old = typeDB.findTypeName(mainType);
                 if (old != null) {
                     mainName.setError("新增主項目名稱不可重複");
@@ -214,6 +220,8 @@ public class InsertType extends Fragment {
             bundle.putSerializable("key", getArguments().getSerializable("key"));
             bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
             bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
+            bundle.putSerializable("period", getArguments().getSerializable("period"));
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
             bundle.putSerializable("position", getArguments().getSerializable("position"));
         } else if (action.equals("SelectShowCircleDe")) {
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
@@ -228,6 +236,10 @@ public class InsertType extends Fragment {
             bundle.putSerializable("period", getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
             bundle.putSerializable("position", getArguments().getSerializable("position"));
+        }else if(action.equals("InsertSpend"))
+        {
+            fragment=new InsertSpend();
+            bundle.putSerializable("needSet", getArguments().getSerializable("needSet"));
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);

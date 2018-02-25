@@ -60,7 +60,7 @@ public class SelectOtherCircle extends Fragment {
     private ArrayList<String> Okey;
     private Calendar start, end;
     private int Statue;
-    private int total;
+    private int total,period,dweek;
     private List<Integer> totalList;
     private HashMap<String, HashMap<String, Integer>> mapHashMap;
     private int countOther;
@@ -83,16 +83,17 @@ public class SelectOtherCircle extends Fragment {
         carrier = (String) getArguments().getSerializable("carrier");
         Okey = getArguments().getStringArrayList("OKey");
         Statue = (int) getArguments().getSerializable("statue");
+        period= (int) getArguments().getSerializable("period");
+        dweek= (int) getArguments().getSerializable("dweek");
         countOther = (int) getArguments().getSerializable("total");
         String title;
         if (Statue == 0) {
             start = new GregorianCalendar(year, month, day, 0, 0, 0);
             end = new GregorianCalendar(year, month, day, 23, 59, 59);
             title = Common.sOne.format(new Date(start.getTimeInMillis()));
-
         } else if (Statue == 1) {
-            start = new GregorianCalendar(year, month, day, 0, 0, 0);
-            end = new GregorianCalendar(year, month, day + 6, 23, 59, 59);
+            start=new GregorianCalendar(year,month,day - dweek + 1,0,0,0);
+            end=new GregorianCalendar(year,month,day - dweek + 1 + period-1,23,59,59);
             title = Common.sTwo.format(new Date(start.getTimeInMillis())) + "~" + Common.sTwo.format(new Date(end.getTimeInMillis()));
         } else if (Statue == 2) {
             start = new GregorianCalendar(year, month, 1, 0, 0, 0);
@@ -114,7 +115,9 @@ public class SelectOtherCircle extends Fragment {
         mapHashMap = new HashMap<>();
         HashMap<String, Integer> second;
         HashMap<String, Integer> totalOther = new HashMap<>();
-        for (String key : Okey) {
+        for (int i=0;i<Okey.size();i++) {
+            String key=Okey.get(i);
+            Log.d("test",key);
             total = 0;
             if (ShowConsume) {
                 consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key);
@@ -181,9 +184,8 @@ public class SelectOtherCircle extends Fragment {
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
-    private PieData addData(String key, TextView detail) {
+    private PieData addData(String key, TextView detail, HashMap<String, Integer> hashMap) {
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
-        HashMap<String, Integer> hashMap = mapHashMap.get(key);
         int i = 0;
         int total=0;
         if(key.equals("total"))
@@ -256,25 +258,29 @@ public class SelectOtherCircle extends Fragment {
             PieChart pieChart = itemView.findViewById(R.id.pieChart);
             TextView detail = itemView.findViewById(R.id.detail);
             String key = KeyList.get(position);
-            pieChart.setData(addData(key, detail));
-            if(key.equals("total"))
+            HashMap<String, Integer> hashMap = mapHashMap.get(key);
+            if(hashMap!=null)
             {
-                pieChart.setOnChartValueSelectedListener(new choiceTotal());
-            }else{
-                pieChart.setOnChartValueSelectedListener(new changeToNewF(key));
+                pieChart.setData(addData(key, detail,hashMap));
+                if(key.equals("total"))
+                {
+                    pieChart.setOnChartValueSelectedListener(new choiceTotal());
+                }else{
+                    pieChart.setOnChartValueSelectedListener(new changeToNewF(key));
+                }
+                pieChart.highlightValues(null);
+                pieChart.setUsePercentValues(true);
+                pieChart.setDrawHoleEnabled(true);
+                pieChart.setHoleRadius(7);
+                pieChart.setTransparentCircleRadius(10);
+                pieChart.setRotationAngle(0);
+                pieChart.setRotationEnabled(true);
+                pieChart.setEntryLabelColor(Color.BLACK);
+                pieChart.getLegend().setEnabled(false);
+                pieChart.setDescription(Common.getDeescription());
+                pieChart.invalidate();
+                pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
             }
-            pieChart.highlightValues(null);
-            pieChart.setUsePercentValues(true);
-            pieChart.setDrawHoleEnabled(true);
-            pieChart.setHoleRadius(7);
-            pieChart.setTransparentCircleRadius(10);
-            pieChart.setRotationAngle(0);
-            pieChart.setRotationEnabled(true);
-            pieChart.setEntryLabelColor(Color.BLACK);
-            pieChart.getLegend().setEnabled(false);
-            pieChart.setDescription(Common.getDeescription());
-            pieChart.invalidate();
-            pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
             return itemView;
         }
 
@@ -323,6 +329,8 @@ public class SelectOtherCircle extends Fragment {
             bundle.putSerializable("carrier", carrier);
             bundle.putSerializable("Statue",Statue);
             bundle.putSerializable("position",0);
+            bundle.putSerializable("period", period);
+            bundle.putSerializable("dweek",dweek);
             fragment.setArguments(bundle);
             switchFragment(fragment);
         }

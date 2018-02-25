@@ -7,26 +7,41 @@ import java.sql.Date;
  */
 
 public class GoalVO {
-    /*
-    * 目標名稱
-    * */
+
+    private int id;
+    private String type;
+
     private String name;
-    /*
-    *  目標金額
-     */
-    private String saveMoney;
-    /*
-    *目標開始日期
-     */
-    private Date begainDate;
-    /*
-    * 目標結束日期
-    * */
-    private Date endbegain;
-    /*
-    * 需要提醒
-    * */
+
+    private String money;
+
+    private String timeStatue;
+
+    private boolean havePeriod;
+
+    private Date periodTime;
+
     private boolean notify;
+
+    private String notifyStatue;
+
+    private String notifyDate;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getName() {
         return name;
@@ -36,28 +51,36 @@ public class GoalVO {
         this.name = name;
     }
 
-    public String getSaveMoney() {
-        return saveMoney;
+    public String getMoney() {
+        return money;
     }
 
-    public void setSaveMoney(String saveMoney) {
-        this.saveMoney = saveMoney;
+    public void setMoney(String money) {
+        this.money = money;
     }
 
-    public Date getBegainDate() {
-        return begainDate;
+    public String getTimeStatue() {
+        return timeStatue;
     }
 
-    public void setBegainDate(Date begainDate) {
-        this.begainDate = begainDate;
+    public void setTimeStatue(String timeStatue) {
+        this.timeStatue = timeStatue;
     }
 
-    public Date getEndbegain() {
-        return endbegain;
+    public boolean isHavePeriod() {
+        return havePeriod;
     }
 
-    public void setEndbegain(Date endbegain) {
-        this.endbegain = endbegain;
+    public void setHavePeriod(boolean havePeriod) {
+        this.havePeriod = havePeriod;
+    }
+
+    public Date getPeriodTime() {
+        return periodTime;
+    }
+
+    public void setPeriodTime(Date periodTime) {
+        this.periodTime = periodTime;
     }
 
     public boolean isNotify() {
@@ -66,5 +89,21 @@ public class GoalVO {
 
     public void setNotify(boolean notify) {
         this.notify = notify;
+    }
+
+    public String getNotifyStatue() {
+        return notifyStatue;
+    }
+
+    public void setNotifyStatue(String notifyStatue) {
+        this.notifyStatue = notifyStatue;
+    }
+
+    public String getNotifyDate() {
+        return notifyDate;
+    }
+
+    public void setNotifyDate(String notifyDate) {
+        this.notifyDate = notifyDate;
     }
 }

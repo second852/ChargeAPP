@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,44 +29,22 @@ import java.util.List;
  * Created by 1709008NB01 on 2017/12/7.
  */
 
-public class SelectListBarIncome extends Fragment {
+public class GoalListAll extends Fragment {
 
-    //    private LineChart lineChart;
+    private ImageView DRadd,DRcut;
     private ListView listView;
-    private int year,month,day;
+    public static int year,month,p;
     private Calendar start,end;
-    private int statue;
     private BankDB bankDB;
-    private int index;
-    private TextView message;
-    private String title;
-
-
-
+    private TextView DRcarrier;
 
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.select_con_detail, container, false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        View view = inflater.inflate(R.layout.select_con_list, container, false);
         findViewById(view);
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        year= (int) getArguments().getSerializable("year");
-        month= (int) getArguments().getSerializable("month");
-        day= (int) getArguments().getSerializable("day");
-        statue= (int) getArguments().getSerializable("statue");
-        index= (int) getArguments().getSerializable("index");
-        if(statue==0) {
-            start = new GregorianCalendar(year, month, 1+index, 0, 0, 0);
-            end=new GregorianCalendar(year,month,1+index,23,59,59);
-            title =Common.sOne.format(new Date(start.getTimeInMillis()));
-        }else{
-            start = new GregorianCalendar(year, month+index, 1, 0, 0, 0);
-            end=new GregorianCalendar(year,month+index,start.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
-            title =Common.sThree.format(new Date(start.getTimeInMillis()));
-        }
-        getActivity().setTitle(title);
         setLayout();
         return view;
     }
@@ -76,15 +54,10 @@ public class SelectListBarIncome extends Fragment {
 
     public void setLayout()
     {
-
+        start=new GregorianCalendar(year,month,1,0,0,0);
+        end=new GregorianCalendar(year,month,start.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
         List<BankVO>  bankVOS=bankDB.getTimeAll(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
         ListAdapter baseAdapter= (ListAdapter) listView.getAdapter();
-        if(bankVOS.size()<=0)
-        {
-            message.setVisibility(View.VISIBLE);
-            message.setText(title+"\n沒有資料");
-            return;
-        }
         if(baseAdapter==null)
         {
             listView.setAdapter(new ListAdapter(getActivity(),bankVOS));
@@ -93,11 +66,44 @@ public class SelectListBarIncome extends Fragment {
             baseAdapter.notifyDataSetChanged();
             listView.invalidate();
         }
+        DRcarrier.setText(Common.sThree.format(new Date(start.getTimeInMillis())));
+        listView.setSelection(p);
     }
 
     private void findViewById(View view) {
-        listView=view.findViewById(R.id.listCircle);
-        message=view.findViewById(R.id.message);
+        listView=view.findViewById(R.id.list);
+        DRcarrier=view.findViewById(R.id.DRcarrier);
+        DRadd=view.findViewById(R.id.DRadd);
+        DRcut=view.findViewById(R.id.DRcut);
+        DRadd.setOnClickListener(new addOnClick());
+        DRcut.setOnClickListener(new cutOnClick());
+    }
+
+
+    private class cutOnClick implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            p=0;
+            month=month-1;
+            if (month < 0) {
+                month = 11;
+                year=year-1;
+            }
+            setLayout();
+        }
+    }
+
+    private class addOnClick implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            p=0;
+            month=month+1;
+            if (month > 11) {
+                month = 0;
+                year=year+1;
+            }
+            setLayout();
+        }
     }
 
 
@@ -109,10 +115,6 @@ public class SelectListBarIncome extends Fragment {
         ListAdapter(Context context,List<BankVO> bankVOS) {
             this.context = context;
             this.bankVOS = bankVOS;
-        }
-
-        public List<BankVO> getBankVOs() {
-            return bankVOS;
         }
 
         public void setBankVOs(List<BankVO> bankVOS) {
@@ -144,14 +146,11 @@ public class SelectListBarIncome extends Fragment {
             update.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                      p=position;
+                      SelectListModelActivity.page=3;
                       Bundle bundle=new Bundle();
                       bundle.putSerializable("bankVO",bankVO);
-                      bundle.putSerializable("year",year);
-                      bundle.putSerializable("month",month);
-                      bundle.putSerializable("day",day);
-                      bundle.putSerializable("statue",statue);
-                      bundle.putSerializable("index",index);
-                      bundle.putSerializable("action","SelectListBarIncome");
+                      bundle.putSerializable("action","SelectListModelIM");
                       Fragment fragment=new UpdateIncome();
                       fragment.setArguments(bundle);
                       switchFragment(fragment);
@@ -160,8 +159,10 @@ public class SelectListBarIncome extends Fragment {
             deleteI.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    bankDB.deleteById(bankVO.getId());
-                    setLayout();
+                    DeleteDialogFragment aa= new DeleteDialogFragment();
+                    aa.setObject(bankVO);
+                    aa.setFragement(GoalListAll.this);
+                    aa.show(getFragmentManager(),"show");
                 }
             });
             return itemView;

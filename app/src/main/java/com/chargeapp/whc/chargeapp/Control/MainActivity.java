@@ -145,11 +145,6 @@ public class MainActivity extends AppCompatActivity {
                     SelectListModelIM.year=calendar.get(Calendar.YEAR);
                     SelectListModelIM.month=calendar.get(Calendar.MONTH);
                     SelectListModelIM.p=0;
-                    UpdateInvoice.showsecondgrid=false;
-                    UpdateInvoice.showfirstgrid=false;
-                    UpdateSpend.showsecondgrid=false;
-                    UpdateSpend.showfirstgrid=false;
-
                     setTitle(R.string.text_Picture);
                     drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);
@@ -161,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
                     drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);
                     listView.collapseGroup(1);
+                    fragment = new GoalActivity();
+                    switchFragment(fragment);
                 } else if (groupPosition == 5){
                     setTitle(R.string.text_Setting);
                     drawerLayout.closeDrawer(GravityCompat.START);

@@ -6,19 +6,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 import com.chargeapp.whc.chargeapp.R;
 
-public class InsertActivity extends Fragment implements ViewPager.OnPageChangeListener {
+public class GoalActivity extends Fragment implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button exportMoney,importMoney,goneMoney;
@@ -32,7 +29,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = inflater.inflate(R.layout.insert_main, container, false);
+        View view = inflater.inflate(R.layout.goal_main, container, false);
         mViewPager = (ViewPager) view.findViewById(R.id.insert_viewPager);
         exportMoney=view.findViewById(R.id.exportD);
         importMoney=view.findViewById(R.id.showD);
@@ -80,15 +77,11 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         @Override
         public Fragment getItem(int position) {
             int currentpoition=position%2;
-            Bundle bundle=new Bundle();
-            bundle.putSerializable("needSet",false);
             if (currentpoition == 0) {
-                Fragment fragment=new InsertSpend();
-                fragment.setArguments(bundle);
+                Fragment fragment=new GoalSet();
                 return fragment;
             } else  {
-                Fragment fragment=new InsertIncome();
-                fragment.setArguments(bundle);
+                Fragment fragment=new GoalListAll();
                 return fragment;
             }
         }
@@ -102,15 +95,15 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         if(currentpoition==0)
         {
             setcurrentpage();
-            goneMoney.setText("收入");
-            exportMoney.setText("支出");
-            importMoney.setText("收入");
+            goneMoney.setText("新增");
+            exportMoney.setText("紀錄");
+            importMoney.setText("新增");
         }else
         {
             setcurrentpage();
-            goneMoney.setText("支出");
-            exportMoney.setText("收入");
-            importMoney.setText("支出");
+            goneMoney.setText("紀錄");
+            exportMoney.setText("新增");
+            importMoney.setText("紀錄");
         }
     }
     @Override

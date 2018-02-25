@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/comsumer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -37,14 +36,13 @@
                     android:textColor="#000000"
                     android:textSize="20sp" />
 
-                <EditText
+                <TextView
                     android:id="@+id/name"
                     android:layout_width="200dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="25dp"
                     android:background="#FFEE99"
-                    android:editable="false"
                     android:gravity="center_vertical"
                     android:inputType="none"
                     android:singleLine="true"
@@ -164,7 +162,7 @@
                         android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:entries="@array/fixday"
+                        android:entries="@array/fixDay"
                         android:theme="@style/spinner" />
                     <Spinner
                         android:id="@+id/choiceday"
@@ -217,7 +215,7 @@
         android:textSize="20sp" />
 
     <LinearLayout
-        android:id="@+id/showPicture"
+        android:id="@+id/firstL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -225,132 +223,31 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:background="#ffffff"
+        android:background="#000000"
         android:orientation="vertical"
         android:visibility="gone">
-
         <TextView
             android:id="@+id/showTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="1dp"
             android:gravity="center"
-            android:text="選擇項目"
+            android:text="主項目種類"
+            android:background="#ffffff"
             android:textColor="#000000"
             android:textSize="25dp" />
         <GridView
-            android:id="@+id/choiceType"
+            android:id="@+id/firstG"
+            android:background="#ffffff"
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginBottom="1dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/insertType"
-        android:layout_width="350dp"
-        android:layout_height="200dp"
-        android:layout_below="@id/choiceitem"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:background="#FFC8B4"
-        android:visibility="gone">
-
-
-        <TextView
-            android:id="@+id/newTypeTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="25dp"
-            android:layout_marginTop="25dp"
-            android:layout_toRightOf="@+id/imageTitle"
-            android:gravity="center"
-            android:layout_above="@+id/newtype"
-            android:text="新增項目"
-            android:textColor="#000000"
-            android:textSize="20dp" />
-        <ImageView
-            android:id="@+id/imageTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/add"
-            android:layout_marginTop="35dp"
-            android:layout_marginLeft="25dp"
-            />
-
-        <EditText
-            android:id="@+id/newtype"
-            android:layout_width="200dp"
-            android:layout_height="30dp"
-            android:layout_toRightOf="@+id/imageTitle"
-            android:layout_marginLeft="25dp"
-            android:background="#FFEE99"
-            android:inputType="text"
-            android:layout_centerVertical="true"
-            android:singleLine="true"
-            android:textColor="#000000"
-            android:textColorHint="#AAAAAA" />
-
-        <TextView
-            android:id="@+id/saveType"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/newTypeTitle"
-            android:layout_marginRight="40dp"
-            android:layout_marginTop="55dp"
-            android:layout_toLeftOf="@+id/newStandard"
-            android:background="#33CCFF"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="新增"
-            android:textColor="#000000"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/clearType"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/newTypeTitle"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="55dp"
-            android:layout_toRightOf="@+id/newStandard"
-            android:background="#FF8888"
-            android:gravity="center"
-            android:padding="5dp"
-            android:text="取消"
-            android:textColor="#000000"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/newStandard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            />
-    </RelativeLayout>
-    <LinearLayout
-        android:id="@+id/showAllPL"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:layout_margin="25dp"
-        android:background="#ffffff"
-        >
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="30sp"
-            android:text="請選擇圖片"
-            android:textColor="#000000"
-            android:gravity="center"
-            />
-        <GridView
-            android:id="@+id/showAllpicture"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#ffffff"
-            >
-        </GridView>
-    </LinearLayout>
     <LinearLayout
         android:id="@+id/showdate"
         android:layout_width="wrap_content"

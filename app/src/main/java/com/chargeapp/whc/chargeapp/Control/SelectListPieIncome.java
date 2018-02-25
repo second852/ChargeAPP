@@ -56,6 +56,8 @@ public class SelectListPieIncome extends Fragment {
     private String key;
     private BankDB bankDB;
     private ArrayList<String> Okey;
+    private TextView message;
+    private String title;
 
 
 
@@ -78,11 +80,14 @@ public class SelectListPieIncome extends Fragment {
         if(statue==0) {
             start = new GregorianCalendar(year, month, 1, 0, 0, 0);
             end=new GregorianCalendar(year,month,day,start.getActualMaximum(Calendar.DAY_OF_MONTH),59,59);
+            title=Common.sThree.format(new Date(start.getTimeInMillis()));
         }else{
             Calendar calendar=new GregorianCalendar(year, month, day, 0, 0, 0);
             start = new GregorianCalendar(calendar.get(Calendar.YEAR), 0, 1, 0, 0, 0);
             end=new GregorianCalendar(calendar.get(Calendar.YEAR),11,31,23,59,59);
+            title=Common.sFour.format(new Date(start.getTimeInMillis()));
         }
+        getActivity().setTitle(title);
         setLayout();
         return view;
     }
@@ -103,6 +108,12 @@ public class SelectListPieIncome extends Fragment {
         }else{
            bankVOS=bankDB.getTimeAll(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
         }
+        if(bankVOS.size()<=0)
+        {
+            message.setVisibility(View.VISIBLE);
+            message.setText(title+"\n"+key+"總類沒有資料");
+            return;
+        }
         ListAdapter baseAdapter= (ListAdapter) listView.getAdapter();
         if(baseAdapter==null)
         {
@@ -116,6 +127,7 @@ public class SelectListPieIncome extends Fragment {
 
     private void findViewById(View view) {
         listView=view.findViewById(R.id.listCircle);
+        message=view.findViewById(R.id.message);
     }
 
 
@@ -170,6 +182,8 @@ public class SelectListPieIncome extends Fragment {
                       bundle.putSerializable("statue",statue);
                       bundle.putSerializable("type",key);
                       bundle.putStringArrayList("OKey",Okey);
+                      bundle.putSerializable("position",position);
+                      bundle.putSerializable("action","SelectListPieIncome");
                       Fragment fragment=new UpdateIncome();
                       fragment.setArguments(bundle);
                       switchFragment(fragment);

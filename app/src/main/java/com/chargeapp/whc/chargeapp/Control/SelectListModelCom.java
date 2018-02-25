@@ -241,7 +241,6 @@ public class SelectListModelCom extends Fragment {
                         bundle.putSerializable("consumeVO",c);
                         bundle.putSerializable("action","SelectListModelCom");
                         bundle.putSerializable("position",position);
-                        bundle.putSerializable("page",6);
                         fragment.setArguments(bundle);
                         switchFragment(fragment);
                     }

@@ -88,6 +88,8 @@ public class Common {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
+    public static boolean showfirstgrid = false;
+    public static boolean showsecondgrid = false;
 
 
 

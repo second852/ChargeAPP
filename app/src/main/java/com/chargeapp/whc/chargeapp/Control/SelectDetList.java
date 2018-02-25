@@ -67,7 +67,7 @@ public class SelectDetList extends Fragment {
     private Gson gson=new Gson();
     private ProgressDialog progressDialog;
     private Calendar start,end;
-    private int Statue;
+    private int Statue,period,dweek;
     private String title;
     private TextView message;
     private int position;
@@ -92,14 +92,16 @@ public class SelectDetList extends Fragment {
         key= (String) getArguments().getSerializable("key");
         carrier= (String) getArguments().getSerializable("carrier");
         Statue=(int) getArguments().getSerializable("Statue");
+        period= (int) getArguments().getSerializable("period");
+        dweek= (int) getArguments().getSerializable("dweek");
         position= (int) getArguments().getSerializable("position");
         if (Statue == 0) {
             start = new GregorianCalendar(year, month, day, 0, 0, 0);
             end = new GregorianCalendar(year, month, day, 23, 59, 59);
             title = Common.sOne.format(new Date(start.getTimeInMillis()));
         } else if (Statue == 1) {
-            start = new GregorianCalendar(year, month, day, 0, 0, 0);
-            end = new GregorianCalendar(year, month, day + 6, 23, 59, 59);
+            start=new GregorianCalendar(year,month,day - dweek + 1,0,0,0);
+            end=new GregorianCalendar(year,month,day - dweek + 1 + period-1,23,59,59);
             title = Common.sTwo.format(new Date(start.getTimeInMillis())) + "~" + Common.sTwo.format(new Date(end.getTimeInMillis()));
         } else if (Statue == 2) {
             start = new GregorianCalendar(year, month, 1, 0, 0, 0);
@@ -260,7 +262,6 @@ public class SelectDetList extends Fragment {
                         Bundle bundle=new Bundle();
                         bundle.putSerializable("consumeVO",c);
                         bundle.putSerializable("position",position);
-                        fragment.setArguments(bundle);
                         switchFragment(fragment,bundle);
                     }
                 });
@@ -303,6 +304,8 @@ public class SelectDetList extends Fragment {
         bundle.putSerializable("key", key);
         bundle.putSerializable("carrier", carrier);
         bundle.putSerializable("Statue",Statue);
+        bundle.putSerializable("period", period);
+        bundle.putSerializable("dweek",dweek);
         bundle.putSerializable("action","SelectDetList");
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

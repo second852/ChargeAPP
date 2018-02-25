@@ -44,6 +44,27 @@ public class BankTybeDB {
         return BankTypeVOlist;
     }
 
+    public BankTypeVO findByName(String n) {
+        String[] columns = {
+                "id,groupNumber,name,image"
+        };
+        String selection = "name = ?;";
+        String[] selectionArgs = {n};
+        Cursor cursor = db.query(TABLE_NAME, columns, selection, selectionArgs,
+                null, null, null);
+        BankTypeVO bankTypeVO = null;
+        if (cursor.moveToNext()) {
+            int id=cursor.getInt(0);
+            String groupnumber =cursor.getString(1);
+            String name=cursor.getString(2);
+            int image=cursor.getInt(3);
+            bankTypeVO=new BankTypeVO(id,groupnumber,name,image);
+        }
+        cursor.close();
+        return bankTypeVO;
+    }
+
+
     public BankTypeVO findById(int id) {
         String[] columns = {
           "id,groupNumber,name,image"

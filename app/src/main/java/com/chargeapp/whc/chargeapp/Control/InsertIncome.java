@@ -5,7 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,25 +16,20 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
-import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -43,30 +38,24 @@ import java.util.Map;
 
 
 public class InsertIncome extends Fragment {
-    private EditText money, newtype,number,detailname;
+    private EditText money,detailname;
     private CheckBox fixdate;
-    private EditText name;
-    private TextView save, clear, date, saveType, clearType, showTitle,datesave;
-    private GridView gridView,showAllpicture;
-    private RelativeLayout insertType;
-    private List<BankTypeVO> bankTypeVOSList;
-    private SimpleAdapter adapter;
-    private List<Map<String, Object>> items;
-    private List<Map<String, Object>> Detailitems;
-    private Map<String, Object> item;
-    private LinearLayout showPicture,showdate,showAllPL,showfixdate;
-    private ImageView imageTitle;
-    private int imageTitleId =999,imageDetatilId =999;
-    private boolean isType;
+    private TextView name;
+    private TextView save, clear,date,datesave;
+    private LinearLayout showdate,showfixdate;
     private DatePicker datePicker;
     private String choicedate;
     private Spinner choiceStatue,choiceday;
     private Gson gson;
-    private SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
     private BankTybeDB bankTybeDB;
     private BankDB bankDB;
-    private TypeDB typeDB;
-    private TypeDetailDB typeDetailDB;
+    private LinearLayout firstL;
+    private GridView firstG;
+    private boolean needSet;
+    private int updateChoice;
+    private boolean first=true;
+    private BankVO bankVO;
+
 
 
 
@@ -75,36 +64,142 @@ public class InsertIncome extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.insert_income, container, false);
+        needSet= (boolean) getArguments().getSerializable("needSet");
         findviewByid(view);
+        gson=new Gson();
         bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDB=new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB =new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankTypeVOSList = bankTybeDB.getAll();
-        Detailitems=new ArrayList<Map<String, Object>>();
-        items = new ArrayList<Map<String, Object>>();
-        for (int i = 0; i < bankTypeVOSList.size(); i++) {
-            item = new HashMap<String, Object>();
-            item.put("image", MainActivity.imageAll[bankTypeVOSList.get(i).getImage()]);
-            item.put("text", bankTypeVOSList.get(i).getName());
-            items.add(item);
-        }
-        item = new HashMap<String, Object>();
-        item.put("image", R.drawable.add);
-        item.put("text", "新增種類");
-        items.add(item);
-        date.setText(sf.format(new Date(System.currentTimeMillis())));
-        name.setOnClickListener(new choiceType());
-        saveType.setOnClickListener(new insertType());
-        clearType.setOnClickListener(new cancelinsert());
-        imageTitle.setOnClickListener(new choicePicture());
+        date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
         date.setOnClickListener(new dateClickListener());
+        name.setOnClickListener(new showFirstG());
         showdate.setOnClickListener(new choicedateClick());
         choiceStatue.setOnItemSelectedListener(new choiceStateItem());
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new savecomsumer());
         fixdate.setOnCheckedChangeListener(new showfixdateClick());
+        firstG.setOnItemClickListener(new firstGridOnClick());
+        if(needSet)
+        {
+            setIncome();
+        }
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        setFirstGrid();
+        if (Common.showfirstgrid) {
+            firstL.setVisibility(View.VISIBLE);
+            Common.showfirstgrid = false;
+        }
+    }
+
+    private void setFirstGrid() {
+        HashMap item;
+        ArrayList items = new ArrayList<Map<String, Object>>();
+        List<BankTypeVO> bankTypeVOS=bankTybeDB.getAll();
+        for (BankTypeVO t : bankTypeVOS) {
+            item = new HashMap<String, Object>();
+            item.put("image", MainActivity.imageAll[t.getImage()]);
+            item.put("text", t.getName());
+            items.add(item);
+        }
+        item = new HashMap<String, Object>();
+        item.put("image", R.drawable.add);
+        item.put("text", "新增");
+        items.add(item);
+        SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+                items, R.layout.main_item, new String[]{"image", "text"},
+                new int[]{R.id.image, R.id.text});
+        firstG.setAdapter(adapter);
+        firstG.setNumColumns(4);
+    }
+
+    private class firstGridOnClick implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            TextView textView = view.findViewById(R.id.text);
+            String type = textView.getText().toString().trim();
+            if (type.equals("新增")) {
+                setBankVO();
+                Common.showfirstgrid = true;
+                Fragment fragment=new InsertIncomeType();
+                Bundle bundle=new Bundle();
+                bundle.putSerializable("bankVO",bankVO);
+                bundle.putSerializable("action","InsertIncome");
+                fragment.setArguments(bundle);
+                switchFragment(fragment);
+                return;
+            }
+            name.setText(type);
+            firstL.setVisibility(View.GONE);
+            Common.showfirstgrid = false;
+        }
+    }
+
+    private void switchFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        for (Fragment fragment1 : getFragmentManager().getFragments()) {
+            fragmentTransaction.remove(fragment1);
+        }
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
+    }
+
+
+    private class showFirstG implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            firstL.setVisibility(View.VISIBLE);
+        }
+    }
+    private void setIncome() {
+        bankVO= (BankVO) getArguments().getSerializable("bankVO");
+        name.setText(bankVO.getMaintype());
+        money.setText(bankVO.getMoney());
+        date.setText(Common.sTwo.format(bankVO.getDate()));
+        detailname.setText(bankVO.getDetailname());
+        fixdate.setChecked(Boolean.valueOf(bankVO.getFixDate()));
+        if(bankVO.getFixDate().equals("true"))
+        {
+            JsonObject js = gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
+            String choicestatue= js.get("choicestatue").getAsString().trim();
+            String choicedate=js.get("choicedate").getAsString().trim();
+            if(choicestatue.trim().equals("每天"))
+            {
+                choiceStatue.setSelection(0);
+            }else if(choicestatue.trim().equals("每周")){
+                choiceStatue.setSelection(1);
+                if(choicedate.equals("星期一"))
+                {
+                    updateChoice=0;
+                }else if(choicedate.equals("星期二"))
+                {
+                    updateChoice=1;
+                }else if(choicedate.equals("星期三"))
+                {
+                    updateChoice=2;
+                }else if(choicedate.equals("星期四"))
+                {
+                    updateChoice=3;
+                }else if(choicedate.equals("星期五"))
+                {
+                    updateChoice=4;
+                }else if(choicedate.equals("星期六"))
+                {
+                    updateChoice=5;
+                }else{
+                    updateChoice=6;
+                }
+            }else if(choicestatue.trim().equals("每個月")){
+                choiceStatue.setSelection(2);
+                updateChoice= Integer.valueOf(choicedate)-1;
+            }else{
+                choiceStatue.setSelection(3);
+                updateChoice=Integer.valueOf(choicedate.substring(0,choicedate.indexOf("月")))-1;
+            }
+        }
     }
 
 
@@ -115,24 +210,15 @@ public class InsertIncome extends Fragment {
         fixdate = view.findViewById(R.id.fixdate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
-        gridView = view.findViewById(R.id.choiceType);
-        insertType = view.findViewById(R.id.insertType);
-        saveType = view.findViewById(R.id.saveType);
-        clearType = view.findViewById(R.id.clearType);
-        newtype = view.findViewById(R.id.newtype);
-        showPicture = view.findViewById(R.id.showPicture);
-        imageTitle = view.findViewById(R.id.imageTitle);
-        showTitle = view.findViewById(R.id.showTitle);
-        showAllpicture=view.findViewById(R.id.showAllpicture);
         datesave=view.findViewById(R.id.datesave);
         showdate=view.findViewById(R.id.showdate);
         datePicker=view.findViewById(R.id.datePicker);
         showfixdate=view.findViewById(R.id.showfixdate);
         choiceStatue=view.findViewById(R.id.choiceStatue);
         choiceday=view.findViewById(R.id.choiceday);
-        showAllPL=view.findViewById(R.id.showAllPL);
-        number=view.findViewById(R.id.number);
         detailname=view.findViewById(R.id.detailname);
+        firstG = view.findViewById(R.id.firstG);
+        firstL = view.findViewById(R.id.firstL);
         ArrayList<String> spinneritem=new ArrayList<>();
         spinneritem.add("每天");
         spinneritem.add("每周");
@@ -143,66 +229,10 @@ public class InsertIncome extends Fragment {
         choiceStatue.setAdapter(arrayAdapter);
     }
 
-    private class cancelinsert implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            newtype.setText(" ");
-            insertType.setVisibility(View.GONE);
-            showPicture.setVisibility(View.VISIBLE);
-        }
-    }
 
-    private class insertType implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            if (newtype.getText().toString() == null || newtype.getText().toString().isEmpty()) {
-                Common.showToast(getActivity(), "主項目不能空白");
-                return;
-            }
-            Common.showToast(getActivity(), "新增成功");
-            if(imageTitleId==999)
-            {
-                imageTitleId=MainActivity.imageAll.length-1;
-            }
-            if(imageDetatilId==999)
-            {
-                imageDetatilId=MainActivity.imageAll.length-1;
-            }
-            typeDB.insert(new TypeVO("other",newtype.getText().toString(),imageTitleId));
-            if(isType)
-            {
-                items.remove(items.size() - 1);
-                Map<String, Object> newitem = new HashMap<String, Object>();
-                newitem.put("image",MainActivity.imageAll[imageTitleId]);
-                newitem.put("text", newtype.getText().toString());
-                items.add(newitem);
-                items.add(item);
-                adapter = new SimpleAdapter(getActivity(),
-                        items, R.layout.main_item, new String[]{"image", "text"},
-                        new int[]{R.id.image, R.id.text});
-                gridView.setAdapter(adapter);
 
-            }
-            insertType.setVisibility(View.GONE);
-            showPicture.setVisibility(View.VISIBLE);
-            return;
-        }
-    }
 
-    private class choiceType implements View.OnClickListener {
 
-        @Override
-        public void onClick(View v) {
-            showTitle.setText("選擇種類");
-            adapter = new SimpleAdapter(getActivity(),
-                    items, R.layout.main_item, new String[]{"image", "text"},
-                    new int[]{R.id.image, R.id.text});
-            gridView.setNumColumns(4);
-            gridView.setAdapter(adapter);
-            showPicture.setVisibility(View.VISIBLE);
-            gridView.setOnItemClickListener(new choiceTypeitem());
-        }
-    }
 
     private class dateClickListener implements View.OnClickListener {
         @Override
@@ -211,47 +241,12 @@ public class InsertIncome extends Fragment {
         }
 
     }
-    private class choicePicture implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            final ImageView setimg = v.findViewById(v.getId());
-            ArrayList items = new ArrayList<Map<String, Object>>();
-            HashMap item;
-            for (int i = 0; i < MainActivity.imageAll.length; i++) {
-                item = new HashMap<String, Object>();
-                item.put("image", MainActivity.imageAll[i]);
-                item.put("text", " ");
-                items.add(item);
-            }
-            SimpleAdapter adapter = new SimpleAdapter(getActivity(),
-                    items, R.layout.main_item, new String[]{"image", "text"},
-                    new int[]{R.id.image, R.id.text});
-            showAllpicture.setNumColumns(4);
-            showAllpicture.setAdapter(adapter);
-            insertType.setVisibility(View.GONE);
-            showAllPL.setVisibility(View.VISIBLE);
-            showAllpicture.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    ImageView image = view.findViewById(R.id.image);
-                    setimg.setImageDrawable(image.getDrawable());
-                    showAllPL.setVisibility(View.GONE);
-                    insertType.setVisibility(View.VISIBLE);
-                    if(setimg.getId()==R.id.imageTitle)
-                    {
-                        imageTitleId=position;
-                    }else{
-                        imageDetatilId=position;
-                    }
-                }
-            });
-        }
-    }
+
 
     private class choicedateClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            choicedate=datePicker.getYear()+"-"+String.valueOf(datePicker.getMonth()+1)+"-"+datePicker.getDayOfMonth();
+            choicedate=datePicker.getYear()+"/"+String.valueOf(datePicker.getMonth()+1)+"/"+datePicker.getDayOfMonth();
             date.setText(choicedate);
             showdate.setVisibility(View.GONE);
         }
@@ -317,6 +312,10 @@ public class InsertIncome extends Fragment {
             fixdate.setX(showfixdate.getWidth()/20);
             choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/20);
             choiceday.setX((showfixdate.getWidth()*2/3)+showfixdate.getWidth()/20);
+            if (first) {
+                choiceday.setSelection(updateChoice);
+                first = false;
+            }
         }
 
 
@@ -327,22 +326,6 @@ public class InsertIncome extends Fragment {
         }
     }
 
-    private class choiceTypeitem implements AdapterView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-            TextView t = view.findViewById(R.id.text);
-            Log.d("one",t.getText().toString());
-            if (t.getText().toString().equals("新增種類")) {
-                showPicture.setVisibility(View.GONE);
-                insertType.setVisibility(View.VISIBLE);
-                newtype.setText(" ");
-                isType=true;
-                return;
-            }
-            name.setText(t.getText());
-            showPicture.setVisibility(View.GONE);
-        }
-    }
 
     private class clearAllInput implements View.OnClickListener {
         @Override
@@ -350,6 +333,7 @@ public class InsertIncome extends Fragment {
             name.setText(" ");
             money.setText(" ");
             fixdate.setChecked(false);
+            detailname.setText("");
         }
     }
 
@@ -362,12 +346,28 @@ public class InsertIncome extends Fragment {
         return text.toString();
     }
 
+    private void setBankVO() {
+        bankVO=new BankVO();
+        Map<String, String> g = new HashMap<>();
+        g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString()));
+        g.put("choicedate", isnull(choiceday.getSelectedItem()));
+        String fixdatedetail = gson.toJson(g);
+        String[] dates = date.getText().toString().split("/");
+        Calendar c = Calendar.getInstance();
+        c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
+        Date d = new Date(c.getTimeInMillis());
+        bankVO.setMaintype(name.getText().toString());
+        bankVO.setMoney(money.getText().toString());
+        bankVO.setDate(d);
+        bankVO.setFixDate(String.valueOf(fixdate.isChecked()));
+        bankVO.setFixDateDetail(fixdatedetail);
+        bankVO.setDetailname(detailname.getText().toString());
+    }
+
 
     private class savecomsumer implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-
-            name.setBackgroundColor(Color.parseColor("#FFEE99"));
             if(name.getText().toString().trim()==null||name.getText().toString().trim().length()==0)
             {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
@@ -385,25 +385,7 @@ public class InsertIncome extends Fragment {
                 Common.showToast(getActivity(),"日期不能空白");
                 return;
             }
-            if(showdate.getVisibility()==View.VISIBLE||showPicture.getVisibility()==View.VISIBLE||showAllPL.getVisibility()==View.VISIBLE)
-            {
-                return;
-            }
-            gson=new Gson();
-            Map<String,String> g=new HashMap<>();
-            g.put("choicestatue",isnull(choiceStatue.getSelectedItem().toString()));
-            g.put("choicedate",isnull(choiceday.getSelectedItem()));
-            String fixdatedetail=gson.toJson(g);
-            Calendar c=Calendar.getInstance();
-            c.set(datePicker.getYear(),datePicker.getMonth(),datePicker.getDayOfMonth());
-            Date d= new Date(c.getTimeInMillis());
-            BankVO bankVO=new BankVO();
-            bankVO.setMaintype(name.getText().toString());
-            bankVO.setMoney(money.getText().toString());
-            bankVO.setDate(d);
-            bankVO.setFixDate(String.valueOf(fixdate.isChecked()));
-            bankVO.setFixDateDetail(fixdatedetail);
-            bankVO.setDetailname(detailname.getText().toString());
+            setBankVO();
             bankDB.insert(bankVO);
             Common.showToast(getActivity(),"新增成功");
         }

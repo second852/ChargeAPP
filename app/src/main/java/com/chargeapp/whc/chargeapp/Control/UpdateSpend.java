@@ -20,14 +20,12 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
@@ -44,7 +42,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -76,8 +73,7 @@ public class UpdateSpend extends Fragment {
     private boolean first = true;
     private LinearLayout firstL,secondL;
     private GridView firstG,secondG;
-    public static boolean showfirstgrid=false;
-    public static boolean showsecondgrid=false;
+
 
 
     @Nullable
@@ -85,10 +81,8 @@ public class UpdateSpend extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.insert_spend, container, false);
         findviewByid(view);
-        if (MainActivity.chargeAPPDB == null) {
-            MainActivity.chargeAPPDB = new ChargeAPPDB(getActivity());
-        }
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        getActivity().setTitle("修改資料");
         gson = new Gson();
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -106,7 +100,6 @@ public class UpdateSpend extends Fragment {
         secondname.setOnClickListener(new showSecondG());
         firstG.setOnItemClickListener(new firstGridOnClick());
         secondG.setOnItemClickListener(new secondGridOnClick());
-
         setUpdate();
         return view;
     }
@@ -191,6 +184,11 @@ public class UpdateSpend extends Fragment {
             bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
             bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
             bundle.putSerializable("position",getArguments().getSerializable("position"));
+            bundle.putSerializable("period",  getArguments().getSerializable("period"));
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
+        }else if(action.equals("SelectListModelCom"))
+        {
+            fragment=new SelectListModelCom();
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);
@@ -215,6 +213,8 @@ public class UpdateSpend extends Fragment {
             bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
             bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
             bundle.putSerializable("position",getArguments().getSerializable("position"));
+            bundle.putSerializable("period",  getArguments().getSerializable("period"));
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
         }else if(action.equals("SelectShowCircleDe"))
         {
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
@@ -296,15 +296,15 @@ public class UpdateSpend extends Fragment {
         super.onStart();
         setFirstGrid();
         setSecondGrid();
-        if(showfirstgrid)
+        if(Common.showfirstgrid)
         {
             firstL.setVisibility(View.VISIBLE);
-            showfirstgrid=false;
+            Common.showfirstgrid=false;
         }
-        if(showsecondgrid)
+        if(Common.showsecondgrid)
         {
             secondL.setVisibility(View.VISIBLE);
-            showsecondgrid=false;
+            Common.showsecondgrid=false;
         }
     }
 
@@ -368,7 +368,6 @@ public class UpdateSpend extends Fragment {
                 choiceStatue.setVisibility(View.GONE);
                 choiceday.setVisibility(View.GONE);
                 noWek.setVisibility(View.GONE);
-
             }
         }
     }
@@ -631,8 +630,8 @@ public class UpdateSpend extends Fragment {
             String type=textView.getText().toString().trim();
             if(type.equals("新增"))
             {
-                showfirstgrid=true;
-                returnThisFramgent(new InsertType());
+                Common.showfirstgrid=true;
+                returnThisFramgent(new InsertConsumeType());
                 return;
             }
             name.setText(type);
@@ -655,8 +654,8 @@ public class UpdateSpend extends Fragment {
             }
             if(type.equals("新增"))
             {
-                showsecondgrid=true;
-                returnThisFramgent(new InsertType());
+                Common.showsecondgrid=true;
+                returnThisFramgent(new InsertConsumeType());
                 return;
             }
             secondname.setText(type);
