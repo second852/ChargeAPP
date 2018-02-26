@@ -1,12 +1,13 @@
 package com.chargeapp.whc.chargeapp.Model;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 /**
  * Created by 1709008NB01 on 2017/11/9.
  */
 
-public class GoalVO {
+public class GoalVO implements Serializable{
 
     private int id;
     private String type;

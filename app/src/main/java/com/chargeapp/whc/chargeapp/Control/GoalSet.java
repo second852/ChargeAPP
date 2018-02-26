@@ -4,6 +4,7 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -140,7 +141,6 @@ public class GoalSet extends Fragment {
     private class choiceDateStatue implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-            Common.showToast(getActivity(), String.valueOf(position));
             ArrayList<String> spinneritem=new ArrayList<>();
             if(position==0)
             {
@@ -206,27 +206,36 @@ public class GoalSet extends Fragment {
                 return;
             }
             String reMa=(remindD.getSelectedItem()==null)?"":remindD.getSelectedItem().toString();
-
-            Log.d("TAG",reMa);
-            Log.d("TAG",remindS.getSelectedItem().toString());
-            Log.d("TAG",spinnerT.getSelectedItem().toString());
-            Log.d("TAG",choiceStatue.getSelectedItem().toString());
-
-//            GoalVO goalVO=new GoalVO();
-//            goalVO.setName(goalName);
-//            goalVO.setMoney(goalMoney);
-//            goalVO.setNoWeekend(noWeekend.isChecked());
-//            goalVO.setHavePeriod(forever.isChecked());
-//            goalVO.setNotify(remind.isChecked());
-//            goalVO.setNotifyDate(remindD.getSelectedItem().toString());
-//            goalVO.setNotifyStatue(remindS.getSelectedItem().toString());
-//            String[] dates = limitP.getText().toString().split("/");
-//            Calendar c = new GregorianCalendar(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
-//            Date d = new Date(c.getTimeInMillis());
-//            goalVO.setPeriodTime(d);
-//            goalVO.setType(spinnerT.getSelectedItem().toString());
-//            goalVO.setTimeStatue(choiceStatue.getSelectedItem().toString());
-//            goalDB.insert(goalVO);
+            GoalVO goalVO=new GoalVO();
+            goalVO.setName(goalName);
+            goalVO.setMoney(goalMoney);
+            goalVO.setNoWeekend(noWeekend.isChecked());
+            goalVO.setHavePeriod(forever.isChecked());
+            goalVO.setNotify(remind.isChecked());
+            goalVO.setNotifyDate(reMa);
+            goalVO.setNotifyStatue(remindS.getSelectedItem().toString());
+            String[] dates = limitP.getText().toString().trim().split("/");
+            Date d;
+            if(dates.length>1)
+            {
+                Calendar c = new GregorianCalendar(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
+                d = new Date(c.getTimeInMillis());
+            }else{
+                Calendar c = new GregorianCalendar(0, 0, 0);
+                d = new Date(c.getTimeInMillis());
+            }
+            goalVO.setPeriodTime(d);
+            goalVO.setType(spinnerT.getSelectedItem().toString());
+            goalVO.setTimeStatue(choiceStatue.getSelectedItem().toString());
+            goalDB.insert(goalVO);
+            Fragment fragment = new GoalActivity();
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            for (Fragment fragment1 :  getFragmentManager().getFragments()) {
+                fragmentTransaction.remove(fragment1);
+            }
+            fragmentTransaction.replace(R.id.body, fragment);
+            fragmentTransaction.commit();
+            Common.showToast(getActivity(),"新增成功!");
         }
     }
 }

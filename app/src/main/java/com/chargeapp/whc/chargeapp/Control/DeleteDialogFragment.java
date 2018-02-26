@@ -11,10 +11,12 @@ import android.text.Html;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 
 import java.util.Map;
@@ -28,6 +30,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     private ConsumeDB consumeDB;
     private InvoiceDB invoiceDB;
     private BankDB bankDB;
+    private GoalDB goalDB;
     private Object object;
     private Fragment fragement;
 
@@ -54,6 +57,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         if(object instanceof InvoiceVO)
         {
             InvoiceVO I= (InvoiceVO) object;
@@ -64,6 +68,9 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         }else if(object instanceof BankVO){
             BankVO b= (BankVO) object;
             message=b.getMaintype()+" "+b.getMoney()+"元";
+        }else if(object instanceof GoalVO){
+            GoalVO b= (GoalVO) object;
+            message=b.getName();
         }
         String title="確定要刪除這筆資料?";
         return new AlertDialog.Builder(getActivity())
@@ -92,6 +99,10 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 {
                     BankVO bankVO = (BankVO) object;
                     bankDB.deleteById(bankVO.getId());
+                }else if(object instanceof GoalVO)
+                {
+                    GoalVO goalVO = (GoalVO) object;
+                    goalDB.deleteById(goalVO.getId());
                 }
 
 
@@ -108,7 +119,11 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 }else if(fragement instanceof SelectListModelIM){
                     SelectListModelIM selectListModelIM= (SelectListModelIM) fragement;
                     selectListModelIM.setLayout();
+                }else if(fragement instanceof GoalListAll){
+                    GoalListAll goalListAll= (GoalListAll) fragement;
+                    goalListAll.setLayout();
                 }
+
                 break;
             default:
                 dialog.cancel();

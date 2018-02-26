@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import com.chargeapp.whc.chargeapp.R;
 
 public class GoalActivity extends Fragment implements ViewPager.OnPageChangeListener {
-    private ViewPager mViewPager;
+    public  ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button exportMoney,importMoney,goneMoney;
     private HorizontalScrollView choiceitem;
@@ -38,7 +38,7 @@ public class GoalActivity extends Fragment implements ViewPager.OnPageChangeList
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(4);
+        mViewPager.setCurrentItem(3);
         setcurrentpage();
         text=view.findViewById(R.id.text);
         return  view;
@@ -77,7 +77,7 @@ public class GoalActivity extends Fragment implements ViewPager.OnPageChangeList
         @Override
         public Fragment getItem(int position) {
             int currentpoition=position%2;
-            if (currentpoition == 0) {
+            if (currentpoition == 1) {
                 Fragment fragment=new GoalSet();
                 return fragment;
             } else  {
@@ -92,18 +92,18 @@ public class GoalActivity extends Fragment implements ViewPager.OnPageChangeList
     public void onPageSelected(int position) {
         int currentpoition=position%2;
         nowpoint=position;
-        if(currentpoition==0)
-        {
-            setcurrentpage();
-            goneMoney.setText("新增");
-            exportMoney.setText("紀錄");
-            importMoney.setText("新增");
-        }else
+        if(currentpoition==1)
         {
             setcurrentpage();
             goneMoney.setText("紀錄");
             exportMoney.setText("新增");
             importMoney.setText("紀錄");
+        }else
+        {
+            setcurrentpage();
+            goneMoney.setText("新增");
+            exportMoney.setText("紀錄");
+            importMoney.setText("新增");
         }
     }
     @Override
