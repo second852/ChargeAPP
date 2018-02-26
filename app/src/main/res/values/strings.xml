@@ -9,7 +9,7 @@
 
     <string-array name="goalType">
         <item>支出</item>
-        <item>儲存</item>
+        <item>儲蓄</item>
     </string-array>
 
     <string name="text_Open">open</string>
