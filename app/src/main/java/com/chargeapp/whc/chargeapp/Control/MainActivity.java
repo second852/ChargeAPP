@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         askPermissions();
-//        deleteDatabase("ChargeAPP");
+        deleteDatabase("ChargeAPP");
         if (chargeAPPDB == null) {
             setdate();
         }

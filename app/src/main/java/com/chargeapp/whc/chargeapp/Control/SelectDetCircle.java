@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -54,12 +55,13 @@ public class SelectDetCircle extends Fragment {
     private boolean ShowAllCarrier;
     private boolean noShowCarrier;
     private int year, month, day, index;
-    private String carrier;
+    private int carrier;
     private List<InvoiceVO> invoiceVOS;
     private List<ConsumeVO> consumeVOS;
     private String mainTitle;
     private HashMap<String, HashMap<String, Integer>> hashMap;
     private int size;
+    private CarrierDB carrierDB;
 
 
     @Override
@@ -77,8 +79,12 @@ public class SelectDetCircle extends Fragment {
         month = (int) getArguments().getSerializable("month");
         day = (int) getArguments().getSerializable("day");
         index = (int) getArguments().getSerializable("index");
-        carrier = (String) getArguments().getSerializable("carrier");
-
+        carrier = (int) getArguments().getSerializable("carrier");
+        List<CarrierVO> carrierVOS=carrierDB.getAll();
+        if(carrierVOS.size()<=0)
+        {
+            noShowCarrier=true;
+        }
         Calendar start = new GregorianCalendar(year, month, day + index, 0, 0, 0);
         Calendar end = new GregorianCalendar(year, month, day + index, 23, 59, 59);
         SimpleDateFormat sf = new SimpleDateFormat("yyyy 年 MM 月 dd 日");
@@ -103,10 +109,11 @@ public class SelectDetCircle extends Fragment {
             }
         }
         if (!noShowCarrier) {
+            String carNul=carrierVOS.get(carrier).getCarNul();
             if (ShowAllCarrier) {
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
             } else {
-                invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrier);
+                invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carNul);
             }
             for (InvoiceVO I : invoiceVOS) {
                 if (hashMap.get(I.getMaintype()) == null) {
@@ -139,6 +146,7 @@ public class SelectDetCircle extends Fragment {
     private void setDB() {
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
     private PieData addData(String key, TextView detail) {

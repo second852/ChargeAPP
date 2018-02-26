@@ -221,7 +221,7 @@ public class SelectConsume extends Fragment {
             PIdateTittle.setText(Common.sFour.format(new Date(start.getTimeInMillis())));
         }
 
-        if (!noShowCarrier) {
+        if (!noShowCarrier&&carrierVOS.size()>0) {
             List<InvoiceVO> invoiceVOS;
             if (ShowAllCarrier) {
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
@@ -316,7 +316,7 @@ public class SelectConsume extends Fragment {
         if (Statue == 0) {
             start = new GregorianCalendar(year, month, day, 0, 0, 0);
             end = new GregorianCalendar(year, month, day, 23, 59, 59);
-            BarEntry barEntry = new BarEntry(0, Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()));
+            BarEntry barEntry = new BarEntry(0, Periodfloat(start,end));
             chartData.add(barEntry);
 
         } else if (Statue == 1) {
@@ -324,7 +324,7 @@ public class SelectConsume extends Fragment {
                 start = new GregorianCalendar(year, month, day - dweek + 1 + i, 0, 0, 0);
                 end = new GregorianCalendar(year, month, day - dweek + 1 + i, 23, 59, 59);
                 Log.d(TAG,"start"+Common.sDay.format(new Date(start.getTimeInMillis())));
-                BarEntry barEntry = new BarEntry(i, Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()));
+                BarEntry barEntry = new BarEntry(i, Periodfloat(start,end));
                 chartData.add(barEntry);
             }
         } else if (Statue == 2) {
@@ -335,7 +335,7 @@ public class SelectConsume extends Fragment {
             end = new GregorianCalendar(year, month, calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
             BarEntry barEntry;
             for (int i = 2; i < period; i++) {
-                barEntry = new BarEntry(i - 2, Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()));
+                barEntry = new BarEntry(i - 2, Periodfloat(start,end));
                 chartData.add(barEntry);
                 Log.d(TAG,"week "+String.valueOf(i - 2)+":"+Common.sDay.format(new Date(start.getTimeInMillis()))+"~"+Common.sDay.format(new Date(end.getTimeInMillis())));
                 calendar.set(Calendar.WEEK_OF_MONTH, i);
@@ -345,33 +345,34 @@ public class SelectConsume extends Fragment {
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
                 end = new GregorianCalendar(year, month, calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
             }
-            barEntry = new BarEntry(period - 2, Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()));
+            barEntry = new BarEntry(period - 2, Periodfloat(start, end));
             chartData.add(barEntry);
             Log.d(TAG,"week "+String.valueOf(period - 2)+":"+Common.sDay.format(new Date(start.getTimeInMillis()))+"~"+Common.sDay.format(new Date(end.getTimeInMillis())));
             calendar.set(Calendar.WEEK_OF_MONTH, period);
             calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
             start = new GregorianCalendar(year, month, calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
             end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
-            barEntry = new BarEntry(period - 1, Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()));
+            barEntry = new BarEntry(period - 1, Periodfloat(start, end));
             chartData.add(barEntry);
             Log.d(TAG,"week "+String.valueOf(period - 1)+":"+Common.sDay.format(new Date(start.getTimeInMillis()))+"~"+Common.sDay.format(new Date(end.getTimeInMillis())));
         } else {
             for (int i = 0; i < period; i++) {
                 start = new GregorianCalendar(year, month + i, 1, 0, 0, 0);
                 end = new GregorianCalendar(year, month + i, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
-                BarEntry barEntry = new BarEntry(i, Periodfloat(start, end, carrierVOS.get(choiceD).getCarNul()));
+                BarEntry barEntry = new BarEntry(i, Periodfloat(start,end));
                 chartData.add(barEntry);
             }
         }
         return chartData;
     }
 
-    private float[] Periodfloat(Calendar start, Calendar end, String carrier) {
+    private float[] Periodfloat(Calendar start, Calendar end) {
         Map<String, Integer> hashMap = new LinkedHashMap<>();
         boolean isOther;
         float[] f = new float[list_Data.size()];
         ChartEntry other = new ChartEntry("其他", 0);
-        if (!noShowCarrier) {
+        if (!noShowCarrier&&carrierVOS.size()>0) {
+            String carrier=carrierVOS.get(choiceD).getCarNul();
             List<InvoiceVO> periodInvoice;
             if (ShowAllCarrier) {
                 periodInvoice = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
@@ -491,6 +492,10 @@ public class SelectConsume extends Fragment {
         findMaxFive();
         Description description = new Description();
         description.setText(" ");
+        if(list_Data.size()<=0)
+        {
+            return;
+        }
         chart_bar.setDrawGridBackground(false);
         chart_bar.setDragEnabled(true);
         chart_bar.setScaleEnabled(true);
@@ -730,7 +735,7 @@ public class SelectConsume extends Fragment {
                 bundle.putSerializable("month", month);
                 bundle.putSerializable("day", day-dweek+1);
                 bundle.putSerializable("index", (int) e.getX());
-                bundle.putSerializable("carrier", carrierVOS.get(choiceD).getCarNul());
+                bundle.putSerializable("carrier",choiceD);
                 bundle.putSerializable("total",(int)e.getY());
                 bundle.putSerializable("period", period);
                 bundle.putSerializable("dweek",dweek);
@@ -778,7 +783,7 @@ public class SelectConsume extends Fragment {
             bundle.putSerializable("month", month);
             bundle.putSerializable("day", day);
             bundle.putSerializable("index", list_Data.get((int) h.getX()).getKey());
-            bundle.putSerializable("carrier", carrierVOS.get(choiceD).getCarNul());
+            bundle.putSerializable("carrier",choiceD);
             bundle.putSerializable("statue", Statue);
             bundle.putSerializable("period", period);
             bundle.putSerializable("dweek",dweek);

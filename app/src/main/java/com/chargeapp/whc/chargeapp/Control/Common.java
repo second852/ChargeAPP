@@ -27,7 +27,7 @@ public class Common {
 
 
     public static SimpleDateFormat sOne = new SimpleDateFormat("yyyy 年 MM 月 dd 日");
-    public static SimpleDateFormat sTwo = new SimpleDateFormat("yyyy/MM/dd");
+    public static SimpleDateFormat sTwo = new SimpleDateFormat("yyyy/M/dd");
     public static SimpleDateFormat sThree = new SimpleDateFormat("yyyy 年 MM 月");
     public static SimpleDateFormat sFour = new SimpleDateFormat("yyyy 年");
     public static SimpleDateFormat sDay = new SimpleDateFormat("MM/dd");

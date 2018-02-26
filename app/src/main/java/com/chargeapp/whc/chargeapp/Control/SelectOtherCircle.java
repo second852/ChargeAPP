@@ -15,8 +15,10 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -54,7 +56,7 @@ public class SelectOtherCircle extends Fragment {
     private boolean ShowAllCarrier;
     private boolean noShowCarrier;
     private int year, month, day;
-    private String carrier;
+    private int carrier;
     private List<InvoiceVO> invoiceVOS;
     private List<ConsumeVO> consumeVOS;
     private ArrayList<String> Okey;
@@ -65,6 +67,8 @@ public class SelectOtherCircle extends Fragment {
     private HashMap<String, HashMap<String, Integer>> mapHashMap;
     private int countOther;
     private TextView message;
+    private CarrierDB carrierDB;
+    private List<CarrierVO> carrierVOS;
 
 
     @Override
@@ -72,6 +76,7 @@ public class SelectOtherCircle extends Fragment {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         setDB();
+        carrierVOS=carrierDB.getAll();
         listView = view.findViewById(R.id.listCircle);
         message=view.findViewById(R.id.message);
         ShowConsume = (boolean) getArguments().getSerializable("ShowConsume");
@@ -80,7 +85,7 @@ public class SelectOtherCircle extends Fragment {
         year = (int) getArguments().getSerializable("year");
         month = (int) getArguments().getSerializable("month");
         day = (int) getArguments().getSerializable("day");
-        carrier = (String) getArguments().getSerializable("carrier");
+        carrier = (int) getArguments().getSerializable("carrier");
         Okey = getArguments().getStringArrayList("OKey");
         Statue = (int) getArguments().getSerializable("statue");
         period= (int) getArguments().getSerializable("period");
@@ -139,11 +144,11 @@ public class SelectOtherCircle extends Fragment {
                     total = total + Integer.parseInt(c.getMoney());
                 }
             }
-            if (!noShowCarrier) {
+            if (!noShowCarrier&&carrierVOS.size()>0) {
                 if (ShowAllCarrier) {
                     invoiceVOS = invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key);
                 } else {
-                    invoiceVOS = invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key, carrier);
+                    invoiceVOS = invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key, carrierVOS.get(carrier).getCarNul());
                 }
                 for (InvoiceVO I : invoiceVOS) {
                     if(mapHashMap.get(I.getMaintype())==null)
@@ -182,6 +187,7 @@ public class SelectOtherCircle extends Fragment {
     private void setDB() {
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
     private PieData addData(String key, TextView detail, HashMap<String, Integer> hashMap) {

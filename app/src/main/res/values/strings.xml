@@ -6,6 +6,12 @@
         <item>每個月</item>
         <item>每年</item>
     </string-array>
+
+    <string-array name="goalType">
+        <item>支出</item>
+        <item>儲存</item>
+    </string-array>
+
     <string name="text_Open">open</string>
     <string name="text_Close">close</string>
     <string name="text_Com">記一筆</string>

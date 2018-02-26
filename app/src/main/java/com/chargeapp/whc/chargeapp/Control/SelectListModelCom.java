@@ -57,6 +57,7 @@ public class SelectListModelCom extends Fragment {
     private ProgressDialog progressDialog;
     private Gson gson=new Gson();
     public static int p;
+    private TextView message;
 
     @Nullable
     @Override
@@ -123,6 +124,15 @@ public class SelectListModelCom extends Fragment {
                 }
             }
         });
+        DRcarrier.setText(Common.sThree.format(new Date(start.getTimeInMillis())));
+        listView.setSelection(p);
+        if(objects.size()<=0)
+        {
+            message.setVisibility(View.VISIBLE);
+            message.setText(Common.sThree.format(new Date(start.getTimeInMillis()))+"\n無資料");
+            return;
+        }
+        message.setVisibility(View.GONE);
         if(listView.getAdapter()!=null)
         {
             ListAdapter adapter= (ListAdapter) listView.getAdapter();
@@ -131,8 +141,6 @@ public class SelectListModelCom extends Fragment {
         }else {
             listView.setAdapter(new ListAdapter(getActivity(),objects));
         }
-        DRcarrier.setText(Common.sThree.format(new Date(start.getTimeInMillis())));
-        listView.setSelection(p);
         progressDialog.cancel();
     }
 
@@ -141,6 +149,7 @@ public class SelectListModelCom extends Fragment {
         DRcut=view.findViewById(R.id.DRcut);
         DRcarrier=view.findViewById(R.id.DRcarrier);
         listView=view.findViewById(R.id.list);
+        message=view.findViewById(R.id.message);
     }
 
     private class ListAdapter extends BaseAdapter {

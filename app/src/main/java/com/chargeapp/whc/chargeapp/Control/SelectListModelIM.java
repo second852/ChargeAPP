@@ -37,6 +37,7 @@ public class SelectListModelIM extends Fragment {
     private Calendar start,end;
     private BankDB bankDB;
     private TextView DRcarrier;
+    private TextView message;
 
 
 
@@ -57,6 +58,15 @@ public class SelectListModelIM extends Fragment {
         start=new GregorianCalendar(year,month,1,0,0,0);
         end=new GregorianCalendar(year,month,start.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
         List<BankVO>  bankVOS=bankDB.getTimeAll(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+        String title=Common.sThree.format(new Date(start.getTimeInMillis()));
+        DRcarrier.setText(title);
+        if(bankVOS.size()<=0)
+        {
+            message.setVisibility(View.VISIBLE);
+            message.setText(title+"\n無資料");
+            return;
+        }
+        message.setVisibility(View.GONE);
         ListAdapter baseAdapter= (ListAdapter) listView.getAdapter();
         if(baseAdapter==null)
         {
@@ -66,7 +76,6 @@ public class SelectListModelIM extends Fragment {
             baseAdapter.notifyDataSetChanged();
             listView.invalidate();
         }
-        DRcarrier.setText(Common.sThree.format(new Date(start.getTimeInMillis())));
         listView.setSelection(p);
     }
 
@@ -75,6 +84,7 @@ public class SelectListModelIM extends Fragment {
         DRcarrier=view.findViewById(R.id.DRcarrier);
         DRadd=view.findViewById(R.id.DRadd);
         DRcut=view.findViewById(R.id.DRcut);
+        message=view.findViewById(R.id.message);
         DRadd.setOnClickListener(new addOnClick());
         DRcut.setOnClickListener(new cutOnClick());
     }

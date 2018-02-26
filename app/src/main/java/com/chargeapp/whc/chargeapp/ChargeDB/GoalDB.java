@@ -39,6 +39,7 @@ public class GoalDB {
            goalVO.setNotify(Boolean.valueOf(cursor.getString(7)));
            goalVO.setNotifyStatue(cursor.getString(8));
            goalVO.setNotifyDate(cursor.getString(9));
+           goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
            goalVOS.add(goalVO);
         }
         cursor.close();
@@ -57,6 +58,7 @@ public class GoalDB {
         values.put("notify",goalVO.isNotify());
         values.put("notifyStatue",goalVO.getNotifyStatue());
         values.put("notifyDate",goalVO.getNotifyDate());
+        values.put("noWeekend",goalVO.isNoWeekend());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -71,6 +73,7 @@ public class GoalDB {
         values.put("notify",goalVO.isNotify());
         values.put("notifyStatue",goalVO.getNotifyStatue());
         values.put("notifyDate",goalVO.getNotifyDate());
+        values.put("noWeekend",goalVO.isNoWeekend());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(goalVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

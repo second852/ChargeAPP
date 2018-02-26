@@ -27,6 +27,16 @@ public class GoalVO {
 
     private String notifyDate;
 
+    private boolean noWeekend;
+
+    public boolean isNoWeekend() {
+        return noWeekend;
+    }
+
+    public void setNoWeekend(boolean noWeekend) {
+        this.noWeekend = noWeekend;
+    }
+
     public int getId() {
         return id;
     }

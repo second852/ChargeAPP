@@ -61,7 +61,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
 
     private static final String TABLE_GOAL =
             "CREATE TABLE Goal ( id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT NOT NULL," +
-                    "name TEXT, money text , timeStatue text, havePeriod text, periodTime DATETIME, notify TEXT , notifyStatue TEXT , notifyDate TEXT) ;";
+                    "name TEXT, money text , timeStatue text, havePeriod text, periodTime DATETIME, notify TEXT , notifyStatue TEXT , notifyDate TEXT , noWeekend TEXT) ;";
 
     public ChargeAPPDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);

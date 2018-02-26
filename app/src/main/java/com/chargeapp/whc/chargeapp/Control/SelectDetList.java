@@ -20,6 +20,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -58,7 +59,7 @@ public class SelectDetList extends Fragment {
     private boolean ShowAllCarrier;
     private boolean noShowCarrier;
     private int year,month,day;
-    private String carrier;
+    private int carrier;
     private List<InvoiceVO> invoiceVOS;
     private List<ConsumeVO> consumeVOS;
     private HashMap<String,Integer> main;
@@ -71,6 +72,8 @@ public class SelectDetList extends Fragment {
     private String title;
     private TextView message;
     private int position;
+    private CarrierDB carrierDB;
+    private List<CarrierVO> carrierVOS;
 
 
 
@@ -80,6 +83,7 @@ public class SelectDetList extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
         setDB();
+        carrierVOS=carrierDB.getAll();
         findViewById(view);
         main=new HashMap<>();
         progressDialog=new ProgressDialog(getActivity());
@@ -90,7 +94,7 @@ public class SelectDetList extends Fragment {
         month= (int) getArguments().getSerializable("month");
         day= (int) getArguments().getSerializable("day");
         key= (String) getArguments().getSerializable("key");
-        carrier= (String) getArguments().getSerializable("carrier");
+        carrier= (int) getArguments().getSerializable("carrier");
         Statue=(int) getArguments().getSerializable("Statue");
         period= (int) getArguments().getSerializable("period");
         dweek= (int) getArguments().getSerializable("dweek");
@@ -131,13 +135,13 @@ public class SelectDetList extends Fragment {
             consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
             objects.addAll(consumeVOS);
         }
-        if(!noShowCarrier)
+        if(!noShowCarrier&&carrierVOS.size()>0)
         {
             if(ShowAllCarrier)
             {
                 invoiceVOS=invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
             }else {
-                invoiceVOS = invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key, carrier);
+                invoiceVOS = invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key, carrierVOS.get(carrier).getCarNul());
             }
             objects.addAll(invoiceVOS);
         }
@@ -168,6 +172,7 @@ public class SelectDetList extends Fragment {
     private void setDB() {
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
     private class ListAdapter extends BaseAdapter {
