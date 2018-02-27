@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                     drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);
                     listView.collapseGroup(1);
-                    fragment = new GoalActivity();
+                    fragment = new GoalListAll();
                     switchFragment(fragment);
                 } else if (groupPosition == 5){
                     setTitle(R.string.text_Setting);

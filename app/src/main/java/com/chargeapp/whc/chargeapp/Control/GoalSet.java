@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,9 +33,9 @@ import java.util.GregorianCalendar;
 public class GoalSet extends Fragment {
     private EditText name,money;
     private Spinner spinnerT,choiceStatue,remindS,remindD;
-    private CheckBox forever,remind,noWeekend;
-    private LinearLayout limitL,showDate;
-    private TextView limitP,save,clear;
+    private CheckBox remind,noWeekend;
+    private LinearLayout showDate;
+    private TextView limitP,save,clear,shift;
     private DatePicker datePicker;
     private View mainView;
     private GoalDB goalDB;
@@ -50,24 +49,30 @@ public class GoalSet extends Fragment {
         findViewById(view);
         limitP.setOnClickListener(new showDate());
         showDate.setOnClickListener(new choicedateClick());
-        forever.setOnCheckedChangeListener(new forverStatue());
         remind.setOnCheckedChangeListener(new dateStatue());
         remindS.setOnItemSelectedListener(new choiceDateStatue());
         clear.setOnClickListener(new clearOnClick());
         save.setOnClickListener(new saveOnClick());
+        spinnerT.setOnItemSelectedListener(new SelectType());
+        choiceStatue.setOnItemSelectedListener(new choiceStatueSelected());
         return view;
     }
 
-
-
-
+    @Override
+    public void onStart() {
+        super.onStart();
+        ArrayList<String> spinneritem=new ArrayList<>();
+        spinneritem.add(" 支出 ");
+        spinneritem.add(" 儲蓄 ");
+        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
+        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+        spinnerT.setAdapter(arrayAdapter);
+    }
 
     private void findViewById(View view) {
         spinnerT=view.findViewById(R.id.spinnerT);
         name=view.findViewById(R.id.name);
         money=view.findViewById(R.id.money);
-        forever=view.findViewById(R.id.forever);
-        limitL=view.findViewById(R.id.limitL);
         limitP=view.findViewById(R.id.limitP);
         remind=view.findViewById(R.id.remind);
         remindS=view.findViewById(R.id.remindS);
@@ -78,6 +83,7 @@ public class GoalSet extends Fragment {
         clear=view.findViewById(R.id.clear);
         save=view.findViewById(R.id.save);
         choiceStatue=view.findViewById(R.id.choiceStatue);
+        shift=view.findViewById(R.id.shift);
     }
 
     private class showDate implements View.OnClickListener {
@@ -96,23 +102,7 @@ public class GoalSet extends Fragment {
         }
     }
 
-    private class forverStatue implements CompoundButton.OnCheckedChangeListener {
-        @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            int width=mainView.getWidth();
-            Log.d("TAG", String.valueOf(width));
-            if(b)
-            {
-                forever.setX(width/2-forever.getWidth()/2);
-                limitL.setVisibility(View.GONE);
-            }else{
-                forever.setX(width/2-forever.getWidth()-forever.getWidth()/3);
-                limitL.setX(width/2+forever.getWidth()/3);
-                limitL.setVisibility(View.VISIBLE);
-                limitP.setHint(Common.sTwo.format(new Date(System.currentTimeMillis())));
-            }
-        }
-    }
+
 
 
     private class dateStatue implements CompoundButton.OnCheckedChangeListener {
@@ -185,7 +175,6 @@ public class GoalSet extends Fragment {
         public void onClick(View view) {
             name.setText("");
             money.setText("");
-            forever.setChecked(true);
             remind.setChecked(false);
         }
     }
@@ -210,7 +199,6 @@ public class GoalSet extends Fragment {
             goalVO.setName(goalName);
             goalVO.setMoney(goalMoney);
             goalVO.setNoWeekend(noWeekend.isChecked());
-            goalVO.setHavePeriod(forever.isChecked());
             goalVO.setNotify(remind.isChecked());
             goalVO.setNotifyDate(reMa);
             goalVO.setNotifyStatue(remindS.getSelectedItem().toString());
@@ -224,11 +212,11 @@ public class GoalSet extends Fragment {
                 Calendar c = new GregorianCalendar(0, 0, 0);
                 d = new Date(c.getTimeInMillis());
             }
-            goalVO.setPeriodTime(d);
+            goalVO.setEndTime(d);
             goalVO.setType(spinnerT.getSelectedItem().toString());
             goalVO.setTimeStatue(choiceStatue.getSelectedItem().toString());
             goalDB.insert(goalVO);
-            Fragment fragment = new GoalActivity();
+            Fragment fragment = new GoalListAll();
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             for (Fragment fragment1 :  getFragmentManager().getFragments()) {
                 fragmentTransaction.remove(fragment1);
@@ -236,6 +224,57 @@ public class GoalSet extends Fragment {
             fragmentTransaction.replace(R.id.body, fragment);
             fragmentTransaction.commit();
             Common.showToast(getActivity(),"新增成功!");
+        }
+    }
+
+    private class SelectType implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            ArrayList<String> spinneritem=new ArrayList<>();
+            if(i==0)
+            {
+                spinneritem.add("每天");
+                spinneritem.add("每周");
+                spinneritem.add("每個月");
+                spinneritem.add("每年");
+            }else{
+                spinneritem.add("今日");
+                spinneritem.add("每個月");
+                spinneritem.add("每年");
+            }
+            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
+            arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+            choiceStatue.setAdapter(arrayAdapter);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+    }
+
+    private class choiceStatueSelected implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            TextView textView= (TextView) view;
+            if(textView==null)
+            {
+                return;
+            }
+            String s=textView.getText().toString().trim();
+            if(s.equals("今日"))
+            {
+                shift.setVisibility(View.VISIBLE);
+                limitP.setVisibility(View.VISIBLE);
+            }else{
+                shift.setVisibility(View.GONE);
+                limitP.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
         }
     }
 }

@@ -16,15 +16,69 @@
     android:background="#DDDDDD"
     android:orientation="vertical"
     >
+    <LinearLayout
+        android:id="@+id/remindL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:visibility="gone"
+        android:layout_toLeftOf="@+id/updateD"
+        android:background="#FF0000"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="提醒"
+            android:textColor="#FF0000"
+            android:background="#DDDDDD"
+            android:gravity="center"
+            android:padding="2dp"
+            android:layout_margin="1dp"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fixL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_toLeftOf="@+id/remindL"
+        android:layout_marginRight="7dp"
+        android:background="#0000FF"
+        android:visibility="gone"
+        >
+        <TextView
+            android:id="@+id/fixT"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="固定"
+            android:textColor="#0000FF"
+            android:background="#DDDDDD"
+            android:gravity="center"
+            android:padding="2dp"
+            android:layout_margin="1dp"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            />
+    </LinearLayout>
+
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/listTitle"
-        android:layout_margin="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="2dp"
         android:layout_gravity="center"
-        android:layout_toLeftOf="@+id/deleteI"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/fixL"
         android:textColor="#000000"
         android:textSize="20sp"
+        android:gravity="left"
+        android:padding="2dp"
         />
     <TextView
         android:layout_width="match_parent"
@@ -32,6 +86,8 @@
         android:layout_toLeftOf="@+id/deleteI"
         android:layout_below="@+id/listTitle"
         android:background="#AAAAAA"
+        android:gravity="left"
+        android:padding="2dp"
         android:layout_margin="8dp"
         android:id="@+id/listDetail"
         android:textColor="#000000"
@@ -41,7 +97,7 @@
         android:id="@+id/updateD"
         android:layout_width="50dp"
         android:layout_height="30dp"
-        android:layout_margin="15dp"
+        android:layout_margin="8dp"
         android:textSize="15dp"
         android:text="下載"
         android:layout_alignParentRight="true"
@@ -53,7 +109,7 @@
         android:layout_width="50dp"
         android:layout_height="30dp"
         android:layout_below="@+id/listTitle"
-        android:layout_margin="15dp"
+        android:layout_margin="8dp"
         android:textSize="15dp"
         android:text="刪除"
         android:layout_alignParentRight="true"

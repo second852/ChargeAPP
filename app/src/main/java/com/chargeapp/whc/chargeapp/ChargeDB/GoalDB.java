@@ -3,9 +3,9 @@ package com.chargeapp.whc.chargeapp.ChargeDB;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.Settings;
 
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
-import com.chargeapp.whc.chargeapp.Model.TypeVO;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -34,12 +34,13 @@ public class GoalDB {
            goalVO.setName(cursor.getString(2));
            goalVO.setMoney(cursor.getString(3));
            goalVO.setTimeStatue(cursor.getString(4));
-           goalVO.setHavePeriod(Boolean.valueOf(cursor.getString(5)));
-           goalVO.setPeriodTime(new Date(cursor.getLong(6)));
+           goalVO.setStartTime(new Date(cursor.getLong(5)));
+           goalVO.setEndTime(new Date(cursor.getLong(6)));
            goalVO.setNotify(Boolean.valueOf(cursor.getString(7)));
            goalVO.setNotifyStatue(cursor.getString(8));
            goalVO.setNotifyDate(cursor.getString(9));
            goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
+           goalVO.setStatue(cursor.getInt(11));
            goalVOS.add(goalVO);
         }
         cursor.close();
@@ -53,12 +54,13 @@ public class GoalDB {
         values.put("name",goalVO.getName());
         values.put("money",goalVO.getMoney());
         values.put("timeStatue",goalVO.getTimeStatue());
-        values.put("havePeriod",goalVO.isHavePeriod());
-        values.put("periodTime",goalVO.getPeriodTime().getTime());
-        values.put("notify",goalVO.isNotify());
+        values.put("startTime",System.currentTimeMillis());
+        values.put("endTime",goalVO.getEndTime().getTime());
+        values.put("notify",String.valueOf(goalVO.isNotify()));
         values.put("notifyStatue",goalVO.getNotifyStatue());
         values.put("notifyDate",goalVO.getNotifyDate());
-        values.put("noWeekend",goalVO.isNoWeekend());
+        values.put("noWeekend",String.valueOf(goalVO.isNoWeekend()));
+        values.put("statue",0);
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -68,12 +70,13 @@ public class GoalDB {
         values.put("name",goalVO.getName());
         values.put("money",goalVO.getMoney());
         values.put("timeStatue",goalVO.getTimeStatue());
-        values.put("havePeriod",goalVO.isHavePeriod());
-        values.put("periodTime",goalVO.getPeriodTime().getTime());
-        values.put("notify",goalVO.isNotify());
+        values.put("startTime",goalVO.getStartTime().getTime());
+        values.put("endTime",goalVO.getEndTime().getTime());
+        values.put("notify",String.valueOf(goalVO.isNotify()));
         values.put("notifyStatue",goalVO.getNotifyStatue());
         values.put("notifyDate",goalVO.getNotifyDate());
-        values.put("noWeekend",goalVO.isNoWeekend());
+        values.put("noWeekend",String.valueOf(goalVO.isNoWeekend()));
+        values.put("statue",goalVO.getStatue());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(goalVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

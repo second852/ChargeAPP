@@ -10,6 +10,7 @@ import java.sql.Date;
 public class GoalVO implements Serializable{
 
     private int id;
+
     private String type;
 
     private String name;
@@ -18,9 +19,9 @@ public class GoalVO implements Serializable{
 
     private String timeStatue;
 
-    private boolean havePeriod;
+    private Date startTime;
 
-    private Date periodTime;
+    private Date endTime;
 
     private boolean notify;
 
@@ -29,6 +30,25 @@ public class GoalVO implements Serializable{
     private String notifyDate;
 
     private boolean noWeekend;
+
+    /* 0:init 1:fail 2:complete*/
+    private int statue;
+
+    public int getStatue() {
+        return statue;
+    }
+
+    public void setStatue(int statue) {
+        this.statue = statue;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
 
     public boolean isNoWeekend() {
         return noWeekend;
@@ -78,20 +98,12 @@ public class GoalVO implements Serializable{
         this.timeStatue = timeStatue;
     }
 
-    public boolean isHavePeriod() {
-        return havePeriod;
+    public Date getEndTime() {
+        return endTime;
     }
 
-    public void setHavePeriod(boolean havePeriod) {
-        this.havePeriod = havePeriod;
-    }
-
-    public Date getPeriodTime() {
-        return periodTime;
-    }
-
-    public void setPeriodTime(Date periodTime) {
-        this.periodTime = periodTime;
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     public boolean isNotify() {
