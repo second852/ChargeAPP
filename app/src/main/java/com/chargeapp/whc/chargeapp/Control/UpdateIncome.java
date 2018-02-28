@@ -160,7 +160,7 @@ public class UpdateIncome extends Fragment {
                 } else {
                     updateChoice = 6;
                 }
-            } else if (choicestatue.trim().equals("每個月")) {
+            } else if (choicestatue.trim().equals("每月")) {
                 choiceStatue.setSelection(2);
                 updateChoice = Integer.valueOf(choicedate) - 1;
             } else {
@@ -188,14 +188,6 @@ public class UpdateIncome extends Fragment {
         detailname = view.findViewById(R.id.detailname);
         firstG = view.findViewById(R.id.firstG);
         firstL = view.findViewById(R.id.firstL);
-        ArrayList<String> spinneritem = new ArrayList<>();
-        spinneritem.add("每天");
-        spinneritem.add("每周");
-        spinneritem.add("每個月");
-        spinneritem.add("每年");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, spinneritem);
-        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        choiceStatue.setAdapter(arrayAdapter);
         getActivity().setTitle("修改資料");
     }
 
@@ -239,14 +231,14 @@ public class UpdateIncome extends Fragment {
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
             String choiceitem = adapterView.getItemAtPosition(position).toString();
             ArrayList<String> spinneritem = new ArrayList<>();
-            if (choiceitem.equals("每天")) {
+            if (position==0) {
                 choiceday.setVisibility(View.GONE);
                 fixdate.setX(showfixdate.getWidth() / 10);
                 choiceStatue.setX(showfixdate.getWidth() / 2 + showfixdate.getWidth() / 10);
                 choiceStatue.setVisibility(View.VISIBLE);
                 return;
             }
-            if (choiceitem.equals("每周")) {
+            if (position==1) {
                 spinneritem.add("星期一");
                 spinneritem.add("星期二");
                 spinneritem.add("星期三");
@@ -255,12 +247,12 @@ public class UpdateIncome extends Fragment {
                 spinneritem.add("星期六");
                 spinneritem.add("星期日");
             }
-            if (choiceitem.equals("每個月")) {
+            if (position==2) {
                 for (int i = 1; i <= 31; i++) {
                     spinneritem.add("    " + String.valueOf(i) + "   ");
                 }
             }
-            if (choiceitem.equals("每年")) {
+            if (position==3) {
                 for (int i = 1; i <= 12; i++) {
                     spinneritem.add(" " + String.valueOf(i) + "月");
                 }

@@ -1,9 +1,9 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.content.Context;
+import android.drm.DrmStore;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.constraint.solver.Goal;
 import android.support.v4.app.Fragment;
@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,16 +23,11 @@ import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
-import com.chargeapp.whc.chargeapp.Model.BankVO;
-import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
-import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 
@@ -50,15 +44,18 @@ public class GoalListAll extends Fragment {
     private ConsumeDB consumeDB;
     private InvoiceDB invoiceDB;
     private BankDB bankDB;
-    private Button addGoal;
-    private Boolean complete=true;
+    private ImageView addGoal;
+    private boolean goalSaveComplete;
+    private boolean goalConsumeComplete;
+    private TextView message;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.goal_list, container, false);
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
         setLayout();
         return view;
@@ -66,8 +63,43 @@ public class GoalListAll extends Fragment {
 
 
     public void setLayout() {
-
+        goalSaveComplete = true;
+        goalConsumeComplete = true;
         List<GoalVO> goalVOS = goalDB.getAll();
+        for (GoalVO g : goalVOS) {
+            if (g.getTimeStatue().trim().equals("今日") && g.getStatue() == 0) {
+                if (g.getEndTime().getTime() < System.currentTimeMillis()) {
+                    int Itotal = invoiceDB.getTotalBytime(new Timestamp(g.getStartTime().getTime()), new Timestamp(g.getEndTime().getTime()));
+                    int Ctotal = consumeDB.getTimeTotal(new Timestamp(g.getStartTime().getTime()), new Timestamp(g.getEndTime().getTime()));
+                    int Btotal = bankDB.getTimeTotal(new Timestamp(g.getStartTime().getTime()), new Timestamp(g.getEndTime().getTime()));
+                    int amout = Btotal - Ctotal - Itotal;
+                    if (amout > Integer.valueOf(g.getMoney())) {
+                        g.setStatue(2);
+                    } else {
+                        g.setStatue(1);
+                    }
+                    goalDB.update(g);
+                }
+            }
+
+            if (g.getType().trim().equals("支出")) {
+                goalConsumeComplete = false;
+            } else {
+                if (g.getStatue() == 0) {
+                    goalSaveComplete = false;
+                } else {
+                    goalSaveComplete = true;
+                }
+            }
+        }
+
+        if(goalVOS.size()<=0)
+        {
+            message.setText("無目標紀錄!\n 請按右下角圖片新增!");
+            message.setVisibility(View.VISIBLE);
+        }else{
+            message.setVisibility(View.GONE);
+        }
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {
             adapter = new ListAdapter(getActivity(), goalVOS);
@@ -77,16 +109,25 @@ public class GoalListAll extends Fragment {
             adapter.notifyDataSetChanged();
             listView.invalidate();
         }
-        if(goalVOS.size()<=1)
-        {
+
+        if (goalConsumeComplete) {
             addGoal.setVisibility(View.VISIBLE);
-            return;
+            addGoal.setOnClickListener(new addNewGoalClick());
+        } else if (goalSaveComplete) {
+            addGoal.setVisibility(View.VISIBLE);
+            addGoal.setOnClickListener(new addNewGoalClick());
+        } else {
+            addGoal.setVisibility(View.GONE);
+            addGoal.setOnClickListener(null);
         }
+
     }
+
 
     private void findViewById(View view) {
         listView = view.findViewById(R.id.list);
-        addGoal=view.findViewById(R.id.addGoal);
+        addGoal = view.findViewById(R.id.addGoal);
+        message=view.findViewById(R.id.message);
     }
 
 
@@ -120,72 +161,70 @@ public class GoalListAll extends Fragment {
             TextView decribe = itemView.findViewById(R.id.listDetail);
             LinearLayout remindL = itemView.findViewById(R.id.remindL);
             LinearLayout fixL = itemView.findViewById(R.id.fixL);
-            TextView fixT=itemView.findViewById(R.id.fixT);
+            TextView fixT = itemView.findViewById(R.id.fixT);
             Button update = itemView.findViewById(R.id.updateD);
             Button deleteI = itemView.findViewById(R.id.deleteI);
             fixL.setVisibility(View.VISIBLE);
             title.setText(goalVO.getName());
-            String timeDec = goalVO.getTimeStatue();
-            fixT.setText("未完成");
-            if (timeDec.equals("今日")&&goalVO.getStatue()==0) {
-                timeDec = Common.sTwo.format(goalVO.getStartTime()).trim() + " ~ " + Common.sTwo.format(goalVO.getEndTime()).trim()+"\n";
-                if(goalVO.getEndTime().getTime()> System.currentTimeMillis())
-                {
-                    int Itotal=invoiceDB.getTotalBytime(new Timestamp(goalVO.getStartTime().getTime()),new Timestamp(goalVO.getEndTime().getTime()));
-                    int Ctotal=consumeDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()),new Timestamp(goalVO.getEndTime().getTime()));
-                    int Btotal=bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()),new Timestamp(goalVO.getEndTime().getTime()));
-                    int amout=Btotal-Ctotal-Itotal;
-                    if(amout>Integer.valueOf(goalVO.getMoney()))
-                    {
-                      complete=true;
-                      goalVO.setStatue(2);
-                    }else{
-                       complete=false;
-                       goalVO.setStatue(1);
-                    }
-                    goalDB.update(goalVO);
-                 }else{
-                   complete=false;
-                }
+            String timeDec = goalVO.getTimeStatue().trim();
+
+            if (timeDec.equals("今日")) {
+                timeDec = Common.sTwo.format(goalVO.getStartTime()).trim() + " ~ " + Common.sTwo.format(goalVO.getEndTime()).trim() + "\n";
             }
-
-
-
-            if(goalVO.getStatue()==1)
-            {
-                update.setVisibility(View.GONE);
-                fixT.setText("失敗");
-                fixT.setTextColor(Color.parseColor("#7700FF"));
-                fixL.setBackgroundColor(Color.parseColor("#7700FF"));
-            }else if(goalVO.getStatue()==2){
-                update.setVisibility(View.GONE);
-                fixT.setText("完成");
-                fixT.setTextColor(Color.parseColor("#FF8800"));
-                fixL.setBackgroundColor(Color.parseColor("#FF8800"));
-            }else {
-                fixT.setText("進行中");
-            }
-
 
             if (goalVO.isNotify()) {
                 remindL.setVisibility(View.VISIBLE);
+            }else{
+                remindL.setVisibility(View.GONE);
             }
+
+            boolean updateGoal;
+            if (goalVO.getStatue() == 1) {
+                remindL.setVisibility(View.GONE);
+                fixT.setText("失敗");
+                fixT.setTextColor(Color.parseColor("#7700FF"));
+                fixL.setBackgroundColor(Color.parseColor("#7700FF"));
+                updateGoal=false;
+            } else if (goalVO.getStatue() == 2) {
+                remindL.setVisibility(View.GONE);
+                fixT.setText("完成");
+                fixT.setTextColor(Color.parseColor("#FF8800"));
+                fixL.setBackgroundColor(Color.parseColor("#FF8800"));
+                updateGoal=false;
+            } else {
+                remindL.setVisibility(View.VISIBLE);
+                fixT.setTextColor(Color.parseColor("#0000FF"));
+                fixL.setBackgroundColor(Color.parseColor("#0000FF"));
+                fixT.setText("進行中");
+                updateGoal=true;
+            }
+
+
+
 
             sb.append(" " + timeDec);
             sb.append(goalVO.getType());
             sb.append(goalVO.getMoney() + " 元");
             decribe.setText(sb.toString());
-            update.setText("修改");
-            update.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    p = position;
-                    Bundle bundle = new Bundle();
-                    Fragment fragment = new UpdateIncome();
-                    fragment.setArguments(bundle);
-                    switchFragment(fragment);
-                }
-            });
+            if(updateGoal)
+            {
+                update.setVisibility(View.VISIBLE);
+                update.setBackgroundColor(Color.parseColor("#33CCFF"));
+                update.setText("修改");
+                update.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        p = position;
+                        Bundle bundle = new Bundle();
+                        Fragment fragment = new GoalUpdate();
+                        bundle.putSerializable("goalVO",goalVO);
+                        fragment.setArguments(bundle);
+                        switchFragment(fragment);
+                    }
+                });
+            }else{
+               update.setVisibility(View.INVISIBLE);
+            }
             deleteI.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -219,4 +258,20 @@ public class GoalListAll extends Fragment {
         fragmentTransaction.commit();
     }
 
+    private class addNewGoalClick implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            Fragment fragment = new GoalInsert();
+            Bundle bundle=new Bundle();
+            if(goalConsumeComplete&&goalSaveComplete){
+                bundle.putSerializable("action","all");
+            } else if (goalConsumeComplete) {
+                bundle.putSerializable("action","Consume");
+            } else if (goalSaveComplete) {
+                bundle.putSerializable("action","Save");
+            }
+            fragment.setArguments(bundle);
+            switchFragment(fragment);
+        }
+    }
 }

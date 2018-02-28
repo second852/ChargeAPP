@@ -9,12 +9,27 @@
             android:layout_height="wrap_content"
         >
     </ListView>
-    <Button
-        android:layout_below="@+id/list"
+
+    <ImageView
         android:id="@+id/addGoal"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="新增"
-        android:textSize="25dp"
+        android:src="@drawable/addtwo"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="60dp"
+        android:layout_marginRight="30dp"
+        />
+
+    <TextView
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/message"
+        android:textSize="26sp"
+        android:textColor="#FF7744"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         />
 </RelativeLayout>

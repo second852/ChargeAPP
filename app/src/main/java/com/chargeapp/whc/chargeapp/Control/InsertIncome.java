@@ -192,7 +192,7 @@ public class InsertIncome extends Fragment {
                 }else{
                     updateChoice=6;
                 }
-            }else if(choicestatue.trim().equals("每個月")){
+            }else if(choicestatue.trim().equals("每月")){
                 choiceStatue.setSelection(2);
                 updateChoice= Integer.valueOf(choicedate)-1;
             }else{
@@ -275,7 +275,7 @@ public class InsertIncome extends Fragment {
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
             String choiceitem=adapterView.getItemAtPosition(position).toString();
             ArrayList<String> spinneritem=new ArrayList<>();
-            if(choiceitem.equals("每天"))
+            if(position==0)
             {
                 choiceday.setVisibility(View.GONE);
                 fixdate.setX(showfixdate.getWidth()/10);
@@ -283,7 +283,7 @@ public class InsertIncome extends Fragment {
                 choiceStatue.setVisibility(View.VISIBLE);
                 return;
             }
-            if(choiceitem.equals("每周"))
+            if(position==1)
             {
                 spinneritem.add("星期一");
                 spinneritem.add("星期二");
@@ -293,13 +293,13 @@ public class InsertIncome extends Fragment {
                 spinneritem.add("星期六");
                 spinneritem.add("星期日");
             }
-            if(choiceitem.equals("每個月"))
+            if(position==2)
             {
                 for(int i=1;i<=31;i++) {
                     spinneritem.add("    "+String.valueOf(i)+"   ");
                 }
             }
-            if(choiceitem.equals("每年"))
+            if(position==3)
             {
                 for(int i=1;i<=12;i++) {
                     spinneritem.add(" "+String.valueOf(i)+"月");
