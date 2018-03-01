@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.sql.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * Created by Wang on 2018/2/25.
@@ -40,6 +41,7 @@ public class GoalInsert extends Fragment {
     private View mainView;
     private GoalDB goalDB;
     private String action;
+    private ArrayList<String> listDayStatue;
 
 
     @Override
@@ -50,6 +52,7 @@ public class GoalInsert extends Fragment {
         getActivity().setTitle("新增目標");
         mainView=view;
         findViewById(view);
+        setSpinner();
         limitP.setOnClickListener(new showDate());
         showDate.setOnClickListener(new choicedateClick());
         remind.setOnCheckedChangeListener(new dateStatue());
@@ -59,6 +62,17 @@ public class GoalInsert extends Fragment {
         spinnerT.setOnItemSelectedListener(new SelectType());
         choiceStatue.setOnItemSelectedListener(new choiceStatueSelected());
         return view;
+    }
+
+    private void setSpinner() {
+        listDayStatue=new ArrayList<>();
+        listDayStatue.add(" 每天 ");
+        listDayStatue.add(" 每周 ");
+        listDayStatue.add(" 每月 ");
+        listDayStatue.add(" 每年 ");
+        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,listDayStatue);
+        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+        remindS.setAdapter(arrayAdapter);
     }
 
     @Override
@@ -168,6 +182,7 @@ public class GoalInsert extends Fragment {
                     spinneritem.add(" "+String.valueOf(i)+"月");
                 }
             }
+            noWeekend.setChecked(false);
             remindD.setVisibility(View.VISIBLE);
             noWeekend.setVisibility(View.GONE);
             ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
@@ -229,6 +244,7 @@ public class GoalInsert extends Fragment {
             }else{
                 goalVO.setEndTime(new Date(0));
             }
+            goalVO.setStartTime(new Date(System.currentTimeMillis()));
             String reMa=(remindD.getSelectedItem()==null)?"":remindD.getSelectedItem().toString();
             goalVO.setName(goalName);
             goalVO.setMoney(goalMoney);
@@ -239,9 +255,10 @@ public class GoalInsert extends Fragment {
             goalVO.setType(spinnerT.getSelectedItem().toString());
             goalVO.setTimeStatue(dayStatue);
             goalDB.insert(goalVO);
-
-
             Fragment fragment = new GoalListAll();
+            Bundle bundle=new Bundle();
+            bundle.putSerializable("position",0);
+            fragment.setArguments(bundle);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             for (Fragment fragment1 :  getFragmentManager().getFragments()) {
                 fragmentTransaction.remove(fragment1);
@@ -260,10 +277,7 @@ public class GoalInsert extends Fragment {
             String title=textView.getText().toString().trim();
             if(title.equals("支出"))
             {
-                spinneritem.add(" 每天 ");
-                spinneritem.add(" 每周 ");
-                spinneritem.add(" 每月 ");
-                spinneritem.add(" 每年 ");
+                spinneritem=listDayStatue;
             }else{
                 spinneritem.add(" 今日 ");
                 spinneritem.add(" 每月 ");

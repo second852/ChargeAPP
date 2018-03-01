@@ -22,7 +22,7 @@ public class GoalDB {
     }
 
     public List<GoalVO> getAll() {
-        String sql = "SELECT * FROM goal order by id;";
+        String sql = "SELECT * FROM goal order by statue desc,endTime desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<GoalVO> goalVOS = new ArrayList<>();
@@ -54,7 +54,7 @@ public class GoalDB {
         values.put("name",goalVO.getName());
         values.put("money",goalVO.getMoney());
         values.put("timeStatue",goalVO.getTimeStatue());
-        values.put("startTime",System.currentTimeMillis());
+        values.put("startTime",goalVO.getStartTime().getTime());
         values.put("endTime",goalVO.getEndTime().getTime());
         values.put("notify",String.valueOf(goalVO.isNotify()));
         values.put("notifyStatue",goalVO.getNotifyStatue());

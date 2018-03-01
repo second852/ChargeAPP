@@ -158,6 +158,9 @@ public class MainActivity extends AppCompatActivity {
                     listView.collapseGroup(groupPosition);
                     listView.collapseGroup(1);
                     fragment = new GoalListAll();
+                    Bundle bundle=new Bundle();
+                    bundle.putSerializable("position",0);
+                    fragment.setArguments(bundle);
                     switchFragment(fragment);
                 } else if (groupPosition == 5){
                     setTitle(R.string.text_Setting);

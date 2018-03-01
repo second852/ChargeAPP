@@ -192,9 +192,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:backgroundTint="#000000"
-                        android:entries="@array/fixDay"
-                        android:gravity="center"
-                        android:theme="@style/spinner1">
+                        android:gravity="center">
                     </Spinner>
 
                     <Spinner

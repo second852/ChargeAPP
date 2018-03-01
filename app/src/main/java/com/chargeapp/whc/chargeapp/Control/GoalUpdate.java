@@ -49,6 +49,7 @@ public class GoalUpdate extends Fragment {
     private Boolean first=true;
     private int updateChoice;
     private String startTitle;
+    private ArrayList<String> listDayStatue;
 
 
     @Override
@@ -57,6 +58,7 @@ public class GoalUpdate extends Fragment {
         goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalVO= (GoalVO) getArguments().getSerializable("goalVO");
         findViewById(view);
+        setRemindS();
         limitP.setOnClickListener(new showDate());
         showDate.setOnClickListener(new choicedateClick());
         remind.setOnCheckedChangeListener(new dateStatue());
@@ -66,6 +68,17 @@ public class GoalUpdate extends Fragment {
         save.setOnClickListener(new saveOnClick());
         choiceStatue.setOnItemSelectedListener(new choiceStatueSelected());
         return view;
+    }
+
+    private void setRemindS() {
+        listDayStatue=new ArrayList<>();
+        listDayStatue.add(" 每天 ");
+        listDayStatue.add(" 每周 ");
+        listDayStatue.add(" 每月 ");
+        listDayStatue.add(" 每年 ");
+        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,listDayStatue);
+        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+        remindS.setAdapter(arrayAdapter);
     }
 
     @Override
@@ -87,7 +100,6 @@ public class GoalUpdate extends Fragment {
         remindS.setSelection(b.indexOf(goalVO.getNotifyStatue().trim()));
         String choicestatue=goalVO.getNotifyStatue().trim();
         String choicedate=goalVO.getNotifyDate().trim();
-
         if(goalVO.isNotify())
         {
             noRemind.setVisibility(View.GONE);
@@ -129,26 +141,23 @@ public class GoalUpdate extends Fragment {
         ArrayList<String> spinneritem=new ArrayList<>();
         if(goalVO.getType().trim().equals("支出"))
         {
-            spinneritem.add("每天");
-            spinneritem.add("每周");
-            spinneritem.add("每月");
-            spinneritem.add("每年");
+            spinneritem=listDayStatue;
         }else{
             if(goalVO.getEndTime().getTime()<=100)
             {
-                spinneritem.add("今日");
+                spinneritem.add(" 今日 ");
                 startTitle="今日";
             }else{
                 startTitle=Common.sTwo.format(goalVO.getStartTime());
                 spinneritem.add(startTitle);
             }
-            spinneritem.add("每個月");
-            spinneritem.add("每年");
+            spinneritem.add(" 每月 ");
+            spinneritem.add(" 每年 ");
         }
         ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setAdapter(arrayAdapter);
-        int choice=spinneritem.indexOf(goalVO.getTimeStatue().trim());
+        int choice=spinneritem.indexOf(goalVO.getTimeStatue());
         if(goalVO.getTimeStatue().trim().equals("今日"))
         {
             choiceStatue.setSelection(0);
@@ -243,6 +252,7 @@ public class GoalUpdate extends Fragment {
                     spinneritem.add(" "+String.valueOf(i)+"月");
                 }
             }
+            noWeekend.setChecked(false);
             remindD.setVisibility(View.VISIBLE);
             noWeekend.setVisibility(View.GONE);
             ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
@@ -323,9 +333,10 @@ public class GoalUpdate extends Fragment {
             goalVO.setNotifyStatue(remindS.getSelectedItem().toString());
             goalVO.setTimeStatue(choiceStatue.getSelectedItem().toString());
             goalDB.update(goalVO);
-
-
             Fragment fragment = new GoalListAll();
+            Bundle bundle=new Bundle();
+            bundle.putSerializable("position",getArguments().getSerializable("position"));
+            fragment.setArguments(bundle);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             for (Fragment fragment1 :  getFragmentManager().getFragments()) {
                 fragmentTransaction.remove(fragment1);

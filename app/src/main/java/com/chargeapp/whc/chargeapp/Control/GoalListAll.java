@@ -1,14 +1,11 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.content.Context;
-import android.drm.DrmStore;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.solver.Goal;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +24,6 @@ import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 
@@ -40,7 +36,6 @@ public class GoalListAll extends Fragment {
 
     private ListView listView;
     private GoalDB goalDB;
-    private int p;
     private ConsumeDB consumeDB;
     private InvoiceDB invoiceDB;
     private BankDB bankDB;
@@ -48,6 +43,7 @@ public class GoalListAll extends Fragment {
     private boolean goalSaveComplete;
     private boolean goalConsumeComplete;
     private TextView message;
+    private int p;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,16 +52,26 @@ public class GoalListAll extends Fragment {
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        p= (int) getArguments().getSerializable("position");
         findViewById(view);
         setLayout();
         return view;
     }
 
 
+
+
     public void setLayout() {
         goalSaveComplete = true;
         goalConsumeComplete = true;
         List<GoalVO> goalVOS = goalDB.getAll();
+        if(goalVOS.size()<=0)
+        {
+            message.setText("無目標紀錄!\n 請按右下角圖片新增!");
+            message.setVisibility(View.VISIBLE);
+        }else{
+            message.setVisibility(View.GONE);
+        }
         for (GoalVO g : goalVOS) {
             if (g.getTimeStatue().trim().equals("今日") && g.getStatue() == 0) {
                 if (g.getEndTime().getTime() < System.currentTimeMillis()) {
@@ -93,13 +99,6 @@ public class GoalListAll extends Fragment {
             }
         }
 
-        if(goalVOS.size()<=0)
-        {
-            message.setText("無目標紀錄!\n 請按右下角圖片新增!");
-            message.setVisibility(View.VISIBLE);
-        }else{
-            message.setVisibility(View.GONE);
-        }
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {
             adapter = new ListAdapter(getActivity(), goalVOS);
@@ -109,7 +108,7 @@ public class GoalListAll extends Fragment {
             adapter.notifyDataSetChanged();
             listView.invalidate();
         }
-
+        listView.setSelection(p);
         if (goalConsumeComplete) {
             addGoal.setVisibility(View.VISIBLE);
             addGoal.setOnClickListener(new addNewGoalClick());
@@ -214,10 +213,10 @@ public class GoalListAll extends Fragment {
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        p = position;
                         Bundle bundle = new Bundle();
                         Fragment fragment = new GoalUpdate();
                         bundle.putSerializable("goalVO",goalVO);
+                        bundle.putSerializable("position",position);
                         fragment.setArguments(bundle);
                         switchFragment(fragment);
                     }
