@@ -167,6 +167,8 @@ public class MainActivity extends AppCompatActivity {
                     drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);
                     listView.collapseGroup(1);
+                    fragment=new SettingMain();
+                    switchFragment(fragment);
                 }else {
                     setTitle(R.string.text_Home);
                     drawerLayout.closeDrawer(GravityCompat.START);
