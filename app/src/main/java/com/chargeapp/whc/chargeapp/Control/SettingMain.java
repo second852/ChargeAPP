@@ -43,15 +43,13 @@ public class SettingMain extends Fragment {
     private CarrierDB carrierDB;
 
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.setting_main, container, false);
-        listView=view.findViewById(R.id.list);
-        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        List<EleMainItemVO> itemSon= getNewItem();
-        listView.setAdapter(new ListAdapter(getActivity(),itemSon));
+        listView = view.findViewById(R.id.list);
+        carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        List<EleMainItemVO> itemSon = getNewItem();
+        listView.setAdapter(new ListAdapter(getActivity(), itemSon));
         return view;
     }
 
@@ -63,17 +61,17 @@ public class SettingMain extends Fragment {
         eleMainItemVOList.add(new EleMainItemVO("設定提醒時間", R.drawable.timei));
         eleMainItemVOList.add(new EleMainItemVO("取消提醒項目", R.drawable.cancel));
         eleMainItemVOList.add(new EleMainItemVO("匯出檔案", R.drawable.importf));
-        eleMainItemVOList.add(new EleMainItemVO("匯入檔案",R.drawable.export));
+        eleMainItemVOList.add(new EleMainItemVO("匯入檔案", R.drawable.export));
+        eleMainItemVOList.add(new EleMainItemVO("重設資料庫", R.drawable.origin));
         return eleMainItemVOList;
     }
-
 
 
     private class ListAdapter extends BaseAdapter {
         private Context context;
         private List<EleMainItemVO> eleMainItemVOS;
 
-        ListAdapter(Context context,List<EleMainItemVO> eleMainItemVOS) {
+        ListAdapter(Context context, List<EleMainItemVO> eleMainItemVOS) {
             this.context = context;
             this.eleMainItemVOS = eleMainItemVOS;
         }
@@ -91,50 +89,63 @@ public class SettingMain extends Fragment {
                 itemView = layoutInflater.inflate(R.layout.setting_main_item, parent, false);
             }
             EleMainItemVO eleMainItemVO = eleMainItemVOS.get(position);
-            ImageView imageView=itemView.findViewById(R.id.image);
-            TextView textView=itemView.findViewById(R.id.listTitle);
+            ImageView imageView = itemView.findViewById(R.id.image);
+            TextView textView = itemView.findViewById(R.id.listTitle);
             imageView.setImageResource(eleMainItemVO.getImage());
             textView.setText(eleMainItemVO.getName());
-            Spinner carrier=itemView.findViewById(R.id.carrier);
-            Switch  notify=itemView.findViewById(R.id.notify);
-            TextView setTime=itemView.findViewById(R.id.setTime);
+            Spinner carrier = itemView.findViewById(R.id.carrier);
+            Switch notify = itemView.findViewById(R.id.notify);
+            TextView setTime = itemView.findViewById(R.id.setTime);
             carrier.setVisibility(View.GONE);
             setTime.setVisibility(View.GONE);
             notify.setVisibility(View.GONE);
-            if(position==0)
-            {
-
-            }else if(position==1)
-            {
+            if (position == 0) {
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Fragment fragment=new SettingListType();
+                        Bundle bundle=new Bundle();
+                        bundle.putSerializable("position",0);
+                        bundle.putSerializable("spinnerC",0);
+                        fragment.setArguments(bundle);
+                        switchFragment(fragment);
+                    }
+                });
+            } else if (position == 1) {
                 ArrayList<String> spinnerItem = new ArrayList<>();
-                List<CarrierVO> carrierVOS=carrierDB.getAll();
-                if(carrierVOS.size()>0)
-                {
-                    for(CarrierVO c:carrierVOS)
-                    {
+                List<CarrierVO> carrierVOS = carrierDB.getAll();
+                if (carrierVOS.size() > 0) {
+                    for (CarrierVO c : carrierVOS) {
                         spinnerItem.add(c.getCarNul());
                     }
-                }else{
+                } else {
                     spinnerItem.add("無載具");
                 }
                 ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, spinnerItem);
                 arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
                 carrier.setAdapter(arrayAdapter);
                 carrier.setVisibility(View.VISIBLE);
-            }else if(position==2)
-            {
+            } else if (position == 2) {
                 notify.setVisibility(View.VISIBLE);
-            }else if(position==3)
-            {
+            } else if (position == 3) {
                 setTime.setVisibility(View.VISIBLE);
-            }else if(position==4)
-            {
+            } else if (position == 4) {
 
-            }else if(position==5)
-            {
+            } else if (position == 5) {
 
+            } else if (position == 6) {
+
+
+            } else if (position == 7) {
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DeleteDialogFragment aa = new DeleteDialogFragment();
+                        aa.setFragement(SettingMain.this);
+                        aa.show(getFragmentManager(), "show");
+                    }
+                });
             }
-
             return itemView;
         }
 
@@ -150,10 +161,9 @@ public class SettingMain extends Fragment {
     }
 
 
-
     private void switchFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        for (Fragment fragment1 :  getFragmentManager().getFragments()) {
+        for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);
         }
         fragmentTransaction.replace(R.id.body, fragment);

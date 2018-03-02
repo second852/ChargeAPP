@@ -24,6 +24,8 @@ public class Common {
 
     public static int length=0;
     public static Description description=new Description();
+    public static boolean showfirstgrid = false;
+    public static boolean showsecondgrid = false;
 
 
     public static SimpleDateFormat sOne = new SimpleDateFormat("yyyy 年 MM 月 dd 日");
@@ -88,8 +90,7 @@ public class Common {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
-    public static boolean showfirstgrid = false;
-    public static boolean showsecondgrid = false;
+
 
 
 

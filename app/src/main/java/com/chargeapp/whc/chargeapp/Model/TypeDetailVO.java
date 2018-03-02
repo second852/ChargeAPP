@@ -1,10 +1,12 @@
 package com.chargeapp.whc.chargeapp.Model;
 
+import java.io.Serializable;
+
 /**
  * Created by Wang on 2017/11/12.
  */
 
-public class TypeDetailVO {
+public class TypeDetailVO implements Serializable{
     /*
     * 種類細節編號
     * */

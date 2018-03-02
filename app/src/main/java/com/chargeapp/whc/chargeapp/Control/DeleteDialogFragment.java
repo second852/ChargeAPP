@@ -10,14 +10,20 @@ import android.support.v4.app.Fragment;
 import android.text.Html;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
+import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
+import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
+import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
+import com.chargeapp.whc.chargeapp.Model.TypeVO;
 
 import java.util.Map;
 
@@ -33,6 +39,9 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     private GoalDB goalDB;
     private Object object;
     private Fragment fragement;
+    private TypeDB typeDB;
+    private TypeDetailDB typeDetailDB;
+    private BankTybeDB bankTybeDB;
 
     public Object getObject() {
         return object;
@@ -58,6 +67,10 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDB=new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetailDB=new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        String title="確定要刪除這筆資料?";
         if(object instanceof InvoiceVO)
         {
             InvoiceVO I= (InvoiceVO) object;
@@ -71,8 +84,23 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         }else if(object instanceof GoalVO){
             GoalVO b= (GoalVO) object;
             message=b.getName();
+        }else if(fragement instanceof SettingMain)
+        {
+            title="確定重設資料庫?";
+        }else if(object instanceof TypeVO)
+        {
+            TypeVO typeVO= (TypeVO) object;
+            message=typeVO.getName();
+        }else if(object instanceof TypeDetailVO)
+        {
+            TypeDetailVO typeDetailVO= (TypeDetailVO) object;
+            message=typeDetailVO.getName();
+        }else if(object instanceof BankTypeVO)
+        {
+            BankTypeVO bankTypeVO= (BankTypeVO) object;
+            message=bankTypeVO.getName();
         }
-        String title="確定要刪除這筆資料?";
+
         return new AlertDialog.Builder(getActivity())
                 .setTitle(Html.fromHtml(title))
                 .setIcon(null)
@@ -103,6 +131,19 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 {
                     GoalVO goalVO = (GoalVO) object;
                     goalDB.deleteById(goalVO.getId());
+                }else if(object instanceof TypeVO)
+                {
+                    TypeVO typeVO= (TypeVO) object;
+                    typeDetailDB.deleteTypeDetailByName(typeVO.getName());
+                    typeDB.deleteById(typeVO.getId());
+                }else if(object instanceof TypeDetailVO)
+                {
+                    TypeDetailVO typeDetailVO= (TypeDetailVO) object;
+                    typeDetailDB.deleteTypeDetailById(typeDetailVO.getId());
+                }else if(object instanceof BankTypeVO)
+                {
+                    BankTypeVO bankTypeVO= (BankTypeVO) object;
+                    bankDB.deleteById(bankTypeVO.getId());
                 }
 
 
@@ -122,6 +163,15 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 }else if(fragement instanceof GoalListAll){
                     GoalListAll goalListAll= (GoalListAll) fragement;
                     goalListAll.setLayout();
+                }else if(fragement instanceof SettingMain)
+                {
+                    getActivity().deleteDatabase("ChargeAPP");
+                    new MainActivity().setdate();
+                    Common.showToast(getActivity(),"重置成功!");
+                }else if(fragement instanceof SettingListType)
+                {
+                   SettingListType settingListType= (SettingListType) fragement;
+                   settingListType.setLayout();
                 }
 
                 break;

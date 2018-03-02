@@ -145,4 +145,10 @@ public class TypeDetailDB {
         String[] whereArgs = {String.valueOf(id)};
         return db.delete("TypeDetail", whereClause, whereArgs);
     }
+
+    public int deleteTypeDetailByName(String groupNumber) {
+        String whereClause ="groupNumber = ?;";
+        String[] whereArgs = {groupNumber};
+        return db.delete("TypeDetail", whereClause, whereArgs);
+    }
 }

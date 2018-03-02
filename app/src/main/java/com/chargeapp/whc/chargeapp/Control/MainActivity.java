@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         askPermissions();
-//        deleteDatabase("ChargeAPP");
         if (chargeAPPDB == null) {
+            chargeAPPDB = new ChargeAPPDB(this);
             setdate();
         }
         setUpActionBar();
@@ -287,8 +287,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void setdate() {
-        chargeAPPDB = new ChargeAPPDB(this);
+    public void setdate() {
         TypeDB typeDB = new TypeDB(chargeAPPDB.getReadableDatabase());
         TypeDetailDB typeDetailDB = new TypeDetailDB(chargeAPPDB.getReadableDatabase());
         List<TypeVO> typeVOS = typeDB.getAll();
