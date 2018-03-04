@@ -37,6 +37,54 @@ public class BankDB {
             bankVO.setFixDate(cursor.getString(4));
             bankVO.setFixDateDetail(cursor.getString(5));
             bankVO.setDetailname(cursor.getString(6));
+            bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
+            bankVO.setAutoId(cursor.getInt(8));
+            BankVOList.add(bankVO);
+        }
+        cursor.close();
+        return BankVOList;
+    }
+
+    public List<BankVO> getFixDate() {
+        String sql = "SELECT * FROM BANK where  fixdate = 'true' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<BankVO> BankVOList = new ArrayList<>();
+        BankVO bankVO;
+        while (cursor.moveToNext()) {
+            bankVO=new BankVO();
+            bankVO.setId(cursor.getInt(0));
+            bankVO.setMaintype(cursor.getString(1));
+            bankVO.setMoney(cursor.getString(2));
+            bankVO.setDate(new Date(cursor.getLong(3)));
+            bankVO.setFixDate(cursor.getString(4));
+            bankVO.setFixDateDetail(cursor.getString(5));
+            bankVO.setDetailname(cursor.getString(6));
+            bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
+            bankVO.setAutoId(cursor.getInt(8));
+            BankVOList.add(bankVO);
+        }
+        cursor.close();
+        return BankVOList;
+    }
+
+    public List<BankVO> getAutoSetting(int id) {
+        String sql = "SELECT * FROM BANK where  autoId = '"+id+"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<BankVO> BankVOList = new ArrayList<>();
+        BankVO bankVO;
+        while (cursor.moveToNext()) {
+            bankVO=new BankVO();
+            bankVO.setId(cursor.getInt(0));
+            bankVO.setMaintype(cursor.getString(1));
+            bankVO.setMoney(cursor.getString(2));
+            bankVO.setDate(new Date(cursor.getLong(3)));
+            bankVO.setFixDate(cursor.getString(4));
+            bankVO.setFixDateDetail(cursor.getString(5));
+            bankVO.setDetailname(cursor.getString(6));
+            bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
+            bankVO.setAutoId(cursor.getInt(8));
             BankVOList.add(bankVO);
         }
         cursor.close();
@@ -58,10 +106,33 @@ public class BankDB {
             bankVO.setFixDate(cursor.getString(4));
             bankVO.setFixDateDetail(cursor.getString(5));
             bankVO.setDetailname(cursor.getString(6));
+            bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
+            bankVO.setAutoId(cursor.getInt(8));
             BankVOList.add(bankVO);
         }
         cursor.close();
         return BankVOList;
+    }
+
+    public BankVO getAutoBank(Timestamp start,Timestamp end,int id) {
+        String sql = "SELECT * FROM BANK where autoId = '"+id+"' and date between '"+start.getTime()+"' and '"+end.getTime()+"' order by date;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        BankVO bankVO =null;
+        if (cursor.moveToNext()) {
+            bankVO=new BankVO();
+            bankVO.setId(cursor.getInt(0));
+            bankVO.setMaintype(cursor.getString(1));
+            bankVO.setMoney(cursor.getString(2));
+            bankVO.setDate(new Date(cursor.getLong(3)));
+            bankVO.setFixDate(cursor.getString(4));
+            bankVO.setFixDateDetail(cursor.getString(5));
+            bankVO.setDetailname(cursor.getString(6));
+            bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
+            bankVO.setAutoId(cursor.getInt(8));
+        }
+        cursor.close();
+        return bankVO;
     }
 
 
@@ -104,6 +175,8 @@ public class BankDB {
             bankVO.setFixDate(cursor.getString(4));
             bankVO.setFixDateDetail(cursor.getString(5));
             bankVO.setDetailname(cursor.getString(6));
+            bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
+            bankVO.setAutoId(cursor.getInt(8));
             BankVOList.add(bankVO);
         }
         cursor.close();
@@ -112,13 +185,9 @@ public class BankDB {
 
 
     public BankVO findById(int id) {
-        String[] columns = {
-          "id,maintype,money,date,fixdate,fixdatedetail,detailname"
-        };
-        String selection = "id = ?;";
-        String[] selectionArgs = {String.valueOf(id)};
-        Cursor cursor = db.query("Consumer", columns, selection, selectionArgs,
-                null, null, null);
+        String sql = "SELECT * FROM BANK where  id = '"+id+"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
         BankVO bankVO = null;
         if (cursor.moveToNext()) {
             bankVO=new BankVO();
@@ -129,6 +198,8 @@ public class BankDB {
             bankVO.setFixDate(cursor.getString(4));
             bankVO.setFixDateDetail(cursor.getString(5));
             bankVO.setDetailname(cursor.getString(6));
+            bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
+            bankVO.setAutoId(cursor.getInt(8));
         }
         cursor.close();
         return bankVO;
@@ -142,6 +213,8 @@ public class BankDB {
         values.put("fixdate",bankVO.getFixDate());
         values.put("fixdatedetail",bankVO.getFixDateDetail());
         values.put("detailname",bankVO.getDetailname());
+        values.put("auto",String.valueOf(bankVO.getAuto()));
+        values.put("autoId",bankVO.getAutoId());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -153,6 +226,8 @@ public class BankDB {
         values.put("fixdate",bankVO.getFixDate());
         values.put("fixdatedetail",bankVO.getFixDateDetail());
         values.put("detailname",bankVO.getDetailname());
+        values.put("auto",String.valueOf(bankVO.getAuto()));
+        values.put("autoId",bankVO.getAutoId());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(bankVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

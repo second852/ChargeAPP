@@ -1,10 +1,12 @@
 package com.chargeapp.whc.chargeapp.Model;
 
+import java.io.Serializable;
+
 /**
  * Created by Wang on 2017/11/12.
  */
 
-public class BankTypeVO {
+public class BankTypeVO implements Serializable {
     /*
     * 種類細節編號
     * */

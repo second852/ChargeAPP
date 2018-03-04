@@ -21,10 +21,11 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class secondReceiver extends BroadcastReceiver {
     private final static String TAG = "BootReceiver";
     private  NotificationManager notificationManager;
-    private SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private SimpleDateFormat sf;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         notificationManager =
                 (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         Bundle bundle=intent.getExtras();
@@ -46,6 +47,7 @@ public class secondReceiver extends BroadcastReceiver {
             Calendar calendar=Calendar.getInstance();
             int month=calendar.get(Calendar.MONTH)+1;
             int year=calendar.get(Calendar.YEAR)-1911;
+            id= (int) bundle.getSerializable("id");
             if(month==1)
             {
                 message="民國"+(year-1)+"年11-12月開獎";
@@ -66,7 +68,7 @@ public class secondReceiver extends BroadcastReceiver {
             {
                 message="民國"+year+"年9-10月開獎";
             }
-            showNotification(title,message,context,99999);
+            showNotification(title,message,context,id+1);
         }
     }
 

@@ -264,15 +264,12 @@
                         android:layout_centerVertical="true"
                         android:gravity="center"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:entries="@array/fixDay"
-                        android:theme="@style/spinner" />
+                        android:layout_height="wrap_content" />
                     <Spinner
                         android:id="@+id/choiceday"
                         android:layout_width="wrap_content"
                         android:layout_centerVertical="true"
                         android:visibility="gone"
-                        android:theme="@style/spinner"
                         android:layout_toRightOf="@+id/choiceStatue"
                         android:layout_marginLeft="15dp"
                         android:layout_height="wrap_content"/>
@@ -298,16 +295,21 @@
                 >
                 <TextView
                     android:id="@+id/standard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:background="#AAAAAA"
+                    android:visibility="invisible"
                     />
                 <TextView
                     android:id="@+id/save"
                     android:layout_width="60dp"
                     android:layout_height="40dp"
-                    android:layout_marginRight="30dp"
+                    android:layout_marginRight="25dp"
                     android:layout_toLeftOf="@+id/standard"
                     android:background="#33CCFF"
                     android:gravity="center"
@@ -319,7 +321,7 @@
                     android:id="@+id/clear"
                     android:layout_width="60dp"
                     android:layout_height="40dp"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginLeft="25dp"
                     android:layout_toRightOf="@+id/standard"
                     android:background="#FF8888"
                     android:gravity="center"

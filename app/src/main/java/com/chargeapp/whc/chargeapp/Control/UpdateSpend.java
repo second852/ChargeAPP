@@ -44,6 +44,7 @@ import java.lang.reflect.Type;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,11 +54,11 @@ import static android.app.Activity.RESULT_OK;
 
 
 public class UpdateSpend extends Fragment {
-    private EditText money,number, detailname;
+    private EditText money, number, detailname;
     private CheckBox fixdate, notify, noWek;
     private TextView secondname, name;
-    private TextView save, clear, date,datesave;
-    private LinearLayout showdate,showfixdate;
+    private TextView save, clear, date, datesave;
+    private LinearLayout showdate, showfixdate;
     private DatePicker datePicker;
     private String choicedate;
     private Spinner choiceStatue, choiceday;
@@ -71,9 +72,11 @@ public class UpdateSpend extends Fragment {
     private int updateChoice;
     private String action;
     private boolean first = true;
-    private LinearLayout firstL,secondL;
-    private GridView firstG,secondG;
-
+    private LinearLayout firstL, secondL;
+    private GridView firstG, secondG;
+    private TextView standard;
+    private int year,month,day;
+    private  Map<String, String> g;
 
 
     @Nullable
@@ -81,9 +84,12 @@ public class UpdateSpend extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.insert_spend, container, false);
         findviewByid(view);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        action = (String) getArguments().getSerializable("action");
+        consumeVO = (ConsumeVO) getArguments().getSerializable("consumeVO");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         getActivity().setTitle("修改資料");
         gson = new Gson();
+        setSpinner();
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -100,21 +106,42 @@ public class UpdateSpend extends Fragment {
         secondname.setOnClickListener(new showSecondG());
         firstG.setOnItemClickListener(new firstGridOnClick());
         secondG.setOnItemClickListener(new secondGridOnClick());
+        if (action.equals("SettingListFixCon") && (!consumeVO.isAuto())) {
+            standard.setText("全部");
+            standard.setVisibility(View.VISIBLE);
+            standard.setOnClickListener(new saveAllConsume());
+        }
         setUpdate();
         return view;
     }
 
+    private void setSpinner() {
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("每天");
+        strings.add("每周");
+        strings.add("每月");
+        strings.add("每年");
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, strings);
+        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+        choiceStatue.setAdapter(arrayAdapter);
+    }
 
 
     private void setUpdate() {
-        action = (String) getArguments().getSerializable("action");
-        consumeVO = (ConsumeVO) getArguments().getSerializable("consumeVO");
+        first = true;
+
         name.setText(consumeVO.getMaintype());
         number.setText(consumeVO.getNumber());
         secondname.setText(consumeVO.getSecondType());
         money.setText(consumeVO.getMoney());
         date.setText(Common.sTwo.format(consumeVO.getDate()));
         detailname.setText(consumeVO.getDetailname());
+
+        //自動產生不能設fix
+        if (consumeVO.isAuto()) {
+            fixdate.setVisibility(View.GONE);
+            return;
+        }
         if (consumeVO.getFixDate().equals("true")) {
             fixdate.setChecked(Boolean.valueOf(consumeVO.getFixDate()));
             notify.setChecked(Boolean.valueOf(consumeVO.getNotify()));
@@ -144,7 +171,8 @@ public class UpdateSpend extends Fragment {
                 }
             } else if (choicestatue.trim().equals("每月")) {
                 choiceStatue.setSelection(2);
-                updateChoice = Integer.valueOf(choicedate) - 1;
+                String choice = choicedate.substring(0, choicedate.indexOf("日"));
+                updateChoice = Integer.valueOf(choice) - 1;
             } else {
                 choiceStatue.setSelection(3);
                 updateChoice = Integer.valueOf(choicedate.substring(0, choicedate.indexOf("月"))) - 1;
@@ -156,8 +184,7 @@ public class UpdateSpend extends Fragment {
     private void goBackFramgent() {
         Fragment fragment = null;
         Bundle bundle = new Bundle();
-        if(action.equals("SelectShowCircleDe"))
-        {
+        if (action.equals("SelectShowCircleDe")) {
             fragment = new SelectShowCircleDe();
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
             bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
@@ -169,54 +196,53 @@ public class UpdateSpend extends Fragment {
             bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
             bundle.putSerializable("statue", getArguments().getSerializable("statue"));
             bundle.putSerializable("period", getArguments().getSerializable("period"));
-            bundle.putSerializable("dweek",getArguments().getSerializable("dweek"));
-            bundle.putSerializable("position",getArguments().getSerializable("position"));
-        }else if(action.equals("SelectDetList"))
-        {
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
+        } else if (action.equals("SelectDetList")) {
             fragment = new SelectDetList();
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
-            bundle.putSerializable("ShowAllCarrier",  getArguments().getSerializable("ShowAllCarrier"));
-            bundle.putSerializable("noShowCarrier",  getArguments().getSerializable("noShowCarrier"));
-            bundle.putSerializable("year",  getArguments().getSerializable("year"));
-            bundle.putSerializable("month",  getArguments().getSerializable("month"));
-            bundle.putSerializable("day",  getArguments().getSerializable("day"));
-            bundle.putSerializable("key",  getArguments().getSerializable("key"));
-            bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
+            bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
+            bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
+            bundle.putSerializable("year", getArguments().getSerializable("year"));
+            bundle.putSerializable("month", getArguments().getSerializable("month"));
+            bundle.putSerializable("day", getArguments().getSerializable("day"));
+            bundle.putSerializable("key", getArguments().getSerializable("key"));
+            bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
             bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
-            bundle.putSerializable("position",getArguments().getSerializable("position"));
-            bundle.putSerializable("period",  getArguments().getSerializable("period"));
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
+            bundle.putSerializable("period", getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
-        }else if(action.equals("SelectListModelCom"))
-        {
-            fragment=new SelectListModelCom();
+        } else if (action.equals("SelectListModelCom")) {
+            fragment = new SelectListModelCom();
+        }else if (action.equals("SettingListFixCon")) {
+            fragment = new SettingListFixCon();
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
+            bundle.putSerializable("ConsumeVO",consumeVO);
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);
     }
 
 
-    private void returnThisFramgent(Fragment fragment)
-    {
+    private void returnThisFramgent(Fragment fragment) {
         setConsume();
         Bundle bundle = new Bundle();
-        bundle.putSerializable("object",consumeVO);
-        bundle.putSerializable("action",action);
-        if(action.equals("SelectDetList"))
-        {
+        bundle.putSerializable("object", consumeVO);
+        bundle.putSerializable("action", action);
+        if (action.equals("SelectDetList")) {
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
-            bundle.putSerializable("ShowAllCarrier",  getArguments().getSerializable("ShowAllCarrier"));
-            bundle.putSerializable("noShowCarrier",  getArguments().getSerializable("noShowCarrier"));
-            bundle.putSerializable("year",  getArguments().getSerializable("year"));
-            bundle.putSerializable("month",  getArguments().getSerializable("month"));
-            bundle.putSerializable("day",  getArguments().getSerializable("day"));
-            bundle.putSerializable("key",  getArguments().getSerializable("key"));
-            bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
+            bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
+            bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
+            bundle.putSerializable("year", getArguments().getSerializable("year"));
+            bundle.putSerializable("month", getArguments().getSerializable("month"));
+            bundle.putSerializable("day", getArguments().getSerializable("day"));
+            bundle.putSerializable("key", getArguments().getSerializable("key"));
+            bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
             bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
-            bundle.putSerializable("position",getArguments().getSerializable("position"));
-            bundle.putSerializable("period",  getArguments().getSerializable("period"));
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
+            bundle.putSerializable("period", getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
-        }else if(action.equals("SelectShowCircleDe"))
-        {
+        } else if (action.equals("SelectShowCircleDe")) {
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
             bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
             bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
@@ -227,18 +253,20 @@ public class UpdateSpend extends Fragment {
             bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
             bundle.putSerializable("statue", getArguments().getSerializable("statue"));
             bundle.putSerializable("period", getArguments().getSerializable("period"));
-            bundle.putSerializable("dweek",getArguments().getSerializable("dweek"));
-            bundle.putSerializable("position",getArguments().getSerializable("position"));
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
+        }else if (action.equals("SettingListFixCon")) {
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);
     }
 
     public void findviewByid(View view) {
-        firstG=view.findViewById(R.id.firstG);
-        firstL=view.findViewById(R.id.firstL);
-        secondG=view.findViewById(R.id.secondG);
-        secondL=view.findViewById(R.id.secondL);
+        firstG = view.findViewById(R.id.firstG);
+        firstL = view.findViewById(R.id.firstL);
+        secondG = view.findViewById(R.id.secondG);
+        secondL = view.findViewById(R.id.secondL);
         name = view.findViewById(R.id.name);
         secondname = view.findViewById(R.id.secondname);
         money = view.findViewById(R.id.money);
@@ -257,23 +285,22 @@ public class UpdateSpend extends Fragment {
         notify = view.findViewById(R.id.notify);
         noWek = view.findViewById(R.id.noWek);
         qrcode = view.findViewById(R.id.qrcode);
+        standard = view.findViewById(R.id.standard);
     }
 
-    private void setFirstGrid()
-    {
+    private void setFirstGrid() {
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
-        List<TypeVO> typeVOS=typeDB.getAll();
-        for(TypeVO t:typeVOS)
-        {
+        List<TypeVO> typeVOS = typeDB.getAll();
+        for (TypeVO t : typeVOS) {
             item = new HashMap<String, Object>();
             item.put("image", MainActivity.imageAll[t.getImage()]);
-            item.put("text",t.getName());
+            item.put("text", t.getName());
             items.add(item);
         }
         item = new HashMap<String, Object>();
         item.put("image", R.drawable.add);
-        item.put("text","新增");
+        item.put("text", "新增");
         items.add(item);
         SimpleAdapter adapter = new SimpleAdapter(getActivity(),
                 items, R.layout.main_item, new String[]{"image", "text"},
@@ -288,38 +315,34 @@ public class UpdateSpend extends Fragment {
         super.onStart();
         setFirstGrid();
         setSecondGrid();
-        if(Common.showfirstgrid)
-        {
+        if (Common.showfirstgrid) {
             firstL.setVisibility(View.VISIBLE);
-            Common.showfirstgrid=false;
+            Common.showfirstgrid = false;
         }
-        if(Common.showsecondgrid)
-        {
+        if (Common.showsecondgrid) {
             secondL.setVisibility(View.VISIBLE);
-            Common.showsecondgrid=false;
+            Common.showsecondgrid = false;
         }
     }
 
 
-    private void setSecondGrid()
-    {
+    private void setSecondGrid() {
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
-        List<TypeDetailVO> typeDetailVOS=typeDetailDB.findByGroupname(name.getText().toString().trim());
-        for(TypeDetailVO t:typeDetailVOS)
-        {
+        List<TypeDetailVO> typeDetailVOS = typeDetailDB.findByGroupname(name.getText().toString().trim());
+        for (TypeDetailVO t : typeDetailVOS) {
             item = new HashMap<String, Object>();
             item.put("image", MainActivity.imageAll[t.getImage()]);
-            item.put("text",t.getName());
+            item.put("text", t.getName());
             items.add(item);
         }
         item = new HashMap<String, Object>();
         item.put("image", R.drawable.returnt);
-        item.put("text","返回");
+        item.put("text", "返回");
         items.add(item);
         item = new HashMap<String, Object>();
         item.put("image", R.drawable.add);
-        item.put("text","新增");
+        item.put("text", "新增");
         items.add(item);
         SimpleAdapter adapter = new SimpleAdapter(getActivity(),
                 items, R.layout.main_item, new String[]{"image", "text"},
@@ -335,7 +358,6 @@ public class UpdateSpend extends Fragment {
         }
 
     }
-
 
 
     private class choicedateClick implements View.OnClickListener {
@@ -368,13 +390,13 @@ public class UpdateSpend extends Fragment {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
             ArrayList<String> spinneritem = new ArrayList<>();
-            if (position==0) {
+            if (position == 0) {
                 choiceday.setVisibility(View.GONE);
                 noWek.setVisibility(View.VISIBLE);
                 choiceStatue.setVisibility(View.VISIBLE);
                 return;
             }
-            if (position==1) {
+            if (position == 1) {
                 spinneritem.add("星期一");
                 spinneritem.add("星期二");
                 spinneritem.add("星期三");
@@ -383,12 +405,12 @@ public class UpdateSpend extends Fragment {
                 spinneritem.add("星期六");
                 spinneritem.add("星期日");
             }
-            if (position==2) {
+            if (position == 2) {
                 for (int i = 1; i <= 31; i++) {
-                    spinneritem.add("    " + String.valueOf(i) + "   ");
+                    spinneritem.add(" " + String.valueOf(i) + "日");
                 }
             }
-            if (position==3) {
+            if (position == 3) {
                 for (int i = 1; i <= 12; i++) {
                     spinneritem.add(" " + String.valueOf(i) + "月");
                 }
@@ -484,14 +506,17 @@ public class UpdateSpend extends Fragment {
     }
 
     private void setConsume() {
-        Map<String, String> g = new HashMap<>();
+        g = new HashMap<>();
         g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString()));
         g.put("choicedate", isnull(choiceday.getSelectedItem()));
         g.put("noweek", String.valueOf(noweek));
         String fixdatedetail = gson.toJson(g);
         String[] dates = date.getText().toString().split("/");
         Calendar c = Calendar.getInstance();
-        c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
+        year=Integer.valueOf(dates[0]);
+        month=(Integer.valueOf(dates[1]) - 1);
+        day=Integer.valueOf(dates[2]);
+        c.set(year,month,day,12, 0, 0);
         Date d = new Date(c.getTimeInMillis());
         consumeVO.setMaintype(name.getText().toString());
         consumeVO.setSecondType(secondname.getText().toString());
@@ -595,11 +620,9 @@ public class UpdateSpend extends Fragment {
     }
 
 
-
-    public void switchFramgent(Fragment fragment)
-    {
+    public void switchFramgent(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        for (Fragment fragment1 :  getFragmentManager().getFragments()) {
+        for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);
         }
         fragmentTransaction.replace(R.id.body, fragment);
@@ -617,11 +640,10 @@ public class UpdateSpend extends Fragment {
     private class firstGridOnClick implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            TextView textView=view.findViewById(R.id.text);
-            String type=textView.getText().toString().trim();
-            if(type.equals("新增"))
-            {
-                Common.showfirstgrid=true;
+            TextView textView = view.findViewById(R.id.text);
+            String type = textView.getText().toString().trim();
+            if (type.equals("新增")) {
+                Common.showfirstgrid = true;
                 returnThisFramgent(new InsertConsumeType());
                 return;
             }
@@ -635,17 +657,15 @@ public class UpdateSpend extends Fragment {
     private class secondGridOnClick implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            TextView textView=view.findViewById(R.id.text);
-            String type=textView.getText().toString().trim();
-            if(type.equals("返回"))
-            {
+            TextView textView = view.findViewById(R.id.text);
+            String type = textView.getText().toString().trim();
+            if (type.equals("返回")) {
                 firstL.setVisibility(View.VISIBLE);
                 secondL.setVisibility(View.GONE);
                 return;
             }
-            if(type.equals("新增"))
-            {
-                Common.showsecondgrid=true;
+            if (type.equals("新增")) {
+                Common.showsecondgrid = true;
                 returnThisFramgent(new InsertConsumeType());
                 return;
             }
@@ -662,7 +682,129 @@ public class UpdateSpend extends Fragment {
     }
 
 
+    private class saveAllConsume implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            name.setBackgroundColor(Color.parseColor("#FFEE99"));
+            secondname.setBackgroundColor(Color.parseColor("#FFEE99"));
+            if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
+                name.setBackgroundColor(Color.parseColor("#ff471a"));
+                Common.showToast(getActivity(), "主項目不能空白");
+                return;
+            }
+            if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
+                secondname.setBackgroundColor(Color.parseColor("#ff471a"));
+                Common.showToast(getActivity(), "次項目不能空白");
+                return;
+            }
+            if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
+                money.setError("金額不能空白");
+                return;
+            }
+            if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
+                name.setError(" ");
+                Common.showToast(getActivity(), "日期不能空白");
+                return;
+            }
+
+            String CheckNul = number.getText().toString();
+            if (CheckNul.trim().length() > 0) {
+                if (CheckNul.length() != 10) {
+                    number.setError("統一發票中英文10個號碼");
+                    return;
+                }
+                try {
+                    new Integer(CheckNul.substring(2));
+                } catch (NumberFormatException e) {
+                    number.setError("統一發票後8碼為數字");
+                    return;
+                }
+                int sN = (int) CheckNul.charAt(0);
+                int eN = (int) CheckNul.charAt(1);
+                if (sN < 65 || sN > 90 || eN < 65 || eN > 90) {
+                    number.setError("統一發票號前2碼為大寫英文字母");
+                    return;
+                }
+            }
+            setConsume();
+            consumeDB.update(consumeVO);
+            List<ConsumeVO> consumeVOS=consumeDB.getAutoCreate(consumeVO.getId());
+            String statue=choiceStatue.getSelectedItem().toString().trim();
+            String dateSpinner= g.get("choicedate").trim();
+            Calendar cd = new GregorianCalendar(year,month,day,12,0,0);
+            int dweek=cd.get(Calendar.WEEK_OF_MONTH);
+            int i=0;
+            for(ConsumeVO c:consumeVOS)
+            {
+                c.setMaintype(consumeVO.getMaintype());
+                c.setSecondType(consumeVO.getSecondType());
+                c.setDetailname(consumeVO.getDetailname());
+                c.setMoney(consumeVO.getMoney());
+                c.setNumber(consumeVO.getNumber());
+                c.setFixDateDetail(consumeVO.getFixDateDetail());
+                if(statue.equals("每天"))
+                {
+                    i++;
+                    Calendar calendar = new GregorianCalendar(year,month,day+i,12,0,0);
+                    c.setDate(new Date(calendar.getTimeInMillis()));
+
+                }else if(statue.equals("每周"))
+                {
+                    i++;
+                    if (dateSpinner.equals("星期一")) {
+                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
+                        cd.set(Calendar.DAY_OF_WEEK,2);
+                    } else if (dateSpinner.equals("星期二")) {
+                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
+                        cd.set(Calendar.DAY_OF_WEEK,3);
+                    } else if (dateSpinner.equals("星期三")) {
+                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
+                        cd.set(Calendar.DAY_OF_WEEK,4);
+                    } else if (dateSpinner.equals("星期四")) {
+                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
+                        cd.set(Calendar.DAY_OF_WEEK,5);
+                    } else if (dateSpinner.equals("星期五")) {
+                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
+                        cd.set(Calendar.DAY_OF_WEEK,6);
+                    } else if (dateSpinner.equals("星期六")) {
+                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
+                        cd.set(Calendar.DAY_OF_WEEK,7);
+                    } else {
+                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
+                        cd.set(Calendar.DAY_OF_WEEK,1);
+                    }
+                    c.setDate(new Date(cd.getTimeInMillis()));
+                }else if(statue.equals("每月"))
+                {
+                    i++;
+                    String string=dateSpinner.substring(0,dateSpinner.indexOf("日"));
+                    Common.showToast(getActivity(),dateSpinner+" : "+dateSpinner.length());
+                    int  choiceD=Integer.valueOf(string.trim());
+                    Calendar calendar = new GregorianCalendar(year,month+i,1,12,0,0);
+                    int monMax=calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+                    if(choiceD>monMax)
+                    {
+                        calendar = new GregorianCalendar(year,month+i,monMax,12,0,0);
+                    }else{
+                        calendar = new GregorianCalendar(year,month+i,choiceD,12,0,0);
+                    }
+                    c.setDate(new Date(calendar.getTimeInMillis()));
+
+                }else if(statue.equals("每年"))
+                {
+                    i++;
+                    int choiceD=Integer.valueOf(dateSpinner.substring(0, dateSpinner.indexOf("月"))) - 1;
+                    Calendar calendar = new GregorianCalendar(year+i,choiceD,1,12,0,0);
+                    c.setDate(new Date(calendar.getTimeInMillis()));
+                }
+                consumeDB.update(c);
+            }
+            goBackFramgent();
+            Common.showToast(getActivity(), "修改成功");
+        }
+    }
 }
+
 
 
 

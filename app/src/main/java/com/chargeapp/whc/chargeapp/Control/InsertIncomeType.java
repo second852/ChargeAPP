@@ -36,7 +36,7 @@ import java.util.Map;
  */
 
 public class InsertIncomeType extends Fragment {
-    private ImageView mainImage,resultI;
+    private ImageView mainImage, resultI;
     private EditText mainName;
     private Button save, clear;
     private LinearLayout choiceL;
@@ -51,8 +51,8 @@ public class InsertIncomeType extends Fragment {
         View view = inflater.inflate(R.layout.updae_inc_type, container, false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         action = (String) getArguments().getSerializable("action");
-        bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankTypeVO=new BankTypeVO();
+        bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankTypeVO = new BankTypeVO();
         findViewById(view);
         setGridPicture();
         getActivity().setTitle("新增項目類別");
@@ -62,7 +62,6 @@ public class InsertIncomeType extends Fragment {
         mainImage.setOnClickListener(new showImage());
         return view;
     }
-
 
 
     private void setGridPicture() {
@@ -123,14 +122,12 @@ public class InsertIncomeType extends Fragment {
                 mainName.setError("項目種類不能空白");
                 return;
             }
-            if(mainType.indexOf(";")!=-1)
-            {
+            if (mainType.indexOf(";") != -1) {
                 mainName.setError("項目種類不能有特殊符號");
                 return;
             }
-            BankTypeVO b=bankTybeDB.findByName(mainType);
-            if(b!=null)
-            {
+            BankTypeVO b = bankTybeDB.findByName(mainType);
+            if (b != null) {
                 mainName.setError("項目種類名稱不能重複");
                 return;
             }
@@ -143,27 +140,33 @@ public class InsertIncomeType extends Fragment {
     }
 
     private void gotoFramgent() {
-        Bundle bundle=new Bundle();
-        Fragment fragment=null;
+        Bundle bundle = new Bundle();
+        Fragment fragment = null;
         bundle.putSerializable("action", action);
         bundle.putSerializable("bankVO", getArguments().getSerializable("bankVO"));
-        if(action.equals("InsertIncome"))
-        {
-           fragment=new InsertIncome();
-           bundle.putSerializable("needSet",true);
-        }else{
-            fragment=new UpdateIncome();
-            if(action.equals("SelectListPieIncome"))
-            {
-                bundle.putSerializable("type",getArguments().getSerializable("type"));
-                bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
-            }
-            bundle.putSerializable("position",getArguments().getSerializable("position"));
+        if (action.equals("InsertIncome")) {
+            fragment = new InsertIncome();
+            bundle.putSerializable("needSet", true);
+        } else if (action.equals("SelectListPieIncome")) {
+            fragment = new UpdateIncome();
+            bundle.putSerializable("type", getArguments().getSerializable("type"));
+            bundle.putStringArrayList("OKey", getArguments().getStringArrayList("OKey"));
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
             bundle.putSerializable("year", getArguments().getSerializable("year"));
             bundle.putSerializable("month", getArguments().getSerializable("month"));
             bundle.putSerializable("day", getArguments().getSerializable("day"));
             bundle.putSerializable("statue", getArguments().getSerializable("statue"));
             bundle.putSerializable("index", getArguments().getSerializable("index"));
+        } else if (action.equals("SelectListPieIncome")) {
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
+            bundle.putSerializable("year", getArguments().getSerializable("year"));
+            bundle.putSerializable("month", getArguments().getSerializable("month"));
+            bundle.putSerializable("day", getArguments().getSerializable("day"));
+            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
+            bundle.putSerializable("index", getArguments().getSerializable("index"));
+        }else if(action.equals("SettingListFixIon"))
+        {
+            bundle.putSerializable("position",getArguments().getSerializable("position"));
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);

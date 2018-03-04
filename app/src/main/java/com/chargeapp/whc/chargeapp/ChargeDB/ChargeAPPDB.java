@@ -24,7 +24,6 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
     private static final String TABLE_NAME = "Type";
 
-
     private static final String TABLE_CREATE =
             "CREATE TABLE Type ( id INTEGER PRIMARY KEY AUTOINCREMENT, groupNumber TEXT NOT NULL," +
                     "name TEXT, image INTEGER ) ;";
@@ -46,10 +45,10 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
 
     private static final String TYPE_COMSUMER=" CREATE TABLE Consumer ( id INTEGER PRIMARY KEY AUTOINCREMENT, maintype TEXT NOT NULL," +
             "secondtype TEXT, money TEXT, date Date , number TEXT , fixdate TEXT , fixdatedetail TEXT ,notify TEXT, detailname TEXT, iswin TEXT" +
-            "); ";
+            ",auto text,autoId INTEGER);";
 
     private static final String TYPE_BANK=" CREATE TABLE BANK ( id INTEGER PRIMARY KEY AUTOINCREMENT, maintype TEXT NOT NULL," +
-            "money TEXT, date Date , fixdate TEXT , fixdatedetail TEXT , detailname TEXT" + "); ";
+            "money TEXT, date Date , fixdate TEXT , fixdatedetail TEXT , detailname TEXT ,auto text,autoId INTEGER);";
 
     private static final String TABLE_BANK_TYPE =
             "CREATE TABLE BANKTYPE ( id INTEGER PRIMARY KEY AUTOINCREMENT, groupNumber TEXT NOT NULL," +

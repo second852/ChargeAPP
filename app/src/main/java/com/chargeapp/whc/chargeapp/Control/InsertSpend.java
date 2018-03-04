@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
+import android.widget.TabHost;
 import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
@@ -80,6 +81,7 @@ public class InsertSpend extends Fragment {
         consumeVO = new ConsumeVO();
         findviewByid(view);
         gson = new Gson();
+        setSpinner();
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -103,7 +105,19 @@ public class InsertSpend extends Fragment {
         return view;
     }
 
+    private void setSpinner() {
+        ArrayList<String> strings=new ArrayList<>();
+        strings.add("每天");
+        strings.add("每周");
+        strings.add("每月");
+        strings.add("每年");
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, strings);
+        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+        choiceStatue.setAdapter(arrayAdapter);
+    }
+
     private void setUpdate() {
+        first=true;
         consumeVO = (ConsumeVO) getArguments().getSerializable("consumeVO");
         name.setText(consumeVO.getMaintype());
         number.setText(consumeVO.getNumber());
@@ -139,14 +153,18 @@ public class InsertSpend extends Fragment {
                     updateChoice = 6;
                 }
             } else if (choicestatue.trim().equals("每月")) {
+                Log.d("XXX", String.valueOf(choicedate));
                 choiceStatue.setSelection(2);
+                choicedate=choicedate.substring(0,choicedate.indexOf("日"));
+                Log.d("XXX", String.valueOf(choicedate));
                 updateChoice = Integer.valueOf(choicedate) - 1;
+                Log.d("XXX", String.valueOf(updateChoice));
             } else {
                 choiceStatue.setSelection(3);
                 updateChoice = Integer.valueOf(choicedate.substring(0, choicedate.indexOf("月"))) - 1;
             }
         }
-
+        Log.d("XXX", String.valueOf(updateChoice));
     }
 
     @Override
@@ -294,7 +312,7 @@ public class InsertSpend extends Fragment {
             }
             if (position==2) {
                 for (int i = 1; i <= 31; i++) {
-                    spinneritem.add("    " + String.valueOf(i) + "   ");
+                    spinneritem.add(" "+ String.valueOf(i) +"日");
                 }
             }
             if (position==3) {
@@ -571,6 +589,9 @@ public class InsertSpend extends Fragment {
         consumeVO.setFixDateDetail(fixdatedetail);
         consumeVO.setNotify(String.valueOf(notify.isChecked()));
         consumeVO.setDetailname(detailname.getText().toString());
+        consumeVO.setAuto(false);
+        consumeVO.setId(-1);
+        Log.d("XXX",consumeVO.getFixDateDetail());
     }
 }
 

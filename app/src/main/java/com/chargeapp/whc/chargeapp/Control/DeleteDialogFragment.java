@@ -143,7 +143,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 }else if(object instanceof BankTypeVO)
                 {
                     BankTypeVO bankTypeVO= (BankTypeVO) object;
-                    bankDB.deleteById(bankTypeVO.getId());
+                    bankTybeDB.deleteById(bankTypeVO.getId());
                 }
 
 
@@ -165,13 +165,21 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                     goalListAll.setLayout();
                 }else if(fragement instanceof SettingMain)
                 {
-                    getActivity().deleteDatabase("ChargeAPP");
-                    new MainActivity().setdate();
+                    SettingMain settingMain= (SettingMain) fragement;
+                    settingMain.deleteAll();
                     Common.showToast(getActivity(),"重置成功!");
                 }else if(fragement instanceof SettingListType)
                 {
                    SettingListType settingListType= (SettingListType) fragement;
                    settingListType.setLayout();
+                }else if(fragement instanceof SettingListFixCon)
+                {
+                    SettingListFixCon settingListFixCon= (SettingListFixCon) fragement;
+                    settingListFixCon.setLayout();
+                }else if(fragement instanceof SettingListFixIon)
+                {
+                    SettingListFixIon settingListFixIon= (SettingListFixIon) fragement;
+                    settingListFixIon.setLayout();
                 }
 
                 break;

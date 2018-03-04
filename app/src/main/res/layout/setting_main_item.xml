@@ -33,39 +33,32 @@
             android:padding="2dp"
             android:textColor="#000000"
             android:textSize="25sp" />
-
-        <Spinner
-            android:id="@+id/carrier"
+        <Switch
+            android:id="@+id/notify"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:visibility="gone" />
-
-        <Switch
-            android:id="@+id/notify"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="60dp"
+            android:layout_marginRight="50dp"
             android:checked="true"
             android:textColor="#000000"
+            android:scaleX="3"
+            android:scaleY="2"
+            android:textSize="20sp"
             android:theme="@style/SCBSwitch"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/setTime"
-            android:layout_width="90dp"
+            android:layout_width="100dp"
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="30dp"
+            android:layout_marginRight="10dp"
             android:background="#ffffff"
             android:text="8:00 p.m."
             android:gravity="center"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:checked="true"
             android:textColor="#000000"
             android:visibility="gone" />

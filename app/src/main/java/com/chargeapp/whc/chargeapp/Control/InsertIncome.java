@@ -66,6 +66,7 @@ public class InsertIncome extends Fragment {
         View view = inflater.inflate(R.layout.insert_income, container, false);
         needSet= (boolean) getArguments().getSerializable("needSet");
         findviewByid(view);
+        setSpinner();
         gson=new Gson();
         bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -85,6 +86,17 @@ public class InsertIncome extends Fragment {
         return view;
     }
 
+
+    private void setSpinner() {
+        ArrayList<String> strings=new ArrayList<>();
+        strings.add("每天");
+        strings.add("每周");
+        strings.add("每月");
+        strings.add("每年");
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, strings);
+        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+        choiceday.setAdapter(arrayAdapter);
+    }
     @Override
     public void onStart() {
         super.onStart();
@@ -155,6 +167,7 @@ public class InsertIncome extends Fragment {
         }
     }
     private void setIncome() {
+        first=true;
         bankVO= (BankVO) getArguments().getSerializable("bankVO");
         name.setText(bankVO.getMaintype());
         money.setText(bankVO.getMoney());
@@ -194,6 +207,7 @@ public class InsertIncome extends Fragment {
                 }
             }else if(choicestatue.trim().equals("每月")){
                 choiceStatue.setSelection(2);
+                choicedate=choicedate.substring(0,choicedate.indexOf("日"));
                 updateChoice= Integer.valueOf(choicedate)-1;
             }else{
                 choiceStatue.setSelection(3);
@@ -222,7 +236,7 @@ public class InsertIncome extends Fragment {
         ArrayList<String> spinneritem=new ArrayList<>();
         spinneritem.add("每天");
         spinneritem.add("每周");
-        spinneritem.add("每個月");
+        spinneritem.add("每月");
         spinneritem.add("每年");
         ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
@@ -296,7 +310,7 @@ public class InsertIncome extends Fragment {
             if(position==2)
             {
                 for(int i=1;i<=31;i++) {
-                    spinneritem.add("    "+String.valueOf(i)+"   ");
+                    spinneritem.add(" "+String.valueOf(i)+"日");
                 }
             }
             if(position==3)
@@ -362,6 +376,8 @@ public class InsertIncome extends Fragment {
         bankVO.setFixDate(String.valueOf(fixdate.isChecked()));
         bankVO.setFixDateDetail(fixdatedetail);
         bankVO.setDetailname(detailname.getText().toString());
+        bankVO.setAuto(false);
+        bankVO.setAutoId(0);
     }
 
 

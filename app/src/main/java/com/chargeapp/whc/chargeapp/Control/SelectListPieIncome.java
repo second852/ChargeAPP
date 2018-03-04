@@ -108,12 +108,7 @@ public class SelectListPieIncome extends Fragment {
         }else{
            bankVOS=bankDB.getTimeAll(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
         }
-        if(bankVOS.size()<=0)
-        {
-            message.setVisibility(View.VISIBLE);
-            message.setText(title+"\n"+key+"總類沒有資料");
-            return;
-        }
+
         ListAdapter baseAdapter= (ListAdapter) listView.getAdapter();
         if(baseAdapter==null)
         {
@@ -122,6 +117,11 @@ public class SelectListPieIncome extends Fragment {
             baseAdapter.setBankVOs(bankVOS);
             baseAdapter.notifyDataSetChanged();
             listView.invalidate();
+        }
+        if(bankVOS.size()<=0)
+        {
+            message.setVisibility(View.VISIBLE);
+            message.setText(title+"\n"+key+"總類沒有資料");
         }
     }
 

@@ -27,6 +27,7 @@
         android:background="#FF0000"
         >
         <TextView
+            android:id="@+id/remainT"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="提醒"

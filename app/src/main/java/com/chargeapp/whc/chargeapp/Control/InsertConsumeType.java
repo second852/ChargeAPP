@@ -240,6 +240,10 @@ public class InsertConsumeType extends Fragment {
         {
             fragment=new InsertSpend();
             bundle.putSerializable("needSet", getArguments().getSerializable("needSet"));
+        }else if (action.equals("SettingListFixCon")) {
+
+
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);

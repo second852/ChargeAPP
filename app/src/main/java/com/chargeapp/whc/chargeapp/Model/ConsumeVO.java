@@ -1,5 +1,7 @@
 package com.chargeapp.whc.chargeapp.Model;
 
+import android.net.wifi.hotspot2.omadm.PpsMoParser;
+
 import java.io.Serializable;
 import java.sql.Date;
 
@@ -48,6 +50,26 @@ public class ConsumeVO implements Serializable{
     private String  notify;
 
     private String isWin;
+
+    private boolean auto;
+
+    private int autoId;
+
+    public int getAutoId() {
+        return autoId;
+    }
+
+    public void setAutoId(int autoId) {
+        this.autoId = autoId;
+    }
+
+    public boolean isAuto() {
+        return auto;
+    }
+
+    public void setAuto(boolean auto) {
+        this.auto = auto;
+    }
 
     public String getIsWin() {
         return isWin;

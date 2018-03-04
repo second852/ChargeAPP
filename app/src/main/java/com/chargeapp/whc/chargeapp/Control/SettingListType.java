@@ -19,9 +19,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
+import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
+import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
@@ -42,7 +45,7 @@ public class SettingListType extends Fragment {
     private ListView listView;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
-    private BankDB bankDB;
+    private BankTybeDB bankTybeDB;
     private int p;
     private Spinner typeH;
     private int spinnerC;
@@ -56,7 +59,7 @@ public class SettingListType extends Fragment {
         typeH = view.findViewById(R.id.typeH);
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         p = (int) getArguments().getSerializable("position");
         spinnerC = (int) getArguments().getSerializable("spinnerC");
         typeH.setOnItemSelectedListener(new choiceType());
@@ -83,7 +86,7 @@ public class SettingListType extends Fragment {
         } else if (spinnerC == 1) {
             objects.addAll(typeDetailDB.getTypdAll());
         } else {
-            objects.addAll(bankDB.getAll());
+            objects.addAll(bankTybeDB.getAll());
         }
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {
@@ -125,7 +128,6 @@ public class SettingListType extends Fragment {
             TextView listTitle = itemView.findViewById(R.id.listTitle);
             Button saveT = itemView.findViewById(R.id.saveT);
             Button deleteT = itemView.findViewById(R.id.deleteT);
-            final Bundle bundle = new Bundle();
             final Object o = objects.get(position);
             deleteT.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -144,7 +146,10 @@ public class SettingListType extends Fragment {
                 saveT.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Fragment fragment = new UpdateConsumeType();
+                        Common.showToast(getActivity(),typeVO.getName());
+                        Fragment fragment = new UpdateIncomeType();
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("action","updateT");
                         bundle.putSerializable("typeVO", typeVO);
                         bundle.putSerializable("position", position);
                         bundle.putSerializable("spinnerC", spinnerC);
@@ -154,13 +159,13 @@ public class SettingListType extends Fragment {
                 });
 
             } else if (o instanceof TypeDetailVO) {
-
                 final TypeDetailVO typeDetailVO = (TypeDetailVO) o;
                 image.setImageResource(MainActivity.imageAll[typeDetailVO.getImage()]);
                 listTitle.setText(typeDetailVO.getName());
                 saveT.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        Bundle bundle = new Bundle();
                         Fragment fragment = new UpdateConsumeType();
                         bundle.putSerializable("TypeDetailVO", typeDetailVO);
                         bundle.putSerializable("position", position);
@@ -170,10 +175,23 @@ public class SettingListType extends Fragment {
                     }
                 });
             } else {
-
+                final BankTypeVO bankTypeVO = (BankTypeVO) o;
+                image.setImageResource(MainActivity.imageAll[bankTypeVO.getImage()]);
+                listTitle.setText(bankTypeVO.getName());
+                saveT.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Bundle bundle = new Bundle();
+                        Fragment fragment = new UpdateIncomeType();
+                        bundle.putSerializable("action","updateB");
+                        bundle.putSerializable("bankTypeVO", bankTypeVO);
+                        bundle.putSerializable("position", position);
+                        bundle.putSerializable("spinnerC", spinnerC);
+                        fragment.setArguments(bundle);
+                        switchFragment(fragment);
+                    }
+                });
             }
-
-
             return itemView;
         }
 

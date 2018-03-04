@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuWrapperFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +18,16 @@ import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
+import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
+import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +43,10 @@ public class UpdateIncomeType extends Fragment {
     private String action;
     private BankTybeDB bankTybeDB;
     private BankTypeVO bankTypeVO;
+    private TypeDB typeDB;
+    private TypeVO typeVO;
+    private TypeDetailDB typeDetailDB;
+
 
     @Nullable
     @Override
@@ -45,17 +55,35 @@ public class UpdateIncomeType extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         action = (String) getArguments().getSerializable("action");
         bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankTypeVO=new BankTypeVO();
+        typeDB= new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetailDB=new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
         setGridPicture();
-        getActivity().setTitle("新增項目類別");
+        getActivity().setTitle("修改類別");
         choiceG.setOnItemClickListener(new choicePicture());
         clear.setOnClickListener(new clearOnClick());
         save.setOnClickListener(new insertType());
         mainImage.setOnClickListener(new showImage());
+        if(action.equals("updateT"))
+        {
+            setTypeVO();
+        }else {
+            setBankVO();
+        }
         return view;
     }
 
+    private void setBankVO() {
+        bankTypeVO= (BankTypeVO) getArguments().getSerializable("bankTypeVO");
+        mainImage.setImageResource(MainActivity.imageAll[bankTypeVO.getImage()]);
+        mainName.setText(bankTypeVO.getName());
+    }
+
+    private void setTypeVO() {
+        typeVO= (TypeVO) getArguments().getSerializable("typeVO");
+        mainImage.setImageResource(MainActivity.imageAll[typeVO.getImage()]);
+        mainName.setText(typeVO.getName());
+    }
 
 
     private void setGridPicture() {
@@ -96,7 +124,12 @@ public class UpdateIncomeType extends Fragment {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             resultI.setImageResource(MainActivity.imageAll[i]);
             choiceL.setVisibility(View.GONE);
-            bankTypeVO.setImage(i);
+            if(action.equals("updateT"))
+            {
+                typeVO.setImage(i);
+            }else {
+                bankTypeVO.setImage(i);
+            }
         }
     }
 
@@ -111,7 +144,7 @@ public class UpdateIncomeType extends Fragment {
     private class insertType implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            String mainType = mainName.getText().toString();
+            String mainType = mainName.getText().toString().trim();
             if (mainType == null || mainType.isEmpty()) {
                 mainName.setError("項目種類不能空白");
                 return;
@@ -121,46 +154,32 @@ public class UpdateIncomeType extends Fragment {
                 mainName.setError("項目種類不能有特殊符號");
                 return;
             }
-            BankTypeVO b=bankTybeDB.findByName(mainType);
-            if(b!=null)
+            Bundle bundle=new Bundle();
+            Fragment fragment=new SettingListType();
+            if(action.equals("updateT"))
             {
-                mainName.setError("項目種類名稱不能重複");
-                return;
+                List<TypeDetailVO> typeDetailVOS=typeDetailDB.findByGroupname(typeVO.getName());
+                for(TypeDetailVO t:typeDetailVOS)
+                {
+                    t.setGroupNumber(mainType);
+                    typeDetailDB.update(t);
+                }
+                typeVO.setGroupNumber(mainType);
+                typeVO.setName(mainType);
+                typeDB.update(typeVO);
+            }else {
+                bankTypeVO.setGroupNumber(mainType);
+                bankTypeVO.setName(mainType);
+                bankTybeDB.update(bankTypeVO);
             }
-            bankTypeVO.setGroupNumber(mainType);
-            bankTypeVO.setName(mainType);
-            bankTybeDB.insert(bankTypeVO);
-            gotoFramgent();
-            Common.showToast(getActivity(), "新增成功");
+            bundle.putSerializable("position",getArguments().getSerializable("position"));
+            bundle.putSerializable("spinnerC",getArguments().getSerializable("spinnerC"));
+            fragment.setArguments(bundle);
+            switchFramgent(fragment);
+            Common.showToast(getActivity(), "修改成功!");
         }
     }
 
-    private void gotoFramgent() {
-        Bundle bundle=new Bundle();
-        Fragment fragment=null;
-        bundle.putSerializable("action", action);
-        bundle.putSerializable("bankVO", getArguments().getSerializable("bankVO"));
-        if(action.equals("InsertIncome"))
-        {
-           fragment=new InsertIncome();
-           bundle.putSerializable("needSet",true);
-        }else{
-            fragment=new UpdateIncome();
-            if(action.equals("SelectListPieIncome"))
-            {
-                bundle.putSerializable("type",getArguments().getSerializable("type"));
-                bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
-            }
-            bundle.putSerializable("position",getArguments().getSerializable("position"));
-            bundle.putSerializable("year", getArguments().getSerializable("year"));
-            bundle.putSerializable("month", getArguments().getSerializable("month"));
-            bundle.putSerializable("day", getArguments().getSerializable("day"));
-            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
-            bundle.putSerializable("index", getArguments().getSerializable("index"));
-        }
-        fragment.setArguments(bundle);
-        switchFramgent(fragment);
-    }
 
     public void switchFramgent(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

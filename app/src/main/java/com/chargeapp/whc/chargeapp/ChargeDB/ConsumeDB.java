@@ -40,9 +40,10 @@ public class ConsumeDB {
             consumeVO.setFixDate(cursor.getString(6));
             consumeVO.setFixDateDetail(cursor.getString(7));
             consumeVO.setNotify(cursor.getString(8));
-            Log.d("XXXXXXXXXXX",cursor.getString(8));
             consumeVO.setDetailname(cursor.getString(9));
             consumeVO.setIsWin(cursor.getString(10));
+            consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
+            consumeVO.setAutoId(cursor.getInt(12));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -68,6 +69,8 @@ public class ConsumeDB {
             consumeVO.setNotify(cursor.getString(8));
             consumeVO.setDetailname(cursor.getString(9));
             consumeVO.setIsWin(cursor.getString(10));
+            consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
+            consumeVO.setAutoId(cursor.getInt(12));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -92,6 +95,8 @@ public class ConsumeDB {
             consumeVO.setNotify(cursor.getString(8));
             consumeVO.setDetailname(cursor.getString(9));
             consumeVO.setIsWin(cursor.getString(10));
+            consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
+            consumeVO.setAutoId(cursor.getInt(12));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -117,6 +122,8 @@ public class ConsumeDB {
             consumeVO.setNotify(cursor.getString(8));
             consumeVO.setDetailname(cursor.getString(9));
             consumeVO.setIsWin(cursor.getString(10));
+            consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
+            consumeVO.setAutoId(cursor.getInt(12));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -166,11 +173,40 @@ public class ConsumeDB {
             consumeVO.setNotify(cursor.getString(8));
             consumeVO.setDetailname(cursor.getString(9));
             consumeVO.setIsWin(cursor.getString(10));
+            consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
+            consumeVO.setAutoId(cursor.getInt(12));
             consumeList.add(consumeVO);
         }
         cursor.close();
         return consumeList;
     }
+
+
+    public  ConsumeVO getAutoTimePeriod(Timestamp startTime, Timestamp endTime,int id) {
+        String sql = "SELECT * FROM Consumer where autoId = '"+id+"' and date between '"+startTime.getTime()+"' and '"+endTime.getTime()+"' order by date ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        ConsumeVO consumeVO =null;
+        if (cursor.moveToNext()) {
+            consumeVO=new ConsumeVO();
+            consumeVO.setId(cursor.getInt(0));
+            consumeVO.setMaintype(cursor.getString(1));
+            consumeVO.setSecondType(cursor.getString(2));
+            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setDate(new Date(cursor.getLong(4)));
+            consumeVO.setNumber(cursor.getString(5));
+            consumeVO.setFixDate(cursor.getString(6));
+            consumeVO.setFixDateDetail(cursor.getString(7));
+            consumeVO.setNotify(cursor.getString(8));
+            consumeVO.setDetailname(cursor.getString(9));
+            consumeVO.setIsWin(cursor.getString(10));
+            consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
+            consumeVO.setAutoId(cursor.getInt(12));
+        }
+        cursor.close();
+        return consumeVO;
+    }
+
 
     public List<ConsumeVO> getFixdate() {
         String sql = "SELECT * FROM Consumer where fixdate = 'true' order by id;";
@@ -191,21 +227,47 @@ public class ConsumeDB {
             consumeVO.setNotify(cursor.getString(8));
             consumeVO.setDetailname(cursor.getString(9));
             consumeVO.setIsWin(cursor.getString(10));
+            consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
+            consumeVO.setAutoId(cursor.getInt(12));
             consumeList.add(consumeVO);
         }
         cursor.close();
         return consumeList;
     }
 
-    public ConsumeVO findById(int id) {
-        String[] columns = {
-          "id,maintype,secondtype,money,date,number,fixdate,fixdatedetail,notify,detailname"
-        };
-        String selection = "id = ?;";
-        String[] selectionArgs = {String.valueOf(id)};
-        Cursor cursor = db.query("Consumer", columns, selection, selectionArgs,
-                null, null, null);
-        ConsumeVO consumeVO = null;
+
+    public List<ConsumeVO> getAutoCreate(int id) {
+        String sql = "SELECT * FROM Consumer where autoId = '"+id+"'order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<ConsumeVO> consumeList = new ArrayList<>();
+        ConsumeVO consumeVO;
+        while (cursor.moveToNext()) {
+            consumeVO=new ConsumeVO();
+            consumeVO.setId(cursor.getInt(0));
+            consumeVO.setMaintype(cursor.getString(1));
+            consumeVO.setSecondType(cursor.getString(2));
+            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setDate(new Date(cursor.getLong(4)));
+            consumeVO.setNumber(cursor.getString(5));
+            consumeVO.setFixDate(cursor.getString(6));
+            consumeVO.setFixDateDetail(cursor.getString(7));
+            consumeVO.setNotify(cursor.getString(8));
+            consumeVO.setDetailname(cursor.getString(9));
+            consumeVO.setIsWin(cursor.getString(10));
+            consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
+            consumeVO.setAutoId(cursor.getInt(12));
+            consumeList.add(consumeVO);
+        }
+        cursor.close();
+        return consumeList;
+    }
+
+    public ConsumeVO findConById(int id) {
+        String sql = "SELECT * FROM Consumer where id = '"+id+"'order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        ConsumeVO consumeVO=null;
         if (cursor.moveToNext()) {
             consumeVO=new ConsumeVO();
             consumeVO.setId(cursor.getInt(0));
@@ -219,6 +281,8 @@ public class ConsumeDB {
             consumeVO.setNotify(cursor.getString(8));
             consumeVO.setDetailname(cursor.getString(9));
             consumeVO.setIsWin(cursor.getString(10));
+            consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
+            consumeVO.setAutoId(cursor.getInt(12));
         }
         cursor.close();
         return consumeVO;
@@ -236,8 +300,11 @@ public class ConsumeDB {
         values.put("notify",consumeVO.getNotify());
         values.put("detailname",consumeVO.getDetailname());
         values.put("iswin",consumeVO.getIsWin());
+        values.put("auto",String.valueOf(consumeVO.isAuto()));
+        values.put("autoId",consumeVO.getAutoId());
         return db.insert(TABLE_NAME, null, values);
     }
+
 
     public int update(ConsumeVO consumeVO) {
         ContentValues values = new ContentValues();
@@ -251,6 +318,8 @@ public class ConsumeDB {
         values.put("notify",consumeVO.getNotify());
         values.put("detailname",consumeVO.getDetailname());
         values.put("iswin",consumeVO.getIsWin());
+        values.put("auto",String.valueOf(consumeVO.isAuto()));
+        values.put("autoId",consumeVO.getAutoId());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(consumeVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

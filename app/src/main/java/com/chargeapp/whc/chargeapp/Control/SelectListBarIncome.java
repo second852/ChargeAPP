@@ -76,15 +76,8 @@ public class SelectListBarIncome extends Fragment {
 
     public void setLayout()
     {
-
         List<BankVO>  bankVOS=bankDB.getTimeAll(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
         ListAdapter baseAdapter= (ListAdapter) listView.getAdapter();
-        if(bankVOS.size()<=0)
-        {
-            message.setVisibility(View.VISIBLE);
-            message.setText(title+"\n沒有資料");
-            return;
-        }
         if(baseAdapter==null)
         {
             listView.setAdapter(new ListAdapter(getActivity(),bankVOS));
@@ -92,6 +85,11 @@ public class SelectListBarIncome extends Fragment {
             baseAdapter.setBankVOs(bankVOS);
             baseAdapter.notifyDataSetChanged();
             listView.invalidate();
+        }
+        if(bankVOS.size()<=0)
+        {
+            message.setVisibility(View.VISIBLE);
+            message.setText(title+"\n沒有資料");
         }
     }
 

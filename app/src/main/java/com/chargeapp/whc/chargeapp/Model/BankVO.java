@@ -36,9 +36,25 @@ public class BankVO implements Serializable{
 
     private String fixDateDetail;
 
+    private Boolean auto;
 
+    private Integer autoId;
 
+    public Boolean getAuto() {
+        return auto;
+    }
 
+    public void setAuto(Boolean auto) {
+        this.auto = auto;
+    }
+
+    public Integer getAutoId() {
+        return autoId;
+    }
+
+    public void setAutoId(Integer autoId) {
+        this.autoId = autoId;
+    }
 
     public String getFixDateDetail() {
         return fixDateDetail;
