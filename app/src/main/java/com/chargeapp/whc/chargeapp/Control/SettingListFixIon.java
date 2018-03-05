@@ -155,17 +155,21 @@ public class SettingListFixIon extends Fragment {
             //設定 describe
             stringBuffer=new StringBuffer();
             JsonObject js=gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
-            stringBuffer.append(js.get("choicestatue").getAsString().trim());
-            stringBuffer.append(" "+js.get("choicedate").getAsString().trim());
+            String daystatue=js.get("choicestatue").getAsString().trim();
+            stringBuffer.append(daystatue);
+            if(!daystatue.equals("每天"))
+            {
+                stringBuffer.append(" "+js.get("choicedate").getAsString().trim());
+            }
             decribe.setText(stringBuffer.toString()+" \n"+bankVO.getDetailname());
             update.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Fragment fragment=new UpdateSpend();
+                    Fragment fragment=new UpdateIncome();
                     Bundle bundle=new Bundle();
-                    bundle.putSerializable("consumeVO",bankVO);
+                    bundle.putSerializable("bankVO",bankVO);
                     bundle.putSerializable("position",position);
-                    bundle.putSerializable("action","SettingListFixCon");
+                    bundle.putSerializable("action","SettingListFixIon");
                     fragment.setArguments(bundle);
                     switchFragment(fragment);
                 }

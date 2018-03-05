@@ -778,7 +778,6 @@ public class UpdateSpend extends Fragment {
                 {
                     i++;
                     String string=dateSpinner.substring(0,dateSpinner.indexOf("日"));
-                    Common.showToast(getActivity(),dateSpinner+" : "+dateSpinner.length());
                     int  choiceD=Integer.valueOf(string.trim());
                     Calendar calendar = new GregorianCalendar(year,month+i,1,12,0,0);
                     int monMax=calendar.getActualMaximum(Calendar.DAY_OF_MONTH);

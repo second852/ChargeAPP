@@ -186,7 +186,6 @@ public class BootReceiver extends BroadcastReceiver {
                 jsonObject = gson.fromJson(detail, JsonObject.class);
                 String action = jsonObject.get("choicestatue").getAsString().trim();
                 if ("每天".equals(action)) {
-
                     Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                     Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
                     BankVO bb = bankDB.getAutoBank(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), b.getId());
@@ -197,22 +196,12 @@ public class BootReceiver extends BroadcastReceiver {
                         b.setAutoId(b.getId());
                         b.setDate(new Date(setNewTime.getTimeInMillis()));
                         bankDB.insert(b);
-
-                        Log.d("XXXXXxbefore", String.valueOf(b.isAuto()));
-                        List<BankVO> tt=bankDB.getAutoSetting(b.getId());
-                        for(BankVO bv:tt)
-                        {
-                            Log.d("XXXXXxafter", String.valueOf(bv.isAuto()));
-                        }
-
                     }
 
                 } else if ("每周".equals(action)) {
                     String fixdetail = jsonObject.get("choicedate").getAsString().trim();
                     HashMap<String, Integer> change = getStringtoInt();
                     if (date.get(Calendar.DAY_OF_WEEK) == change.get(fixdetail)) {
-
-
                         Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                         Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
                         BankVO bb = bankDB.getAutoBank(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), b.getId());

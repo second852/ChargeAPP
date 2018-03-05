@@ -96,6 +96,10 @@ public class UpdateIncome extends Fragment {
             standard.setVisibility(View.VISIBLE);
             standard.setOnClickListener(new saveAllConsume());
         }
+        if(bankVO.isAuto())
+        {
+            fixdate.setVisibility(View.GONE);
+        }
         setUpdate();
         return view;
     }
@@ -261,7 +265,6 @@ public class UpdateIncome extends Fragment {
     private class choiceStateItem implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-            String choiceitem = adapterView.getItemAtPosition(position).toString();
             ArrayList<String> spinneritem = new ArrayList<>();
             if (position == 0) {
                 choiceday.setVisibility(View.GONE);
@@ -401,7 +404,7 @@ public class UpdateIncome extends Fragment {
                 gotoFramgent(fragment, bundle);
             } else if (action.equals("SettingListFixIon")) {
                 fragment = new SettingListFixIon();
-                bundle.putSerializable("bankVO", bankVO);
+                bundle.putSerializable("BankVO", bankVO);
                 bundle.putSerializable("action", action);
                 bundle.putSerializable("position", getArguments().getSerializable("position"));
                 fragment.setArguments(bundle);
@@ -453,6 +456,7 @@ public class UpdateIncome extends Fragment {
                 return;
             }
             setBankVO();
+            bankDB.update(bankVO);
             List<BankVO> bankVOS = bankDB.getAutoSetting(bankVO.getId());
             String statue = choiceStatue.getSelectedItem().toString().trim();
             String dateSpinner = g.get("choicedate").trim();
@@ -461,10 +465,10 @@ public class UpdateIncome extends Fragment {
             int i = 0;
             for (BankVO bb : bankVOS) {
 
-                bb.setMaintype(bb.getMaintype());
-                bb.setDetailname(bb.getDetailname());
-                bb.setMoney(bb.getMoney());
-                bb.setFixDateDetail(bb.getFixDateDetail());
+                bb.setMaintype(bankVO.getMaintype());
+                bb.setDetailname(bankVO.getDetailname());
+                bb.setMoney(bankVO.getMoney());
+                bb.setFixDateDetail(bankVO.getFixDateDetail());
                 if (statue.equals("每天")) {
                     i++;
                     Calendar calendar = new GregorianCalendar(year, month, day + i, 12, 0, 0);
@@ -497,7 +501,6 @@ public class UpdateIncome extends Fragment {
                 } else if (statue.equals("每月")) {
                     i++;
                     String string = dateSpinner.substring(0, dateSpinner.indexOf("日"));
-                    Common.showToast(getActivity(), dateSpinner + " : " + dateSpinner.length());
                     int choiceD = Integer.valueOf(string.trim());
                     Calendar calendar = new GregorianCalendar(year, month + i, 1, 12, 0, 0);
                     int monMax = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -518,7 +521,7 @@ public class UpdateIncome extends Fragment {
             }
             Bundle bundle = new Bundle();
             Fragment fragment = new SettingListFixIon();
-            bundle.putSerializable("bankVO", bankVO);
+            bundle.putSerializable("BankVO", bankVO);
             bundle.putSerializable("action", action);
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             fragment.setArguments(bundle);
