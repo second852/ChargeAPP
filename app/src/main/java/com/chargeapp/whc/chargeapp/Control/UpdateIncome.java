@@ -91,7 +91,7 @@ public class UpdateIncome extends Fragment {
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new savecomsumer());
         fixdate.setOnCheckedChangeListener(new showfixdateClick());
-        if (action.equals("SettingListFixIon") && (!bankVO.getAuto())) {
+        if (action.equals("SettingListFixIon") && (!bankVO.isAuto())) {
             standard.setText("全部");
             standard.setVisibility(View.VISIBLE);
             standard.setOnClickListener(new saveAllConsume());

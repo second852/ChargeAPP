@@ -69,7 +69,7 @@ public class BankDB {
     }
 
     public List<BankVO> getAutoSetting(int id) {
-        String sql = "SELECT * FROM BANK where  autoId = '"+id+"' order by id;";
+        String sql = "SELECT * FROM BANK where autoId = "+id+";";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();
@@ -213,7 +213,7 @@ public class BankDB {
         values.put("fixdate",bankVO.getFixDate());
         values.put("fixdatedetail",bankVO.getFixDateDetail());
         values.put("detailname",bankVO.getDetailname());
-        values.put("auto",String.valueOf(bankVO.getAuto()));
+        values.put("auto",String.valueOf(bankVO.isAuto()));
         values.put("autoId",bankVO.getAutoId());
         return db.insert(TABLE_NAME, null, values);
     }
@@ -226,7 +226,7 @@ public class BankDB {
         values.put("fixdate",bankVO.getFixDate());
         values.put("fixdatedetail",bankVO.getFixDateDetail());
         values.put("detailname",bankVO.getDetailname());
-        values.put("auto",String.valueOf(bankVO.getAuto()));
+        values.put("auto",String.valueOf(bankVO.isAuto()));
         values.put("autoId",bankVO.getAutoId());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(bankVO.getId())};

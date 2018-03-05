@@ -198,6 +198,13 @@ public class BootReceiver extends BroadcastReceiver {
                         b.setDate(new Date(setNewTime.getTimeInMillis()));
                         bankDB.insert(b);
 
+                        Log.d("XXXXXxbefore", String.valueOf(b.isAuto()));
+                        List<BankVO> tt=bankDB.getAutoSetting(b.getId());
+                        for(BankVO bv:tt)
+                        {
+                            Log.d("XXXXXxafter", String.valueOf(bv.isAuto()));
+                        }
+
                     }
 
                 } else if ("每周".equals(action)) {
@@ -272,8 +279,6 @@ public class BootReceiver extends BroadcastReceiver {
                             b.setDate(new Date((setNewTime.getTimeInMillis())));
                             bankDB.insert(b);
                         }
-
-
                     }
                 }
             }

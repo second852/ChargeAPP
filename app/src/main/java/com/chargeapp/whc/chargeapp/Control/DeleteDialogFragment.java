@@ -87,6 +87,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         }else if(fragement instanceof SettingMain)
         {
             title="確定重設資料庫?";
+            message="重設後，紀錄資料會消失!";
         }else if(object instanceof TypeVO)
         {
             TypeVO typeVO= (TypeVO) object;

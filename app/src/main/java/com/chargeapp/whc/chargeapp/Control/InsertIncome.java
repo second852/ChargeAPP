@@ -377,7 +377,7 @@ public class InsertIncome extends Fragment {
         bankVO.setFixDateDetail(fixdatedetail);
         bankVO.setDetailname(detailname.getText().toString());
         bankVO.setAuto(false);
-        bankVO.setAutoId(0);
+        bankVO.setAutoId(-1);
     }
 
 

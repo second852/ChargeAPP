@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,14 +62,21 @@ public class SettingListFixIon extends Fragment {
     }
 
     public void setLayout() {
-        if(bankVO.getAuto())
+        if(bankVO.isAuto())
         {
             bankVOS=bankDB.getAutoSetting(bankVO.getAutoId());
-            bankVOS.add(0,bankDB.findById(bankVO.getAutoId()));
+            BankVO bankVO1=bankDB.findById(bankVO.getAutoId());
+            if(bankVO1!=null)
+            {
+                bankVOS.add(0,bankVO1);
+            }
+
         }else{
-            bankVOS=bankDB.getAutoSetting(bankVO.getAutoId());
-            bankVOS.add(0,bankVO);
+
+            bankVOS=bankDB.getAutoSetting(bankVO.getId());
+            bankVOS.add(0, bankVO);
         }
+
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {
             listView.setAdapter(new ListAdapter(getActivity(), bankVOS));
@@ -123,8 +131,7 @@ public class SettingListFixIon extends Fragment {
             update.setText("修改");
             StringBuffer stringBuffer = new StringBuffer();
             final BankVO bankVO=bankVOS.get(position);
-
-            if(bankVO.getAuto())
+            if(bankVO.isAuto())
             {
                 fixT.setText("子體");
                 fixT.setTextColor(Color.parseColor("#7744FF"));
