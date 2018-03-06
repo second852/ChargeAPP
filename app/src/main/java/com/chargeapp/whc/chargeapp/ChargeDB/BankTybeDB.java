@@ -44,6 +44,24 @@ public class BankTybeDB {
         return BankTypeVOlist;
     }
 
+    public List<BankTypeVO> getExport() {
+        String sql = "SELECT * FROM BANKTYPE where id > 7 order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<BankTypeVO> BankTypeVOlist = new ArrayList<>();
+        BankTypeVO bankTypeVO;
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            String groupnumber =cursor.getString(1);
+            String name=cursor.getString(2);
+            int image=cursor.getInt(3);
+            bankTypeVO=new BankTypeVO(id,groupnumber,name,image);
+            BankTypeVOlist.add(bankTypeVO);
+        }
+        cursor.close();
+        return BankTypeVOlist;
+    }
+
     public BankTypeVO findByName(String n) {
         String[] columns = {
                 "id,groupNumber,name,image"

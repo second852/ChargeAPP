@@ -39,6 +39,24 @@ public class TypeDB {
         return typeList;
     }
 
+    public List<TypeVO> getExport() {
+        String sql = "SELECT * FROM Type where id > 9 order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<TypeVO> typeList = new ArrayList<>();
+        TypeVO typeVO;
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            String groupNumber = cursor.getString(1);
+            String name = cursor.getString(2);
+            int image=cursor.getInt(3);
+            typeVO=new TypeVO(id,groupNumber,name,image);
+            typeList.add(typeVO);
+        }
+        cursor.close();
+        return typeList;
+    }
+
     public TypeVO findTypeName(String n) {
         String sql = "SELECT * FROM Type where name = '"+n+"' order by id;";
         String[] args = {};

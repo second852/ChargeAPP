@@ -17,6 +17,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -346,6 +347,7 @@ public class MainActivity extends AppCompatActivity {
         bankTybeDB.insert(new BankTypeVO("薪水", "股票", indexOfIntArray(imageAll, R.drawable.origin)));
         bankTybeDB.insert(new BankTypeVO("薪水", "利息", indexOfIntArray(imageAll, R.drawable.bank)));
         bankTybeDB.insert(new BankTypeVO("薪水", "股利", indexOfIntArray(imageAll, R.drawable.interest)));
+        Log.d("XZXXXXXX",typeDB.getAll().size()+" : "+typeDetailDB.getTypdAll().size()+" : "+bankTybeDB.getAll().size()+bankTybeDB.getAll().get(0).getId());
     }
 
     public static int indexOfIntArray(int[] array, int key) {
