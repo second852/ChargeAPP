@@ -74,7 +74,8 @@ public class SettingMain extends Fragment {
         eleMainItemVOList.add(new EleMainItemVO("關閉提醒", R.drawable.notifyt));
         eleMainItemVOList.add(new EleMainItemVO("設定提醒時間", R.drawable.timei));
         eleMainItemVOList.add(new EleMainItemVO("設定定期項目", R.drawable.cancel));
-        eleMainItemVOList.add(new EleMainItemVO("匯入/匯出檔案", R.drawable.export));
+        eleMainItemVOList.add(new EleMainItemVO("匯出檔案", R.drawable.importf));
+        eleMainItemVOList.add(new EleMainItemVO("匯入檔案", R.drawable.export));
         eleMainItemVOList.add(new EleMainItemVO("重設資料庫", R.drawable.origin));
         return eleMainItemVOList;
     }
@@ -198,7 +199,17 @@ public class SettingMain extends Fragment {
                     }
                 });
 
-            }  else if (position == 5) {
+            }else if (position == 5) {
+
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Fragment fragment=new SettingUploadFile();
+                        switchFragment(fragment);
+                    }
+                });
+
+            } else if (position == 6) {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

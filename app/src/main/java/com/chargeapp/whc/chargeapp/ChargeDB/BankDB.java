@@ -114,7 +114,7 @@ public class BankDB {
         return BankVOList;
     }
 
-    public BankVO getAutoBank(Timestamp start,Timestamp end,int id) {
+    public BankVO   getAutoBank(Timestamp start,Timestamp end,int id) {
         String sql = "SELECT * FROM BANK where autoId = '"+id+"' and date between '"+start.getTime()+"' and '"+end.getTime()+"' order by date;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
