@@ -1,6 +1,8 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -21,6 +23,7 @@ import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
@@ -28,19 +31,22 @@ import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
+import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.zxing.oned.OneDimensionalCodeWriter;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -60,25 +66,34 @@ public class SettingUploadFile extends Fragment {
     private ListView listView;
     private LinearLayout fileChoice;
     private ImageView excel, txtFile, cancelF;
-    private Boolean isShow = true;
     private Spinner choiceT;
-    private boolean local, consume, income,all;
     private ConsumeDB consumeDB;
     private InvoiceDB invoiceDB;
     private BankDB bankDB;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
     private BankTybeDB bankTybeDB;
+    private GoalDB goalDB;
+    private int position;
+    private boolean local, consume, income, all, show = true;
+
+    private static final String TAG = "drive-quickstart";
+    private static final int REQUEST_CODE_CAPTURE_IMAGE = 1;
+    private static final int REQUEST_CODE_CREATOR = 2;
+    private static final int REQUEST_CODE_RESOLUTION = 3;
+    private GoogleApiClient mGoogleApiClient;
+    private Bitmap mBitmapToSave;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.setting_upload, container, false);
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDB=new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB=new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<EleMainItemVO> itemSon = getNewItem();
         listView = view.findViewById(R.id.list);
         fileChoice = view.findViewById(R.id.fileChoice);
@@ -148,28 +163,28 @@ public class SettingUploadFile extends Fragment {
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (isShow) {
-                            fileChoice.setVisibility(View.VISIBLE);
-                            isShow = false;
-                            local = true;
+                        if (SettingUploadFile.this.position == 0) {
+                            outputExcel();
                         } else {
-
-
+                            if (show) {
+                                fileChoice.setVisibility(View.VISIBLE);
+                                show = false;
+                            }
                         }
                     }
                 });
 
             } else if (position == 1) {
-
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (isShow) {
-                            fileChoice.setVisibility(View.VISIBLE);
-                            isShow = false;
-                            local = false;
+                        if (SettingUploadFile.this.position == 0) {
+                            outputExcel();
                         } else {
-
+                            if (show) {
+                                fileChoice.setVisibility(View.VISIBLE);
+                                show = false;
+                            }
                         }
                     }
                 });
@@ -186,6 +201,119 @@ public class SettingUploadFile extends Fragment {
         @Override
         public long getItemId(int position) {
             return 0;
+        }
+    }
+
+    private void outputTxt() {
+        File dir = null;
+        dir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        try {
+
+            File file = new File(dir, "記帳小助手.txt");
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file, false));
+            if (consume) {
+                bw.append("日期 ");
+                bw.append("主項目 ");
+                bw.append("次項目 ");
+                bw.append("金額 ");
+                bw.append("發票號碼 ");
+                bw.append("細節 ");
+                bw.append("中獎 ");
+                bw.append("類別 ");
+                bw.append("定期支出 ");
+                bw.append("定期支出設定 ");
+                bw.append("自動產生 ");
+                bw.append("自動產生母ID ");
+                bw.append("資料庫ID\n");
+                List<ConsumeVO> consumeVOS = consumeDB.getAll();
+                List<InvoiceVO> invoiceVOS = invoiceDB.getAll();
+                List<Object> objects = new ArrayList<>();
+                objects.addAll(consumeVOS);
+                objects.addAll(invoiceVOS);
+                //照時間排列
+                Collections.sort(objects, new Comparator<Object>() {
+                    @Override
+                    public int compare(Object o1, Object o2) {
+                        long t1 = (o1 instanceof InvoiceVO) ? ((InvoiceVO) o1).getTime().getTime() : ((ConsumeVO) o1).getDate().getTime();
+                        long t2 = (o2 instanceof InvoiceVO) ? ((InvoiceVO) o2).getTime().getTime() : ((ConsumeVO) o2).getDate().getTime();
+                        if (t1 > t2) {
+                            return -1;
+                        } else if (t1 == t2) {
+                            return 0;
+                        } else {
+                            return 1;
+                        }
+                    }
+                });
+
+                //塞資料
+                for (int i = 0; i < objects.size(); i++) {
+                    Object o = objects.get(i);
+                    if (o instanceof InvoiceVO) {
+                        InvoiceVO invoiceVO = (InvoiceVO) o;
+                        bw.append(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())) + " ");
+                        bw.append(invoiceVO.getMaintype() + " ");
+                        bw.append(invoiceVO.getSecondtype() + " ");
+                        bw.append(invoiceVO.getAmount() + " ");
+                        bw.append(invoiceVO.getInvNum() + " ");
+                        bw.append(invoiceVO.getDetail() + " ");
+                        bw.append(invoiceVO.getIswin() + " ");
+                        bw.append("電子發票" + " ");
+                        bw.append("false" + " ");
+                        bw.append("無" + " ");
+                        bw.append("false" + " ");
+                        bw.append("-1" + " ");
+                        bw.append(String.valueOf(invoiceVO.getId()) + "\n");
+                    } else {
+                        ConsumeVO consumeVO = (ConsumeVO) o;
+                        bw.append(Common.sTwo.format(new Date(consumeVO.getDate().getTime())) + " ");
+                        bw.append(consumeVO.getMaintype() + " ");
+                        bw.append(consumeVO.getSecondType() + " ");
+                        bw.append(consumeVO.getMoney() + " ");
+                        bw.append(consumeVO.getNumber() + " ");
+                        bw.append(consumeVO.getDetailname() + " ");
+                        bw.append(consumeVO.getIsWin() + " ");
+                        bw.append("本機" + " ");
+                        bw.append(consumeVO.getFixDate() + " ");
+                        bw.append(consumeVO.getFixDateDetail() + " ");
+                        bw.append(String.valueOf(consumeVO.isAuto()) + " ");
+                        bw.append(String.valueOf(consumeVO.getAutoId()) + " ");
+                        bw.append(String.valueOf(consumeVO.getId()) + "\n");
+                    }
+                }
+            }
+            if (income) {
+                bw.append("日期 ");
+                bw.append("主項目 ");
+                bw.append("金額 ");
+                bw.append("細節 ");
+                bw.append("定期收入 ");
+                bw.append("定期收入設定 ");
+                bw.append("自動產生 ");
+                bw.append("自動產生母ID ");
+                bw.append("資料庫ID\n");
+                List<BankVO> bankVOS = bankDB.getAll();
+                for (int i = 0; i < bankVOS.size(); i++) {
+                    BankVO bankVO = bankVOS.get(i);
+                    bw.append(Common.sTwo.format(new Date(bankVO.getDate().getTime())) + " ");
+                    bw.append(bankVO.getMaintype() + " ");
+                    bw.append(bankVO.getMoney() + " ");
+                    bw.append(bankVO.getDetailname() + " ");
+                    bw.append(bankVO.getFixDate() + " ");
+                    bw.append(bankVO.getFixDateDetail() + " ");
+                    bw.append(String.valueOf(bankVO.isAuto()) + " ");
+                    bw.append(String.valueOf(bankVO.getAutoId()) + " ");
+                    bw.append(String.valueOf(bankVO.getId() + "\n"));
+                }
+            }
+            bw.close();
+            Common.showToast(getActivity(), "匯出成功，檔名為記帳小助手.txt，路徑為" + file.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -293,7 +421,7 @@ public class SettingUploadFile extends Fragment {
                 List<BankVO> bankVOS = bankDB.getAll();
                 for (int i = 0; i < bankVOS.size(); i++) {
                     Row rowContent = sheetCon.createRow(i + 1); // 建立儲存格
-                    BankVO bankVO=bankVOS.get(i);
+                    BankVO bankVO = bankVOS.get(i);
                     rowContent.createCell(0).setCellValue(Common.sTwo.format(new Date(bankVO.getDate().getTime())));
                     rowContent.createCell(1).setCellValue(bankVO.getMaintype());
                     rowContent.createCell(3).setCellValue(bankVO.getMoney());
@@ -305,15 +433,14 @@ public class SettingUploadFile extends Fragment {
                     rowContent.createCell(9).setCellValue(bankVO.getId());
                 }
             }
-            if(all)
-            {
+            if (all) {
                 //Type
                 Sheet sheetCon = workbook.createSheet("Type");
                 sheetCon.setColumnWidth(2, 2);// 自動調整欄位寬度
                 List<TypeVO> typeVOS = typeDB.getExport();
                 for (int i = 0; i < typeVOS.size(); i++) {
                     Row rowContent = sheetCon.createRow(i); // 建立儲存格
-                    TypeVO typeVO=typeVOS.get(i);
+                    TypeVO typeVO = typeVOS.get(i);
                     rowContent.createCell(0).setCellValue(typeVO.getId());
                     rowContent.createCell(1).setCellValue(typeVO.getGroupNumber());
                     rowContent.createCell(2).setCellValue(typeVO.getName());
@@ -326,7 +453,7 @@ public class SettingUploadFile extends Fragment {
                 List<TypeDetailVO> typeDetailVOS = typeDetailDB.getExport();
                 for (int i = 0; i < typeDetailVOS.size(); i++) {
                     Row rowContent = sheetCon1.createRow(i); // 建立儲存格
-                    TypeDetailVO typeDetailVO=typeDetailVOS.get(i);
+                    TypeDetailVO typeDetailVO = typeDetailVOS.get(i);
                     rowContent.createCell(0).setCellValue(typeDetailVO.getId());
                     rowContent.createCell(1).setCellValue(typeDetailVO.getGroupNumber());
                     rowContent.createCell(2).setCellValue(typeDetailVO.getName());
@@ -335,24 +462,43 @@ public class SettingUploadFile extends Fragment {
                 }
 
                 //BankDetail
-                Sheet sheetCon2 = workbook.createSheet("TypeDetail");
+                Sheet sheetCon2 = workbook.createSheet("BankType");
                 sheetCon2.setColumnWidth(2, 2);
                 List<BankTypeVO> bankTypeVOS = bankTybeDB.getExport();
                 for (int i = 0; i < bankTypeVOS.size(); i++) {
                     Row rowContent = sheetCon2.createRow(i);
-                    BankTypeVO bankTypeVO=bankTypeVOS.get(i);
+                    BankTypeVO bankTypeVO = bankTypeVOS.get(i);
                     rowContent.createCell(0).setCellValue(bankTypeVO.getId());
                     rowContent.createCell(1).setCellValue(bankTypeVO.getGroupNumber());
                     rowContent.createCell(2).setCellValue(bankTypeVO.getName());
                     rowContent.createCell(3).setCellValue(bankTypeVO.getImage());
                 }
-
-            }else{
-
+                //goal
+                //BankDetail
+                Sheet sheetCon3 = workbook.createSheet("Goal");
+                sheetCon3.setColumnWidth(2, 2);
+                List<GoalVO> goalVOS = goalDB.getAll();
+                for (int i = 0; i < goalVOS.size(); i++) {
+                    Row rowContent = sheetCon3.createRow(i);
+                    GoalVO goalVO = goalVOS.get(i);
+                    rowContent.createCell(0).setCellValue(goalVO.getId());
+                    rowContent.createCell(1).setCellValue(goalVO.getType());
+                    rowContent.createCell(2).setCellValue(goalVO.getName());
+                    rowContent.createCell(3).setCellValue(goalVO.getMoney());
+                    rowContent.createCell(4).setCellValue(goalVO.getTimeStatue());
+                    rowContent.createCell(5).setCellValue(goalVO.getStartTime());
+                    rowContent.createCell(6).setCellValue(goalVO.getEndTime());
+                    rowContent.createCell(7).setCellValue(goalVO.isNotify());
+                    rowContent.createCell(8).setCellValue(goalVO.getNotifyStatue());
+                    rowContent.createCell(9).setCellValue(goalVO.getNotifyDate());
+                    rowContent.createCell(10).setCellValue(goalVO.isNoWeekend());
+                    rowContent.createCell(11).setCellValue(goalVO.getStatue());
+                }
             }
             workbook.write(outputStream);
             workbook.close();
             outputStream.close();
+            Common.showToast(getActivity(), "匯出成功，檔名為記帳小助手.xls，路徑為" + file.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -364,7 +510,8 @@ public class SettingUploadFile extends Fragment {
         @Override
         public void onClick(View v) {
             fileChoice.setVisibility(View.GONE);
-            isShow = true;
+            show = true;
+            outputExcel();
         }
     }
 
@@ -372,7 +519,7 @@ public class SettingUploadFile extends Fragment {
         @Override
         public void onClick(View v) {
             fileChoice.setVisibility(View.GONE);
-            isShow = true;
+            show = true;
         }
     }
 
@@ -380,30 +527,32 @@ public class SettingUploadFile extends Fragment {
         @Override
         public void onClick(View v) {
             fileChoice.setVisibility(View.GONE);
-            isShow = true;
+            show = true;
         }
     }
 
     private class choiceAction implements android.widget.AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            if (i == 0) {
-                consume = true;
-                income = true;
-                isShow = false;
-            } else if (i == 1) {
-                consume = true;
-                income = true;
-                isShow = true;
 
-            } else if (i == 2) {
-                consume = true;
-                income = false;
-                isShow = true;
-            } else if (i == 3) {
-                consume = false;
+            position = i;
+            Common.showToast(getActivity(), String.valueOf(position));
+            if (position == 0) {
+                all = true;
                 income = true;
-                isShow = true;
+                consume = true;
+            } else if (position == 1) {
+                all = false;
+                income = true;
+                consume = true;
+            } else if (position == 2) {
+                all = false;
+                income = false;
+                consume = true;
+            } else {
+                all = false;
+                income = false;
+                consume = true;
             }
         }
 
@@ -412,4 +561,7 @@ public class SettingUploadFile extends Fragment {
 
         }
     }
+
+
+
 }
