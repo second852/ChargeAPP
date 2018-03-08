@@ -541,7 +541,7 @@ public class SettingUploadFile extends Fragment {
                     rowContent.createCell(0).setCellValue(bankVO.getId());
                     rowContent.createCell(1).setCellValue(bankVO.getMaintype());
                     rowContent.createCell(2).setCellValue(bankVO.getMoney());
-                    rowContent.createCell(3).setCellValue(Common.sTwo.format(bankVO.getDate()));
+                    rowContent.createCell(3).setCellValue(bankVO.getDate().getTime());
                     rowContent.createCell(4).setCellValue(bankVO.getFixDate());
                     rowContent.createCell(5).setCellValue(bankVO.getFixDateDetail());
                     rowContent.createCell(6).setCellValue(bankVO.getDetailname());
@@ -559,7 +559,7 @@ public class SettingUploadFile extends Fragment {
                     rowContent.createCell(1).setCellValue(consumeVO.getMaintype());
                     rowContent.createCell(2).setCellValue(consumeVO.getSecondType());
                     rowContent.createCell(3).setCellValue(consumeVO.getMoney());
-                    rowContent.createCell(4).setCellValue(Common.sTwo.format(consumeVO.getDate()));
+                    rowContent.createCell(4).setCellValue(consumeVO.getDate().getTime());
                     rowContent.createCell(5).setCellValue(consumeVO.getNumber());
                     rowContent.createCell(6).setCellValue(consumeVO.getFixDate());
                     rowContent.createCell(7).setCellValue(consumeVO.getFixDateDetail());
@@ -580,7 +580,7 @@ public class SettingUploadFile extends Fragment {
                     rowContent.createCell(1).setCellValue(invoiceVO.getCardType());
                     rowContent.createCell(2).setCellValue(invoiceVO.getCardNo());
                     rowContent.createCell(3).setCellValue(invoiceVO.getCardEncrypt());
-                    rowContent.createCell(4).setCellValue(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())));
+                    rowContent.createCell(4).setCellValue(invoiceVO.getTime().getTime());
                     rowContent.createCell(5).setCellValue(invoiceVO.getAmount());
                     rowContent.createCell(6).setCellValue(invoiceVO.getDetail());
                     rowContent.createCell(7).setCellValue(invoiceVO.getSellerName());
@@ -590,7 +590,7 @@ public class SettingUploadFile extends Fragment {
                     rowContent.createCell(11).setCellValue(invoiceVO.getMaintype());
                     rowContent.createCell(12).setCellValue(invoiceVO.getSecondtype());
                     rowContent.createCell(13).setCellValue(invoiceVO.getHeartyteam());
-                    rowContent.createCell(14).setCellValue(Common.sTwo.format(new Date(invoiceVO.getDonateTime().getTime())));
+                    rowContent.createCell(14).setCellValue(invoiceVO.getTime().getTime());
                     rowContent.createCell(15).setCellValue(invoiceVO.getIswin());
                     rowContent.createCell(16).setCellValue(invoiceVO.getSellerBan());
                     rowContent.createCell(17).setCellValue(invoiceVO.getSellerAddress());

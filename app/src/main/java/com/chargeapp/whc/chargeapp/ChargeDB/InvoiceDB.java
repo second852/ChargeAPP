@@ -510,7 +510,29 @@ public class InvoiceDB {
         return invoiceVOSList;
     }
 
-
+    public long insertHid(InvoiceVO invoiceVO) {
+        ContentValues values = new ContentValues();
+        values.put("id",invoiceVO.getId());
+        values.put("invNum",invoiceVO.getInvNum());
+        values.put("cardType", invoiceVO.getCardType());
+        values.put("cardNo",invoiceVO.getCardNo());
+        values.put("cardEncrypt",invoiceVO.getCardEncrypt());
+        values.put("time",invoiceVO.getTime().getTime());
+        values.put("amount",invoiceVO.getAmount());
+        values.put("detail",invoiceVO.getDetail());
+        values.put("sellerName",invoiceVO.getSellerName());
+        values.put("invDonatable",invoiceVO.getInvDonatable());
+        values.put("donateMark",invoiceVO.getInvDonatable());
+        values.put("carrier",invoiceVO.getCarrier());
+        values.put("maintype",invoiceVO.getMaintype());
+        values.put("secondtype",invoiceVO.getSecondtype());
+        values.put("heartyteam",invoiceVO.getHeartyteam());
+        values.put("donateTime",invoiceVO.getDonateTime().getTime());
+        values.put("iswin",invoiceVO.getIswin());
+        values.put("sellerBan",invoiceVO.getSellerBan());
+        values.put("sellerAddress",invoiceVO.getSellerAddress());
+        return db.insert(TABLE_NAME, null, values);
+    }
 
 
 

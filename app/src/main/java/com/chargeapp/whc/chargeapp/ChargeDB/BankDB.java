@@ -218,6 +218,20 @@ public class BankDB {
         return db.insert(TABLE_NAME, null, values);
     }
 
+    public long insertHid(BankVO bankVO) {
+        ContentValues values = new ContentValues();
+        values.put("id",bankVO.getId());
+        values.put("maintype",bankVO.getMaintype());
+        values.put("money",bankVO.getMoney());
+        values.put("date",bankVO.getDate().getTime());
+        values.put("fixdate",bankVO.getFixDate());
+        values.put("fixdatedetail",bankVO.getFixDateDetail());
+        values.put("detailname",bankVO.getDetailname());
+        values.put("auto",String.valueOf(bankVO.isAuto()));
+        values.put("autoId",bankVO.getAutoId());
+        return db.insert(TABLE_NAME, null, values);
+    }
+
     public int update(BankVO bankVO) {
         ContentValues values = new ContentValues();
         values.put("maintype",bankVO.getMaintype());

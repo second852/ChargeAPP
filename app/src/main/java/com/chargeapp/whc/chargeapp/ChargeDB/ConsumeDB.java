@@ -305,6 +305,24 @@ public class ConsumeDB {
         return db.insert(TABLE_NAME, null, values);
     }
 
+    public long insertHid(ConsumeVO consumeVO) {
+        ContentValues values = new ContentValues();
+        values.put("id",consumeVO.getId());
+        values.put("maintype",consumeVO.getMaintype());
+        values.put("secondtype", consumeVO.getSecondType());
+        values.put("money",consumeVO.getMoney());
+        values.put("date",consumeVO.getDate().getTime());
+        values.put("number",consumeVO.getNumber());
+        values.put("fixdate",consumeVO.getFixDate());
+        values.put("fixdatedetail",consumeVO.getFixDateDetail());
+        values.put("notify",consumeVO.getNotify());
+        values.put("detailname",consumeVO.getDetailname());
+        values.put("iswin",consumeVO.getIsWin());
+        values.put("auto",String.valueOf(consumeVO.isAuto()));
+        values.put("autoId",consumeVO.getAutoId());
+        return db.insert(TABLE_NAME, null, values);
+    }
+
 
     public int update(ConsumeVO consumeVO) {
         ContentValues values = new ContentValues();

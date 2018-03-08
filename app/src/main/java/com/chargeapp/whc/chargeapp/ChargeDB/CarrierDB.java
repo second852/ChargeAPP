@@ -65,6 +65,14 @@ public class CarrierDB {
         return db.insert(TABLE_NAME, null, values);
     }
 
+    public long insertHid(CarrierVO carrierVO) {
+        ContentValues values = new ContentValues();
+        values.put("id",carrierVO.getId());
+        values.put("CARNUL",carrierVO.getCarNul());
+        values.put("PASSWORD", carrierVO.getPassword());
+        return db.insert(TABLE_NAME, null, values);
+    }
+
     public int update(CarrierVO carrierVO) {
         ContentValues values = new ContentValues();
         values.put("CARNUL",carrierVO.getCarNul());
