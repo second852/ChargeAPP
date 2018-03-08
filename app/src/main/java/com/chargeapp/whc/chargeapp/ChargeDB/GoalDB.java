@@ -64,6 +64,23 @@ public class GoalDB {
         return db.insert(TABLE_NAME, null, values);
     }
 
+    public long insertHid(GoalVO goalVO) {
+        ContentValues values = new ContentValues();
+        values.put("id",goalVO.getId());
+        values.put("type",goalVO.getType());
+        values.put("name",goalVO.getName());
+        values.put("money",goalVO.getMoney());
+        values.put("timeStatue",goalVO.getTimeStatue());
+        values.put("startTime",goalVO.getStartTime().getTime());
+        values.put("endTime",goalVO.getEndTime().getTime());
+        values.put("notify",String.valueOf(goalVO.isNotify()));
+        values.put("notifyStatue",goalVO.getNotifyStatue());
+        values.put("notifyDate",goalVO.getNotifyDate());
+        values.put("noWeekend",String.valueOf(goalVO.isNoWeekend()));
+        values.put("statue",0);
+        return db.insert(TABLE_NAME, null, values);
+    }
+
     public int update(GoalVO goalVO) {
         ContentValues values = new ContentValues();
         values.put("type",goalVO.getType());

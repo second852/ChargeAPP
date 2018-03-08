@@ -530,6 +530,25 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
     }
+
+
+    @Override
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        Log.d("XXXXXXX", String.valueOf(resultCode));
+        switch (requestCode) {
+            case 2:
+                // Called after a file is saved to Drive.
+                Fragment fragment=new SettingUploadFile();
+                switchFragment(fragment);
+                if(resultCode==-1)
+                {
+                    Common.showToast(this, "上傳成功");
+                }else{
+                    Common.showToast(this, "上傳失敗");
+                }
+                break;
+        }
+    }
 //    @Override
 //    public boolean onKeyDown(int keyCode, KeyEvent event) {
 //        int index = getSupportFragmentManager().getBackStackEntryCount() - 1;

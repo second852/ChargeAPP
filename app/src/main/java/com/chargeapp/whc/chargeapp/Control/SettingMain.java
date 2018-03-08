@@ -204,7 +204,7 @@ public class SettingMain extends Fragment {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Fragment fragment=new SettingUploadFile();
+                        Fragment fragment=new SettingDownloadFile();
                         switchFragment(fragment);
                     }
                 });

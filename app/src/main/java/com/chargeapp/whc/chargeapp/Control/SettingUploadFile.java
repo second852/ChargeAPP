@@ -1,12 +1,15 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,7 @@ import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
@@ -29,6 +33,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
+import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
@@ -36,7 +41,13 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.MetadataChangeSet;
 
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -44,11 +55,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -74,15 +86,14 @@ public class SettingUploadFile extends Fragment {
     private TypeDetailDB typeDetailDB;
     private BankTybeDB bankTybeDB;
     private GoalDB goalDB;
-    private int position;
-    private boolean local, consume, income, all, show = true;
-
+    private CarrierDB carrierDB;
+    private static int position;
+    private boolean local, consume, income, all, show = true, txt;
     private static final String TAG = "drive-quickstart";
-    private static final int REQUEST_CODE_CAPTURE_IMAGE = 1;
     private static final int REQUEST_CODE_CREATOR = 2;
-    private static final int REQUEST_CODE_RESOLUTION = 3;
     private GoogleApiClient mGoogleApiClient;
-    private Bitmap mBitmapToSave;
+    private ProgressDialog progressDialog;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -93,6 +104,7 @@ public class SettingUploadFile extends Fragment {
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<EleMainItemVO> itemSon = getNewItem();
         listView = view.findViewById(R.id.list);
@@ -106,6 +118,7 @@ public class SettingUploadFile extends Fragment {
         cancelF.setOnClickListener(new cancelOnClick());
         listView.setAdapter(new ListAdapter(getActivity(), itemSon));
         setSpinner();
+        progressDialog=new ProgressDialog(getActivity());
         return view;
     }
 
@@ -119,6 +132,7 @@ public class SettingUploadFile extends Fragment {
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceT.setAdapter(arrayAdapter);
         choiceT.setOnItemSelectedListener(new choiceAction());
+        choiceT.setSelection(position);
     }
 
     private List<EleMainItemVO> getNewItem() {
@@ -164,11 +178,12 @@ public class SettingUploadFile extends Fragment {
                     @Override
                     public void onClick(View v) {
                         if (SettingUploadFile.this.position == 0) {
-                            outputExcel();
+                            FileTOLocal();
                         } else {
                             if (show) {
                                 fileChoice.setVisibility(View.VISIBLE);
                                 show = false;
+                                local = true;
                             }
                         }
                     }
@@ -179,11 +194,13 @@ public class SettingUploadFile extends Fragment {
                     @Override
                     public void onClick(View v) {
                         if (SettingUploadFile.this.position == 0) {
-                            outputExcel();
+                            openCloud();
+                            txt = false;
                         } else {
                             if (show) {
                                 fileChoice.setVisibility(View.VISIBLE);
                                 show = false;
+                                local = false;
                             }
                         }
                     }
@@ -204,17 +221,27 @@ public class SettingUploadFile extends Fragment {
         }
     }
 
-    private void outputTxt() {
-        File dir = null;
-        dir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+    private void TxtToLocal() {
         try {
-
+            File dir = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
             File file = new File(dir, "記帳小助手.txt");
-            BufferedWriter bw = new BufferedWriter(new FileWriter(file, false));
+            FileOutputStream fs = new FileOutputStream(file);
+            OutPutTxt(fs);
+        } catch (Exception e) {
+            Common.showToast(getActivity(), "File Error!");
+        }
+    }
+
+    private void OutPutTxt(OutputStream outputStream) {
+        progressDialog.setTitle("處理中");
+        progressDialog.show();
+        try {
+            OutputStreamWriter ow = new OutputStreamWriter(outputStream);
+            BufferedWriter bw = new BufferedWriter(ow);
             if (consume) {
                 bw.append("日期 ");
                 bw.append("主項目 ");
@@ -228,7 +255,8 @@ public class SettingUploadFile extends Fragment {
                 bw.append("定期支出設定 ");
                 bw.append("自動產生 ");
                 bw.append("自動產生母ID ");
-                bw.append("資料庫ID\n");
+                bw.append("資料庫ID");
+                bw.newLine();
                 List<ConsumeVO> consumeVOS = consumeDB.getAll();
                 List<InvoiceVO> invoiceVOS = invoiceDB.getAll();
                 List<Object> objects = new ArrayList<>();
@@ -267,7 +295,8 @@ public class SettingUploadFile extends Fragment {
                         bw.append("無" + " ");
                         bw.append("false" + " ");
                         bw.append("-1" + " ");
-                        bw.append(String.valueOf(invoiceVO.getId()) + "\n");
+                        bw.append(String.valueOf(invoiceVO.getId()));
+                        bw.newLine();
                     } else {
                         ConsumeVO consumeVO = (ConsumeVO) o;
                         bw.append(Common.sTwo.format(new Date(consumeVO.getDate().getTime())) + " ");
@@ -282,7 +311,8 @@ public class SettingUploadFile extends Fragment {
                         bw.append(consumeVO.getFixDateDetail() + " ");
                         bw.append(String.valueOf(consumeVO.isAuto()) + " ");
                         bw.append(String.valueOf(consumeVO.getAutoId()) + " ");
-                        bw.append(String.valueOf(consumeVO.getId()) + "\n");
+                        bw.append(String.valueOf(consumeVO.getId()));
+                        bw.newLine();
                     }
                 }
             }
@@ -295,7 +325,8 @@ public class SettingUploadFile extends Fragment {
                 bw.append("定期收入設定 ");
                 bw.append("自動產生 ");
                 bw.append("自動產生母ID ");
-                bw.append("資料庫ID\n");
+                bw.append("資料庫ID");
+                bw.newLine();
                 List<BankVO> bankVOS = bankDB.getAll();
                 for (int i = 0; i < bankVOS.size(); i++) {
                     BankVO bankVO = bankVOS.get(i);
@@ -307,29 +338,40 @@ public class SettingUploadFile extends Fragment {
                     bw.append(bankVO.getFixDateDetail() + " ");
                     bw.append(String.valueOf(bankVO.isAuto()) + " ");
                     bw.append(String.valueOf(bankVO.getAutoId()) + " ");
-                    bw.append(String.valueOf(bankVO.getId() + "\n"));
+                    bw.append(String.valueOf(bankVO.getId()));
+                    bw.newLine();
                 }
             }
             bw.close();
-            Common.showToast(getActivity(), "匯出成功，檔名為記帳小助手.txt，路徑為" + file.getAbsolutePath());
+            if(local)
+            {
+                Common.showToast(getActivity(), "匯出成功，檔名為記帳小助手.txt，路徑為" + "/Download/記帳小助手.txt");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void outputExcel() {
-        File dir = null;
-        dir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+    private void FileTOLocal() {
         try {
-
+            File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
             File file = new File(dir, "記帳小助手.xls");
-            HSSFWorkbook workbook = new HSSFWorkbook();
             OutputStream outputStream = new FileOutputStream(file);
+            outputExcel(outputStream);
+        } catch (Exception e) {
+            Common.showToast(getActivity(), "File Error");
+        }
+    }
 
+    private void outputExcel(OutputStream outputStream) {
+
+        try {
+            progressDialog.setTitle("處理中");
+            progressDialog.show();
+            HSSFWorkbook workbook = new HSSFWorkbook();
             if (consume) {
                 Sheet sheetCon = workbook.createSheet("消費");
                 sheetCon.setColumnWidth(2, 2);// 自動調整欄位寬度
@@ -436,7 +478,6 @@ public class SettingUploadFile extends Fragment {
             if (all) {
                 //Type
                 Sheet sheetCon = workbook.createSheet("Type");
-                sheetCon.setColumnWidth(2, 2);// 自動調整欄位寬度
                 List<TypeVO> typeVOS = typeDB.getExport();
                 for (int i = 0; i < typeVOS.size(); i++) {
                     Row rowContent = sheetCon.createRow(i); // 建立儲存格
@@ -449,7 +490,6 @@ public class SettingUploadFile extends Fragment {
                 }
                 //TypeDetail
                 Sheet sheetCon1 = workbook.createSheet("TypeDetail");
-                sheetCon1.setColumnWidth(2, 2);// 自動調整欄位寬度
                 List<TypeDetailVO> typeDetailVOS = typeDetailDB.getExport();
                 for (int i = 0; i < typeDetailVOS.size(); i++) {
                     Row rowContent = sheetCon1.createRow(i); // 建立儲存格
@@ -463,7 +503,6 @@ public class SettingUploadFile extends Fragment {
 
                 //BankDetail
                 Sheet sheetCon2 = workbook.createSheet("BankType");
-                sheetCon2.setColumnWidth(2, 2);
                 List<BankTypeVO> bankTypeVOS = bankTybeDB.getExport();
                 for (int i = 0; i < bankTypeVOS.size(); i++) {
                     Row rowContent = sheetCon2.createRow(i);
@@ -474,9 +513,7 @@ public class SettingUploadFile extends Fragment {
                     rowContent.createCell(3).setCellValue(bankTypeVO.getImage());
                 }
                 //goal
-                //BankDetail
                 Sheet sheetCon3 = workbook.createSheet("Goal");
-                sheetCon3.setColumnWidth(2, 2);
                 List<GoalVO> goalVOS = goalDB.getAll();
                 for (int i = 0; i < goalVOS.size(); i++) {
                     Row rowContent = sheetCon3.createRow(i);
@@ -494,11 +531,90 @@ public class SettingUploadFile extends Fragment {
                     rowContent.createCell(10).setCellValue(goalVO.isNoWeekend());
                     rowContent.createCell(11).setCellValue(goalVO.getStatue());
                 }
+
+                //bank
+                Sheet sheetCon4 = workbook.createSheet("Bank");
+                List<BankVO> bankVOS = bankDB.getAll();
+                for (int i = 0; i < goalVOS.size(); i++) {
+                    Row rowContent = sheetCon4.createRow(i);
+                    BankVO bankVO = bankVOS.get(i);
+                    rowContent.createCell(0).setCellValue(bankVO.getId());
+                    rowContent.createCell(1).setCellValue(bankVO.getMaintype());
+                    rowContent.createCell(2).setCellValue(bankVO.getMoney());
+                    rowContent.createCell(3).setCellValue(Common.sTwo.format(bankVO.getDate()));
+                    rowContent.createCell(4).setCellValue(bankVO.getFixDate());
+                    rowContent.createCell(5).setCellValue(bankVO.getFixDateDetail());
+                    rowContent.createCell(6).setCellValue(bankVO.getDetailname());
+                    rowContent.createCell(7).setCellValue(bankVO.isAuto());
+                    rowContent.createCell(8).setCellValue(bankVO.getAutoId());
+                }
+
+                //Consume
+                Sheet sheetCon5 = workbook.createSheet("Consume");
+                List<ConsumeVO> consumeVOS = consumeDB.getAll();
+                for (int i = 0; i < consumeVOS.size(); i++) {
+                    Row rowContent = sheetCon5.createRow(i);
+                    ConsumeVO consumeVO = consumeVOS.get(i);
+                    rowContent.createCell(0).setCellValue(consumeVO.getId());
+                    rowContent.createCell(1).setCellValue(consumeVO.getMaintype());
+                    rowContent.createCell(2).setCellValue(consumeVO.getSecondType());
+                    rowContent.createCell(3).setCellValue(consumeVO.getMoney());
+                    rowContent.createCell(4).setCellValue(Common.sTwo.format(consumeVO.getDate()));
+                    rowContent.createCell(5).setCellValue(consumeVO.getNumber());
+                    rowContent.createCell(6).setCellValue(consumeVO.getFixDate());
+                    rowContent.createCell(7).setCellValue(consumeVO.getFixDateDetail());
+                    rowContent.createCell(8).setCellValue(consumeVO.getNotify());
+                    rowContent.createCell(9).setCellValue(consumeVO.getDetailname());
+                    rowContent.createCell(10).setCellValue(consumeVO.getIsWin());
+                    rowContent.createCell(11).setCellValue(consumeVO.isAuto());
+                    rowContent.createCell(12).setCellValue(consumeVO.getAutoId());
+                }
+
+                //Invoice
+                Sheet sheetCon6 = workbook.createSheet("Invoice");
+                List<InvoiceVO> invoiceVOS = invoiceDB.getAll();
+                for (int i = 0; i < invoiceVOS.size(); i++) {
+                    Row rowContent = sheetCon6.createRow(i);
+                    InvoiceVO invoiceVO = invoiceVOS.get(i);
+                    rowContent.createCell(0).setCellValue(invoiceVO.getInvNum());
+                    rowContent.createCell(1).setCellValue(invoiceVO.getCardType());
+                    rowContent.createCell(2).setCellValue(invoiceVO.getCardNo());
+                    rowContent.createCell(3).setCellValue(invoiceVO.getCardEncrypt());
+                    rowContent.createCell(4).setCellValue(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())));
+                    rowContent.createCell(5).setCellValue(invoiceVO.getAmount());
+                    rowContent.createCell(6).setCellValue(invoiceVO.getDetail());
+                    rowContent.createCell(7).setCellValue(invoiceVO.getSellerName());
+                    rowContent.createCell(8).setCellValue(invoiceVO.getInvDonatable());
+                    rowContent.createCell(9).setCellValue(invoiceVO.getInvDonatable());
+                    rowContent.createCell(10).setCellValue(invoiceVO.getCarrier());
+                    rowContent.createCell(11).setCellValue(invoiceVO.getMaintype());
+                    rowContent.createCell(12).setCellValue(invoiceVO.getSecondtype());
+                    rowContent.createCell(13).setCellValue(invoiceVO.getHeartyteam());
+                    rowContent.createCell(14).setCellValue(Common.sTwo.format(new Date(invoiceVO.getDonateTime().getTime())));
+                    rowContent.createCell(15).setCellValue(invoiceVO.getIswin());
+                    rowContent.createCell(16).setCellValue(invoiceVO.getSellerBan());
+                    rowContent.createCell(17).setCellValue(invoiceVO.getSellerAddress());
+                    rowContent.createCell(18).setCellValue(invoiceVO.getId());
+                }
+                //Carrier
+                Sheet sheetCon7 = workbook.createSheet("Carrier");
+                List<CarrierVO> carrierVOS = carrierDB.getAll();
+                for (int i = 0; i < carrierVOS.size(); i++) {
+                    Row rowContent = sheetCon7.createRow(i);
+                    CarrierVO carrierVO = carrierVOS.get(i);
+                    rowContent.createCell(0).setCellValue(carrierVO.getId());
+                    rowContent.createCell(1).setCellValue(carrierVO.getCarNul());
+                    rowContent.createCell(2).setCellValue(carrierVO.getPassword());
+                }
             }
             workbook.write(outputStream);
             workbook.close();
             outputStream.close();
-            Common.showToast(getActivity(), "匯出成功，檔名為記帳小助手.xls，路徑為" + file.getAbsolutePath());
+            if(local)
+            {
+                Common.showToast(getActivity(), "匯出成功，檔名為記帳小助手.xls，路徑為" + "/Download/記帳小助手.xls");
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -511,15 +627,26 @@ public class SettingUploadFile extends Fragment {
         public void onClick(View v) {
             fileChoice.setVisibility(View.GONE);
             show = true;
-            outputExcel();
+            txt = false;
+            if (local) {
+                FileTOLocal();
+            } else {
+                openCloud();
+            }
         }
     }
 
     private class txtOnClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            txt = true;
             fileChoice.setVisibility(View.GONE);
             show = true;
+            if (local) {
+                TxtToLocal();
+            } else {
+               openCloud();
+            }
         }
     }
 
@@ -534,13 +661,11 @@ public class SettingUploadFile extends Fragment {
     private class choiceAction implements android.widget.AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
             position = i;
-            Common.showToast(getActivity(), String.valueOf(position));
             if (position == 0) {
                 all = true;
-                income = true;
-                consume = true;
+                income = false;
+                consume = false;
             } else if (position == 1) {
                 all = false;
                 income = true;
@@ -562,6 +687,108 @@ public class SettingUploadFile extends Fragment {
         }
     }
 
+    public void openCloud() {
+        if (mGoogleApiClient == null) {
+            // Create the API client and bind it to an instance variable.
+            // We use this instance as the callback for connection and connection
+            // failures.
+            // Since no account name is passed, the user is prompted to choose.
+            mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(new googleCallback())
+                    .addOnConnectionFailedListener(new failCallback())
+                    .build();
+        }
+        // Connect the client. Once connected, the camera is launched.
+        mGoogleApiClient.connect();
+    }
+
+    private class googleCallback implements GoogleApiClient.ConnectionCallbacks {
+        @Override
+        public void onConnected(@Nullable Bundle bundle) {
+            Log.i(TAG, "API client connected.");
+            saveFileToDrive();
+        }
+
+        @Override
+        public void onConnectionSuspended(int i) {
+            Log.i(TAG, "GoogleApiClient connection suspended");
+        }
+    }
+
+    private class failCallback implements GoogleApiClient.OnConnectionFailedListener {
+        @Override
+        public void onConnectionFailed(@NonNull ConnectionResult result) {
+            // Called whenever the API client fails to connect.
+            Log.i(TAG, "GoogleApiClient connection failed: " + result.toString());
+            if (!result.hasResolution()) {
+                // show the localized error dialog.
+                GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), result.getErrorCode(), 0).show();
+                return;
+            }
+
+        }
+    }
+
+
+    private void saveFileToDrive() {
+        // Start by creating a new contents, and setting a callback.
+        Log.i(TAG, "Creating new contents.");
+        Drive.DriveApi.newDriveContents(mGoogleApiClient)
+                .setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
+
+                    @Override
+                    public void onResult(DriveApi.DriveContentsResult result) {
+                        // If the operation was not successful, we cannot do anything
+                        // and must
+                        // fail.
+                        if (!result.getStatus().isSuccess()) {
+                            Log.i(TAG, "Failed to create new contents.");
+                            return;
+                        }
+                        // Otherwise, we can write our data to the new contents.
+                        Log.i(TAG, "New contents created.");
+                        // Get an output stream for the contents.
+                        OutputStream outputStream = result.getDriveContents().getOutputStream();
+                        // Write the bitmap data from it.
+                        ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
+                        String fileName, fileType;
+                        if (txt) {
+                            fileName = "記帳小助手.txt";
+                            fileType = "File/txt";
+                            OutPutTxt(bitmapStream);
+                        } else {
+                            fileName = "記帳小助手.xls";
+                            fileType = "File/xls";
+                            outputExcel(bitmapStream);
+                        }
+
+
+                        try {
+                            outputStream.write(bitmapStream.toByteArray());
+                        } catch (IOException e1) {
+                            Log.i(TAG, "Unable to write file contents.");
+                        }
+                        // Create the initial metadata - MIME type and title.
+                        // Note that the user will be able to change the title later.
+                        MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                                .setMimeType(fileType).setTitle(fileName).build();
+                        // Create an intent for the file chooser, and start it.
+                        IntentSender intentSender = Drive.DriveApi
+                                .newCreateFileActivityBuilder()
+                                .setInitialMetadata(metadataChangeSet)
+                                .setInitialDriveContents(result.getDriveContents())
+                                .build(mGoogleApiClient);
+                        try {
+                            getActivity().startIntentSenderForResult(
+                                    intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.i(TAG, "Failed to launch file chooser.");
+                        }
+                    }
+                });
+    }
 
 
 }

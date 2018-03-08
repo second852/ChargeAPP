@@ -101,6 +101,15 @@ public class TypeDB {
         return db.insert(TABLE_NAME, null, values);
     }
 
+    public long insertHId(TypeVO typeVO) {
+        ContentValues values = new ContentValues();
+        values.put("id",typeVO.getId());
+        values.put("groupNumber",typeVO.getGroupNumber());
+        values.put("name", typeVO.getName());
+        values.put("image",typeVO.getImage());
+        return db.insert(TABLE_NAME, null, values);
+    }
+
     public int update(TypeVO typeVO) {
         ContentValues values = new ContentValues();
         values.put("groupNumber",typeVO.getGroupNumber());

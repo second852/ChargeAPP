@@ -110,6 +110,15 @@ public class BankTybeDB {
         return db.insert(TABLE_NAME, null, values);
     }
 
+    public long insertHid(BankTypeVO bankTypeVO) {
+        ContentValues values = new ContentValues();
+        values.put("id",bankTypeVO.getId());
+        values.put("groupNumber",bankTypeVO.getGroupNumber());
+        values.put("name", bankTypeVO.getName());
+        values.put("image",bankTypeVO.getImage());
+        return db.insert(TABLE_NAME, null, values);
+    }
+
     public int update(BankTypeVO bankTypeVO) {
         ContentValues values = new ContentValues();
         values.put("groupNumber",bankTypeVO.getGroupNumber());

@@ -149,6 +149,16 @@ public class TypeDetailDB {
         return db.insert("TypeDetail", null, values);
     }
 
+    public long insertHid(TypeDetailVO typeDetailVO) {
+        ContentValues values = new ContentValues();
+        values.put("id", typeDetailVO.getId());
+        values.put("name", typeDetailVO.getName());
+        values.put("groupNumber",typeDetailVO.getGroupNumber());
+        values.put("image",typeDetailVO.getImage());
+        values.put("keyword",typeDetailVO.getKeyword());
+        return db.insert("TypeDetail", null, values);
+    }
+
     public int update(TypeDetailVO typeDetailVO) {
         ContentValues values = new ContentValues();
         values.put("name", typeDetailVO.getName());
