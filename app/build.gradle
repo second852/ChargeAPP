@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        Keystore {
+            keyAlias 'key0'
+            keyPassword 'second'
+            storeFile file('C:/Users/1709008NB01/Desktop/second.jks')
+            storePassword 'second'
+        }
+    }
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.chargeapp.whc.chargeapp"
@@ -14,6 +22,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.Keystore
         }
     }
 }
@@ -35,6 +46,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-drive:9.4.0+'
     compile 'com.google.android.gms:play-services-drive:8.4.0'
     compile 'com.android.support:design:26.1.0'
-
     implementation files('libs/poi-3.17.jar')
 }

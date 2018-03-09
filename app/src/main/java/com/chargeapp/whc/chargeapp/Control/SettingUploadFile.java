@@ -72,7 +72,8 @@ import java.util.List;
  * Created by 1709008NB01 on 2017/12/7.
  */
 
-public class SettingUploadFile extends Fragment {
+public class SettingUploadFile extends Fragment implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
 
     private ListView listView;
@@ -140,6 +141,31 @@ public class SettingUploadFile extends Fragment {
         eleMainItemVOList.add(new EleMainItemVO("匯出資料到本機", R.drawable.importf));
         eleMainItemVOList.add(new EleMainItemVO("匯出資料到Google雲端", R.drawable.importf));
         return eleMainItemVOList;
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        saveFileToDrive();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
+        if (!result.hasResolution()) {
+            // show the localized error dialog.
+            GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), result.getErrorCode(), 0).show();
+            return;
+        }
+        // Called typically when the app is not yet authorized, and authorization dialog is displayed to the user.
+        try {
+            result.startResolutionForResult(getActivity(), 2);
+        } catch (IntentSender.SendIntentException e) {
+            Log.e(TAG, "Exception while starting resolution activity. " + e.getMessage());
+        }
     }
 
 
@@ -689,6 +715,7 @@ public class SettingUploadFile extends Fragment {
 
     public void openCloud() {
         if (mGoogleApiClient == null) {
+            Log.i(TAG, "connectAPIClient().");
             // Create the API client and bind it to an instance variable.
             // We use this instance as the callback for connection and connection
             // failures.
@@ -696,8 +723,8 @@ public class SettingUploadFile extends Fragment {
             mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                     .addApi(Drive.API)
                     .addScope(Drive.SCOPE_FILE)
-                    .addConnectionCallbacks(new googleCallback())
-                    .addOnConnectionFailedListener(new failCallback())
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
                     .build();
         }
         // Connect the client. Once connected, the camera is launched.
@@ -708,7 +735,7 @@ public class SettingUploadFile extends Fragment {
         @Override
         public void onConnected(@Nullable Bundle bundle) {
             Log.i(TAG, "API client connected.");
-            saveFileToDrive();
+
         }
 
         @Override

@@ -371,6 +371,17 @@ public class SettingDownloadFile extends Fragment {
         @Override
         public void onConnectionFailed(@NonNull ConnectionResult result) {
             // Called whenever the API client fails to connect.
+            if (!result.hasResolution()) {
+                // show the localized error dialog.
+                GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), result.getErrorCode(), 0).show();
+                return;
+            }
+            // Called typically when the app is not yet authorized, and authorization dialog is displayed to the user.
+            try {
+                result.startResolutionForResult(getActivity(), 2);
+            } catch (IntentSender.SendIntentException e) {
+                Log.e(TAG, "Exception while starting resolution activity. " + e.getMessage());
+            }
         }
     }
 
