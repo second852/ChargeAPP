@@ -37,6 +37,7 @@ import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -58,13 +59,7 @@ public class MainActivity extends AppCompatActivity {
     public static ChargeAPPDB chargeAPPDB;
     private int position=6;
     private View oldview;
-    private int[] image = {
-            R.drawable.book, R.drawable.goal, R.drawable.chart, R.drawable.ele, R.drawable.lotto, R.drawable.setting
-    };
-    private String[] imgText = {
-            "記帳", "目標", "圖表", "電子發票", "發票兌獎", "設定"
-    };
-
+    private boolean doubleClick = false;
     public static int[] imageAll = {
             R.drawable.food, R.drawable.phone, R.drawable.clothes, R.drawable.traffic, R.drawable.teach, R.drawable.happy,
             R.drawable.home, R.drawable.medical, R.drawable.invent,
@@ -109,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         List<EleMainItemVO> itemVOS = getNewItem();
         final List<EleMainItemVO> itemSon= getElemainItemList();
         listView.setAdapter(new ExpandableAdapter(this,itemVOS,itemSon));
+
         listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
@@ -123,14 +119,7 @@ public class MainActivity extends AppCompatActivity {
                     setTitle(R.string.text_Com);
                     switchFragment(fragment);
                 } else if (groupPosition == 1) {
-                    View view;
-                    for(int i=0;i<listView.getChildCount();i++)
-                    {
-                        view=listView.getChildAt(i);
-                        view.setBackgroundColor(Color.parseColor("#f5f5f5"));
-                    }
-                    view=listView.getChildAt(position);
-                    view.setBackgroundColor(Color.parseColor("#FFEE99"));
+
                 } else if (groupPosition == 2) {
                     drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);
@@ -139,7 +128,13 @@ public class MainActivity extends AppCompatActivity {
                     setTitle(R.string.text_Price);
                     switchFragment(fragment);
                 } else if (groupPosition == 3) {
-
+                    setTitle(R.string.text_DataPicture);
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                    listView.collapseGroup(groupPosition);
+                    listView.collapseGroup(1);
+                    fragment = new SelectActivity();
+                    switchFragment(fragment);
+                } else if (groupPosition == 4) {
                     Calendar calendar=Calendar.getInstance();
                     SelectListModelCom.year=calendar.get(Calendar.YEAR);
                     SelectListModelCom.month=calendar.get(Calendar.MONTH);
@@ -147,13 +142,13 @@ public class MainActivity extends AppCompatActivity {
                     SelectListModelIM.year=calendar.get(Calendar.YEAR);
                     SelectListModelIM.month=calendar.get(Calendar.MONTH);
                     SelectListModelIM.p=0;
-                    setTitle(R.string.text_Picture);
+                    setTitle(R.string.text_DataList);
                     drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);
                     listView.collapseGroup(1);
-                    fragment = new SelectActivity();
+                    fragment = new SelectListModelActivity();
                     switchFragment(fragment);
-                } else if (groupPosition == 4) {
+                } else if (groupPosition == 5) {
                     setTitle(R.string.text_Goal);
                     drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);
@@ -163,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                     bundle.putSerializable("position",0);
                     fragment.setArguments(bundle);
                     switchFragment(fragment);
-                } else if (groupPosition == 5){
+                }else if (groupPosition == 6){
                     setTitle(R.string.text_Setting);
                     drawerLayout.closeDrawer(GravityCompat.START);
                     listView.collapseGroup(groupPosition);
@@ -196,7 +191,8 @@ public class MainActivity extends AppCompatActivity {
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Com, R.drawable.book));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Ele, R.drawable.barcode));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Price, R.drawable.bouns));
-        eleMainItemVOList.add(new EleMainItemVO(R.string.text_Picture, R.drawable.chart));
+        eleMainItemVOList.add(new EleMainItemVO(R.string.text_DataPicture, R.drawable.chart));
+        eleMainItemVOList.add(new EleMainItemVO(R.string.text_DataList, R.drawable.invent));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Goal, R.drawable.goal));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Setting, R.drawable.settings));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Home,R.drawable.home));
@@ -218,17 +214,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(position!=1)
-        {
-            View view;
-            for(int i=0;i<this.listView.getChildCount();i++)
-            {
-                view=listView.getChildAt(i);
-                view.setBackgroundColor(Color.parseColor("#f5f5f5"));
-            }
-            view=listView.getChildAt(position);
-            view.setBackgroundColor(Color.parseColor("#FFEE99"));
-        }
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -431,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
+        public View getGroupView(final int i, boolean b, View view, ViewGroup viewGroup) {
             if (view == null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                 view = layoutInflater.inflate(R.layout.ele_main_item, viewGroup, false);
@@ -454,6 +439,28 @@ public class MainActivity extends AppCompatActivity {
             String mystring = getResources().getString(member.getIdstring());
             TextView tvId = (TextView) view.findViewById(R.id.tvId);
             tvId.setText(mystring);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(i==1)
+                    {
+                        if(doubleClick)
+                        {
+                            listView.collapseGroup(1);
+                            doubleClick=false;
+                            return;
+                        }else {
+                            doubleClick=true;
+                        }
+                    }
+                    for (int i = 0; i < listView.getChildCount(); i++) {
+                      View  o = listView.getChildAt(i);
+                      o.setBackgroundColor(Color.parseColor("#f5f5f5"));
+                    }
+                    v.setBackgroundColor(Color.parseColor("#FFEE99"));
+                    listView.expandGroup(i);
+                }
+            });
             return view;
         }
 
@@ -533,21 +540,78 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        Log.d("XXXXXXX", String.valueOf(resultCode));
-        switch (requestCode) {
-            case 2:
-                // Called after a file is saved to Drive.
-                Fragment fragment=new SettingUploadFile();
-                switchFragment(fragment);
-                if(resultCode==-1)
-                {
-                    Common.showToast(this, "上傳成功");
-                }else{
-                    Common.showToast(this, "上傳失敗");
-                }
-                break;
-        }
+    public void onActivityResult(int requestCode,int resultCode,Intent data) {
+      if(requestCode==0)
+      {
+          Fragment fragment= new SettingUploadFile();
+          Bundle bundle=new Bundle();
+          bundle.putSerializable("action","all");
+          fragment.setArguments(bundle);
+          switchFragment(fragment);
+      }else  if(requestCode==1)
+      {
+          Fragment fragment= new SettingUploadFile();
+          Bundle bundle=new Bundle();
+          bundle.putSerializable("action","uploadTxt");
+          fragment.setArguments(bundle);
+          switchFragment(fragment);
+      }else  if(requestCode==2)
+      {
+          Fragment fragment= new SettingUploadFile();
+          Bundle bundle=new Bundle();
+          bundle.putSerializable("action","uploadExcel");
+          fragment.setArguments(bundle);
+          switchFragment(fragment);
+      }else  if(requestCode==3)
+      {
+          Fragment fragment= new SettingUploadFile();
+          Bundle bundle=new Bundle();
+          bundle.putSerializable("action","no");
+          fragment.setArguments(bundle);
+          switchFragment(fragment);
+          if(resultCode==-1)
+          {
+              Common.showToast(this,"上傳成功");
+          }else{
+              Common.showToast(this,"上傳失敗");
+          }
+      }else  if(requestCode==3)
+      {
+          Fragment fragment= new SettingUploadFile();
+          Bundle bundle=new Bundle();
+          bundle.putSerializable("action","no");
+          fragment.setArguments(bundle);
+          switchFragment(fragment);
+          if(resultCode==-1)
+          {
+              Common.showToast(this,"上傳成功");
+          }else{
+              Common.showToast(this,"上傳失敗");
+          }
+      }else  if(requestCode==4)
+      {
+          Fragment fragment= new SettingDownloadFile();
+          Bundle bundle=new Bundle();
+          bundle.putSerializable("action","open");
+          fragment.setArguments(bundle);
+          switchFragment(fragment);
+      }else  if(requestCode==5)
+      {
+          Fragment fragment= new SettingDownloadFile();
+          Bundle bundle=new Bundle();
+          if(resultCode==-1)
+          {
+              SettingDownloadFile.mSelectedFileDriveId= data.getParcelableExtra(
+                      OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+              bundle.putSerializable("action","download");
+              Common.showToast(this,"下傳成功");
+          }else{
+              bundle.putSerializable("action","no");
+              Common.showToast(this,"下傳失敗");
+          }
+          fragment.setArguments(bundle);
+          switchFragment(fragment);
+      }
     }
 //    @Override
 //    public boolean onKeyDown(int keyCode, KeyEvent event) {

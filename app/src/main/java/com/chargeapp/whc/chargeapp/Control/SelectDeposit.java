@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -22,10 +21,13 @@ import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -63,12 +65,17 @@ public class SelectDeposit extends Fragment {
     private InvoiceDB invoiceDB;
     private String Title, desTittleTop,desTittleDown;
     private RelativeLayout PIdateL;
+    private GoalDB goalDB;
+    private GoalVO goalVO;
+    private int Max;
 
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_deposit, container, false);
+        goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        goalVO=goalDB.getFindType("儲蓄");
         end = Calendar.getInstance();
         year = end.get(Calendar.YEAR);
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -81,11 +88,38 @@ public class SelectDeposit extends Fragment {
         return view;
     }
 
+    private void setGoalVO() {
+        if(goalVO!=null)
+        {
+            String goalTimeStatue=goalVO.getTimeStatue().trim();
+            if(goalTimeStatue.equals("每月"))
+            {
+                Max= Integer.parseInt(goalVO.getMoney());
+            }else if(goalTimeStatue.equals("每年"))
+            {
+                Max= Integer.parseInt(goalVO.getMoney())/12;
+            }else if(goalTimeStatue.equals("今日"))
+            {
+                Calendar start=new GregorianCalendar();
+                start.setTime(goalVO.getStartTime());
+                Calendar end = new GregorianCalendar();
+                end.setTime(goalVO.getEndTime());
+                int divid=(end.get(Calendar.MONTH)-start.get(Calendar.MONTH));
+                if(divid==0)
+                {
+                    divid=1;
+                }
+                Max= Integer.parseInt(goalVO.getMoney())/divid;
+            }
+        }
+    }
+
     @Override
     public void onStart() {
         super.onStart();
         dataAnalyze();
     }
+
 
     private void dataAnalyze() {
         Calendar start,end;
@@ -95,6 +129,7 @@ public class SelectDeposit extends Fragment {
         Allincome=0;
         if(Statue==0)
         {
+            setGoalVO();
             for(int i=0;i<=period;i++)
             {
                 start=new GregorianCalendar(year,month+i,01,0,0,0);
@@ -104,6 +139,8 @@ public class SelectDeposit extends Fragment {
                 PIdateL.setVisibility(View.VISIBLE);
             }
         }else{
+            setGoalVO();
+            Max=Max*12;
             for(int i=0;i<=period;i++)
             {
                 start=new GregorianCalendar(year+i,0,01,0,0,0);
@@ -148,6 +185,15 @@ public class SelectDeposit extends Fragment {
         });
         chart_line.setData(data);
         chart_line.setDescription(Common.getDeescription());
+        if(goalVO!=null)
+        {
+            LimitLine yLimitLine = new LimitLine(Max,"儲蓄目標");
+            yLimitLine.setLineColor(Color.RED);
+            yLimitLine.setTextColor(Color.RED);
+            YAxis yAxis=chart_line.getAxisLeft();
+            yAxis.removeAllLimitLines();
+            yAxis.addLimitLine(yLimitLine);
+        }
         chart_line.invalidate();
     }
 

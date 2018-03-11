@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.solver.Goal;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -21,12 +22,14 @@ import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
+import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
@@ -36,6 +39,7 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -106,6 +110,9 @@ public class SelectConsume extends Fragment {
     private ArrayList<String> OKey;
     private XAxis xAxis;
     private int week;
+    private GoalDB goalDB;
+    private GoalVO goalVO;
+    private int Max;
 
 
 
@@ -127,14 +134,38 @@ public class SelectConsume extends Fragment {
         choiceCarrier.setOnItemSelectedListener(new ChoiceCarrier());
         chart_bar.setOnChartValueSelectedListener(new charvalue());
         chart_pie.setOnChartValueSelectedListener(new pievalue());
+        goalVO=goalDB.getFindType("支出");
         return view;
     }
+
+    private void setGoalVO(Calendar month) {
+        if(goalVO!=null)
+        {
+            String goalTimeStatue=goalVO.getTimeStatue().trim();
+            if(goalTimeStatue.equals("每天"))
+            {
+                Max= Integer.parseInt(goalVO.getMoney());
+            }else if(goalTimeStatue.equals("每周"))
+            {
+                Max= Integer.parseInt(goalVO.getMoney())/7;
+            }else if(goalTimeStatue.equals("每月"))
+            {
+                int day=month.getActualMaximum(Calendar.DAY_OF_MONTH);
+                Max= Integer.parseInt(goalVO.getMoney())/day;
+            }else if(goalTimeStatue.equals("每年"))
+            {
+                Max= Integer.parseInt(goalVO.getMoney())/365;
+            }
+        }
+    }
+
 
     private void setDB() {
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
 
@@ -148,10 +179,10 @@ public class SelectConsume extends Fragment {
         chart_pie = view.findViewById(R.id.chart_pie);
         describe = view.findViewById(R.id.describe);
         ArrayList<String> SpinnerItem1 = new ArrayList<>();
-        SpinnerItem1.add(" 日 ");
-        SpinnerItem1.add(" 周 ");
-        SpinnerItem1.add(" 月 ");
-        SpinnerItem1.add(" 年 ");
+        SpinnerItem1.add("  日  ");
+        SpinnerItem1.add("  周  ");
+        SpinnerItem1.add("  月  ");
+        SpinnerItem1.add("  年  ");
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, SpinnerItem1);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         ArrayList<String> SpinnerItem2 = new ArrayList<>();
@@ -188,7 +219,6 @@ public class SelectConsume extends Fragment {
         String[] s = new String[list_Data.size()];
         for (int i = 0; i < list_Data.size(); i++) {
             s[i] = list_Data.get(i).getKey();
-            Log.d("XXXx", s[i]);
         }
         return s;
     }
@@ -318,8 +348,10 @@ public class SelectConsume extends Fragment {
             end = new GregorianCalendar(year, month, day, 23, 59, 59);
             BarEntry barEntry = new BarEntry(0, Periodfloat(start,end));
             chartData.add(barEntry);
-
+            setGoalVO(start);
         } else if (Statue == 1) {
+            start = new GregorianCalendar(year, month, day - dweek + 1, 0, 0, 0);
+            setGoalVO(start);
             for (int i = 0; i < period; i++) {
                 start = new GregorianCalendar(year, month, day - dweek + 1 + i, 0, 0, 0);
                 end = new GregorianCalendar(year, month, day - dweek + 1 + i, 23, 59, 59);
@@ -330,6 +362,8 @@ public class SelectConsume extends Fragment {
         } else if (Statue == 2) {
             Calendar calendar = new GregorianCalendar(year, month, 1, 0, 0, 0);
             start = new GregorianCalendar(year, month, 1, 0, 0, 0);
+            setGoalVO(start);
+            Max=Max*7;
             calendar.set(Calendar.WEEK_OF_MONTH, 1);
             calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
             end = new GregorianCalendar(year, month, calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
@@ -356,6 +390,9 @@ public class SelectConsume extends Fragment {
             chartData.add(barEntry);
             Log.d(TAG,"week "+String.valueOf(period - 1)+":"+Common.sDay.format(new Date(start.getTimeInMillis()))+"~"+Common.sDay.format(new Date(end.getTimeInMillis())));
         } else {
+            start = new GregorianCalendar(year, month , 1, 0, 0, 0);
+            setGoalVO(start);
+            Max=Max*365/12;
             for (int i = 0; i < period; i++) {
                 start = new GregorianCalendar(year, month + i, 1, 0, 0, 0);
                 end = new GregorianCalendar(year, month + i, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
@@ -530,8 +567,15 @@ public class SelectConsume extends Fragment {
         chart_bar.setDoubleTapToZoomEnabled(false);
         chart_bar.setDescription(description);
         chart_bar.setHighlightFullBarEnabled(false);
+        if(goalVO!=null)
+        {
+            yAxis.removeAllLimitLines();
+            LimitLine yLimitLine = new LimitLine(Max,"支出目標");
+            yLimitLine.setLineColor(Color.parseColor("#191970"));
+            yLimitLine.setTextColor(Color.parseColor("#191970"));
+            yAxis.addLimitLine(yLimitLine);
+        }
         chart_bar.invalidate();
-
         chart_pie.setEntryLabelColor(Color.BLACK);
         chart_pie.setUsePercentValues(true);
         chart_pie.setDrawHoleEnabled(true);
@@ -567,12 +611,13 @@ public class SelectConsume extends Fragment {
         } else {
             dataSet.setColors(Common.getColor(yVals1.size()));
             dataSet.setDrawValues(true);
-            dataSet.setValueLinePart1OffsetPercentage(90.f);
-            dataSet.setValueLinePart1Length(1f);
-            dataSet.setValueLinePart2Length(.2f);
-            dataSet.setValueTextColor(Color.BLACK);
-            dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+
         }
+        dataSet.setValueLinePart1OffsetPercentage(90.f);
+        dataSet.setValueLinePart1Length(1f);
+        dataSet.setValueLinePart2Length(.2f);
+        dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         dataSet.setSliceSpace(0);
         dataSet.setSelectionShift(20f);
         PieData data = new PieData(dataSet);

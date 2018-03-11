@@ -156,9 +156,7 @@ public class InsertSpend extends Fragment {
                 Log.d("XXX", String.valueOf(choicedate));
                 choiceStatue.setSelection(2);
                 choicedate=choicedate.substring(0,choicedate.indexOf("日"));
-                Log.d("XXX", String.valueOf(choicedate));
                 updateChoice = Integer.valueOf(choicedate) - 1;
-                Log.d("XXX", String.valueOf(updateChoice));
             } else {
                 choiceStatue.setSelection(3);
                 updateChoice = Integer.valueOf(choicedate.substring(0, choicedate.indexOf("月"))) - 1;
@@ -590,7 +588,7 @@ public class InsertSpend extends Fragment {
         consumeVO.setNotify(String.valueOf(notify.isChecked()));
         consumeVO.setDetailname(detailname.getText().toString());
         consumeVO.setAuto(false);
-        consumeVO.setId(-1);
+        consumeVO.setAutoId(-1);
         Log.d("XXX",consumeVO.getFixDateDetail());
     }
 }

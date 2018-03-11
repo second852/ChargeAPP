@@ -121,4 +121,28 @@
                 />
         </LinearLayout>
     </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/progressL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        android:visibility="gone"
+        >
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="執行中…"
+            android:textSize="25dp"
+            android:textColor="#000000"
+            android:layout_below="@+id/progress"
+            android:layout_centerHorizontal="true"
+            />
+    </RelativeLayout>
 </RelativeLayout>

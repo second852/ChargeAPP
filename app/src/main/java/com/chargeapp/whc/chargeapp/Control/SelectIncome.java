@@ -446,6 +446,9 @@ public class SelectIncome extends Fragment {
             if (list_Data.size()<=0) {
                 return;
             }
+            if (type.size()<=0) {
+                return;
+            }
             Fragment fragment = new SelectListPieIncome();
             Bundle bundle = new Bundle();
             bundle.putSerializable("year", year);

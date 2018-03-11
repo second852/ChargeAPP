@@ -1,15 +1,15 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
-import android.app.ProgressDialog;
+
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +19,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -88,12 +89,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private BankTybeDB bankTybeDB;
     private GoalDB goalDB;
     private CarrierDB carrierDB;
-    private static int position;
+    public static int position;
     private boolean local, consume, income, all, show = true, txt;
-    private static final String TAG = "drive-quickstart";
-    private static final int REQUEST_CODE_CREATOR = 2;
     private GoogleApiClient mGoogleApiClient;
-    private ProgressDialog progressDialog;
+    private String action;
+    private RelativeLayout progressL;
+
 
 
     @Override
@@ -114,12 +115,29 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         txtFile = view.findViewById(R.id.txtFile);
         cancelF = view.findViewById(R.id.cancelF);
         choiceT = view.findViewById(R.id.choiceT);
+        progressL=view.findViewById(R.id.progressL);
         excel.setOnClickListener(new excelOnClick());
         txtFile.setOnClickListener(new txtOnClick());
         cancelF.setOnClickListener(new cancelOnClick());
         listView.setAdapter(new ListAdapter(getActivity(), itemSon));
         setSpinner();
-        progressDialog=new ProgressDialog(getActivity());
+        action= (String) getArguments().getSerializable("action");
+        if(action.equals("all"))
+        {
+            txt=false;
+            openCloud();
+        }else if(action.equals("uploadTxt"))
+        {
+            txt=true;
+            openCloud();
+        }else if(action.equals("uploadExcel"))
+        {
+            txt=false;
+            openCloud();
+        }else
+        {
+            progressL.setVisibility(View.GONE);
+        }
         return view;
     }
 
@@ -153,6 +171,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
 
     }
 
+
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult result) {
         if (!result.hasResolution()) {
@@ -162,9 +181,21 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         }
         // Called typically when the app is not yet authorized, and authorization dialog is displayed to the user.
         try {
-            result.startResolutionForResult(getActivity(), 2);
+            if(position==0)
+            {
+                result.startResolutionForResult(getActivity(), 0);
+            }
+            else
+            {
+                if(txt)
+                {
+                    result.startResolutionForResult(getActivity(), 1);
+                }else{
+                    result.startResolutionForResult(getActivity(), 2);
+                }
+            }
         } catch (IntentSender.SendIntentException e) {
-            Log.e(TAG, "Exception while starting resolution activity. " + e.getMessage());
+
         }
     }
 
@@ -203,13 +234,13 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        local = true;
                         if (SettingUploadFile.this.position == 0) {
                             FileTOLocal();
                         } else {
                             if (show) {
                                 fileChoice.setVisibility(View.VISIBLE);
                                 show = false;
-                                local = true;
                             }
                         }
                     }
@@ -219,6 +250,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        local = false;
                         if (SettingUploadFile.this.position == 0) {
                             openCloud();
                             txt = false;
@@ -226,7 +258,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                             if (show) {
                                 fileChoice.setVisibility(View.VISIBLE);
                                 show = false;
-                                local = false;
                             }
                         }
                     }
@@ -263,12 +294,13 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     }
 
     private void OutPutTxt(OutputStream outputStream) {
-        progressDialog.setTitle("處理中");
-        progressDialog.show();
+        progressL.setVisibility(View.VISIBLE);
         try {
             OutputStreamWriter ow = new OutputStreamWriter(outputStream);
             BufferedWriter bw = new BufferedWriter(ow);
             if (consume) {
+                bw.write("消費資料");
+                bw.write("\r\n");
                 bw.append("日期 ");
                 bw.append("主項目 ");
                 bw.append("次項目 ");
@@ -283,6 +315,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 bw.append("自動產生母ID ");
                 bw.append("資料庫ID");
                 bw.newLine();
+                bw.write("\r\n");
                 List<ConsumeVO> consumeVOS = consumeDB.getAll();
                 List<InvoiceVO> invoiceVOS = invoiceDB.getAll();
                 List<Object> objects = new ArrayList<>();
@@ -323,6 +356,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         bw.append("-1" + " ");
                         bw.append(String.valueOf(invoiceVO.getId()));
                         bw.newLine();
+                        bw.write("\r\n");
                     } else {
                         ConsumeVO consumeVO = (ConsumeVO) o;
                         bw.append(Common.sTwo.format(new Date(consumeVO.getDate().getTime())) + " ");
@@ -339,10 +373,14 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         bw.append(String.valueOf(consumeVO.getAutoId()) + " ");
                         bw.append(String.valueOf(consumeVO.getId()));
                         bw.newLine();
+                        bw.write("\r\n");
                     }
                 }
             }
             if (income) {
+                bw.write("\r\n");
+                bw.write("收入資料");
+                bw.write("\r\n");
                 bw.append("日期 ");
                 bw.append("主項目 ");
                 bw.append("金額 ");
@@ -366,11 +404,13 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     bw.append(String.valueOf(bankVO.getAutoId()) + " ");
                     bw.append(String.valueOf(bankVO.getId()));
                     bw.newLine();
+                    bw.write("\r\n");
                 }
             }
             bw.close();
             if(local)
             {
+                progressL.setVisibility(View.GONE);
                 Common.showToast(getActivity(), "匯出成功，檔名為記帳小助手.txt，路徑為" + "/Download/記帳小助手.txt");
             }
         } catch (IOException e) {
@@ -392,11 +432,19 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         }
     }
 
-    private void outputExcel(OutputStream outputStream) {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode==-1)
+        {
+            Common.showToast(getActivity(), "上傳成功");
+        }else{
+            Common.showToast(getActivity(), "上傳失敗");
+        }
+    }
 
+    private void outputExcel(OutputStream outputStream) {
+        progressL.setVisibility(View.VISIBLE);
         try {
-            progressDialog.setTitle("處理中");
-            progressDialog.show();
             HSSFWorkbook workbook = new HSSFWorkbook();
             if (consume) {
                 Sheet sheetCon = workbook.createSheet("消費");
@@ -414,7 +462,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 rowTitle.createCell(9).setCellValue("定期支出設定");
                 rowTitle.createCell(10).setCellValue("自動產生");
                 rowTitle.createCell(11).setCellValue("自動產生母ID");
-                rowTitle.createCell(11).setCellValue("資料庫ID");
+                rowTitle.createCell(12).setCellValue("資料庫ID");
                 List<ConsumeVO> consumeVOS = consumeDB.getAll();
                 List<InvoiceVO> invoiceVOS = invoiceDB.getAll();
                 List<Object> objects = new ArrayList<>();
@@ -561,7 +609,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 //bank
                 Sheet sheetCon4 = workbook.createSheet("Bank");
                 List<BankVO> bankVOS = bankDB.getAll();
-                for (int i = 0; i < goalVOS.size(); i++) {
+                for (int i = 0; i < bankVOS.size(); i++) {
                     Row rowContent = sheetCon4.createRow(i);
                     BankVO bankVO = bankVOS.get(i);
                     rowContent.createCell(0).setCellValue(bankVO.getId());
@@ -639,6 +687,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             if(local)
             {
                 Common.showToast(getActivity(), "匯出成功，檔名為記帳小助手.xls，路徑為" + "/Download/記帳小助手.xls");
+                progressL.setVisibility(View.GONE);
             }
 
         } catch (IOException e) {
@@ -646,6 +695,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         }
 
     }
+
 
 
     private class excelOnClick implements View.OnClickListener {
@@ -702,8 +752,8 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 consume = true;
             } else {
                 all = false;
-                income = false;
-                consume = true;
+                income = true;
+                consume = false;
             }
         }
 
@@ -715,7 +765,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
 
     public void openCloud() {
         if (mGoogleApiClient == null) {
-            Log.i(TAG, "connectAPIClient().");
             // Create the API client and bind it to an instance variable.
             // We use this instance as the callback for connection and connection
             // failures.
@@ -731,37 +780,20 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         mGoogleApiClient.connect();
     }
 
-    private class googleCallback implements GoogleApiClient.ConnectionCallbacks {
-        @Override
-        public void onConnected(@Nullable Bundle bundle) {
-            Log.i(TAG, "API client connected.");
-
-        }
-
-        @Override
-        public void onConnectionSuspended(int i) {
-            Log.i(TAG, "GoogleApiClient connection suspended");
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mGoogleApiClient!=null)
+        {
+            mGoogleApiClient.disconnect();
         }
     }
 
-    private class failCallback implements GoogleApiClient.OnConnectionFailedListener {
-        @Override
-        public void onConnectionFailed(@NonNull ConnectionResult result) {
-            // Called whenever the API client fails to connect.
-            Log.i(TAG, "GoogleApiClient connection failed: " + result.toString());
-            if (!result.hasResolution()) {
-                // show the localized error dialog.
-                GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), result.getErrorCode(), 0).show();
-                return;
-            }
-
-        }
-    }
 
 
     private void saveFileToDrive() {
         // Start by creating a new contents, and setting a callback.
-        Log.i(TAG, "Creating new contents.");
+
         Drive.DriveApi.newDriveContents(mGoogleApiClient)
                 .setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
 
@@ -771,11 +803,10 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         // and must
                         // fail.
                         if (!result.getStatus().isSuccess()) {
-                            Log.i(TAG, "Failed to create new contents.");
+                            Common.showToast(getActivity(),"連線失敗!");
                             return;
                         }
                         // Otherwise, we can write our data to the new contents.
-                        Log.i(TAG, "New contents created.");
                         // Get an output stream for the contents.
                         OutputStream outputStream = result.getDriveContents().getOutputStream();
                         // Write the bitmap data from it.
@@ -795,7 +826,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         try {
                             outputStream.write(bitmapStream.toByteArray());
                         } catch (IOException e1) {
-                            Log.i(TAG, "Unable to write file contents.");
+
                         }
                         // Create the initial metadata - MIME type and title.
                         // Note that the user will be able to change the title later.
@@ -809,13 +840,15 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                                 .build(mGoogleApiClient);
                         try {
                             getActivity().startIntentSenderForResult(
-                                    intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
+                                    intentSender, 3, null, 0, 0, 0);
                         } catch (IntentSender.SendIntentException e) {
-                            Log.i(TAG, "Failed to launch file chooser.");
+
                         }
                     }
                 });
     }
+
+
 
 
 }

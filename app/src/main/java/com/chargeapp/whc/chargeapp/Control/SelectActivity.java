@@ -52,31 +52,6 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        ActionBar actionBar=((AppCompatActivity)getActivity()).getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        View actionbarLayout = LayoutInflater.from(getActivity()).inflate(R.layout.actionbar_layout, null);
-        actionBar.setCustomView(actionbarLayout);
-        Button list=actionbarLayout.findViewById(R.id.howtogetprice);
-        mainTitle=actionbarLayout.findViewById(R.id.mainTitle);
-        mainTitle.setText("數據統計");
-        list.setText("列表模式");
-        list.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Fragment fragment=new SelectListModelActivity();
-                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                for (Fragment fragment1 : getFragmentManager().getFragments()) {
-                    fragmentTransaction.remove(fragment1);
-                }
-                fragmentTransaction.replace(R.id.body, fragment);
-                fragmentTransaction.commit();
-            }
-        });
-    }
-
     public void setcurrentpage()
     {
         int page=mViewPager.getCurrentItem();

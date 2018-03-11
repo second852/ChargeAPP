@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -207,6 +208,9 @@ public class SelectDetList extends Fragment {
             TextView decribe=itemView.findViewById(R.id.listDetail);
             Button update=itemView.findViewById(R.id.updateD);
             Button deleteI=itemView.findViewById(R.id.deleteI);
+            LinearLayout fixL=itemView.findViewById(R.id.fixL);
+            LinearLayout remindL=itemView.findViewById(R.id.remindL);
+            TextView remainT=itemView.findViewById(R.id.remainT);
             final Object o=objects.get(position);
             StringBuffer sbTitle=new StringBuffer();
             StringBuffer sbDecribe=new StringBuffer();
@@ -255,11 +259,54 @@ public class SelectDetList extends Fragment {
                     });
                 }
             }else{
+
+                //設定Consume
                 update.setText("修改");
                 final ConsumeVO c= (ConsumeVO) o;
-                sbTitle.append(c.getSecondType()+" ");
-                sbTitle.append("共"+c.getMoney()+"元");
-                sbDecribe.append((c.getDetailname()==null)?"無資料\n  \n":c.getDetailname());
+
+                //設定fix
+                String fix=c.getFixDate();
+                if(Boolean.valueOf(fix))
+                {
+                    fixL.setVisibility(View.VISIBLE);
+                }else{
+                    fixL.setVisibility(View.GONE);
+                }
+
+                if(c.isAuto())
+                {
+                    remainT.setText("自動");
+                    remainT.setTextColor(Color.parseColor("#EE7700"));
+                    remindL.setBackgroundColor(Color.parseColor("#EE7700"));
+                }else{
+                    remindL.setVisibility(View.GONE);
+                }
+
+                if(c.getNotify().equals("true"))
+                {
+                   remindL.setVisibility(View.VISIBLE);
+                }else{
+                    remindL.setVisibility(View.GONE);
+                }
+                StringBuffer stringBuffer=new StringBuffer();
+                //設定 title
+                stringBuffer.append(Common.sTwo.format(c.getDate()));
+                stringBuffer.append(" "+c.getMaintype());
+                stringBuffer.append("\n共"+c.getMoney()+"元");
+                title.setText(stringBuffer.toString());
+
+                //設定 describe
+                stringBuffer=new StringBuffer();
+                JsonObject js=gson.fromJson(c.getFixDateDetail(),JsonObject.class);
+                stringBuffer.append(js.get("choicestatue").getAsString().trim());
+                stringBuffer.append(" "+js.get("choicedate").getAsString().trim());
+                boolean noweek= Boolean.parseBoolean(js.get("noweek").getAsString());
+                if(js.get("choicestatue").getAsString().trim().equals("每天")&&noweek)
+                {
+                    stringBuffer.append(" 假日除外");
+                }
+                decribe.setText(stringBuffer.toString()+" \n"+c.getDetailname());
+
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -271,8 +318,6 @@ public class SelectDetList extends Fragment {
                     }
                 });
             }
-            title.setText(sbTitle.toString());
-            decribe.setText(sbDecribe.toString());
             deleteI.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

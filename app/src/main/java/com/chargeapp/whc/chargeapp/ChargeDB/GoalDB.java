@@ -47,6 +47,30 @@ public class GoalDB {
         return goalVOS;
     }
 
+    public GoalVO getFindType(String type) {
+        String sql = "SELECT * FROM goal where type like '%"+type+"%' and statue = 0 ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        GoalVO goalVO=null;
+        if (cursor.moveToNext()) {
+            goalVO=new GoalVO();
+            goalVO.setId(cursor.getInt(0));
+            goalVO.setType(cursor.getString(1));
+            goalVO.setName(cursor.getString(2));
+            goalVO.setMoney(cursor.getString(3));
+            goalVO.setTimeStatue(cursor.getString(4));
+            goalVO.setStartTime(new Date(cursor.getLong(5)));
+            goalVO.setEndTime(new Date(cursor.getLong(6)));
+            goalVO.setNotify(Boolean.valueOf(cursor.getString(7)));
+            goalVO.setNotifyStatue(cursor.getString(8));
+            goalVO.setNotifyDate(cursor.getString(9));
+            goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
+            goalVO.setStatue(cursor.getInt(11));
+        }
+        cursor.close();
+        return goalVO;
+    }
+
 
     public long insert(GoalVO goalVO) {
         ContentValues values = new ContentValues();

@@ -301,7 +301,7 @@ public class UpdateIncome extends Fragment {
                 first = false;
             }
             fixdate.setX(showfixdate.getWidth() / 20);
-            choiceStatue.setX(showfixdate.getWidth() / 3 + showfixdate.getWidth() / 20);
+            choiceStatue.setX(showfixdate.getWidth() / 3 + showfixdate.getWidth() / 10);
             choiceday.setX((showfixdate.getWidth() * 2 / 3) + showfixdate.getWidth() / 20);
         }
 

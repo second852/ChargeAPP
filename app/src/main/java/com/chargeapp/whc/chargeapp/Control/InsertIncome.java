@@ -287,7 +287,6 @@ public class InsertIncome extends Fragment {
     private class choiceStateItem implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-            String choiceitem=adapterView.getItemAtPosition(position).toString();
             ArrayList<String> spinneritem=new ArrayList<>();
             if(position==0)
             {
@@ -324,7 +323,7 @@ public class InsertIncome extends Fragment {
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
             fixdate.setX(showfixdate.getWidth()/20);
-            choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/20);
+            choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/10);
             choiceday.setX((showfixdate.getWidth()*2/3)+showfixdate.getWidth()/20);
             if (first) {
                 choiceday.setSelection(updateChoice);

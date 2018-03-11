@@ -195,6 +195,9 @@ public class SettingMain extends Fragment {
                     @Override
                     public void onClick(View view) {
                         Fragment fragment=new SettingUploadFile();
+                        Bundle bundle=new Bundle();
+                        bundle.putSerializable("action","no");
+                        fragment.setArguments(bundle);
                         switchFragment(fragment);
                     }
                 });
@@ -205,6 +208,9 @@ public class SettingMain extends Fragment {
                     @Override
                     public void onClick(View view) {
                         Fragment fragment=new SettingDownloadFile();
+                        Bundle bundle=new Bundle();
+                        bundle.putSerializable("action","no");
+                        fragment.setArguments(bundle);
                         switchFragment(fragment);
                     }
                 });

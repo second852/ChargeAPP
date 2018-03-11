@@ -238,7 +238,6 @@ public class SelectListModelCom extends Fragment {
                 sbTitle.append(Common.sDay.format((c.getDate())));
                 sbTitle.append(c.getSecondType());
                 sbTitle.append("  共"+c.getMoney()+"元  ");
-                sbTitle.append("(本地)");
                 sbDecribe.append(c.getDetailname());
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override

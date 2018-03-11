@@ -170,7 +170,6 @@ public class GoalListAll extends Fragment {
             if (timeDec.equals("今日")) {
                 timeDec = Common.sTwo.format(goalVO.getStartTime()).trim() + " ~ " + Common.sTwo.format(goalVO.getEndTime()).trim() + "\n";
             }
-
             if (goalVO.isNotify()) {
                 remindL.setVisibility(View.VISIBLE);
             }else{
@@ -179,19 +178,16 @@ public class GoalListAll extends Fragment {
 
             boolean updateGoal;
             if (goalVO.getStatue() == 1) {
-                remindL.setVisibility(View.GONE);
                 fixT.setText("失敗");
                 fixT.setTextColor(Color.parseColor("#7700FF"));
                 fixL.setBackgroundColor(Color.parseColor("#7700FF"));
                 updateGoal=false;
             } else if (goalVO.getStatue() == 2) {
-                remindL.setVisibility(View.GONE);
                 fixT.setText("完成");
                 fixT.setTextColor(Color.parseColor("#FF8800"));
                 fixL.setBackgroundColor(Color.parseColor("#FF8800"));
                 updateGoal=false;
             } else {
-                remindL.setVisibility(View.VISIBLE);
                 fixT.setTextColor(Color.parseColor("#0000FF"));
                 fixL.setBackgroundColor(Color.parseColor("#0000FF"));
                 fixT.setText("進行中");

@@ -160,11 +160,13 @@
                         android:id="@+id/choiceStatue"
                         android:layout_centerVertical="true"
                         android:visibility="gone"
+                        android:backgroundTint="#000000"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                     <Spinner
                         android:id="@+id/choiceday"
                         android:layout_width="wrap_content"
+                        android:backgroundTint="#000000"
                         android:layout_centerVertical="true"
                         android:visibility="gone"
                         android:layout_height="wrap_content"/>

@@ -58,7 +58,6 @@ public class SelectDetCircle extends Fragment {
     private int carrier;
     private List<InvoiceVO> invoiceVOS;
     private List<ConsumeVO> consumeVOS;
-    private String mainTitle;
     private HashMap<String, HashMap<String, Integer>> hashMap;
     private int size;
     private CarrierDB carrierDB;
