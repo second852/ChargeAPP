@@ -1,13 +1,34 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.ListActivity;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.opengl.Visibility;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.RemoteViews;
 
+import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
+import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by 1709008NB01 on 2018/3/13.
@@ -17,22 +38,75 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        final int N = appWidgetIds.length;
+        final int count = appWidgetIds.length;
+        ChargeAPPDB chargeAPPDB=new ChargeAPPDB(context);
+        CarrierDB carrierDB=new CarrierDB(chargeAPPDB.getReadableDatabase());
+        List<String> springItem=carrierDB.getAllNul();
+        SharedPreferences sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
+        int b=sharedPreferences.getInt("carrier",0);
 
-        // Perform this loop procedure for each App Widget that belongs to this provider
-        for (int i = 0; i < N; i++) {
-            int appWidgetId = appWidgetIds[i];
+        try{
+            for (int i = 0; i < count; i++) {
+                int widgetId = appWidgetIds[i];
+                RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
+                        R.layout.simple_widget);
+                Intent intent = new Intent(context, MainActivity.class);
+                if(springItem.size()>0)
+                {
+                    remoteViews.setBitmap(R.id.imageView, "setImageBitmap",encodeAsBitmap(springItem.get(b), BarcodeFormat.CODE_39, 600, 100));
+                    remoteViews.setTextViewText(R.id.text,springItem.get(b));
+                }else{
+                    remoteViews.setTextViewText(R.id.text,"無載具，請點擊新增載具");
+                    remoteViews.setViewVisibility(R.id.imageView, View.GONE);
+                }
+                Bundle bundle=new Bundle();
+                bundle.putSerializable("action","setMain");
+                intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+                        intent, 0);
+                remoteViews.setOnClickPendingIntent(R.id.linearLayout, pendingIntent);
+                appWidgetManager.updateAppWidget(widgetId, remoteViews);
+            }
+        }catch (Exception e)
+        {
 
-            // Create an Intent to launch ExampleActivity
-            Intent intent = new Intent(context, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-
-            // Get the layout for the App Widget and attach an on-click listener
-            // to the button
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.appwidget_provider_layout);
-            views.setOnClickPendingIntent(R.id.actionButton, pendingIntent);
-            // Tell the AppWidgetManager to perform an update on the current app widget
-            appWidgetManager.updateAppWidget(appWidgetId, views);
         }
+
     }
+
+
+
+    public static Bitmap encodeAsBitmap(String contents, BarcodeFormat format, int desiredWidth, int desiredHeight) throws WriterException {
+        if (contents.length() == 0) return null;
+        final int WHITE = 0xFFFFFFFF;
+        final int BLACK = 0xFF000000;
+        HashMap<EncodeHintType, String> hints = null;
+        String encoding = null;
+        for (int i = 0; i < contents.length(); i++) {
+            if (contents.charAt(i) > 0xFF) {
+                encoding = "UTF-8";
+                break;
+            }
+        }
+        if (encoding != null) {
+            hints = new HashMap<EncodeHintType, String>(2);
+            hints.put(EncodeHintType.CHARACTER_SET, encoding);
+        }
+        MultiFormatWriter writer = new MultiFormatWriter();
+        BitMatrix result = writer.encode(contents, format, desiredWidth, desiredHeight, hints);
+        int width = result.getWidth();
+        int height = result.getHeight();
+        int[] pixels = new int[width * height];
+        for (int y = 0; y < height; y++) {
+            int offset = y * width;
+            for (int x = 0; x < width; x++) {
+                pixels[offset + x] = result.get(x, y) ? BLACK : WHITE;
+            }
+        }
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+        return bitmap;
+    }
+
 }

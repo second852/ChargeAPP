@@ -39,6 +39,23 @@ public class CarrierDB {
         return carrierVOS;
     }
 
+    public List<String> getAllNul() {
+        String sql = "SELECT * FROM CARRIER order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<String> carrierVOS = new ArrayList<>();
+        CarrierVO carrierVO;
+        while (cursor.moveToNext()) {
+            carrierVO=new CarrierVO();
+            carrierVO.setId(cursor.getInt(0));
+            carrierVO.setCarNul(cursor.getString(1));
+            carrierVO.setPassword(cursor.getString(2));
+            carrierVOS.add(carrierVO.getCarNul());
+        }
+        cursor.close();
+        return carrierVOS;
+    }
+
     public CarrierVO findById(int id) {
         String[] columns = {
           "id,CARNUL,PASSWORD"

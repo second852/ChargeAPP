@@ -44,13 +44,15 @@
         </receiver>
         <receiver android:name=".Control.secondReceiver">
         </receiver>
-        <receiver android:name=".Control.SimpleWidgetProvider">
+        <receiver android:name=".Control.SimpleWidgetProvider" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
-                android:resource="@xml/text" />
+                android:resource="@xml/simple_widget_info" />
         </receiver>
+
+
         <activity
             android:name=".ui.MultiTrackerActivity"/>
     </application>

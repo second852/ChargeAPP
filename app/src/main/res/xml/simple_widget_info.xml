@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="272dp"
+    android:minHeight="48dp"
+    android:label="手機載具"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/simple_widget"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen|keyguard"
+    android:previewImage="@drawable/barcode"
+    >
+</appwidget-provider>
