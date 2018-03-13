@@ -3,9 +3,9 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         Keystore {
-            keyAlias 'key'
+            keyAlias 'key0'
             keyPassword 'second'
-            storeFile file('C:/Users/Wang/Desktop/second.jks')
+            storeFile file('D:/second.jks')
             storePassword 'second'
         }
     }

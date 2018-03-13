@@ -152,6 +152,7 @@ public class SettingListFixIon extends Fragment {
             stringBuffer.append("\n共"+bankVO.getMoney()+"元");
             title.setText(stringBuffer.toString());
 
+
             //設定 describe
             stringBuffer=new StringBuffer();
             JsonObject js=gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);

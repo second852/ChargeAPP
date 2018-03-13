@@ -95,7 +95,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     private BankTybeDB bankTybeDB;
     private GoalDB goalDB;
     private CarrierDB carrierDB;
-    private static GoogleApiClient mGoogleApiClient;
+    public static GoogleApiClient mGoogleApiClient;
     public static DriveId mSelectedFileDriveId;
     private RelativeLayout progressL;
     private ProgressBar mProgressBar;
@@ -310,7 +310,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         bankVO.setMaintype(row.getCell(1).getStringCellValue());
                         bankVO.setMoney(row.getCell(2).getStringCellValue());
                         bankVO.setDate(new java.sql.Date((long) row.getCell(3).getNumericCellValue()));
-                        bankVO.setFixDateDetail(row.getCell(4).getStringCellValue());
+                        bankVO.setFixDate(row.getCell(4).getStringCellValue());
                         bankVO.setFixDateDetail(row.getCell(5).getStringCellValue());
                         bankVO.setDetailname(row.getCell(6).getStringCellValue());
                         bankVO.setAuto(row.getCell(7).getBooleanCellValue());
@@ -366,6 +366,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
             }
             workbook.close();
             inp.close();
+
             Common.showToast(getActivity(),"匯入成功");
         } catch (IOException e) {
             e.printStackTrace();

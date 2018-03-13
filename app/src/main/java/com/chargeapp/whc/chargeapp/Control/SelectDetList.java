@@ -217,6 +217,14 @@ public class SelectDetList extends Fragment {
             if(o instanceof InvoiceVO)
             {
                 final InvoiceVO I= (InvoiceVO) o;
+
+                //設定標籤
+                remindL.setVisibility(View.VISIBLE);
+                remainT.setText("電子發票");
+                remainT.setTextColor(Color.parseColor("#66FF66"));
+                remindL.setBackgroundColor(Color.parseColor("#66FF66"));
+
+
                 sbTitle.append(I.getSecondtype().equals("O")?"其他":I.getSecondtype());
                 sbTitle.append("  共"+I.getAmount()+"元");
                 if(I.getDetail().equals("0"))
@@ -264,20 +272,13 @@ public class SelectDetList extends Fragment {
                 update.setText("修改");
                 final ConsumeVO c= (ConsumeVO) o;
 
-                //設定fix
-                String fix=c.getFixDate();
-                if(Boolean.valueOf(fix))
-                {
-                    fixL.setVisibility(View.VISIBLE);
-                }else{
-                    fixL.setVisibility(View.GONE);
-                }
 
                 if(c.isAuto())
                 {
                     remainT.setText("自動");
                     remainT.setTextColor(Color.parseColor("#EE7700"));
                     remindL.setBackgroundColor(Color.parseColor("#EE7700"));
+                    remindL.setVisibility(View.VISIBLE);
                 }else{
                     remindL.setVisibility(View.GONE);
                 }
@@ -296,16 +297,24 @@ public class SelectDetList extends Fragment {
                 title.setText(stringBuffer.toString());
 
                 //設定 describe
-                stringBuffer=new StringBuffer();
-                JsonObject js=gson.fromJson(c.getFixDateDetail(),JsonObject.class);
-                stringBuffer.append(js.get("choicestatue").getAsString().trim());
-                stringBuffer.append(" "+js.get("choicedate").getAsString().trim());
-                boolean noweek= Boolean.parseBoolean(js.get("noweek").getAsString());
-                if(js.get("choicestatue").getAsString().trim().equals("每天")&&noweek)
+                if(c.getFixDate().equals("true"))
                 {
-                    stringBuffer.append(" 假日除外");
+                    stringBuffer=new StringBuffer();
+                    JsonObject js=gson.fromJson(c.getFixDateDetail(),JsonObject.class);
+                    stringBuffer.append(js.get("choicestatue").getAsString().trim());
+                    stringBuffer.append(" "+js.get("choicedate").getAsString().trim());
+                    boolean noweek= Boolean.parseBoolean(js.get("noweek").getAsString());
+                    if(js.get("choicestatue").getAsString().trim().equals("每天")&&noweek)
+                    {
+                        stringBuffer.append(" 假日除外");
+                    }
+                    decribe.setText(stringBuffer.toString()+" \n"+c.getDetailname());
+                    fixL.setVisibility(View.VISIBLE);
+                }else{
+                    decribe.setText(c.getDetailname());
+                    fixL.setVisibility(View.GONE);
                 }
-                decribe.setText(stringBuffer.toString()+" \n"+c.getDetailname());
+
 
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override

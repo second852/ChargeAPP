@@ -1,6 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,12 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -40,6 +44,7 @@ public class SelectListBarIncome extends Fragment {
     private int index;
     private TextView message;
     private String title;
+    private Gson gson;
 
 
 
@@ -50,6 +55,7 @@ public class SelectListBarIncome extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        gson=new Gson();
         findViewById(view);
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         year= (int) getArguments().getSerializable("year");
@@ -90,6 +96,8 @@ public class SelectListBarIncome extends Fragment {
         {
             message.setVisibility(View.VISIBLE);
             message.setText(title+"\n沒有資料");
+        }else{
+            message.setVisibility(View.GONE);
         }
     }
 
@@ -129,15 +137,50 @@ public class SelectListBarIncome extends Fragment {
                 itemView = layoutInflater.inflate(R.layout.select_con_detail_list_item, parent, false);
             }
             final BankVO bankVO=bankVOS.get(position);
-            StringBuffer buffer=new StringBuffer();
+
             TextView title=itemView.findViewById(R.id.listTitle);
             TextView decribe=itemView.findViewById(R.id.listDetail);
             Button update=itemView.findViewById(R.id.updateD);
             Button deleteI=itemView.findViewById(R.id.deleteI);
-            buffer.append(Common.sDay.format(bankVO.getDate())+" ");
-            buffer.append(bankVO.getMaintype()+" "+bankVO.getMoney());
-            title.setText(buffer.toString());
-            decribe.setText(bankVO.getDetailname());
+
+
+            TextView remainT = itemView.findViewById(R.id.remainT);
+            LinearLayout remindL = itemView.findViewById(R.id.remindL);
+            LinearLayout fixL = itemView.findViewById(R.id.fixL);
+
+            StringBuffer stringBuffer = new StringBuffer();
+
+            if (bankVO.isAuto()) {
+                remindL.setVisibility(View.VISIBLE);
+                remainT.setText("自動");
+                remainT.setTextColor(Color.parseColor("#EE7700"));
+                remindL.setBackgroundColor(Color.parseColor("#EE7700"));
+            } else {
+                remindL.setVisibility(View.GONE);
+            }
+
+            //設定 title
+            stringBuffer.append(Common.sTwo.format(bankVO.getDate()));
+            stringBuffer.append(" "+bankVO.getMaintype());
+            stringBuffer.append("\n共"+bankVO.getMoney()+"元");
+            title.setText(stringBuffer.toString());
+            //設定 describe
+            if (bankVO.getFixDate().equals("true")) {
+                fixL.setVisibility(View.VISIBLE);
+                stringBuffer=new StringBuffer();
+                JsonObject js=gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
+                String daystatue=js.get("choicestatue").getAsString().trim();
+                stringBuffer.append(daystatue);
+                if(!daystatue.equals("每天"))
+                {
+                    stringBuffer.append(" "+js.get("choicedate").getAsString().trim());
+                }
+                decribe.setText(stringBuffer.toString()+" \n"+bankVO.getDetailname());
+            } else {
+                fixL.setVisibility(View.GONE);
+                decribe.setText(bankVO.getDetailname());
+            }
+
             update.setText("修改");
             update.setOnClickListener(new View.OnClickListener() {
                 @Override

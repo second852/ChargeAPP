@@ -1,6 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -130,9 +132,10 @@ public class SelectListModelCom extends Fragment {
         {
             message.setVisibility(View.VISIBLE);
             message.setText(Common.sThree.format(new Date(start.getTimeInMillis()))+"\n無資料");
-            return;
+        }else{
+            message.setVisibility(View.GONE);
         }
-        message.setVisibility(View.GONE);
+
         if(listView.getAdapter()!=null)
         {
             ListAdapter adapter= (ListAdapter) listView.getAdapter();
@@ -180,16 +183,25 @@ public class SelectListModelCom extends Fragment {
             TextView decribe=itemView.findViewById(R.id.listDetail);
             Button update=itemView.findViewById(R.id.updateD);
             Button deleteI=itemView.findViewById(R.id.deleteI);
+            LinearLayout fixL=itemView.findViewById(R.id.fixL);
+            LinearLayout remindL=itemView.findViewById(R.id.remindL);
+            TextView remainT=itemView.findViewById(R.id.remainT);
             final Object o=objects.get(position);
             StringBuffer sbTitle=new StringBuffer();
             StringBuffer sbDecribe=new StringBuffer();
             if(o instanceof InvoiceVO)
             {
                 final InvoiceVO I= (InvoiceVO) o;
+
+                //設定標籤
+                remindL.setVisibility(View.VISIBLE);
+                remainT.setText("電子發票");
+                remainT.setTextColor(Color.parseColor("#66FF66"));
+                remindL.setBackgroundColor(Color.parseColor("#66FF66"));
+
                 sbTitle.append(Common.sDay.format(new Date(I.getTime().getTime())));
                 sbTitle.append(I.getSecondtype().equals("O")?"其他":I.getSecondtype());
                 sbTitle.append("  共"+I.getAmount()+"元  ");
-                sbTitle.append("(電子發票)");
                 if(I.getDetail().equals("0"))
                 {
                     update.setText("下載");
@@ -235,10 +247,51 @@ public class SelectListModelCom extends Fragment {
             }else{
                 update.setText("修改");
                 final ConsumeVO c= (ConsumeVO) o;
-                sbTitle.append(Common.sDay.format((c.getDate())));
-                sbTitle.append(c.getSecondType());
-                sbTitle.append("  共"+c.getMoney()+"元  ");
-                sbDecribe.append(c.getDetailname());
+
+                if(c.isAuto())
+                {
+                    remainT.setText("自動");
+                    remainT.setTextColor(Color.parseColor("#EE7700"));
+                    remindL.setBackgroundColor(Color.parseColor("#EE7700"));
+                }else{
+                    remindL.setVisibility(View.GONE);
+                }
+
+                if(c.getNotify().equals("true"))
+                {
+                    remindL.setVisibility(View.VISIBLE);
+                }else{
+                    remindL.setVisibility(View.GONE);
+                }
+
+
+
+                StringBuffer stringBuffer=new StringBuffer();
+                //設定 title
+                stringBuffer.append(Common.sTwo.format(c.getDate()));
+                stringBuffer.append(" "+c.getMaintype());
+                stringBuffer.append("\n共"+c.getMoney()+"元");
+                title.setText(stringBuffer.toString());
+
+                //設定 describe
+                if(c.getFixDate().equals("true"))
+                {
+                    fixL.setVisibility(View.VISIBLE);
+                    stringBuffer=new StringBuffer();
+                    JsonObject js=gson.fromJson(c.getFixDateDetail(),JsonObject.class);
+                    stringBuffer.append(js.get("choicestatue").getAsString().trim());
+                    stringBuffer.append(" "+js.get("choicedate").getAsString().trim());
+                    boolean noweek= Boolean.parseBoolean(js.get("noweek").getAsString());
+                    if(js.get("choicestatue").getAsString().trim().equals("每天")&&noweek)
+                    {
+                        stringBuffer.append(" 假日除外");
+                    }
+                    decribe.setText(stringBuffer.toString()+" \n"+c.getDetailname());
+                }else{
+                    fixL.setVisibility(View.GONE);
+                    decribe.setText(c.getDetailname());
+                }
+
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -254,8 +307,7 @@ public class SelectListModelCom extends Fragment {
                     }
                 });
             }
-            title.setText(sbTitle.toString());
-            decribe.setText(sbDecribe.toString());
+
             deleteI.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

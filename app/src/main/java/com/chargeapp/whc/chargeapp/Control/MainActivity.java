@@ -57,8 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private  ExpandableListView listView;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     public static ChargeAPPDB chargeAPPDB;
-    private int position=6;
-    private View oldview;
+    private View oldSecondView,oldMainView;
     private boolean doubleClick = false;
     public static int[] imageAll = {
             R.drawable.food, R.drawable.phone, R.drawable.clothes, R.drawable.traffic, R.drawable.teach, R.drawable.happy,
@@ -104,75 +103,6 @@ public class MainActivity extends AppCompatActivity {
         List<EleMainItemVO> itemVOS = getNewItem();
         final List<EleMainItemVO> itemSon= getElemainItemList();
         listView.setAdapter(new ExpandableAdapter(this,itemVOS,itemSon));
-
-        listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-            @Override
-            public void onGroupExpand(int groupPosition) {
-                Fragment fragment;
-                position=groupPosition;
-                getSupportActionBar().setDisplayShowCustomEnabled(false);
-                if (groupPosition == 0) {
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                    listView.collapseGroup(groupPosition);
-                    listView.collapseGroup(1);
-                    fragment = new InsertActivity();
-                    setTitle(R.string.text_Com);
-                    switchFragment(fragment);
-                } else if (groupPosition == 1) {
-
-                } else if (groupPosition == 2) {
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                    listView.collapseGroup(groupPosition);
-                    listView.collapseGroup(1);
-                    fragment = new Download();
-                    setTitle(R.string.text_Price);
-                    switchFragment(fragment);
-                } else if (groupPosition == 3) {
-                    setTitle(R.string.text_DataPicture);
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                    listView.collapseGroup(groupPosition);
-                    listView.collapseGroup(1);
-                    fragment = new SelectActivity();
-                    switchFragment(fragment);
-                } else if (groupPosition == 4) {
-                    Calendar calendar=Calendar.getInstance();
-                    SelectListModelCom.year=calendar.get(Calendar.YEAR);
-                    SelectListModelCom.month=calendar.get(Calendar.MONTH);
-                    SelectListModelCom.p=0;
-                    SelectListModelIM.year=calendar.get(Calendar.YEAR);
-                    SelectListModelIM.month=calendar.get(Calendar.MONTH);
-                    SelectListModelIM.p=0;
-                    setTitle(R.string.text_DataList);
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                    listView.collapseGroup(groupPosition);
-                    listView.collapseGroup(1);
-                    fragment = new SelectListModelActivity();
-                    switchFragment(fragment);
-                } else if (groupPosition == 5) {
-                    setTitle(R.string.text_Goal);
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                    listView.collapseGroup(groupPosition);
-                    listView.collapseGroup(1);
-                    fragment = new GoalListAll();
-                    Bundle bundle=new Bundle();
-                    bundle.putSerializable("position",0);
-                    fragment.setArguments(bundle);
-                    switchFragment(fragment);
-                }else if (groupPosition == 6){
-                    setTitle(R.string.text_Setting);
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                    listView.collapseGroup(groupPosition);
-                    listView.collapseGroup(1);
-                    fragment=new SettingMain();
-                    switchFragment(fragment);
-                }else {
-                    setTitle(R.string.text_Home);
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                    listView.collapseGroup(groupPosition);
-                    listView.collapseGroup(1);
-                }
-            }
-        });
     }
 
     private List<EleMainItemVO> getElemainItemList() {
@@ -208,9 +138,17 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-
-
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Calendar calendar=Calendar.getInstance();
+        SelectListModelCom.year=calendar.get(Calendar.YEAR);
+        SelectListModelCom.month=calendar.get(Calendar.MONTH);
+        SelectListModelCom.p=0;
+        SelectListModelIM.year=calendar.get(Calendar.YEAR);
+        SelectListModelIM.month=calendar.get(Calendar.MONTH);
+        SelectListModelIM.p=0;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -346,6 +284,18 @@ public class MainActivity extends AppCompatActivity {
         return returnvalue;
     }
 
+    //設定目前選擇項目的顏色
+    private void setColor(View v)
+    {
+        v.setBackgroundColor(Color.parseColor("#FFDD55"));
+        if(oldMainView !=null&&v!=oldMainView)
+        {
+            oldMainView.setBackgroundColor(Color.parseColor("#f5f5f5"));
+        }
+        oldMainView =v;
+    }
+
+
     private static final int REQ_PERMISSIONS = 0;
 
     public void askPermissions() {
@@ -442,23 +392,61 @@ public class MainActivity extends AppCompatActivity {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(i==1)
-                    {
+                    Fragment fragment;
+                    if (i == 0) {
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        fragment = new InsertActivity();
+                        switchFragment(fragment);
+                        listView.collapseGroup(i);
+                        setTitle(R.string.text_Com);
+                    } else if (i  == 1) {
                         if(doubleClick)
                         {
                             listView.collapseGroup(1);
                             doubleClick=false;
-                            return;
                         }else {
+                            listView.expandGroup(1);
                             doubleClick=true;
                         }
+                    } else if (i == 2) {
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        fragment = new Download();
+                        switchFragment(fragment);
+                        setTitle(R.string.text_Price);
+                        listView.collapseGroup(i);
+                    } else if (i == 3) {
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        fragment = new SelectActivity();
+                        switchFragment(fragment);
+                        listView.collapseGroup(i);
+                        setTitle(R.string.text_DataPicture);
+                    } else if (i == 4) {
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        fragment = new SelectListModelActivity();
+                        switchFragment(fragment);
+                        listView.collapseGroup(i);
+                        setTitle(R.string.text_DataList);
+                    } else if (i == 5) {
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        fragment = new GoalListAll();
+                        Bundle bundle=new Bundle();
+                        bundle.putSerializable("position",0);
+                        fragment.setArguments(bundle);
+                        switchFragment(fragment);
+                        listView.collapseGroup(i);
+                        setTitle(R.string.text_Goal);
+                    }else if (i == 6){
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        fragment=new SettingMain();
+                        switchFragment(fragment);
+                        setTitle(R.string.text_Setting);
+                        listView.collapseGroup(i);
+                    }else {
+                        setTitle(R.string.text_Home);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        listView.collapseGroup(i);
                     }
-                    for (int i = 0; i < listView.getChildCount(); i++) {
-                      View  o = listView.getChildAt(i);
-                      o.setBackgroundColor(Color.parseColor("#f5f5f5"));
-                    }
-                    v.setBackgroundColor(Color.parseColor("#FFEE99"));
-                    listView.expandGroup(i);
+                    setColor(v);
                 }
             });
             return view;
@@ -521,11 +509,11 @@ public class MainActivity extends AppCompatActivity {
                     {
                         return;
                     }
-                    if(oldview!=null)
+                    if(oldSecondView !=null&&oldSecondView!=view)
                     {
-                        oldview.setBackgroundColor(Color.WHITE);
+                        oldSecondView.setBackgroundColor(Color.WHITE);
                     }
-                    oldview=view;
+                    oldSecondView =view;
                     view.setBackgroundColor(Color.parseColor("#EEFFBB"));
                 }
             });

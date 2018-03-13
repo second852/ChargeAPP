@@ -87,7 +87,16 @@ public class Common {
 
 
     public static void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        try {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        }catch (Exception e)
+        {
+            if(SettingDownloadFile.mGoogleApiClient!=null)
+            {
+                SettingDownloadFile.mGoogleApiClient.disconnect();
+                SettingDownloadFile.mGoogleApiClient=null;
+            }
+        }
     }
 
 

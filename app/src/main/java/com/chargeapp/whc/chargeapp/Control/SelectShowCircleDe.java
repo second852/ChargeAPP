@@ -132,7 +132,6 @@ public class SelectShowCircleDe extends Fragment {
             title=sY.format(new Date(start.getTimeInMillis()));
             title=title.substring(0,title.indexOf("年")+1);
         }
-        Log.d("XXXXXX",sf.format(new Date(start.getTimeInMillis()))+" / "+sf.format(new Date(end.getTimeInMillis())));
         setLayout();
         return view;
     }
@@ -321,9 +320,18 @@ public class SelectShowCircleDe extends Fragment {
             if(o instanceof InvoiceVO)
             {
                 final InvoiceVO I= (InvoiceVO) o;
+
+                //設定標籤
+                remindL.setVisibility(View.VISIBLE);
+                remainT.setText("電子發票");
+                remainT.setTextColor(Color.parseColor("#66FF66"));
+                remindL.setBackgroundColor(Color.parseColor("#66FF66"));
+
                 sbTitle.append(sf.format(new Date(I.getTime().getTime()))+" ");
                 sbTitle.append(I.getSecondtype().equals("O")?"其他":I.getSecondtype());
                 sbTitle.append("  共"+I.getAmount()+"元");
+                remindL.setVisibility(View.VISIBLE);
+                remainT.setText("電子發票");
                 if(I.getDetail().equals("0"))
                 {
                     update.setText("下載");
@@ -382,20 +390,12 @@ public class SelectShowCircleDe extends Fragment {
                 update.setText("修改");
                 final ConsumeVO c= (ConsumeVO) o;
 
-                //設定fix
-                String fix=c.getFixDate();
-                if(Boolean.valueOf(fix))
-                {
-                    fixL.setVisibility(View.VISIBLE);
-                }else{
-                    fixL.setVisibility(View.GONE);
-                }
-
                 if(c.isAuto())
                 {
                     remainT.setText("自動");
                     remainT.setTextColor(Color.parseColor("#EE7700"));
                     remindL.setBackgroundColor(Color.parseColor("#EE7700"));
+                    remindL.setVisibility(View.VISIBLE);
                 }else{
                     remindL.setVisibility(View.GONE);
                 }
@@ -406,6 +406,9 @@ public class SelectShowCircleDe extends Fragment {
                 }else{
                     remindL.setVisibility(View.GONE);
                 }
+
+
+
                 StringBuffer stringBuffer=new StringBuffer();
                 //設定 title
                 stringBuffer.append(Common.sTwo.format(c.getDate()));
@@ -414,16 +417,24 @@ public class SelectShowCircleDe extends Fragment {
                 title.setText(stringBuffer.toString());
 
                 //設定 describe
-                stringBuffer=new StringBuffer();
-                JsonObject js=gson.fromJson(c.getFixDateDetail(),JsonObject.class);
-                stringBuffer.append(js.get("choicestatue").getAsString().trim());
-                stringBuffer.append(" "+js.get("choicedate").getAsString().trim());
-                boolean noweek= Boolean.parseBoolean(js.get("noweek").getAsString());
-                if(js.get("choicestatue").getAsString().trim().equals("每天")&&noweek)
+                if(c.getFixDate().equals("true"))
                 {
-                    stringBuffer.append(" 假日除外");
+                    fixL.setVisibility(View.VISIBLE);
+                    stringBuffer=new StringBuffer();
+                    JsonObject js=gson.fromJson(c.getFixDateDetail(),JsonObject.class);
+                    stringBuffer.append(js.get("choicestatue").getAsString().trim());
+                    stringBuffer.append(" "+js.get("choicedate").getAsString().trim());
+                    boolean noweek= Boolean.parseBoolean(js.get("noweek").getAsString());
+                    if(js.get("choicestatue").getAsString().trim().equals("每天")&&noweek)
+                    {
+                        stringBuffer.append(" 假日除外");
+                    }
+                    decribe.setText(stringBuffer.toString()+" \n"+c.getDetailname());
+                }else{
+                    fixL.setVisibility(View.GONE);
+                    decribe.setText(c.getDetailname());
                 }
-                decribe.setText(stringBuffer.toString()+" \n"+c.getDetailname());
+
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
