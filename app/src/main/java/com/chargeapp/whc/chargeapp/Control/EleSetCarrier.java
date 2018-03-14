@@ -15,9 +15,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -71,7 +73,6 @@ public class EleSetCarrier extends Fragment {
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB =new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         sharedPreferences=getActivity().getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
-        position=sharedPreferences.getInt("carrier",0);
         setListAdapt();
         return view;
     }
@@ -83,20 +84,31 @@ public class EleSetCarrier extends Fragment {
 
     public void setListAdapt()
     {
+        position=sharedPreferences.getInt("carrier",0);
         carrierlist=carrierDB.getAll();
-        if(carrierlist!=null&&carrierlist.size()>0)
-        {
-            listtiitle.setVisibility(View.VISIBLE);
-            listcarrier.setAdapter(new EleSetCarrierAdapter(getActivity(),carrierlist));
-        }else{
-            listtiitle.setVisibility(View.GONE);
-        }
-        closeDialog();
         Intent intent = new Intent(getActivity(), SimpleWidgetProvider.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         int[] ids = AppWidgetManager.getInstance(getActivity().getApplication()).getAppWidgetIds(new ComponentName(getActivity().getApplication(), SimpleWidgetProvider.class));
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         getActivity().sendBroadcast(intent);
+        if(carrierlist!=null&&carrierlist.size()>0)
+        {
+            listtiitle.setVisibility(View.VISIBLE);
+        }else{
+            listtiitle.setVisibility(View.GONE);
+        }
+        Adapter adapter=listcarrier.getAdapter();
+        if(adapter==null)
+        {
+            listcarrier.setAdapter(new EleSetCarrierAdapter(getActivity(),carrierlist));
+        }else{
+            EleSetCarrierAdapter adapter1 = (EleSetCarrierAdapter) listcarrier.getAdapter();
+            adapter1.setCarNulList(carrierlist);
+            adapter1.notifyDataSetChanged();
+            listcarrier.invalidate();
+        }
+
+        closeDialog();
     }
 
     private class EleSetCarrierAdapter extends BaseAdapter {
@@ -106,6 +118,10 @@ public class EleSetCarrier extends Fragment {
         EleSetCarrierAdapter(Context context, List<CarrierVO> CarNulList) {
             this.context = context;
             this.CarNulList = CarNulList;
+        }
+
+        public void setCarNulList(List<CarrierVO> carNulList) {
+            CarNulList = carNulList;
         }
 
         @Override
@@ -124,14 +140,30 @@ public class EleSetCarrier extends Fragment {
             Button deletecarrier=itemView.findViewById(R.id.deletecarrier);
             Button widgetShow=itemView.findViewById(R.id.widgetShow);
             deletecarrier.setVisibility(View.VISIBLE);
+            widgetShow.setVisibility(View.VISIBLE);
+            //綁定工具列
+            if(position!=EleSetCarrier.this.position)
+            {
+                widgetShow.setText("設置條碼");
+                widgetShow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sharedPreferences.edit().putInt("carrier",position).apply();
+                        setListAdapt();
+                    }
+                });
+            }
             String show=carrierVO.getCarNul();
             tvId.setText(show);
             deletecarrier.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    carrierDB.deleteByCarNul(carrierVO.getCarNul());
-                    invoiceDB.deleteById(carrierVO.getCarNul());
-                    setListAdapt();
+
+                    DeleteDialogFragment aa= new DeleteDialogFragment();
+                    aa.setObject(carrierVO);
+                    aa.setFragement(EleSetCarrier.this);
+                    aa.show(getFragmentManager(),"show");
+
                 }
             });
             return itemView;

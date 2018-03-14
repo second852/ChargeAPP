@@ -29,7 +29,7 @@
         android:layout_height="35dp"
         android:layout_toRightOf="@+id/deletecarrier"
         android:layout_marginRight="10dp"
-        android:background="#FF8888"
+        android:background="#FFDD55"
         android:layout_gravity="center_vertical"
         android:layout_centerVertical="true"
         android:textSize="20sp"

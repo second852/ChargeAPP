@@ -37,6 +37,10 @@ import java.util.Random;
 
 public class SimpleWidgetProvider extends AppWidgetProvider {
 
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+    }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -52,7 +56,7 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
                 RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                         R.layout.simple_widget);
                 Intent intent = new Intent(context, MainActivity.class);
-                if(springItem.size()>=1)
+                if(springItem.size()>0)
                 {
                     remoteViews.setBitmap(R.id.imageView, "setImageBitmap",encodeAsBitmap(springItem.get(b), BarcodeFormat.CODE_39, 600, 100));
                     remoteViews.setTextViewText(R.id.text,springItem.get(b));

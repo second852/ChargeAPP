@@ -11,6 +11,7 @@ import android.text.Html;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
@@ -19,6 +20,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
+import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
@@ -42,6 +44,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
     private BankTybeDB bankTybeDB;
+    private CarrierDB carrierDB;
 
     public Object getObject() {
         return object;
@@ -70,6 +73,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         typeDB=new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB=new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         String title="確定要刪除這筆資料?";
         if(object instanceof InvoiceVO)
         {
@@ -100,6 +104,11 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         {
             BankTypeVO bankTypeVO= (BankTypeVO) object;
             message=bankTypeVO.getName();
+        }else if(object instanceof CarrierVO)
+        {
+            CarrierVO carrierVO= (CarrierVO) object;
+            message=carrierVO.getCarNul();
+            title="確定要刪除載具?\n相關資料會一併刪除!";
         }
 
         return new AlertDialog.Builder(getActivity())
@@ -145,6 +154,11 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 {
                     BankTypeVO bankTypeVO= (BankTypeVO) object;
                     bankTybeDB.deleteById(bankTypeVO.getId());
+                }else if(object instanceof CarrierVO)
+                {
+                    CarrierVO carrierVO= (CarrierVO) object;
+                    carrierDB.deleteByCarNul(carrierVO.getCarNul());
+                    invoiceDB.deleteById(carrierVO.getCarNul());
                 }
 
 
@@ -181,8 +195,11 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 {
                     SettingListFixIon settingListFixIon= (SettingListFixIon) fragement;
                     settingListFixIon.setLayout();
+                }else if(fragement instanceof EleSetCarrier)
+                {
+                    EleSetCarrier eleSetCarrier= (EleSetCarrier) fragement;
+                    eleSetCarrier.setListAdapt();
                 }
-
                 break;
             default:
                 dialog.cancel();
