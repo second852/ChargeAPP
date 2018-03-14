@@ -1,7 +1,13 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Notification;
 import android.app.ProgressDialog;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +19,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
@@ -21,6 +29,8 @@ import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.R;
+
+import org.apache.poi.ss.formula.functions.T;
 
 import java.util.List;
 
@@ -32,15 +42,17 @@ import java.util.List;
 public class EleSetCarrier extends Fragment {
     private EditText cellphone,certcode;
     private ListView listcarrier;
-    private Button confirm;
+    private TextView confirm;
     private InvoiceDB invoiceDB;
-    public AsyncTask getIvnum;
+    public GetSQLDate getIvnum;
     private List<CarrierVO> carrierlist;
     public CarrierDB carrierDB;
     public TextView listtiitle;
     private ConsumeDB consumeDB;
-    private ProgressDialog progressDialog;
-    private long time;
+    private RelativeLayout progressbarL;
+    private ProgressBar progressBar;
+    private  SharedPreferences sharedPreferences;
+    private  int position;
 
 
     @Nullable
@@ -52,18 +64,21 @@ public class EleSetCarrier extends Fragment {
         listcarrier = view.findViewById(R.id.listcarrier);
         confirm = view.findViewById(R.id.confirm);
         listtiitle=view.findViewById(R.id.listtiitle);
-        progressDialog=new ProgressDialog(getActivity());
+        progressbarL=view.findViewById(R.id.progressbarL);
+        progressBar=view.findViewById(R.id.progressbar);
         confirm.setOnClickListener(new Confirmlisten());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB =new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        sharedPreferences=getActivity().getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
+        position=sharedPreferences.getInt("carrier",0);
         setListAdapt();
         return view;
     }
 
     public void closeDialog()
     {
-        progressDialog.cancel();
+        progressbarL.setVisibility(View.GONE);
     }
 
     public void setListAdapt()
@@ -77,6 +92,11 @@ public class EleSetCarrier extends Fragment {
             listtiitle.setVisibility(View.GONE);
         }
         closeDialog();
+        Intent intent = new Intent(getActivity(), SimpleWidgetProvider.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] ids = AppWidgetManager.getInstance(getActivity().getApplication()).getAppWidgetIds(new ComponentName(getActivity().getApplication(), SimpleWidgetProvider.class));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        getActivity().sendBroadcast(intent);
     }
 
     private class EleSetCarrierAdapter extends BaseAdapter {
@@ -102,6 +122,7 @@ public class EleSetCarrier extends Fragment {
             final CarrierVO carrierVO = CarNulList.get(position);
             TextView tvId = (TextView) itemView.findViewById(R.id.tvId);
             Button deletecarrier=itemView.findViewById(R.id.deletecarrier);
+            Button widgetShow=itemView.findViewById(R.id.widgetShow);
             deletecarrier.setVisibility(View.VISIBLE);
             String show=carrierVO.getCarNul();
             tvId.setText(show);
@@ -149,10 +170,9 @@ public class EleSetCarrier extends Fragment {
                 Common.showToast(getActivity(),"載具已新增過");
                 return;
             }
-            time=System.currentTimeMillis();
-            getIvnum=new GetSQLDate(EleSetCarrier.this).execute("getInvoice",user,password);
-            progressDialog.setMessage("正在下載資料,請稍候...");
-            progressDialog.show();
+            getIvnum= (GetSQLDate) new GetSQLDate(EleSetCarrier.this).execute("getInvoice",user,password);
+            getIvnum.setProgressBar(progressBar);
+            progressbarL.setVisibility(View.VISIBLE);
         }
     }
 

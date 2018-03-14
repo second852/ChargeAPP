@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.chargeapp.whc.chargeapp">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -12,10 +15,12 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <supports-screens android:largeScreens="true"/>
-    <supports-screens android:normalScreens="true"/>
-    <supports-screens android:smallScreens="true"/>
-    <supports-screens android:xlargeScreens="true"/>
+
+    <supports-screens android:largeScreens="true" />
+    <supports-screens android:normalScreens="true" />
+    <supports-screens android:smallScreens="true" />
+    <supports-screens android:xlargeScreens="true" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/add"
@@ -30,8 +35,9 @@
             </intent-filter>
         </activity>
 
-        <meta-data android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
@@ -42,19 +48,19 @@
                 <action android:name="android.intent.action.DATE_CHANGED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".Control.secondReceiver">
-        </receiver>
-        <receiver android:name=".Control.SimpleWidgetProvider" >
+        <receiver android:name=".Control.secondReceiver"></receiver>
+        <receiver
+            android:name=".Control.SimpleWidgetProvider"
+            android:label="手機載具">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
+            <meta-data
+                android:name="android.appwidget.provider"
                 android:resource="@xml/simple_widget_info" />
         </receiver>
 
-
-        <activity
-            android:name=".ui.MultiTrackerActivity"/>
+        <activity android:name=".ui.MultiTrackerActivity" />
     </application>
 
 </manifest>

@@ -44,13 +44,8 @@ public class CarrierDB {
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<String> carrierVOS = new ArrayList<>();
-        CarrierVO carrierVO;
         while (cursor.moveToNext()) {
-            carrierVO=new CarrierVO();
-            carrierVO.setId(cursor.getInt(0));
-            carrierVO.setCarNul(cursor.getString(1));
-            carrierVO.setPassword(cursor.getString(2));
-            carrierVOS.add(carrierVO.getCarNul());
+            carrierVOS.add(cursor.getString(1));
         }
         cursor.close();
         return carrierVOS;

@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.opengl.Visibility;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.RemoteViews;
@@ -36,6 +37,7 @@ import java.util.Random;
 
 public class SimpleWidgetProvider extends AppWidgetProvider {
 
+
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         final int count = appWidgetIds.length;
@@ -44,14 +46,13 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
         List<String> springItem=carrierDB.getAllNul();
         SharedPreferences sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         int b=sharedPreferences.getInt("carrier",0);
-
         try{
             for (int i = 0; i < count; i++) {
                 int widgetId = appWidgetIds[i];
                 RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                         R.layout.simple_widget);
                 Intent intent = new Intent(context, MainActivity.class);
-                if(springItem.size()>0)
+                if(springItem.size()>=1)
                 {
                     remoteViews.setBitmap(R.id.imageView, "setImageBitmap",encodeAsBitmap(springItem.get(b), BarcodeFormat.CODE_39, 600, 100));
                     remoteViews.setTextViewText(R.id.text,springItem.get(b));
@@ -59,8 +60,7 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
                     remoteViews.setTextViewText(R.id.text,"無載具，請點擊新增載具");
                     remoteViews.setViewVisibility(R.id.imageView, View.GONE);
                 }
-                Bundle bundle=new Bundle();
-                bundle.putSerializable("action","setMain");
+                intent.putExtra("action","setCarrier");
                 intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
                 intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
@@ -72,7 +72,6 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
         {
 
         }
-
     }
 
 

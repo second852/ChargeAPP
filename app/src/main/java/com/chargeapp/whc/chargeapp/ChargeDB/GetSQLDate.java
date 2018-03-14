@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 
 
 import android.util.Log;
-
+import android.widget.ProgressBar;
 
 
 import com.chargeapp.whc.chargeapp.Control.Common;
@@ -61,6 +61,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private List<TypeDetailVO> typeDetailVOS;
     private SimpleDateFormat sd=new SimpleDateFormat("HH");
     private InvoiceVO invoiceVO;
+    private ProgressBar progressBar;
 
     public GetSQLDate(Object object) {
         this.object = object;
@@ -77,6 +78,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB =new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailVOS= typeDetailDB.getHaveDetailTypdAll();
+    }
+
+    public void setProgressBar(ProgressBar progressBar) {
+        this.progressBar = progressBar;
     }
 
     @Override

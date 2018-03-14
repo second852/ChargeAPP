@@ -148,6 +148,15 @@ public class MainActivity extends AppCompatActivity {
         SelectListModelIM.year=calendar.get(Calendar.YEAR);
         SelectListModelIM.month=calendar.get(Calendar.MONTH);
         SelectListModelIM.p=0;
+        String a=getIntent().getStringExtra("action");
+        if(a!=null)
+        {
+            if(a.equals("setCarrier"))
+            {
+                Fragment fragment= new EleSetCarrier();
+                switchFragment(fragment);
+            }
+        }
     }
 
     @Override
@@ -514,19 +523,6 @@ public class MainActivity extends AppCompatActivity {
           bundle.putSerializable("action","uploadExcel");
           fragment.setArguments(bundle);
           switchFragment(fragment);
-      }else  if(requestCode==3)
-      {
-          Fragment fragment= new SettingUploadFile();
-          Bundle bundle=new Bundle();
-          bundle.putSerializable("action","no");
-          fragment.setArguments(bundle);
-          switchFragment(fragment);
-          if(resultCode==-1)
-          {
-              Common.showToast(this,"上傳成功");
-          }else{
-              Common.showToast(this,"上傳失敗");
-          }
       }else  if(requestCode==3)
       {
           Fragment fragment= new SettingUploadFile();

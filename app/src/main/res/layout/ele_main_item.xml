@@ -24,6 +24,19 @@
         android:textSize="25sp"
         android:text="ID" />
     <Button
+        android:id="@+id/widgetShow"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_toRightOf="@+id/deletecarrier"
+        android:layout_marginRight="10dp"
+        android:background="#FF8888"
+        android:layout_gravity="center_vertical"
+        android:layout_centerVertical="true"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:visibility="gone"
+        />
+    <Button
         android:id="@+id/deletecarrier"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
