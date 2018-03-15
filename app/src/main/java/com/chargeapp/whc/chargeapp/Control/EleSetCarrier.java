@@ -55,12 +55,14 @@ public class EleSetCarrier extends Fragment {
     private ProgressBar progressBar;
     private  SharedPreferences sharedPreferences;
     private  int position;
+    private CarrierVO carrierVO;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ele_setcarrier, container, false);
+        carrierVO=new CarrierVO();
         cellphone = view.findViewById(R.id.cellphone);
         certcode = view.findViewById(R.id.certcode);
         listcarrier = view.findViewById(R.id.listcarrier);
@@ -107,7 +109,6 @@ public class EleSetCarrier extends Fragment {
             adapter1.notifyDataSetChanged();
             listcarrier.invalidate();
         }
-
         closeDialog();
     }
 
@@ -202,9 +203,12 @@ public class EleSetCarrier extends Fragment {
                 Common.showToast(getActivity(),"載具已新增過");
                 return;
             }
-            getIvnum= (GetSQLDate) new GetSQLDate(EleSetCarrier.this).execute("getInvoice",user,password);
-            getIvnum.setProgressBar(progressBar);
-            progressbarL.setVisibility(View.VISIBLE);
+            carrierVO.setCarNul(user);
+            carrierVO.setPassword(password);
+            carrierDB.insert(carrierVO);
+//            getIvnum= (GetSQLDate) new GetSQLDate(EleSetCarrier.this).execute("getInvoice",user,password);
+//            getIvnum.setProgressBar(progressBar);
+//            progressbarL.setVisibility(View.VISIBLE);
         }
     }
 

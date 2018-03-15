@@ -151,11 +151,8 @@ public class MainActivity extends AppCompatActivity {
         String a=getIntent().getStringExtra("action");
         if(a!=null)
         {
-            if(a.equals("setCarrier"))
-            {
                 Fragment fragment= new EleSetCarrier();
                 switchFragment(fragment);
-            }
         }
     }
 
