@@ -39,12 +39,13 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("XXXXXXX","receive");
         super.onReceive(context, intent);
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        final int count = appWidgetIds.length;
+        int count = appWidgetIds.length;
         ChargeAPPDB chargeAPPDB=new ChargeAPPDB(context);
         CarrierDB carrierDB=new CarrierDB(chargeAPPDB.getReadableDatabase());
         List<String> springItem=carrierDB.getAllNul();
@@ -60,6 +61,7 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
                 {
                     remoteViews.setBitmap(R.id.imageView, "setImageBitmap",encodeAsBitmap(springItem.get(b), BarcodeFormat.CODE_39, 600, 100));
                     remoteViews.setTextViewText(R.id.text,springItem.get(b));
+                    remoteViews.setViewVisibility(R.id.imageView, View.VISIBLE);
                 }else{
                     remoteViews.setTextViewText(R.id.text,"無載具，請點擊新增載具");
                     remoteViews.setViewVisibility(R.id.imageView, View.GONE);

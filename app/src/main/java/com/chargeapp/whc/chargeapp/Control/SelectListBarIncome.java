@@ -117,9 +117,6 @@ public class SelectListBarIncome extends Fragment {
             this.bankVOS = bankVOS;
         }
 
-        public List<BankVO> getBankVOs() {
-            return bankVOS;
-        }
 
         public void setBankVOs(List<BankVO> bankVOS) {
             this.bankVOS = bankVOS;
@@ -165,7 +162,7 @@ public class SelectListBarIncome extends Fragment {
             stringBuffer.append("\n共"+bankVO.getMoney()+"元");
             title.setText(stringBuffer.toString());
             //設定 describe
-            if (bankVO.getFixDate().equals("true")) {
+            if (bankVO.getFixDate().equals("true")&&bankVO.isAuto()) {
                 fixL.setVisibility(View.VISIBLE);
                 stringBuffer=new StringBuffer();
                 JsonObject js=gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);

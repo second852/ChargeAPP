@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -364,6 +365,29 @@ public class InvoiceDB {
         }
         cursor.close();
         return invoiceVOSList;
+    }
+
+    public HashMap<String,Integer> getInvoiceBytimeHashMap(Timestamp start, Timestamp end) {
+        String sql = "SELECT maintype,amount FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' order by time desc;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        HashMap<String,Integer> hashMap=new HashMap<>();
+        String main;
+        int money,total=0;
+        while (cursor.moveToNext()) {
+            main=cursor.getString(0);
+            money=cursor.getInt(1);
+            if(hashMap.get(main)==null)
+            {
+                hashMap.put(main,money);
+            }else{
+                hashMap.put(main,hashMap.get(main)+money);
+            }
+            total=total+money;
+        }
+        hashMap.put("total",total);
+        cursor.close();
+        return hashMap;
     }
 
     public List<InvoiceVO> getInvoiceBytimeMainType(Timestamp start,Timestamp end,String mainType) {

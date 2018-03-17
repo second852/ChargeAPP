@@ -220,12 +220,13 @@ public class SelectDetList extends Fragment {
 
                 //設定標籤
                 remindL.setVisibility(View.VISIBLE);
+                fixL.setVisibility(View.GONE);
                 remainT.setText("電子發票");
-                remainT.setTextColor(Color.parseColor("#66FF66"));
-                remindL.setBackgroundColor(Color.parseColor("#66FF66"));
+                remainT.setTextColor(Color.parseColor("#008844"));
+                remindL.setBackgroundColor(Color.parseColor("#008844"));
 
 
-                sbTitle.append(I.getSecondtype().equals("O")?"其他":I.getSecondtype());
+                sbTitle.append(I.getSecondtype().equals("0")?"其他":I.getSecondtype());
                 sbTitle.append("  共"+I.getAmount()+"元");
                 if(I.getDetail().equals("0"))
                 {
@@ -266,6 +267,8 @@ public class SelectDetList extends Fragment {
                         }
                     });
                 }
+                title.setText(sbTitle.toString());
+                decribe.setText(sbDecribe.toString());
             }else{
 
                 //設定Consume
@@ -280,15 +283,18 @@ public class SelectDetList extends Fragment {
                     remindL.setBackgroundColor(Color.parseColor("#EE7700"));
                     remindL.setVisibility(View.VISIBLE);
                 }else{
-                    remindL.setVisibility(View.GONE);
+                    if(Boolean.valueOf(c.getNotify()))
+                    {
+                        remainT.setText("提醒");
+                        remainT.setTextColor(Color.RED);
+                        remindL.setBackgroundColor(Color.RED);
+                        remindL.setVisibility(View.VISIBLE);
+                    }else{
+                        remindL.setVisibility(View.GONE);
+                    }
                 }
 
-                if(c.getNotify().equals("true"))
-                {
-                   remindL.setVisibility(View.VISIBLE);
-                }else{
-                    remindL.setVisibility(View.GONE);
-                }
+
                 StringBuffer stringBuffer=new StringBuffer();
                 //設定 title
                 stringBuffer.append(Common.sTwo.format(c.getDate()));
@@ -297,7 +303,7 @@ public class SelectDetList extends Fragment {
                 title.setText(stringBuffer.toString());
 
                 //設定 describe
-                if(c.getFixDate().equals("true"))
+                if(c.getFixDate().equals("true")&&c.isAuto())
                 {
                     stringBuffer=new StringBuffer();
                     JsonObject js=gson.fromJson(c.getFixDateDetail(),JsonObject.class);

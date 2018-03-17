@@ -127,7 +127,6 @@ public class SelectListModelCom extends Fragment {
             }
         });
         DRcarrier.setText(Common.sThree.format(new Date(start.getTimeInMillis())));
-        listView.setSelection(p);
         if(objects.size()<=0)
         {
             message.setVisibility(View.VISIBLE);
@@ -144,6 +143,7 @@ public class SelectListModelCom extends Fragment {
         }else {
             listView.setAdapter(new ListAdapter(getActivity(),objects));
         }
+        listView.setSelection(p);
         progressDialog.cancel();
     }
 
@@ -195,12 +195,13 @@ public class SelectListModelCom extends Fragment {
 
                 //設定標籤
                 remindL.setVisibility(View.VISIBLE);
+                fixL.setVisibility(View.GONE);
                 remainT.setText("電子發票");
-                remainT.setTextColor(Color.parseColor("#66FF66"));
-                remindL.setBackgroundColor(Color.parseColor("#66FF66"));
+                remainT.setTextColor(Color.parseColor("#008844"));
+                remindL.setBackgroundColor(Color.parseColor("#008844"));
 
-                sbTitle.append(Common.sDay.format(new Date(I.getTime().getTime())));
-                sbTitle.append(I.getSecondtype().equals("O")?"其他":I.getSecondtype());
+                sbTitle.append(Common.sDay.format(new Date(I.getTime().getTime()))+" ");
+                sbTitle.append(I.getSecondtype().equals("0")?"其他":I.getSecondtype());
                 sbTitle.append("  共"+I.getAmount()+"元  ");
                 if(I.getDetail().equals("0"))
                 {
@@ -209,6 +210,8 @@ public class SelectListModelCom extends Fragment {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            p=position;
+                            SelectListModelActivity.page=4;
                             new GetSQLDate(SelectListModelCom.this,I).execute("reDownload");
                             progressDialog.setMessage("正在下傳資料,請稍候...");
                             progressDialog.show();
@@ -244,6 +247,8 @@ public class SelectListModelCom extends Fragment {
                         }
                     });
                 }
+                title.setText(sbTitle.toString());
+                decribe.setText(sbDecribe.toString());
             }else{
                 update.setText("修改");
                 final ConsumeVO c= (ConsumeVO) o;
@@ -253,18 +258,18 @@ public class SelectListModelCom extends Fragment {
                     remainT.setText("自動");
                     remainT.setTextColor(Color.parseColor("#EE7700"));
                     remindL.setBackgroundColor(Color.parseColor("#EE7700"));
-                }else{
-                    remindL.setVisibility(View.GONE);
-                }
-
-                if(c.getNotify().equals("true"))
-                {
                     remindL.setVisibility(View.VISIBLE);
                 }else{
-                    remindL.setVisibility(View.GONE);
+                    if(Boolean.valueOf(c.getNotify()))
+                    {
+                        remainT.setText("提醒");
+                        remainT.setTextColor(Color.RED);
+                        remindL.setBackgroundColor(Color.RED);
+                        remindL.setVisibility(View.VISIBLE);
+                    }else{
+                        remindL.setVisibility(View.GONE);
+                    }
                 }
-
-
 
                 StringBuffer stringBuffer=new StringBuffer();
                 //設定 title
@@ -274,7 +279,7 @@ public class SelectListModelCom extends Fragment {
                 title.setText(stringBuffer.toString());
 
                 //設定 describe
-                if(c.getFixDate().equals("true"))
+                if(c.getFixDate().equals("true")||c.isAuto())
                 {
                     fixL.setVisibility(View.VISIBLE);
                     stringBuffer=new StringBuffer();

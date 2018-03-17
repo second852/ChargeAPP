@@ -11,6 +11,7 @@ import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -179,6 +180,29 @@ public class ConsumeDB {
         }
         cursor.close();
         return consumeList;
+    }
+
+    public HashMap<String,Integer> getTimePeriodHashMap(Timestamp startTime, Timestamp endTime) {
+        String sql = "SELECT maintype,money FROM Consumer where  date between '"+startTime.getTime()+"' and '"+endTime.getTime()+"' order by date ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        HashMap<String,Integer> hashMap=new HashMap<>();
+        String main;
+        int money,total=0;
+        while (cursor.moveToNext()) {
+            main=cursor.getString(0);
+            money=cursor.getInt(1);
+            if(hashMap.get(main)==null)
+            {
+                hashMap.put(main,money);
+            }else{
+                hashMap.put(main,hashMap.get(main)+money);
+            }
+            total=money+total;
+        }
+        hashMap.put("total",total);
+        cursor.close();
+        return hashMap;
     }
 
 

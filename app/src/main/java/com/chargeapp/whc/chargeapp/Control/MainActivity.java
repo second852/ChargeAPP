@@ -153,7 +153,11 @@ public class MainActivity extends AppCompatActivity {
         {
                 Fragment fragment= new EleSetCarrier();
                 switchFragment(fragment);
+        }else{
+            Fragment fragment=new HomePage();
+            switchFragment(fragment);
         }
+
     }
 
     @Override
@@ -240,7 +244,6 @@ public class MainActivity extends AppCompatActivity {
         bankTybeDB.insert(new BankTypeVO("薪水", "股票", indexOfIntArray(imageAll, R.drawable.origin)));
         bankTybeDB.insert(new BankTypeVO("薪水", "利息", indexOfIntArray(imageAll, R.drawable.bank)));
         bankTybeDB.insert(new BankTypeVO("薪水", "股利", indexOfIntArray(imageAll, R.drawable.interest)));
-        Log.d("XZXXXXXX",typeDB.getAll().size()+" : "+typeDetailDB.getTypdAll().size()+" : "+bankTybeDB.getAll().size()+bankTybeDB.getAll().get(0).getId());
     }
 
     public static int indexOfIntArray(int[] array, int key) {
@@ -260,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
         v.setBackgroundColor(Color.parseColor("#FFDD55"));
         if(oldMainView !=null&&v!=oldMainView)
         {
-            oldMainView.setBackgroundColor(Color.parseColor("#f5f5f5"));
+            oldMainView.setBackgroundColor(Color.parseColor("#DDDDDD"));
         }
         oldMainView =v;
     }
@@ -414,6 +417,8 @@ public class MainActivity extends AppCompatActivity {
                     }else {
                         setTitle(R.string.text_Home);
                         drawerLayout.closeDrawer(GravityCompat.START);
+                        fragment=new HomePage();
+                        switchFragment(fragment);
                         listView.collapseGroup(i);
                     }
                     setColor(v);

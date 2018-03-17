@@ -170,7 +170,7 @@ public class SelectListModelIM extends Fragment {
 
             //設定 describe
             stringBuffer = new StringBuffer();
-            if (bankVO.getFixDate().equals("true")) {
+            if (bankVO.getFixDate().equals("true")&&bankVO.isAuto()) {
                 fixL.setVisibility(View.VISIBLE);
                 JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);
                 String daystatue = js.get("choicestatue").getAsString().trim();

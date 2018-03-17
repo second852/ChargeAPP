@@ -178,7 +178,7 @@ public class SelectListPieIncome extends Fragment {
             title.setText(stringBuffer.toString());
 
             //設定 describe
-            if (bankVO.getFixDate().equals("true")) {
+            if (bankVO.getFixDate().equals("true")||bankVO.isAuto()) {
                 stringBuffer=new StringBuffer();
                 JsonObject js=gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
                 String daystatue=js.get("choicestatue").getAsString().trim();

@@ -41,8 +41,10 @@ public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("BootReceiver","ACTION_DATE_CHANGED");
         sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         if (intent.getAction().equals(Intent.ACTION_DATE_CHANGED)) {
+            Log.d("BootReceiver","ACTION_DATE_CHANGED");
             id = 0;
             chargeAPPDB = new ChargeAPPDB(context);
             consumeDB = new ConsumeDB(chargeAPPDB.getReadableDatabase());
@@ -94,7 +96,7 @@ public class BootReceiver extends BroadcastReceiver {
 
                         }
                         if (notify && setNotify) {
-                            NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+//                            NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
                             Log.d("XXXXX", sf.format(setNewTime.getTimeInMillis()));
                         }
                     } else if ("每周".equals(action)) {
@@ -113,7 +115,7 @@ public class BootReceiver extends BroadcastReceiver {
                                 consumeDB.insert(consumeVO);
                             }
                             if (notify && setNotify) {
-                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+//                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
                             }
                         }
                     } else if ("每月".equals(action)) {
@@ -135,7 +137,7 @@ public class BootReceiver extends BroadcastReceiver {
                             }
 
                             if (notify && setNotify) {
-                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+//                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
                             }
                         }
                         if (Maxday < Integer.valueOf(fixdate) && day == Maxday) {
@@ -152,7 +154,7 @@ public class BootReceiver extends BroadcastReceiver {
                             }
 
                             if (notify && setNotify) {
-                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+//                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
                             }
                         }
                     } else {
@@ -174,7 +176,7 @@ public class BootReceiver extends BroadcastReceiver {
                             }
 
                             if (notify && setNotify) {
-                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+//                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
                             }
                         }
                     }
@@ -272,7 +274,7 @@ public class BootReceiver extends BroadcastReceiver {
                 }
             }
         }
-        notifyLottery(context);
+//        notifyLottery(context);
     }
 
     public void notifyLottery(Context context) {

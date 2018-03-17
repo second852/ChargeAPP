@@ -21,6 +21,8 @@
     <supports-screens android:smallScreens="true" />
     <supports-screens android:xlargeScreens="true" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/add"
@@ -31,6 +33,7 @@
         <activity android:name=".Control.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -38,7 +41,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode,face" />
@@ -48,13 +50,14 @@
                 <action android:name="android.intent.action.DATE_CHANGED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".Control.secondReceiver"></receiver>
+        <receiver android:name=".Control.secondReceiver" />
         <receiver
             android:name=".Control.SimpleWidgetProvider"
             android:label="手機載具">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/simple_widget_info" />

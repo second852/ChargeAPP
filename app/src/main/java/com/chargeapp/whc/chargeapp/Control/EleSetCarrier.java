@@ -206,6 +206,7 @@ public class EleSetCarrier extends Fragment {
             carrierVO.setCarNul(user);
             carrierVO.setPassword(password);
             carrierDB.insert(carrierVO);
+            setListAdapt();
 //            getIvnum= (GetSQLDate) new GetSQLDate(EleSetCarrier.this).execute("getInvoice",user,password);
 //            getIvnum.setProgressBar(progressBar);
 //            progressbarL.setVisibility(View.VISIBLE);
