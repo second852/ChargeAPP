@@ -260,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
     //設定目前選擇項目的顏色
     private void setColor(View v)
     {
+        (getSupportActionBar()).setDisplayShowCustomEnabled(false);
         v.setBackgroundColor(Color.parseColor("#FFDD55"));
         if(oldMainView !=null&&v!=oldMainView)
         {

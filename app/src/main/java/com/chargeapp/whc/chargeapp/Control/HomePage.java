@@ -6,12 +6,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -19,24 +17,19 @@ import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
-import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
-import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
+import org.apache.poi.ss.formula.functions.T;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,6 +40,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by Wang on 2018/3/17.
@@ -64,6 +58,7 @@ public class HomePage extends Fragment {
     private List<Map.Entry<String, Integer>> list_Data;
     private ArrayList<String> OKey;
     private ListView listView;
+    private int year,month,day;
 
 
     @Override
@@ -77,7 +72,10 @@ public class HomePage extends Fragment {
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         end=Calendar.getInstance();
-        start=new GregorianCalendar(end.get(Calendar.YEAR),end.get(Calendar.MONTH),end.get(Calendar.DAY_OF_MONTH),0,0,0);
+        year=end.get(Calendar.YEAR);
+        month=end.get(Calendar.MONTH);
+        day=end.get(Calendar.DAY_OF_MONTH);
+        start=new GregorianCalendar(year,month,day,0,0,0);
         setListLayout();
         return view;
     }
@@ -240,38 +238,163 @@ public class HomePage extends Fragment {
             ImageView imageView=itemView.findViewById(R.id.ivImage);
             TextView title=itemView.findViewById(R.id.goal);
             TextView describe=itemView.findViewById(R.id.describe);
+            TextView resultT=itemView.findViewById(R.id.resultT);
+            LinearLayout resultL=itemView.findViewById(R.id.resultL);
             if(o instanceof GoalVO)
             {
+                int consumeCount=0;
+                Calendar start,end;
                 GoalVO goalVO= (GoalVO) o;
-                if(goalVO.getType().equals("支出"))
+                imageView.setImageResource(R.drawable.goal);
+                String timeStatue=goalVO.getTimeStatue().trim();
+                StringBuffer describeContent=new StringBuffer();
+                if(goalVO.getType().trim().equals("支出"))
                 {
-                      String timeStatue=goalVO.getTimeStatue();
-                      int consumeCount;
+
                       if(timeStatue.equals("每天"))
                       {
-
-
+                          consumeCount=consumeDB.getTimeTotal(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()))+
+                          invoiceDB.getTotalBytime(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()));
+                          describeContent.append("花費 : 本日支出"+consumeCount+"元");
                       }else if(timeStatue.equals("每周"))
                       {
-
+                          int dweek=HomePage.this.start.get(Calendar.DAY_OF_WEEK);
+                          start=new GregorianCalendar(year,month,day-dweek+1,0,0,0);
+                          end=new GregorianCalendar(year,month,day,23,59,59);
+                          consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
+                                  invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+                          describeContent.append("花費 : 本周支出"+consumeCount+"元");
                       }else if(timeStatue.equals("每月"))
                       {
-
+                          start=new GregorianCalendar(year,month,1,0,0,0);
+                          end=new GregorianCalendar(year,month,day,23,59,59);
+                          consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
+                                  invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+                          describeContent.append("花費 : 本月支出"+consumeCount+"元");
                       }else if(timeStatue.equals("每年"))
                       {
-
-                      }else {
-
+                          int max=HomePage.this.start.getActualMaximum(Calendar.DAY_OF_MONTH);
+                          start=new GregorianCalendar(year,month,1,0,0,0);
+                          end=new GregorianCalendar(year,month,max,23,59,59);
+                          consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
+                                  invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+                          describeContent.append("花費 : 本年支出"+consumeCount+"元");
                       }
+                      title.setText("目標 : "+goalVO.getName()+" "+goalVO.getTimeStatue()+"支出"+goalVO.getMoney()+"元");
+                      if(Integer.valueOf(goalVO.getMoney())>consumeCount)
+                      {
+                          resultT.setText("達成");
+                          resultT.setTextColor(Color.parseColor("#2E8B57"));
+                          resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
 
-
+                      }else{
+                          resultT.setText("失敗");
+                          resultT.setTextColor(Color.RED);
+                          resultT.setBackgroundColor(Color.RED);
+                      }
+                      describe.setText(describeContent.toString());
                 }else {
+
+                    if(timeStatue.equals("今日"))
+                    {
+
+                        consumeCount=consumeDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()),new Timestamp(goalVO.getEndTime().getTime()))+
+                                invoiceDB.getTotalBytime(new Timestamp(goalVO.getStartTime().getTime()),new Timestamp(goalVO.getEndTime().getTime()));
+                        int saveMoney=bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()),new Timestamp(goalVO.getEndTime().getTime()))-consumeCount;
+
+                        if(goalVO.getEndTime().getTime()>System.currentTimeMillis())
+                        {
+                            title.setText(" 目標 :"+goalVO.getName()+" "+Common.sTwo.format(goalVO.getEndTime())+"前儲蓄"+goalVO.getMoney()+"元");
+                            if(Integer.valueOf(goalVO.getMoney())<saveMoney)
+                            {
+                                goalVO.setStatue(1);
+                                describeContent.append(Common.sTwo.format(goalVO.getEndTime())+"前已儲蓄"+saveMoney+"元");
+                                resultT.setText("達成");
+                                resultT.setTextColor(Color.parseColor("#2E8B57"));
+                                resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
+                            }else{
+                                goalVO.setStatue(2);
+                                describeContent.append(Common.sTwo.format(goalVO.getEndTime())+"前已儲蓄"+saveMoney+"元");
+                                resultT.setText("失敗");
+                                resultT.setTextColor(Color.RED);
+                                resultT.setBackgroundColor(Color.RED);
+                            }
+                            goalDB.update(goalVO);
+                        }else{
+                            title.setText(" 目標 :"+goalVO.getName()+" "+Common.sTwo.format(goalVO.getEndTime())+"前儲蓄"+goalVO.getMoney()+"元");
+                            double day=((goalVO.getEndTime().getTime()-System.currentTimeMillis())/(1000*60*60*24));
+                            if(Integer.valueOf(goalVO.getMoney())<saveMoney)
+                            {
+                                goalVO.setStatue(1);
+                                describeContent.append("倒數"+(int)day+"天 目前已儲蓄"+saveMoney+"元");
+                                resultT.setText("達成");
+                                resultT.setTextColor(Color.parseColor("#2E8B57"));
+                                resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
+                            }else{
+                                goalVO.setStatue(2);
+                                describeContent.append("倒數"+(int)day+"天 目前已儲蓄"+saveMoney+"元");
+                                resultT.setText("持續中");
+                                resultT.setTextColor(Color.RED);
+                                resultT.setBackgroundColor(Color.RED);
+                            }
+                        }
+                        describe.setText(describeContent.toString());
+                    }else if(timeStatue.equals("每月"))
+                    {
+                        int max=HomePage.this.start.getActualMaximum(Calendar.DAY_OF_MONTH);
+                        start=new GregorianCalendar(year,month,1,0,0,0);
+                        end=new GregorianCalendar(year,month,max,23,59,59);
+                        consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
+                                invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+                        int savemoney=bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))-consumeCount;
+                        title.setText(" 目標 :"+goalVO.getName()+" 每月儲蓄"+goalVO.getMoney()+"元");
+                        describe.setText("目前 : 本月已存款"+savemoney+"元");
+                        if(Integer.valueOf(goalVO.getMoney())<savemoney)
+                        {
+                            resultT.setText("達成");
+                            resultT.setTextColor(Color.parseColor("#2E8B57"));
+                            resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
+                        }else{
+                            resultT.setText("失敗");
+                            resultT.setTextColor(Color.RED);
+                            resultT.setBackgroundColor(Color.RED);
+                        }
+                    }else if(timeStatue.equals("每年"))
+                    {
+                        start=new GregorianCalendar(year,0,1,0,0,0);
+                        end=new GregorianCalendar(year,11,31,23,59,59);
+                        consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
+                                invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+                        int savemoney=bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))-consumeCount;
+                        title.setText(" 目標 :"+goalVO.getName()+" 每年儲蓄"+goalVO.getMoney()+"元");
+                        describe.setText("目前 : 本年已存款"+savemoney+"元");
+                        if(Integer.valueOf(goalVO.getMoney())<savemoney)
+                        {
+                            resultT.setText("達成");
+                            resultT.setTextColor(Color.parseColor("#2E8B57"));
+                            resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
+                        }else{
+                            resultT.setText("失敗");
+                            resultT.setTextColor(Color.RED);
+                            resultT.setBackgroundColor(Color.RED);
+                        }
+                    }
 
                 }
 
-
             }else{
+                //顯示本周花費
+                int consumeCount=0;
+                if(position==0)
+                {
+                    consumeCount=consumeDB.getTimeTotal(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()))+
+                            invoiceDB.getTotalBytime(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()));
 
+                }else {
+                    //顯示本月花費
+                    consumeCount=consumeDB.getTimeTotal(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()))+
+                            invoiceDB.getTotalBytime(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()));
+                }
             }
             return itemView;
         }
