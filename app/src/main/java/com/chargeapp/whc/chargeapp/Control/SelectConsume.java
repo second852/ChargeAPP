@@ -144,17 +144,17 @@ public class SelectConsume extends Fragment {
             String goalTimeStatue=goalVO.getTimeStatue().trim();
             if(goalTimeStatue.equals("每天"))
             {
-                Max= Integer.parseInt(goalVO.getMoney());
+                Max= goalVO.getMoney();
             }else if(goalTimeStatue.equals("每周"))
             {
-                Max= Integer.parseInt(goalVO.getMoney())/7;
+                Max= goalVO.getMoney()/7;
             }else if(goalTimeStatue.equals("每月"))
             {
                 int day=month.getActualMaximum(Calendar.DAY_OF_MONTH);
-                Max= Integer.parseInt(goalVO.getMoney())/day;
+                Max= goalVO.getMoney()/day;
             }else if(goalTimeStatue.equals("每年"))
             {
-                Max= Integer.parseInt(goalVO.getMoney())/365;
+                Max= goalVO.getMoney()/365;
             }
         }
     }

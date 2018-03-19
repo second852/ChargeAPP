@@ -469,7 +469,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
     private InvoiceVO jsonToInVoice(JsonObject j, String password, String user) throws IOException {
         InvoiceVO invoiceVO = new InvoiceVO();
-        invoiceVO.setAmount(j.get("amount").getAsString());
+        invoiceVO.setAmount(j.get("amount").getAsInt());
         invoiceVO.setCardEncrypt(password);
         invoiceVO.setCardNo(j.get("cardNo").getAsString());
         invoiceVO.setCardType(j.get("cardType").getAsString());
@@ -687,7 +687,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             hashMap.put("invDate", sf.format(new Date(invoiceVO.getTime().getTime())));
             hashMap.put("uuid", "second");
             hashMap.put("sellerName", invoiceVO.getSellerName());
-            hashMap.put("amount", invoiceVO.getAmount());
+            hashMap.put("amount", String.valueOf(invoiceVO.getAmount()));
             hashMap.put("appID", "EINV3201711184648");
             hashMap.put("cardEncrypt", invoiceVO.getCardEncrypt());
             String detailjs = getRemoteData(urldetail, hashMap);

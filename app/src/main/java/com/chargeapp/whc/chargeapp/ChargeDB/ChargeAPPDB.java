@@ -44,11 +44,11 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
             "name TEXT, image INTEGER , keyword text); ";
 
     private static final String TYPE_COMSUMER=" CREATE TABLE Consumer ( id INTEGER PRIMARY KEY AUTOINCREMENT, maintype TEXT NOT NULL," +
-            "secondtype TEXT, money TEXT, date Date , number TEXT , fixdate TEXT , fixdatedetail TEXT ,notify TEXT, detailname TEXT, iswin TEXT" +
+            "secondtype TEXT, money INTEGER, date Date , number TEXT , fixdate TEXT , fixdatedetail TEXT ,notify TEXT, detailname TEXT, iswin TEXT" +
             ",auto text,autoId INTEGER);";
 
     private static final String TYPE_BANK=" CREATE TABLE BANK ( id INTEGER PRIMARY KEY AUTOINCREMENT, maintype TEXT NOT NULL," +
-            "money TEXT, date Date , fixdate TEXT , fixdatedetail TEXT , detailname TEXT ,auto text,autoId INTEGER);";
+            "money INTEGER, date Date , fixdate TEXT , fixdatedetail TEXT , detailname TEXT ,auto text,autoId INTEGER);";
 
     private static final String TABLE_BANK_TYPE =
             "CREATE TABLE BANKTYPE ( id INTEGER PRIMARY KEY AUTOINCREMENT, groupNumber TEXT NOT NULL," +
@@ -56,11 +56,11 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
 
     private static final String TABLE_INVOICE =
             "CREATE TABLE INVOICE ( id INTEGER PRIMARY KEY AUTOINCREMENT, invNum TEXT NOT NULL," +
-                    "cardType TEXT, cardNo TEXT, cardEncrypt TEXT, time DATETIME, amount TEXT, detail TEXT, sellerName TEXT, invDonatable TEXT , donateMark TEXT, carrier TEXT, maintype TEXT, secondtype TEXT ,heartyteam TEXT,donateTime DATETIME,isWin TEXT,sellerBan TEXT, sellerAddress TEXT);";
+                    "cardType TEXT, cardNo TEXT, cardEncrypt TEXT, time DATETIME, amount INTEGER, detail TEXT, sellerName TEXT, invDonatable TEXT , donateMark TEXT, carrier TEXT, maintype TEXT, secondtype TEXT ,heartyteam TEXT,donateTime DATETIME,isWin TEXT,sellerBan TEXT, sellerAddress TEXT);";
 
     private static final String TABLE_GOAL =
             "CREATE TABLE Goal ( id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT NOT NULL," +
-                    "name TEXT, money text , timeStatue text, startTime DATETIME ,endTime DATETIME, notify TEXT , notifyStatue TEXT , notifyDate TEXT , noWeekend TEXT ,statue INTEGER) ;";
+                    "name TEXT, money INTEGER , timeStatue text, startTime DATETIME ,endTime DATETIME, notify TEXT , notifyStatue TEXT , notifyDate TEXT , noWeekend TEXT ,statue INTEGER) ;";
 
     public ChargeAPPDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);

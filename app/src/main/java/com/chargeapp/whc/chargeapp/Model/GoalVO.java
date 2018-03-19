@@ -15,7 +15,7 @@ public class GoalVO implements Serializable{
 
     private String name;
 
-    private String money;
+    private int money;
 
     private String timeStatue;
 
@@ -82,11 +82,11 @@ public class GoalVO implements Serializable{
         this.name = name;
     }
 
-    public String getMoney() {
+    public int getMoney() {
         return money;
     }
 
-    public void setMoney(String money) {
+    public void setMoney(int money) {
         this.money = money;
     }
 

@@ -32,7 +32,7 @@ public class BankDB {
             bankVO=new BankVO();
             bankVO.setId(cursor.getInt(0));
             bankVO.setMaintype(cursor.getString(1));
-            bankVO.setMoney(cursor.getString(2));
+            bankVO.setMoney(cursor.getInt(2));
             bankVO.setDate(new Date(cursor.getLong(3)));
             bankVO.setFixDate(cursor.getString(4));
             bankVO.setFixDateDetail(cursor.getString(5));
@@ -55,7 +55,7 @@ public class BankDB {
             bankVO=new BankVO();
             bankVO.setId(cursor.getInt(0));
             bankVO.setMaintype(cursor.getString(1));
-            bankVO.setMoney(cursor.getString(2));
+            bankVO.setMoney(cursor.getInt(2));
             bankVO.setDate(new Date(cursor.getLong(3)));
             bankVO.setFixDate(cursor.getString(4));
             bankVO.setFixDateDetail(cursor.getString(5));
@@ -78,7 +78,7 @@ public class BankDB {
             bankVO=new BankVO();
             bankVO.setId(cursor.getInt(0));
             bankVO.setMaintype(cursor.getString(1));
-            bankVO.setMoney(cursor.getString(2));
+            bankVO.setMoney(cursor.getInt(2));
             bankVO.setDate(new Date(cursor.getLong(3)));
             bankVO.setFixDate(cursor.getString(4));
             bankVO.setFixDateDetail(cursor.getString(5));
@@ -101,7 +101,7 @@ public class BankDB {
             bankVO=new BankVO();
             bankVO.setId(cursor.getInt(0));
             bankVO.setMaintype(cursor.getString(1));
-            bankVO.setMoney(cursor.getString(2));
+            bankVO.setMoney(cursor.getInt(2));
             bankVO.setDate(new Date(cursor.getLong(3)));
             bankVO.setFixDate(cursor.getString(4));
             bankVO.setFixDateDetail(cursor.getString(5));
@@ -123,7 +123,7 @@ public class BankDB {
             bankVO=new BankVO();
             bankVO.setId(cursor.getInt(0));
             bankVO.setMaintype(cursor.getString(1));
-            bankVO.setMoney(cursor.getString(2));
+            bankVO.setMoney(cursor.getInt(2));
             bankVO.setDate(new Date(cursor.getLong(3)));
             bankVO.setFixDate(cursor.getString(4));
             bankVO.setFixDateDetail(cursor.getString(5));
@@ -170,7 +170,7 @@ public class BankDB {
             bankVO=new BankVO();
             bankVO.setId(cursor.getInt(0));
             bankVO.setMaintype(cursor.getString(1));
-            bankVO.setMoney(cursor.getString(2));
+            bankVO.setMoney(cursor.getInt(2));
             bankVO.setDate(new Date(cursor.getLong(3)));
             bankVO.setFixDate(cursor.getString(4));
             bankVO.setFixDateDetail(cursor.getString(5));
@@ -193,7 +193,7 @@ public class BankDB {
             bankVO=new BankVO();
             bankVO.setId(cursor.getInt(0));
             bankVO.setMaintype(cursor.getString(1));
-            bankVO.setMoney(cursor.getString(2));
+            bankVO.setMoney(cursor.getInt(2));
             bankVO.setDate(new Date(cursor.getLong(3)));
             bankVO.setFixDate(cursor.getString(4));
             bankVO.setFixDateDetail(cursor.getString(5));

@@ -370,7 +370,7 @@ public class InsertIncome extends Fragment {
         c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
         Date d = new Date(c.getTimeInMillis());
         bankVO.setMaintype(name.getText().toString());
-        bankVO.setMoney(money.getText().toString());
+        bankVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
         bankVO.setDate(d);
         bankVO.setFixDate(String.valueOf(fixdate.isChecked()));
         bankVO.setFixDateDetail(fixdatedetail);

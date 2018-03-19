@@ -94,10 +94,10 @@ public class SelectDeposit extends Fragment {
             String goalTimeStatue=goalVO.getTimeStatue().trim();
             if(goalTimeStatue.equals("每月"))
             {
-                Max= Integer.parseInt(goalVO.getMoney());
+                Max= goalVO.getMoney();
             }else if(goalTimeStatue.equals("每年"))
             {
-                Max= Integer.parseInt(goalVO.getMoney())/12;
+                Max= goalVO.getMoney()/12;
             }else if(goalTimeStatue.equals("今日"))
             {
                 Calendar start=new GregorianCalendar();
@@ -109,7 +109,7 @@ public class SelectDeposit extends Fragment {
                 {
                     divid=1;
                 }
-                Max= Integer.parseInt(goalVO.getMoney())/divid;
+                Max= goalVO.getMoney()/divid;
             }
         }
     }

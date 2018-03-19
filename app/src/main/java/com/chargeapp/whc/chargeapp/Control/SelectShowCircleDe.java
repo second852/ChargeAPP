@@ -213,7 +213,7 @@ public class SelectShowCircleDe extends Fragment {
                 }else{
                     hashMap.put(c.getSecondType(),hashMap.get(c.getSecondType())+Integer.valueOf(c.getMoney()));
                 }
-                total=total+Integer.parseInt(c.getMoney());
+                total=total+c.getMoney();
             }
             objects.addAll(consumeVOS);
         }
@@ -233,7 +233,7 @@ public class SelectShowCircleDe extends Fragment {
                 }else{
                     hashMap.put(I.getSecondtype(),hashMap.get(I.getSecondtype())+Integer.valueOf(I.getAmount()));
                 }
-                total= total+Integer.parseInt(I.getAmount());
+                total= total+I.getAmount();
             }
             objects.addAll(invoiceVOS);
         }

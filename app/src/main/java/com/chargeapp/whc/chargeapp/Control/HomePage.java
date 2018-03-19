@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.view.menu.MenuWrapperFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +22,9 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
+import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
+import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
@@ -38,6 +42,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -88,6 +93,7 @@ public class HomePage extends Fragment {
             objects.addAll(goalVOS);
         }else{
             objects.add("本周花費");
+            objects.add("本月花費");
         }
         listView.setAdapter(new ListAdapter(getActivity(),objects));
     }
@@ -289,8 +295,8 @@ public class HomePage extends Fragment {
 
                       }else{
                           resultT.setText("失敗");
-                          resultT.setTextColor(Color.RED);
-                          resultT.setBackgroundColor(Color.RED);
+                          resultT.setTextColor(Color.parseColor("#DC143C"));
+                          resultL.setBackgroundColor(Color.parseColor("#DC143C"));
                       }
                       describe.setText(describeContent.toString());
                 }else {
@@ -316,8 +322,8 @@ public class HomePage extends Fragment {
                                 goalVO.setStatue(2);
                                 describeContent.append(Common.sTwo.format(goalVO.getEndTime())+"前已儲蓄"+saveMoney+"元");
                                 resultT.setText("失敗");
-                                resultT.setTextColor(Color.RED);
-                                resultT.setBackgroundColor(Color.RED);
+                                resultT.setTextColor(Color.parseColor("#DC143C"));
+                                resultL.setBackgroundColor(Color.parseColor("#DC143C"));
                             }
                             goalDB.update(goalVO);
                         }else{
@@ -334,8 +340,8 @@ public class HomePage extends Fragment {
                                 goalVO.setStatue(2);
                                 describeContent.append("倒數"+(int)day+"天 目前已儲蓄"+saveMoney+"元");
                                 resultT.setText("持續中");
-                                resultT.setTextColor(Color.RED);
-                                resultT.setBackgroundColor(Color.RED);
+                                resultT.setTextColor(Color.parseColor("#DC143C"));
+                                resultL.setBackgroundColor(Color.parseColor("#DC143C"));
                             }
                         }
                         describe.setText(describeContent.toString());
@@ -356,8 +362,8 @@ public class HomePage extends Fragment {
                             resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
                         }else{
                             resultT.setText("失敗");
-                            resultT.setTextColor(Color.RED);
-                            resultT.setBackgroundColor(Color.RED);
+                            resultT.setTextColor(Color.parseColor("#DC143C"));
+                            resultL.setBackgroundColor(Color.parseColor("#DC143C"));
                         }
                     }else if(timeStatue.equals("每年"))
                     {
@@ -375,25 +381,75 @@ public class HomePage extends Fragment {
                             resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
                         }else{
                             resultT.setText("失敗");
-                            resultT.setTextColor(Color.RED);
-                            resultT.setBackgroundColor(Color.RED);
+                            resultT.setTextColor(Color.parseColor("#DC143C"));
+                            resultL.setBackgroundColor(Color.parseColor("#DC143C"));
                         }
                     }
 
                 }
 
             }else{
+
+                //沒有目標顯示
                 //顯示本周花費
-                int consumeCount=0;
+                int consumeCount;
+                resultL.setVisibility(View.GONE);
+                HashMap<String,Integer> hashMap=new HashMap<>();
+                List<ChartEntry> chartEntries= new ArrayList<>();
+                List<String> strings=new ArrayList<>();
+
                 if(position==0)
                 {
-                    consumeCount=consumeDB.getTimeTotal(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()))+
-                            invoiceDB.getTotalBytime(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()));
-
+                    imageView.setImageResource(R.drawable.bouns);
+                    int dweek=HomePage.this.start.get(Calendar.DAY_OF_WEEK);
+                    start=new GregorianCalendar(year,month,day-dweek+1,0,0,0);
+                    end=new GregorianCalendar(year,month,day,23,59,59);
+                    consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
+                            invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+                    title.setText("本周支出 : "+consumeCount+"元");
+                    List<ChartEntry> consumeVOS=consumeDB.getTimeMaxType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+                    List<ChartEntry> invoiceVOS=invoiceDB.getInvoiceBytimeMaxType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+                    chartEntries.addAll(consumeVOS);
+                    chartEntries.addAll(invoiceVOS);
                 }else {
                     //顯示本月花費
-                    consumeCount=consumeDB.getTimeTotal(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()))+
-                            invoiceDB.getTotalBytime(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()));
+                    imageView.setImageResource(R.drawable.lotto);
+                    int max=HomePage.this.start.getActualMaximum(Calendar.DAY_OF_MONTH);
+                    start=new GregorianCalendar(year,month,1,0,0,0);
+                    end=new GregorianCalendar(year,month,max,23,59,59);
+                    consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
+                            invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+                    title.setText("本年支出 : "+consumeCount+"元");
+                    List<ChartEntry> consumeVOS=consumeDB.getTimeMaxType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+                    List<ChartEntry> invoiceVOS=invoiceDB.getInvoiceBytimeMaxType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+                    chartEntries.addAll(consumeVOS);
+                    chartEntries.addAll(invoiceVOS);
+                }
+
+                if(chartEntries.size()>0)
+                {
+                    describe.setVisibility(View.VISIBLE);
+                    Collections.sort(chartEntries, new Comparator<ChartEntry>() {
+                        @Override
+                        public int compare(ChartEntry o1, ChartEntry o2) {
+                            return o2.getValue()-o1.getValue();
+                        }
+                    });
+
+                    for(ChartEntry chartEntry:chartEntries)
+                    {
+                        if(hashMap.get(chartEntry.getKey())==null)
+                        {
+                            hashMap.put(chartEntry.getKey(),chartEntry.getValue());
+                            strings.add(chartEntry.getKey());
+                        }else{
+                            hashMap.put(chartEntry.getKey(),hashMap.get(chartEntry.getKey())+chartEntry.getValue());
+                        }
+                    }
+                    describe.setText("最多花費 : "+(strings.get(0).equals("O")?"其他":strings.get(0))+" "+ hashMap.get(strings.get(0))+"元");
+                    describe.setVisibility(View.VISIBLE);
+                }else{
+                    describe.setVisibility(View.GONE);
                 }
             }
             return itemView;

@@ -247,7 +247,7 @@ public class GoalInsert extends Fragment {
             goalVO.setStartTime(new Date(System.currentTimeMillis()));
             String reMa=(remindD.getSelectedItem()==null)?"":remindD.getSelectedItem().toString();
             goalVO.setName(goalName);
-            goalVO.setMoney(goalMoney);
+            goalVO.setMoney(Integer.valueOf(goalMoney));
             goalVO.setNoWeekend(noWeekend.isChecked());
             goalVO.setNotify(remind.isChecked());
             goalVO.setNotifyDate(reMa);

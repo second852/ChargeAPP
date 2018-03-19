@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 
@@ -35,7 +36,7 @@ public class ConsumeDB {
             consumeVO.setId(cursor.getInt(0));
             consumeVO.setMaintype(cursor.getString(1));
             consumeVO.setSecondType(cursor.getString(2));
-            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setMoney(cursor.getInt(3));
             consumeVO.setDate(new Date(cursor.getLong(4)));
             consumeVO.setNumber(cursor.getString(5));
             consumeVO.setFixDate(cursor.getString(6));
@@ -62,7 +63,7 @@ public class ConsumeDB {
             consumeVO.setId(cursor.getInt(0));
             consumeVO.setMaintype(cursor.getString(1));
             consumeVO.setSecondType(cursor.getString(2));
-            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setMoney(cursor.getInt(3));
             consumeVO.setDate(new Date(cursor.getLong(4)));
             consumeVO.setNumber(cursor.getString(5));
             consumeVO.setFixDate(cursor.getString(6));
@@ -88,7 +89,7 @@ public class ConsumeDB {
             consumeVO.setId(cursor.getInt(0));
             consumeVO.setMaintype(cursor.getString(1));
             consumeVO.setSecondType(cursor.getString(2));
-            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setMoney(cursor.getInt(3));
             consumeVO.setDate(new Date(cursor.getLong(4)));
             consumeVO.setNumber(cursor.getString(5));
             consumeVO.setFixDate(cursor.getString(6));
@@ -115,7 +116,7 @@ public class ConsumeDB {
             consumeVO.setId(cursor.getInt(0));
             consumeVO.setMaintype(cursor.getString(1));
             consumeVO.setSecondType(cursor.getString(2));
-            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setMoney(cursor.getInt(3));
             consumeVO.setDate(new Date(cursor.getLong(4)));
             consumeVO.setNumber(cursor.getString(5));
             consumeVO.setFixDate(cursor.getString(6));
@@ -143,6 +144,23 @@ public class ConsumeDB {
         return total;
     }
 
+
+    public List<ChartEntry> getTimeMaxType(Timestamp startTime, Timestamp endTime) {
+        String sql = "SELECT SUM(money),maintype FROM Consumer where date between '"+startTime.getTime()+"' and '"+endTime.getTime()+"' group by maintype ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<ChartEntry> chartEntries=new ArrayList<>();
+        ChartEntry chartEntry;
+        while (cursor.moveToNext()) {
+            chartEntry=new ChartEntry();
+            chartEntry.setValue(cursor.getInt(0));
+            chartEntry.setKey(cursor.getString(1));
+            chartEntries.add(chartEntry);
+        }
+        cursor.close();
+        return chartEntries;
+    }
+
     public long getMinTime() {
         String sql = "SELECT min(date) FROM Consumer ;";
         String[] args = {};
@@ -166,7 +184,7 @@ public class ConsumeDB {
             consumeVO.setId(cursor.getInt(0));
             consumeVO.setMaintype(cursor.getString(1));
             consumeVO.setSecondType(cursor.getString(2));
-            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setMoney(cursor.getInt(3));
             consumeVO.setDate(new Date(cursor.getLong(4)));
             consumeVO.setNumber(cursor.getString(5));
             consumeVO.setFixDate(cursor.getString(6));
@@ -216,7 +234,7 @@ public class ConsumeDB {
             consumeVO.setId(cursor.getInt(0));
             consumeVO.setMaintype(cursor.getString(1));
             consumeVO.setSecondType(cursor.getString(2));
-            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setMoney(cursor.getInt(3));
             consumeVO.setDate(new Date(cursor.getLong(4)));
             consumeVO.setNumber(cursor.getString(5));
             consumeVO.setFixDate(cursor.getString(6));
@@ -243,7 +261,7 @@ public class ConsumeDB {
             consumeVO.setId(cursor.getInt(0));
             consumeVO.setMaintype(cursor.getString(1));
             consumeVO.setSecondType(cursor.getString(2));
-            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setMoney(cursor.getInt(3));
             consumeVO.setDate(new Date(cursor.getLong(4)));
             consumeVO.setNumber(cursor.getString(5));
             consumeVO.setFixDate(cursor.getString(6));
@@ -271,7 +289,7 @@ public class ConsumeDB {
             consumeVO.setId(cursor.getInt(0));
             consumeVO.setMaintype(cursor.getString(1));
             consumeVO.setSecondType(cursor.getString(2));
-            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setMoney(cursor.getInt(3));
             consumeVO.setDate(new Date(cursor.getLong(4)));
             consumeVO.setNumber(cursor.getString(5));
             consumeVO.setFixDate(cursor.getString(6));
@@ -297,7 +315,7 @@ public class ConsumeDB {
             consumeVO.setId(cursor.getInt(0));
             consumeVO.setMaintype(cursor.getString(1));
             consumeVO.setSecondType(cursor.getString(2));
-            consumeVO.setMoney(cursor.getString(3));
+            consumeVO.setMoney(cursor.getInt(3));
             consumeVO.setDate(new Date(cursor.getLong(4)));
             consumeVO.setNumber(cursor.getString(5));
             consumeVO.setFixDate(cursor.getString(6));

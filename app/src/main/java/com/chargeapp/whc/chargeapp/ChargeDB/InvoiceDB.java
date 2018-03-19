@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 
@@ -38,7 +39,7 @@ public class InvoiceDB {
             invoiceVO.setCardNo(cursor.getString(3));
             invoiceVO.setCardEncrypt(cursor.getString(4));
             invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getString(6));
+            invoiceVO.setAmount(cursor.getInt(6));
             invoiceVO.setDetail(cursor.getString(7));
             invoiceVO.setSellerName(cursor.getString(8));
             invoiceVO.setInvDonatable(cursor.getString(9));
@@ -71,7 +72,7 @@ public class InvoiceDB {
             invoiceVO.setCardNo(cursor.getString(3));
             invoiceVO.setCardEncrypt(cursor.getString(4));
             invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getString(6));
+            invoiceVO.setAmount(cursor.getInt(6));
             invoiceVO.setDetail(cursor.getString(7));
             invoiceVO.setSellerName(cursor.getString(8));
             invoiceVO.setInvDonatable(cursor.getString(9));
@@ -104,7 +105,7 @@ public class InvoiceDB {
             invoiceVO.setCardNo(cursor.getString(3));
             invoiceVO.setCardEncrypt(cursor.getString(4));
             invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getString(6));
+            invoiceVO.setAmount(cursor.getInt(6));
             invoiceVO.setDetail(cursor.getString(7));
             invoiceVO.setSellerName(cursor.getString(8));
             invoiceVO.setInvDonatable(cursor.getString(9));
@@ -138,7 +139,7 @@ public class InvoiceDB {
             invoiceVO.setCardNo(cursor.getString(3));
             invoiceVO.setCardEncrypt(cursor.getString(4));
             invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getString(6));
+            invoiceVO.setAmount(cursor.getInt(6));
             invoiceVO.setDetail(cursor.getString(7));
             invoiceVO.setSellerName(cursor.getString(8));
             invoiceVO.setInvDonatable(cursor.getString(9));
@@ -171,7 +172,7 @@ public class InvoiceDB {
             invoiceVO.setCardNo(cursor.getString(3));
             invoiceVO.setCardEncrypt(cursor.getString(4));
             invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getString(6));
+            invoiceVO.setAmount(cursor.getInt(6));
             invoiceVO.setDetail(cursor.getString(7));
             invoiceVO.setSellerName(cursor.getString(8));
             invoiceVO.setInvDonatable(cursor.getString(9));
@@ -205,7 +206,7 @@ public class InvoiceDB {
             invoiceVO.setCardNo(cursor.getString(3));
             invoiceVO.setCardEncrypt(cursor.getString(4));
             invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getString(6));
+            invoiceVO.setAmount(cursor.getInt(6));
             invoiceVO.setDetail(cursor.getString(7));
             invoiceVO.setSellerName(cursor.getString(8));
             invoiceVO.setInvDonatable(cursor.getString(9));
@@ -291,7 +292,7 @@ public class InvoiceDB {
             invoiceVO.setCardNo(cursor.getString(3));
             invoiceVO.setCardEncrypt(cursor.getString(4));
             invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getString(6));
+            invoiceVO.setAmount(cursor.getInt(6));
             invoiceVO.setDetail(cursor.getString(7));
             invoiceVO.setSellerName(cursor.getString(8));
             invoiceVO.setInvDonatable(cursor.getString(9));
@@ -348,7 +349,7 @@ public class InvoiceDB {
             invoiceVO.setCardNo(cursor.getString(3));
             invoiceVO.setCardEncrypt(cursor.getString(4));
             invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getString(6));
+            invoiceVO.setAmount(cursor.getInt(6));
             invoiceVO.setDetail(cursor.getString(7));
             invoiceVO.setSellerName(cursor.getString(8));
             invoiceVO.setInvDonatable(cursor.getString(9));
@@ -404,7 +405,7 @@ public class InvoiceDB {
             invoiceVO.setCardNo(cursor.getString(3));
             invoiceVO.setCardEncrypt(cursor.getString(4));
             invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getString(6));
+            invoiceVO.setAmount(cursor.getInt(6));
             invoiceVO.setDetail(cursor.getString(7));
             invoiceVO.setSellerName(cursor.getString(8));
             invoiceVO.setInvDonatable(cursor.getString(9));
@@ -423,6 +424,23 @@ public class InvoiceDB {
         return invoiceVOSList;
     }
 
+
+    public List<ChartEntry> getInvoiceBytimeMaxType(Timestamp start, Timestamp end) {
+        String sql = "SELECT SUM(amount), maintype FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' group by maintype;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<ChartEntry> chartEntries=new ArrayList<>();
+        ChartEntry chartEntry;
+        while (cursor.moveToNext()) {
+            chartEntry=new ChartEntry();
+            chartEntry.setValue(cursor.getInt(0));
+            chartEntry.setKey(cursor.getString(1));
+            chartEntries.add(chartEntry);
+        }
+        cursor.close();
+        return chartEntries;
+    }
+
     public List<InvoiceVO> getInvoiceBytimeMainType(Timestamp start,Timestamp end,String mainType,String user) {
         String sql = "SELECT * FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' and maintype = '"+mainType+"' and carrier = '"+user+"' order by time desc;";
         String[] args = {};
@@ -437,7 +455,7 @@ public class InvoiceDB {
             invoiceVO.setCardNo(cursor.getString(3));
             invoiceVO.setCardEncrypt(cursor.getString(4));
             invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getString(6));
+            invoiceVO.setAmount(cursor.getInt(6));
             invoiceVO.setDetail(cursor.getString(7));
             invoiceVO.setSellerName(cursor.getString(8));
             invoiceVO.setInvDonatable(cursor.getString(9));
@@ -470,7 +488,7 @@ public class InvoiceDB {
             invoiceVO.setCardNo(cursor.getString(3));
             invoiceVO.setCardEncrypt(cursor.getString(4));
             invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getString(6));
+            invoiceVO.setAmount(cursor.getInt(6));
             invoiceVO.setDetail(cursor.getString(7));
             invoiceVO.setSellerName(cursor.getString(8));
             invoiceVO.setInvDonatable(cursor.getString(9));
@@ -515,7 +533,7 @@ public class InvoiceDB {
             invoiceVO.setCardNo(cursor.getString(3));
             invoiceVO.setCardEncrypt(cursor.getString(4));
             invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getString(6));
+            invoiceVO.setAmount(cursor.getInt(6));
             invoiceVO.setDetail(cursor.getString(7));
             invoiceVO.setSellerName(cursor.getString(8));
             invoiceVO.setInvDonatable(cursor.getString(9));

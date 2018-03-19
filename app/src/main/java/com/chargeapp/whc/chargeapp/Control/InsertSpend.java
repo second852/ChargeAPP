@@ -580,7 +580,7 @@ public class InsertSpend extends Fragment {
         Date d = new Date(c.getTimeInMillis());
         consumeVO.setMaintype(name.getText().toString());
         consumeVO.setSecondType(secondname.getText().toString());
-        consumeVO.setMoney(money.getText().toString());
+        consumeVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
         consumeVO.setDate(d);
         consumeVO.setNumber(number.getText().toString());
         consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));

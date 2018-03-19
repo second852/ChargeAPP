@@ -32,7 +32,7 @@ public class GoalDB {
            goalVO.setId(cursor.getInt(0));
            goalVO.setType(cursor.getString(1));
            goalVO.setName(cursor.getString(2));
-           goalVO.setMoney(cursor.getString(3));
+           goalVO.setMoney(cursor.getInt(3));
            goalVO.setTimeStatue(cursor.getString(4));
            goalVO.setStartTime(new Date(cursor.getLong(5)));
            goalVO.setEndTime(new Date(cursor.getLong(6)));
@@ -58,7 +58,7 @@ public class GoalDB {
             goalVO.setId(cursor.getInt(0));
             goalVO.setType(cursor.getString(1));
             goalVO.setName(cursor.getString(2));
-            goalVO.setMoney(cursor.getString(3));
+            goalVO.setMoney(cursor.getInt(3));
             goalVO.setTimeStatue(cursor.getString(4));
             goalVO.setStartTime(new Date(cursor.getLong(5)));
             goalVO.setEndTime(new Date(cursor.getLong(6)));
@@ -83,7 +83,7 @@ public class GoalDB {
             goalVO.setId(cursor.getInt(0));
             goalVO.setType(cursor.getString(1));
             goalVO.setName(cursor.getString(2));
-            goalVO.setMoney(cursor.getString(3));
+            goalVO.setMoney(cursor.getInt(3));
             goalVO.setTimeStatue(cursor.getString(4));
             goalVO.setStartTime(new Date(cursor.getLong(5)));
             goalVO.setEndTime(new Date(cursor.getLong(6)));

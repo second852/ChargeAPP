@@ -342,7 +342,7 @@ public class UpdateIncome extends Fragment {
         c.set(year, month, day, 12, 0, 0);
         Date d = new Date(c.getTimeInMillis());
         bankVO.setMaintype(name.getText().toString());
-        bankVO.setMoney(money.getText().toString());
+        bankVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
         bankVO.setDate(d);
         bankVO.setFixDate(String.valueOf(fixdate.isChecked()));
         bankVO.setFixDateDetail(fixdatedetail);

@@ -15,7 +15,7 @@ public class InvoiceVO implements Serializable{
     private String cardNo;
     private String cardEncrypt;
     private Timestamp time;
-    private String amount;
+    private int amount;
     private String detail;
     private String invDonatable;
     private String donateMark;
@@ -142,11 +142,11 @@ public class InvoiceVO implements Serializable{
         this.time = time;
     }
 
-    public String getAmount() {
+    public int getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(int amount) {
         this.amount = amount;
     }
 

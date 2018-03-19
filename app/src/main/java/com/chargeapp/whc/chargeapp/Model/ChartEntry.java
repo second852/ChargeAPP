@@ -2,6 +2,7 @@ package com.chargeapp.whc.chargeapp.Model;
 
 import android.app.DialogFragment;
 
+import java.util.Comparator;
 import java.util.Map;
 
 /**
@@ -13,6 +14,11 @@ public class ChartEntry implements Map.Entry<String,Integer>{
     Integer value;
 
     public ChartEntry(String key, Integer value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public ChartEntry() {
         this.key = key;
         this.value = value;
     }
@@ -36,5 +42,22 @@ public class ChartEntry implements Map.Entry<String,Integer>{
     public Integer setValue(Integer value) {
         this.value=value;
         return this.value;
+    }
+
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ChartEntry that = (ChartEntry) o;
+
+        return key.equals(that.key);
+    }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
     }
 }

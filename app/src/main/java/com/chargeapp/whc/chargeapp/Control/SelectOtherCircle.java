@@ -141,7 +141,7 @@ public class SelectOtherCircle extends Fragment {
                         }
                     }
                     mapHashMap.put(c.getMaintype(),second);
-                    total = total + Integer.parseInt(c.getMoney());
+                    total = total + c.getMoney();
                 }
             }
             if (!noShowCarrier&&carrierVOS.size()>0) {
@@ -165,7 +165,7 @@ public class SelectOtherCircle extends Fragment {
                         }
                     }
                     mapHashMap.put(I.getMaintype(),second);
-                    total = total + Integer.parseInt(I.getAmount());
+                    total = total + I.getAmount();
                 }
             }
             if (total <= 0) {

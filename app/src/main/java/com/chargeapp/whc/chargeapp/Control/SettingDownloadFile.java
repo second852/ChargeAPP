@@ -294,7 +294,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         goalVO.setId((int) row.getCell(0).getNumericCellValue());
                         goalVO.setType(row.getCell(1).getStringCellValue());
                         goalVO.setName(row.getCell(2).getStringCellValue());
-                        goalVO.setMoney(row.getCell(3).getStringCellValue());
+                        goalVO.setMoney((int)row.getCell(3).getNumericCellValue());
                         goalVO.setTimeStatue(row.getCell(4).getStringCellValue());
                         goalVO.setStartTime(new java.sql.Date((long) row.getCell(5).getNumericCellValue()));
                         goalVO.setEndTime(new java.sql.Date((long) row.getCell(6).getNumericCellValue()));
@@ -308,7 +308,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         BankVO bankVO = new BankVO();
                         bankVO.setId((int) row.getCell(0).getNumericCellValue());
                         bankVO.setMaintype(row.getCell(1).getStringCellValue());
-                        bankVO.setMoney(row.getCell(2).getStringCellValue());
+                        bankVO.setMoney((int)row.getCell(2).getNumericCellValue());
                         bankVO.setDate(new java.sql.Date((long) row.getCell(3).getNumericCellValue()));
                         bankVO.setFixDate(row.getCell(4).getStringCellValue());
                         bankVO.setFixDateDetail(row.getCell(5).getStringCellValue());
@@ -321,7 +321,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         consumeVO.setId((int) row.getCell(0).getNumericCellValue());
                         consumeVO.setMaintype(row.getCell(1).getStringCellValue());
                         consumeVO.setSecondType(row.getCell(2).getStringCellValue());
-                        consumeVO.setMoney(row.getCell(3).getStringCellValue());
+                        consumeVO.setMoney((int)row.getCell(3).getNumericCellValue());
                         consumeVO.setDate(new java.sql.Date((long) row.getCell(4).getNumericCellValue()));
                         consumeVO.setNumber(row.getCell(5).getStringCellValue());
                         consumeVO.setFixDate(row.getCell(6).getStringCellValue());
@@ -340,7 +340,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         invoiceVO.setCardNo(row.getCell(3).getStringCellValue());
                         invoiceVO.setCardEncrypt(row.getCell(4).getStringCellValue());
                         invoiceVO.setTime(new Timestamp((long) row.getCell(5).getNumericCellValue()));
-                        invoiceVO.setAmount(row.getCell(6).getStringCellValue());
+                        invoiceVO.setAmount((int)row.getCell(6).getNumericCellValue());
                         invoiceVO.setDetail(row.getCell(7).getStringCellValue());
                         invoiceVO.setSellerName(row.getCell(8).getStringCellValue());
                         invoiceVO.setInvDonatable(row.getCell(9).getStringCellValue());

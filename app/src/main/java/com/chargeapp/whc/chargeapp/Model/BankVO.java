@@ -21,7 +21,7 @@ public class BankVO implements Serializable{
     /*
     *   薪水金額
     * */
-    private String money;
+    private int money;
     /*
     * 入帳日期
     * */
@@ -80,11 +80,11 @@ public class BankVO implements Serializable{
         this.detailname = detailname;
     }
 
-    public String getMoney() {
+    public int getMoney() {
         return money;
     }
 
-    public void setMoney(String money) {
+    public void setMoney(int money) {
         this.money = money;
     }
 

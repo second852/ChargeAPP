@@ -104,7 +104,7 @@ public class SelectDetCircle extends Fragment {
                         second.put(c.getSecondType(), second.get(c.getSecondType()) + Integer.valueOf(c.getMoney()));
                     }
                 }
-                total = total + Integer.parseInt(c.getMoney());
+                total = total + c.getMoney();
             }
         }
         if (!noShowCarrier) {
@@ -128,7 +128,7 @@ public class SelectDetCircle extends Fragment {
                     }
                 }
 
-                total = total + Integer.parseInt(I.getAmount());
+                total = total + I.getAmount();
             }
         }
         getActivity().setTitle(sf.format(new Date(start.getTimeInMillis())));
