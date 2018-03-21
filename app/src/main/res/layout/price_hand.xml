@@ -42,66 +42,32 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/DRtittle"
-        android:layout_width="match_parent"
+        android:id="@+id/modelR"
+        android:layout_width="wrap_content"
         android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
         android:layout_below="@+id/PIdateL"
         android:layout_marginTop="10dp"
-        android:background="#FFBB66"
-        android:orientation="horizontal"
-        android:padding="6dp">
+        android:background="#aaaaaa">
 
-        <TextView
-            android:id="@+id/DRdate"
+        <Spinner
+            android:id="@+id/choiceModel"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:layout_gravity="center"
-            android:layout_marginLeft="40dp"
-            android:text="鍵盤"
-            android:textColor="#000000"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/QrCodeA"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="50dp"
-            android:layout_toRightOf="@+id/DRdate"
-            android:text="QRcode"
-            android:textColor="#000000"
-            android:textSize="20sp" />
-
-        <TextView
-            android:id="@+id/voice"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="50dp"
-            android:layout_toRightOf="@+id/QrCodeA"
-            android:text="聲音"
-            android:textColor="#000000"
-            android:textSize="20sp" />
+            android:layout_margin="2dp"
+            android:backgroundTint="#000000"
+            android:gravity="center"
+            android:theme="@style/spinner"/>
     </RelativeLayout>
-    <TextView
-        android:layout_marginTop="2dp"
-        android:background="#ffffff"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="30dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/showRemain"
-        android:textColor="#FF0000"
-        android:visibility="gone"
-        />
+
+
     <TextView
         android:id="@+id/priceTitle"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_below="@+id/DRtittle"
+        android:layout_below="@+id/modelR"
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="請輸入後三碼"
@@ -167,4 +133,18 @@
             android:layout_margin="5dp"
             />
     </RelativeLayout>
+
+    <TextView
+        android:layout_marginTop="2dp"
+        android:background="#ffffff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/showRemain"
+        android:textColor="#FF0000"
+        android:visibility="gone"
+        />
 </RelativeLayout>

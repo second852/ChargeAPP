@@ -1,7 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
-import android.graphics.Color;
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -97,7 +97,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
 
 
     public static class MainPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 12;
+        private static int NUM_ITEMS = 9;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);

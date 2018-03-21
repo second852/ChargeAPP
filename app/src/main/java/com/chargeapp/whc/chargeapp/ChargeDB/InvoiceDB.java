@@ -52,6 +52,7 @@ public class InvoiceDB {
             invoiceVO.setIswin(cursor.getString(16));
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -85,6 +86,7 @@ public class InvoiceDB {
             invoiceVO.setIswin(cursor.getString(16));
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -118,6 +120,7 @@ public class InvoiceDB {
             invoiceVO.setIswin(cursor.getString(16));
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -152,14 +155,15 @@ public class InvoiceDB {
             invoiceVO.setIswin(cursor.getString(16));
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
         return invoiceVOSList;
     }
 
-    public List<InvoiceVO> getWinIn(String carrrier,long startTime,long endTime) {
-        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and iswin != 'N' and time >= '"+startTime+"' and time <'"+endTime+"' order by time desc;";
+    public List<InvoiceVO> getWinIn(long startTime,long endTime) {
+        String sql = "SELECT * FROM INVOICE  where iswin != 'N' and time >= '"+startTime+"' and time <'"+endTime+"' order by time desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
@@ -185,6 +189,7 @@ public class InvoiceDB {
             invoiceVO.setIswin(cursor.getString(16));
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -219,6 +224,7 @@ public class InvoiceDB {
             invoiceVO.setIswin(cursor.getString(16));
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -305,6 +311,7 @@ public class InvoiceDB {
             invoiceVO.setIswin(cursor.getString(16));
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -362,6 +369,7 @@ public class InvoiceDB {
             invoiceVO.setIswin(cursor.getString(16));
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -418,6 +426,7 @@ public class InvoiceDB {
             invoiceVO.setIswin(cursor.getString(16));
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -468,6 +477,7 @@ public class InvoiceDB {
             invoiceVO.setIswin(cursor.getString(16));
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -501,6 +511,7 @@ public class InvoiceDB {
             invoiceVO.setIswin(cursor.getString(16));
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -546,6 +557,7 @@ public class InvoiceDB {
             invoiceVO.setIswin(cursor.getString(16));
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -573,6 +585,7 @@ public class InvoiceDB {
         values.put("iswin",invoiceVO.getIswin());
         values.put("sellerBan",invoiceVO.getSellerBan());
         values.put("sellerAddress",invoiceVO.getSellerAddress());
+        values.put("isWinNul",invoiceVO.getIsWinNul());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -600,6 +613,7 @@ public class InvoiceDB {
         values.put("iswin",invoiceVO.getIswin());
         values.put("sellerBan",invoiceVO.getSellerBan());
         values.put("sellerAddress",invoiceVO.getSellerAddress());
+        values.put("isWinNul",invoiceVO.getIsWinNul());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -623,6 +637,7 @@ public class InvoiceDB {
         values.put("iswin",invoiceVO.getIswin());
         values.put("sellerBan",invoiceVO.getSellerBan());
         values.put("sellerAddress",invoiceVO.getSellerAddress());
+        values.put("isWinNul",invoiceVO.getIsWinNul());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(invoiceVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

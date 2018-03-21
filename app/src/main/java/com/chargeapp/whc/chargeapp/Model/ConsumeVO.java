@@ -55,6 +55,17 @@ public class ConsumeVO implements Serializable{
 
     private int autoId;
 
+    //中獎號碼
+    private String isWinNul;
+
+    public String getIsWinNul() {
+        return isWinNul;
+    }
+
+    public void setIsWinNul(String isWinNul) {
+        this.isWinNul = isWinNul;
+    }
+
     public int getAutoId() {
         return autoId;
     }

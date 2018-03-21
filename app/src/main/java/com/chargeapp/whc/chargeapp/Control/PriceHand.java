@@ -21,8 +21,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 
@@ -46,18 +49,17 @@ import java.util.List;
 
 public class PriceHand extends Fragment {
     private ImageView PIdateAdd, PIdateCut;
-    private TextView priceTitle, PIdateTittle, inputNul, QrCodeA, voice, showRemain;
+    private TextView priceTitle, PIdateTittle, inputNul, showRemain;
     private RecyclerView donateRL;
     private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private Calendar now = Calendar.getInstance();
     private int month, year;
-    private SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     private PriceVO priceVO, oldPriceVO;
     private String message = "";
     private List<PriceVO> priceVOS;
     private HashMap<String, String> levelPrice;
-    private RelativeLayout showMi;
-
+    private RelativeLayout showMi,modelR;
+    private Spinner choiceModel;
     private CardView cardview;
     private static SpeechRecognizer speech = null;
     private static Intent recognizerIntent;
@@ -75,6 +77,7 @@ public class PriceHand extends Fragment {
             cardview.setVisibility(View.GONE);
             priceTitle.setVisibility(View.GONE);
             showRemain.setVisibility(View.VISIBLE);
+            modelR.setVisibility(View.GONE);
             showRemain.setText("財政部網路忙線中~\n請稍後使用~");
             return view;
         }
@@ -83,14 +86,6 @@ public class PriceHand extends Fragment {
         setMonText("in");
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
-        QrCodeA.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MultiTrackerActivity.refresh = false;
-                Intent intent = new Intent(getActivity(), MultiTrackerActivity.class);
-                startActivity(intent);
-            }
-        });
         donateRL.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         List<String> number = getInputN();
         donateRL.setAdapter(new InputAdapter(getActivity(), number));
@@ -101,15 +96,6 @@ public class PriceHand extends Fragment {
                 showMi.setVisibility(View.GONE);
                 speech.stopListening();
                 speech.cancel();
-            }
-        });
-        voice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                priceTitle.setText("請念後三碼");
-                showMi.setVisibility(View.VISIBLE);
-                donateRL.setVisibility(View.GONE);
-                startListening();
             }
         });
         return view;
@@ -251,8 +237,6 @@ public class PriceHand extends Fragment {
             searchtime = year + "12";
             searcholdtime = year + "10";
         }
-        Log.d("XXXXXXsearchtime", searchtime);
-        Log.d("XXXXXsearcholdtime", searcholdtime);
         priceVO = priceDB.getPeriodAll(searchtime);
         oldPriceVO = priceDB.getPeriodAll(searcholdtime);
         priceVOS = new ArrayList<>();
@@ -291,11 +275,46 @@ public class PriceHand extends Fragment {
         PIdateTittle = view.findViewById(R.id.PIdateTittle);
         donateRL = view.findViewById(R.id.donateRL);
         inputNul = view.findViewById(R.id.inputNul);
-        QrCodeA = view.findViewById(R.id.QrCodeA);
-        voice = view.findViewById(R.id.voice);
         showMi = view.findViewById(R.id.showMi);
         showRemain = view.findViewById(R.id.showRemain);
         cardview = view.findViewById(R.id.cardview);
+        choiceModel=view.findViewById(R.id.choiceModel);
+        modelR=view.findViewById(R.id.modelR);
+        ArrayList<String> SpinnerItem = new ArrayList<>();
+        SpinnerItem.add("鍵盤");
+        SpinnerItem.add("聲音");
+        SpinnerItem.add("QRCode掃描");
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, SpinnerItem);
+        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+        choiceModel.setAdapter(arrayAdapter);
+        choiceModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(i==0)
+                {
+                    donateRL.setVisibility(View.VISIBLE);
+                    showMi.setVisibility(View.GONE);
+                    speech.stopListening();
+                    speech.cancel();
+                }else if(i==1)
+                {
+                    priceTitle.setText("請念後三碼");
+                    showMi.setVisibility(View.VISIBLE);
+                    donateRL.setVisibility(View.GONE);
+                    startListening();
+                }else if(i==2)
+                {
+                    MultiTrackerActivity.refresh = false;
+                    Intent intent = new Intent(getActivity(), MultiTrackerActivity.class);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
 
@@ -355,7 +374,7 @@ public class PriceHand extends Fragment {
         @Override
         public PriceHand.InputAdapter.MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
-            View itemView = layoutInflater.inflate(R.layout.ele_setdenote_record_item, viewGroup, false);
+            View itemView = layoutInflater.inflate(R.layout.ele_hand_item, viewGroup, false);
             return new PriceHand.InputAdapter.MyViewHolder(itemView);
         }
 

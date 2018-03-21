@@ -3,50 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="#f5f5f5"
     >
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/DRshow"
-        android:layout_marginTop="10dp"
-        android:visibility="gone"
-        >
-        <ImageView
-            android:id="@+id/DRcut"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/arrow"
-            android:rotation="90"
-            android:layout_toLeftOf="@+id/DRcarrier"
-            />
-        <TextView
-            android:id="@+id/DRcarrier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            />
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/DRadd"
-            android:src="@drawable/arrow"
-            android:rotation="270"
-            android:layout_toRightOf="@+id/DRcarrier"
-            />
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/DRshow"
         android:id="@+id/PIdateL"
         android:layout_marginTop="10dp"
         >
@@ -78,52 +40,8 @@
             android:layout_toRightOf="@+id/PIdateTittle"
             />
     </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/DRtittle"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:orientation="horizontal"
-        android:layout_below="@+id/PIdateL"
-        android:layout_marginTop="5dp"
-        android:background="#FFBB66"
-        android:padding="6dp">
-        <TextView
-            android:id="@+id/DRdate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_centerVertical="true"
-            android:textColor="#000000"
-            android:text="種類/日期"
-            android:textSize="18sp"
-            android:layout_marginLeft="30dp"
-            />
-        <TextView
-            android:id="@+id/QrCodeA"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#000000"
-            android:textSize="18sp"
-            android:layout_marginLeft="30dp"
-            android:text="統一編號"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/DRdate"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/QrCodeA"
-            android:layout_marginLeft="30dp"
-            android:textColor="#000000"
-            android:text="獎項/獎金"
-            android:textSize="18sp"
-            />
-    </RelativeLayout>
     <TextView
-        android:layout_below="@+id/DRtittle"
-        android:background="#ffffff"
+        android:layout_below="@+id/PIdateL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -132,6 +50,13 @@
         android:textColor="#FF0000"
         android:layout_centerHorizontal="true"
         />
+        <ListView
+            android:id="@+id/donateRL"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/showRemain"
+            android:layout_height="wrap_content">
+        </ListView>
     <TextView
         android:id="@+id/DRmessage"
         android:layout_width="match_parent"
@@ -143,11 +68,4 @@
         android:gravity="center"
         android:visibility="gone"
         />
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/donateRL"
-            android:layout_width="match_parent"
-            android:layout_below="@+id/DRtittle"
-            android:layout_height="wrap_content">
-        </android.support.v7.widget.RecyclerView>
-
 </RelativeLayout>

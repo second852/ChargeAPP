@@ -24,10 +24,22 @@ public class InvoiceVO implements Serializable{
     private String secondtype;
     private String heartyteam;
     private Timestamp donateTime;
-    private String iswin;
     private String sellerBan;
     private String sellerName;
     private String sellerAddress;
+
+    //中獎資訊
+    private String iswin;
+    //中獎號碼
+    private String isWinNul;
+
+    public String getIsWinNul() {
+        return isWinNul;
+    }
+
+    public void setIsWinNul(String isWinNul) {
+        this.isWinNul = isWinNul;
+    }
 
     public String getSellerBan() {
         return sellerBan;

@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     public static ChargeAPPDB chargeAPPDB;
     private View oldSecondView,oldMainView;
+    private boolean first;
+    private int position;
     private boolean doubleClick = false;
     public static int[] imageAll = {
             R.drawable.food, R.drawable.phone, R.drawable.clothes, R.drawable.traffic, R.drawable.teach, R.drawable.happy,
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         askPermissions();
+        first=true;
         if (chargeAPPDB == null) {
             chargeAPPDB = new ChargeAPPDB(this);
             setdate();
@@ -346,6 +350,20 @@ public class MainActivity extends AppCompatActivity {
                 view = layoutInflater.inflate(R.layout.ele_main_item, viewGroup, false);
             }
             ImageView indicator =view.findViewById(R.id.ele_indicator);
+            RelativeLayout rea=view.findViewById(R.id.rea);
+            if(oldMainView==view&&MainActivity.this.position==i)
+            {
+                rea.setBackgroundColor(Color.parseColor("#FFDD55"));
+            }else {
+                rea.setBackgroundColor(Color.parseColor("#DDDDDD"));
+            }
+
+            if(MainActivity.this.first&&i==7)
+            {
+                rea.setBackgroundColor(Color.parseColor("#FFDD55"));
+                MainActivity.this.first=false;
+            }
+
             indicator.setVisibility(View.GONE);
             if(i==1)
             {
@@ -367,6 +385,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Fragment fragment;
+                    MainActivity.this.position=i;
                     if (i == 0) {
                         drawerLayout.closeDrawer(GravityCompat.START);
                         fragment = new InsertActivity();
@@ -384,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } else if (i == 2) {
                         drawerLayout.closeDrawer(GravityCompat.START);
-                        fragment = new Download();
+                        fragment = new PriceActivity();
                         switchFragment(fragment);
                         setTitle(R.string.text_Price);
                         listView.collapseGroup(i);
@@ -480,10 +499,6 @@ public class MainActivity extends AppCompatActivity {
                         intent.setAction(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse("http://www.nknu.edu.tw/~psl/new.file/103/08/1030825reciept1.pdf"));
                         startActivity(intent);
-                    }
-                    if(i1==2||i1==6)
-                    {
-                        return;
                     }
                     if(oldSecondView !=null&&oldSecondView!=view)
                     {

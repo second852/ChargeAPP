@@ -15,7 +15,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -24,15 +27,20 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
+import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.R;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -42,25 +50,20 @@ import java.util.List;
  */
 
 public class PriceInvoice extends Fragment {
-    private ImageView DRadd, DRcut, PIdateAdd, PIdateCut;
-    private TextView DRcarrier, DRmessage, PIdateTittle;
-    private RecyclerView donateRL;
+    private ImageView PIdateAdd, PIdateCut;
+    private TextView  DRmessage, PIdateTittle;
+    private RelativeLayout PIdateL;
     private InvoiceDB invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-    private CarrierDB carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-    public int choiceca = 0;
-    private SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
-    private SimpleDateFormat sf = new SimpleDateFormat("M/dd");
-    private String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
-    public static AsyncTask<Object, Integer, String> getGetSQLDate1;
-    private List<CarrierVO> carrierVOS;
     private ConsumeDB consumeDB;
     private HashMap<String,String> levelprice;
     private HashMap<String,Integer> levellength;
+    private HashMap<String,String> levelMoney;
     private long start,end;
     private RelativeLayout DRshow;
     private TextView showRemain;
     private int month,year;
+    private ListView donateRL;
 
 
 
@@ -70,60 +73,29 @@ public class PriceInvoice extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_invoice, container, false);
         findViewById(view);
-        levelprice=getHashLP();
-        levellength=getlevellength();
-        carrierVOS = carrierDB.getAll();
+        levelprice=Common.getPriceName();
+        levellength=Common.getlevellength();
+        levelMoney=Common.getPrice();
         String period=priceDB.findMaxPeriod();
         if(period==null)
         {
             showRemain.setVisibility(View.VISIBLE);
             showRemain.setText("財政部網路忙線中~\n請稍後使用~");
+            PIdateL.setVisibility(View.GONE);
             return view;
         }
-        DRadd.setOnClickListener(new addOnClick());
-        DRcut.setOnClickListener(new cutOnClick());
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
         this.month=Integer.valueOf(period.substring(period.length() - 2));
         this.year= Integer.valueOf(period.substring(0, period.length() - 2));
         setMonText("in");
-        if(carrierVOS.size()>0&&carrierVOS!=null)
-        {
-            String carrier=carrierVOS.get(choiceca).getCarNul();
-            DRcarrier.setText(carrier);
-            DRshow.setVisibility(View.VISIBLE);
-        }else{
-            DRshow.setVisibility(View.GONE);
-        }
         return view;
     }
 
-    private HashMap<String,Integer> getlevellength() {
-        HashMap<String,Integer> hashMap=new HashMap<>();
-        hashMap.put("super",2);
-        hashMap.put("spc",2);
-        hashMap.put("first",2);
-        hashMap.put("second",3);
-        hashMap.put("third",4);
-        hashMap.put("fourth",5);
-        hashMap.put("fifth",6);
-        hashMap.put("sixth",7);
-        return hashMap;
-    }
 
 
-    private HashMap<String,String> getHashLP() {
-        HashMap<String,String> hashMap=new HashMap<>();
-        hashMap.put("super","特別獎\n1000萬元");
-        hashMap.put("spc","特獎\n200萬元");
-        hashMap.put("first","頭獎\n20萬元");
-        hashMap.put("second","二獎\n4萬元");
-        hashMap.put("third","三獎\n1萬元");
-        hashMap.put("fourth","四獎\n4千元");
-        hashMap.put("fifth","五獎\n1千元");
-        hashMap.put("sixth","六獎\n200元");
-        return hashMap;
-    }
+
+
 
     private void setMonText(String action) {
         String showtime,period;
@@ -185,46 +157,29 @@ public class PriceInvoice extends Fragment {
         setlayout();
     }
 
-    private class cutOnClick implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            choiceca--;
-            if (choiceca < 0) {
-                choiceca = carrierVOS.size() - 1;
-            }
-            setlayout();
-        }
-    }
 
-    private class addOnClick implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            choiceca++;
-            if (choiceca > (carrierVOS.size() - 1)) {
-                choiceca = 0;
-            }
-            setlayout();
-        }
-    }
 
     private void setlayout() {
-        Log.d("ssss",sd.format(new Date(start))+":"+sd.format(new Date(end)));
         List<Object> objectList=new ArrayList<>();
-        if(carrierVOS.size()>0&&carrierVOS!=null)
-        {
-            String carrier=carrierVOS.get(choiceca).getCarNul();
-            List<InvoiceVO> invoiceVOS=invoiceDB.getWinIn(carrier,start,end);
-            objectList.addAll(invoiceVOS);
-            DRcarrier.setText(carrier);
-        }
+        List<InvoiceVO> invoiceVOS=invoiceDB.getWinIn(start,end);
         List<ConsumeVO> consumeVOS= consumeDB.getWinAll(start,end);
+        objectList.addAll(invoiceVOS);
         objectList.addAll(consumeVOS);
         if(objectList.size()>0)
         {
             donateRL.setVisibility(View.VISIBLE);
-            donateRL.setLayoutManager(new LinearLayoutManager(getActivity()));
-            donateRL.setAdapter(new InvoiceAdapter(getActivity(),objectList));
             DRmessage.setVisibility(View.GONE);
+            ListAdapter listAdapter= (ListAdapter) donateRL.getAdapter();
+            if(listAdapter==null)
+            {
+                listAdapter=new ListAdapter(getActivity(),objectList);
+                donateRL.setAdapter(listAdapter);
+            }else{
+                listAdapter.setObjects(objectList);
+                listAdapter.notifyDataSetChanged();
+                donateRL.invalidate();
+            }
+
         }else {
             DRmessage.setVisibility(View.VISIBLE);
             DRmessage.setText("本期發票沒有中獎!");
@@ -233,83 +188,19 @@ public class PriceInvoice extends Fragment {
     }
 
     private void findViewById(View view) {
-        DRadd = view.findViewById(R.id.DRadd);
-        DRcut = view.findViewById(R.id.DRcut);
-        DRcarrier = view.findViewById(R.id.DRcarrier);
-        donateRL = view.findViewById(R.id.donateRL);
+        PIdateL = view.findViewById(R.id.PIdateL);
         DRmessage = view.findViewById(R.id.DRmessage);
         PIdateAdd = view.findViewById(R.id.PIdateAdd);
         PIdateCut = view.findViewById(R.id.PIdateCut);
         PIdateTittle = view.findViewById(R.id.PIdateTittle);
         DRshow=view.findViewById(R.id.DRshow);
         showRemain=view.findViewById(R.id.showRemain);
+        donateRL=view.findViewById(R.id.donateRL);
         showRemain.setText("(無實體電子發票專屬獎中獎清單\n請到財政部網站確認)");
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
-    private class InvoiceAdapter extends
-            RecyclerView.Adapter<PriceInvoice.InvoiceAdapter.MyViewHolder> {
-        private Context context;
-        private List<Object> invoiceVOList;
 
-
-        InvoiceAdapter(Context context, List<Object> memberList) {
-            this.context = context;
-            this.invoiceVOList = memberList;
-        }
-
-        class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView day, nul, checkdonate;
-
-
-            MyViewHolder(View itemView) {
-                super(itemView);
-                checkdonate = itemView.findViewById(R.id.DRdate);
-                day = itemView.findViewById(R.id.QrCodeA);
-                nul = itemView.findViewById(R.id.DRamout);
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return invoiceVOList.size();
-        }
-
-        @Override
-        public PriceInvoice.InvoiceAdapter.MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(context);
-            View itemView = layoutInflater.inflate(R.layout.ele_setdenote_record_item, viewGroup, false);
-            return new PriceInvoice.InvoiceAdapter.MyViewHolder(itemView);
-        }
-
-        @Override
-        public void onBindViewHolder(PriceInvoice.InvoiceAdapter.MyViewHolder viewHolder, int position) {
-            final Object object = invoiceVOList.get(position);
-            String title,nul,message,iswin;
-            if (object instanceof InvoiceVO)
-            {
-                InvoiceVO invoiceVO= (InvoiceVO) object;
-                title="電子發票"+(invoiceVO.getDonateMark().equals("true")?"已捐贈":"未捐贈");
-                nul=invoiceVO.getInvNum();
-                message=levelprice.get(invoiceVO.getIswin());
-                iswin=invoiceVO.getIswin();
-            }else{
-                ConsumeVO consumeVO= (ConsumeVO) object;
-                Calendar calendar=Calendar.getInstance();
-                calendar.setTime(consumeVO.getDate());
-                title=sf.format(consumeVO.getDate())+"\n實體發票";
-                nul=consumeVO.getNumber();
-                message=levelprice.get(consumeVO.getIsWin());
-                iswin=consumeVO.getIsWin();
-            }
-
-            SpannableString content = new SpannableString(nul);
-            content.setSpan(new ForegroundColorSpan(Color.RED), levellength.get(iswin), nul.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            viewHolder.checkdonate.setText(title);
-            viewHolder.day.setText(content);
-            viewHolder.nul.setText(message);
-        }
-    }
 
     private class addMonth implements View.OnClickListener {
         @Override
@@ -334,6 +225,126 @@ public class PriceInvoice extends Fragment {
                 year=year-1;
             }
             setMonText("cut");
+        }
+    }
+
+
+    private class ListAdapter extends BaseAdapter {
+        private Context context;
+        private List<Object> objects;
+
+        ListAdapter(Context context, List<Object> objects) {
+            this.context = context;
+            this.objects = objects;
+        }
+
+
+        public void setObjects(List<Object> objects) {
+            this.objects = objects;
+        }
+
+        @Override
+        public int getCount() {
+            return objects.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return objects.get(position);
+        }
+
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(final int position, View itemView, final ViewGroup parent) {
+            if (itemView == null) {
+                LayoutInflater layoutInflater = LayoutInflater.from(context);
+                itemView = layoutInflater.inflate(R.layout.ele_setdenote_record_item, parent, false);
+            }
+            TextView Title=itemView.findViewById(R.id.listTitle);
+            TextView describe=itemView.findViewById(R.id.listDetail);
+            LinearLayout remindL=itemView.findViewById(R.id.remindL);
+            TextView remainT=itemView.findViewById(R.id.remainT);
+            LinearLayout fixL=itemView.findViewById(R.id.fixL);
+            TextView fixT=itemView.findViewById(R.id.fixT);
+            LinearLayout donateL=itemView.findViewById(R.id.donateL);
+            String title,day;
+            Object o=objects.get(position);
+            //區別電子發票
+            if(o instanceof InvoiceVO)
+            {
+                //電子發票
+                InvoiceVO invoiceVO= (InvoiceVO) o;
+                remainT.setText("電子發票");
+                remainT.setTextColor(Color.parseColor("#008844"));
+                remindL.setBackgroundColor(Color.parseColor("#008844"));
+                if(invoiceVO.getDonateMark().equals("true"))
+                {
+                    donateL.setVisibility(View.VISIBLE);
+                }else{
+                    donateL.setVisibility(View.GONE);
+                }
+                //標題
+                day=Common.sDay.format(new Date(invoiceVO.getTime().getTime()))+" ";
+                title=day+invoiceVO.getInvNum();
+                SpannableString content = new SpannableString(title);
+                content.setSpan(new ForegroundColorSpan(Color.RED),day.length()+levellength.get(invoiceVO.getIswin().trim()),
+                        title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                Title.setText(content);
+                //中獎顯示
+                fixL.setVisibility(View.VISIBLE);
+                fixL.setBackgroundColor(Color.parseColor("#AA0000"));
+                fixT.setTextColor(Color.parseColor("#AA0000"));
+                fixT.setText(levelprice.get(invoiceVO.getIswin()));
+
+                //detail
+                String firstH="中獎號碼 : ";
+                String firstAll=firstH+invoiceVO.getIsWinNul();
+                String pIF=levelMoney.get(invoiceVO.getIswin());
+                String detail=firstAll+"\n獎金 : "+pIF;
+                SpannableString detailC = new SpannableString(detail);
+                detailC.setSpan(new ForegroundColorSpan(Color.RED),firstH.length()+levellength.get(invoiceVO.getIswin().trim())-2,
+                        firstAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                detailC.setSpan(new ForegroundColorSpan(Color.RED),detail.length()-pIF.length()+1,
+                        detail.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                describe.setText(detailC);
+            }else{
+                //紙本發票
+                ConsumeVO consumeVO= (ConsumeVO) o;
+                remainT.setText("紙本發票");
+                remainT.setTextColor(Color.parseColor("#008844"));
+                remindL.setBackgroundColor(Color.parseColor("#008844"));
+
+                //標題
+                day=Common.sDay.format(consumeVO.getDate())+" ";
+                title=day+consumeVO.getNumber();
+                SpannableString content = new SpannableString(title);
+                content.setSpan(new ForegroundColorSpan(Color.RED),day.length()+levellength.get(consumeVO.getIsWin().trim()),
+                        title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                Title.setText(content);
+                //中獎顯示
+                fixL.setVisibility(View.VISIBLE);
+                fixL.setBackgroundColor(Color.parseColor("#AA0000"));
+                fixT.setTextColor(Color.parseColor("#AA0000"));
+                fixT.setText(levelprice.get(consumeVO.getIsWin()));
+
+                //detail
+                String firstH="中獎號碼 : ";
+                String firstAll=firstH+consumeVO.getIsWinNul();
+                String pIF=levelMoney.get(consumeVO.getIsWin());
+                String detail=firstAll+"\n獎金 : "+pIF;
+                SpannableString detailC = new SpannableString(detail);
+                detailC.setSpan(new ForegroundColorSpan(Color.RED),firstH.length()+levellength.get(consumeVO.getIsWin().trim())-2,
+                        firstAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                detailC.setSpan(new ForegroundColorSpan(Color.RED),detail.length()-pIF.length()+1,
+                        detail.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                describe.setText(detailC);
+            }
+            return itemView;
         }
     }
 }

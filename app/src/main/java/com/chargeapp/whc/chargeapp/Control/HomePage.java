@@ -121,7 +121,7 @@ public class HomePage extends Fragment {
           }
         }
 
-        pieChartT.setText(Common.sDay.format(new Date(end.getTimeInMillis()))+"今日花費 :"+hashMap.get("total")+"元");
+        pieChartT.setText(Common.sDay.format(new Date(end.getTimeInMillis()))+"本日花費 : "+hashMap.get("total")+"元");
         list_Data = new ArrayList<Map.Entry<String, Integer>>(hashMap.entrySet());
         //
         if(list_Data.size()>5)

@@ -99,6 +99,45 @@ public class Common {
         }
     }
 
+    //price set
+    public static HashMap<String,Integer> getlevellength() {
+        HashMap<String,Integer> hashMap=new HashMap<>();
+        hashMap.put("super",2);
+        hashMap.put("spc",2);
+        hashMap.put("first",2);
+        hashMap.put("second",3);
+        hashMap.put("third",4);
+        hashMap.put("fourth",5);
+        hashMap.put("fifth",6);
+        hashMap.put("sixth",7);
+        return hashMap;
+    }
+
+    public static HashMap<String,String> getPriceName() {
+        HashMap<String,String> hashMap=new HashMap<>();
+        hashMap.put("super","特別獎");
+        hashMap.put("spc","特獎");
+        hashMap.put("first","頭獎");
+        hashMap.put("second","二獎");
+        hashMap.put("third","三獎");
+        hashMap.put("fourth","四獎");
+        hashMap.put("fifth","五獎");
+        hashMap.put("sixth","六獎");
+        return hashMap;
+    }
+
+    public static HashMap<String,String> getPrice() {
+        HashMap<String,String> hashMap=new HashMap<>();
+        hashMap.put("super","1000萬元");
+        hashMap.put("spc","200萬元");
+        hashMap.put("first","20萬元");
+        hashMap.put("second","4萬元");
+        hashMap.put("third","1萬元");
+        hashMap.put("fourth","4千元");
+        hashMap.put("fifth","1千元");
+        hashMap.put("sixth","200元");
+        return hashMap;
+    }
 
 
 
