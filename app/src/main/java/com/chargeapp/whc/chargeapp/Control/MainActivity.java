@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle actionBarDrawerToggle;
     public static ChargeAPPDB chargeAPPDB;
     private View oldSecondView,oldMainView;
-    private boolean first;
     private int position;
     private boolean doubleClick = false;
     public static int[] imageAll = {
@@ -82,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         askPermissions();
-        first=true;
         if (chargeAPPDB == null) {
             chargeAPPDB = new ChargeAPPDB(this);
             setdate();
@@ -358,11 +356,6 @@ public class MainActivity extends AppCompatActivity {
                 rea.setBackgroundColor(Color.parseColor("#DDDDDD"));
             }
 
-            if(MainActivity.this.first&&i==7)
-            {
-                rea.setBackgroundColor(Color.parseColor("#FFDD55"));
-                MainActivity.this.first=false;
-            }
 
             indicator.setVisibility(View.GONE);
             if(i==1)

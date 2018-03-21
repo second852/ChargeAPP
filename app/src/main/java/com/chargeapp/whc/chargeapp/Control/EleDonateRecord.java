@@ -3,13 +3,16 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
@@ -19,7 +22,7 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,70 +30,56 @@ import java.util.List;
  */
 
 public class EleDonateRecord extends Fragment {
-    private ImageView DRadd,DRcut;
-    private TextView DRcarrier,DRmessage;
-    private RecyclerView donateRL;
-    private InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-    private CarrierDB carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+    private TextView DRmessage;
+    private ListView donateRL;
+    private RelativeLayout modelR;
+    private Spinner choiceModel;
+    private InvoiceDB invoiceDB;
+    private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOS;
     private List<InvoiceVO> invoiceVOS;
-    private SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
     public  int choiceca = 0;
-    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ele_setdenote_record, container, false);
+        invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
-        setlayout();
-        DRadd.setOnClickListener(new addOnClick());
-        DRcut.setOnClickListener(new cutOnClick());
-        swipeRefreshLayout =
-                (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
-                setlayout();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-        return view;
-    }
-
-    private class cutOnClick implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            choiceca--;
-            if (choiceca < 0) {
-                choiceca = carrierVOS.size() - 1;
-            }
-            setlayout();
-        }
-    }
-
-    private class addOnClick implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            choiceca++;
-            if (choiceca > (carrierVOS.size() - 1)) {
-                choiceca = 0;
-            }
-            setlayout();
-        }
-    }
-
-
-    private void setlayout() {
         carrierVOS=carrierDB.getAll();
         if(carrierVOS==null||carrierVOS.size()<=0)
         {
             DRmessage.setText("請新增載具!");
             DRmessage.setVisibility(View.VISIBLE);
-            return ;
+            modelR.setVisibility(View.GONE);
+            return view;
         }
-        DRcarrier.setText(carrierVOS.get(choiceca).getCarNul());
+        ArrayList<String> SpinnerItem = new ArrayList<>();
+        for(CarrierVO c:carrierVOS)
+        {
+            SpinnerItem.add(c.getCarNul());
+        }
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, SpinnerItem);
+        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+        choiceModel.setAdapter(arrayAdapter);
+        choiceModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                choiceca=position;
+                setLayout();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        setLayout();
+        return view;
+    }
+
+    private void setLayout() {
         invoiceVOS=invoiceDB.getisDonated(carrierVOS.get(choiceca).getCarNul());
         if(invoiceVOS==null||invoiceVOS.size()<=0)
         {
@@ -98,60 +87,73 @@ public class EleDonateRecord extends Fragment {
             DRmessage.setVisibility(View.VISIBLE);
             return ;
         }
-        donateRL.setLayoutManager(new LinearLayoutManager(getActivity()));
-        donateRL.setAdapter(new EleDonateRecord.InvoiceAdapter(getActivity(), invoiceVOS));
+        ListAdapter adapter= (ListAdapter) donateRL.getAdapter();
+        if(adapter==null)
+        {
+            donateRL.setAdapter(new ListAdapter(getActivity(),invoiceVOS));
+        }else{
+            adapter.setObjects(invoiceVOS);
+            adapter.notifyDataSetChanged();
+            donateRL.invalidate();
+        }
     }
 
     private void findViewById(View view) {
-        DRadd=view.findViewById(R.id.DRadd);
-        DRcut=view.findViewById(R.id.DRcut);
-        DRcarrier=view.findViewById(R.id.DRcarrier);
+        modelR=view.findViewById(R.id.modelR);
         donateRL=view.findViewById(R.id.donateRL);
         DRmessage=view.findViewById(R.id.DRmessage);
-
+        choiceModel=view.findViewById(R.id.choiceModel);
     }
 
-    private class InvoiceAdapter extends
-            RecyclerView.Adapter<EleDonateRecord.InvoiceAdapter.MyViewHolder> {
+
+    private class ListAdapter extends BaseAdapter {
         private Context context;
-        private List<InvoiceVO> invoiceVOList;
+        private List<InvoiceVO> invoiceVOS;
 
-
-        InvoiceAdapter(Context context, List<InvoiceVO> memberList) {
+        ListAdapter(Context context, List<InvoiceVO> invoiceVOS) {
             this.context = context;
-            this.invoiceVOList = memberList;
+            this.invoiceVOS = invoiceVOS;
         }
 
-        class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView day, nul,checkdonate;
+
+        public void setObjects(List<InvoiceVO> invoiceVOS) {
+            this.invoiceVOS = invoiceVOS;
+        }
+
+        @Override
+        public int getCount() {
+            return invoiceVOS.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return invoiceVOS.get(position);
+        }
 
 
-            MyViewHolder(View itemView) {
-                super(itemView);
-                checkdonate = itemView.findViewById(R.id.DRdate);
-                day = itemView.findViewById(R.id.QrCodeA);
-                nul = itemView.findViewById(R.id.DRamout);
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(final int position, View itemView, final ViewGroup parent) {
+            if (itemView == null) {
+                LayoutInflater layoutInflater = LayoutInflater.from(context);
+                itemView = layoutInflater.inflate(R.layout.ele_setdenote_record_item, parent, false);
             }
-        }
-
-        @Override
-        public int getItemCount() {
-            return invoiceVOList.size();
-        }
-
-        @Override
-        public EleDonateRecord.InvoiceAdapter.MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(context);
-            View itemView = layoutInflater.inflate(R.layout.ele_setdenote_record_item, viewGroup, false);
-            return new EleDonateRecord.InvoiceAdapter.MyViewHolder(itemView);
-        }
-
-        @Override
-        public void onBindViewHolder(EleDonateRecord.InvoiceAdapter.MyViewHolder viewHolder, int position) {
-            final InvoiceVO invoiceVO = invoiceVOList.get(position);
-            viewHolder.checkdonate.setText(sf.format(new Date(invoiceVO.getTime().getTime())));
-            viewHolder.day.setText(invoiceVO.getInvNum());
-            viewHolder.nul.setText(invoiceVO.getHeartyteam());
+            TextView Title=itemView.findViewById(R.id.listTitle);
+            TextView describe=itemView.findViewById(R.id.listDetail);
+            LinearLayout remindL=itemView.findViewById(R.id.remindL);
+            TextView remainT=itemView.findViewById(R.id.remainT);
+            LinearLayout fixL=itemView.findViewById(R.id.fixL);
+            TextView fixT=itemView.findViewById(R.id.fixT);
+            LinearLayout donateL=itemView.findViewById(R.id.donateL);
+            InvoiceVO invoiceVO=invoiceVOS.get(position);
+            Title.setText(Common.sTwo.format(new Date(invoiceVO.getTime().getTime()))+" "+invoiceVO.getInvNum());
+            describe.setText(invoiceVO.getHeartyteam());
+            return itemView;
         }
     }
+
 }

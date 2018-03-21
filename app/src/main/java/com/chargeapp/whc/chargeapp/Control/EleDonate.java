@@ -12,15 +12,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
@@ -36,6 +41,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,9 +51,8 @@ import java.util.List;
 
 public class EleDonate extends Fragment {
 
-    private TextView carrier, message;
-    private ImageView add, cut;
-    private RecyclerView listinviuce;
+    private TextView  message;
+    private ListView listinviuce;
     private InvoiceDB invoiceDB;
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOList;
@@ -58,7 +63,6 @@ public class EleDonate extends Fragment {
     private ProgressDialog progressDialog;
     public static HashMap<String, InvoiceVO> donateMap;
     private Button choiceall, save, cancel;
-    private List<InvoiceVO> invoiceVOList;
     private boolean sellall = false;
     private EditText inputH;
     private ImageView searchI;
@@ -66,55 +70,59 @@ public class EleDonate extends Fragment {
     public static String teamNumber, teamTitle;
     private Button returnSH;
     private ProgressBar progressbar;
+    private RelativeLayout modelR;
+    private Spinner choiceModel;
     public static AsyncTask get1=null;
+    private List<CarrierVO> carrierVOS;
+    private List<InvoiceVO> invoiceVOList;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ele_setdenote, container, false);
         progressDialog = new ProgressDialog(getActivity());
+        carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         donateMap = new HashMap<>();
         findviewbyid(view);
-        add.setOnClickListener(new addOnClick());
-        cut.setOnClickListener(new cutOnClick());
         choiceall.setOnClickListener(new choiceallchecked());
         cancel.setOnClickListener(new cancelallchecked());
         save.setOnClickListener(new uploadheraty());
         searchI.setOnClickListener(new searchHeartyTeam());
         returnSH.setOnClickListener(new retrinDonateM());
-        return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        download();
-    }
-
-    private void download() {
-
-        carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
-        invoiceVOList=invoiceDB.getAll();
-        carrierVOList = carrierDB.getAll();
+        carrierVOS=carrierDB.getAll();
         if (carrierVOList == null || carrierVOList.size() <= 0) {
             message.setText("請新增載具!");
             message.setVisibility(View.VISIBLE);
             listinviuce.setVisibility(View.GONE);
             showmonth.setVisibility(View.GONE);
             choice.setVisibility(View.GONE);
-            return;
+            return view;
         }
-        if(EleDonate.get1==null)
+        ArrayList<String> SpinnerItem = new ArrayList<>();
+        for(CarrierVO c:carrierVOS)
         {
-            get1= new GetSQLDate(this).execute("GetToday");
-            progressDialog.setMessage("正在更新資料,請稍候...");
-            progressDialog.show();
-        }else {
-            setlayout();
+            SpinnerItem.add(c.getCarNul());
         }
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, SpinnerItem);
+        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+        choiceModel.setAdapter(arrayAdapter);
+        choiceModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                choiceca=position;
+                setlayout();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        return view;
     }
+
+
 
     public void cancelDialog() {
 
@@ -146,28 +154,30 @@ public class EleDonate extends Fragment {
     public void setlayout() {
         cancelDialog();
         carrierVO = carrierVOList.get(choiceca);
-        listinviuce.removeAllViews();
         invoiceVOList = invoiceDB.getCarrierDoAll(carrierVO.getCarNul());
-        carrier.setText(carrierVO.getCarNul());
         if (invoiceVOList == null || invoiceVOList.size() <= 0) {
             message.setText("目前沒有可捐贈發票!");
             message.setVisibility(View.VISIBLE);
             listinviuce.setVisibility(View.GONE);
             showmonth.setVisibility(View.VISIBLE);
-            return;
+        }else{
+            message.setVisibility(View.GONE);
+            listinviuce.setVisibility(View.VISIBLE);
+            showmonth.setVisibility(View.VISIBLE);
         }
-        message.setVisibility(View.GONE);
-        listinviuce.setVisibility(View.VISIBLE);
-        showmonth.setVisibility(View.VISIBLE);
-        listinviuce.setLayoutManager(new LinearLayoutManager(getActivity()));
-        listinviuce.setAdapter(new InvoiceAdapter(getActivity(), invoiceVOList));
+        ListAdapter adapter= (ListAdapter) listinviuce.getAdapter();
+        if(adapter==null)
+        {
+            listinviuce.setAdapter(new ListAdapter(getActivity(), invoiceVOList));
+        }else{
+            adapter.setObjects(invoiceVOList);
+            adapter.notifyDataSetChanged();
+            listinviuce.invalidate();
+        }
     }
 
 
     private void findviewbyid(View view) {
-        carrier = view.findViewById(R.id.DRcarrier);
-        add = view.findViewById(R.id.DRadd);
-        cut = view.findViewById(R.id.DRcut);
         listinviuce = view.findViewById(R.id.recyclenul);
         message = view.findViewById(R.id.message);
         showmonth = view.findViewById(R.id.DRshow);
@@ -181,6 +191,8 @@ public class EleDonate extends Fragment {
         returnSH = view.findViewById(R.id.returnSH);
         progressbar = view.findViewById(R.id.progressbar);
         choice=view.findViewById(R.id.choice);
+        modelR=view.findViewById(R.id.modelR);
+        choiceModel=view.findViewById(R.id.choiceModel);
     }
 
 
@@ -246,27 +258,6 @@ public class EleDonate extends Fragment {
     }
 
 
-    private class addOnClick implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            choiceca++;
-            if (choiceca > (carrierVOList.size() - 1)) {
-                choiceca = 0;
-            }
-            setlayout();
-        }
-    }
-
-    private class cutOnClick implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            choiceca--;
-            if (choiceca < 0) {
-                choiceca = carrierVOList.size() - 1;
-            }
-            setlayout();
-        }
-    }
 
 
     private class choiceallchecked implements View.OnClickListener {
@@ -276,7 +267,7 @@ public class EleDonate extends Fragment {
             for (InvoiceVO invoiceVO : invoiceVOList) {
                 donateMap.put(invoiceVO.getInvNum(), invoiceVO);
             }
-            listinviuce.setAdapter(new InvoiceAdapter(getActivity(), invoiceVOList));
+            listinviuce.invalidate();
         }
     }
 
@@ -285,7 +276,7 @@ public class EleDonate extends Fragment {
         public void onClick(View v) {
             sellall = false;
             donateMap.clear();
-            listinviuce.setAdapter(new InvoiceAdapter(getActivity(), invoiceVOList));
+            listinviuce.invalidate();
         }
     }
 
@@ -369,6 +360,57 @@ public class EleDonate extends Fragment {
         @Override
         public void onClick(View view) {
             searchRL.setVisibility(View.GONE);
+        }
+    }
+
+
+    private class ListAdapter extends BaseAdapter {
+        private Context context;
+        private List<InvoiceVO> invoiceVOS;
+
+        ListAdapter(Context context, List<InvoiceVO> invoiceVOS) {
+            this.context = context;
+            this.invoiceVOS = invoiceVOS;
+        }
+
+
+        public void setObjects(List<InvoiceVO> invoiceVOS) {
+            this.invoiceVOS = invoiceVOS;
+        }
+
+        @Override
+        public int getCount() {
+            return invoiceVOS.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return invoiceVOS.get(position);
+        }
+
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(final int position, View itemView, final ViewGroup parent) {
+            if (itemView == null) {
+                LayoutInflater layoutInflater = LayoutInflater.from(context);
+                itemView = layoutInflater.inflate(R.layout.ele_setdenote_record_item, parent, false);
+            }
+            TextView Title = itemView.findViewById(R.id.listTitle);
+            TextView describe = itemView.findViewById(R.id.listDetail);
+            LinearLayout remindL = itemView.findViewById(R.id.remindL);
+            TextView remainT = itemView.findViewById(R.id.remainT);
+            LinearLayout fixL = itemView.findViewById(R.id.fixL);
+            TextView fixT = itemView.findViewById(R.id.fixT);
+            LinearLayout donateL = itemView.findViewById(R.id.donateL);
+            InvoiceVO invoiceVO = invoiceVOS.get(position);
+            Title.setText(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())) + " " + invoiceVO.getInvNum());
+            describe.setText(invoiceVO.getHeartyteam());
+            return itemView;
         }
     }
 
