@@ -72,9 +72,9 @@ public class EleDonate extends Fragment {
     private ProgressBar progressbar;
     private RelativeLayout modelR;
     private Spinner choiceModel;
-    public static AsyncTask get1=null;
     private List<CarrierVO> carrierVOS;
     private List<InvoiceVO> invoiceVOList;
+    private Gson gson;
 
     @Nullable
     @Override
@@ -83,6 +83,7 @@ public class EleDonate extends Fragment {
         progressDialog = new ProgressDialog(getActivity());
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        gson=new Gson();
         donateMap = new HashMap<>();
         findviewbyid(view);
         choiceall.setOnClickListener(new choiceallchecked());
@@ -125,7 +126,6 @@ public class EleDonate extends Fragment {
 
 
     public void cancelDialog() {
-
         progressDialog.cancel();
         progressbar.setVisibility(View.GONE);
     }
@@ -195,67 +195,6 @@ public class EleDonate extends Fragment {
         choiceModel=view.findViewById(R.id.choiceModel);
     }
 
-
-
-
-
-    private class InvoiceAdapter extends
-            RecyclerView.Adapter<InvoiceAdapter.MyViewHolder> {
-        private Context context;
-        private List<InvoiceVO> invoiceVOList;
-
-
-        InvoiceAdapter(Context context, List<InvoiceVO> memberList) {
-            this.context = context;
-            this.invoiceVOList = memberList;
-        }
-
-        class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView day, nul, amount;
-            CheckBox checkdonate;
-
-            MyViewHolder(View itemView) {
-                super(itemView);
-                checkdonate = itemView.findViewById(R.id.DRdate);
-                day = itemView.findViewById(R.id.QrCodeA);
-                nul = itemView.findViewById(R.id.DRamout);
-                amount = itemView.findViewById(R.id.eleamount);
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return invoiceVOList.size();
-        }
-
-        @Override
-        public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(context);
-            View itemView = layoutInflater.inflate(R.layout.ele_setdenote_item, viewGroup, false);
-            return new MyViewHolder(itemView);
-        }
-
-        @Override
-        public void onBindViewHolder(MyViewHolder viewHolder, int position) {
-            final InvoiceVO invoiceVO = invoiceVOList.get(position);
-            viewHolder.day.setText(sf.format(new Date(invoiceVO.getTime().getTime())));
-            viewHolder.nul.setText(invoiceVO.getInvNum());
-            String amout = "NT$" + invoiceVO.getAmount();
-            viewHolder.amount.setText(String.format(amout));
-            viewHolder.checkdonate.setChecked(sellall);
-            viewHolder.checkdonate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (buttonView.isChecked()) {
-                        donateMap.put(invoiceVO.getInvNum(), invoiceVO);
-                    } else {
-                        donateMap.remove(invoiceVO.getInvNum());
-                    }
-                }
-            });
-
-        }
-    }
 
 
 
@@ -402,14 +341,55 @@ public class EleDonate extends Fragment {
             }
             TextView Title = itemView.findViewById(R.id.listTitle);
             TextView describe = itemView.findViewById(R.id.listDetail);
-            LinearLayout remindL = itemView.findViewById(R.id.remindL);
-            TextView remainT = itemView.findViewById(R.id.remainT);
-            LinearLayout fixL = itemView.findViewById(R.id.fixL);
-            TextView fixT = itemView.findViewById(R.id.fixT);
-            LinearLayout donateL = itemView.findViewById(R.id.donateL);
-            InvoiceVO invoiceVO = invoiceVOS.get(position);
-            Title.setText(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())) + " " + invoiceVO.getInvNum());
-            describe.setText(invoiceVO.getHeartyteam());
+            Button updateD=itemView.findViewById(R.id.updateD);
+            CheckBox donateC=itemView.findViewById(R.id.donateC);
+            final InvoiceVO invoiceVO = invoiceVOS.get(position);
+            Title.setText(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())) + " " + invoiceVO.getInvNum()+" "+invoiceVO.getAmount()+"元");
+            //設定describe
+            StringBuffer sbDecribe=new StringBuffer();
+            if(invoiceVO.getDetail().equals("0"))
+            {
+                updateD.setVisibility(View.VISIBLE);
+                sbDecribe.append("無資料，請按下載\n  \n ");
+                updateD.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        new GetSQLDate(EleDonate.this,invoiceVO).execute("reDownload");
+                        progressDialog.setMessage("正在下傳資料,請稍候...");
+                        progressDialog.show();
+                    }
+                });
+            }else{
+                updateD.setVisibility(View.GONE);
+                Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
+                List<JsonObject> js=gson.fromJson(invoiceVO.getDetail(), cdType);
+                int price,n;
+                for(JsonObject j:js)
+                {
+                    try {
+                        n=j.get("amount").getAsInt();
+                        price=j.get("unitPrice").getAsInt();
+                        sbDecribe.append(j.get("description").getAsString()+" : \n"+price+"X"+n/price+"="+n+"元\n");
+                    }catch (Exception e)
+                    {
+                        sbDecribe.append(j.get("description").getAsString()+" : \n"+0+"X"+0+"="+0+"元\n");
+                    }
+                }
+            }
+            describe.setText(sbDecribe.toString());
+
+            //設定CheckBox
+            donateC.setChecked(sellall);
+            donateC.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (buttonView.isChecked()) {
+                        donateMap.put(invoiceVO.getInvNum(), invoiceVO);
+                    } else {
+                        donateMap.remove(invoiceVO.getInvNum());
+                    }
+                }
+            });
             return itemView;
         }
     }

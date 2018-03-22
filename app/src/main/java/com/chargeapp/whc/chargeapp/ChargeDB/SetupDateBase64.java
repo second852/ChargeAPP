@@ -78,7 +78,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                }
             }else if("getThisDetail".equals(action))
             {
-                jsonIn=getThisInvoiceDate();
+                jsonIn=getThisDate();
             }
         } catch (Exception e) {
             Log.e(TAG, e.toString());
@@ -87,6 +87,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
         return jsonIn;
     }
 
+    //QRCode 讀不到掃描
     private String getThisDate() throws IOException {
         HashMap<String,String> data=new HashMap<>();
         String imformation= BarcodeGraphic.hashMap.get(1);
@@ -124,25 +125,6 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
        return j;
     }
 
-
-    private String getThisInvoiceDate() throws IOException {
-        HashMap<String,String> data=new HashMap<>();
-        data.put("version","0.3");
-        data.put("type","Barcode");
-        data.put("invNum","XY62329070");
-        data.put("action","qryInvDetail");
-        data.put("generation","V2");
-        data.put("invTerm","10612");
-        data.put("invDate","2017/12/14");
-        data.put("encrypt"," ");
-        data.put("sellerID","23526999");
-        data.put("UUID","second");
-        data.put("randomNumber","0204");
-        data.put("appID",appId);
-        String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp?";
-        String j=getRemoteData(url,data);
-        return j;
-    }
 
     private HashMap<String,String> getupdateHeartyTeam(int seriel,InvoiceVO invoiceVO) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
         HashMap<String,String> data=new HashMap<>();

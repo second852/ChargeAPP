@@ -1,61 +1,71 @@
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="6dp"
+    android:layout_margin="20dp"
     android:padding="6dp"
     card_view:cardBackgroundColor="#ffdddddd"
     card_view:cardCornerRadius="12dp"
     card_view:cardElevation="6dp">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="6dp"
-        android:orientation="horizontal"
-        android:padding="6dp">
+        xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#DDDDDD"
+        android:orientation="vertical"
+        >
 
         <CheckBox
-            android:id="@+id/DRdate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="2dp"
+            android:text="捐獻"
+            android:backgroundTint="#CC0000"
+            android:buttonTint="#CC0000"
+            android:textColor="#CC0000"
+            android:id="@+id/donateC"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/listTitle"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="2dp"
             android:layout_gravity="center"
-            android:buttonTint="#00BBFF"
-            android:gravity="center" />
-
-        <TextView
-            android:id="@+id/QrCodeA"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="18dp"
-            android:layout_toRightOf="@+id/DRdate"
-            android:gravity="center"
+            android:layout_toRightOf="@+id/donateC"
             android:textColor="#000000"
-            android:textSize="18sp" />
-
+            android:textSize="20sp"
+            android:gravity="left"
+            android:padding="2dp"
+            />
+        <Button
+            android:id="@+id/updateD"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_margin="8dp"
+            android:textSize="15dp"
+            android:text="下載"
+            android:layout_alignParentRight="true"
+            android:background="#33CCFF"
+            android:layout_centerHorizontal="true"
+            />
         <TextView
-            android:id="@+id/DRamout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/QrCodeA"
-            android:gravity="center"
+            android:layout_below="@+id/listTitle"
+            android:background="#AAAAAA"
+            android:gravity="left"
+            android:padding="2dp"
+            android:layout_margin="8dp"
+            android:id="@+id/listDetail"
             android:textColor="#000000"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/eleamount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_toRightOf="@+id/DRamout"
-            android:gravity="center"
-            android:textColor="#000000"
-            android:textSize="18sp" />
+            android:textSize="20sp"
+            />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

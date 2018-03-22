@@ -1,6 +1,8 @@
 package com.chargeapp.whc.chargeapp.ChargeDB;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 
@@ -46,6 +48,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private final static String TAG = "GetSQLDate";
@@ -90,62 +93,56 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         String jsonIn = null;
         String url;
         HashMap<String, String> data;
-        boolean first =true;
         try {
+
+            //最初下載
             if (action.equals("getInvoice")) {
-                String startDate,endDate ;
-                Calendar cal = Calendar.getInstance();
-                int nowyear=cal.get(Calendar.YEAR);
-                int nowmonth=cal.get(Calendar.MONTH);
-                cal.set(nowyear, nowmonth-6, 1);
-                year = cal.get(Calendar.YEAR);
-                month = cal.get(Calendar.MONTH);
-                day = cal.get(Calendar.DAY_OF_MONTH);
                 user = params[1].toString();
                 password = params[2].toString();
-                while (true) {
-                    cal.set(year, month, 1);
-                    startDate = sf.format(new Date(cal.getTimeInMillis()));
-                    cal.set(year, month, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-                    endDate = sf.format(new Date(cal.getTimeInMillis()));
-                    Log.d(TAG, "startDate: " + startDate + "endDate" + endDate + "isNoExist" + isNoExist);
-                    data = getInvoice(user, password, startDate, endDate,"N");
-                    month = month+1;
-                    if (month >11) {
-                        month = 0;
-                        year = year + 1;
-                    }
-                    url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
-                    jsonIn = getRemoteData(url, data);
-                    if (jsonIn.indexOf("919") != -1) {
-                        jsonIn = "noUser";
-                        break;
-                    }
-                    if(isNoExist>3)
-                    {
-                        jsonIn="timeout";
-                        break;
-                    }
-                    if (jsonIn.indexOf("200") == -1) {
-                        isNoExist++;
-                        continue;
-                    }
-                    getjsonIn(jsonIn, password, user);
-                    if(first)
-                    {
+                //設定初始下載時間這個月
+                String startDate,endDate ;
+                Calendar cal = Calendar.getInstance();
+                year=cal.get(Calendar.YEAR);
+                month=cal.get(Calendar.MONTH);
+                cal.set(year, month, 1);
+                startDate = Common.sTwo.format(new Date(cal.getTimeInMillis()));
+                cal.set(year, month, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+                endDate = Common.sTwo.format(new Date(cal.getTimeInMillis()));
+                //設定傳遞參數
+                data = getInvoice(user, password, startDate, endDate,"N");
+                url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
+                jsonIn = getRemoteData(url, data);
+                //Exception 處理
+                if(jsonIn.equals("timeout")||jsonIn.equals("error"))
+                {
+
+
+                }else {
+                    //檢查回傳號碼
+                    JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
+                    String code=js.get("code").getAsString().trim();
+                    //成功
+                    if (code.equals("200")) {
                         CarrierVO carrierVO = new CarrierVO();
                         carrierVO.setCarNul(user);
                         carrierVO.setPassword(password);
+                        carrierVO.setFirstYear(year);
+                        carrierVO.setFirstMonth(month);
+                        carrierVO.setSecondMonth(false);
+                        carrierVO.setThirdMonth(false);
+                        carrierVO.setFourthMonth(false);
+                        carrierVO.setFifthMonth(false);
+                        carrierVO.setSixthMonth(false);
                         carrierDB.insert(carrierVO);
-                    }
-                    first=false;
-                    if(year==nowyear&&month>nowmonth)
-                    {
-                        Log.d(TAG, "End startDate: " + startDate + "endDate" + endDate + "isNoExist" + isNoExist);
+                        jsonIn=getjsonIn(jsonIn, password, user);
+                        jsonIn=downLoadOtherMon(carrierVO);
+                        return jsonIn;
+                    }else{
+                        //失敗
+                        jsonIn = "noUser";
                         return jsonIn;
                     }
                 }
-                return jsonIn;
             } else if (action.equals("GetToday")) {
                 List<CarrierVO> carrierVOS = carrierDB.getAll();
                 int todayyear, todaymonth, todayday, lastyear, lastmonth, lastday;
@@ -195,6 +192,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         return jsonIn;
     }
 
+    private String downLoadOtherMon(CarrierVO carrierVO) {
+    }
 
 
     private String searchNewPriceNul() {
@@ -444,62 +443,71 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     }
 
 
-    private void getjsonIn(String jsonIn, String password, String user) {
+    private String getjsonIn(String jsonIn, String password, String user) {
         try {
             InvoiceVO invoiceVO;
-            HashMap<String,InvoiceVO> hashMap=new HashMap<>();
             JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
             Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
             String s = js.get("details").toString();
             List<JsonObject> b = gson.fromJson(s, cdType);
+            String result="";
             for (JsonObject j : b) {
                 invoiceVO = jsonToInVoice(j, password, user);
-                invoiceVO.setDonateTime(invoiceVO.getTime());
-                hashMap.put(invoiceVO.getInvNum(),invoiceVO);
+                if(invoiceVO!=null)
+                {
+                    if(invoiceVO!=null)
+                    {
+                        result=getInvoicedetail(invoiceVO);
+                    }
+                }
             }
-            for (String key:hashMap.keySet())
-            {
-                invoiceDB.insert(hashMap.get(key));
-                Log.d(TAG,"insert invoice"+hashMap.get(key).getInvNum());
-            }
+            return result;
         } catch (Exception e) {
            e.printStackTrace();
+           return null;
         }
     }
 
-    private InvoiceVO jsonToInVoice(JsonObject j, String password, String user) throws IOException {
-        InvoiceVO invoiceVO = new InvoiceVO();
-        invoiceVO.setAmount(j.get("amount").getAsInt());
-        invoiceVO.setCardEncrypt(password);
-        invoiceVO.setCardNo(j.get("cardNo").getAsString());
-        invoiceVO.setCardType(j.get("cardType").getAsString());
-        invoiceVO.setDonateMark(String.valueOf(j.get("donateMark").getAsInt()));
-        invoiceVO.setInvNum(j.get("invNum").getAsString());
-        invoiceVO.setInvDonatable(String.valueOf(j.get("invDonatable").getAsBoolean()));
-        invoiceVO.setSellerName(j.get("sellerName").getAsString());
-        String ass="0";
-        if(j.get("sellerAddress")!=null)
+    private InvoiceVO jsonToInVoice(JsonObject j, String password, String user){
+        try {
+            InvoiceVO invoiceVO = new InvoiceVO();
+            invoiceVO.setAmount(j.get("amount").getAsInt());
+            invoiceVO.setCardEncrypt(password);
+            invoiceVO.setCardNo(j.get("cardNo").getAsString());
+            invoiceVO.setCardType(j.get("cardType").getAsString());
+            invoiceVO.setDonateMark(String.valueOf(j.get("donateMark").getAsInt()));
+            invoiceVO.setInvNum(j.get("invNum").getAsString());
+            invoiceVO.setInvDonatable(String.valueOf(j.get("invDonatable").getAsBoolean()));
+            invoiceVO.setSellerName(j.get("sellerName").getAsString());
+            String ass="0";
+            if(j.get("sellerAddress")!=null)
+            {
+                ass=j.get("sellerAddress").getAsString();
+            }
+            invoiceVO.setSellerAddress(ass);
+            invoiceVO.setSellerBan(j.get("sellerBan").getAsString());
+            JsonObject jtime = gson.fromJson(j.get("invDate").toString(), JsonObject.class);
+            String hhmmss=j.get("invoiceTime").getAsString();
+            if(hhmmss.indexOf("null")!=-1)
+            {
+                hhmmss="00:00:00";
+            }
+            String time = String.valueOf(jtime.get("year").getAsInt() + 1911) + "-" + lengthlowtwo(jtime.get("month").getAsString()) + "-" + lengthlowtwo(jtime.get("date").getAsString()) + " " +hhmmss;
+            invoiceVO.setTime(Timestamp.valueOf(time));
+            invoiceVO.setDonateTime(Timestamp.valueOf(time));
+            invoiceVO.setCarrier(user);
+            invoiceVO.setCardEncrypt(password);
+            invoiceVO.setDetail("0");
+            invoiceVO.setMaintype("0");
+            invoiceVO.setSecondtype("0");
+            invoiceVO.setIswin("0");
+            invoiceVO.setDonateTime(invoiceVO.getTime());
+            return invoiceVO;
+        }catch (Exception e)
         {
-            ass=j.get("sellerAddress").getAsString();
+            e.printStackTrace();
+            return null;
         }
-        invoiceVO.setSellerAddress(ass);
-        invoiceVO.setSellerBan(j.get("sellerBan").getAsString());
-        JsonObject jtime = gson.fromJson(j.get("invDate").toString(), JsonObject.class);
-        String hhmmss=j.get("invoiceTime").getAsString();
-        if(hhmmss.indexOf("null")!=-1)
-        {
-            hhmmss="00:00:00";
-        }
-        String time = String.valueOf(jtime.get("year").getAsInt() + 1911) + "-" + lengthlowtwo(jtime.get("month").getAsString()) + "-" + lengthlowtwo(jtime.get("date").getAsString()) + " " +hhmmss;
-        invoiceVO.setTime(Timestamp.valueOf(time));
-        invoiceVO.setDonateTime(Timestamp.valueOf(time));
-        invoiceVO.setCarrier(user);
-        invoiceVO.setCardEncrypt(password);
-        invoiceVO.setDetail("0");
-        invoiceVO.setMaintype("0");
-        invoiceVO.setSecondtype("0");
-        invoiceVO.setIswin("0");
-        return invoiceVO;
     }
 
     public String lengthlowtwo(String a)
@@ -561,7 +569,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             if (object instanceof EleSetCarrier) {
                 EleSetCarrier eleSetCarrier = (EleSetCarrier) object;
                 if (s.equals("noUser")) {
-                    Common.showToast(eleSetCarrier.getActivity(), "手機條碼或驗證碼有誤");
+                    Common.showToast(eleSetCarrier.getActivity(), "手機條碼或驗證碼有誤!");
                     eleSetCarrier.closeDialog();
                     return;
                 } else if(s.equals("timeout"))
@@ -610,15 +618,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 {
                     download.AutoSetPrice();
                     return;
-                }
-            }else if(object instanceof SelectConsume)
-            {
-                SelectConsume selectConsume = (SelectConsume) object;
-                if(action.equals("GetToday"))
-                {
-                    selectConsume.getAllInvoiceDetail();
-                }else {
-                    selectConsume.dataAnalyze();
                 }
             }else if(object instanceof SelectDetList)
             {
@@ -693,12 +692,13 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             String detailjs = getRemoteData(urldetail, hashMap);
             if(detailjs==null||detailjs.equals("error")||detailjs.equals("timeout"))
             {
+                invoiceDB.insert(invoiceVO);
                 return detailjs;
             }
             JsonObject jsonObject = gson.fromJson(detailjs, JsonObject.class);
             invoiceVO.setDetail(jsonObject.get("details").toString());
             InvoiceVO type=getType(invoiceVO);
-            invoiceDB.update(type);
+            invoiceDB.insert(type);
         return detailjs;
     }
 

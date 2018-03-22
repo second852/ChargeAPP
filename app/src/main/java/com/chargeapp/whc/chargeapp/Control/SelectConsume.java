@@ -57,7 +57,6 @@ import com.github.mikephil.charting.highlight.Highlight;
 
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -83,8 +82,6 @@ public class SelectConsume extends Fragment {
     private InvoiceDB invoiceDB;
     private CarrierDB carrierDB;
     private ConsumeDB consumeDB;
-    private ProgressDialog progressDialog;
-    private static AsyncTask first = null;
     private TextView PIdateTittle, describe;
     private ImageView PIdateCut, PIdateAdd;
     private int choiceD = 0;
@@ -98,7 +95,6 @@ public class SelectConsume extends Fragment {
     private Calendar end;
     private Spinner choicePeriod, choiceCarrier;
     private PieChart chart_pie;
-    private TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
     private int total, period;
     private int Statue = 1;
     private String DesTittle;
@@ -127,7 +123,6 @@ public class SelectConsume extends Fragment {
         setDB();
         findViewById(view);
         typeList = typeDB.getAll();
-        progressDialog = new ProgressDialog(getActivity());
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
         choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
@@ -470,59 +465,6 @@ public class SelectConsume extends Fragment {
     }
 
 
-    private void download() {
-        List<CarrierVO> carrierVOList = carrierDB.getAll();
-        if (carrierVOList == null || carrierVOList.size() <= 0) {
-            return;
-        }
-        if (first == null) {
-            first = new GetSQLDate(this).execute("GetToday");
-            progressDialog.setMessage("正在更新資料,請稍候...");
-            progressDialog.show();
-        } else {
-            dataAnalyze();
-        }
-    }
-
-
-    private InvoiceVO getType(InvoiceVO invoiceVO) {
-        List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
-        String main = "O", second = "O";
-        int x = 0, total = 0;
-        for (TypeDetailVO t : typeDetailVOS) {
-            x = 0;
-            String[] key = t.getKeyword().split(" ");
-            for (int i = 0; i < key.length; i++) {
-                if (invoiceVO.getDetail().indexOf(key[i].trim()) != -1) {
-                    x = x + key[i].length();
-                }
-            }
-            if (x > total) {
-                total = x;
-                main = t.getGroupNumber();
-                second = t.getName();
-            }
-        }
-        if (second.indexOf("餐") != -1) {
-            int hour = Integer.valueOf(Common.sHour.format(new Date(invoiceVO.getTime().getTime())));
-            if (hour > 0 && hour < 11) {
-                second = "早餐";
-            } else if (hour >= 11 && hour < 18) {
-                second = "午餐";
-            } else {
-                second = "晚餐";
-            }
-        }
-        invoiceVO.setMaintype(main);
-        invoiceVO.setSecondtype(second);
-        invoiceDB.update(invoiceVO);
-        Log.d(TAG, invoiceVO.getInvNum() + " : " + main + " : " + second);
-        return invoiceVO;
-    }
-
-    public void getAllInvoiceDetail() {
-        new GetSQLDate(this).execute("GetAllInvoice");
-    }
 
     public void dataAnalyze() {
         chart_bar.clear();

@@ -19,7 +19,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 public class AlertDialogFragment extends DialogFragment implements  DialogInterface.OnClickListener{
 
 
-    Object object;
+    private Object object;
 
     public Object getObject() {
         return object;

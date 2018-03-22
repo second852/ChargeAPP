@@ -29,7 +29,8 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
                     "name TEXT, image INTEGER ) ;";
     private static final String TABLE_CARRIER =
             "CREATE TABLE CARRIER ( id INTEGER PRIMARY KEY AUTOINCREMENT, CARNUL TEXT NOT NULL," +
-                    "PASSWORD TEXT) ;";
+                    "PASSWORD TEXT,FirstMonth INTEGER,FirstYear INTEGER,SecondMonth TEXT," +
+                    "ThirdMonth TEXT,FourthMonth TEXT,FifthMonth TEXT,SixthMonth TEXT) ;";
 
     private static final String TABLE_PRICE =
             "CREATE TABLE PRICE ( invoYm TEXT PRIMARY KEY,superPrizeNo TEXT,spcPrizeNo TEXT,firstPrizeNo1 TEXT," +
