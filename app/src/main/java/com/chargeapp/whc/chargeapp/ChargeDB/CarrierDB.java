@@ -128,6 +128,23 @@ public class CarrierDB {
         String[] whereArgs = {Integer.toString(carrierVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);
     }
+
+    public int updatebyCaRNul(CarrierVO carrierVO) {
+        ContentValues values = new ContentValues();
+        values.put("CARNUL",carrierVO.getCarNul());
+        values.put("PASSWORD", carrierVO.getPassword());
+        values.put("FirstMonth",carrierVO.getFirstMonth());
+        values.put("FirstYear",carrierVO.getFirstYear());
+        values.put("SecondMonth",String.valueOf(carrierVO.isSecondMonth()));
+        values.put("ThirdMonth",String.valueOf(carrierVO.isThirdMonth()));
+        values.put("FourthMonth",String.valueOf(carrierVO.isFourthMonth()));
+        values.put("FifthMonth",String.valueOf(carrierVO.isFifthMonth()));
+        values.put("SixthMonth",String.valueOf(carrierVO.isSixthMonth()));
+        String whereClause = "CARNUL = ?;";
+        String[] whereArgs = {carrierVO.getCarNul()};
+        return db.update(TABLE_NAME, values, whereClause, whereArgs);
+    }
+
     public int deleteById(int id) {
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {String.valueOf(id)};

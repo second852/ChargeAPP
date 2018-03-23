@@ -1,13 +1,12 @@
 package com.chargeapp.whc.chargeapp.ChargeDB;
 
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 
 import android.util.Log;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 
 import com.chargeapp.whc.chargeapp.Control.Common;
@@ -15,7 +14,6 @@ import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
-import com.chargeapp.whc.chargeapp.Control.SelectConsume;
 import com.chargeapp.whc.chargeapp.Control.SelectDetList;
 import com.chargeapp.whc.chargeapp.Control.SelectListModelCom;
 import com.chargeapp.whc.chargeapp.Control.SelectShowCircleDe;
@@ -45,10 +43,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeoutException;
 
 public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private final static String TAG = "GetSQLDate";
@@ -65,6 +63,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private SimpleDateFormat sd=new SimpleDateFormat("HH");
     private InvoiceVO invoiceVO;
     private ProgressBar progressBar;
+    private TextView textView;
 
     public GetSQLDate(Object object) {
         this.object = object;
@@ -91,27 +90,18 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     protected String doInBackground(Object... params) {
         action = params[0].toString();
         String jsonIn = null;
-        String url;
-        HashMap<String, String> data;
         try {
 
             //最初下載
             if (action.equals("getInvoice")) {
+
+                //設定初始下載時間這個月
                 user = params[1].toString();
                 password = params[2].toString();
-                //設定初始下載時間這個月
-                String startDate,endDate ;
                 Calendar cal = Calendar.getInstance();
                 year=cal.get(Calendar.YEAR);
                 month=cal.get(Calendar.MONTH);
-                cal.set(year, month, 1);
-                startDate = Common.sTwo.format(new Date(cal.getTimeInMillis()));
-                cal.set(year, month, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-                endDate = Common.sTwo.format(new Date(cal.getTimeInMillis()));
-                //設定傳遞參數
-                data = getInvoice(user, password, startDate, endDate,"N");
-                url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
-                jsonIn = getRemoteData(url, data);
+                jsonIn= findMonthHead(year,month,user,password);
                 //Exception 處理
                 if(jsonIn.equals("timeout")||jsonIn.equals("error"))
                 {
@@ -135,7 +125,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         carrierVO.setSixthMonth(false);
                         carrierDB.insert(carrierVO);
                         jsonIn=getjsonIn(jsonIn, password, user);
-                        jsonIn=downLoadOtherMon(carrierVO);
+                        if(jsonIn.equals("success"))
+                        {
+                            jsonIn=downLoadOtherMon(carrierVO);
+                        }
                         return jsonIn;
                     }else{
                         //失敗
@@ -183,7 +176,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 return jsonIn;
             }else if(action.equals("reDownload"))
             {
-                jsonIn=getInvoicedetail(invoiceVO);
+                jsonIn= getInvoiceDetail(invoiceVO);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -192,7 +185,139 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         return jsonIn;
     }
 
+    private String findMonthHead(int year, int month, String user, String password) {
+        String startDate,endDate,url,jsonIn;
+        HashMap<String, String> data;
+        Calendar cal=new GregorianCalendar(year,month,1);
+        startDate = Common.sTwo.format(new Date(cal.getTimeInMillis()));
+        cal.set(year, month, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        endDate = Common.sTwo.format(new Date(cal.getTimeInMillis()));
+        //設定傳遞參數
+        data = getInvoice(user, password, startDate, endDate,"N");
+        url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
+        jsonIn = getRemoteData(url, data);
+        return jsonIn;
+    }
+
     private String downLoadOtherMon(CarrierVO carrierVO) {
+        //設定TimeOut reTry次數 3次
+        int endWhile=0;
+        String user=carrierVO.getCarNul();
+        String password=carrierVO.getPassword();
+        String jsonIn="";
+        while (carrierVO.isSixthMonth()||endWhile<3)
+        {
+             int month=carrierVO.getFirstMonth();
+             int year=carrierVO.getFirstYear();
+             if(!carrierVO.isSecondMonth())
+             {
+                 month=month-1;
+                 jsonIn=findMonthHead(year,month,user,password);
+                 //檢查回傳號碼
+                 JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
+                 String code=js.get("code").getAsString().trim();
+                 //success
+                 if (code.equals("200"))
+                 {
+                     jsonIn=getjsonIn(jsonIn, password, user);
+                     if(jsonIn.equals("success"))
+                     {
+                         carrierVO.setSecondMonth(true);
+                         carrierDB.updatebyCaRNul(carrierVO);
+                     }
+                 }else{
+                     //fail
+                     endWhile++;
+                 }
+
+                 month=carrierVO.getFirstMonth();
+             }else if(!carrierVO.isThirdMonth())
+             {
+                 month=month-2;
+                 jsonIn=findMonthHead(year,month,user,password);
+                 //檢查回傳號碼
+                 JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
+                 String code=js.get("code").getAsString().trim();
+                 //success
+                 if (code.equals("200"))
+                 {
+                     jsonIn=getjsonIn(jsonIn, password, user);
+                     if(jsonIn.equals("success"))
+                     {
+                         carrierVO.setThirdMonth(true);
+                         carrierDB.updatebyCaRNul(carrierVO);
+                     }
+                 }else{
+                     //fail
+                     endWhile++;
+                 }
+                 month=carrierVO.getFirstMonth();
+             }else if(!carrierVO.isFourthMonth())
+             {
+                 month=month-3;
+                 jsonIn=findMonthHead(year,month,user,password);
+                 //檢查回傳號碼
+                 JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
+                 String code=js.get("code").getAsString().trim();
+                 //success
+                 if (code.equals("200"))
+                 {
+                     jsonIn=getjsonIn(jsonIn, password, user);
+                     if(jsonIn.equals("success"))
+                     {
+                         carrierVO.setThirdMonth(true);
+                         carrierDB.updatebyCaRNul(carrierVO);
+                     }
+                 }else{
+                     //fail
+                     endWhile++;
+                 }
+                 month=carrierVO.getFirstMonth();
+             }else if(!carrierVO.isFifthMonth())
+             {
+                 month=month-4;
+                 jsonIn=findMonthHead(year,month,user,password);
+                 //檢查回傳號碼
+                 JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
+                 String code=js.get("code").getAsString().trim();
+                 //success
+                 if (code.equals("200"))
+                 {
+                     jsonIn=getjsonIn(jsonIn, password, user);
+                     if(jsonIn.equals("success"))
+                     {
+                         carrierVO.setFifthMonth(true);
+                         carrierDB.updatebyCaRNul(carrierVO);
+                     }
+                 }else{
+                     //fail
+                     endWhile++;
+                 }
+                 month=carrierVO.getFirstMonth();
+             }else if(!carrierVO.isSixthMonth())
+             {
+                 month=month-5;
+                 jsonIn=findMonthHead(year,month,user,password);
+                 //檢查回傳號碼
+                 JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
+                 String code=js.get("code").getAsString().trim();
+                 //success
+                 if (code.equals("200"))
+                 {
+                     jsonIn=getjsonIn(jsonIn, password, user);
+                     if(jsonIn.equals("success"))
+                     {
+                         carrierVO.setSixthMonth(true);
+                         carrierDB.updatebyCaRNul(carrierVO);
+                     }
+                 }else{
+                     //fail
+                     endWhile++;
+                 }
+                 month=carrierVO.getFirstMonth();
+             }
+        }
+        return jsonIn;
     }
 
 
@@ -455,10 +580,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 invoiceVO = jsonToInVoice(j, password, user);
                 if(invoiceVO!=null)
                 {
-                    if(invoiceVO!=null)
-                    {
-                        result=getInvoicedetail(invoiceVO);
-                    }
+                    result= getInvoiceDetail(invoiceVO);
                 }
             }
             return result;
@@ -668,12 +790,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         List<InvoiceVO> invoiceVOS=invoiceDB.getNoDetailAll();
         for (InvoiceVO i:invoiceVOS)
         {
-            a=getInvoicedetail(i);
+            a= getInvoiceDetail(i);
         }
         return a;
     }
 
-    private String getInvoicedetail(InvoiceVO invoiceVO) {
+    private String getInvoiceDetail(InvoiceVO invoiceVO) {
             String urldetail = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
             HashMap<String, String> hashMap = new HashMap();
             hashMap.put("version", "0.3");
@@ -693,12 +815,13 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             if(detailjs==null||detailjs.equals("error")||detailjs.equals("timeout"))
             {
                 invoiceDB.insert(invoiceVO);
-                return detailjs;
+                return "success";
             }
             JsonObject jsonObject = gson.fromJson(detailjs, JsonObject.class);
             invoiceVO.setDetail(jsonObject.get("details").toString());
             InvoiceVO type=getType(invoiceVO);
             invoiceDB.insert(type);
+            detailjs="success";
         return detailjs;
     }
 

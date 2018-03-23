@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:id="@android:id/background"> <span class="crayon-c">//進度條的背景圖片</span>
+      <clip android:drawable="@drawable/background_shape" />
+    </item>
+
+        <item android:id="@android:id/progress" > //<span class="crayon-c">進度條的主要進度值圖片</span>     
+            <clip android:drawable="@drawable/progress_shape" />    
+        </item>
+
+        <item android:id="@android:id/secondaryProgress" > <span class="crayon-c">//進度條的次要進度值圖片</span>
+    <clip android:drawable="@drawable/secondaryprogress_shape" />
+</item>
+
+</layer-list>
