@@ -254,7 +254,7 @@ public class SelectConsume extends Fragment {
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrierVOS.get(choiceD).getCarNul());
             }
             for (InvoiceVO I : invoiceVOS) {
-                if (I.getMaintype().equals("O")) {
+                if (I.getMaintype().equals("0")||I.getMaintype().equals("O")) {
                     other.setValue(other.getValue() + Integer.valueOf(I.getAmount()));
                     continue;
                 }

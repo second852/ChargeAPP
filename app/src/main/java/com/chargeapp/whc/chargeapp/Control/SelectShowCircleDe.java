@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,15 +26,10 @@ import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -72,7 +66,7 @@ public class SelectShowCircleDe extends Fragment {
     private List<ConsumeVO> consumeVOS;
     private String mainTitle;
     private HashMap<String,Integer> hashMap;
-    private String key;
+
     private int Statue;
     private Calendar start,end;
     private PieChart pieChart;
@@ -102,7 +96,6 @@ public class SelectShowCircleDe extends Fragment {
         year= (int) getArguments().getSerializable("year");
         month= (int) getArguments().getSerializable("month");
         day= (int) getArguments().getSerializable("day");
-        key= (String) getArguments().getSerializable("index");
         carrier= (int) getArguments().getSerializable("carrier");
         Statue= (int) getArguments().getSerializable("statue");
         mainTitle= (String) getArguments().getSerializable("index");
@@ -157,16 +150,16 @@ public class SelectShowCircleDe extends Fragment {
 
     private PieData addData() {
         List<PieEntry> yVals1 = new ArrayList<PieEntry>();
-        int i=0;
         for(String s:hashMap.keySet())
         {
             if(s.equals("O"))
             {
                 yVals1.add(new PieEntry(hashMap.get(s),"其他"));
-            }else{
-                yVals1.add(new PieEntry(hashMap.get(s),s));
+            }else if(s.equals("0")){
+                yVals1.add(new PieEntry(hashMap.get(s),"未知"));
+            }else {
+               yVals1.add(new PieEntry(hashMap.get(s),s));
             }
-            i++;
         }
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
         int size=yVals1.size();
@@ -329,7 +322,14 @@ public class SelectShowCircleDe extends Fragment {
                 remindL.setBackgroundColor(Color.parseColor("#008844"));
 
                 sbTitle.append(sf.format(new Date(I.getTime().getTime()))+" ");
-                sbTitle.append(I.getSecondtype().equals("O")?"其他":I.getSecondtype());
+                if(I.getSecondtype().equals("0"))
+                {
+                    sbTitle.append("其他");
+                }else if(I.getSecondtype().equals("O")){
+                    sbTitle.append("未知");
+                }else{
+                    sbTitle.append(I.getSecondtype());
+                }
                 sbTitle.append("  共"+I.getAmount()+"元");
                 remindL.setVisibility(View.VISIBLE);
                 remainT.setText("電子發票");

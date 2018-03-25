@@ -141,7 +141,7 @@ public class SettingListType extends Fragment {
 
             if (o instanceof TypeVO) {
                 final TypeVO typeVO = (TypeVO) o;
-                image.setImageResource(MainActivity.imageAll[typeVO.getImage()]);
+                image.setImageResource(Download.imageAll[typeVO.getImage()]);
                 listTitle.setText(typeVO.getName());
                 saveT.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -160,7 +160,7 @@ public class SettingListType extends Fragment {
 
             } else if (o instanceof TypeDetailVO) {
                 final TypeDetailVO typeDetailVO = (TypeDetailVO) o;
-                image.setImageResource(MainActivity.imageAll[typeDetailVO.getImage()]);
+                image.setImageResource(Download.imageAll[typeDetailVO.getImage()]);
                 listTitle.setText(typeDetailVO.getName());
                 saveT.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -176,7 +176,7 @@ public class SettingListType extends Fragment {
                 });
             } else {
                 final BankTypeVO bankTypeVO = (BankTypeVO) o;
-                image.setImageResource(MainActivity.imageAll[bankTypeVO.getImage()]);
+                image.setImageResource(Download.imageAll[bankTypeVO.getImage()]);
                 listTitle.setText(bankTypeVO.getName());
                 saveT.setOnClickListener(new View.OnClickListener() {
                     @Override

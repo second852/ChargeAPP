@@ -294,8 +294,11 @@ public class PriceHand extends Fragment {
                 {
                     donateRL.setVisibility(View.VISIBLE);
                     showMi.setVisibility(View.GONE);
-                    speech.stopListening();
-                    speech.cancel();
+                    if(speech!=null)
+                    {
+                        speech.stopListening();
+                        speech.cancel();
+                    }
                 }else if(i==1)
                 {
                     priceTitle.setText("請念後三碼");

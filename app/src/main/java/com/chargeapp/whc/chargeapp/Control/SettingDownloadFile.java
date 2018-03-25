@@ -26,6 +26,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ElePeriodDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
@@ -35,6 +36,7 @@ import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
+import com.chargeapp.whc.chargeapp.Model.ElePeriod;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
@@ -95,6 +97,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     private BankTybeDB bankTybeDB;
     private GoalDB goalDB;
     private CarrierDB carrierDB;
+    private ElePeriodDB elePeriodDB;
     public static GoogleApiClient mGoogleApiClient;
     public static DriveId mSelectedFileDriveId;
     private RelativeLayout progressL;
@@ -113,6 +116,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        elePeriodDB=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<EleMainItemVO> itemSon = getNewItem();
         listView = view.findViewById(R.id.list);
         progressL = view.findViewById(R.id.progressL);
@@ -263,6 +267,8 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                 String sheetTitle = sheet.getSheetName();
                 if ((!sheetTitle.equals("Type") && i == 0)) {
                     Common.showToast(getActivity(), "不是備份檔");
+                    workbook.close();
+                    inp.close();
                     return;
                 }
                 for (Row row : sheet) {
@@ -360,9 +366,17 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         carrierVO.setCarNul(row.getCell(1).getStringCellValue());
                         carrierVO.setPassword(row.getCell(2).getStringCellValue());
                         carrierDB.insertHid(carrierVO);
+                    }else if (sheetTitle.equals("ElePeriod")) {
+                        ElePeriod elePeriod = new ElePeriod();
+                        elePeriod.setId((int) row.getCell(0).getNumericCellValue());
+                        elePeriod.setCarNul(row.getCell(1).getStringCellValue());
+                        elePeriod.setYear((int) row.getCell(2).getNumericCellValue());
+                        elePeriod.setMonth((int) row.getCell(3).getNumericCellValue());
+                        elePeriod.setDownload(row.getCell(4).getBooleanCellValue());
+                        elePeriodDB.insertHid(elePeriod);
                     }
+                    i++;
                 }
-                i++;
             }
             workbook.close();
             inp.close();

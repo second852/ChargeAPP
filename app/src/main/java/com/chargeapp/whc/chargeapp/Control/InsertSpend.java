@@ -23,7 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
-import android.widget.TabHost;
 import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
@@ -186,7 +185,7 @@ public class InsertSpend extends Fragment {
         List<TypeDetailVO> typeDetailVOS = typeDetailDB.findByGroupname(name.getText().toString().trim());
         for (TypeDetailVO t : typeDetailVOS) {
             item = new HashMap<String, Object>();
-            item.put("image", MainActivity.imageAll[t.getImage()]);
+            item.put("image", Download.imageAll[t.getImage()]);
             item.put("text", t.getName());
             items.add(item);
         }
@@ -211,7 +210,7 @@ public class InsertSpend extends Fragment {
         List<TypeVO> typeVOS = typeDB.getAll();
         for (TypeVO t : typeVOS) {
             item = new HashMap<String, Object>();
-            item.put("image", MainActivity.imageAll[t.getImage()]);
+            item.put("image", Download.imageAll[t.getImage()]);
             item.put("text", t.getName());
             items.add(item);
         }

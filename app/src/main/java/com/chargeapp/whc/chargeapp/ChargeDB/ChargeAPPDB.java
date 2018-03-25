@@ -29,8 +29,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
                     "name TEXT, image INTEGER ) ;";
     private static final String TABLE_CARRIER =
             "CREATE TABLE CARRIER ( id INTEGER PRIMARY KEY AUTOINCREMENT, CARNUL TEXT NOT NULL," +
-                    "PASSWORD TEXT,FirstMonth INTEGER,FirstYear INTEGER,SecondMonth TEXT," +
-                    "ThirdMonth TEXT,FourthMonth TEXT,FifthMonth TEXT,SixthMonth TEXT) ;";
+                    "PASSWORD TEXT) ;";
 
     private static final String TABLE_PRICE =
             "CREATE TABLE PRICE ( invoYm TEXT PRIMARY KEY,superPrizeNo TEXT,spcPrizeNo TEXT,firstPrizeNo1 TEXT," +
@@ -63,6 +62,11 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
             "CREATE TABLE Goal ( id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT NOT NULL," +
                     "name TEXT, money INTEGER , timeStatue text, startTime DATETIME ,endTime DATETIME, notify TEXT , notifyStatue TEXT , notifyDate TEXT , noWeekend TEXT ,statue INTEGER) ;";
 
+
+    private static final String TABLE_ElePeriod =
+            "CREATE TABLE ElePeriod ( id INTEGER PRIMARY KEY AUTOINCREMENT, CARNUL TEXT," +
+                    "year INTEGER,month INTEGER, download TEXT) ;";
+
     public ChargeAPPDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -79,6 +83,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
         db.execSQL(TABLE_HERATYTEAM);
         db.execSQL(TABLE_PRICE);
         db.execSQL(TABLE_GOAL);
+        db.execSQL(TABLE_ElePeriod);
     }
 
     @Override
@@ -93,6 +98,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + "HEARTYTEAM");
         db.execSQL("DROP TABLE IF EXISTS " + "PRICE");
         db.execSQL("DROP TABLE IF EXISTS " + "GOAL");
+        db.execSQL("DROP TABLE IF EXISTS "+"ElePeriod");
         onCreate(db);
     }
 

@@ -30,7 +30,7 @@
         android:roundIcon="@drawable/arrow"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Control.MainActivity"
+        <activity android:name=".Control.Download"
                   android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,6 +38,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".Control.MainActivity"
+            android:screenOrientation="portrait" >
+        </activity>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

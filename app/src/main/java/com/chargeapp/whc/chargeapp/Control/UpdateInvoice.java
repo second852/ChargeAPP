@@ -96,7 +96,7 @@ public class UpdateInvoice extends Fragment {
         for(TypeVO t:typeVOS)
         {
             item = new HashMap<String, Object>();
-            item.put("image", MainActivity.imageAll[t.getImage()]);
+            item.put("image", Download.imageAll[t.getImage()]);
             item.put("text",t.getName());
             items.add(item);
         }
@@ -119,7 +119,7 @@ public class UpdateInvoice extends Fragment {
         for(TypeDetailVO t:typeDetailVOS)
         {
             item = new HashMap<String, Object>();
-            item.put("image", MainActivity.imageAll[t.getImage()]);
+            item.put("image", Download.imageAll[t.getImage()]);
             item.put("text",t.getName());
             items.add(item);
         }

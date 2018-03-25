@@ -64,12 +64,12 @@ public class UpdateConsumeType extends Fragment {
     private void setTypeDetail() {
         typeDetailVO= (TypeDetailVO) getArguments().getSerializable("TypeDetailVO");
         TypeVO typeVO = typeDB.findTypeName(typeDetailVO.getGroupNumber());
-        mainImage.setImageResource(MainActivity.imageAll[typeVO.getImage()]);
+        mainImage.setImageResource(Download.imageAll[typeVO.getImage()]);
         mainName.setText(typeVO.getName().trim());
         mainName.setFocusable(false);
         mainName.setFocusableInTouchMode(false);
         mainName.setBackgroundColor(Color.parseColor("#DDDDDD"));
-        secondImage.setImageResource(MainActivity.imageAll[typeDetailVO.getImage()]);
+        secondImage.setImageResource(Download.imageAll[typeDetailVO.getImage()]);
         secondName.setText(typeDetailVO.getName());
         secondKey.setText(typeDetailVO.getKeyword());
     }
@@ -77,9 +77,9 @@ public class UpdateConsumeType extends Fragment {
     private void setGridPicture() {
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
-        for (int i = 0; i < MainActivity.imageAll.length; i++) {
+        for (int i = 0; i < Download.imageAll.length; i++) {
             item = new HashMap<String, Object>();
-            item.put("image", MainActivity.imageAll[i]);
+            item.put("image", Download.imageAll[i]);
             item.put("text", " ");
             items.add(item);
         }
@@ -114,7 +114,7 @@ public class UpdateConsumeType extends Fragment {
     private class choicePicture implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            resultI.setImageResource(MainActivity.imageAll[i]);
+            resultI.setImageResource(Download.imageAll[i]);
             typeDetailVO.setImage(i);
             choiceL.setVisibility(View.GONE);
         }

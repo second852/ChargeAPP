@@ -33,13 +33,6 @@ public class CarrierDB {
             carrierVO.setId(cursor.getInt(0));
             carrierVO.setCarNul(cursor.getString(1));
             carrierVO.setPassword(cursor.getString(2));
-            carrierVO.setFirstMonth(cursor.getInt(3));
-            carrierVO.setFirstYear(cursor.getInt(4));
-            carrierVO.setSecondMonth(Boolean.valueOf(cursor.getString(5)));
-            carrierVO.setThirdMonth(Boolean.valueOf(cursor.getString(6)));
-            carrierVO.setFourthMonth(Boolean.valueOf(cursor.getString(7)));
-            carrierVO.setFifthMonth(Boolean.valueOf(cursor.getString(8)));
-            carrierVO.setSixthMonth(Boolean.valueOf(cursor.getString(9)));
             carrierVOS.add(carrierVO);
         }
         cursor.close();
@@ -72,13 +65,6 @@ public class CarrierDB {
             carrierVO.setId(cursor.getInt(0));
             carrierVO.setCarNul(cursor.getString(1));
             carrierVO.setPassword(cursor.getString(2));
-            carrierVO.setFirstMonth(cursor.getInt(3));
-            carrierVO.setFirstYear(cursor.getInt(4));
-            carrierVO.setSecondMonth(Boolean.valueOf(cursor.getString(5)));
-            carrierVO.setThirdMonth(Boolean.valueOf(cursor.getString(6)));
-            carrierVO.setFourthMonth(Boolean.valueOf(cursor.getString(7)));
-            carrierVO.setFifthMonth(Boolean.valueOf(cursor.getString(8)));
-            carrierVO.setSixthMonth(Boolean.valueOf(cursor.getString(9)));
         }
         cursor.close();
         return carrierVO;
@@ -88,13 +74,6 @@ public class CarrierDB {
         ContentValues values = new ContentValues();
         values.put("CARNUL",carrierVO.getCarNul());
         values.put("PASSWORD", carrierVO.getPassword());
-        values.put("FirstMonth",carrierVO.getFirstMonth());
-        values.put("FirstYear",carrierVO.getFirstYear());
-        values.put("SecondMonth",String.valueOf(carrierVO.isSecondMonth()));
-        values.put("ThirdMonth",String.valueOf(carrierVO.isThirdMonth()));
-        values.put("FourthMonth",String.valueOf(carrierVO.isFourthMonth()));
-        values.put("FifthMonth",String.valueOf(carrierVO.isFifthMonth()));
-        values.put("SixthMonth",String.valueOf(carrierVO.isSixthMonth()));
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -103,13 +82,6 @@ public class CarrierDB {
         values.put("id",carrierVO.getId());
         values.put("CARNUL",carrierVO.getCarNul());
         values.put("PASSWORD", carrierVO.getPassword());
-        values.put("FirstMonth",carrierVO.getFirstMonth());
-        values.put("FirstYear",carrierVO.getFirstYear());
-        values.put("SecondMonth",String.valueOf(carrierVO.isSecondMonth()));
-        values.put("ThirdMonth",String.valueOf(carrierVO.isThirdMonth()));
-        values.put("FourthMonth",String.valueOf(carrierVO.isFourthMonth()));
-        values.put("FifthMonth",String.valueOf(carrierVO.isFifthMonth()));
-        values.put("SixthMonth",String.valueOf(carrierVO.isSixthMonth()));
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -117,13 +89,6 @@ public class CarrierDB {
         ContentValues values = new ContentValues();
         values.put("CARNUL",carrierVO.getCarNul());
         values.put("PASSWORD", carrierVO.getPassword());
-        values.put("FirstMonth",carrierVO.getFirstMonth());
-        values.put("FirstYear",carrierVO.getFirstYear());
-        values.put("SecondMonth",String.valueOf(carrierVO.isSecondMonth()));
-        values.put("ThirdMonth",String.valueOf(carrierVO.isThirdMonth()));
-        values.put("FourthMonth",String.valueOf(carrierVO.isFourthMonth()));
-        values.put("FifthMonth",String.valueOf(carrierVO.isFifthMonth()));
-        values.put("SixthMonth",String.valueOf(carrierVO.isSixthMonth()));
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(carrierVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);
@@ -133,13 +98,6 @@ public class CarrierDB {
         ContentValues values = new ContentValues();
         values.put("CARNUL",carrierVO.getCarNul());
         values.put("PASSWORD", carrierVO.getPassword());
-        values.put("FirstMonth",carrierVO.getFirstMonth());
-        values.put("FirstYear",carrierVO.getFirstYear());
-        values.put("SecondMonth",String.valueOf(carrierVO.isSecondMonth()));
-        values.put("ThirdMonth",String.valueOf(carrierVO.isThirdMonth()));
-        values.put("FourthMonth",String.valueOf(carrierVO.isFourthMonth()));
-        values.put("FifthMonth",String.valueOf(carrierVO.isFifthMonth()));
-        values.put("SixthMonth",String.valueOf(carrierVO.isSixthMonth()));
         String whereClause = "CARNUL = ?;";
         String[] whereArgs = {carrierVO.getCarNul()};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

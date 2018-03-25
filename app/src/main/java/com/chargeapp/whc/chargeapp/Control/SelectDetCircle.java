@@ -151,20 +151,22 @@ public class SelectDetCircle extends Fragment {
     private PieData addData(String key, TextView detail) {
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
         HashMap<String, Integer> second = hashMap.get(key);
-        int i = 0;
         int total = 0;
         for (String s : second.keySet()) {
             if (s.equals("O")) {
                 yVals1.add(new PieEntry(second.get(s), "其他"));
-            } else {
+            } else if(s.equals("0")){
+                yVals1.add(new PieEntry(second.get(s), "未知"));
+            }else{
                 yVals1.add(new PieEntry(second.get(s), s));
             }
             total = total + second.get(s);
-            i++;
         }
         if (key.equals("O")) {
             detail.setText("其他 : " + total + "元");
-        } else {
+        } else if(key.equals("0")){
+            detail.setText("未知 : " + total + "元");
+        }else{
             detail.setText(key + " : " + total + "元");
         }
         // create pie data set

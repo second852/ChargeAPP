@@ -75,6 +75,7 @@ public class EleDonate extends Fragment {
     private List<CarrierVO> carrierVOS;
     private List<InvoiceVO> invoiceVOList;
     private Gson gson;
+    private int poisition;
 
     @Nullable
     @Override
@@ -174,6 +175,7 @@ public class EleDonate extends Fragment {
             adapter.notifyDataSetChanged();
             listinviuce.invalidate();
         }
+        listinviuce.setSelection(poisition);
     }
 
 
@@ -357,6 +359,7 @@ public class EleDonate extends Fragment {
                         new GetSQLDate(EleDonate.this,invoiceVO).execute("reDownload");
                         progressDialog.setMessage("正在下傳資料,請稍候...");
                         progressDialog.show();
+                        EleDonate.this.poisition=position;
                     }
                 });
             }else{

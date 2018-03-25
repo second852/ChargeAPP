@@ -110,6 +110,7 @@ public class SelectOtherCircle extends Fragment {
             title = Common.sFour.format(new Date(start.getTimeInMillis()));
         }
         Okey.add("O");
+        Okey.add("0");
         getActivity().setTitle(title);
         setLayout();
         return view;
@@ -180,7 +181,6 @@ public class SelectOtherCircle extends Fragment {
             mapHashMap.put("total", totalOther);
         }
         listView.setAdapter(new ListAdapter(getActivity(), Okey));
-
     }
 
 
@@ -192,7 +192,6 @@ public class SelectOtherCircle extends Fragment {
 
     private PieData addData(String key, TextView detail, HashMap<String, Integer> hashMap) {
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
-        int i = 0;
         int total=0;
         if(key.equals("total"))
         {
@@ -200,28 +199,32 @@ public class SelectOtherCircle extends Fragment {
             {
                 if (Okey.get(j).equals("O")) {
                     yVals1.add(new PieEntry(hashMap.get(Okey.get(j)), "其他"));
-                } else {
+                } else if(Okey.get(j).equals("0")){
+                    yVals1.add(new PieEntry(hashMap.get(Okey.get(j)), "未知"));
+                }else{
                     yVals1.add(new PieEntry(hashMap.get(Okey.get(j)), Okey.get(j)));
                 }
                 total=total+hashMap.get(Okey.get(j));
-                i++;
             }
         }else{
             for (String s : hashMap.keySet()) {
                 if (s.equals("O")) {
                     yVals1.add(new PieEntry(hashMap.get(s), "其他"));
-                } else {
+                } else if(s.equals("0")){
+                    yVals1.add(new PieEntry(hashMap.get(s), "未知"));
+                }else{
                     yVals1.add(new PieEntry(hashMap.get(s), s));
                 }
                 total=total+hashMap.get(s);
-                i++;
             }
         }
         if (key.equals("O")) {
             detail.setText("其他" + " : 總共" + total + "元");
         } else if (key.equals("total")) {
             detail.setText("其他細項 : 總共" + countOther + "元");
-        } else {
+        } else if(key.equals("0")){
+            detail.setText("未知" + " : 總共" + total + "元");
+        }else{
             detail.setText(key + " : 總共" + total + "元");
         }
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");

@@ -28,6 +28,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ElePeriodDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
@@ -37,6 +38,7 @@ import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
+import com.chargeapp.whc.chargeapp.Model.ElePeriod;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
@@ -94,6 +96,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private GoogleApiClient mGoogleApiClient;
     private String action;
     private RelativeLayout progressL;
+    private ElePeriodDB elePeriodDB;
 
 
 
@@ -108,6 +111,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        elePeriodDB=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<EleMainItemVO> itemSon = getNewItem();
         listView = view.findViewById(R.id.list);
         fileChoice = view.findViewById(R.id.fileChoice);
@@ -679,6 +683,18 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(0).setCellValue(carrierVO.getId());
                     rowContent.createCell(1).setCellValue(carrierVO.getCarNul());
                     rowContent.createCell(2).setCellValue(carrierVO.getPassword());
+                }
+                //ElePeriod
+                Sheet sheetCon8 = workbook.createSheet("ElePeriod");
+                List<ElePeriod> elePeriods = elePeriodDB.getAll();
+                for (int i = 0; i < elePeriods.size(); i++) {
+                    Row rowContent = sheetCon8.createRow(i);
+                    ElePeriod elePeriod = elePeriods.get(i);
+                    rowContent.createCell(0).setCellValue(elePeriod.getId());
+                    rowContent.createCell(1).setCellValue(elePeriod.getCarNul());
+                    rowContent.createCell(2).setCellValue(elePeriod.getYear());
+                    rowContent.createCell(3).setCellValue(elePeriod.getMonth());
+                    rowContent.createCell(4).setCellValue(elePeriod.isDownload());
                 }
             }
             workbook.write(outputStream);

@@ -44,7 +44,7 @@ import java.util.List;
 public class EleSetCarrier extends Fragment {
     private EditText cellphone,certcode;
     private ListView listcarrier;
-    private TextView confirm;
+    private TextView confirm,percentage,progressT;
     private InvoiceDB invoiceDB;
     public GetSQLDate getIvnum;
     private List<CarrierVO> carrierlist;
@@ -52,7 +52,6 @@ public class EleSetCarrier extends Fragment {
     public TextView listtiitle;
     private ConsumeDB consumeDB;
     private RelativeLayout progressbarL;
-    private ProgressBar progressBar;
     private  SharedPreferences sharedPreferences;
     private  int position;
     private CarrierVO carrierVO;
@@ -69,7 +68,8 @@ public class EleSetCarrier extends Fragment {
         confirm = view.findViewById(R.id.confirm);
         listtiitle=view.findViewById(R.id.listtiitle);
         progressbarL=view.findViewById(R.id.progressbarL);
-        progressBar=view.findViewById(R.id.progressbar);
+        progressT=view.findViewById(R.id.progressT);
+        percentage=view.findViewById(R.id.percentage);
         confirm.setOnClickListener(new Confirmlisten());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -205,10 +205,10 @@ public class EleSetCarrier extends Fragment {
             }
             carrierVO.setCarNul(user);
             carrierVO.setPassword(password);
-            carrierDB.insert(carrierVO);
-            setListAdapt();
-            getIvnum= (GetSQLDate) new GetSQLDate(EleSetCarrier.this).execute("getInvoice",user,password);
-            getIvnum.setProgressBar(progressBar);
+            getIvnum= (GetSQLDate) new GetSQLDate(EleSetCarrier.this);
+            getIvnum.setProgressT(progressT);
+            getIvnum.setPercentage(percentage);
+            getIvnum.execute("getInvoice",user,password);
             progressbarL.setVisibility(View.VISIBLE);
         }
     }

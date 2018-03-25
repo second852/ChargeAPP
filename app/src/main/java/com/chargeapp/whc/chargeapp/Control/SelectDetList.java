@@ -216,9 +216,14 @@ public class SelectDetList extends Fragment {
                 remainT.setText("電子發票");
                 remainT.setTextColor(Color.parseColor("#008844"));
                 remindL.setBackgroundColor(Color.parseColor("#008844"));
-
-
-                sbTitle.append(I.getSecondtype().equals("0")?"其他":I.getSecondtype());
+                if(I.getSecondtype().equals("O"))
+                {
+                    sbTitle.append("其他");
+                }else if(I.getSecondtype().equals("0")){
+                    sbTitle.append("未知");
+                }else{
+                    sbTitle.append(I.getSecondtype());
+                }
                 sbTitle.append("  共"+I.getAmount()+"元");
                 if(I.getDetail().equals("0"))
                 {

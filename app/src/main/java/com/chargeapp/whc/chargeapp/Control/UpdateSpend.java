@@ -294,7 +294,7 @@ public class UpdateSpend extends Fragment {
         List<TypeVO> typeVOS = typeDB.getAll();
         for (TypeVO t : typeVOS) {
             item = new HashMap<String, Object>();
-            item.put("image", MainActivity.imageAll[t.getImage()]);
+            item.put("image", Download.imageAll[t.getImage()]);
             item.put("text", t.getName());
             items.add(item);
         }
@@ -332,7 +332,7 @@ public class UpdateSpend extends Fragment {
         List<TypeDetailVO> typeDetailVOS = typeDetailDB.findByGroupname(name.getText().toString().trim());
         for (TypeDetailVO t : typeDetailVOS) {
             item = new HashMap<String, Object>();
-            item.put("image", MainActivity.imageAll[t.getImage()]);
+            item.put("image", Download.imageAll[t.getImage()]);
             item.put("text", t.getName());
             items.add(item);
         }

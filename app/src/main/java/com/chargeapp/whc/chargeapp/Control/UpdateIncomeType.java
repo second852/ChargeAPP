@@ -75,13 +75,13 @@ public class UpdateIncomeType extends Fragment {
 
     private void setBankVO() {
         bankTypeVO= (BankTypeVO) getArguments().getSerializable("bankTypeVO");
-        mainImage.setImageResource(MainActivity.imageAll[bankTypeVO.getImage()]);
+        mainImage.setImageResource(Download.imageAll[bankTypeVO.getImage()]);
         mainName.setText(bankTypeVO.getName());
     }
 
     private void setTypeVO() {
         typeVO= (TypeVO) getArguments().getSerializable("typeVO");
-        mainImage.setImageResource(MainActivity.imageAll[typeVO.getImage()]);
+        mainImage.setImageResource(Download.imageAll[typeVO.getImage()]);
         mainName.setText(typeVO.getName());
     }
 
@@ -89,9 +89,9 @@ public class UpdateIncomeType extends Fragment {
     private void setGridPicture() {
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
-        for (int i = 0; i < MainActivity.imageAll.length; i++) {
+        for (int i = 0; i < Download.imageAll.length; i++) {
             item = new HashMap<String, Object>();
-            item.put("image", MainActivity.imageAll[i]);
+            item.put("image", Download.imageAll[i]);
             item.put("text", " ");
             items.add(item);
         }
@@ -122,7 +122,7 @@ public class UpdateIncomeType extends Fragment {
     private class choicePicture implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            resultI.setImageResource(MainActivity.imageAll[i]);
+            resultI.setImageResource(Download.imageAll[i]);
             choiceL.setVisibility(View.GONE);
             if(action.equals("updateT"))
             {

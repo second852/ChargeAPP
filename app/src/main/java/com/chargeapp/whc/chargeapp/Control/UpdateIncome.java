@@ -355,7 +355,7 @@ public class UpdateIncome extends Fragment {
         List<BankTypeVO> bankTypeVOS = bankTybeDB.getAll();
         for (BankTypeVO t : bankTypeVOS) {
             item = new HashMap<String, Object>();
-            item.put("image", MainActivity.imageAll[t.getImage()]);
+            item.put("image", Download.imageAll[t.getImage()]);
             item.put("text", t.getName());
             items.add(item);
         }

@@ -84,7 +84,7 @@ public class SettingMain extends Fragment {
     {
         getActivity().deleteDatabase("ChargeAPP");
         MainActivity.chargeAPPDB=new ChargeAPPDB(getActivity());
-        new MainActivity().setdate();
+        new Download().setdate();
     }
 
     private class ListAdapter extends BaseAdapter {
