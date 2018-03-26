@@ -1,6 +1,9 @@
 package com.chargeapp.whc.chargeapp.ChargeDB;
 
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 
 
@@ -137,6 +140,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                             }
                             jsonIn = downLoadOtherMon(carrierVO);
                         }
+
                         return jsonIn;
                     } else {
                         //失敗
@@ -288,6 +292,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         String password = carrierVO.getPassword();
         String jsonIn = "";
         List<ElePeriod> elePeriods = elePeriodDB.getCarrierAll(user);
+        Log.d("XXXXXXXXX", String.valueOf(elePeriods.size()));
         for (ElePeriod elePeriod : elePeriods) {
             year = elePeriod.getYear();
             month = elePeriod.getMonth();
@@ -377,7 +382,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             Log.d(TAG, "insert period :" + period.toString());
             HashMap<String, String> data = getPriceMap(period.toString());
             jsonin = getRemoteData(url, data);
-            if (jsonin.equals("timeout") && jsonin.equals("error")) {
+            if (jsonin.equals("timeout") || jsonin.equals("error")) {
                 publishProgress(2, month, (int) total);
                 return jsonin;
             }
@@ -462,7 +467,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         int todayMonth = today.get(Calendar.MONTH);
         int todayYear = today.get(Calendar.YEAR);
         int lastMonth = oldMax.get(Calendar.MONTH);
-        int lastYear = oldMax.get(Calendar.MONTH);
+        int lastYear = oldMax.get(Calendar.YEAR);
         today.set(todayYear, todayMonth, 1);
         if (todayMonth == lastMonth && lastYear == todayYear) {
             jsonIn = searchTodayDate(oldMax, today, carrierVO.getCarNul(), carrierVO.getPassword());
@@ -709,7 +714,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             } else if (object instanceof Download) {
                 Download download = (Download) object;
                 percentage.setText("100%");
-                progressT.setText("自動兌獎中");
+                progressT.setText("下載完成!\n更新中");
                 (new Common()).AutoSetPrice();
                 download.tonNewActivity();
             } else if (object instanceof SelectDetList) {
@@ -769,12 +774,23 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             invoiceDB.insert(invoiceVO);
             return "fail";
         }
-        JsonObject jsonObject = gson.fromJson(detailjs, JsonObject.class);
-        invoiceVO.setDetail(jsonObject.get("details").toString());
-        InvoiceVO type = getType(invoiceVO);
-        invoiceDB.insert(type);
-        Log.d("total :", Common.sDay.format(new Date(invoiceVO.getTime().getTime())) + " : " + invoiceVO.getInvNum());
-        detailjs = "success";
+        JsonObject jsonObject=null;
+        try {
+            jsonObject = gson.fromJson(detailjs, JsonObject.class);
+        }catch (Exception e)
+        {
+            Log.d("XXXXXX",detailjs);
+            Log.d("XXXXXX",e.getMessage());
+        }
+
+        if(jsonObject!=null)
+        {
+            invoiceVO.setDetail(jsonObject.get("details").toString());
+            InvoiceVO type = getType(invoiceVO);
+            invoiceDB.insert(type);
+            Log.d("total :", Common.sDay.format(new Date(invoiceVO.getTime().getTime())) + " : " + invoiceVO.getInvNum());
+            detailjs = "success";
+        }
         return detailjs;
     }
 

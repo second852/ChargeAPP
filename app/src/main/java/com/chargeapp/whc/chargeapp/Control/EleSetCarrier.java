@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -205,11 +207,19 @@ public class EleSetCarrier extends Fragment {
             }
             carrierVO.setCarNul(user);
             carrierVO.setPassword(password);
-            getIvnum= (GetSQLDate) new GetSQLDate(EleSetCarrier.this);
-            getIvnum.setProgressT(progressT);
-            getIvnum.setPercentage(percentage);
-            getIvnum.execute("getInvoice",user,password);
-            progressbarL.setVisibility(View.VISIBLE);
+            ConnectivityManager mConnectivityManager = (ConnectivityManager)EleSetCarrier.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+            if(mNetworkInfo!=null)
+            {
+                getIvnum= (GetSQLDate) new GetSQLDate(EleSetCarrier.this);
+                getIvnum.setProgressT(progressT);
+                getIvnum.setPercentage(percentage);
+                getIvnum.execute("getInvoice",user,password);
+                progressbarL.setVisibility(View.VISIBLE);
+            }else{
+                Common.showToast(EleSetCarrier.this.getActivity(),"網路沒有開啟，無法下載!");
+            }
+
         }
     }
 

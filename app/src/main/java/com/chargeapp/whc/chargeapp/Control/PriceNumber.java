@@ -45,7 +45,7 @@ public class PriceNumber extends Fragment {
     private TextView PIdateTittle,superN,spcN,firstN,addsixN,showRemain;
     private SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     private PriceVO priceVO;
-    private RelativeLayout showNul;
+    private RelativeLayout showNul,PIdateL;
 
     @Nullable
     @Override
@@ -55,9 +55,10 @@ public class PriceNumber extends Fragment {
         String period=priceDB.findMaxPeriod();
         if(period==null)
         {
+            PIdateL.setVisibility(View.GONE);
             showNul.setVisibility(View.GONE);
             showRemain.setVisibility(View.VISIBLE);
-            showRemain.setText("財政部網路忙線中~\n請稍後使用~");
+            showRemain.setText("財政部網路忙線中!\n請稍後使用!");
             return view;
         }
         this.month=Integer.valueOf(period.substring(period.length() - 2));
@@ -168,6 +169,7 @@ public class PriceNumber extends Fragment {
         PIdateAdd = view.findViewById(R.id.PIdateAdd);
         PIdateCut = view.findViewById(R.id.PIdateCut);
         PIdateTittle = view.findViewById(R.id.PIdateTittle);
+        PIdateL=view.findViewById(R.id.PIdateL);
         superN=view.findViewById(R.id.superN);
         spcN=view.findViewById(R.id.spcN);
         firstN=view.findViewById(R.id.firstN);

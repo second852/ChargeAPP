@@ -1,10 +1,14 @@
 package com.chargeapp.whc.chargeapp.Control;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -54,16 +58,13 @@ public class EleDonate extends Fragment {
     private TextView  message;
     private ListView listinviuce;
     private InvoiceDB invoiceDB;
-    private CarrierDB carrierDB;
-    private List<CarrierVO> carrierVOList;
-    public static CarrierVO carrierVO;
-    private SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
-    private RelativeLayout showmonth, searchRL,choice;
+    private  CarrierDB carrierDB;
+    public  static CarrierVO carrierVO;
+    private RelativeLayout searchRL,choice;
     public static int choiceca = 0;
     private ProgressDialog progressDialog;
     public static HashMap<String, InvoiceVO> donateMap;
     private Button choiceall, save, cancel;
-    private boolean sellall = false;
     private EditText inputH;
     private ImageView searchI;
     private ListView heartyList;
@@ -93,12 +94,12 @@ public class EleDonate extends Fragment {
         searchI.setOnClickListener(new searchHeartyTeam());
         returnSH.setOnClickListener(new retrinDonateM());
         carrierVOS=carrierDB.getAll();
-        if (carrierVOList == null || carrierVOList.size() <= 0) {
+        if (carrierVOS == null || carrierVOS.size() <= 0) {
             message.setText("請新增載具!");
             message.setVisibility(View.VISIBLE);
             listinviuce.setVisibility(View.GONE);
-            showmonth.setVisibility(View.GONE);
             choice.setVisibility(View.GONE);
+            modelR.setVisibility(View.GONE);
             return view;
         }
         ArrayList<String> SpinnerItem = new ArrayList<>();
@@ -124,6 +125,12 @@ public class EleDonate extends Fragment {
         return view;
     }
 
+    public void showDialog()
+    {
+        progressDialog.setTitle("上傳資料中!");
+        progressDialog.show();
+        progressbar.setVisibility(View.GONE);
+    }
 
 
     public void cancelDialog() {
@@ -135,7 +142,7 @@ public class EleDonate extends Fragment {
     public void setlistTeam(String jsonin) {
         cancelDialog();
         try {
-
+             Log.d("XXXXXx",jsonin);
             if (jsonin.indexOf("details") != -1) {
                 Gson gson = new Gson();
                 JsonObject jFS = gson.fromJson(jsonin, JsonObject.class);
@@ -154,35 +161,38 @@ public class EleDonate extends Fragment {
 
     public void setlayout() {
         cancelDialog();
-        carrierVO = carrierVOList.get(choiceca);
+        carrierVO = carrierVOS.get(choiceca);
         invoiceVOList = invoiceDB.getCarrierDoAll(carrierVO.getCarNul());
         if (invoiceVOList == null || invoiceVOList.size() <= 0) {
             message.setText("目前沒有可捐贈發票!");
             message.setVisibility(View.VISIBLE);
             listinviuce.setVisibility(View.GONE);
-            showmonth.setVisibility(View.VISIBLE);
         }else{
             message.setVisibility(View.GONE);
             listinviuce.setVisibility(View.VISIBLE);
-            showmonth.setVisibility(View.VISIBLE);
         }
-        ListAdapter adapter= (ListAdapter) listinviuce.getAdapter();
-        if(adapter==null)
-        {
-            listinviuce.setAdapter(new ListAdapter(getActivity(), invoiceVOList));
-        }else{
-            adapter.setObjects(invoiceVOList);
-            adapter.notifyDataSetChanged();
-            listinviuce.invalidate();
-        }
+        listinviuce.setAdapter(null);
+        listinviuce.setAdapter(new ListAdapter(getActivity(), invoiceVOList));
         listinviuce.setSelection(poisition);
     }
+
+    public void donateOK()
+    {
+        cancelDialog();
+        Fragment fragment=new EleDonateMain();
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        for (Fragment fragment1 :  getFragmentManager().getFragments()) {
+            fragmentTransaction.remove(fragment1);
+        }
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
+    }
+
 
 
     private void findviewbyid(View view) {
         listinviuce = view.findViewById(R.id.recyclenul);
         message = view.findViewById(R.id.message);
-        showmonth = view.findViewById(R.id.DRshow);
         choiceall = view.findViewById(R.id.choiceall);
         save = view.findViewById(R.id.save);
         cancel = view.findViewById(R.id.cancel);
@@ -204,20 +214,18 @@ public class EleDonate extends Fragment {
     private class choiceallchecked implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            sellall = true;
             for (InvoiceVO invoiceVO : invoiceVOList) {
                 donateMap.put(invoiceVO.getInvNum(), invoiceVO);
             }
-            listinviuce.invalidate();
+            setlayout();
         }
     }
 
     private class cancelallchecked implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            sellall = false;
             donateMap.clear();
-            listinviuce.invalidate();
+            setlayout();
         }
     }
 
@@ -235,8 +243,16 @@ public class EleDonate extends Fragment {
     private class searchHeartyTeam implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            new GetSQLDate(EleDonate.this).execute("searchHeartyTeam", inputH.getText().toString());
-            progressbar.setVisibility(View.VISIBLE);
+            ConnectivityManager mConnectivityManager = (ConnectivityManager) EleDonate.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+            if(mNetworkInfo!=null)
+            {
+                new GetSQLDate(EleDonate.this).execute("searchHeartyTeam", inputH.getText().toString());
+                progressbar.setVisibility(View.VISIBLE);
+            }else{
+                Common.showToast(EleDonate.this.getActivity(),"網路沒有開啟，無法下載!");
+            }
+
         }
     }
 
@@ -267,6 +283,7 @@ public class EleDonate extends Fragment {
             } catch (NullPointerException e) {
                 teamName = team.get("LoveCode").getAsString();
             }
+            itemView.setBackgroundColor(Color.parseColor("#FFDD55"));
             TextView tvId = (TextView) itemView.findViewById(R.id.tvId);
             tvId.setTextSize(20);
             tvId.setText(teamName);
@@ -279,8 +296,6 @@ public class EleDonate extends Fragment {
                     AlertDialogFragment aa= new AlertDialogFragment();
                     aa.setObject(EleDonate.this);
                     aa.show(getFragmentManager(),"show");
-                    progressDialog.setMessage("正在上傳資料,請稍候...");
-                    progressDialog.show();
                 }
             });
             return itemView;
@@ -339,16 +354,17 @@ public class EleDonate extends Fragment {
         public View getView(final int position, View itemView, final ViewGroup parent) {
             if (itemView == null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
-                itemView = layoutInflater.inflate(R.layout.ele_setdenote_record_item, parent, false);
+                itemView = layoutInflater.inflate(R.layout.ele_setdenote_item, parent, false);
             }
             TextView Title = itemView.findViewById(R.id.listTitle);
             TextView describe = itemView.findViewById(R.id.listDetail);
             Button updateD=itemView.findViewById(R.id.updateD);
             CheckBox donateC=itemView.findViewById(R.id.donateC);
             final InvoiceVO invoiceVO = invoiceVOS.get(position);
-            Title.setText(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())) + " " + invoiceVO.getInvNum()+" "+invoiceVO.getAmount()+"元");
+            Title.setText(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())) + " " +invoiceVO.getMaintype()+" 共"+invoiceVO.getAmount()+"元");
             //設定describe
             StringBuffer sbDecribe=new StringBuffer();
+            sbDecribe.append("統一編號:\n"+invoiceVO.getInvNum()+"\n\n");
             if(invoiceVO.getDetail().equals("0"))
             {
                 updateD.setVisibility(View.VISIBLE);
@@ -356,10 +372,18 @@ public class EleDonate extends Fragment {
                 updateD.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        new GetSQLDate(EleDonate.this,invoiceVO).execute("reDownload");
-                        progressDialog.setMessage("正在下傳資料,請稍候...");
-                        progressDialog.show();
-                        EleDonate.this.poisition=position;
+                        ConnectivityManager mConnectivityManager = (ConnectivityManager) EleDonate.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+                        if(mNetworkInfo!=null)
+                        {
+                            new GetSQLDate(EleDonate.this,invoiceVO).execute("reDownload");
+                            progressDialog.setMessage("正在下傳資料,請稍候...");
+                            progressDialog.show();
+                            EleDonate.this.poisition=position;
+                        }else{
+                            Common.showToast(EleDonate.this.getActivity(),"網路沒有開啟，無法下載!");
+                        }
+
                     }
                 });
             }else{
@@ -381,14 +405,32 @@ public class EleDonate extends Fragment {
             }
             describe.setText(sbDecribe.toString());
 
-            //設定CheckBox
-            donateC.setChecked(sellall);
-            donateC.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            if(donateMap.get(invoiceVO.getInvNum())!=null)
+            {
+                donateC.setChecked(true);
+            }else{
+                donateC.setChecked(false);
+            }
+            donateC.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (buttonView.isChecked()) {
+                public void onClick(View view) {
+                    CheckBox c= (CheckBox) view;
+
+                    if(searchRL.getVisibility()==View.VISIBLE)
+                    {
+                        if(donateMap.get(invoiceVO.getInvNum())!=null)
+                        {
+                            c.setChecked(true);
+                        }else{
+                            c.setChecked(false);
+                        }
+                        return;
+                    }
+
+                    if(c.isChecked())
+                    {
                         donateMap.put(invoiceVO.getInvNum(), invoiceVO);
-                    } else {
+                    }else{
                         donateMap.remove(invoiceVO.getInvNum());
                     }
                 }

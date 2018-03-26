@@ -1,8 +1,11 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -11,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +26,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ElePeriodDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
@@ -30,6 +35,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.ElePeriod;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
@@ -80,10 +86,33 @@ public class Download extends AppCompatActivity {
         (getSupportActionBar()).hide();
         firstH=new Handler();
         firstH.post(runnable);
-        getSQLDate=new GetSQLDate(this);
-        getSQLDate.setPercentage(percentage);
-        getSQLDate.setProgressT(progressT);
-        getSQLDate.execute("download");
+//        CarrierDB carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+//        ElePeriodDB elePeriodDB=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
+//        String carNUL=carrierDB.getAll().get(0).getCarNul();
+//        elePeriodDB.deleteByCARNUL(carNUL);
+//        for(int i=0;i<6;i++)
+//        {
+//            elePeriodDB.insert(new ElePeriod(2018, 3,carNUL, false));
+//        }
+//        List<ElePeriod> elePeriods=elePeriodDB.getCarrierAll(carNUL);
+//        Log.d("XXXXX", String.valueOf(elePeriods.size()));
+//        for(ElePeriod e:elePeriods)
+//        {
+//            Log.d("XXXXX", e.getYear()+":"+String.valueOf(e.isDownload()));
+//        }
+
+        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+        if(mNetworkInfo!=null)
+        {
+            getSQLDate=new GetSQLDate(this);
+            getSQLDate.setPercentage(percentage);
+            getSQLDate.setProgressT(progressT);
+            getSQLDate.execute("download");
+        }else{
+            tonNewActivity();
+            Common.showToast(this,"網路沒有開啟，無法下載!");
+        }
     }
 
     @Override
@@ -109,7 +138,13 @@ public class Download extends AppCompatActivity {
     private Runnable runToNeW=new Runnable() {
         @Override
         public void run() {
-            startActivity(new Intent().setClass(Download.this, MainActivity.class));
+            String a=getIntent().getStringExtra("action");
+            Intent intent=new Intent();
+            if(a!=null)
+            {
+                intent.putExtra("action",a);
+            }
+            startActivity(intent.setClass(Download.this, MainActivity.class));
             finish();
         }
     };

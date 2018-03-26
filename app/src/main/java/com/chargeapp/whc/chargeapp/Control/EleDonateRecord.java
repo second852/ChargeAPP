@@ -83,7 +83,7 @@ public class EleDonateRecord extends Fragment {
         invoiceVOS=invoiceDB.getisDonated(carrierVOS.get(choiceca).getCarNul());
         if(invoiceVOS==null||invoiceVOS.size()<=0)
         {
-            DRmessage.setText("沒有捐贈發票~");
+            DRmessage.setText("沒有捐贈發票!");
             DRmessage.setVisibility(View.VISIBLE);
             return ;
         }

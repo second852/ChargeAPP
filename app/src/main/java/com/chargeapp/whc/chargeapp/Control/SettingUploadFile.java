@@ -5,6 +5,8 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -780,6 +782,14 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     }
 
     public void openCloud() {
+        ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingUploadFile.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+        if(mNetworkInfo==null)
+        {
+            Common.showToast(SettingUploadFile.this.getActivity(),"網路沒有開啟，無法下載!");
+            return;
+        }
+
         if (mGoogleApiClient == null) {
             // Create the API client and bind it to an instance variable.
             // We use this instance as the callback for connection and connection

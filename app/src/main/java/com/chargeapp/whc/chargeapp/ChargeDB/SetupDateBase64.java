@@ -155,11 +155,11 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
             EleDonate eleDonate= (EleDonate) object;
            if(s.indexOf("200")!=-1)
            {
-               eleDonate.setlayout();
+               eleDonate.donateOK();
                Common.showToast(eleDonate.getActivity(),"捐贈成功");
            }else {
                 Common.showToast(eleDonate.getActivity(),"捐贈失敗");
-                eleDonate.cancelDialog();
+                eleDonate.setlayout();
             }
         }
 

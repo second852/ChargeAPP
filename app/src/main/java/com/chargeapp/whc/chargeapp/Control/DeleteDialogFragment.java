@@ -13,6 +13,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ElePeriodDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
@@ -22,6 +23,7 @@ import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.ElePeriod;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
@@ -45,6 +47,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     private TypeDetailDB typeDetailDB;
     private BankTybeDB bankTybeDB;
     private CarrierDB carrierDB;
+    private ElePeriodDB elePeriodDB;
 
     public Object getObject() {
         return object;
@@ -54,9 +57,6 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         this.object = object;
     }
 
-    public Fragment getFragement() {
-        return fragement;
-    }
 
     public void setFragement(Fragment fragement) {
         this.fragement = fragement;
@@ -74,6 +74,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         typeDetailDB=new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        elePeriodDB=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
         String title="確定要刪除這筆資料?";
         if(object instanceof InvoiceVO)
         {
@@ -107,8 +108,8 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         }else if(object instanceof CarrierVO)
         {
             CarrierVO carrierVO= (CarrierVO) object;
-            message=carrierVO.getCarNul();
-            title="確定要刪除載具?\n相關資料會一併刪除!";
+            message=carrierVO.getCarNul()+"相關資料會一併刪除!";
+            title="確定要刪除載具?";
         }
 
         return new AlertDialog.Builder(getActivity())
@@ -159,6 +160,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                     CarrierVO carrierVO= (CarrierVO) object;
                     carrierDB.deleteByCarNul(carrierVO.getCarNul());
                     invoiceDB.deleteById(carrierVO.getCarNul());
+                    elePeriodDB.deleteByCARNUL(carrierVO.getCarNul());
                 }
 
 

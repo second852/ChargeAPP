@@ -3,6 +3,8 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -322,15 +324,15 @@ public class SelectShowCircleDe extends Fragment {
                 remindL.setBackgroundColor(Color.parseColor("#008844"));
 
                 sbTitle.append(sf.format(new Date(I.getTime().getTime()))+" ");
-                if(I.getSecondtype().equals("0"))
+                if(I.getSecondtype().equals("O"))
                 {
                     sbTitle.append("其他");
-                }else if(I.getSecondtype().equals("O")){
+                }else if(I.getSecondtype().equals("0")){
                     sbTitle.append("未知");
                 }else{
                     sbTitle.append(I.getSecondtype());
                 }
-                sbTitle.append("  共"+I.getAmount()+"元");
+                sbTitle.append("\n共"+I.getAmount()+"元");
                 remindL.setVisibility(View.VISIBLE);
                 remainT.setText("電子發票");
                 if(I.getDetail().equals("0"))
@@ -340,10 +342,18 @@ public class SelectShowCircleDe extends Fragment {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            new GetSQLDate(SelectShowCircleDe.this,I).execute("reDownload");
-                            progressDialog.setMessage("正在下傳資料,請稍候...");
-                            progressDialog.show();
-                            SelectShowCircleDe.this.position=position;
+                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SelectShowCircleDe.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+                            if(mNetworkInfo!=null)
+                            {
+                                new GetSQLDate(SelectShowCircleDe.this,I).execute("reDownload");
+                                progressDialog.setMessage("正在下傳資料,請稍候...");
+                                progressDialog.show();
+                                SelectShowCircleDe.this.position=position;
+                            }else {
+                                Common.showToast(SelectShowCircleDe.this.getActivity(),"網路沒有開啟，無法下載!");
+                            }
+
                         }
                     });
                 }else{

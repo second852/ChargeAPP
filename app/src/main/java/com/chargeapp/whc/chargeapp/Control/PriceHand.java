@@ -65,6 +65,7 @@ public class PriceHand extends Fragment {
     private static Intent recognizerIntent;
     private List<String> mResults;
     private boolean isRecognitionServiceAvailable = false;
+    private RelativeLayout PIdateL;
 
 
     @Nullable
@@ -74,11 +75,13 @@ public class PriceHand extends Fragment {
         findViewById(view);
         String period = priceDB.findMaxPeriod();
         if (period == null) {
+
             cardview.setVisibility(View.GONE);
             priceTitle.setVisibility(View.GONE);
             showRemain.setVisibility(View.VISIBLE);
             modelR.setVisibility(View.GONE);
-            showRemain.setText("財政部網路忙線中~\n請稍後使用~");
+            PIdateL.setVisibility(View.GONE);
+            showRemain.setText("財政部網路忙線中!\n請稍後使用!");
             return view;
         }
         this.month = Integer.valueOf(period.substring(period.length() - 2));
@@ -92,6 +95,7 @@ public class PriceHand extends Fragment {
         showMi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                choiceModel.setSelection(0);
                 donateRL.setVisibility(View.VISIBLE);
                 showMi.setVisibility(View.GONE);
                 speech.stopListening();
@@ -266,6 +270,7 @@ public class PriceHand extends Fragment {
 
 
     private void findViewById(View view) {
+        PIdateL=view.findViewById(R.id.PIdateL);
         month = now.get(Calendar.MONTH);
         year = now.get(Calendar.YEAR);
         donateRL = view.findViewById(R.id.donateRL);

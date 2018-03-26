@@ -85,7 +85,7 @@
         android:layout_height="350dp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:background="#aaaaaa"
+        android:background="#FFEE99"
         android:visibility="gone"
         >
         <TextView
@@ -140,7 +140,7 @@
             android:text="返回"
             android:textSize="20sp"
             android:textColor="#000000"
-            android:background="#aaaaaa"
+            android:background="#FFCC22"
             />
     </RelativeLayout>
     <TextView
@@ -149,8 +149,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:textSize="40sp"
-        android:textColor="#FF3333"
+        android:textSize="25sp"
+        android:textColor="#FF7744"
         android:gravity="center"
         android:visibility="gone"
         />

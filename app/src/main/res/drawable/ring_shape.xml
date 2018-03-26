@@ -8,5 +8,5 @@
     android:startColor="#77DDFF"
     android:endColor="#003C9D"
     android:type="sweep"
-    android:useLevel="true"/>
+    android:useLevel="false"/>
 </shape>

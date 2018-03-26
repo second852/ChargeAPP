@@ -79,8 +79,8 @@ public class PriceInvoice extends Fragment {
         String period=priceDB.findMaxPeriod();
         if(period==null)
         {
-            showRemain.setVisibility(View.VISIBLE);
-            showRemain.setText("財政部網路忙線中~\n請稍後使用~");
+            DRmessage.setVisibility(View.VISIBLE);
+            DRmessage.setText("財政部網路忙線中!\n請稍後使用!");
             PIdateL.setVisibility(View.GONE);
             return view;
         }

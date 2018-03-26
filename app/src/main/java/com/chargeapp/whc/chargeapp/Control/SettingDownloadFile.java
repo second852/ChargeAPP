@@ -4,6 +4,8 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -152,6 +154,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+
         if (mSelectedFileDriveId != null) {
             open();
             return;
@@ -240,7 +243,14 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                 textView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        openCloud();
+                        ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingDownloadFile.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+                        if(mNetworkInfo!=null)
+                        {
+                            openCloud();
+                        }else{
+                            Common.showToast(SettingDownloadFile.this.getActivity(),"網路沒有開啟，無法下載!");
+                        }
                     }
                 });
             }
@@ -375,8 +385,8 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         elePeriod.setDownload(row.getCell(4).getBooleanCellValue());
                         elePeriodDB.insertHid(elePeriod);
                     }
-                    i++;
                 }
+                i++;
             }
             workbook.close();
             inp.close();

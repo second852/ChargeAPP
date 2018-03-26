@@ -54,6 +54,7 @@ public class AlertDialogFragment extends DialogFragment implements  DialogInterf
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
                 EleDonate eleDonate= (EleDonate) object;
+                eleDonate.showDialog();
                 new SetupDateBase64(eleDonate).execute("DonateTeam");
                 break;
             default:

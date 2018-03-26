@@ -47,7 +47,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:gravity="center"
-        android:textSize="25dp"
+        android:textSize="25sp"
         android:id="@+id/showRemain"
         android:textColor="#FF0000"
         android:visibility="gone"

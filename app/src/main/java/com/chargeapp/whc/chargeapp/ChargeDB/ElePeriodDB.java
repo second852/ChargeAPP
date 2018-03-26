@@ -42,7 +42,7 @@ public class ElePeriodDB {
     }
 
     public List<ElePeriod> getCarrierAll(String CarNul) {
-        String sql = "SELECT * FROM ElePeriod where CarNul = '"+CarNul+"' and download = 'false' order by year desc,month desc;";
+        String sql = "SELECT * FROM ElePeriod where CARNUL = '"+CarNul+"' and download = 'false' order by year desc,month desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<ElePeriod> elePeriods = new ArrayList<>();
@@ -62,26 +62,29 @@ public class ElePeriodDB {
 
     public long insert(ElePeriod elePeriod) {
         ContentValues values = new ContentValues();
-        values.put("CalNul",elePeriod.getCarNul());
+        values.put("CARNUL",elePeriod.getCarNul());
         values.put("year", elePeriod.getYear());
         values.put("month",elePeriod.getMonth());
+        values.put("download",String.valueOf(elePeriod.isDownload()));
         return db.insert(TABLE_NAME, null, values);
     }
 
     public long insertHid(ElePeriod elePeriod) {
         ContentValues values = new ContentValues();
         values.put("id",elePeriod.getId());
-        values.put("CalNul",elePeriod.getCarNul());
+        values.put("CARNUL",elePeriod.getCarNul());
         values.put("year", elePeriod.getYear());
         values.put("month",elePeriod.getMonth());
+        values.put("download",String.valueOf(elePeriod.isDownload()));
         return db.insert(TABLE_NAME, null, values);
     }
 
     public int update(ElePeriod elePeriod) {
         ContentValues values = new ContentValues();
-        values.put("CalNul",elePeriod.getCarNul());
+        values.put("CARNUL",elePeriod.getCarNul());
         values.put("year", elePeriod.getYear());
         values.put("month",elePeriod.getMonth());
+        values.put("download",String.valueOf(elePeriod.isDownload()));
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(elePeriod.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);
@@ -89,6 +92,12 @@ public class ElePeriodDB {
     public int deleteById(int id) {
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {String.valueOf(id)};
+        return db.delete(TABLE_NAME, whereClause, whereArgs);
+    }
+
+    public int deleteByCARNUL(String CARNUL) {
+        String whereClause = "CARNUL = ?;";
+        String[] whereArgs = {CARNUL};
         return db.delete(TABLE_NAME, whereClause, whereArgs);
     }
 

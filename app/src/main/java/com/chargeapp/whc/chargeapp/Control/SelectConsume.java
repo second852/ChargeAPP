@@ -64,9 +64,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
@@ -103,12 +105,13 @@ public class SelectConsume extends Fragment {
     private boolean noShowCarrier = false;
     private List<String> chartLabels;
     private boolean ShowZero;
-    private ArrayList<String> OKey;
+    private Set<String> OKey;
     private XAxis xAxis;
     private int week;
     private GoalDB goalDB;
     private GoalVO goalVO;
     private int Max;
+
 
 
 
@@ -220,7 +223,7 @@ public class SelectConsume extends Fragment {
 
     private void findMaxFive() {
         total = 0;
-        OKey = new ArrayList<>();
+        OKey = new HashSet<>();
         HashMap<String, Integer> hashMap = new HashMap<>();
         Calendar start, end;
         ChartEntry other = new ChartEntry("其他", 0);
@@ -256,6 +259,7 @@ public class SelectConsume extends Fragment {
             for (InvoiceVO I : invoiceVOS) {
                 if (I.getMaintype().equals("0")||I.getMaintype().equals("O")) {
                     other.setValue(other.getValue() + Integer.valueOf(I.getAmount()));
+                    OKey.add(I.getMaintype());
                     continue;
                 }
                 if (hashMap.get(I.getMaintype()) == null) {
@@ -758,7 +762,9 @@ public class SelectConsume extends Fragment {
             Fragment fragment;
             if (key.equals("其他")) {
                 fragment = new SelectOtherCircle();
-                bundle.putStringArrayList("OKey", OKey);
+                ArrayList<String> s=new ArrayList<>();
+                s.addAll(OKey);
+                bundle.putStringArrayList("OKey", s);
                 bundle.putSerializable("total",(int)h.getY());
             } else {
                 fragment = new SelectShowCircleDe();

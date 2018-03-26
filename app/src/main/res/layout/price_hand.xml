@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff">
+    android:background="#f5f5f5">
 
     <RelativeLayout
         android:id="@+id/PIdateL"
@@ -112,7 +112,8 @@
         android:layout_height="wrap_content"
         android:background="#99FFFF"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_below="@+id/cardview"
+        android:layout_marginTop="50dp"
         android:visibility="gone"
         >
       <ImageView
@@ -136,11 +137,10 @@
 
     <TextView
         android:layout_marginTop="2dp"
-        android:background="#ffffff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="30dp"
+        android:textSize="25sp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/showRemain"

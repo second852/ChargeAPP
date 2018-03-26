@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:textSize="40sp"
+        android:textSize="25sp"
         android:textColor="#FF3333"
         android:gravity="center"
         android:visibility="gone"

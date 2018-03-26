@@ -56,7 +56,7 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
                 int widgetId = appWidgetIds[i];
                 RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                         R.layout.simple_widget);
-                Intent intent = new Intent(context, MainActivity.class);
+                Intent intent = new Intent(context, Download.class);
                 if(springItem.size()>0)
                 {
                     remoteViews.setBitmap(R.id.imageView, "setImageBitmap",encodeAsBitmap(springItem.get(b), BarcodeFormat.CODE_39, 600, 100));

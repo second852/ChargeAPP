@@ -24,10 +24,11 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="2dp"
             android:text="捐獻"
-            android:backgroundTint="#CC0000"
-            android:buttonTint="#CC0000"
-            android:textColor="#CC0000"
+            android:backgroundTint="#708090"
+            android:buttonTint="#000088"
+            android:textColor="#000088"
             android:id="@+id/donateC"
+            android:checked="false"
             />
 
         <TextView

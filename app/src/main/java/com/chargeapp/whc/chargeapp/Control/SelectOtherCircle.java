@@ -109,8 +109,6 @@ public class SelectOtherCircle extends Fragment {
             end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
             title = Common.sFour.format(new Date(start.getTimeInMillis()));
         }
-        Okey.add("O");
-        Okey.add("0");
         getActivity().setTitle(title);
         setLayout();
         return view;
@@ -200,7 +198,10 @@ public class SelectOtherCircle extends Fragment {
                 if (Okey.get(j).equals("O")) {
                     yVals1.add(new PieEntry(hashMap.get(Okey.get(j)), "其他"));
                 } else if(Okey.get(j).equals("0")){
-                    yVals1.add(new PieEntry(hashMap.get(Okey.get(j)), "未知"));
+                    if(hashMap.get(Okey.get(j))!=null)
+                    {
+                        yVals1.add(new PieEntry(hashMap.get(Okey.get(j)), "未知"));
+                    }
                 }else{
                     yVals1.add(new PieEntry(hashMap.get(Okey.get(j)), Okey.get(j)));
                 }
@@ -211,7 +212,10 @@ public class SelectOtherCircle extends Fragment {
                 if (s.equals("O")) {
                     yVals1.add(new PieEntry(hashMap.get(s), "其他"));
                 } else if(s.equals("0")){
-                    yVals1.add(new PieEntry(hashMap.get(s), "未知"));
+                    if(hashMap.get(s)!=null)
+                    {
+                        yVals1.add(new PieEntry(hashMap.get(s), "未知"));
+                    }
                 }else{
                     yVals1.add(new PieEntry(hashMap.get(s), s));
                 }
