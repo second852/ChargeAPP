@@ -282,6 +282,7 @@ public class PriceInvoice extends Fragment {
                 remainT.setText("電子發票");
                 remainT.setTextColor(Color.parseColor("#008844"));
                 remindL.setBackgroundColor(Color.parseColor("#008844"));
+                remindL.setVisibility(View.VISIBLE);
                 if(invoiceVO.getDonateMark().equals("true"))
                 {
                     donateL.setVisibility(View.VISIBLE);
@@ -290,11 +291,8 @@ public class PriceInvoice extends Fragment {
                 }
                 //標題
                 day=Common.sDay.format(new Date(invoiceVO.getTime().getTime()))+" ";
-                title=day+invoiceVO.getInvNum();
-                SpannableString content = new SpannableString(title);
-                content.setSpan(new ForegroundColorSpan(Color.RED),day.length()+levellength.get(invoiceVO.getIswin().trim()),
-                        title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                Title.setText(content);
+                title=day+invoiceVO.getMaintype();
+                Title.setText(title);
                 //中獎顯示
                 fixL.setVisibility(View.VISIBLE);
                 fixL.setBackgroundColor(Color.parseColor("#AA0000"));
@@ -302,14 +300,23 @@ public class PriceInvoice extends Fragment {
                 fixT.setText(levelprice.get(invoiceVO.getIswin()));
 
                 //detail
-                String firstH="中獎號碼 : ";
-                String firstAll=firstH+invoiceVO.getIsWinNul();
-                String pIF=levelMoney.get(invoiceVO.getIswin());
-                String detail=firstAll+"\n獎金 : "+pIF;
+                String firstH="發票號碼 : ";
+                String firstL="\n中獎號碼 : ";
+                String firstAll=firstH+invoiceVO.getInvNum();
+                String secondAll=firstL+invoiceVO.getIsWinNul();
+                String pIF="\n獎金 : ";
+                String detail=firstAll+secondAll+pIF+levelMoney.get(invoiceVO.getIswin());
+                int correctLength=-2;
+                if(invoiceVO.getIsWinNul().trim().length()<5)
+                {
+                    correctLength=-7;
+                }
                 SpannableString detailC = new SpannableString(detail);
-                detailC.setSpan(new ForegroundColorSpan(Color.RED),firstH.length()+levellength.get(invoiceVO.getIswin().trim())-2,
+                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstH.length()+levellength.get(invoiceVO.getIswin().trim()),
                         firstAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                detailC.setSpan(new ForegroundColorSpan(Color.RED),detail.length()-pIF.length()+1,
+                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstAll.length()+firstL.length()+levellength.get(invoiceVO.getIswin().trim())+correctLength,
+                        firstAll.length()+secondAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstAll.length()+secondAll.length()+pIF.length(),
                         detail.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 describe.setText(detailC);
             }else{
@@ -318,14 +325,11 @@ public class PriceInvoice extends Fragment {
                 remainT.setText("紙本發票");
                 remainT.setTextColor(Color.parseColor("#008844"));
                 remindL.setBackgroundColor(Color.parseColor("#008844"));
-
+                remindL.setVisibility(View.VISIBLE);
                 //標題
                 day=Common.sDay.format(consumeVO.getDate())+" ";
-                title=day+consumeVO.getNumber();
-                SpannableString content = new SpannableString(title);
-                content.setSpan(new ForegroundColorSpan(Color.RED),day.length()+levellength.get(consumeVO.getIsWin().trim()),
-                        title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                Title.setText(content);
+                title=day+consumeVO.getMaintype();
+                Title.setText(title);
                 //中獎顯示
                 fixL.setVisibility(View.VISIBLE);
                 fixL.setBackgroundColor(Color.parseColor("#AA0000"));
@@ -333,14 +337,23 @@ public class PriceInvoice extends Fragment {
                 fixT.setText(levelprice.get(consumeVO.getIsWin()));
 
                 //detail
-                String firstH="中獎號碼 : ";
-                String firstAll=firstH+consumeVO.getIsWinNul();
-                String pIF=levelMoney.get(consumeVO.getIsWin());
-                String detail=firstAll+"\n獎金 : "+pIF;
+                String firstH="發票號碼 : ";
+                String firstL="\n中獎號碼 : ";
+                String firstAll=firstH+consumeVO.getNumber();
+                String secondAll=firstL+consumeVO.getIsWinNul();
+                String pIF="\n獎金 : ";
+                String detail=firstAll+secondAll+pIF+levelMoney.get(consumeVO.getIsWin());
+                int correctLength=-2;
+                if(consumeVO.getIsWinNul().trim().length()<5)
+                {
+                    correctLength=-7;
+                }
                 SpannableString detailC = new SpannableString(detail);
-                detailC.setSpan(new ForegroundColorSpan(Color.RED),firstH.length()+levellength.get(consumeVO.getIsWin().trim())-2,
+                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstH.length()+levellength.get(consumeVO.getIsWin().trim()),
                         firstAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                detailC.setSpan(new ForegroundColorSpan(Color.RED),detail.length()-pIF.length()+1,
+                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstAll.length()+firstL.length()+levellength.get(consumeVO.getIsWin().trim())+correctLength,
+                        firstAll.length()+secondAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstAll.length()+secondAll.length()+pIF.length(),
                         detail.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 describe.setText(detailC);
             }

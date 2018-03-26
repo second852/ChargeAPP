@@ -588,7 +588,7 @@ public class InsertSpend extends Fragment {
         consumeVO.setDetailname(detailname.getText().toString());
         consumeVO.setAuto(false);
         consumeVO.setAutoId(-1);
-        Log.d("XXX",consumeVO.getFixDateDetail());
+        consumeVO.setIsWin("0");
     }
 }
 

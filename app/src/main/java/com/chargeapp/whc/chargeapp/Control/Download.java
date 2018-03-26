@@ -86,20 +86,14 @@ public class Download extends AppCompatActivity {
         (getSupportActionBar()).hide();
         firstH=new Handler();
         firstH.post(runnable);
-//        CarrierDB carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-//        ElePeriodDB elePeriodDB=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
-//        String carNUL=carrierDB.getAll().get(0).getCarNul();
-//        elePeriodDB.deleteByCARNUL(carNUL);
-//        for(int i=0;i<6;i++)
+//        new Common().AutoSetPrice();
+//        ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+//        List<ConsumeVO> consumeVOS=consumeDB.getAll();
+//        for(ConsumeVO c:consumeVOS)
 //        {
-//            elePeriodDB.insert(new ElePeriod(2018, 3,carNUL, false));
+//            Log.d("XXXXXX",Common.sDay.format(c.getDate())+":"+c.getIsWin()+":"+c.getIsWinNul());
 //        }
-//        List<ElePeriod> elePeriods=elePeriodDB.getCarrierAll(carNUL);
-//        Log.d("XXXXX", String.valueOf(elePeriods.size()));
-//        for(ElePeriod e:elePeriods)
-//        {
-//            Log.d("XXXXX", e.getYear()+":"+String.valueOf(e.isDownload()));
-//        }
+
 
         ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
