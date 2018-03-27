@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 import com.chargeapp.whc.chargeapp.R;
 
 public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeListener {
-    private ViewPager mViewPager;
+    private ViewPager DonateViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button importMoney,exportMoney;
     public  Button goneMoney;
@@ -31,15 +31,15 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ele_setdenote_main, container, false);
-        mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        DonateViewPager = (ViewPager) view.findViewById(R.id.DonateViewPager);
         exportMoney=view.findViewById(R.id.exportD);
         importMoney=view.findViewById(R.id.showD);
         choiceitem=view.findViewById(R.id.choiceitem);
         goneMoney=view.findViewById(R.id.goneD);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
-        mViewPager.setAdapter(mAdapterViewPager);
-        mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(4);
+        DonateViewPager.setAdapter(mAdapterViewPager);
+        DonateViewPager.addOnPageChangeListener(this);
+        DonateViewPager.setCurrentItem(4);
         setcurrentpage();
         text=view.findViewById(R.id.text);
         movefirst=exportMoney.getWidth();
@@ -48,7 +48,7 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
 
     public void setcurrentpage()
     {
-        int page=mViewPager.getCurrentItem();
+        int page=DonateViewPager.getCurrentItem();
         exportMoney.setOnClickListener(new ChangePage(page));
         importMoney.setOnClickListener(new ChangePage(page+1));
     }
@@ -56,7 +56,7 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
     @Override
     public void onStop() {
         super.onStop();
-        mViewPager.removeAllViews();
+        DonateViewPager.removeAllViews();
     }
 
     public  class MainPagerAdapter extends FragmentPagerAdapter {
@@ -122,7 +122,7 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
         }
         @Override
         public void onClick(View view) {
-            mViewPager.setCurrentItem(page);
+            DonateViewPager.setCurrentItem(page);
         }
     }
 

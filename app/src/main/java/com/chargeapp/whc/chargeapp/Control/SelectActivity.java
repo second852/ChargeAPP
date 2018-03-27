@@ -23,7 +23,7 @@ import com.chargeapp.whc.chargeapp.R;
 import java.util.Calendar;
 
 public class SelectActivity extends Fragment implements ViewPager.OnPageChangeListener {
-    private ViewPager mViewPager;
+    private ViewPager SViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button exportMoney, importMoney, goneMoney, getMoney;
     private HorizontalScrollView choiceitem;
@@ -36,15 +36,16 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_char_main, container, false);
-        mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        SViewPager = (ViewPager) view.findViewById(R.id.seleViewPager);
         exportMoney = view.findViewById(R.id.exportD);
         importMoney = view.findViewById(R.id.showD);
         choiceitem = view.findViewById(R.id.choiceitem);
         goneMoney = view.findViewById(R.id.goneD);
         getMoney = view.findViewById(R.id.getMoney);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
-        mViewPager.setAdapter(mAdapterViewPager);
-        mViewPager.addOnPageChangeListener(this);
+        SViewPager.setAdapter(mAdapterViewPager);
+        SViewPager.addOnPageChangeListener(this);
+        SViewPager.setCurrentItem(6);
         setcurrentpage();
         text = view.findViewById(R.id.text);
         movefirst = -importMoney.getWidth();
@@ -52,28 +53,16 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
     }
 
     public void setcurrentpage() {
-        int page = mViewPager.getCurrentItem();
+        int page = SViewPager.getCurrentItem();
         exportMoney.setOnClickListener(new ChangePage(page));
         importMoney.setOnClickListener(new ChangePage(page + 1));
         getMoney.setOnClickListener(new ChangePage(page - 1));
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        for(int i=0;i<3;i++)
-        {
-            Fragment fragment=mAdapterViewPager.getItem(0);
-            if(fragment!=null)
-            {
-                fragment.onDestroy();
-            }
-        }
-    }
 
 
     public class MainPagerAdapter extends FragmentPagerAdapter {
-        private int NUM_ITEMS = 3;
+        private int NUM_ITEMS = 9;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -87,9 +76,10 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
 
         @Override
         public Fragment getItem(int position) {
-            if (position == 0) {
+            int currentpoition = position % 3;
+            if (currentpoition == 0) {
                 return new SelectConsume();
-            } else if (position == 1) {
+            } else if (currentpoition == 1) {
                 return new SelectIncome();
             } else {
                 return new SelectDeposit();
@@ -102,6 +92,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
     public void onPageSelected(int position) {
         int currentpoition = position % 3;
         nowpoint = position;
+        SViewPager.invalidate();
         setcurrentpage();
         if (currentpoition == 0) {
             goneMoney.setText("存款");
@@ -144,7 +135,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
 
         @Override
         public void onClick(View view) {
-            mViewPager.setCurrentItem(page);
+            SViewPager.setCurrentItem(page);
         }
     }
 

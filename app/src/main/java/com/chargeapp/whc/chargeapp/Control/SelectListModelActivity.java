@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.R;
 
 public class SelectListModelActivity extends Fragment implements ViewPager.OnPageChangeListener {
-    private ViewPager mViewPager;
+    private ViewPager SelAllviewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button exportMoney, importMoney, goneMoney;
     private HorizontalScrollView choiceitem;
@@ -34,15 +34,15 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_list_main, container, false);
-        mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        SelAllviewPager = (ViewPager) view.findViewById(R.id.SelAllviewPager);
         goneMoney = view.findViewById(R.id.goneD);
         exportMoney = view.findViewById(R.id.exportD);
         importMoney = view.findViewById(R.id.showD);
         choiceitem = view.findViewById(R.id.choiceitem);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
-        mViewPager.setAdapter(mAdapterViewPager);
-        mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(page);
+        SelAllviewPager.setAdapter(mAdapterViewPager);
+        SelAllviewPager.addOnPageChangeListener(this);
+        SelAllviewPager.setCurrentItem(page);
         setcurrentpage();
         text = view.findViewById(R.id.text);
         movefirst = -importMoney.getWidth();
@@ -51,7 +51,7 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
 
 
     public void setcurrentpage() {
-        int page = mViewPager.getCurrentItem();
+        int page = SelAllviewPager.getCurrentItem();
         exportMoney.setOnClickListener(new ChangePage(page));
         importMoney.setOnClickListener(new ChangePage(page + 1));
     }
@@ -60,7 +60,6 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
     @Override
     public void onStop() {
         super.onStop();
-        mViewPager.removeAllViews();
     }
 
     public  class MainPagerAdapter extends FragmentPagerAdapter {
@@ -125,7 +124,7 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
 
         @Override
         public void onClick(View view) {
-            mViewPager.setCurrentItem(page);
+            SelAllviewPager.setCurrentItem(page);
         }
     }
 

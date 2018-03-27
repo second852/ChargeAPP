@@ -23,7 +23,7 @@ import com.chargeapp.whc.chargeapp.R;
 import java.util.List;
 
 public class PriceActivity extends Fragment implements ViewPager.OnPageChangeListener {
-    private ViewPager mViewPager;
+    private ViewPager priceViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button importMoney, showN, howtogetprice;
     public Button goneMoney;
@@ -38,16 +38,17 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.price_main, container, false);
-        mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        priceViewPager = (ViewPager) view.findViewById(R.id.priceViewPager);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
-        mViewPager.setAdapter(mAdapterViewPager);
-        mViewPager.addOnPageChangeListener(this);
+        priceViewPager.setAdapter(mAdapterViewPager);
+        priceViewPager.addOnPageChangeListener(this);
         exportMoney = view.findViewById(R.id.exportD);
         importMoney = view.findViewById(R.id.showD);
         choiceitem = view.findViewById(R.id.choiceitem);
         goneMoney = view.findViewById(R.id.goneD);
         showN = view.findViewById(R.id.showN);
         text = view.findViewById(R.id.text);
+        priceViewPager.setCurrentItem(6);
         setloyout();
         return view;
     }
@@ -77,7 +78,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
     }
 
     public void setcurrentpage() {
-        int page = mViewPager.getCurrentItem();
+        int page = priceViewPager.getCurrentItem();
         exportMoney.setOnClickListener(new ChangePage(page));
         importMoney.setOnClickListener(new ChangePage(page + 1));
         showN.setOnClickListener(new ChangePage(page - 1));
@@ -85,7 +86,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
 
 
     public class MainPagerAdapter extends FragmentPagerAdapter {
-        private int NUM_ITEMS = 3;
+        private int NUM_ITEMS = 9;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -98,9 +99,10 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
 
         @Override
         public Fragment getItem(int position) {
-            if (position == 0) {
+            int currentpoition = position % 3;
+            if (currentpoition == 0) {
                 return new PriceInvoice();
-            } else if (position == 1) {
+            } else if (currentpoition == 1) {
                 return new PriceHand();
             } else {
                 return new PriceNumber();
@@ -108,18 +110,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
         }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        for(int i=0;i<3;i++)
-        {
-            Fragment fragment=mAdapterViewPager.getItem(0);
-            if(fragment!=null)
-            {
-               getFragmentManager().beginTransaction().remove(fragment);
-            }
-        }
-    }
+
 
     @Override
     public void onPageSelected(int position) {
@@ -168,7 +159,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
 
         @Override
         public void onClick(View view) {
-            mViewPager.setCurrentItem(page);
+            priceViewPager.setCurrentItem(page);
         }
     }
 
