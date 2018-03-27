@@ -1,23 +1,21 @@
 package com.chargeapp.whc.chargeapp.Control;
 
-import android.Manifest;
+
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
+
 import android.graphics.Color;
 import android.net.Uri;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,28 +27,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
-import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
+
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
-import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
-import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
-import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -116,10 +100,11 @@ public class MainActivity extends AppCompatActivity {
         return eleMainItemVOList;
     }
 
+
     private void switchFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        for (Fragment fragment1 :  getSupportFragmentManager().getFragments()) {
-                fragmentTransaction.remove(fragment1);
+        for (Fragment f :  getSupportFragmentManager().getFragments()) {
+                fragmentTransaction.remove(f);
         }
         fragmentTransaction.replace(R.id.body, fragment);
         fragmentTransaction.commit();

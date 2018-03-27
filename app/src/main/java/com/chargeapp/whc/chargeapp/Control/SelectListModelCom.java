@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -187,6 +188,8 @@ public class SelectListModelCom extends Fragment {
             LinearLayout fixL=itemView.findViewById(R.id.fixL);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
             TextView remainT=itemView.findViewById(R.id.remainT);
+            LinearLayout typeL=itemView.findViewById(R.id.typeL);
+            TextView typeT=itemView.findViewById(R.id.typeT);
             final Object o=objects.get(position);
             StringBuffer sbTitle=new StringBuffer();
             StringBuffer sbDecribe=new StringBuffer();
@@ -195,15 +198,17 @@ public class SelectListModelCom extends Fragment {
                 final InvoiceVO I= (InvoiceVO) o;
 
                 //設定標籤
-                remindL.setVisibility(View.VISIBLE);
+                remindL.setVisibility(View.GONE);
                 fixL.setVisibility(View.GONE);
-                remainT.setText("電子發票");
-                remainT.setTextColor(Color.parseColor("#008844"));
-                remindL.setBackgroundColor(Color.parseColor("#008844"));
+                typeL.setVisibility(View.VISIBLE);
+
+                typeT.setText("電子發票");
+                typeT.setTextColor(Color.parseColor("#008844"));
+                typeL.setBackgroundColor(Color.parseColor("#008844"));
 
                 sbTitle.append(Common.sDay.format(new Date(I.getTime().getTime()))+" ");
                 sbTitle.append(I.getSecondtype().equals("0")?"其他":I.getSecondtype());
-                sbTitle.append("  共"+I.getAmount()+"元  ");
+                sbTitle.append(" 共"+I.getAmount()+"元  ");
                 if(I.getDetail().equals("0"))
                 {
                     update.setText("下載");
@@ -262,11 +267,15 @@ public class SelectListModelCom extends Fragment {
                 update.setText("修改");
                 final ConsumeVO c= (ConsumeVO) o;
 
+                typeT.setText("紙本發票");
+                typeT.setTextColor(Color.parseColor("#0044BB"));
+                typeL.setBackgroundColor(Color.parseColor("#0044BB"));
+                typeL.setVisibility(View.VISIBLE);
                 if(c.isAuto())
                 {
                     remainT.setText("自動");
-                    remainT.setTextColor(Color.parseColor("#EE7700"));
-                    remindL.setBackgroundColor(Color.parseColor("#EE7700"));
+                    remainT.setTextColor(Color.parseColor("#7700BB"));
+                    remindL.setBackgroundColor(Color.parseColor("#7700BB"));
                     remindL.setVisibility(View.VISIBLE);
                 }else{
                     if(Boolean.valueOf(c.getNotify()))
@@ -282,9 +291,9 @@ public class SelectListModelCom extends Fragment {
 
                 StringBuffer stringBuffer=new StringBuffer();
                 //設定 title
-                stringBuffer.append(Common.sTwo.format(c.getDate()));
+                stringBuffer.append(Common.sDay.format(c.getDate()));
                 stringBuffer.append(" "+c.getMaintype());
-                stringBuffer.append("\n共"+c.getMoney()+"元");
+                stringBuffer.append(" 共"+c.getMoney()+"元");
                 title.setText(stringBuffer.toString());
 
                 //設定 describe

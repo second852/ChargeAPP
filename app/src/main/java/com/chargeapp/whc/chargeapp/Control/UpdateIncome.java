@@ -147,6 +147,15 @@ public class UpdateIncome extends Fragment {
                     switchFragment(fragment);
                 } else if (action.equals("SelectListPieIncome")) {
                     gotoFramgent(fragment, bundle);
+                }else if(action.equals("SelectListModelIM"))
+                {
+                    bundle.putSerializable("bankVO", bankVO);
+                    bundle.putSerializable("action", action);
+                    fragment.setArguments(bundle);
+                    switchFragment(fragment);
+                }else if(action.equals("SelectListBarIncome"))
+                {
+                    gotoFramgent(fragment, bundle);
                 }
                 return;
             }
@@ -167,7 +176,7 @@ public class UpdateIncome extends Fragment {
     private void setUpdate() {
         first = true;
         name.setText(bankVO.getMaintype());
-        money.setText(bankVO.getMoney());
+        money.setText(String.valueOf(bankVO.getMoney()));
         date.setText(Common.sTwo.format(bankVO.getDate()));
         detailname.setText(bankVO.getDetailname());
         fixdate.setChecked(Boolean.valueOf(bankVO.getFixDate()));
@@ -408,6 +417,10 @@ public class UpdateIncome extends Fragment {
                 bundle.putSerializable("action", action);
                 bundle.putSerializable("position", getArguments().getSerializable("position"));
                 fragment.setArguments(bundle);
+                switchFragment(fragment);
+            }else if(action.equals("SelectListModelIM"))
+            {
+                fragment=new SelectListModelActivity();
                 switchFragment(fragment);
             }
             Common.showToast(getActivity(), "修改成功");

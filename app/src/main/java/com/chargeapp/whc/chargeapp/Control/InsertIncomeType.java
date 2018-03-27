@@ -167,6 +167,18 @@ public class InsertIncomeType extends Fragment {
         }else if(action.equals("SettingListFixIon"))
         {
             bundle.putSerializable("position",getArguments().getSerializable("position"));
+        }else if(action.equals("SelectListModelIM"))
+        {
+            fragment = new UpdateIncome();
+        }else if(action.equals("SelectListBarIncome"))
+        {
+            fragment = new UpdateIncome();
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
+            bundle.putSerializable("year", getArguments().getSerializable("year"));
+            bundle.putSerializable("month", getArguments().getSerializable("month"));
+            bundle.putSerializable("day", getArguments().getSerializable("day"));
+            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
+            bundle.putSerializable("index", getArguments().getSerializable("index"));
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);

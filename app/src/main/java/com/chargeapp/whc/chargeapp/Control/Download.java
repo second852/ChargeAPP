@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
+import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
@@ -33,6 +34,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
+import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.ElePeriod;
@@ -42,7 +44,9 @@ import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
@@ -86,27 +90,19 @@ public class Download extends AppCompatActivity {
         (getSupportActionBar()).hide();
         firstH=new Handler();
         firstH.post(runnable);
-//        new Common().AutoSetPrice();
-//        ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-//        List<ConsumeVO> consumeVOS=consumeDB.getAll();
-//        for(ConsumeVO c:consumeVOS)
+
+//        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+//        if(mNetworkInfo!=null)
 //        {
-//            Log.d("XXXXXX",Common.sDay.format(c.getDate())+":"+c.getIsWin()+":"+c.getIsWinNul());
+//            getSQLDate=new GetSQLDate(this);
+//            getSQLDate.setPercentage(percentage);
+//            getSQLDate.setProgressT(progressT);
+//            getSQLDate.execute("download");
+//        }else{
+//            tonNewActivity();
+//            Common.showToast(this,"網路沒有開啟，無法下載!");
 //        }
-
-
-        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-        if(mNetworkInfo!=null)
-        {
-            getSQLDate=new GetSQLDate(this);
-            getSQLDate.setPercentage(percentage);
-            getSQLDate.setProgressT(progressT);
-            getSQLDate.execute("download");
-        }else{
-            tonNewActivity();
-            Common.showToast(this,"網路沒有開啟，無法下載!");
-        }
     }
 
     @Override
@@ -119,6 +115,7 @@ public class Download extends AppCompatActivity {
         SelectListModelIM.year=calendar.get(Calendar.YEAR);
         SelectListModelIM.month=calendar.get(Calendar.MONTH);
         SelectListModelIM.p=0;
+        tonNewActivity();
     }
 
     private Runnable runnable=new Runnable() {
@@ -132,6 +129,7 @@ public class Download extends AppCompatActivity {
     private Runnable runToNeW=new Runnable() {
         @Override
         public void run() {
+            (new Common()).AutoSetPrice();
             String a=getIntent().getStringExtra("action");
             Intent intent=new Intent();
             if(a!=null)
@@ -165,7 +163,7 @@ public class Download extends AppCompatActivity {
     public void tonNewActivity()
     {
         secondH=new Handler();
-        secondH.postDelayed(runToNeW,1000);
+        secondH.post(runToNeW);
     }
 
 

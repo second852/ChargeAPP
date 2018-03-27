@@ -323,8 +323,8 @@ public class PriceInvoice extends Fragment {
                 //紙本發票
                 ConsumeVO consumeVO= (ConsumeVO) o;
                 remainT.setText("紙本發票");
-                remainT.setTextColor(Color.parseColor("#008844"));
-                remindL.setBackgroundColor(Color.parseColor("#008844"));
+                remainT.setTextColor(Color.parseColor("#0044BB"));
+                remindL.setBackgroundColor(Color.parseColor("#0044BB"));
                 remindL.setVisibility(View.VISIBLE);
                 //標題
                 day=Common.sDay.format(consumeVO.getDate())+" ";

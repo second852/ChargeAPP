@@ -127,24 +127,25 @@ public class SettingListFixIon extends Fragment {
             final LinearLayout fixL=itemView.findViewById(R.id.fixL);
             Button update=itemView.findViewById(R.id.updateD);
             Button deleteI=itemView.findViewById(R.id.deleteI);
-            fixL.setVisibility(View.VISIBLE);
             update.setText("修改");
             StringBuffer stringBuffer = new StringBuffer();
             final BankVO bankVO=bankVOS.get(position);
             if(bankVO.isAuto())
             {
+                fixL.setVisibility(View.VISIBLE);
                 fixT.setText("子體");
                 fixT.setTextColor(Color.parseColor("#7744FF"));
                 fixL.setBackgroundColor(Color.parseColor("#7744FF"));
                 remindL.setVisibility(View.VISIBLE);
                 remainT.setText("自動");
-                remainT.setTextColor(Color.parseColor("#EE7700"));
-                remindL.setBackgroundColor(Color.parseColor("#EE7700"));
+                remainT.setTextColor(Color.parseColor("#7700BB"));
+                remindL.setBackgroundColor(Color.parseColor("#7700BB"));
             }else {
-                remindL.setVisibility(View.GONE);
-                fixT.setText("本體");
-                fixT.setTextColor(Color.parseColor("#0000FF"));
-                fixL.setBackgroundColor(Color.parseColor("#0000FF"));
+                fixL.setVisibility(View.GONE);
+                remindL.setVisibility(View.VISIBLE);
+                remainT.setText("本體");
+                remainT.setTextColor(Color.parseColor("#0000FF"));
+                remindL.setBackgroundColor(Color.parseColor("#0000FF"));
             }
             //設定 title
             stringBuffer.append(Common.sTwo.format(bankVO.getDate()));

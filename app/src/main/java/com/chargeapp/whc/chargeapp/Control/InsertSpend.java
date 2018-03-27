@@ -121,7 +121,7 @@ public class InsertSpend extends Fragment {
         name.setText(consumeVO.getMaintype());
         number.setText(consumeVO.getNumber());
         secondname.setText(consumeVO.getSecondType());
-        money.setText(consumeVO.getMoney());
+        money.setText(String.valueOf(consumeVO.getMoney()));
         date.setText(Common.sTwo.format(consumeVO.getDate()));
         detailname.setText(consumeVO.getDetailname());
         if (consumeVO.getFixDate().equals("true")) {
@@ -283,7 +283,7 @@ public class InsertSpend extends Fragment {
                 choiceStatue.setVisibility(View.GONE);
                 choiceday.setVisibility(View.GONE);
                 noWek.setVisibility(View.GONE);
-
+                notify.setChecked(false);
             }
         }
     }

@@ -147,7 +147,7 @@ public class UpdateInvoice extends Fragment {
         name.setText(invoiceVO.getMaintype().equals("O")?"其他":invoiceVO.getMaintype());
         number.setText(invoiceVO.getInvNum());
         secondname.setText(invoiceVO.getSecondtype().equals("O")?"其他":invoiceVO.getSecondtype());
-        money.setText(invoiceVO.getAmount());
+        money.setText(String.valueOf(invoiceVO.getAmount()));
         date.setText(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())));
         setLayout();
     }

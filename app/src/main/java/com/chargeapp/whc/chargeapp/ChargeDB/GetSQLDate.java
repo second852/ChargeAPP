@@ -460,7 +460,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     }
 
     private String searchToMonth(CarrierVO carrierVO, long maxTime) throws IOException {
-        String jsonIn = null;
+        String jsonIn;
         Calendar oldMax = new GregorianCalendar();
         oldMax.setTime(new Date(maxTime));
         Calendar today = Calendar.getInstance();
@@ -468,7 +468,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         int todayYear = today.get(Calendar.YEAR);
         int lastMonth = oldMax.get(Calendar.MONTH);
         int lastYear = oldMax.get(Calendar.YEAR);
-        today.set(todayYear, todayMonth, 1);
         if (todayMonth == lastMonth && lastYear == todayYear) {
             jsonIn = searchTodayDate(oldMax, today, carrierVO.getCarNul(), carrierVO.getPassword());
             return jsonIn;
@@ -715,7 +714,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 Download download = (Download) object;
                 percentage.setText("100%");
                 progressT.setText("下載完成!\n更新中");
-                (new Common()).AutoSetPrice();
                 download.tonNewActivity();
             } else if (object instanceof SelectDetList) {
                 SelectDetList selectDetList = (SelectDetList) object;

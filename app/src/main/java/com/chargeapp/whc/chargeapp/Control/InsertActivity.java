@@ -56,17 +56,20 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     public void setcurrentpage()
     {
         int page=mViewPager.getCurrentItem();
-        if(page==5||page==1)
-        {
-            page=3;
-        }
         exportMoney.setOnClickListener(new ChangePage(page));
         importMoney.setOnClickListener(new ChangePage(page+1));
     }
 
 
-    public static class MainPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 6;
+    @Override
+    public void onStop() {
+        super.onStop();
+        mViewPager.removeAllViews();
+    }
+
+
+    public  class MainPagerAdapter extends FragmentPagerAdapter {
+        private  int NUM_ITEMS = 6;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);

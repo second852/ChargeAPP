@@ -201,6 +201,14 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 {
                     EleSetCarrier eleSetCarrier= (EleSetCarrier) fragement;
                     eleSetCarrier.setListAdapt();
+                }else if(fragement instanceof SelectListBarIncome)
+                {
+                    SelectListBarIncome selectListBarIncome= (SelectListBarIncome) fragement;
+                    selectListBarIncome.setLayout();
+                }else if(fragement instanceof SelectListPieIncome)
+                {
+                    SelectListPieIncome selectListPieIncome= (SelectListPieIncome) fragement;
+                    selectListPieIncome.setLayout();
                 }
                 break;
             default:

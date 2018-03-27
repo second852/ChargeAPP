@@ -36,7 +36,7 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
         importMoney=view.findViewById(R.id.showD);
         choiceitem=view.findViewById(R.id.choiceitem);
         goneMoney=view.findViewById(R.id.goneD);
-        mAdapterViewPager = new MainPagerAdapter(getActivity().getSupportFragmentManager());
+        mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapterViewPager);
         mViewPager.addOnPageChangeListener(this);
         mViewPager.setCurrentItem(4);
@@ -53,9 +53,14 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
         importMoney.setOnClickListener(new ChangePage(page+1));
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        mViewPager.removeAllViews();
+    }
 
-    public static class MainPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 8;
+    public  class MainPagerAdapter extends FragmentPagerAdapter {
+        private  int NUM_ITEMS = 8;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -75,6 +80,7 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
                 return new EleDonateRecord();
             }
         }
+
     }
 
 

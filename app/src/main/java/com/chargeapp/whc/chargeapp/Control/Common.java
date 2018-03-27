@@ -2,13 +2,16 @@ package com.chargeapp.whc.chargeapp.Control;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
+import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
@@ -17,6 +20,7 @@ import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.components.Description;
 import com.google.gson.JsonObject;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -162,6 +166,19 @@ public class Common {
         return hashMap;
     }
 
+    public static HashMap<String,Integer> getIntPrice() {
+        HashMap<String,Integer> hashMap=new HashMap<>();
+        hashMap.put("super",10000000);
+        hashMap.put("spc",2000000);
+        hashMap.put("first",200000);
+        hashMap.put("second",40000);
+        hashMap.put("third",10000);
+        hashMap.put("fourth",4000);
+        hashMap.put("fifth",1000);
+        hashMap.put("sixth",200);
+        return hashMap;
+    }
+
     //自動兌獎
     private String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
     public void AutoSetPrice() {
@@ -176,7 +193,7 @@ public class Common {
             year = Integer.valueOf(invoYM.substring(0, invoYM.length() - 2)) + 1911;
             startTime = (new GregorianCalendar(year, month - 2, 1,0,0,0)).getTimeInMillis();
             Calendar endC=new GregorianCalendar(year, month-1, 1);
-            endTime = (new GregorianCalendar(year, month-1, endC.getActualMaximum(Calendar.DAY_OF_MONTH),59,59)).getTimeInMillis();
+            endTime = (new GregorianCalendar(year, month-1, endC.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59)).getTimeInMillis();
             autoSetCRWin(startTime, endTime, priceVO);
             autoSetInWin(startTime, endTime, priceVO);
         }
@@ -184,6 +201,7 @@ public class Common {
 
     private void autoSetCRWin(long startTime, long endTime, PriceVO priceVO) {
         ConsumeDB consumeDB =new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        BankDB bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<ConsumeVO> consumeVOS = consumeDB.getNoWinAll(startTime, endTime);
         for (ConsumeVO consumeVO : consumeVOS) {
             String nul = consumeVO.getNumber().trim();
@@ -193,6 +211,20 @@ public class Common {
                 List<String> result = anwswer(nul, priceVO);
                 consumeVO.setIsWin(result.get(0));
                 consumeVO.setIsWinNul(result.get(1));
+                if(!consumeVO.getIsWin().trim().equals("N"))
+                {
+                    BankVO bankVO=new BankVO();
+                    bankVO.setMoney(getIntPrice().get(consumeVO.getIsWin()));
+                    bankVO.setDate(new Date(System.currentTimeMillis()));
+                    bankVO.setMaintype("中獎");
+                    bankVO.setFixDate("false");
+                    int month= Integer.parseInt(priceVO.getInvoYm().substring(3));
+                    String detail=priceVO.getInvoYm().substring(0,3)+"年"+getPriceMonth().get(month)
+                            +getPriceName().get(consumeVO.getIsWin())+" : "+getPrice().get(consumeVO.getIsWin());
+                    bankVO.setDetailname(detail);
+                    bankDB.insert(bankVO);
+                }
+
             }
             consumeDB.update(consumeVO);
         }
@@ -201,15 +233,30 @@ public class Common {
     private void autoSetInWin(long startTime, long endTime, PriceVO priceVO) {
         CarrierDB carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        BankDB bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<CarrierVO> carrierVOS = carrierDB.getAll();
         for (CarrierVO c : carrierVOS) {
             List<InvoiceVO> invoiceVOS = invoiceDB.getNotSetWin(c.getCarNul(), startTime, endTime);
+            Log.d("Common",priceVO.getInvoYm()+" : "+sTwo.format(new Date(startTime))+" : "+sTwo.format(new Date(endTime))+" : "+invoiceVOS.size());
             for (InvoiceVO i : invoiceVOS) {
-                String nul = i.getInvNum().substring(2);
+                String nul = i.getInvNum().trim().substring(2);
                 List<String> inWin = anwswer(nul, priceVO);
                 i.setIswin(inWin.get(0));
                 i.setIsWinNul(inWin.get(1));
                 invoiceDB.update(i);
+                if(!i.getIswin().trim().equals("N"))
+                {
+                    BankVO bankVO=new BankVO();
+                    bankVO.setFixDate("false");
+                    bankVO.setMoney(getIntPrice().get(i.getIswin()));
+                    bankVO.setDate(new Date(System.currentTimeMillis()));
+                    bankVO.setMaintype("中獎");
+                    int month= Integer.parseInt(priceVO.getInvoYm().substring(3));
+                    String detail=priceVO.getInvoYm().substring(0,3)+"年"+getPriceMonth().get(month)
+                            +getPriceName().get(i.getIswin())+" : "+getPrice().get(i.getIswin());
+                    bankVO.setDetailname(detail);
+                    bankDB.insert(bankVO);
+                }
             }
         }
     }

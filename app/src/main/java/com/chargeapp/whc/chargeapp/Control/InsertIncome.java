@@ -170,7 +170,7 @@ public class InsertIncome extends Fragment {
         first=true;
         bankVO= (BankVO) getArguments().getSerializable("bankVO");
         name.setText(bankVO.getMaintype());
-        money.setText(bankVO.getMoney());
+        money.setText(String.valueOf(bankVO.getMoney()));
         date.setText(Common.sTwo.format(bankVO.getDate()));
         detailname.setText(bankVO.getDetailname());
         fixdate.setChecked(Boolean.valueOf(bankVO.getFixDate()));

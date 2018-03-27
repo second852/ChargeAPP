@@ -124,29 +124,32 @@ public class SettingListFixCon extends Fragment {
             final LinearLayout fixL=itemView.findViewById(R.id.fixL);
             Button update=itemView.findViewById(R.id.updateD);
             Button deleteI=itemView.findViewById(R.id.deleteI);
-            fixL.setVisibility(View.VISIBLE);
             update.setText("修改");
             StringBuffer stringBuffer = new StringBuffer();
             final ConsumeVO consumeVO=consumeVOS.get(position);
-            if(consumeVO.getNotify().equals("true"))
-            {
-                remindL.setVisibility(View.VISIBLE);
-            }else {
-                remindL.setVisibility(View.GONE);
-            }
+
             if(consumeVO.isAuto())
             {
+                fixL.setVisibility(View.VISIBLE);
                 fixT.setText("子體");
                 fixT.setTextColor(Color.parseColor("#7744FF"));
                 fixL.setBackgroundColor(Color.parseColor("#7744FF"));
                 remindL.setVisibility(View.VISIBLE);
                 remainT.setText("自動");
-                remainT.setTextColor(Color.parseColor("#EE7700"));
-                remindL.setBackgroundColor(Color.parseColor("#EE7700"));
+                remainT.setTextColor(Color.parseColor("#7700BB"));
+                remindL.setBackgroundColor(Color.parseColor("#7700BB"));
             }else {
-                fixT.setText("本體");
-                fixT.setTextColor(Color.parseColor("#0000FF"));
-                fixL.setBackgroundColor(Color.parseColor("#0000FF"));
+                if(consumeVO.getNotify().equals("true"))
+                {
+                    fixT.setTextColor(Color.parseColor("#CC0000"));
+                    fixL.setBackgroundColor(Color.parseColor("#CC0000"));
+                    fixL.setVisibility(View.VISIBLE);
+                }else {
+                    fixL.setVisibility(View.GONE);
+                }
+                remainT.setText("本體");
+                remainT.setTextColor(Color.parseColor("#0000FF"));
+                remindL.setBackgroundColor(Color.parseColor("#0000FF"));
             }
             //設定 title
             stringBuffer.append(Common.sTwo.format(consumeVO.getDate()));

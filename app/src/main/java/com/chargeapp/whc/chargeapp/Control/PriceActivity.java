@@ -1,7 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
-
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,7 +18,6 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 
-
 import com.chargeapp.whc.chargeapp.R;
 
 import java.util.List;
@@ -27,17 +25,13 @@ import java.util.List;
 public class PriceActivity extends Fragment implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
-    private Button importMoney,showN,howtogetprice;
-    public  Button goneMoney;
+    private Button importMoney, showN, howtogetprice;
+    public Button goneMoney;
     private HorizontalScrollView choiceitem;
     private LinearLayout text;
-    private int nowpoint=0;
+    private int nowpoint = 0;
     private float movefirst;
     private Button exportMoney;
-
-
-
-
 
 
     @Override
@@ -46,58 +40,52 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
         View view = inflater.inflate(R.layout.price_main, container, false);
         mViewPager = (ViewPager) view.findViewById(R.id.viewPager);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
-        exportMoney=view.findViewById(R.id.exportD);
-        importMoney=view.findViewById(R.id.showD);
-        choiceitem=view.findViewById(R.id.choiceitem);
-        goneMoney=view.findViewById(R.id.goneD);
-        showN=view.findViewById(R.id.showN);
-        text=view.findViewById(R.id.text);
+        mViewPager.setAdapter(mAdapterViewPager);
+        mViewPager.addOnPageChangeListener(this);
+        exportMoney = view.findViewById(R.id.exportD);
+        importMoney = view.findViewById(R.id.showD);
+        choiceitem = view.findViewById(R.id.choiceitem);
+        goneMoney = view.findViewById(R.id.goneD);
+        showN = view.findViewById(R.id.showN);
+        text = view.findViewById(R.id.text);
         setloyout();
         return view;
     }
 
 
-    public void setloyout()
-    {
-        ActionBar actionBar=((AppCompatActivity)getActivity()).getSupportActionBar();
+    public void setloyout() {
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         View actionbarLayout = LayoutInflater.from(getActivity()).inflate(R.layout.actionbar_layout, null);
         actionBar.setCustomView(actionbarLayout);
-        mViewPager.setAdapter(mAdapterViewPager);
-        mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(6);
         setcurrentpage();
-        howtogetprice=actionbarLayout.findViewById(R.id.howtogetprice);
+        howtogetprice = actionbarLayout.findViewById(R.id.howtogetprice);
         howtogetprice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                List<Fragment> fragments=getFragmentManager().getFragments();
-                for(Fragment f:fragments)
-                {
+                List<Fragment> fragments = getFragmentManager().getFragments();
+                for (Fragment f : fragments) {
                     fragmentTransaction.remove(f);
                 }
                 getActivity().setTitle(R.string.text_HowGet);
-                Fragment fragment=new HowGetPrice();
+                Fragment fragment = new HowGetPrice();
                 fragmentTransaction.replace(R.id.body, fragment);
                 fragmentTransaction.commit();
             }
         });
     }
 
-    public void setcurrentpage()
-    {
-        int page=mViewPager.getCurrentItem();
+    public void setcurrentpage() {
+        int page = mViewPager.getCurrentItem();
         exportMoney.setOnClickListener(new ChangePage(page));
-        importMoney.setOnClickListener(new ChangePage(page+1));
-        showN.setOnClickListener(new ChangePage(page-1));
+        importMoney.setOnClickListener(new ChangePage(page + 1));
+        showN.setOnClickListener(new ChangePage(page - 1));
     }
 
 
-
-
-    public static class MainPagerAdapter extends FragmentPagerAdapter {
-        private static int NUM_ITEMS = 9;
+    public class MainPagerAdapter extends FragmentPagerAdapter {
+        private int NUM_ITEMS = 3;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -110,40 +98,46 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
 
         @Override
         public Fragment getItem(int position) {
-            int currentpoition=position%3;
-            if (currentpoition == 0) {
+            if (position == 0) {
                 return new PriceInvoice();
-            } else  if(currentpoition == 1)
-            {
+            } else if (position == 1) {
                 return new PriceHand();
-            }
-            else{
+            } else {
                 return new PriceNumber();
             }
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        for(int i=0;i<3;i++)
+        {
+            Fragment fragment=mAdapterViewPager.getItem(0);
+            if(fragment!=null)
+            {
+               getFragmentManager().beginTransaction().remove(fragment);
+            }
+        }
+    }
 
     @Override
     public void onPageSelected(int position) {
-        int currentpoition=position%3;
-        nowpoint=position;
-        if(currentpoition==0)
-        {
+        int currentpoition = position % 3;
+        nowpoint = position;
+        if (currentpoition == 0) {
             setcurrentpage();
             goneMoney.setText("兌獎號碼");
             exportMoney.setText("中獎發票");
             importMoney.setText("兌獎");
             showN.setText("兌獎號碼");
-        }else if(currentpoition==1)
-        {
+        } else if (currentpoition == 1) {
             setcurrentpage();
             goneMoney.setText("中獎發票");
             exportMoney.setText("兌獎");
             importMoney.setText("兌獎號碼");
             showN.setText("中獎發票");
-        } else
-        {
+        } else {
             setcurrentpage();
             goneMoney.setText("兌獎");
             exportMoney.setText("兌獎號碼");
@@ -151,25 +145,27 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
             showN.setText("兌獎");
         }
     }
+
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if(nowpoint>position)
-        {
-            text.setX(movefirst+(1-positionOffset)*goneMoney.getWidth()*2);
-        }else{
-            text.setX(movefirst-(positionOffset*goneMoney.getWidth()*2));
+        if (nowpoint > position) {
+            text.setX(movefirst + (1 - positionOffset) * goneMoney.getWidth() * 2);
+        } else {
+            text.setX(movefirst - (positionOffset * goneMoney.getWidth() * 2));
         }
     }
+
     @Override
     public void onPageScrollStateChanged(int state) {
     }
 
-    private class ChangePage implements View.OnClickListener{
+    private class ChangePage implements View.OnClickListener {
         private int page;
-        public ChangePage(int page)
-        {
-            this.page=page;
+
+        public ChangePage(int page) {
+            this.page = page;
         }
+
         @Override
         public void onClick(View view) {
             mViewPager.setCurrentItem(page);

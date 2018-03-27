@@ -139,19 +139,18 @@ public class SelectListBarIncome extends Fragment {
             TextView decribe=itemView.findViewById(R.id.listDetail);
             Button update=itemView.findViewById(R.id.updateD);
             Button deleteI=itemView.findViewById(R.id.deleteI);
-
-
             TextView remainT = itemView.findViewById(R.id.remainT);
             LinearLayout remindL = itemView.findViewById(R.id.remindL);
-            LinearLayout fixL = itemView.findViewById(R.id.fixL);
+            LinearLayout typeL=itemView.findViewById(R.id.typeL);
+            TextView typeT=itemView.findViewById(R.id.typeT);
+
 
             StringBuffer stringBuffer = new StringBuffer();
-
             if (bankVO.isAuto()) {
                 remindL.setVisibility(View.VISIBLE);
                 remainT.setText("自動");
-                remainT.setTextColor(Color.parseColor("#EE7700"));
-                remindL.setBackgroundColor(Color.parseColor("#EE7700"));
+                remainT.setTextColor(Color.parseColor("#7700BB"));
+                remindL.setBackgroundColor(Color.parseColor("#7700BB"));
             } else {
                 remindL.setVisibility(View.GONE);
             }
@@ -161,9 +160,14 @@ public class SelectListBarIncome extends Fragment {
             stringBuffer.append(" "+bankVO.getMaintype());
             stringBuffer.append("\n共"+bankVO.getMoney()+"元");
             title.setText(stringBuffer.toString());
+
             //設定 describe
-            if (bankVO.getFixDate().equals("true")&&bankVO.isAuto()) {
-                fixL.setVisibility(View.VISIBLE);
+            if (bankVO.getFixDate().equals("true")||bankVO.isAuto()) {
+
+                typeL.setVisibility(View.VISIBLE);
+                typeT.setText("固定");
+                typeT.setTextColor(Color.parseColor("#008844"));
+                typeL.setBackgroundColor(Color.parseColor("#008844"));
                 stringBuffer=new StringBuffer();
                 JsonObject js=gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
                 String daystatue=js.get("choicestatue").getAsString().trim();
@@ -174,7 +178,7 @@ public class SelectListBarIncome extends Fragment {
                 }
                 decribe.setText(stringBuffer.toString()+" \n"+bankVO.getDetailname());
             } else {
-                fixL.setVisibility(View.GONE);
+                typeL.setVisibility(View.GONE);
                 decribe.setText(bankVO.getDetailname());
             }
 
@@ -198,8 +202,10 @@ public class SelectListBarIncome extends Fragment {
             deleteI.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    bankDB.deleteById(bankVO.getId());
-                    setLayout();
+                    DeleteDialogFragment aa = new DeleteDialogFragment();
+                    aa.setObject(bankVO);
+                    aa.setFragement(SelectListBarIncome.this);
+                    aa.show(getFragmentManager(), "show");
                 }
             });
             return itemView;
