@@ -108,13 +108,6 @@ public class Download extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Calendar calendar=Calendar.getInstance();
-        SelectListModelCom.year=calendar.get(Calendar.YEAR);
-        SelectListModelCom.month=calendar.get(Calendar.MONTH);
-        SelectListModelCom.p=0;
-        SelectListModelIM.year=calendar.get(Calendar.YEAR);
-        SelectListModelIM.month=calendar.get(Calendar.MONTH);
-        SelectListModelIM.p=0;
         tonNewActivity();
     }
 

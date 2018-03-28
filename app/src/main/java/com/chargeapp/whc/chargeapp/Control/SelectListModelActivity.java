@@ -88,6 +88,7 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
 
     @Override
     public void onPageSelected(int position) {
+        page=position;
         int currentpoition = position % 2;
         nowpoint = position;
         setcurrentpage();

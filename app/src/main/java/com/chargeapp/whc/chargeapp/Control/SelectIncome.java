@@ -61,12 +61,10 @@ public class SelectIncome extends Fragment {
     private ImageView PIdateCut, PIdateAdd;
     private String TAG = "SelectIncome";
     private BarChart chart_bar;
-    private int month, year, day, dweek;
-    private Calendar end;
+    private int month, year,day;
     private Spinner choicePeriod;
     private PieChart chart_pie;
     private int total, period;
-    private int Statue = 0;
     private String DesTittle;
     private List<String> chartLabels;
     private BankDB bankDB;
@@ -74,15 +72,15 @@ public class SelectIncome extends Fragment {
     private List<BankVO> bankVOS;
     private ArrayList<String> Okey;
     private List<String> type;
+    public static Calendar end;
+    public static int Statue;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_income, container, false);
-        end = Calendar.getInstance();
         month = end.get(Calendar.MONTH);
         year = end.get(Calendar.YEAR);
-        dweek = end.get(Calendar.DAY_OF_WEEK);
-        day = end.get(Calendar.DAY_OF_MONTH);
+        day=end.get(Calendar.DAY_OF_MONTH);
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());
@@ -90,6 +88,7 @@ public class SelectIncome extends Fragment {
         choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
         chart_pie.setOnChartValueSelectedListener(new pievalue());
         chart_bar.setOnChartValueSelectedListener(new charValue());
+        choicePeriod.setSelection(Statue);
         return view;
     }
 
@@ -376,8 +375,8 @@ public class SelectIncome extends Fragment {
         public void onClick(View v) {
             if (Statue == 0) {
                 month = month + 1;
-                Calendar calendar = new GregorianCalendar(year, month, 1);
-                period = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+                end = new GregorianCalendar(year, month, 1);
+                period = end.getActualMaximum(Calendar.DAY_OF_MONTH);
             } else {
                 year = year + 1;
                 period = 12;
@@ -391,8 +390,8 @@ public class SelectIncome extends Fragment {
         public void onClick(View v) {
             if (Statue == 0) {
                 month = month - 1;
-                Calendar calendar = new GregorianCalendar(year, month, 1);
-                period = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+                end = new GregorianCalendar(year, month, 1);
+                period = end.getActualMaximum(Calendar.DAY_OF_MONTH);
             } else {
                 year = year - 1;
                 period = 12;
@@ -406,13 +405,10 @@ public class SelectIncome extends Fragment {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             Statue = position;
-            end =new GregorianCalendar(year,month,day);
             month = end.get(Calendar.MONTH);
             year = end.get(Calendar.YEAR);
-            dweek = end.get(Calendar.DAY_OF_WEEK);
-            day = end.get(Calendar.DAY_OF_MONTH);
             if (position == 0) {
-                period = end.get(Calendar.DAY_OF_MONTH);
+                period = end.getActualMaximum(Calendar.DAY_OF_MONTH);
                 dataAnalyze();
             } else {
                 period = 12;
@@ -431,6 +427,8 @@ public class SelectIncome extends Fragment {
 
 
     private void switchFragment(Fragment fragment) {
+        MainActivity.oldFramgent.add("SelectActivity");
+        MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

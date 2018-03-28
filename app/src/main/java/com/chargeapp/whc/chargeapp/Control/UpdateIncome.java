@@ -403,6 +403,8 @@ public class UpdateIncome extends Fragment {
             bankDB.update(bankVO);
             Fragment fragment = null;
             Bundle bundle = new Bundle();
+            MainActivity.bundles.remove(MainActivity.bundles.size()-1);
+            MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
             if (action.equals("SelectListBarIncome")) {
                 fragment = new SelectListBarIncome();
                 gotoFramgent(fragment, bundle);

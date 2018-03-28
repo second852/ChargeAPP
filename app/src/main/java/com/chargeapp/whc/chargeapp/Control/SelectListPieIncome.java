@@ -49,7 +49,7 @@ public class SelectListPieIncome extends Fragment {
 
     //    private LineChart lineChart;
     private ListView listView;
-    private int year, month, day;
+    private int year, month,day;
     private HashMap<String, Integer> main;
     private List<Object> objects;
     private ProgressDialog progressDialog;
@@ -73,16 +73,16 @@ public class SelectListPieIncome extends Fragment {
         progressDialog = new ProgressDialog(getActivity());
         year = (int) getArguments().getSerializable("year");
         month = (int) getArguments().getSerializable("month");
-        day = (int) getArguments().getSerializable("day");
         key = (String) getArguments().getSerializable("type");
         statue = (int) getArguments().getSerializable("statue");
+        day=(int) getArguments().getSerializable("day");
         Okey = getArguments().getStringArrayList("OKey");
         if (statue == 0) {
             start = new GregorianCalendar(year, month, 1, 0, 0, 0);
-            end = new GregorianCalendar(year, month, day, start.getActualMaximum(Calendar.DAY_OF_MONTH), 59, 59);
+            end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23,59, 59);
             title = Common.sThree.format(new Date(start.getTimeInMillis()));
         } else {
-            Calendar calendar = new GregorianCalendar(year, month, day, 0, 0, 0);
+            Calendar calendar = new GregorianCalendar(year, month, 1, 0, 0, 0);
             start = new GregorianCalendar(calendar.get(Calendar.YEAR), 0, 1, 0, 0, 0);
             end = new GregorianCalendar(calendar.get(Calendar.YEAR), 11, 31, 23, 59, 59);
             title = Common.sFour.format(new Date(start.getTimeInMillis()));
@@ -243,6 +243,8 @@ public class SelectListPieIncome extends Fragment {
 
 
     private void switchFragment(Fragment fragment) {
+        MainActivity.oldFramgent.add("SelectListPieIncome");
+        MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

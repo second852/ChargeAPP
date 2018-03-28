@@ -202,13 +202,19 @@ public class SelectDeposit extends Fragment {
                 LimitLine xLimitLine;
                 Calendar endGoal =new GregorianCalendar();
                 endGoal.setTime(goalVO.getEndTime());
+                XAxis xAxis1=chart_line.getXAxis();
+                xAxis.removeAllLimitLines();
                 if(Statue==0)
                 {
                     int month=endGoal.get(Calendar.MONTH);
                     xLimitLine = new LimitLine(month, "儲蓄目標");
+                    xLimitLine.setTextColor(Color.BLUE);
+                    xAxis1.addLimitLine(xLimitLine);
                 }else{
                     int year=endGoal.get(Calendar.YEAR);
                     xLimitLine = new LimitLine(year, "儲蓄目標");
+                    xLimitLine.setTextColor(Color.BLUE);
+                    xAxis1.addLimitLine(xLimitLine);
                 }
 
 

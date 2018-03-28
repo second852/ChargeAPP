@@ -15,8 +15,10 @@ import android.util.Log;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -38,6 +40,7 @@ public class BootReceiver extends BroadcastReceiver {
     private SimpleDateFormat sf;
     private Calendar setNewTime;
     private int id;
+    private GoalDB goalDB;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -49,6 +52,7 @@ public class BootReceiver extends BroadcastReceiver {
             chargeAPPDB = new ChargeAPPDB(context);
             consumeDB = new ConsumeDB(chargeAPPDB.getReadableDatabase());
             bankDB = new BankDB(chargeAPPDB.getReadableDatabase());
+            goalDB=new GoalDB(chargeAPPDB.getReadableDatabase());
             List<BankVO> bankVOS = bankDB.getFixDate();
             SharedPreferences sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
             boolean setNotify = sharedPreferences.getBoolean("notify", true);
@@ -96,7 +100,7 @@ public class BootReceiver extends BroadcastReceiver {
 
                         }
                         if (notify && setNotify) {
-//                            NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+                            NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
                             Log.d("XXXXX", sf.format(setNewTime.getTimeInMillis()));
                         }
                     } else if ("每周".equals(action)) {
@@ -115,7 +119,7 @@ public class BootReceiver extends BroadcastReceiver {
                                 consumeDB.insert(consumeVO);
                             }
                             if (notify && setNotify) {
-//                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
                             }
                         }
                     } else if ("每月".equals(action)) {
@@ -137,7 +141,7 @@ public class BootReceiver extends BroadcastReceiver {
                             }
 
                             if (notify && setNotify) {
-//                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
                             }
                         }
                         if (Maxday < Integer.valueOf(fixdate) && day == Maxday) {
@@ -154,33 +158,11 @@ public class BootReceiver extends BroadcastReceiver {
                             }
 
                             if (notify && setNotify) {
-//                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
                             }
                         }
-                    } else {
-                        String fixdate = jsonObject.get("choicedate").getAsString().trim();
-                        fixdate = fixdate.substring(0, fixdate.indexOf("月"));
-                        int d = Integer.valueOf(fixdate) - 1;
-                        if (d == month && day == 1) {
-
-                            Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
-                            Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
-                            ConsumeVO cccc = consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getId());
-                            if (cccc == null) {
-                                consumeVO.setNotify("false");
-                                consumeVO.setFixDate("false");
-                                consumeVO.setAuto(true);
-                                consumeVO.setAutoId(consumeVO.getId());
-                                consumeVO.setDate(new Date((date.getTimeInMillis())));
-                                consumeDB.insert(consumeVO);
-                            }
-
-                            if (notify && setNotify) {
-//                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
-                            }
-                        }
-                    }
-                    id = consumeVO.getId();
+                    } else
+                    id++;
                 }
             }
             for (BankVO b : bankVOS) {
@@ -273,8 +255,69 @@ public class BootReceiver extends BroadcastReceiver {
                     }
                 }
             }
+            List<GoalVO> goalVOS=goalDB.getNotify();
+
+            for(GoalVO goalVO:goalVOS)
+            {
+                String statue=goalVO.getNotifyStatue().trim();
+                if(statue.equals("每天"))
+                {
+                   if(goalVO.isNoWeekend())
+                   {
+                       if(dweek==1||dweek==7)
+                       {
+                           return;
+                       }
+                   }
+                   if(setNotify)
+                   {
+                       NotifyUse(context,goalVO);
+                   }
+                }else if(statue.equals("每周"))
+                {
+                    HashMap<String, Integer> change = getStringtoInt();
+                    String dateStatue=goalVO.getNotifyDate().trim();
+                    if(dweek==change.get(dateStatue))
+                    {
+                        if(setNotify)
+                        {
+                            NotifyUse(context,goalVO);
+                        }
+                    }
+                }else if(statue.equals("每月"))
+                {
+                    int max=date.getActualMaximum(Calendar.DAY_OF_MONTH);
+                    String dateStatue=goalVO.getNotifyDate().trim();
+                    if(dateStatue.equals(String.valueOf(day)))
+                    {
+                        if(setNotify)
+                        {
+                            NotifyUse(context,goalVO);
+                        }
+                    }
+                    if(day==max&&Integer.valueOf(dateStatue)>day)
+                    {
+                        if(setNotify)
+                        {
+                            NotifyUse(context,goalVO);
+                        }
+                    }
+                }else {
+                    String fixdate =goalVO.getNotifyDate().trim();
+                    fixdate = fixdate.substring(0, fixdate.indexOf("月"));
+                    int d = Integer.valueOf(fixdate) - 1;
+                    if(month==d&&day==1)
+                    {
+                        if(setNotify)
+                        {
+                            NotifyUse(context,goalVO);
+                        }
+                    }
+                }
+                id++;
+            }
         }
-//        notifyLottery(context);
+        notifyLottery(context);
     }
 
     public void notifyLottery(Context context) {
@@ -301,12 +344,24 @@ public class BootReceiver extends BroadcastReceiver {
         Bundle bundle = new Bundle();
         bundle.putSerializable("action", "notifyC");
         bundle.putSerializable("comsumer", message);
-        bundle.putSerializable("id", consumeVO.getId());
+        bundle.putSerializable("id", id);
         Intent alarmIntent = new Intent(context, secondReceiver.class);
         alarmIntent.putExtras(bundle);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, consumeVO.getId());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, id);
         manager.set(AlarmManager.RTC_WAKEUP, settime, pendingIntent);
         Log.d("xxxx", message);
+    }
+
+    public void NotifyUse( Context context,GoalVO goalVO) {
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("action", "goalC");
+        bundle.putSerializable("id", id);
+        bundle.putSerializable("goal",goalVO.getId());
+        Intent alarmIntent = new Intent(context, secondReceiver.class);
+        alarmIntent.putExtras(bundle);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, id);
+        manager.set(AlarmManager.RTC_WAKEUP, setNewTime.getTimeInMillis(), pendingIntent);
     }
 
 

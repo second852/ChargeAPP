@@ -195,7 +195,6 @@ public class SelectListModelIM extends Fragment {
                 @Override
                 public void onClick(View v) {
                     p = position;
-                    SelectListModelActivity.page = 3;
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("bankVO", bankVO);
                     bundle.putSerializable("action", "SelectListModelIM");
@@ -229,6 +228,8 @@ public class SelectListModelIM extends Fragment {
 
 
     private void switchFragment(Fragment fragment) {
+        MainActivity.oldFramgent.add("SelectListModelIM");
+        MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

@@ -31,6 +31,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
     private int nowpoint = 0;
     private float movefirst;
     public TextView mainTitle;
+    public static int position=6;
 
 
     @Override
@@ -45,7 +46,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         SViewPager.setAdapter(mAdapterViewPager);
         SViewPager.addOnPageChangeListener(this);
-        SViewPager.setCurrentItem(6);
+        SViewPager.setCurrentItem(position);
         setcurrentpage();
         text = view.findViewById(R.id.text);
         movefirst = -importMoney.getWidth();
@@ -92,7 +93,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
     public void onPageSelected(int position) {
         int currentpoition = position % 3;
         nowpoint = position;
-        SViewPager.invalidate();
+        this.position=position;
         setcurrentpage();
         if (currentpoition == 0) {
             goneMoney.setText("存款");
