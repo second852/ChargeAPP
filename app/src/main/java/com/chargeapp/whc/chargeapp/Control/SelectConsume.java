@@ -86,7 +86,7 @@ public class SelectConsume extends Fragment {
     private ConsumeDB consumeDB;
     private TextView PIdateTittle, describe;
     private ImageView PIdateCut, PIdateAdd;
-    private int choiceD = 0;
+    public  int choiceD;
     private List<CarrierVO> carrierVOS;
     private String TAG = "SelectConsume";
     private BarChart chart_bar;
@@ -94,11 +94,9 @@ public class SelectConsume extends Fragment {
     private List<TypeVO> typeList;
     private List<Map.Entry<String, Integer>> list_Data;
     private int month, year,day,dweek,extra;
-    private Calendar end;
     private Spinner choicePeriod, choiceCarrier;
     private PieChart chart_pie;
     private int total, period;
-    private int Statue = 1;
     private String DesTittle;
     private boolean ShowConsume = true;
     private boolean ShowAllCarrier = true;
@@ -111,14 +109,15 @@ public class SelectConsume extends Fragment {
     private GoalDB goalDB;
     private GoalVO goalVO;
     private int Max;
-
+    public static int Statue;
+    public static Calendar end;
+    public static int CStatue;
 
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_consume, container, false);
-        end = Calendar.getInstance();
         month = end.get(Calendar.MONTH);
         year = end.get(Calendar.YEAR);
         dweek = end.get(Calendar.DAY_OF_WEEK);
@@ -133,6 +132,8 @@ public class SelectConsume extends Fragment {
         chart_bar.setOnChartValueSelectedListener(new charvalue());
         chart_pie.setOnChartValueSelectedListener(new pievalue());
         goalVO=goalDB.getFindType("支出");
+        choiceCarrier.setSelection(CStatue);
+        choicePeriod.setSelection(Statue);
         return view;
     }
 
@@ -185,7 +186,6 @@ public class SelectConsume extends Fragment {
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         ArrayList<String> SpinnerItem2 = new ArrayList<>();
         choicePeriod.setAdapter(arrayAdapter);
-        choicePeriod.setSelection(1);
         carrierVOS = carrierDB.getAll();
         if (carrierVOS == null || carrierVOS.size() <= 0) {
             ShowAllCarrier = false;
@@ -581,6 +581,7 @@ public class SelectConsume extends Fragment {
         public void onClick(View v) {
             if (Statue == 0) {
                 day = day + 1;
+                end = new GregorianCalendar(year,month,day);
             } else if (Statue == 1) {
                 day = day + 7;
                 period=7;
@@ -592,6 +593,7 @@ public class SelectConsume extends Fragment {
                 period=end.getActualMaximum(Calendar.WEEK_OF_MONTH);
             } else {
                 year = year + 1;
+                end = new GregorianCalendar(year,month,day);
                 period=12;
             }
             dataAnalyze();
@@ -603,6 +605,7 @@ public class SelectConsume extends Fragment {
         public void onClick(View v) {
             if (Statue == 0) {
                 day = day - 1;
+                end = new GregorianCalendar(year,month,day);
             } else if (Statue == 1) {
                 day = day - 7;
                 period=7;
@@ -614,6 +617,7 @@ public class SelectConsume extends Fragment {
                 period=end.getActualMaximum(Calendar.WEEK_OF_MONTH);
             } else {
                 year = year - 1;
+                end = new GregorianCalendar(year,month,day);
                 period=12;
             }
             dataAnalyze();
@@ -659,6 +663,7 @@ public class SelectConsume extends Fragment {
     private class ChoiceCarrier implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            CStatue=i;
             if (i == 0) {
                 ShowConsume = true;
                 ShowAllCarrier = true;
@@ -743,6 +748,8 @@ public class SelectConsume extends Fragment {
     }
 
     private void switchFragment(Fragment fragment) {
+        MainActivity.oldFramgent.add("SelectConsume");
+        MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

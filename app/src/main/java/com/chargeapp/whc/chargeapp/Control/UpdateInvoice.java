@@ -299,7 +299,7 @@ public class UpdateInvoice extends Fragment {
             bundle.putSerializable("day",  getArguments().getSerializable("day"));
             bundle.putSerializable("key",  getArguments().getSerializable("key"));
             bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
-            bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
+            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             bundle.putSerializable("period",  getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
@@ -325,6 +325,8 @@ public class UpdateInvoice extends Fragment {
 
 
     private void goBackFramgent() {
+        MainActivity.bundles.remove(MainActivity.bundles.size()-1);
+        MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
         Fragment fragment=null;
         Bundle bundle=new Bundle();
         if(action.equals("SelectListModelCom"))
@@ -341,7 +343,7 @@ public class UpdateInvoice extends Fragment {
             bundle.putSerializable("day",  getArguments().getSerializable("day"));
             bundle.putSerializable("key",  getArguments().getSerializable("key"));
             bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
-            bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
+            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             bundle.putSerializable("period",  getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));

@@ -1,6 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -45,15 +46,14 @@ public class SettingListFix extends Fragment {
 
 
     private ListView listView;
-    private int p;
     private Spinner typeH;
-    private int spinnerC;
     private ArrayList<Object> objects;
     private BankDB bankDB;
     private ConsumeDB consumeDB;
     private Gson gson;
     private TextView message;
-
+    public static int p;
+    public static int spinnerC;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,8 +64,6 @@ public class SettingListFix extends Fragment {
         listView = view.findViewById(R.id.list);
         typeH = view.findViewById(R.id.typeH);
         message=view.findViewById(R.id.message);
-        p = (int) getArguments().getSerializable("position");
-        spinnerC = (int) getArguments().getSerializable("spinnerC");
         typeH.setOnItemSelectedListener(new choiceType());
         setSpinner();
         setLayout();
@@ -136,7 +134,9 @@ public class SettingListFix extends Fragment {
             TextView title=itemView.findViewById(R.id.listTitle);
             TextView decribe=itemView.findViewById(R.id.listDetail);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
-            final LinearLayout fixL=itemView.findViewById(R.id.fixL);
+            TextView remainT=itemView.findViewById(R.id.remainT);
+            TextView fixT=itemView.findViewById(R.id.fixT);
+            LinearLayout fixL=itemView.findViewById(R.id.fixL);
             Button update=itemView.findViewById(R.id.updateD);
             Button deleteI=itemView.findViewById(R.id.deleteI);
             fixL.setVisibility(View.VISIBLE);
@@ -152,12 +152,18 @@ public class SettingListFix extends Fragment {
                 stringBuffer.append("\n共"+consumeVO.getMoney()+"元");
                 title.setText(stringBuffer.toString());
                 stringBuffer=new StringBuffer();
+                remindL.setVisibility(View.VISIBLE);
+                remainT.setText("固定");
+                remainT.setTextColor(Color.parseColor("#0000FF"));
+                remindL.setBackgroundColor(Color.parseColor("#0000FF"));
                 if(consumeVO.getNotify().equals("true"))
                 {
-                    remindL.setVisibility(View.VISIBLE);
-
+                    fixL.setVisibility(View.VISIBLE);
+                    fixT.setText("提醒");
+                    fixT.setTextColor(Color.parseColor("#CC0000"));
+                    fixL.setBackgroundColor(Color.parseColor("#CC0000"));
                 }else {
-                    remindL.setVisibility(View.GONE);
+                    fixL.setVisibility(View.GONE);
                 }
                 JsonObject js=gson.fromJson(consumeVO.getFixDateDetail(),JsonObject.class);
                 stringBuffer.append(js.get("choicestatue").getAsString().trim());
@@ -173,7 +179,7 @@ public class SettingListFix extends Fragment {
                     public void onClick(View v) {
                        Fragment fragment=new SettingListFixCon();
                        Bundle bundle=new Bundle();
-                       bundle.putSerializable("ConsumeVO",consumeVO);
+                       bundle.putSerializable("consumeVO",consumeVO);
                        bundle.putSerializable("position",0);
                        fragment.setArguments(bundle);
                        switchFragment(fragment);
@@ -226,6 +232,8 @@ public class SettingListFix extends Fragment {
 
 
     private void switchFragment(Fragment fragment) {
+        MainActivity.oldFramgent.add("SettingListFix");
+        MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

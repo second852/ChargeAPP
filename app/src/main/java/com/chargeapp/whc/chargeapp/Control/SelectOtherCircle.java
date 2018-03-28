@@ -340,10 +340,12 @@ public class SelectOtherCircle extends Fragment {
             bundle.putSerializable("key", key);
             bundle.putSerializable("day", day);
             bundle.putSerializable("carrier", carrier);
-            bundle.putSerializable("Statue",Statue);
+            bundle.putSerializable("statue",Statue);
             bundle.putSerializable("position",0);
             bundle.putSerializable("period", period);
             bundle.putSerializable("dweek",dweek);
+            bundle.putSerializable("total",getArguments().getSerializable("total"));
+            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
             fragment.setArguments(bundle);
             switchFragment(fragment);
         }
@@ -355,6 +357,8 @@ public class SelectOtherCircle extends Fragment {
     }
 
     private void switchFragment(Fragment fragment) {
+        MainActivity.oldFramgent.add("SelectOtherCircle");
+        MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

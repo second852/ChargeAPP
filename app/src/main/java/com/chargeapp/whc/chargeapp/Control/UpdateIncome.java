@@ -534,6 +534,8 @@ public class UpdateIncome extends Fragment {
                 }
                 bankDB.update(bb);
             }
+            MainActivity.bundles.remove(MainActivity.bundles.size()-1);
+            MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
             Bundle bundle = new Bundle();
             Fragment fragment = new SettingListFixIon();
             bundle.putSerializable("BankVO", bankVO);

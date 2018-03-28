@@ -52,7 +52,7 @@ public class SettingListFixCon extends Fragment {
         gson=new Gson();
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         View view = inflater.inflate(R.layout.setting_main, container, false);
-        consumeVO= (ConsumeVO) getArguments().getSerializable("ConsumeVO");
+        consumeVO= (ConsumeVO) getArguments().getSerializable("consumeVO");
         p= (int) getArguments().getSerializable("position");
         listView=view.findViewById(R.id.list);
         message=view.findViewById(R.id.message);
@@ -141,6 +141,7 @@ public class SettingListFixCon extends Fragment {
             }else {
                 if(consumeVO.getNotify().equals("true"))
                 {
+                    fixT.setText("提醒");
                     fixT.setTextColor(Color.parseColor("#CC0000"));
                     fixL.setBackgroundColor(Color.parseColor("#CC0000"));
                     fixL.setVisibility(View.VISIBLE);
@@ -150,6 +151,8 @@ public class SettingListFixCon extends Fragment {
                 remainT.setText("本體");
                 remainT.setTextColor(Color.parseColor("#0000FF"));
                 remindL.setBackgroundColor(Color.parseColor("#0000FF"));
+                remindL.setVisibility(View.VISIBLE);
+
             }
             //設定 title
             stringBuffer.append(Common.sTwo.format(consumeVO.getDate()));
@@ -206,6 +209,8 @@ public class SettingListFixCon extends Fragment {
 
 
     private void switchFragment(Fragment fragment) {
+        MainActivity.oldFramgent.add("SettingListFixCon");
+        MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

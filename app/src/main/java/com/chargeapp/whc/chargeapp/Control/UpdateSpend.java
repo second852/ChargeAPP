@@ -184,8 +184,6 @@ public class UpdateSpend extends Fragment {
     private void goBackFramgent() {
         Fragment fragment = null;
         Bundle bundle = new Bundle();
-        MainActivity.bundles.remove(MainActivity.bundles.size()-1);
-        MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
         if (action.equals("SelectShowCircleDe")) {
             fragment = new SelectShowCircleDe();
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
@@ -210,7 +208,7 @@ public class UpdateSpend extends Fragment {
             bundle.putSerializable("day", getArguments().getSerializable("day"));
             bundle.putSerializable("key", getArguments().getSerializable("key"));
             bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
-            bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
+            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             bundle.putSerializable("period", getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
@@ -219,7 +217,7 @@ public class UpdateSpend extends Fragment {
         }else if (action.equals("SettingListFixCon")) {
             fragment = new SettingListFixCon();
             bundle.putSerializable("position", getArguments().getSerializable("position"));
-            bundle.putSerializable("ConsumeVO",consumeVO);
+            bundle.putSerializable("consumeVO",consumeVO);
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);
@@ -240,7 +238,7 @@ public class UpdateSpend extends Fragment {
             bundle.putSerializable("day", getArguments().getSerializable("day"));
             bundle.putSerializable("key", getArguments().getSerializable("key"));
             bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
-            bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
+            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             bundle.putSerializable("period", getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
@@ -500,6 +498,8 @@ public class UpdateSpend extends Fragment {
                     return;
                 }
             }
+            MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
+            MainActivity.bundles.remove(MainActivity.bundles.size()-1);
             setConsume();
             consumeDB.update(consumeVO);
             goBackFramgent();
@@ -801,6 +801,8 @@ public class UpdateSpend extends Fragment {
                 }
                 consumeDB.update(c);
             }
+            MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
+            MainActivity.bundles.remove(MainActivity.bundles.size()-1);
             goBackFramgent();
             Common.showToast(getActivity(), "修改成功");
         }

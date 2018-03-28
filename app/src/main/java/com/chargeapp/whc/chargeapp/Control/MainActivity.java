@@ -66,6 +66,11 @@ public class MainActivity extends AppCompatActivity {
         SelectListModelIM.year=calendar.get(Calendar.YEAR);
         SelectListModelIM.month=calendar.get(Calendar.MONTH);
         SelectListModelIM.p=0;
+        SelectConsume.Statue=1;
+        SelectConsume.end=Calendar.getInstance();
+        SelectConsume.CStatue=0;
+        SettingListFix.spinnerC=0;
+        SettingListFix.p=0;
         setContentView(R.layout.activity_main);
         (getSupportActionBar()).show();
         setUpActionBar();
@@ -253,6 +258,8 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Fragment fragment;
                     MainActivity.this.position = i;
+                    oldFramgent.clear();
+                    bundles.clear();
                     if (i == 0) {
                         drawerLayout.closeDrawer(GravityCompat.START);
                         fragment = new InsertActivity();
@@ -462,6 +469,45 @@ public class MainActivity extends AppCompatActivity {
           }else if(action.equals("SelectListModelIM"))
           {
               fragment=new SelectListModelActivity();
+              fragment.setArguments(bundle);
+          }else if(action.equals("SelectListModelCom"))
+          {
+              fragment=new SelectListModelActivity();
+              fragment.setArguments(bundle);
+          }else if(action.equals("SelectConsume"))
+          {
+              fragment=new SelectActivity();
+              fragment.setArguments(bundle);
+          }else if(action.equals("SelectOtherCircle"))
+          {
+              fragment=new SelectOtherCircle();
+              fragment.setArguments(bundle);
+          }else if(action.equals("SelectDetList"))
+          {
+              fragment=new SelectDetList();
+              fragment.setArguments(bundle);
+          }else if(action.equals("SelectShowCircleDe"))
+          {
+              fragment=new SelectShowCircleDe();
+              fragment.setArguments(bundle);
+          }else if(action.equals("SelectDetCircle"))
+          {
+              fragment=new SelectDetCircle();
+              int index= (int) bundle.getSerializable("index");
+              int day = (int) bundle.getSerializable("day");
+              bundle.putSerializable("day",day-index);
+              fragment.setArguments(bundle);
+          }else if(action.equals("SettingListFix"))
+          {
+              fragment=new SettingListFix();
+              fragment.setArguments(bundle);
+          }else if(action.equals("SettingListFixIon"))
+          {
+              fragment=new SettingListFixIon();
+              fragment.setArguments(bundle);
+          }else if(action.equals("SettingListFixCon"))
+          {
+              fragment=new SettingListFixCon();
               fragment.setArguments(bundle);
           }
           oldFramgent.remove(oldFramgent.size()-1);

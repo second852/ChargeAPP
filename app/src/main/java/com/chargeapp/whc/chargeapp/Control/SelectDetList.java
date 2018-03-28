@@ -90,7 +90,7 @@ public class SelectDetList extends Fragment {
         day= (int) getArguments().getSerializable("day");
         key= (String) getArguments().getSerializable("key");
         carrier= (int) getArguments().getSerializable("carrier");
-        Statue=(int) getArguments().getSerializable("Statue");
+        Statue=(int) getArguments().getSerializable("statue");
         period= (int) getArguments().getSerializable("period");
         dweek= (int) getArguments().getSerializable("dweek");
         position= (int) getArguments().getSerializable("position");
@@ -384,11 +384,13 @@ public class SelectDetList extends Fragment {
         bundle.putSerializable("day", day);
         bundle.putSerializable("key", key);
         bundle.putSerializable("carrier", carrier);
-        bundle.putSerializable("Statue",Statue);
+        bundle.putSerializable("statue",Statue);
         bundle.putSerializable("period", period);
         bundle.putSerializable("dweek",dweek);
         bundle.putSerializable("action","SelectDetList");
         fragment.setArguments(bundle);
+        MainActivity.oldFramgent.add("SelectDetList");
+        MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 :  getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

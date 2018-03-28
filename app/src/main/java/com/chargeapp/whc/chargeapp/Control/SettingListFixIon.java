@@ -124,7 +124,7 @@ public class SettingListFixIon extends Fragment {
             TextView fixT=itemView.findViewById(R.id.fixT);
             TextView remainT=itemView.findViewById(R.id.remainT);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
-            final LinearLayout fixL=itemView.findViewById(R.id.fixL);
+            LinearLayout fixL=itemView.findViewById(R.id.fixL);
             Button update=itemView.findViewById(R.id.updateD);
             Button deleteI=itemView.findViewById(R.id.deleteI);
             update.setText("修改");
@@ -202,6 +202,8 @@ public class SettingListFixIon extends Fragment {
 
 
     private void switchFragment(Fragment fragment) {
+        MainActivity.oldFramgent.add("SettingListFixIon");
+        MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

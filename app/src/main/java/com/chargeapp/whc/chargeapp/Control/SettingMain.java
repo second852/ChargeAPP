@@ -183,8 +183,6 @@ public class SettingMain extends Fragment {
                     public void onClick(View view) {
                         Fragment fragment=new SettingListFix();
                         Bundle bundle=new Bundle();
-                        bundle.putSerializable("position",0);
-                        bundle.putSerializable("spinnerC",0);
                         fragment.setArguments(bundle);
                         switchFragment(fragment);
                     }

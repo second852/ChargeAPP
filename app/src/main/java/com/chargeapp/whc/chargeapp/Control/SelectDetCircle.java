@@ -261,7 +261,8 @@ public class SelectDetCircle extends Fragment {
             bundle.putSerializable("day", day + index);
             bundle.putSerializable("key", key);
             bundle.putSerializable("carrier", carrier);
-            bundle.putSerializable("Statue", 0);
+            bundle.putSerializable("index",index);
+            bundle.putSerializable("statue", 0);
             bundle.putSerializable("action", "SelectDetCircle");
             bundle.putSerializable("position",0);
             bundle.putSerializable("period", getArguments().getSerializable("period"));
@@ -277,6 +278,8 @@ public class SelectDetCircle extends Fragment {
     }
 
     private void switchFragment(Fragment fragment) {
+        MainActivity.oldFramgent.add("SelectDetCircle");
+        MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

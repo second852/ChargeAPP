@@ -221,7 +221,6 @@ public class SelectListModelCom extends Fragment {
                             if(mNetworkInfo!=null)
                             {
                                 p=position;
-                                SelectListModelActivity.page=4;
                                 new GetSQLDate(SelectListModelCom.this,I).execute("reDownload");
                                 progressDialog.setMessage("正在下傳資料,請稍候...");
                                 progressDialog.show();
@@ -251,7 +250,6 @@ public class SelectListModelCom extends Fragment {
                         @Override
                         public void onClick(View v) {
                             p=position;
-                            SelectListModelActivity.page=4;
                             Fragment fragment=new UpdateInvoice();
                             Bundle bundle=new Bundle();
                             bundle.putSerializable("invoiceVO",I);

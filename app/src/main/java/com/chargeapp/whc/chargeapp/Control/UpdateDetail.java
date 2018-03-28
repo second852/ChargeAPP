@@ -77,7 +77,7 @@ public class UpdateDetail extends Fragment {
                     bundle.putSerializable("day",  getArguments().getSerializable("day"));
                     bundle.putSerializable("key",  getArguments().getSerializable("key"));
                     bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
-                    bundle.putSerializable("Statue", getArguments().getSerializable("Statue"));
+                    bundle.putSerializable("statue", getArguments().getSerializable("statue"));
                     bundle.putSerializable("position",getArguments().getSerializable("position"));
                 }else if(action.equals("SelectShowCircleDe"))
                 {
