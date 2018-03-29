@@ -33,6 +33,8 @@ import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import org.apache.poi.ss.formula.functions.T;
 
@@ -72,6 +74,9 @@ public class EleSetCarrier extends Fragment {
         progressbarL=view.findViewById(R.id.progressbarL);
         progressT=view.findViewById(R.id.progressT);
         percentage=view.findViewById(R.id.percentage);
+        AdView adView =view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
         confirm.setOnClickListener(new Confirmlisten());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());

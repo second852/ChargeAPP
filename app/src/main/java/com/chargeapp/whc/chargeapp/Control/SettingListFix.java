@@ -31,6 +31,8 @@ import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -64,6 +66,9 @@ public class SettingListFix extends Fragment {
         listView = view.findViewById(R.id.list);
         typeH = view.findViewById(R.id.typeH);
         message=view.findViewById(R.id.message);
+        AdView adView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
         typeH.setOnItemSelectedListener(new choiceType());
         setSpinner();
         setLayout();

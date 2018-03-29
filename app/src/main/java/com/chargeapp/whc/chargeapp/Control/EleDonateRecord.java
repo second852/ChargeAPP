@@ -20,6 +20,8 @@ import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -103,6 +105,9 @@ public class EleDonateRecord extends Fragment {
         donateRL=view.findViewById(R.id.donateRL);
         DRmessage=view.findViewById(R.id.DRmessage);
         choiceModel=view.findViewById(R.id.choiceModel);
+        AdView adView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
 
@@ -152,6 +157,8 @@ public class EleDonateRecord extends Fragment {
             InvoiceVO invoiceVO=invoiceVOS.get(position);
             Title.setText(Common.sTwo.format(new Date(invoiceVO.getTime().getTime()))+" "+invoiceVO.getInvNum());
             describe.setText(invoiceVO.getHeartyteam());
+            remindL.setVisibility(View.VISIBLE);
+            remainT.setText("以捐贈");
             return itemView;
         }
     }

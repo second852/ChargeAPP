@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -47,8 +49,8 @@ public class SelectListModelIM extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        gson = new Gson();
         View view = inflater.inflate(R.layout.select_con_list, container, false);
+        gson = new Gson();
         findViewById(view);
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         setLayout();
@@ -88,6 +90,9 @@ public class SelectListModelIM extends Fragment {
         message = view.findViewById(R.id.message);
         DRadd.setOnClickListener(new addOnClick());
         DRcut.setOnClickListener(new cutOnClick());
+        AdView adView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
 

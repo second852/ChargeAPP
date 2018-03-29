@@ -33,6 +33,8 @@ import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -198,6 +200,9 @@ public class PriceInvoice extends Fragment {
         donateRL=view.findViewById(R.id.donateRL);
         showRemain.setText("(無實體電子發票專屬獎中獎清單\n請到財政部網站確認)");
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        AdView adView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
 

@@ -1,48 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f5f5f5"
-    >
+    android:background="#DDDDDD">
+
     <ListView
-            android:id="@+id/list"
-            android:background="#f5f5f5"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-    </ListView>
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/adView"
+        android:layout_marginBottom="5dp"
+        android:background="#f5f5f5"/>
+
     <TextView
-        android:gravity="center"
+        android:id="@+id/message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/message"
-        android:textSize="35sp"
-        android:textColor="#FF7744"
-        android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        />
+        android:gravity="center"
+        android:textColor="#FF7744"
+        android:textSize="35sp"
+        android:visibility="gone" />
+
     <RelativeLayout
         android:id="@+id/progressL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#ffffff"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
+
         <ProgressBar
             android:id="@+id/progress"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            />
+            android:layout_centerVertical="true" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="執行中…"
-            android:textSize="25dp"
-            android:textColor="#000000"
             android:layout_below="@+id/progress"
             android:layout_centerHorizontal="true"
-            />
+            android:text="執行中…"
+            android:textColor="#000000"
+            android:textSize="25dp" />
     </RelativeLayout>
+
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-5169620543343332/5257007139" />
 </RelativeLayout>

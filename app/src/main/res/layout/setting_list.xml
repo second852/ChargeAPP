@@ -23,13 +23,15 @@
             android:layout_margin="2dp"
             android:backgroundTint="#000000"
             android:gravity="center"
-            android:theme="@style/spinner"></Spinner>
+            android:theme="@style/spinner"/>
     </RelativeLayout>
     <ListView
             android:id="@+id/list"
             android:layout_below="@+id/typeR"
             android:background="#f5f5f5"
             android:layout_marginTop="10dp"
+            android:layout_above="@+id/adView"
+            android:layout_marginBottom="5dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
     </ListView>
@@ -44,4 +46,13 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         />
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-5169620543343332/5257007139" />
 </RelativeLayout>

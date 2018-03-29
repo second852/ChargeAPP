@@ -330,7 +330,7 @@ public class BootReceiver extends BroadcastReceiver {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("action", "notifyNul");
                 bundle.putSerializable("id", id);
-                Intent alarmIntent = new Intent(context, secondReceiver.class);
+                Intent alarmIntent = new Intent(context, SecondReceiver.class);
                 alarmIntent.putExtras(bundle);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
                 manager.set(AlarmManager.RTC_WAKEUP, setNewTime.getTimeInMillis(), pendingIntent);
@@ -345,7 +345,7 @@ public class BootReceiver extends BroadcastReceiver {
         bundle.putSerializable("action", "notifyC");
         bundle.putSerializable("comsumer", message);
         bundle.putSerializable("id", id);
-        Intent alarmIntent = new Intent(context, secondReceiver.class);
+        Intent alarmIntent = new Intent(context, SecondReceiver.class);
         alarmIntent.putExtras(bundle);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, id);
         manager.set(AlarmManager.RTC_WAKEUP, settime, pendingIntent);
@@ -358,7 +358,7 @@ public class BootReceiver extends BroadcastReceiver {
         bundle.putSerializable("action", "goalC");
         bundle.putSerializable("id", id);
         bundle.putSerializable("goal",goalVO.getId());
-        Intent alarmIntent = new Intent(context, secondReceiver.class);
+        Intent alarmIntent = new Intent(context, SecondReceiver.class);
         alarmIntent.putExtras(bundle);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, id);
         manager.set(AlarmManager.RTC_WAKEUP, setNewTime.getTimeInMillis(), pendingIntent);

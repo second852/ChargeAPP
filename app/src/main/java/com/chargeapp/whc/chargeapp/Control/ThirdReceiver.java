@@ -3,12 +3,13 @@ package com.chargeapp.whc.chargeapp.Control;
 
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -28,7 +29,7 @@ import java.util.GregorianCalendar;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 
-public class secondReceiver extends BroadcastReceiver {
+public class ThirdReceiver extends BroadcastReceiver {
     private final static String TAG = "BootReceiver";
     private  NotificationManager notificationManager;
     private SimpleDateFormat sf;
@@ -196,18 +197,29 @@ public class secondReceiver extends BroadcastReceiver {
     }
 
     private void showNotification(String title,String message,Context context,int NOTIFICATION_ID) {
-        Intent intent = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
-                intent, 0);
-        Notification notification = new Notification.Builder(context)
-                .setTicker(sf.format(new Date(System.currentTimeMillis())))
-                .setContentTitle(title)
-                .setContentText(message)
-                .setSmallIcon(android.R.drawable.ic_menu_info_details)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .build();
-        notificationManager.notify(NOTIFICATION_ID, notification);
-        Log.d("XXXXXXXXxx", String.valueOf(NOTIFICATION_ID));
+        NotificationChannel channelLove = null;
+        String idLove="ChargeAPP";
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            channelLove = new NotificationChannel(idLove,
+                    "Channel Love",
+                    NotificationManager.IMPORTANCE_HIGH);
+            channelLove.setDescription("最重要的人");
+            channelLove.enableLights(true);
+            channelLove.enableVibration(true);
+            Notification.Builder builder =  new Notification.Builder(context,idLove)
+                            .setSmallIcon(null)
+                            .setContentTitle(title)
+                            .setContentText(message);
+
+            Intent intent = new Intent(context, Download.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+            stackBuilder.addNextIntent(intent);
+            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(
+                    0,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
+            builder.setContentIntent(resultPendingIntent);
+            notificationManager.notify(NOTIFICATION_ID, builder.build());
+        }
     }
 }

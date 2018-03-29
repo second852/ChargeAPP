@@ -34,6 +34,8 @@ import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -62,6 +64,9 @@ public class SettingMain extends Fragment {
         View view = inflater.inflate(R.layout.setting_main, container, false);
         sharedPreferences=getActivity().getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         listView = view.findViewById(R.id.list);
+        AdView adView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<EleMainItemVO> itemSon = getNewItem();
         listView.setAdapter(new ListAdapter(getActivity(), itemSon));

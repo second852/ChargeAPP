@@ -1,11 +1,15 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.Manifest;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -43,6 +47,8 @@ import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -90,25 +96,38 @@ public class Download extends AppCompatActivity {
         (getSupportActionBar()).hide();
         firstH=new Handler();
         firstH.post(runnable);
-
-//        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-//        if(mNetworkInfo!=null)
-//        {
-//            getSQLDate=new GetSQLDate(this);
-//            getSQLDate.setPercentage(percentage);
-//            getSQLDate.setProgressT(progressT);
-//            getSQLDate.execute("download");
-//        }else{
-//            tonNewActivity();
-//            Common.showToast(this,"網路沒有開啟，無法下載!");
-//        }
+        AdView adView = (AdView) this.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+        if(mNetworkInfo!=null)
+        {
+            getSQLDate=new GetSQLDate(this);
+            getSQLDate.setPercentage(percentage);
+            getSQLDate.setProgressT(progressT);
+            getSQLDate.execute("download");
+        }else{
+            tonNewActivity();
+            Common.showToast(this,"網路沒有開啟，無法下載!");
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        tonNewActivity();
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);;
+            JobInfo.Builder builder = new JobInfo.Builder(0, mServiceComponent);
+            builder.setPeriodic(1000*60);
+            builder.setPersisted(true);
+            builder.setRequiresCharging(false);
+            builder.setRequiresDeviceIdle(false);
+            JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            tm.cancel(0);
+            tm.schedule(builder.build());
+        }
+//        tonNewActivity();
     }
 
     private Runnable runnable=new Runnable() {

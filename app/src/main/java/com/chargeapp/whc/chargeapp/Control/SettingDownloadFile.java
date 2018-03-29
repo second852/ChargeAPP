@@ -44,6 +44,8 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -123,6 +125,9 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         listView = view.findViewById(R.id.list);
         progressL = view.findViewById(R.id.progressL);
         mProgressBar = view.findViewById(R.id.progress);
+        AdView adView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
         listView.setAdapter(new ListAdapter(getActivity(), itemSon));
         action = (String) getArguments().getSerializable("action");
         progressL.setVisibility(View.GONE);
