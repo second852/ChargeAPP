@@ -4,6 +4,7 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -71,46 +72,23 @@ public class InsertSpend extends Fragment {
     private boolean needSet;
     private int updateChoice;
     private boolean first;
+    private Handler handler,secondHander;
+    private View view;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.insert_spend, container, false);
+        view = inflater.inflate(R.layout.insert_spend, container, false);
         needSet= (boolean) getArguments().getSerializable("needSet");
-        consumeVO = new ConsumeVO();
-        findviewByid(view);
-        gson = new Gson();
-        setSpinner();
-        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
-        date.setOnClickListener(new dateClickListener());
-        showdate.setOnClickListener(new choicedateClick());
-        fixdate.setOnCheckedChangeListener(new showfixdateClick());
-        choiceStatue.setOnItemSelectedListener(new choiceStateItem());
-        clear.setOnClickListener(new clearAllInput());
-        save.setOnClickListener(new savecomsumer());
-        noWek.setOnCheckedChangeListener(new nowWekchange());
-        qrcode.setOnClickListener(new QrCodeClick());
-        name.setOnClickListener(new showFirstG());
-        firstG.setOnItemClickListener(new firstGridOnClick());
-        secondG.setOnItemClickListener(new secondGridOnClick());
-        if(needSet)
-        {
-            setUpdate();
-            secondname.setOnClickListener(new showSecondG());
-        }
+        handler=new Handler();
+        handler.post(runnable);
+        secondHander=new Handler();
+        secondHander.post(setOnClick);
         return view;
     }
 
     private void setSpinner() {
-        ArrayList<String> strings=new ArrayList<>();
-        strings.add("每天");
-        strings.add("每周");
-        strings.add("每月");
-        strings.add("每年");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, strings);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, Common.DateStatueSetSpinner());
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setAdapter(arrayAdapter);
     }
@@ -167,8 +145,6 @@ public class InsertSpend extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        setFirstGrid();
-        setSecondGrid();
         if (Common.showfirstgrid) {
             firstL.setVisibility(View.VISIBLE);
             Common.showfirstgrid = false;
@@ -179,7 +155,57 @@ public class InsertSpend extends Fragment {
         }
     }
 
+    private Runnable runnable=new Runnable() {
+        @Override
+        public void run() {
+            typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            firstG = view.findViewById(R.id.firstG);
+            firstL = view.findViewById(R.id.firstL);
+            secondG = view.findViewById(R.id.secondG);
+            secondL = view.findViewById(R.id.secondL);
+            setFirstGrid();
+            setSecondGrid();
+            firstG.setOnItemClickListener(new firstGridOnClick());
+            secondG.setOnItemClickListener(new secondGridOnClick());
+        }
+    };
+
+    private Runnable setOnClick=new Runnable() {
+        @Override
+        public void run() {
+            consumeVO = new ConsumeVO();
+            findviewByid(view);
+            gson = new Gson();
+            setSpinner();
+            setSetOnClickView();
+            date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
+            if(needSet)
+            {
+                setUpdate();
+                secondname.setOnClickListener(new showSecondG());
+            }
+        }
+    };
+
+    private void setSetOnClickView() {
+        date.setOnClickListener(new dateClickListener());
+        showdate.setOnClickListener(new choicedateClick());
+        fixdate.setOnCheckedChangeListener(new showfixdateClick());
+        choiceStatue.setOnItemSelectedListener(new choiceStateItem());
+        clear.setOnClickListener(new clearAllInput());
+        save.setOnClickListener(new savecomsumer());
+        noWek.setOnCheckedChangeListener(new nowWekchange());
+        qrcode.setOnClickListener(new QrCodeClick());
+        name.setOnClickListener(new showFirstG());
+    }
+
     private void setSecondGrid() {
+        if(name==null)
+        {
+            return;
+        }
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
         List<TypeDetailVO> typeDetailVOS = typeDetailDB.findByGroupname(name.getText().toString().trim());
@@ -226,11 +252,6 @@ public class InsertSpend extends Fragment {
     }
 
     public void findviewByid(View view) {
-        firstG = view.findViewById(R.id.firstG);
-        firstL = view.findViewById(R.id.firstL);
-        secondG = view.findViewById(R.id.secondG);
-        secondL = view.findViewById(R.id.secondL);
-        name = view.findViewById(R.id.name);
         secondname = view.findViewById(R.id.secondname);
         money = view.findViewById(R.id.money);
         date = view.findViewById(R.id.date);
@@ -248,7 +269,7 @@ public class InsertSpend extends Fragment {
         notify = view.findViewById(R.id.notify);
         noWek = view.findViewById(R.id.noWek);
         qrcode = view.findViewById(R.id.qrcode);
-
+        name = view.findViewById(R.id.name);
     }
 
 
@@ -414,75 +435,14 @@ public class InsertSpend extends Fragment {
             MultiTrackerActivity.refresh = true;
             BarcodeGraphic.hashMap = new HashMap<>();
             Intent intent = new Intent(InsertSpend.this.getActivity(), MultiTrackerActivity.class);
-            startActivityForResult(intent, 0);
+            startActivityForResult(intent, 6);
         }
     }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == 0) {
-            if (resultCode == RESULT_OK) {
-                HashMap<Integer, String> contents = BarcodeGraphic.hashMap;
-                String all = BarcodeGraphic.hashMap.get(1).trim() + BarcodeGraphic.hashMap.get(2).trim();
-                String[] EleNulAll = all.split(":");
-                String EleNul = EleNulAll[0].substring(0, 10);
-                String day = EleNulAll[0].substring(10, 17);
-                String m = EleNulAll[0].substring(29, 37);
-                String westday = (Integer.valueOf(day.substring(0, 3)) + 1911) + "-" + day.substring(3, 5) + "-" + day.substring(5);
-                money.setText(String.valueOf(Integer.parseInt(m, 16)));
-                number.setText(EleNul);
-                date.setText(westday);
-                StringBuffer sb = new StringBuffer();
-                if (EleNulAll[4].equals("2")) {
-                    try {
-                        String base64 = EleNulAll[5];
-                        byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
-                        if (EleNulAll[3].equals("1")) {
-                            sb.append(new String(bytes, "UTF-8") + "/1/" + money.getText().toString());
-                        } else {
-                            String debase64 = new String(bytes, "UTF-8");
-                            String[] ddd = debase64.trim().split(":");
-                            for (int j = 0; j < ddd.length; j = j + 2) {
-                                sb.append(ddd[j] + "/" + ddd[j + 1] + "/" + ddd[j + 2] + " ");
-                            }
-                        }
-                    } catch (Exception e) {
-                        Common.showToast(getActivity(), e.getMessage());
-                    }
-                } else if (EleNulAll[4].equals("0")) {
-                    try {
-                        String a = new SetupDateBase64(this).execute("getThisDetail").get();
-                        if (a.equals("InternetError")) {
-                            Common.showToast(getActivity(), "連線逾時,請從新掃QRCODE");
-                            return;
-                        }
-                        JsonObject jFT = gson.fromJson(a, JsonObject.class);
-                        String s = jFT.get("details").toString();
-                        Type cdType = new TypeToken<List<JsonObject>>() {
-                        }.getType();
-                        List<JsonObject> b = gson.fromJson(s, cdType);
-                        for (JsonObject j : b) {
-                            sb.append(j.get("description").getAsString() + "/" + j.get("quantity").getAsString() + "/" + j.get("unitPrice").getAsString() + " ");
-                        }
-                    } catch (Exception e) {
-                        Common.showToast(getActivity(), e.getMessage());
-                    }
-                } else {
-                    if (EleNulAll[3].equals("1")) {
-                        sb.append(EleNulAll[5] + "/1/" + money.getText().toString());
-                    } else {
-                        for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                            sb.append(EleNulAll[i] + "/" + EleNulAll[i + 1] + "/" + EleNulAll[i + 2] + " ");
-                        }
-                    }
-                }
-                detailname.setText(sb.toString());
-            }
-        } else if (resultCode == RESULT_CANCELED) {
-            // To Handle cancel
-            Log.i("App", "Scan unsuccessful");
-        }
+
     }
 
     private class showFirstG implements View.OnClickListener {

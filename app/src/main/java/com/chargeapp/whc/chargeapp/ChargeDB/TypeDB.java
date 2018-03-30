@@ -4,12 +4,17 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.chargeapp.whc.chargeapp.Control.Download;
+import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
+import com.chargeapp.whc.chargeapp.R;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class TypeDB {
@@ -37,6 +42,27 @@ public class TypeDB {
         }
         cursor.close();
         return typeList;
+    }
+
+
+    public static ArrayList<Map<String, Object>> getAllName() {
+        String sql = "SELECT * FROM Type order by id;";
+        String[] args = {};
+        Cursor cursor = MainActivity.chargeAPPDB.getReadableDatabase().rawQuery(sql, args);
+        ArrayList items = new ArrayList<Map<String, Object>>();
+        HashMap item;
+        while (cursor.moveToNext()) {
+            item = new HashMap<String, Object>();
+            item.put("image", Download.imageAll[cursor.getInt(3)]);
+            item.put("text", cursor.getString(2));
+            items.add(item);
+        }
+        item = new HashMap<String, Object>();
+        item.put("image", R.drawable.add);
+        item.put("text", "新增");
+        items.add(item);
+        cursor.close();
+        return items;
     }
 
     public List<TypeVO> getExport() {

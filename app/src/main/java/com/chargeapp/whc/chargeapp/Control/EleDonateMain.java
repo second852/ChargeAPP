@@ -60,7 +60,7 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
     }
 
     public  class MainPagerAdapter extends FragmentPagerAdapter {
-        private  int NUM_ITEMS = 8;
+        private  int NUM_ITEMS = 2;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -73,8 +73,7 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
 
         @Override
         public Fragment getItem(int position) {
-            int currentpoition=position%2;
-            if (currentpoition == 0) {
+            if (position == 0) {
                 return new EleDonate();
             } else  {
                 return new EleDonateRecord();
@@ -86,9 +85,8 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
 
     @Override
     public void onPageSelected(int position) {
-        int currentpoition=position%2;
         nowpoint=position;
-        if(currentpoition==0)
+        if(position==0)
         {
             setcurrentpage();
             goneMoney.setText("紀錄");

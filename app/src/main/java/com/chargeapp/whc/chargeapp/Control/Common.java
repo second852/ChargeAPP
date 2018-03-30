@@ -132,6 +132,16 @@ public class Common {
         return strings;
     }
 
+    public static ArrayList<String> DateStatueSetSpinner()
+    {
+        ArrayList<String> strings=new ArrayList<>();
+        strings.add("每天");
+        strings.add("每周");
+        strings.add("每月");
+        strings.add("每年");
+        return strings;
+    }
+
 
     public static void showToast(Context context, String message) {
         try {

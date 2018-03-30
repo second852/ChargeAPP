@@ -28,7 +28,7 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
     private int nowpoint = 0;
     private float movefirst;
     public TextView mainTitle;
-    public static int page = 4;
+    public static int page;
 
 
     @Override
@@ -63,7 +63,7 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
     }
 
     public  class MainPagerAdapter extends FragmentPagerAdapter {
-        private int NUM_ITEMS = 6;
+        private int NUM_ITEMS = 2;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -76,8 +76,7 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
 
         @Override
         public Fragment getItem(int position) {
-            int currentpoition = position % 2;
-            if (currentpoition == 0) {
+            if (position == 0) {
                 return new SelectListModelCom();
             }  else {
                 return new SelectListModelIM();
@@ -89,10 +88,9 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
     @Override
     public void onPageSelected(int position) {
         page=position;
-        int currentpoition = position % 2;
         nowpoint = position;
         setcurrentpage();
-        if (currentpoition == 0) {
+        if (position == 0) {
             goneMoney.setText("收入");
             exportMoney.setText("支出");
             importMoney.setText("收入");

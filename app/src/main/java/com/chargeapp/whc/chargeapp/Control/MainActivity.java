@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -29,12 +30,22 @@ import android.widget.TextView;
 
 
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
+import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -436,6 +447,79 @@ public class MainActivity extends AppCompatActivity {
             }
             fragment.setArguments(bundle);
             switchFragment(fragment);
+        }else if (requestCode == 6) {
+            if (requestCode == 0) {
+                if (resultCode == RESULT_OK) {
+                    ConsumeVO consumeVO=new ConsumeVO();
+                    HashMap<Integer, String> contents = BarcodeGraphic.hashMap;
+                    String all = BarcodeGraphic.hashMap.get(1).trim() + BarcodeGraphic.hashMap.get(2).trim();
+                    String[] EleNulAll = all.split(":");
+                    String EleNul = EleNulAll[0].substring(0, 10);
+                    String day = EleNulAll[0].substring(10, 17);
+                    String m = EleNulAll[0].substring(29, 37);
+                    String westday = (Integer.valueOf(day.substring(0, 3)) + 1911) + "-" + day.substring(3, 5) + "-" + day.substring(5);
+                    Calendar calendar=new GregorianCalendar(Integer.valueOf(day.substring(0, 3)),Integer.valueOf( day.substring(3, 5)),Integer.valueOf(day.substring(5)),12,0,0);
+                    consumeVO.setMoney(Integer.parseInt(m, 16));
+                    consumeVO.setNumber(EleNul);
+                    consumeVO.setDate(new Date(calendar.getTimeInMillis()));
+                    StringBuffer sb = new StringBuffer();
+                    if (EleNulAll[4].equals("2")) {
+                        try {
+                            String base64 = EleNulAll[5];
+                            byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
+                            if (EleNulAll[3].equals("1")) {
+                                sb.append(new String(bytes, "UTF-8") + "/1/" + consumeVO.getMoney());
+                            } else {
+                                String debase64 = new String(bytes, "UTF-8");
+                                String[] ddd = debase64.trim().split(":");
+                                for (int j = 0; j < ddd.length; j = j + 2) {
+                                    sb.append(ddd[j] + "/" + ddd[j + 1] + "/" + ddd[j + 2] + " ");
+                                }
+                            }
+                        } catch (Exception e) {
+                            Common.showToast(this, e.getMessage());
+                        }
+                    } else if (EleNulAll[4].equals("0")) {
+                        try {
+                            String a = new SetupDateBase64(this).execute("getThisDetail").get();
+                            if (a.equals("InternetError")) {
+                                Common.showToast(this, "連線逾時,請從新掃QRCODE");
+                                return;
+                            }
+                            Gson gson=new Gson();
+                            JsonObject jFT = gson.fromJson(a, JsonObject.class);
+                            String s = jFT.get("details").toString();
+                            Type cdType = new TypeToken<List<JsonObject>>() {
+                            }.getType();
+                            List<JsonObject> b = gson.fromJson(s, cdType);
+                            for (JsonObject j : b) {
+                                sb.append(j.get("description").getAsString() + "/" + j.get("quantity").getAsString() + "/" + j.get("unitPrice").getAsString() + " ");
+                            }
+                        } catch (Exception e) {
+                            Common.showToast(this, e.getMessage());
+                        }
+                    } else {
+                        if (EleNulAll[3].equals("1")) {
+                            sb.append(EleNulAll[5] + "/1/" +consumeVO.getMoney());
+                        } else {
+                            for (int i = 5; i < EleNulAll.length; i = i + 3) {
+                                sb.append(EleNulAll[i] + "/" + EleNulAll[i + 1] + "/" + EleNulAll[i + 2] + " ");
+                            }
+                        }
+                    }
+                    consumeVO.setDetailname(sb.toString());
+                    consumeVO.setFixDate("false");
+                    Fragment fragment = new InsertSpend();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("needSet",true);
+                    bundle.putSerializable("consumeVO",getIntent().getExtras().getSerializable("consumeVO"));
+                    fragment.setArguments(bundle);
+                    switchFragment(fragment);
+                }
+            } else if (resultCode == RESULT_CANCELED) {
+                // To Handle cancel
+                Log.i("App", "Scan unsuccessful");
+            }
         }
     }
 

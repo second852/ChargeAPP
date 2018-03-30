@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.Control;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -57,6 +58,8 @@ public class InsertIncome extends Fragment {
     private int updateChoice;
     private boolean first=true;
     private BankVO bankVO;
+    private Handler handler,secondHander;
+    private View view;
 
 
 
@@ -65,14 +68,58 @@ public class InsertIncome extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.insert_income, container, false);
+        view = inflater.inflate(R.layout.insert_income, container, false);
         needSet= (boolean) getArguments().getSerializable("needSet");
-        findviewByid(view);
-        setSpinner();
-        gson=new Gson();
-        bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
+        handler=new Handler();
+        secondHander=new Handler();
+        handler.post(runnable);
+        secondHander.post(setOnClick);
+        return view;
+    }
+
+
+    private void setSpinner() {
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, Common.DateStatueSetSpinner());
+        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+        choiceday.setAdapter(arrayAdapter);
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Common.showfirstgrid) {
+            firstL.setVisibility(View.VISIBLE);
+            Common.showfirstgrid = false;
+        }
+    }
+
+    private Runnable runnable=new Runnable() {
+        @Override
+        public void run() {
+            bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            firstG = view.findViewById(R.id.firstG);
+            firstL = view.findViewById(R.id.firstL);
+            setFirstGrid();
+        }
+    };
+
+    private Runnable setOnClick=new Runnable() {
+        @Override
+        public void run() {
+            findviewByid(view);
+            setSpinner();
+            gson=new Gson();
+            bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
+            if(needSet)
+            {
+                setIncome();
+            }
+            setSetOnClickView();
+        }
+    };
+
+    private void setSetOnClickView()
+    {
         date.setOnClickListener(new dateClickListener());
         name.setOnClickListener(new showFirstG());
         showdate.setOnClickListener(new choicedateClick());
@@ -81,33 +128,9 @@ public class InsertIncome extends Fragment {
         save.setOnClickListener(new savecomsumer());
         fixdate.setOnCheckedChangeListener(new showfixdateClick());
         firstG.setOnItemClickListener(new firstGridOnClick());
-        if(needSet)
-        {
-            setIncome();
-        }
-        return view;
     }
 
 
-    private void setSpinner() {
-        ArrayList<String> strings=new ArrayList<>();
-        strings.add("每天");
-        strings.add("每周");
-        strings.add("每月");
-        strings.add("每年");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, strings);
-        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        choiceday.setAdapter(arrayAdapter);
-    }
-    @Override
-    public void onStart() {
-        super.onStart();
-        setFirstGrid();
-        if (Common.showfirstgrid) {
-            firstL.setVisibility(View.VISIBLE);
-            Common.showfirstgrid = false;
-        }
-    }
 
     private void setFirstGrid() {
         HashMap item;
@@ -233,17 +256,7 @@ public class InsertIncome extends Fragment {
         choiceStatue=view.findViewById(R.id.choiceStatue);
         choiceday=view.findViewById(R.id.choiceday);
         detailname=view.findViewById(R.id.detailname);
-        firstG = view.findViewById(R.id.firstG);
-        firstL = view.findViewById(R.id.firstL);
-        ArrayList<String> spinneritem=new ArrayList<>();
-        spinneritem.add("每天");
-        spinneritem.add("每周");
-        spinneritem.add("每月");
-        spinneritem.add("每年");
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
-        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        choiceStatue.setAdapter(arrayAdapter);
-        AdView adView = (AdView) view.findViewById(R.id.adView);
+        AdView adView = view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }

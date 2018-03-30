@@ -48,7 +48,6 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
         goneMoney = view.findViewById(R.id.goneD);
         showN = view.findViewById(R.id.showN);
         text = view.findViewById(R.id.text);
-        priceViewPager.setCurrentItem(6);
         setloyout();
         return view;
     }
@@ -86,7 +85,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
 
 
     public class MainPagerAdapter extends FragmentPagerAdapter {
-        private int NUM_ITEMS = 9;
+        private int NUM_ITEMS = 3;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -99,10 +98,9 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
 
         @Override
         public Fragment getItem(int position) {
-            int currentpoition = position % 3;
-            if (currentpoition == 0) {
+            if (position == 0) {
                 return new PriceInvoice();
-            } else if (currentpoition == 1) {
+            } else if (position == 1) {
                 return new PriceHand();
             } else {
                 return new PriceNumber();
@@ -114,15 +112,14 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
 
     @Override
     public void onPageSelected(int position) {
-        int currentpoition = position % 3;
         nowpoint = position;
-        if (currentpoition == 0) {
+        if (position == 0) {
             setcurrentpage();
             goneMoney.setText("兌獎號碼");
             exportMoney.setText("中獎發票");
             importMoney.setText("兌獎");
             showN.setText("兌獎號碼");
-        } else if (currentpoition == 1) {
+        } else if (position == 1) {
             setcurrentpage();
             goneMoney.setText("中獎發票");
             exportMoney.setText("兌獎");
