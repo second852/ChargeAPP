@@ -101,6 +101,38 @@ public class Common {
     }
 
 
+    public static ArrayList<String> WeekSetSpinner()
+    {
+        ArrayList<String> strings=new ArrayList<>();
+        strings.add("星期一");
+        strings.add("星期二");
+        strings.add("星期三");
+        strings.add("星期四");
+        strings.add("星期五");
+        strings.add("星期六");
+        strings.add("星期日");
+        return strings;
+    }
+
+    public static ArrayList<String> DaySetSpinner()
+    {
+        ArrayList<String> strings=new ArrayList<>();
+        for (int i = 1; i <= 31; i++) {
+            strings.add(" "+ String.valueOf(i) +"日");
+        }
+        return strings;
+    }
+
+    public static ArrayList<String> MonthSetSpinner()
+    {
+        ArrayList<String> strings=new ArrayList<>();
+        for (int i = 1; i <= 12; i++) {
+            strings.add(" " + String.valueOf(i) + "月");
+        }
+        return strings;
+    }
+
+
     public static void showToast(Context context, String message) {
         try {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();

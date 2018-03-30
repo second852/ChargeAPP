@@ -248,10 +248,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             EleMainItemVO member = list.get(i);
-            ImageView ivImage = (ImageView) view.findViewById(R.id.ivImage);
+            ImageView ivImage =  view.findViewById(R.id.ivImage);
             ivImage.setImageResource(member.getImage());
             String mystring = getResources().getString(member.getIdstring());
-            TextView tvId = (TextView) view.findViewById(R.id.tvId);
+            TextView tvId =  view.findViewById(R.id.tvId);
             tvId.setText(mystring);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -291,7 +291,7 @@ public class InsertSpend extends Fragment {
     private class choiceStateItem implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-            ArrayList<String> spinneritem = new ArrayList<>();
+            ArrayList<String> spinneritem=new ArrayList<>();
             if (position==0) {
                 choiceday.setVisibility(View.GONE);
                 noWek.setVisibility(View.VISIBLE);
@@ -299,23 +299,13 @@ public class InsertSpend extends Fragment {
                 return;
             }
             if (position==1) {
-                spinneritem.add("星期一");
-                spinneritem.add("星期二");
-                spinneritem.add("星期三");
-                spinneritem.add("星期四");
-                spinneritem.add("星期五");
-                spinneritem.add("星期六");
-                spinneritem.add("星期日");
+                spinneritem=Common.WeekSetSpinner();
             }
             if (position==2) {
-                for (int i = 1; i <= 31; i++) {
-                    spinneritem.add(" "+ String.valueOf(i) +"日");
-                }
+                spinneritem=Common.DaySetSpinner();
             }
             if (position==3) {
-                for (int i = 1; i <= 12; i++) {
-                    spinneritem.add(" " + String.valueOf(i) + "月");
-                }
+                spinneritem=Common.MonthSetSpinner();
             }
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, spinneritem);
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
