@@ -82,7 +82,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
     }
 
 
-    private HashMap<String, Integer> getlevellength() {
+    private static HashMap<String, Integer> getlevellength() {
         HashMap<String, Integer> hashMap = new HashMap<>();
         hashMap.put("super", 8);
         hashMap.put("spc", 8);
@@ -96,7 +96,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
     }
 
 
-    private HashMap<String, String> getHashLP() {
+    private static HashMap<String, String> getHashLP() {
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("super", "\n特別獎1000萬元");
         hashMap.put("spc", "\n特獎200萬元");
@@ -114,10 +114,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
      * relevant portions of the overlay to trigger a redraw.
      */
     void updateItem(Barcode barcode) {
-        if(barcode.format!=256)
-        {
-            return;
-        }
+
         mBarcode = barcode;
         Log.d("XXXXXX1", barcode.rawValue);
         if (MultiTrackerActivity.refresh) {
@@ -244,18 +241,20 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
     @Override
     public void draw(Canvas canvas) {
         Barcode barcode = mBarcode;
-        if (barcode == null) {
-            anwser=null;
-            return;
+        if (barcode != null) {
+            // Draws the bounding box around the barcode.
+            RectF rect = new RectF(barcode.getBoundingBox());
+            rect.left = translateX(rect.left);
+            rect.top = translateY(rect.top);
+            rect.right = translateX(rect.right);
+            rect.bottom = translateY(rect.bottom);
+            canvas.drawRect(rect, mRectPaint);
         }
 
-        // Draws the bounding box around the barcode.
-        RectF rect = new RectF(barcode.getBoundingBox());
-        rect.left = translateX(rect.left);
-        rect.top = translateY(rect.top);
-        rect.right = translateX(rect.right);
-        rect.bottom = translateY(rect.bottom);
-        canvas.drawRect(rect, mRectPaint);
+        if(MultiTrackerActivity.refresh)
+        {
+            return;
+        }
         if(anwser==null)
         {
             MultiTrackerActivity.answer.setText("請對準左邊QRCode~");

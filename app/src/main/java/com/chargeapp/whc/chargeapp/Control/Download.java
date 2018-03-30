@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.Manifest;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
+import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -99,6 +100,13 @@ public class Download extends AppCompatActivity {
         AdView adView = (AdView) this.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
+
+        PriceDB priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        for(PriceVO p:priceDB.getAll())
+        {
+            Log.d("XXXXXXX",p.getInvoYm());
+        }
+
         ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
         if(mNetworkInfo!=null)
@@ -124,7 +132,11 @@ public class Download extends AppCompatActivity {
             builder.setRequiresCharging(false);
             builder.setRequiresDeviceIdle(false);
             JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            tm.cancel(0);
+            JobInfo job=tm.getPendingJob(0);
+            if(job!=null)
+            {
+                tm.cancel(0);
+            }
             tm.schedule(builder.build());
         }
 //        tonNewActivity();

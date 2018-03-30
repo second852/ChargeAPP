@@ -192,7 +192,10 @@ public class SettingListFix extends Fragment {
                 });
 
             }else{
-                remindL.setVisibility(View.GONE);
+                remindL.setVisibility(View.VISIBLE);
+                remainT.setText("固定");
+                remainT.setTextColor(Color.parseColor("#0000FF"));
+                fixL.setVisibility(View.GONE);
                 final BankVO bankVO= (BankVO) o;
                 stringBuffer.append(Common.sTwo.format(bankVO.getDate()));
                 stringBuffer.append(" "+bankVO.getMaintype());

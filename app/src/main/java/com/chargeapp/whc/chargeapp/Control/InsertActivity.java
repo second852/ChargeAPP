@@ -20,7 +20,6 @@ import com.chargeapp.whc.chargeapp.R;
 
 public class InsertActivity extends Fragment implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
-    private FragmentPagerAdapter mAdapterViewPager;
     private Button exportMoney,importMoney,goneMoney;
     private HorizontalScrollView choiceitem;
     private LinearLayout text;
@@ -33,15 +32,13 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.insert_main, container, false);
-        mViewPager = (ViewPager) view.findViewById(R.id.insert_viewPager);
+        mViewPager =  view.findViewById(R.id.insert_viewPager);
         exportMoney=view.findViewById(R.id.exportD);
         importMoney=view.findViewById(R.id.showD);
         choiceitem=view.findViewById(R.id.choiceitem);
         goneMoney=view.findViewById(R.id.goneD);
-        mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
-        mViewPager.setAdapter(mAdapterViewPager);
+        mViewPager.setAdapter(new MainPagerAdapter(getFragmentManager()));
         mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(4);
         setcurrentpage();
         text=view.findViewById(R.id.text);
         return  view;
@@ -68,12 +65,13 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     }
 
 
-    public  class MainPagerAdapter extends FragmentPagerAdapter {
-        private  int NUM_ITEMS = 6;
+    public static class MainPagerAdapter extends FragmentPagerAdapter {
+        private  int NUM_ITEMS = 2;
 
-        MainPagerAdapter(FragmentManager fm) {
+        public MainPagerAdapter(FragmentManager fm) {
             super(fm);
         }
+
 
         @Override
         public int getCount() {
@@ -82,10 +80,9 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
 
         @Override
         public Fragment getItem(int position) {
-            int currentpoition=position%2;
             Bundle bundle=new Bundle();
             bundle.putSerializable("needSet",false);
-            if (currentpoition == 0) {
+            if (position == 0) {
                 Fragment fragment=new InsertSpend();
                 fragment.setArguments(bundle);
                 return fragment;
@@ -100,9 +97,8 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
 
     @Override
     public void onPageSelected(int position) {
-        int currentpoition=position%2;
         nowpoint=position;
-        if(currentpoition==0)
+        if(position==0)
         {
             setcurrentpage();
             goneMoney.setText("收入");

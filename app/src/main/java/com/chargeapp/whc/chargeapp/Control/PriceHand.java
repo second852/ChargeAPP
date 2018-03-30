@@ -64,7 +64,6 @@ public class PriceHand extends Fragment {
     private static SpeechRecognizer speech = null;
     private static Intent recognizerIntent;
     private List<String> mResults;
-    private boolean isRecognitionServiceAvailable = false;
     private RelativeLayout PIdateL;
 
 
@@ -96,10 +95,6 @@ public class PriceHand extends Fragment {
             @Override
             public void onClick(View view) {
                 choiceModel.setSelection(0);
-                donateRL.setVisibility(View.VISIBLE);
-                showMi.setVisibility(View.GONE);
-                speech.stopListening();
-                speech.cancel();
             }
         });
         return view;
@@ -299,10 +294,12 @@ public class PriceHand extends Fragment {
                 {
                     donateRL.setVisibility(View.VISIBLE);
                     showMi.setVisibility(View.GONE);
+                    priceTitle.setText("請輸入後三碼");
                     if(speech!=null)
                     {
                         speech.stopListening();
                         speech.cancel();
+                        speech.destroy();
                     }
                 }else if(i==1)
                 {
@@ -437,16 +434,11 @@ public class PriceHand extends Fragment {
 
     public void startListening() {
         if (SpeechRecognizer.isRecognitionAvailable(getActivity())) {
-            if (isRecognitionServiceAvailable) {//(speech!=null){
-                speech.startListening(recognizerIntent);
-                mResults = new ArrayList<String>();
-            } else
                 startSR();
         }
     }
 
     public void startSR() {
-        isRecognitionServiceAvailable = true;
         speech = SpeechRecognizer.createSpeechRecognizer(getActivity());
         speech.setRecognitionListener(new listener());
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
