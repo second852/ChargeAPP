@@ -100,25 +100,29 @@ public class Download extends AppCompatActivity {
         AdView adView = (AdView) this.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-
-        PriceDB priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        for(PriceVO p:priceDB.getAll())
+        ChargeAPPDB chargeAPPDB=new ChargeAPPDB(this);
+        CarrierDB carrierDB=new CarrierDB(chargeAPPDB.getReadableDatabase());
+        InvoiceDB invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
+        Calendar differCal = new GregorianCalendar();
+        for(CarrierVO c:carrierDB.getAll())
         {
-            Log.d("XXXXXXX",p.getInvoYm());
+            long maxTime = invoiceDB.findIVByMaxDate(c.getCarNul());
+            differCal.setTime(new Date(System.currentTimeMillis() - maxTime));
+            Log.d("XXXXX", String.valueOf(System.currentTimeMillis() - maxTime));
+            Log.d("XXXXX", String.valueOf(differCal.get(Calendar.MONTH)));
         }
-
-        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-        if(mNetworkInfo!=null)
-        {
-            getSQLDate=new GetSQLDate(this);
-            getSQLDate.setPercentage(percentage);
-            getSQLDate.setProgressT(progressT);
-            getSQLDate.execute("download");
-        }else{
-            tonNewActivity();
-            Common.showToast(this,"網路沒有開啟，無法下載!");
-        }
+//        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+//        if(mNetworkInfo!=null)
+//        {
+//            getSQLDate=new GetSQLDate(this);
+//            getSQLDate.setPercentage(percentage);
+//            getSQLDate.setProgressT(progressT);
+//            getSQLDate.execute("download");
+//        }else{
+//            tonNewActivity();
+//            Common.showToast(this,"網路沒有開啟，無法下載!");
+//        }
     }
 
     @Override
@@ -145,6 +149,20 @@ public class Download extends AppCompatActivity {
     private Runnable runnable=new Runnable() {
         @Override
         public void run() {
+            SelectIncome.end= Calendar.getInstance();
+            SelectIncome.Statue=0;
+            Calendar calendar=Calendar.getInstance();
+            SelectListModelCom.year=calendar.get(Calendar.YEAR);
+            SelectListModelCom.month=calendar.get(Calendar.MONTH);
+            SelectListModelCom.p=0;
+            SelectListModelIM.year=calendar.get(Calendar.YEAR);
+            SelectListModelIM.month=calendar.get(Calendar.MONTH);
+            SelectListModelIM.p=0;
+            SelectConsume.Statue=1;
+            SelectConsume.end=Calendar.getInstance();
+            SelectConsume.CStatue=0;
+            SettingListFix.spinnerC=0;
+            SettingListFix.p=0;
             setdate();
         }
     };

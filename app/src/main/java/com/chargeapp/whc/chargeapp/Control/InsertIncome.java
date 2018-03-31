@@ -77,11 +77,17 @@ public class InsertIncome extends Fragment {
         return view;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        handler.removeCallbacks(runnable);
+        secondHander.removeCallbacks(setOnClick);
+    }
 
     private void setSpinner() {
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, Common.DateStatueSetSpinner());
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        choiceday.setAdapter(arrayAdapter);
+        choiceStatue.setAdapter(arrayAdapter);
     }
     @Override
     public void onStart() {
@@ -106,7 +112,6 @@ public class InsertIncome extends Fragment {
         @Override
         public void run() {
             findviewByid(view);
-            setSpinner();
             gson=new Gson();
             bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
             date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
@@ -114,7 +119,9 @@ public class InsertIncome extends Fragment {
             {
                 setIncome();
             }
+            setSpinner();
             setSetOnClickView();
+
         }
     };
 
@@ -316,25 +323,15 @@ public class InsertIncome extends Fragment {
             }
             if(position==1)
             {
-                spinneritem.add("星期一");
-                spinneritem.add("星期二");
-                spinneritem.add("星期三");
-                spinneritem.add("星期四");
-                spinneritem.add("星期五");
-                spinneritem.add("星期六");
-                spinneritem.add("星期日");
+                spinneritem=Common.WeekSetSpinner();
             }
             if(position==2)
             {
-                for(int i=1;i<=31;i++) {
-                    spinneritem.add(" "+String.valueOf(i)+"日");
-                }
+                spinneritem=Common.DaySetSpinner();
             }
             if(position==3)
             {
-                for(int i=1;i<=12;i++) {
-                    spinneritem.add(" "+String.valueOf(i)+"月");
-                }
+                spinneritem=Common.MonthSetSpinner();
             }
             ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
@@ -388,7 +385,12 @@ public class InsertIncome extends Fragment {
         c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
         Date d = new Date(c.getTimeInMillis());
         bankVO.setMaintype(name.getText().toString());
-        bankVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
+        try {
+            bankVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
+        }catch (NumberFormatException e)
+        {
+            bankVO.setMoney(0);
+        }
         bankVO.setDate(d);
         bankVO.setFixDate(String.valueOf(fixdate.isChecked()));
         bankVO.setFixDateDetail(fixdatedetail);

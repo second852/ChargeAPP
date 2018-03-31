@@ -127,8 +127,9 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 Log.d("XXXXXX2", barcode.rawValue.substring(2));
             }
             if (hashMap.size() == 2) {
-                Intent intent = new Intent();
-                context.setResult(Activity.RESULT_OK, intent);
+                Intent intent = new Intent(context,MainActivity.class);
+                intent.putExtra("action","setConsume");
+                context.startActivity(intent);
                 context.finish();
             }
         } else {

@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -216,6 +217,11 @@ public class EleSetCarrier extends Fragment {
             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
             if(mNetworkInfo!=null)
             {
+                View v = EleSetCarrier.this.getActivity().getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
                 getIvnum= (GetSQLDate) new GetSQLDate(EleSetCarrier.this);
                 getIvnum.setProgressT(progressT);
                 getIvnum.setPercentage(percentage);

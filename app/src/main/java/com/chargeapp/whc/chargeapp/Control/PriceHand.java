@@ -63,7 +63,6 @@ public class PriceHand extends Fragment {
     private CardView cardview;
     private static SpeechRecognizer speech = null;
     private static Intent recognizerIntent;
-    private List<String> mResults;
     private RelativeLayout PIdateL;
 
 

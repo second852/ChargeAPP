@@ -63,6 +63,8 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
         howtogetprice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+                actionBar.setDisplayShowCustomEnabled(false);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 List<Fragment> fragments = getFragmentManager().getFragments();
                 for (Fragment f : fragments) {

@@ -85,6 +85,11 @@ public class HomePage extends Fragment {
         return view;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
     private void setListLayout() {
         List<GoalVO> goalVOS=goalDB.getNoCompleteAll();
         List<Object> objects=new ArrayList<>();

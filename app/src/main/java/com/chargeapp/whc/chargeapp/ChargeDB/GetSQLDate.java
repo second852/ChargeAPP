@@ -480,6 +480,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     todayMonth = 12 + todayMonth;
                     todayYear = todayYear - 1;
                 }
+                Log.d("XXXXXXx",todayMonth+":"+todayYear);
                 //到最大個月為止
                 if (todayMonth == lastMonth && lastYear == todayYear) {
                     break;
@@ -691,9 +692,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         return;
                     }
                 } else {
+                    percentage.setText("100%");
+                    progressT.setText("下載完成!\n更新中");
                     (new Common()).AutoSetPrice();
                     eleSetCarrier.setListAdapt();
-                    percentage.setText("100%");
                     Common.showToast(eleSetCarrier.getActivity(), "新增成功");
                     eleSetCarrier.setListAdapt();
                     return;

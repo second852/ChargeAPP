@@ -57,10 +57,7 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
     }
 
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
+
 
     public  class MainPagerAdapter extends FragmentPagerAdapter {
         private int NUM_ITEMS = 2;

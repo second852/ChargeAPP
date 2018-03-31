@@ -53,11 +53,6 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
         importMoney.setOnClickListener(new ChangePage(page+1));
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        DonateViewPager.removeAllViews();
-    }
 
     public  class MainPagerAdapter extends FragmentPagerAdapter {
         private  int NUM_ITEMS = 2;

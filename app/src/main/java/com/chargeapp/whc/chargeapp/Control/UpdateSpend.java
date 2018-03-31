@@ -523,8 +523,13 @@ public class UpdateSpend extends Fragment {
         Date d = new Date(c.getTimeInMillis());
         consumeVO.setMaintype(name.getText().toString());
         consumeVO.setSecondType(secondname.getText().toString());
-        consumeVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
         consumeVO.setDate(d);
+        try {
+            consumeVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
+        }catch (NumberFormatException e)
+        {
+            consumeVO.setMoney(0);
+        }
         consumeVO.setNumber(number.getText().toString());
         consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
         consumeVO.setFixDateDetail(fixdatedetail);

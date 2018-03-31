@@ -6,8 +6,8 @@ import android.content.Intent;
 
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -31,8 +31,10 @@ import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
+import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
+import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
@@ -61,31 +63,13 @@ public class MainActivity extends AppCompatActivity {
     private boolean doubleClick = false;
     public static LinkedList<String> oldFramgent;
     public static LinkedList<Bundle> bundles;
+    private boolean reStart;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        oldFramgent = new LinkedList<>();
-        bundles = new LinkedList<>();
-        SelectIncome.end= Calendar.getInstance();
-        SelectIncome.Statue=0;
-        Calendar calendar=Calendar.getInstance();
-        SelectListModelCom.year=calendar.get(Calendar.YEAR);
-        SelectListModelCom.month=calendar.get(Calendar.MONTH);
-        SelectListModelCom.p=0;
-        SelectListModelIM.year=calendar.get(Calendar.YEAR);
-        SelectListModelIM.month=calendar.get(Calendar.MONTH);
-        SelectListModelIM.p=0;
-        SelectConsume.Statue=1;
-        SelectConsume.end=Calendar.getInstance();
-        SelectConsume.CStatue=0;
-        SettingListFix.spinnerC=0;
-        SettingListFix.p=0;
-        setContentView(R.layout.activity_main);
-        (getSupportActionBar()).show();
-        setUpActionBar();
-        initDrawer();
+        reStart = false;
     }
 
 
@@ -142,17 +126,61 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        Log.d("XXXXXXX", "onResume");
+        super.onResume();
+    }
+
+    @Override
     protected void onStart() {
+        Log.d("XXXXXXX", "onStart");
         super.onStart();
+        oldFramgent = new LinkedList<>();
+        bundles = new LinkedList<>();
+        setContentView(R.layout.activity_main);
+        (getSupportActionBar()).show();
+        setUpActionBar();
+        initDrawer();
+        if (chargeAPPDB == null) {
+            chargeAPPDB = new ChargeAPPDB(this);
+        }
         String a = getIntent().getStringExtra("action");
-        if (a != null) {
-            Fragment fragment = new EleSetCarrier();
-            switchFragment(fragment);
-        } else {
+        if (a == null) {
             Fragment fragment = new HomePage();
             switchFragment(fragment);
+        } else {
+            if (a.equals("setCarrier")) {
+                Fragment fragment = new EleSetCarrier();
+                switchFragment(fragment);
+            } else if (a.equals("setConsume")) {
+                setConsume();
+            }
         }
+    }
 
+
+    @Override
+    protected void onPause() {
+        Log.d("XXXXXXX", "onRestart");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d("XXXXXXX", "onStop");
+        super.onStop();
+    }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d("XXXXXXX", "onRestart");
+        super.onDestroy();
     }
 
     @Override
@@ -259,10 +287,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             EleMainItemVO member = list.get(i);
-            ImageView ivImage =  view.findViewById(R.id.ivImage);
+            ImageView ivImage = view.findViewById(R.id.ivImage);
             ivImage.setImageResource(member.getImage());
             String mystring = getResources().getString(member.getIdstring());
-            TextView tvId =  view.findViewById(R.id.tvId);
+            TextView tvId = view.findViewById(R.id.tvId);
             tvId.setText(mystring);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -398,6 +426,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d("XXXXXXXXX", requestCode + ":" + resultCode);
         if (requestCode == 0) {
             Fragment fragment = new SettingUploadFile();
             Bundle bundle = new Bundle();
@@ -447,157 +476,171 @@ public class MainActivity extends AppCompatActivity {
             }
             fragment.setArguments(bundle);
             switchFragment(fragment);
-        }else if (requestCode == 6) {
-            if (requestCode == 0) {
-                if (resultCode == RESULT_OK) {
-                    ConsumeVO consumeVO=new ConsumeVO();
-                    HashMap<Integer, String> contents = BarcodeGraphic.hashMap;
-                    String all = BarcodeGraphic.hashMap.get(1).trim() + BarcodeGraphic.hashMap.get(2).trim();
-                    String[] EleNulAll = all.split(":");
-                    String EleNul = EleNulAll[0].substring(0, 10);
-                    String day = EleNulAll[0].substring(10, 17);
-                    String m = EleNulAll[0].substring(29, 37);
-                    String westday = (Integer.valueOf(day.substring(0, 3)) + 1911) + "-" + day.substring(3, 5) + "-" + day.substring(5);
-                    Calendar calendar=new GregorianCalendar(Integer.valueOf(day.substring(0, 3)),Integer.valueOf( day.substring(3, 5)),Integer.valueOf(day.substring(5)),12,0,0);
-                    consumeVO.setMoney(Integer.parseInt(m, 16));
-                    consumeVO.setNumber(EleNul);
-                    consumeVO.setDate(new Date(calendar.getTimeInMillis()));
-                    StringBuffer sb = new StringBuffer();
-                    if (EleNulAll[4].equals("2")) {
-                        try {
-                            String base64 = EleNulAll[5];
-                            byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
-                            if (EleNulAll[3].equals("1")) {
-                                sb.append(new String(bytes, "UTF-8") + "/1/" + consumeVO.getMoney());
-                            } else {
-                                String debase64 = new String(bytes, "UTF-8");
-                                String[] ddd = debase64.trim().split(":");
-                                for (int j = 0; j < ddd.length; j = j + 2) {
-                                    sb.append(ddd[j] + "/" + ddd[j + 1] + "/" + ddd[j + 2] + " ");
-                                }
-                            }
-                        } catch (Exception e) {
-                            Common.showToast(this, e.getMessage());
-                        }
-                    } else if (EleNulAll[4].equals("0")) {
-                        try {
-                            String a = new SetupDateBase64(this).execute("getThisDetail").get();
-                            if (a.equals("InternetError")) {
-                                Common.showToast(this, "連線逾時,請從新掃QRCODE");
-                                return;
-                            }
-                            Gson gson=new Gson();
-                            JsonObject jFT = gson.fromJson(a, JsonObject.class);
-                            String s = jFT.get("details").toString();
-                            Type cdType = new TypeToken<List<JsonObject>>() {
-                            }.getType();
-                            List<JsonObject> b = gson.fromJson(s, cdType);
-                            for (JsonObject j : b) {
-                                sb.append(j.get("description").getAsString() + "/" + j.get("quantity").getAsString() + "/" + j.get("unitPrice").getAsString() + " ");
-                            }
-                        } catch (Exception e) {
-                            Common.showToast(this, e.getMessage());
-                        }
-                    } else {
-                        if (EleNulAll[3].equals("1")) {
-                            sb.append(EleNulAll[5] + "/1/" +consumeVO.getMoney());
-                        } else {
-                            for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                                sb.append(EleNulAll[i] + "/" + EleNulAll[i + 1] + "/" + EleNulAll[i + 2] + " ");
-                            }
-                        }
-                    }
-                    consumeVO.setDetailname(sb.toString());
-                    consumeVO.setFixDate("false");
-                    Fragment fragment = new InsertSpend();
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("needSet",true);
-                    bundle.putSerializable("consumeVO",getIntent().getExtras().getSerializable("consumeVO"));
-                    fragment.setArguments(bundle);
-                    switchFragment(fragment);
-                }
-            } else if (resultCode == RESULT_CANCELED) {
-                // To Handle cancel
-                Log.i("App", "Scan unsuccessful");
-            }
+        } else if (requestCode == 6) {
+
         }
     }
 
+    private void setConsume() {
+        String all = BarcodeGraphic.hashMap.get(1).trim() + BarcodeGraphic.hashMap.get(2).trim();
+        String[] EleNulAll = all.split(":");
+        String EleNul = EleNulAll[0].substring(0, 10);
+        String day = EleNulAll[0].substring(10, 17);
+        String m = EleNulAll[0].substring(29, 37);
+
+        Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), Integer.valueOf(day.substring(3, 5)), Integer.valueOf(day.substring(5)), 12, 0, 0);
+        InsertSpend.consumeVO.setMoney(Integer.parseInt(m, 16));
+        InsertSpend.consumeVO.setNumber(EleNul);
+        InsertSpend.consumeVO.setDate(new Date(calendar.getTimeInMillis()));
+        StringBuffer sb = new StringBuffer();
+        if (EleNulAll[4].equals("2")) {
+            try {
+                String base64 = EleNulAll[5];
+                byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
+                if (EleNulAll[3].equals("1")) {
+                    sb.append(new String(bytes, "UTF-8") + "/1/" + InsertSpend.consumeVO.getMoney());
+                } else {
+                    String debase64 = new String(bytes, "UTF-8");
+                    String[] ddd = debase64.trim().split(":");
+                    for (int j = 0; j < ddd.length; j = j + 2) {
+                        sb.append(ddd[j] + "/" + ddd[j + 1] + "/" + ddd[j + 2] + " ");
+                    }
+                }
+            } catch (Exception e) {
+                Common.showToast(this, e.getMessage());
+            }
+        } else if (EleNulAll[4].equals("0")) {
+            try {
+                String a = new SetupDateBase64(this).execute("getThisDetail").get();
+                if (a.equals("InternetError")) {
+                    Common.showToast(this, "連線逾時,請從新掃QRCODE");
+                    return;
+                }
+                Gson gson = new Gson();
+                JsonObject jFT = gson.fromJson(a, JsonObject.class);
+                String s = jFT.get("details").toString();
+                Type cdType = new TypeToken<List<JsonObject>>() {
+                }.getType();
+                List<JsonObject> b = gson.fromJson(s, cdType);
+                for (JsonObject j : b) {
+                    sb.append(j.get("description").getAsString() + "/" + j.get("quantity").getAsString() + "/" + j.get("unitPrice").getAsString() + " ");
+                }
+            } catch (Exception e) {
+                Common.showToast(this, e.getMessage());
+            }
+        } else {
+            if (EleNulAll[3].equals("1")) {
+                sb.append(EleNulAll[5] + "/1/" + InsertSpend.consumeVO.getMoney());
+            } else {
+                for (int i = 5; i < EleNulAll.length; i = i + 3) {
+                    sb.append(EleNulAll[i] + "/" + EleNulAll[i + 1] + "/" + EleNulAll[i + 2] + " ");
+                }
+            }
+        }
+        InsertSpend.consumeVO.setDetailname(sb.toString());
+        InsertSpend.consumeVO.setFixDate("false");
+        InsertSpend.consumeVO = getType(InsertSpend.consumeVO);
+        InsertSpend.needSet = true;
+        Fragment fragment = new InsertActivity();
+        switchFragment(fragment);
+    }
+
+
+    private ConsumeVO getType(ConsumeVO consumeVO) {
+        TypeDetailDB typeDetailDB = new TypeDetailDB(chargeAPPDB.getReadableDatabase());
+        List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
+        String main = "O", second = "O";
+        int x = 0, total = 0;
+        for (TypeDetailVO t : typeDetailVOS) {
+            x = 0;
+            String[] key = t.getKeyword().split(" ");
+            for (int i = 0; i < key.length; i++) {
+                if (consumeVO.getDetailname().indexOf(key[i].trim()) != -1) {
+                    x = x + key[i].length();
+                }
+            }
+            if (x > total) {
+                total = x;
+                main = t.getGroupNumber();
+                second = t.getName();
+            }
+        }
+        if (second.indexOf("餐") != -1) {
+            int hour = Integer.valueOf(Common.sHour.format(consumeVO.getDate()));
+            if (hour > 0 && hour < 11) {
+                second = "早餐";
+            } else if (hour >= 11 && hour < 18) {
+                second = "午餐";
+            } else {
+                second = "晚餐";
+            }
+        }
+        consumeVO.setMaintype(main);
+        consumeVO.setSecondType(second);
+        return consumeVO;
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        if(oldFramgent.size()==0||bundles.size()==0)
-        {
-            OutDialogFragment aa= new OutDialogFragment();
-            aa.setObject(MainActivity.this);
-            aa.show(this.getSupportFragmentManager(),"show");
-        }else{
-
-          String action=oldFramgent.getLast();
-          Bundle bundle=bundles.getLast();
-            Log.d("MainActivity",action);
-          Fragment fragment=null;
-          if(action.equals("SelectActivity"))
-          {
-              fragment=new SelectActivity();
-              fragment.setArguments(bundle);
-          }else if(action.equals("SelectListPieIncome"))
-          {
-              fragment=new SelectListPieIncome();
-              fragment.setArguments(bundle);
-          }else if(action.equals("SelectListBarIncome"))
-          {
-              fragment=new SelectListBarIncome();
-              fragment.setArguments(bundle);
-          }else if(action.equals("SelectListModelIM"))
-          {
-              fragment=new SelectListModelActivity();
-              fragment.setArguments(bundle);
-          }else if(action.equals("SelectListModelCom"))
-          {
-              fragment=new SelectListModelActivity();
-              fragment.setArguments(bundle);
-          }else if(action.equals("SelectConsume"))
-          {
-              fragment=new SelectActivity();
-              fragment.setArguments(bundle);
-          }else if(action.equals("SelectOtherCircle"))
-          {
-              fragment=new SelectOtherCircle();
-              fragment.setArguments(bundle);
-          }else if(action.equals("SelectDetList"))
-          {
-              fragment=new SelectDetList();
-              fragment.setArguments(bundle);
-          }else if(action.equals("SelectShowCircleDe"))
-          {
-              fragment=new SelectShowCircleDe();
-              fragment.setArguments(bundle);
-          }else if(action.equals("SelectDetCircle"))
-          {
-              fragment=new SelectDetCircle();
-              int index= (int) bundle.getSerializable("index");
-              int day = (int) bundle.getSerializable("day");
-              bundle.putSerializable("day",day-index);
-              fragment.setArguments(bundle);
-          }else if(action.equals("SettingListFix"))
-          {
-              fragment=new SettingListFix();
-              fragment.setArguments(bundle);
-          }else if(action.equals("SettingListFixIon"))
-          {
-              fragment=new SettingListFixIon();
-              fragment.setArguments(bundle);
-          }else if(action.equals("SettingListFixCon"))
-          {
-              fragment=new SettingListFixCon();
-              fragment.setArguments(bundle);
-          }
-          oldFramgent.remove(oldFramgent.size()-1);
-          bundles.remove(bundles.size()-1);
-          switchFragment(fragment);
-          return true;
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (oldFramgent.size() == 0 || bundles.size() == 0) {
+                OutDialogFragment aa = new OutDialogFragment();
+                aa.setObject(MainActivity.this);
+                aa.show(this.getSupportFragmentManager(), "show");
+            } else {
+                String action = oldFramgent.getLast();
+                Bundle bundle = bundles.getLast();
+                Log.d("MainActivity", action);
+                Fragment fragment = null;
+                if (action.equals("SelectActivity")) {
+                    fragment = new SelectActivity();
+                    fragment.setArguments(bundle);
+                } else if (action.equals("SelectListPieIncome")) {
+                    fragment = new SelectListPieIncome();
+                    fragment.setArguments(bundle);
+                } else if (action.equals("SelectListBarIncome")) {
+                    fragment = new SelectListBarIncome();
+                    fragment.setArguments(bundle);
+                } else if (action.equals("SelectListModelIM")) {
+                    fragment = new SelectListModelActivity();
+                    fragment.setArguments(bundle);
+                } else if (action.equals("SelectListModelCom")) {
+                    fragment = new SelectListModelActivity();
+                    fragment.setArguments(bundle);
+                } else if (action.equals("SelectConsume")) {
+                    fragment = new SelectActivity();
+                    fragment.setArguments(bundle);
+                } else if (action.equals("SelectOtherCircle")) {
+                    fragment = new SelectOtherCircle();
+                    fragment.setArguments(bundle);
+                } else if (action.equals("SelectDetList")) {
+                    fragment = new SelectDetList();
+                    fragment.setArguments(bundle);
+                } else if (action.equals("SelectShowCircleDe")) {
+                    fragment = new SelectShowCircleDe();
+                    fragment.setArguments(bundle);
+                } else if (action.equals("SelectDetCircle")) {
+                    fragment = new SelectDetCircle();
+                    int index = (int) bundle.getSerializable("index");
+                    int day = (int) bundle.getSerializable("day");
+                    bundle.putSerializable("day", day - index);
+                    fragment.setArguments(bundle);
+                } else if (action.equals("SettingListFix")) {
+                    fragment = new SettingListFix();
+                    fragment.setArguments(bundle);
+                } else if (action.equals("SettingListFixIon")) {
+                    fragment = new SettingListFixIon();
+                    fragment.setArguments(bundle);
+                } else if (action.equals("SettingListFixCon")) {
+                    fragment = new SettingListFixCon();
+                    fragment.setArguments(bundle);
+                }
+                oldFramgent.remove(oldFramgent.size() - 1);
+                bundles.remove(bundles.size() - 1);
+                switchFragment(fragment);
+                return true;
+            }
         }
         return super.onKeyDown(keyCode, event);
     }

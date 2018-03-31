@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
+import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.R;
 
 public class InsertActivity extends Fragment implements ViewPager.OnPageChangeListener {
@@ -24,13 +25,23 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     private HorizontalScrollView choiceitem;
     private LinearLayout text;
     private int nowpoint=0;
-    private float movefirst;
+    private String needSet;
+    private ConsumeVO consumeVO;
 
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            needSet=getArguments().getString("needSet");
+            consumeVO= (ConsumeVO) getArguments().getSerializable("consumeVO");
+        }catch (NullPointerException e)
+        {
+            needSet=null;
+            consumeVO=null;
+        }
+
         View view = inflater.inflate(R.layout.insert_main, container, false);
         mViewPager =  view.findViewById(R.id.insert_viewPager);
         exportMoney=view.findViewById(R.id.exportD);
@@ -44,24 +55,12 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         return  view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        movefirst=-exportMoney.getX();
-    }
 
     public void setcurrentpage()
     {
         int page=mViewPager.getCurrentItem();
         exportMoney.setOnClickListener(new ChangePage(page));
         importMoney.setOnClickListener(new ChangePage(page+1));
-    }
-
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mViewPager.removeAllViews();
     }
 
 
@@ -80,13 +79,12 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
 
         @Override
         public Fragment getItem(int position) {
-            Bundle bundle=new Bundle();
-            bundle.putSerializable("needSet",false);
             if (position == 0) {
                 Fragment fragment=new InsertSpend();
-                fragment.setArguments(bundle);
                 return fragment;
             } else  {
+                Bundle bundle=new Bundle();
+                bundle.putSerializable("needSet",false);
                 Fragment fragment=new InsertIncome();
                 fragment.setArguments(bundle);
                 return fragment;
@@ -116,9 +114,9 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if(nowpoint>position)
         {
-            text.setX(movefirst+(1-positionOffset)*320);
+            text.setX((1-positionOffset)*320);
         }else{
-            text.setX(movefirst-(positionOffset*320));
+            text.setX(-(positionOffset*320));
         }
     }
     @Override

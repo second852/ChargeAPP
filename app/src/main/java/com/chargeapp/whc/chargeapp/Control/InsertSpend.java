@@ -68,8 +68,8 @@ public class InsertSpend extends Fragment {
     private RelativeLayout qrcode;
     private LinearLayout firstL, secondL;
     private GridView firstG, secondG;
-    private ConsumeVO consumeVO;
-    private boolean needSet;
+    public static ConsumeVO consumeVO;
+    public static boolean needSet;
     private int updateChoice;
     private boolean first;
     private Handler handler,secondHander;
@@ -79,7 +79,6 @@ public class InsertSpend extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.insert_spend, container, false);
-        needSet= (boolean) getArguments().getSerializable("needSet");
         handler=new Handler();
         handler.post(runnable);
         secondHander=new Handler();
@@ -93,9 +92,15 @@ public class InsertSpend extends Fragment {
         choiceStatue.setAdapter(arrayAdapter);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        handler.removeCallbacks(runnable);
+        secondHander.removeCallbacks(setOnClick);
+    }
+
     private void setUpdate() {
         first=true;
-        consumeVO = (ConsumeVO) getArguments().getSerializable("consumeVO");
         name.setText(consumeVO.getMaintype());
         number.setText(consumeVO.getNumber());
         secondname.setText(consumeVO.getSecondType());
@@ -139,6 +144,7 @@ public class InsertSpend extends Fragment {
                 updateChoice = Integer.valueOf(choicedate.substring(0, choicedate.indexOf("月"))) - 1;
             }
         }
+        needSet=false;
         Log.d("XXX", String.valueOf(updateChoice));
     }
 
@@ -175,7 +181,10 @@ public class InsertSpend extends Fragment {
     private Runnable setOnClick=new Runnable() {
         @Override
         public void run() {
-            consumeVO = new ConsumeVO();
+            if(consumeVO==null)
+            {
+                consumeVO = new ConsumeVO();
+            }
             findviewByid(view);
             gson = new Gson();
             setSpinner();
@@ -432,6 +441,7 @@ public class InsertSpend extends Fragment {
     private class QrCodeClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            setConsume();
             MultiTrackerActivity.refresh = true;
             BarcodeGraphic.hashMap = new HashMap<>();
             Intent intent = new Intent(InsertSpend.this.getActivity(), MultiTrackerActivity.class);
@@ -529,7 +539,12 @@ public class InsertSpend extends Fragment {
         Date d = new Date(c.getTimeInMillis());
         consumeVO.setMaintype(name.getText().toString());
         consumeVO.setSecondType(secondname.getText().toString());
-        consumeVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
+        try {
+            consumeVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
+        }catch (NumberFormatException e)
+        {
+            consumeVO.setMoney(0);
+        }
         consumeVO.setDate(d);
         consumeVO.setNumber(number.getText().toString());
         consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
