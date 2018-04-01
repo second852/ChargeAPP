@@ -183,8 +183,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             //找載具最新的月
             Calendar differCal = new GregorianCalendar();
             long maxTime = invoiceDB.findIVByMaxDate(carrierVO.getCarNul());
-            differCal.setTime(new Date(System.currentTimeMillis() - maxTime));
-            if (differCal.get(Calendar.MONTH) >= 6) {
+            long differTime=System.currentTimeMillis() - maxTime;
+            differCal.setTime(new Date(differTime));
+            if (differCal.get(Calendar.MONTH) >= 6&&differTime>0) {
                 //超過6個月
                 searchNewInvoice(carrierVO);
             } else {

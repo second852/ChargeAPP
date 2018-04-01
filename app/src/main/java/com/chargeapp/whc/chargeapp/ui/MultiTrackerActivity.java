@@ -32,6 +32,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +63,11 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     private CameraSourcePreview mPreview;
     private GraphicOverlay mGraphicOverlay;
     public static TextView answer;
+    public static String result;
+    //避免重複兌獎
+    public static String oldElu,p;
+    public static boolean isold;
+    public static int colorChange;
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -185,13 +191,28 @@ public final class MultiTrackerActivity extends AppCompatActivity {
                 .build();
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_BACK)
+        {
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        finish();
+    }
+
     /**
      * Restarts the camera.
      */
     @Override
     protected void onResume() {
         super.onResume();
-
         startCameraSource();
     }
 

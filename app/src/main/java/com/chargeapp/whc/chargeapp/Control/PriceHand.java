@@ -308,6 +308,7 @@ public class PriceHand extends Fragment {
                     startListening();
                 }else if(i==2)
                 {
+                    Common.showToast(getActivity(),"載入資料中");
                     MultiTrackerActivity.refresh = false;
                     Intent intent = new Intent(getActivity(), MultiTrackerActivity.class);
                     startActivity(intent);

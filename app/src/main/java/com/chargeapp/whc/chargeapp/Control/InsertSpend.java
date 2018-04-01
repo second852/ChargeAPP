@@ -148,18 +148,7 @@ public class InsertSpend extends Fragment {
         Log.d("XXX", String.valueOf(updateChoice));
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (Common.showfirstgrid) {
-            firstL.setVisibility(View.VISIBLE);
-            Common.showfirstgrid = false;
-        }
-        if (Common.showsecondgrid) {
-            secondL.setVisibility(View.VISIBLE);
-            Common.showsecondgrid = false;
-        }
-    }
+
 
     private Runnable runnable=new Runnable() {
         @Override
@@ -169,12 +158,13 @@ public class InsertSpend extends Fragment {
             consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
             firstG = view.findViewById(R.id.firstG);
             firstL = view.findViewById(R.id.firstL);
-            secondG = view.findViewById(R.id.secondG);
-            secondL = view.findViewById(R.id.secondL);
             setFirstGrid();
-            setSecondGrid();
             firstG.setOnItemClickListener(new firstGridOnClick());
-            secondG.setOnItemClickListener(new secondGridOnClick());
+            if (Common.showfirstgrid) {
+                firstL.setVisibility(View.VISIBLE);
+                Common.showfirstgrid = false;
+            }
+
         }
     };
 
@@ -195,6 +185,12 @@ public class InsertSpend extends Fragment {
                 setUpdate();
                 secondname.setOnClickListener(new showSecondG());
             }
+            setSecondGrid();
+            secondG.setOnItemClickListener(new secondGridOnClick());
+            if (Common.showsecondgrid) {
+                secondL.setVisibility(View.VISIBLE);
+                Common.showsecondgrid = false;
+            }
         }
     };
 
@@ -211,10 +207,6 @@ public class InsertSpend extends Fragment {
     }
 
     private void setSecondGrid() {
-        if(name==null)
-        {
-            return;
-        }
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
         List<TypeDetailVO> typeDetailVOS = typeDetailDB.findByGroupname(name.getText().toString().trim());
@@ -279,6 +271,8 @@ public class InsertSpend extends Fragment {
         noWek = view.findViewById(R.id.noWek);
         qrcode = view.findViewById(R.id.qrcode);
         name = view.findViewById(R.id.name);
+        secondG = view.findViewById(R.id.secondG);
+        secondL = view.findViewById(R.id.secondL);
     }
 
 
@@ -513,6 +507,7 @@ public class InsertSpend extends Fragment {
 
     private void returnThisFramgent(Fragment fragment) {
         setConsume();
+        needSet=true;
         Bundle bundle = new Bundle();
         bundle.putSerializable("object",consumeVO);
         bundle.putSerializable("action","InsertSpend");

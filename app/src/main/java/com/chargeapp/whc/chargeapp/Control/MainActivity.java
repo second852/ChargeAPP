@@ -6,7 +6,6 @@ import android.content.Intent;
 
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -47,7 +46,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,13 +61,11 @@ public class MainActivity extends AppCompatActivity {
     private boolean doubleClick = false;
     public static LinkedList<String> oldFramgent;
     public static LinkedList<Bundle> bundles;
-    private boolean reStart;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        reStart = false;
     }
 
 
@@ -135,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         Log.d("XXXXXXX", "onStart");
         super.onStart();
+        (getSupportActionBar()).setDisplayShowCustomEnabled(false);
         oldFramgent = new LinkedList<>();
         bundles = new LinkedList<>();
         setContentView(R.layout.activity_main);
@@ -154,33 +151,56 @@ public class MainActivity extends AppCompatActivity {
                 switchFragment(fragment);
             } else if (a.equals("setConsume")) {
                 setConsume();
+            }else if (a.equals("all")) {
+                Fragment fragment = new SettingUploadFile();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("action", "all");
+                fragment.setArguments(bundle);
+                switchFragment(fragment);
+            }else if (a.equals("uploadTxt")) {
+                Fragment fragment = new SettingUploadFile();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("action", "uploadTxt");
+                fragment.setArguments(bundle);
+                switchFragment(fragment);
+            }else if (a.equals("uploadExcel")) {
+                Fragment fragment = new SettingUploadFile();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("action", "uploadExcel");
+                fragment.setArguments(bundle);
+                switchFragment(fragment);
+            }else if (a.equals("no")) {
+                Fragment fragment = new SettingUploadFile();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("action", "no");
+                fragment.setArguments(bundle);
+                switchFragment(fragment);
+            }else if (a.equals("open")) {
+                Fragment fragment = new SettingDownloadFile();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("action", "open");
+                fragment.setArguments(bundle);
+                switchFragment(fragment);
+            }else if (a.equals("setConsume")) {
+                Fragment fragment = new SettingDownloadFile();
+                Bundle bundle = new Bundle();
+                if( SettingDownloadFile.mSelectedFileDriveId!=null)
+                {
+                    bundle.putSerializable("action", "download");
+                }else{
+                    bundle.putSerializable("action", "no");
+                }
+                switchFragment(fragment);
             }
         }
     }
 
-
-    @Override
-    protected void onPause() {
-        Log.d("XXXXXXX", "onRestart");
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d("XXXXXXX", "onStop");
-        super.onStop();
-    }
-
-
     @Override
     protected void onRestart() {
         super.onRestart();
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.d("XXXXXXX", "onRestart");
-        super.onDestroy();
+        Intent intent=new Intent(this,Download.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -428,56 +448,29 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("XXXXXXXXX", requestCode + ":" + resultCode);
         if (requestCode == 0) {
-            Fragment fragment = new SettingUploadFile();
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("action", "all");
-            fragment.setArguments(bundle);
-            switchFragment(fragment);
+            getIntent().putExtra("action","all");
         } else if (requestCode == 1) {
-            Fragment fragment = new SettingUploadFile();
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("action", "uploadTxt");
-            fragment.setArguments(bundle);
-            switchFragment(fragment);
+            getIntent().putExtra("action","uploadTxt");
         } else if (requestCode == 2) {
-            Fragment fragment = new SettingUploadFile();
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("action", "uploadExcel");
-            fragment.setArguments(bundle);
-            switchFragment(fragment);
+            getIntent().putExtra("action","uploadExcel");
         } else if (requestCode == 3) {
-            Fragment fragment = new SettingUploadFile();
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("action", "no");
-            fragment.setArguments(bundle);
-            switchFragment(fragment);
+            getIntent().putExtra("action","no");
             if (resultCode == -1) {
                 Common.showToast(this, "上傳成功");
             } else {
                 Common.showToast(this, "上傳失敗");
             }
         } else if (requestCode == 4) {
-            Fragment fragment = new SettingDownloadFile();
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("action", "open");
-            fragment.setArguments(bundle);
-            switchFragment(fragment);
+            getIntent().putExtra("action","open");
         } else if (requestCode == 5) {
-            Fragment fragment = new SettingDownloadFile();
-            Bundle bundle = new Bundle();
+            getIntent().putExtra("action","download");
             if (resultCode == -1) {
                 SettingDownloadFile.mSelectedFileDriveId = data.getParcelableExtra(
                         OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-                bundle.putSerializable("action", "download");
                 Common.showToast(this, "下傳成功");
             } else {
-                bundle.putSerializable("action", "no");
                 Common.showToast(this, "下傳失敗");
             }
-            fragment.setArguments(bundle);
-            switchFragment(fragment);
-        } else if (requestCode == 6) {
-
         }
     }
 

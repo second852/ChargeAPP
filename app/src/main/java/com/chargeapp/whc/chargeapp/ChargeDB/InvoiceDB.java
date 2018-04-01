@@ -377,7 +377,7 @@ public class InvoiceDB {
     }
 
     public HashMap<String,Integer> getInvoiceBytimeHashMap(Timestamp start, Timestamp end) {
-        String sql = "SELECT maintype,amount FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' order by time desc;";
+        String sql = "SELECT maintype,amount FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' order by amount desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         HashMap<String,Integer> hashMap=new HashMap<>();

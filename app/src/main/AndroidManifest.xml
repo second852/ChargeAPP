@@ -25,9 +25,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/add"
+        android:icon="@mipmap/ele_book"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/arrow"
+        android:roundIcon="@mipmap/ele_book_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity

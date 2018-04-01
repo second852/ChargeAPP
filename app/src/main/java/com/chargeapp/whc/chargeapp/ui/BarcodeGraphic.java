@@ -50,20 +50,21 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
     private Paint mTextPaint;
     private volatile Barcode mBarcode;
     private Activity context;
-    public static HashMap<Integer, String> hashMap = new HashMap<>();
+    public static HashMap<Integer, String> hashMap;
     private PriceDB priceDB;
     private String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
-    private String anwser;
     private PriceVO priceVO;
     private HashMap<String, Integer> levellength;
     private HashMap<String, String> levelprice;
-    private String EleNul,p;
+    private String EleNul;
     private int max;
+
 
 
 
     BarcodeGraphic(GraphicOverlay overlay, Activity context) {
         super(overlay);
+        hashMap = new HashMap<>();
         this.context = context;
         priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         mCurrentColorIndex = (mCurrentColorIndex + 1) % COLOR_CHOICES.length;
@@ -72,7 +73,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         mRectPaint.setColor(selectedColor);
         mRectPaint.setStyle(Paint.Style.STROKE);
         mRectPaint.setStrokeWidth(4.0f);
-
+        //paint
         mTextPaint = new Paint();
         mTextPaint.setColor(selectedColor);
         mTextPaint.setTextSize(36.0f);
@@ -114,9 +115,12 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
      * relevant portions of the overlay to trigger a redraw.
      */
     void updateItem(Barcode barcode) {
-
         mBarcode = barcode;
-        Log.d("XXXXXX1", barcode.rawValue);
+        if(barcode==null)
+        {
+            postInvalidate();
+            return;
+        }
         if (MultiTrackerActivity.refresh) {
             if (mBarcode.rawValue.indexOf(":") != -1 && (!(mBarcode.rawValue.indexOf("**") == 0))) {
                 hashMap.put(1, barcode.rawValue);
@@ -135,6 +139,16 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         } else {
             if (mBarcode.rawValue.indexOf(":") != -1 && (!(mBarcode.rawValue.indexOf("**") == 0))) {
                 EleNul = mBarcode.rawValue.substring(0, 10);
+                if(MultiTrackerActivity.oldElu==null||(!MultiTrackerActivity.oldElu.equals(EleNul)))
+                {
+                    MultiTrackerActivity.oldElu=EleNul;
+                    MultiTrackerActivity.isold=false;
+                    MultiTrackerActivity.colorChange++;
+                }else{
+                    MultiTrackerActivity.isold=true;
+                    postInvalidate();
+                    return;
+                }
                 String day = mBarcode.rawValue.substring(10, 17);
                 int mon = Integer.parseInt(day.substring(3, 5));
                 if (mon % 2 == 1) {
@@ -151,22 +165,22 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 } else {
                     day = day.substring(0, 5);
                 }
-                p=getPeriod(day);
+                MultiTrackerActivity.p=getPeriod(day);
                 if(Integer.valueOf(day)>max)
                 {
 
-                    anwser="over";
+                    MultiTrackerActivity.result="over";
                     postInvalidate();
                     return;
                 }
                 priceVO=priceDB.getPeriodAll(day);
                 if(priceVO==null)
                 {
-                    anwser="no";
+                    MultiTrackerActivity.result="no";
                     postInvalidate();
                     return;
                 }
-                anwser=anwswer(EleNul.substring(2),priceVO);
+                MultiTrackerActivity.result=anwswer(EleNul.substring(2),priceVO);
             }
         }
         postInvalidate();
@@ -251,35 +265,46 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             rect.bottom = translateY(rect.bottom);
             canvas.drawRect(rect, mRectPaint);
         }
-
         if(MultiTrackerActivity.refresh)
         {
             return;
         }
-        if(anwser==null)
+        if(MultiTrackerActivity.result==null)
         {
             MultiTrackerActivity.answer.setText("請對準左邊QRCode~");
             return;
         }
-        if(anwser.equals("over"))
+        if(MultiTrackerActivity.result.equals("over"))
         {
-            MultiTrackerActivity.answer.setText(p+"尚未開獎");
+            MultiTrackerActivity.answer.setText(MultiTrackerActivity.p+"尚未開獎");
             return;
         }
-        if(anwser.equals("no"))
+        if(MultiTrackerActivity.result.equals("no"))
         {
-            MultiTrackerActivity.answer.setText(p+"已過兌獎期限");
+            MultiTrackerActivity.answer.setText(MultiTrackerActivity.p+"已過兌獎期限");
             return;
         }
-        if (!MultiTrackerActivity.refresh && anwser != null) {
-            if (anwser.equals("N")) {
-                MultiTrackerActivity.answer.setText("沒有中獎!再接再厲!");
+        if (!MultiTrackerActivity.isold) {
+            if (MultiTrackerActivity.result.equals("N")) {
+                String total=MultiTrackerActivity.p+"\n發票號碼:"+MultiTrackerActivity.oldElu+"\n"+"沒有中獎!再接再厲!";
+                if((MultiTrackerActivity.colorChange%2)==0)
+                {
+                    Spannable content = new SpannableString(total);
+                    content.setSpan(new ForegroundColorSpan(Color.BLUE), 0,total.indexOf("發") , Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    content.setSpan(new ForegroundColorSpan(Color.BLUE), total.indexOf(":")+1, total.indexOf("沒"), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    MultiTrackerActivity.answer.setText(content);
+                }else{
+                    Spannable content = new SpannableString(total);
+                    content.setSpan(new ForegroundColorSpan(Color.parseColor("#00AA55")), 0,total.indexOf("發") , Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    content.setSpan(new ForegroundColorSpan(Color.parseColor("#00AA55")), total.indexOf(":")+1, total.indexOf("沒"), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    MultiTrackerActivity.answer.setText(content);
+                }
             } else {
                 String peroid = getPeriod(priceVO.getInvoYm());
-                peroid = peroid + levelprice.get("win") + levelprice.get(anwser) + "\n中獎號碼" + EleNul;
+                peroid = peroid + levelprice.get("win") + levelprice.get(MultiTrackerActivity.result) + "\n中獎號碼" + MultiTrackerActivity.oldElu;
                 Spannable content = new SpannableString(peroid);
-                content.setSpan(new ForegroundColorSpan(Color.RED), 10, 10+levellength.get(anwser), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                content.setSpan(new ForegroundColorSpan(Color.MAGENTA), peroid.length()-(levellength.get(anwser)), peroid.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                content.setSpan(new ForegroundColorSpan(Color.RED), 10, 10+levellength.get(MultiTrackerActivity.result), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                content.setSpan(new ForegroundColorSpan(Color.MAGENTA), peroid.length()-(levellength.get(MultiTrackerActivity.result)), peroid.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 MultiTrackerActivity.answer.setText(content);
             }
         }
@@ -291,17 +316,17 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         String day = inYm.substring(3, 5);
         String period;
         if (day.equals("02")) {
-            period = inYm.substring(0, 3) + "年01~02月";
+            period = inYm.substring(0, 3) + "年01-02月";
         } else if (day.equals("04")) {
-            period = inYm.substring(0, 3) + "年03~04月";
+            period = inYm.substring(0, 3) + "年03-04月";
         } else if (day.equals("06")) {
-            period = inYm.substring(0, 3) + "年05~06月";
+            period = inYm.substring(0, 3) + "年05-06月";
         } else if (day.equals("08")) {
-            period = inYm.substring(0, 3) + "年07~08月";
+            period = inYm.substring(0, 3) + "年07-08月";
         } else if (day.equals("10")) {
-            period = inYm.substring(0, 3) + "年09~10月";
+            period = inYm.substring(0, 3) + "年09-10月";
         } else {
-            period = inYm.substring(0, 3) + "年11~12月";
+            period = inYm.substring(0, 3) + "年11-12月";
         }
         return period;
     }

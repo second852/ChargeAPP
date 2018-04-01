@@ -59,9 +59,6 @@ public class HomePage extends Fragment {
     private ConsumeDB consumeDB;
     private BankDB bankDB;
     private Calendar start,end;
-    private HashMap<String,Integer> hashMap;
-    private List<Map.Entry<String, Integer>> list_Data;
-    private ArrayList<String> OKey;
     private ListView listView;
     private int year,month,day;
 
@@ -81,7 +78,7 @@ public class HomePage extends Fragment {
         month=end.get(Calendar.MONTH);
         day=end.get(Calendar.DAY_OF_MONTH);
         start=new GregorianCalendar(year,month,day,0,0,0);
-        setListLayout();
+        end=new GregorianCalendar(year,month,day,23,59,59);
         return view;
     }
 
@@ -100,58 +97,54 @@ public class HomePage extends Fragment {
             objects.add("本周花費");
             objects.add("本月花費");
         }
-        listView.setAdapter(new ListAdapter(getActivity(),objects));
+        ListAdapter listAdapter= (ListAdapter) listView.getAdapter();
+        if(listAdapter==null)
+        {
+            listView.setAdapter(new ListAdapter(getActivity(),objects));
+        }else{
+            listAdapter.setObjects(objects);
+            listAdapter.notifyDataSetChanged();
+            listView.invalidate();
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        setListLayout();
         setPieChart();
     }
 
+
+
     private void setPieChart() {
-
-
-        hashMap=new HashMap<>();
         HashMap<String,Integer> consumeVOS=consumeDB.getTimePeriodHashMap(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
         HashMap<String,Integer> invoiceVOS=invoiceDB.getInvoiceBytimeHashMap(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
-        hashMap.putAll(consumeVOS);
-        for(String s:invoiceVOS.keySet())
+
+        if(invoiceVOS.size()>consumeVOS.size())
         {
-          if(hashMap.get(s)==null)
-          {
-              hashMap.put(s,invoiceVOS.get(s));
-          }else{
-              hashMap.put(s,invoiceVOS.get(s)+hashMap.get(s));
-          }
-        }
-
-        pieChartT.setText(Common.sDay.format(new Date(end.getTimeInMillis()))+"本日花費 : "+hashMap.get("total")+"元");
-        list_Data = new ArrayList<Map.Entry<String, Integer>>(hashMap.entrySet());
-        //
-        if(list_Data.size()>5)
-        {
-            OKey=new ArrayList<>();
-            ChartEntry other = new ChartEntry("O", 0);
-            Collections.sort(list_Data, new Comparator<Map.Entry<String, Integer>>() {
-                public int compare(Map.Entry<String, Integer> entry1,
-                                   Map.Entry<String, Integer> entry2) {
-
-                    return (entry2.getValue() - entry1.getValue());
+            for(String s:consumeVOS.keySet())
+            {
+                if(invoiceVOS.get(s)==null)
+                {
+                    invoiceVOS.put(s,consumeVOS.get(s));
+                }else{
+                    invoiceVOS.put(s,invoiceVOS.get(s)+consumeVOS.get(s));
                 }
-            });
-            for (int i = 0; i < list_Data.size(); i++) {
-                if (i >= 4) {
-                    other.setValue(other.getValue() + list_Data.get(4).getValue());
-                    OKey.add(list_Data.get(4).getKey());
-                    list_Data.remove(4);
-                    i--;
+            }
+            addData(invoiceVOS);
+        }else{
+            for(String s:invoiceVOS.keySet())
+            {
+                if(consumeVOS.get(s)==null)
+                {
+                    consumeVOS.put(s,invoiceVOS.get(s));
+                }else{
+                    consumeVOS.put(s,invoiceVOS.get(s)+consumeVOS.get(s));
                 }
-                list_Data.add(other);
-           }
+            }
+            addData(consumeVOS);
         }
-
-
         pieChart.setEntryLabelColor(Color.BLACK);
         pieChart.setUsePercentValues(true);
         pieChart.setDrawHoleEnabled(true);
@@ -160,31 +153,34 @@ public class HomePage extends Fragment {
         pieChart.setRotationAngle(30);
         pieChart.setRotationEnabled(true);
         pieChart.setDescription(Common.getDeescription());
-        addData();
         // customize legends
         pieChart.getLegend().setEnabled(false);
     }
 
-    private void addData() {
+    private void addData(HashMap<String, Integer> consumeVOS) {
+        pieChartT.setText(Common.sDay.format(new Date(end.getTimeInMillis()))+"本日花費 : "+consumeVOS.get("total")+"元");
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
         boolean ShowZero = true;
-
-        for (int i = 0; i < list_Data.size(); i++) {
-            if (list_Data.get(i).getValue() > 0) {
-                ShowZero = false;
-                if(list_Data.get(i).getKey().equals("total"))
-                {
-                    continue;
-                }
-                if(list_Data.get(i).getKey().equals("O"))
-                {
-                    yVals1.add(new PieEntry(list_Data.get(i).getValue(),"其他"));
-                }else{
-                    yVals1.add(new PieEntry(list_Data.get(i).getValue(), list_Data.get(i).getKey()));
-                }
+        int total=consumeVOS.get("total");
+        consumeVOS.remove("total");
+        ChartEntry chartEntry=new ChartEntry("其他",0);
+        int i=0;
+        for (String key:consumeVOS.keySet()) {
+            ShowZero = false;
+            double part=(consumeVOS.get(key)*100/total);
+            Log.d("XXXXX",part+" : "+total);
+            if(i<4&&part>2&&(!key.equals("O"))&&(!key.equals("0")))
+            {
+                yVals1.add(new PieEntry(consumeVOS.get(key),key));
+                i++;
+            }else{
+                chartEntry.setValue(chartEntry.getValue()+consumeVOS.get(key));
             }
         }
-
+        if(chartEntry.getValue()>0)
+        {
+            yVals1.add(new PieEntry(chartEntry.getValue(),chartEntry.getKey()));
+        }
         // create pie data set
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
         if (ShowZero) {
@@ -195,7 +191,6 @@ public class HomePage extends Fragment {
         } else {
             dataSet.setColors(Common.getColor(yVals1.size()));
             dataSet.setDrawValues(true);
-
         }
         dataSet.setValueLinePart1OffsetPercentage(90.f);
         dataSet.setValueLinePart1Length(1f);
@@ -217,9 +212,12 @@ public class HomePage extends Fragment {
     private class ListAdapter extends BaseAdapter {
         private Context context;
         private List<Object> objects;
-
         ListAdapter(Context context, List<Object> objects) {
             this.context = context;
+            this.objects = objects;
+        }
+
+        public void setObjects(List<Object> objects) {
             this.objects = objects;
         }
 
@@ -264,8 +262,8 @@ public class HomePage extends Fragment {
 
                       if(timeStatue.equals("每天"))
                       {
-                          consumeCount=consumeDB.getTimeTotal(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()))+
-                          invoiceDB.getTotalBytime(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()));
+                          consumeCount=consumeDB.getTimeTotal(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(HomePage.this.end.getTimeInMillis()))+
+                          invoiceDB.getTotalBytime(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(HomePage.this.end.getTimeInMillis()));
                           describeContent.append("花費 : 本日支出"+consumeCount+"元");
                       }else if(timeStatue.equals("每周"))
                       {

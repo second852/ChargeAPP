@@ -206,7 +206,7 @@ public class ConsumeDB {
     }
 
     public HashMap<String,Integer> getTimePeriodHashMap(Timestamp startTime, Timestamp endTime) {
-        String sql = "SELECT maintype,money FROM Consumer where  date between '"+startTime.getTime()+"' and '"+endTime.getTime()+"' order by date ;";
+        String sql = "SELECT maintype,money FROM Consumer where  date between '"+startTime.getTime()+"' and '"+endTime.getTime()+"' order by money desc ;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         HashMap<String,Integer> hashMap=new HashMap<>();

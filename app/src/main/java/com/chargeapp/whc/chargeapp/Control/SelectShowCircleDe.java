@@ -337,8 +337,6 @@ public class SelectShowCircleDe extends Fragment {
                     sbTitle.append(I.getSecondtype());
                 }
                 sbTitle.append("\n共"+I.getAmount()+"元");
-                remindL.setVisibility(View.VISIBLE);
-                remainT.setText("電子發票");
                 if(I.getDetail().equals("0"))
                 {
                     update.setText("下載");

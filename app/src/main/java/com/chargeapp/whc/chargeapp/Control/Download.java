@@ -89,40 +89,6 @@ public class Download extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.download_main);
-        progressT=findViewById(R.id.progressT);
-        percentage=findViewById(R.id.percentage);
-        if (MainActivity.chargeAPPDB == null) {
-            MainActivity.chargeAPPDB = new ChargeAPPDB(Download.this);}
-        askPermissions();
-        (getSupportActionBar()).hide();
-        firstH=new Handler();
-        firstH.post(runnable);
-        AdView adView = (AdView) this.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-        ChargeAPPDB chargeAPPDB=new ChargeAPPDB(this);
-        CarrierDB carrierDB=new CarrierDB(chargeAPPDB.getReadableDatabase());
-        InvoiceDB invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
-        Calendar differCal = new GregorianCalendar();
-        for(CarrierVO c:carrierDB.getAll())
-        {
-            long maxTime = invoiceDB.findIVByMaxDate(c.getCarNul());
-            differCal.setTime(new Date(System.currentTimeMillis() - maxTime));
-            Log.d("XXXXX", String.valueOf(System.currentTimeMillis() - maxTime));
-            Log.d("XXXXX", String.valueOf(differCal.get(Calendar.MONTH)));
-        }
-//        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-//        if(mNetworkInfo!=null)
-//        {
-//            getSQLDate=new GetSQLDate(this);
-//            getSQLDate.setPercentage(percentage);
-//            getSQLDate.setProgressT(progressT);
-//            getSQLDate.execute("download");
-//        }else{
-//            tonNewActivity();
-//            Common.showToast(this,"網路沒有開啟，無法下載!");
-//        }
     }
 
     @Override
@@ -142,6 +108,30 @@ public class Download extends AppCompatActivity {
                 tm.cancel(0);
             }
             tm.schedule(builder.build());
+        }
+
+        progressT=findViewById(R.id.progressT);
+        percentage=findViewById(R.id.percentage);
+        if (MainActivity.chargeAPPDB == null) {
+            MainActivity.chargeAPPDB = new ChargeAPPDB(Download.this);}
+        askPermissions();
+        (getSupportActionBar()).hide();
+        firstH=new Handler();
+        firstH.post(runnable);
+        AdView adView = (AdView) this.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+        if(mNetworkInfo!=null)
+        {
+            getSQLDate=new GetSQLDate(this);
+            getSQLDate.setPercentage(percentage);
+            getSQLDate.setProgressT(progressT);
+            getSQLDate.execute("download");
+        }else{
+            tonNewActivity();
+            Common.showToast(this,"網路沒有開啟，無法下載!");
         }
 //        tonNewActivity();
     }
@@ -205,7 +195,7 @@ public class Download extends AppCompatActivity {
     public void tonNewActivity()
     {
         secondH=new Handler();
-        secondH.post(runToNeW);
+        secondH.postDelayed(runToNeW,500);
     }
 
 
