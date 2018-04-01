@@ -204,7 +204,10 @@ public class Download extends AppCompatActivity {
         //因為是群組授權，所以請求ACCESS_COARSE_LOCATION就等同於請求ACCESS_FINE_LOCATION，因為同屬於LOCATION群組
         String[] permissions = {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.GET_ACCOUNTS,
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.CAMERA,
         };
 
         Set<String> permissionsRequest = new HashSet<>();

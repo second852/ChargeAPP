@@ -12,10 +12,11 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.chargeapp.whc.chargeapp"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

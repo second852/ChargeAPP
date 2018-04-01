@@ -18,6 +18,18 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="spinner_large" parent="@android:style/Theme.DeviceDefault.Light.DarkActionBar">
+        <item name="android:textColor">#000000</item>
+        <item name="android:background">#ffffff</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
+
+    <style name="spinner_xlarge" parent="@android:style/Theme.DeviceDefault.Light.DarkActionBar">
+        <item name="android:textColor">#000000</item>
+        <item name="android:background">#ffffff</item>
+        <item name="android:textSize">40sp</item>
+    </style>
 
     <style name="SCBSwitch" parent="Theme.AppCompat.Light">
         <!-- active thumb & track color (30% transparency) -->

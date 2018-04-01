@@ -1,0 +1,72 @@
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    android:padding="6dp"
+    card_view:cardBackgroundColor="#ffdddddd"
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="6dp">
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#DDDDDD"
+        android:orientation="vertical"
+        >
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="2dp"
+            android:text="捐獻"
+            android:backgroundTint="#708090"
+            android:buttonTint="#000088"
+            android:textColor="#000088"
+            android:id="@+id/donateC"
+            android:checked="false"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/listTitle"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="2dp"
+            android:layout_gravity="center"
+            android:layout_toRightOf="@+id/donateC"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:gravity="left"
+            android:padding="2dp"
+            />
+        <Button
+            android:id="@+id/updateD"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:layout_margin="8dp"
+            android:textSize="15dp"
+            android:text="下載"
+            android:layout_alignParentRight="true"
+            android:background="#33CCFF"
+            android:layout_centerHorizontal="true"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/listTitle"
+            android:background="#AAAAAA"
+            android:gravity="left"
+            android:padding="2dp"
+            android:layout_margin="8dp"
+            android:id="@+id/listDetail"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
