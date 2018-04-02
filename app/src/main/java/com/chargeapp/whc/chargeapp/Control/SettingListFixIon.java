@@ -146,11 +146,11 @@ public class SettingListFixIon extends Fragment {
                 remainT.setTextColor(Color.parseColor("#7700BB"));
                 remindL.setBackgroundColor(Color.parseColor("#7700BB"));
             }else {
-                fixL.setVisibility(View.GONE);
-                remindL.setVisibility(View.VISIBLE);
-                remainT.setText("本體");
-                remainT.setTextColor(Color.parseColor("#0000FF"));
-                remindL.setBackgroundColor(Color.parseColor("#0000FF"));
+                remindL.setVisibility(View.GONE);
+                fixL.setVisibility(View.VISIBLE);
+                fixL.setBackgroundColor(Color.parseColor("#0000FF"));
+                fixT.setText("本體");
+                fixT.setTextColor(Color.parseColor("#0000FF"));
             }
             //設定 title
             stringBuffer.append(Common.sTwo.format(bankVO.getDate()));

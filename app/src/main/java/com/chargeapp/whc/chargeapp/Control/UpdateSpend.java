@@ -184,6 +184,7 @@ public class UpdateSpend extends Fragment {
     private void goBackFramgent() {
         Fragment fragment = null;
         Bundle bundle = new Bundle();
+        bundle.putSerializable("consumeVO ", consumeVO);
         if (action.equals("SelectShowCircleDe")) {
             fragment = new SelectShowCircleDe();
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
@@ -218,6 +219,20 @@ public class UpdateSpend extends Fragment {
             fragment = new SettingListFixCon();
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             bundle.putSerializable("consumeVO",consumeVO);
+        }else if (action.equals("SelectShowCircleDeList")) {
+            fragment = new SelectDetList();
+            bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
+            bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
+            bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
+            bundle.putSerializable("year", getArguments().getSerializable("year"));
+            bundle.putSerializable("month", getArguments().getSerializable("month"));
+            bundle.putSerializable("day", getArguments().getSerializable("day"));
+            bundle.putSerializable("key", getArguments().getSerializable("key"));
+            bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
+            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
+            bundle.putSerializable("period", getArguments().getSerializable("period"));
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);
@@ -226,8 +241,10 @@ public class UpdateSpend extends Fragment {
 
     private void returnThisFramgent(Fragment fragment) {
         setConsume();
+        Log.d("XXXXXXXX",consumeVO.getMaintype());
         Bundle bundle = new Bundle();
         bundle.putSerializable("object", consumeVO);
+        bundle.putSerializable("consumeVO",consumeVO);
         bundle.putSerializable("action", action);
         if (action.equals("SelectDetList")) {
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
@@ -257,8 +274,23 @@ public class UpdateSpend extends Fragment {
             bundle.putSerializable("position", getArguments().getSerializable("position"));
         }else if (action.equals("SettingListFixCon")) {
             bundle.putSerializable("position", getArguments().getSerializable("position"));
+        }else  if (action.equals("SelectShowCircleDeList")) {
+            bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
+            bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
+            bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
+            bundle.putSerializable("year", getArguments().getSerializable("year"));
+            bundle.putSerializable("month", getArguments().getSerializable("month"));
+            bundle.putSerializable("day", getArguments().getSerializable("day"));
+            bundle.putSerializable("key", getArguments().getSerializable("key"));
+            bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
+            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
+            bundle.putSerializable("period", getArguments().getSerializable("period"));
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
         }
         fragment.setArguments(bundle);
+        MainActivity.bundles.add(bundle);
+        MainActivity.oldFramgent.add("UpdateSpend");
         switchFramgent(fragment);
     }
 
@@ -560,72 +592,6 @@ public class UpdateSpend extends Fragment {
     }
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (requestCode == 0) {
-            if (resultCode == RESULT_OK) {
-                HashMap<Integer, String> contents = BarcodeGraphic.hashMap;
-                String all = BarcodeGraphic.hashMap.get(1).trim() + BarcodeGraphic.hashMap.get(2).trim();
-                String[] EleNulAll = all.split(":");
-                String EleNul = EleNulAll[0].substring(0, 10);
-                String day = EleNulAll[0].substring(10, 17);
-                String m = EleNulAll[0].substring(29, 37);
-                String westday = (Integer.valueOf(day.substring(0, 3)) + 1911) + "-" + day.substring(3, 5) + "-" + day.substring(5);
-                money.setText(String.valueOf(Integer.parseInt(m, 16)));
-                number.setText(EleNul);
-                date.setText(westday);
-                StringBuffer sb = new StringBuffer();
-                if (EleNulAll[4].equals("2")) {
-                    try {
-                        String base64 = EleNulAll[5];
-                        byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
-                        if (EleNulAll[3].equals("1")) {
-                            sb.append(new String(bytes, "UTF-8") + "/1/" + money.getText().toString());
-                        } else {
-                            String debase64 = new String(bytes, "UTF-8");
-                            String[] ddd = debase64.trim().split(":");
-                            for (int j = 0; j < ddd.length; j = j + 2) {
-                                sb.append(ddd[j] + "/" + ddd[j + 1] + "/" + ddd[j + 2] + " ");
-                            }
-                        }
-                    } catch (Exception e) {
-                        Common.showToast(getActivity(), e.getMessage());
-                    }
-                } else if (EleNulAll[4].equals("0")) {
-                    try {
-                        String a = new SetupDateBase64(this).execute("getThisDetail").get();
-                        if (a.equals("InternetError")) {
-                            Common.showToast(getActivity(), "連線逾時,請從新掃QRCODE");
-                            return;
-                        }
-                        Gson gson = new Gson();
-                        JsonObject jFT = gson.fromJson(a, JsonObject.class);
-                        String s = jFT.get("details").toString();
-                        Type cdType = new TypeToken<List<JsonObject>>() {
-                        }.getType();
-                        List<JsonObject> b = gson.fromJson(s, cdType);
-                        for (JsonObject j : b) {
-                            sb.append(j.get("description").getAsString() + "/" + j.get("quantity").getAsString() + "/" + j.get("unitPrice").getAsString() + " ");
-                        }
-                    } catch (Exception e) {
-                        Common.showToast(getActivity(), e.getMessage());
-                    }
-                } else {
-                    if (EleNulAll[3].equals("1")) {
-                        sb.append(EleNulAll[5] + "/1/" + money.getText().toString());
-                    } else {
-                        for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                            sb.append(EleNulAll[i] + "/" + EleNulAll[i + 1] + "/" + EleNulAll[i + 2] + " ");
-                        }
-                    }
-                }
-                detailname.setText(sb.toString());
-            }
-        } else if (resultCode == RESULT_CANCELED) {
-            // To Handle cancel
-            Log.i("App", "Scan unsuccessful");
-        }
-    }
 
 
     public void switchFramgent(Fragment fragment) {

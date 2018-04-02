@@ -144,35 +144,37 @@ public class SelectListBarIncome extends Fragment {
             TextView decribe=itemView.findViewById(R.id.listDetail);
             Button update=itemView.findViewById(R.id.updateD);
             Button deleteI=itemView.findViewById(R.id.deleteI);
-            TextView remainT = itemView.findViewById(R.id.remainT);
-            LinearLayout remindL = itemView.findViewById(R.id.remindL);
-            LinearLayout typeL=itemView.findViewById(R.id.typeL);
-            TextView typeT=itemView.findViewById(R.id.typeT);
-
+            TextView fixT = itemView.findViewById(R.id.fixT);
+            LinearLayout fixL = itemView.findViewById(R.id.fixL);
+            LinearLayout remindL=itemView.findViewById(R.id.remindL);
 
             StringBuffer stringBuffer = new StringBuffer();
+
+            remindL.setVisibility(View.GONE);
             if (bankVO.isAuto()) {
-                remindL.setVisibility(View.VISIBLE);
-                remainT.setText("自動");
-                remainT.setTextColor(Color.parseColor("#7700BB"));
-                remindL.setBackgroundColor(Color.parseColor("#7700BB"));
-            } else {
-                remindL.setVisibility(View.GONE);
+                fixT.setText("自動");
+                fixT.setTextColor(Color.parseColor("#7700BB"));
+                fixL.setBackgroundColor(Color.parseColor("#7700BB"));
+                fixL.setVisibility(View.VISIBLE);
+            }else{
+                fixL.setVisibility(View.GONE);
             }
 
             //設定 title
-            stringBuffer.append(Common.sTwo.format(bankVO.getDate()));
+            stringBuffer.append(Common.sDay.format(bankVO.getDate()));
             stringBuffer.append(" "+bankVO.getMaintype());
             stringBuffer.append("\n共"+bankVO.getMoney()+"元");
             title.setText(stringBuffer.toString());
 
             //設定 describe
-            if (bankVO.getFixDate().equals("true")||bankVO.isAuto()) {
+            if (bankVO.getFixDate().equals("true")) {
 
-                typeL.setVisibility(View.VISIBLE);
-                typeT.setText("固定");
-                typeT.setTextColor(Color.parseColor("#008844"));
-                typeL.setBackgroundColor(Color.parseColor("#008844"));
+                fixT.setText("固定");
+                fixT.setTextColor(Color.parseColor("#003C9D"));
+                fixL.setBackgroundColor(Color.parseColor("#003C9D"));
+                fixL.setVisibility(View.VISIBLE);
+
+
                 stringBuffer=new StringBuffer();
                 JsonObject js=gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
                 String daystatue=js.get("choicestatue").getAsString().trim();
@@ -183,7 +185,7 @@ public class SelectListBarIncome extends Fragment {
                 }
                 decribe.setText(stringBuffer.toString()+" \n"+bankVO.getDetailname());
             } else {
-                typeL.setVisibility(View.GONE);
+                fixL.setVisibility(View.GONE);
                 decribe.setText(bankVO.getDetailname());
             }
 

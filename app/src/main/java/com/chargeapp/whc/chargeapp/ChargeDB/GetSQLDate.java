@@ -21,6 +21,7 @@ import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectDetList;
 import com.chargeapp.whc.chargeapp.Control.SelectListModelCom;
 import com.chargeapp.whc.chargeapp.Control.SelectShowCircleDe;
+import com.chargeapp.whc.chargeapp.Control.SelectShowCircleDeList;
 import com.chargeapp.whc.chargeapp.Control.UpdateInvoice;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ElePeriod;
@@ -685,7 +686,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         percentage.setText("100%");
                         progressT.setText("新增成功");
                         Common.showToast(eleSetCarrier.getActivity(), "新增成功");
-                        eleSetCarrier.setListAdapt();
+                        eleSetCarrier.SucessDownload();
                         return;
                     } else {
                         Common.showToast(eleSetCarrier.getActivity(), "財政部網路忙線中，請稍候使用!");
@@ -698,7 +699,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     (new Common()).AutoSetPrice();
                     eleSetCarrier.setListAdapt();
                     Common.showToast(eleSetCarrier.getActivity(), "新增成功");
-                    eleSetCarrier.setListAdapt();
+                    eleSetCarrier.SucessDownload();
                     return;
                 }
             }
@@ -745,6 +746,13 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     selectListModelCom.cancelshow();
                 } else {
                     selectListModelCom.setLayout();
+                }
+            }else if (object instanceof SelectShowCircleDeList) {
+                SelectShowCircleDeList selectShowCircleDeList = (SelectShowCircleDeList) object;
+                if (s.equals("timeout") || s.equals("error")) {
+                    selectShowCircleDeList.cancelshow();
+                } else {
+                    selectShowCircleDeList.choiceLayout();
                 }
             }
         } catch (Exception e) {

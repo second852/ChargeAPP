@@ -12,6 +12,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -60,6 +61,7 @@ public class EleSetCarrier extends Fragment {
     private  SharedPreferences sharedPreferences;
     private  int position;
     private CarrierVO carrierVO;
+    private Handler handler;
 
 
     @Nullable
@@ -90,6 +92,33 @@ public class EleSetCarrier extends Fragment {
     public void closeDialog()
     {
         progressbarL.setVisibility(View.GONE);
+    }
+
+    public void SucessDownload()
+    {
+        handler=new Handler();
+        handler.postDelayed(runnable,500);
+    }
+
+    private Runnable runnable=new Runnable() {
+        @Override
+        public void run() {
+            setListAdapt();
+        }
+    };
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(getIvnum!=null)
+        {
+            getIvnum.cancel(true);
+        }
+        if(handler!=null)
+        {
+            handler.removeCallbacks(runnable);
+        }
     }
 
     public void setListAdapt()

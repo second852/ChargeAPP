@@ -19,6 +19,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
+import com.chargeapp.whc.chargeapp.R;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -145,15 +146,17 @@ public class ThirdReceiver extends BroadcastReceiver {
                         invoiceDB.getTotalBytime(new Timestamp(goalVO.getStartTime().getTime()),new Timestamp(goalVO.getEndTime().getTime()));
                 int saveMoney=bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()),new Timestamp(goalVO.getEndTime().getTime()))-consumeCount;
 
-                if(goalVO.getEndTime().getTime()>System.currentTimeMillis())
+                if(goalVO.getEndTime().getTime()<System.currentTimeMillis())
                 {
                     title=" 目標 :"+goalVO.getName()+" "+Common.sTwo.format(goalVO.getEndTime())+"前儲蓄"+goalVO.getMoney()+"元";
                     if(Integer.valueOf(goalVO.getMoney())<saveMoney)
                     {
                         goalVO.setStatue(1);
+                        goalVO.setNotify(false);
                         message=Common.sTwo.format(goalVO.getEndTime())+"前已儲蓄"+saveMoney+"元 達成";
                     }else{
                         goalVO.setStatue(2);
+                        goalVO.setNotify(false);
                         message=Common.sTwo.format(goalVO.getEndTime())+"前已儲蓄"+saveMoney+"元 失敗";
                     }
                     goalDB.update(goalVO);
@@ -207,7 +210,7 @@ public class ThirdReceiver extends BroadcastReceiver {
             channelLove.enableLights(true);
             channelLove.enableVibration(true);
             Notification.Builder builder =  new Notification.Builder(context,idLove)
-                            .setSmallIcon(null)
+                            .setSmallIcon(R.mipmap.ele_book)
                             .setContentTitle(title)
                             .setContentText(message);
 

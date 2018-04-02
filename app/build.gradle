@@ -4,15 +4,15 @@ android {
     signingConfigs {
         Keystore {
             keyAlias 'key'
-            keyPassword 'second'
+            keyPassword 'hearty852'
             storeFile file('D:/second.jks')
-            storePassword 'second'
+            storePassword 'hearty852'
         }
     }
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.chargeapp.whc.chargeapp"
-        minSdkVersion 23
+        minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"

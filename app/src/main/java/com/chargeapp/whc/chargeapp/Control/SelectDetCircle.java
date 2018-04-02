@@ -220,7 +220,7 @@ public class SelectDetCircle extends Fragment {
             pieChart.setHoleRadius(7);
             pieChart.setTransparentCircleRadius(10);
             // enable rotation of the chart by touch
-            pieChart.setRotationAngle(30);
+            pieChart.setRotationAngle(60);
             pieChart.setRotationEnabled(true);
             Legend l = pieChart.getLegend();
             l.setEnabled(false);

@@ -139,8 +139,6 @@ public class SettingListFix extends Fragment {
             TextView title=itemView.findViewById(R.id.listTitle);
             TextView decribe=itemView.findViewById(R.id.listDetail);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
-            TextView remainT=itemView.findViewById(R.id.remainT);
-            TextView fixT=itemView.findViewById(R.id.fixT);
             LinearLayout fixL=itemView.findViewById(R.id.fixL);
             Button update=itemView.findViewById(R.id.updateD);
             Button deleteI=itemView.findViewById(R.id.deleteI);
@@ -157,18 +155,14 @@ public class SettingListFix extends Fragment {
                 stringBuffer.append("\n共"+consumeVO.getMoney()+"元");
                 title.setText(stringBuffer.toString());
                 stringBuffer=new StringBuffer();
-                remindL.setVisibility(View.VISIBLE);
-                remainT.setText("固定");
-                remainT.setTextColor(Color.parseColor("#0000FF"));
-                remindL.setBackgroundColor(Color.parseColor("#0000FF"));
+
+                //設定標籤
+                fixL.setVisibility(View.VISIBLE);
                 if(consumeVO.getNotify().equals("true"))
                 {
-                    fixL.setVisibility(View.VISIBLE);
-                    fixT.setText("提醒");
-                    fixT.setTextColor(Color.parseColor("#CC0000"));
-                    fixL.setBackgroundColor(Color.parseColor("#CC0000"));
+                    remindL.setVisibility(View.VISIBLE);
                 }else {
-                    fixL.setVisibility(View.GONE);
+                    remindL.setVisibility(View.GONE);
                 }
                 JsonObject js=gson.fromJson(consumeVO.getFixDateDetail(),JsonObject.class);
                 stringBuffer.append(js.get("choicestatue").getAsString().trim());
@@ -192,17 +186,16 @@ public class SettingListFix extends Fragment {
                 });
 
             }else{
-                remindL.setVisibility(View.VISIBLE);
-                remainT.setText("固定");
-                remainT.setTextColor(Color.parseColor("#0000FF"));
-                fixL.setVisibility(View.GONE);
+                //設定標記
+                fixL.setVisibility(View.VISIBLE);
+                remindL.setVisibility(View.GONE);
+
                 final BankVO bankVO= (BankVO) o;
                 stringBuffer.append(Common.sTwo.format(bankVO.getDate()));
                 stringBuffer.append(" "+bankVO.getMaintype());
                 stringBuffer.append("\n共"+bankVO.getMoney()+"元");
                 title.setText(stringBuffer.toString());
                 //descide
-
                 stringBuffer=new StringBuffer();
                 JsonObject js=gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
                 String choiceStatue=js.get("choicestatue").getAsString().trim();

@@ -46,32 +46,26 @@ import java.util.List;
  * Created by 1709008NB01 on 2017/12/7.
  */
 
-public class SelectDetList extends Fragment {
+public class HomePagetList extends Fragment {
 
     //    private LineChart lineChart;
     private InvoiceDB invoiceDB;
     private ConsumeDB consumeDB;
     private ListView listView;
-    private boolean ShowConsume ;
-    private boolean ShowAllCarrier;
-    private boolean noShowCarrier;
-    private int year,month,day;
-    private int carrier;
     private List<InvoiceVO> invoiceVOS;
     private List<ConsumeVO> consumeVOS;
-    private HashMap<String,Integer> main;
     private String key;
     private List<Object> objects;
     private Gson gson=new Gson();
     private ProgressDialog progressDialog;
     private Calendar start,end;
-    private int Statue,period,dweek;
-    private String title;
     private TextView message;
     private int position;
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOS;
-
+    private int year,month,day;
+    private ArrayList<String> okey;
+    private String title;
 
 
 
@@ -80,39 +74,15 @@ public class SelectDetList extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
         setDB();
-        carrierVOS=carrierDB.getAll();
         findViewById(view);
-        main=new HashMap<>();
-        progressDialog=new ProgressDialog(getActivity());
-        ShowConsume= (boolean) getArguments().getSerializable("ShowConsume");
-        ShowAllCarrier= (boolean) getArguments().getSerializable("ShowAllCarrier");
-        noShowCarrier= (boolean) getArguments().getSerializable("noShowCarrier");
-        year= (int) getArguments().getSerializable("year");
-        month= (int) getArguments().getSerializable("month");
-        day= (int) getArguments().getSerializable("day");
+        end=Calendar.getInstance();
+        year=end.get(Calendar.YEAR);
+        month=end.get(Calendar.MONTH);
+        day=end.get(Calendar.DAY_OF_MONTH);
+        start=new GregorianCalendar(year,month,day,0,0,0);
+        end=new GregorianCalendar(year,month,day,23,59,59);
         key= (String) getArguments().getSerializable("key");
-        carrier= (int) getArguments().getSerializable("carrier");
-        Statue=(int) getArguments().getSerializable("statue");
-        period= (int) getArguments().getSerializable("period");
-        dweek= (int) getArguments().getSerializable("dweek");
-        position= (int) getArguments().getSerializable("position");
-        if (Statue == 0) {
-            start = new GregorianCalendar(year, month, day, 0, 0, 0);
-            end = new GregorianCalendar(year, month, day, 23, 59, 59);
-            title = Common.sOne.format(new Date(start.getTimeInMillis()));
-        } else if (Statue == 1) {
-            start=new GregorianCalendar(year,month,day - dweek + 1,0,0,0);
-            end=new GregorianCalendar(year,month,day - dweek + 1 + period-1,23,59,59);
-            title = Common.sTwo.format(new Date(start.getTimeInMillis())) + "~" + Common.sTwo.format(new Date(end.getTimeInMillis()));
-        } else if (Statue == 2) {
-            start = new GregorianCalendar(year, month, 1, 0, 0, 0);
-            end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
-            title = Common.sThree.format(new Date(start.getTimeInMillis()));
-        } else {
-            start = new GregorianCalendar(year, 0, 1, 0, 0, 0);
-            end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
-            title = Common.sFour.format(new Date(start.getTimeInMillis()));
-        }
+        title=Common.sOne.format(new Date(start.getTimeInMillis()))+key;
         getActivity().setTitle(title);
         setLayout();
         return view;
@@ -127,21 +97,10 @@ public class SelectDetList extends Fragment {
     public void setLayout()
     {
         objects=new ArrayList<>();
-        if(ShowConsume)
-        {
-            consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
-            objects.addAll(consumeVOS);
-        }
-        if(!noShowCarrier&&carrierVOS.size()>0)
-        {
-            if(ShowAllCarrier)
-            {
-                invoiceVOS=invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
-            }else {
-                invoiceVOS = invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key, carrierVOS.get(carrier).getCarNul());
-            }
-            objects.addAll(invoiceVOS);
-        }
+        consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
+        objects.addAll(consumeVOS);
+        invoiceVOS=invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
+        objects.addAll(invoiceVOS);
         if(listView.getAdapter()!=null)
         {
             ListAdapter adapter= (ListAdapter) listView.getAdapter();
@@ -245,15 +204,15 @@ public class SelectDetList extends Fragment {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SelectDetList.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                            ConnectivityManager mConnectivityManager = (ConnectivityManager) HomePagetList.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                             if(mNetworkInfo!=null)
                             {
-                                new GetSQLDate(SelectDetList.this,I).execute("reDownload");
+                                new GetSQLDate(HomePagetList.this,I).execute("reDownload");
                                 progressDialog.setMessage("正在下傳資料,請稍候...");
                                 progressDialog.show();
                             }else{
-                                Common.showToast(SelectDetList.this.getActivity(),"網路沒有開啟，無法下載!");
+                                Common.showToast(HomePagetList.this.getActivity(),"網路沒有開啟，無法下載!");
                             }
                         }
                     });
@@ -359,7 +318,7 @@ public class SelectDetList extends Fragment {
                 public void onClick(View view) {
                     DeleteDialogFragment aa= new DeleteDialogFragment();
                     aa.setObject(o);
-                    aa.setFragement(SelectDetList.this);
+                    aa.setFragement(HomePagetList.this);
                     aa.show(getFragmentManager(),"show");
                 }
             });
@@ -380,20 +339,13 @@ public class SelectDetList extends Fragment {
 
 
     private void switchFragment(Fragment fragment,Bundle bundle) {
-        bundle.putSerializable("action","SelectDetList");
-        bundle.putSerializable("ShowConsume", ShowConsume);
-        bundle.putSerializable("ShowAllCarrier", ShowAllCarrier);
-        bundle.putSerializable("noShowCarrier", noShowCarrier);
+        bundle.putSerializable("action","HomePagetList");
         bundle.putSerializable("year", year);
         bundle.putSerializable("month", month);
         bundle.putSerializable("day", day);
         bundle.putSerializable("key", key);
-        bundle.putSerializable("carrier", carrier);
-        bundle.putSerializable("statue",Statue);
-        bundle.putSerializable("period", period);
-        bundle.putSerializable("dweek",dweek);
         fragment.setArguments(bundle);
-        MainActivity.oldFramgent.add("SelectDetList");
+        MainActivity.oldFramgent.add("HomePagetList");
         MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 :  getFragmentManager().getFragments()) {

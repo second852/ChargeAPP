@@ -575,7 +575,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
+        Log.d("MainActivity", String.valueOf(oldFramgent.size())+":"+String.valueOf(bundles.size()));
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (oldFramgent.size() == 0 || bundles.size() == 0) {
                 OutDialogFragment aa = new OutDialogFragment();
@@ -627,6 +627,18 @@ public class MainActivity extends AppCompatActivity {
                     fragment.setArguments(bundle);
                 } else if (action.equals("SettingListFixCon")) {
                     fragment = new SettingListFixCon();
+                    fragment.setArguments(bundle);
+                }else if (action.equals("SelectShowCircleDeList")) {
+                    fragment = new SelectShowCircleDeList();
+                    fragment.setArguments(bundle);
+                }else if (action.equals("UpdateInvoice")) {
+                    fragment = new UpdateInvoice();
+                    fragment.setArguments(bundle);
+                }else if (action.equals("UpdateSpend")) {
+                    fragment = new UpdateSpend();
+                    fragment.setArguments(bundle);
+                }else if (action.equals("UpdateIncome")) {
+                    fragment = new UpdateIncome();
                     fragment.setArguments(bundle);
                 }
                 oldFramgent.remove(oldFramgent.size() - 1);

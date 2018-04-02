@@ -46,7 +46,7 @@ import java.util.List;
  * Created by 1709008NB01 on 2017/12/7.
  */
 
-public class SelectDetList extends Fragment {
+public class SelectShowCircleDeList extends Fragment {
 
     //    private LineChart lineChart;
     private InvoiceDB invoiceDB;
@@ -71,6 +71,7 @@ public class SelectDetList extends Fragment {
     private int position;
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOS;
+    private List<String> Okey;
 
 
 
@@ -114,7 +115,7 @@ public class SelectDetList extends Fragment {
             title = Common.sFour.format(new Date(start.getTimeInMillis()));
         }
         getActivity().setTitle(title);
-        setLayout();
+        choiceLayout();
         return view;
     }
 
@@ -123,22 +124,73 @@ public class SelectDetList extends Fragment {
         Common.showToast(getActivity(),"財政部網路忙線~");
     }
 
+    public void setOtherLayout()
+    {
+        objects=new ArrayList<>();
+        for(String s:Okey)
+        {
+            if(ShowConsume)
+            {
+                consumeVOS=consumeDB.getSecondTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),s);
+                objects.addAll(consumeVOS);
+            }
+            if(!noShowCarrier&&carrierVOS.size()>0)
+            {
+                if(ShowAllCarrier)
+                {
+                    invoiceVOS=invoiceDB.getInvoiceBytimeSecondType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),s);
+                }else {
+                    invoiceVOS = invoiceDB.getInvoiceBytimeSecondType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), s, carrierVOS.get(carrier).getCarNul());
+                }
+                objects.addAll(invoiceVOS);
+            }
+            if(listView.getAdapter()!=null)
+            {
+                ListAdapter adapter= (ListAdapter) listView.getAdapter();
+                adapter.setObjects(objects);
+                adapter.notifyDataSetChanged();
+            }else {
+                listView.setAdapter(new ListAdapter(getActivity(),objects));
+            }
+            listView.setSelection(position);
+            if(objects.size()<=0)
+            {
+                message.setText(title+"\n"+key+"種類 無資料!");
+                message.setVisibility(View.VISIBLE);
+            }else{
+                message.setVisibility(View.GONE);
+            }
+            progressDialog.cancel();
+        }
+    }
+
+    public void choiceLayout()
+    {
+        if(key.equals("其他"))
+        {
+            Okey=getArguments().getStringArrayList("OKey");
+            setOtherLayout();
+        }else {
+            setLayout();
+        }
+    }
+
 
     public void setLayout()
     {
         objects=new ArrayList<>();
         if(ShowConsume)
         {
-            consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
+            consumeVOS=consumeDB.getSecondTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
             objects.addAll(consumeVOS);
         }
         if(!noShowCarrier&&carrierVOS.size()>0)
         {
             if(ShowAllCarrier)
             {
-                invoiceVOS=invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
+                invoiceVOS=invoiceDB.getInvoiceBytimeSecondType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
             }else {
-                invoiceVOS = invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key, carrierVOS.get(carrier).getCarNul());
+                invoiceVOS = invoiceDB.getInvoiceBytimeSecondType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key, carrierVOS.get(carrier).getCarNul());
             }
             objects.addAll(invoiceVOS);
         }
@@ -245,15 +297,15 @@ public class SelectDetList extends Fragment {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SelectDetList.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SelectShowCircleDeList.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
                             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                             if(mNetworkInfo!=null)
                             {
-                                new GetSQLDate(SelectDetList.this,I).execute("reDownload");
+                                new GetSQLDate(SelectShowCircleDeList.this,I).execute("reDownload");
                                 progressDialog.setMessage("正在下傳資料,請稍候...");
                                 progressDialog.show();
                             }else{
-                                Common.showToast(SelectDetList.this.getActivity(),"網路沒有開啟，無法下載!");
+                                Common.showToast(SelectShowCircleDeList.this.getActivity(),"網路沒有開啟，無法下載!");
                             }
                         }
                     });
@@ -359,7 +411,7 @@ public class SelectDetList extends Fragment {
                 public void onClick(View view) {
                     DeleteDialogFragment aa= new DeleteDialogFragment();
                     aa.setObject(o);
-                    aa.setFragement(SelectDetList.this);
+                    aa.setFragement(SelectShowCircleDeList.this);
                     aa.show(getFragmentManager(),"show");
                 }
             });
@@ -380,7 +432,7 @@ public class SelectDetList extends Fragment {
 
 
     private void switchFragment(Fragment fragment,Bundle bundle) {
-        bundle.putSerializable("action","SelectDetList");
+        bundle.putSerializable("action","SelectShowCircleDeList");
         bundle.putSerializable("ShowConsume", ShowConsume);
         bundle.putSerializable("ShowAllCarrier", ShowAllCarrier);
         bundle.putSerializable("noShowCarrier", noShowCarrier);
@@ -393,7 +445,7 @@ public class SelectDetList extends Fragment {
         bundle.putSerializable("period", period);
         bundle.putSerializable("dweek",dweek);
         fragment.setArguments(bundle);
-        MainActivity.oldFramgent.add("SelectDetList");
+        MainActivity.oldFramgent.add("SelectShowCircleDeList");
         MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 :  getFragmentManager().getFragments()) {

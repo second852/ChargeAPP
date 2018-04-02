@@ -89,7 +89,7 @@ public class GoalUpdate extends Fragment {
 
     private void setGoalVO() {
         name.setText(goalVO.getName());
-        money.setText(goalVO.getMoney());
+        money.setText(String.valueOf(goalVO.getMoney()));
         spinnerT.setText(goalVO.getType());
         setSpinnerT();
         limitP.setText(Common.sTwo.format(goalVO.getEndTime()));

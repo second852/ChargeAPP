@@ -286,7 +286,7 @@ public class SelectOtherCircle extends Fragment {
                 pieChart.setDrawHoleEnabled(true);
                 pieChart.setHoleRadius(7);
                 pieChart.setTransparentCircleRadius(10);
-                pieChart.setRotationAngle(0);
+                pieChart.setRotationAngle(60);
                 pieChart.setRotationEnabled(true);
                 pieChart.setEntryLabelColor(Color.BLACK);
                 pieChart.getLegend().setEnabled(false);

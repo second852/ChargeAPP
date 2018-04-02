@@ -288,7 +288,7 @@ public class UpdateInvoice extends Fragment {
     private void returnThisFramgent(Fragment fragment,Bundle bundle)
     {
 
-
+        bundle.putSerializable("invoiceVO",invoiceVO);
         if(action.equals("SelectDetList"))
         {
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
@@ -317,8 +317,24 @@ public class UpdateInvoice extends Fragment {
             bundle.putSerializable("period", getArguments().getSerializable("period"));
             bundle.putSerializable("dweek",getArguments().getSerializable("dweek"));
             bundle.putSerializable("position",getArguments().getSerializable("position"));
+        }else if(action.equals("SelectShowCircleDeList"))
+        {
+            bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
+            bundle.putSerializable("ShowAllCarrier",  getArguments().getSerializable("ShowAllCarrier"));
+            bundle.putSerializable("noShowCarrier",  getArguments().getSerializable("noShowCarrier"));
+            bundle.putSerializable("year",  getArguments().getSerializable("year"));
+            bundle.putSerializable("month",  getArguments().getSerializable("month"));
+            bundle.putSerializable("day",  getArguments().getSerializable("day"));
+            bundle.putSerializable("key",  getArguments().getSerializable("key"));
+            bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
+            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
+            bundle.putSerializable("period",  getArguments().getSerializable("period"));
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
         }
         fragment.setArguments(bundle);
+        MainActivity.bundles.add(bundle);
+        MainActivity.oldFramgent.add("UpdateInvoice");
         switchFramgent(fragment);
     }
 
@@ -365,6 +381,21 @@ public class UpdateInvoice extends Fragment {
         }else if(action.equals("SelectListModelCom"))
         {
             fragment=new SelectListModelCom();
+        }else if(action.equals("SelectShowCircleDeList"))
+        {
+            fragment=new SelectShowCircleDeList();
+            bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
+            bundle.putSerializable("ShowAllCarrier",  getArguments().getSerializable("ShowAllCarrier"));
+            bundle.putSerializable("noShowCarrier",  getArguments().getSerializable("noShowCarrier"));
+            bundle.putSerializable("year",  getArguments().getSerializable("year"));
+            bundle.putSerializable("month",  getArguments().getSerializable("month"));
+            bundle.putSerializable("day",  getArguments().getSerializable("day"));
+            bundle.putSerializable("key",  getArguments().getSerializable("key"));
+            bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
+            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
+            bundle.putSerializable("period",  getArguments().getSerializable("period"));
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);

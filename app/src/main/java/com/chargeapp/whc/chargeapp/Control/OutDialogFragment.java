@@ -9,6 +9,7 @@ import android.support.v4.app.DialogFragment;
 import android.text.Html;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
+import com.chargeapp.whc.chargeapp.R;
 
 /**
  * Created by Wang on 2018/1/3.
@@ -35,7 +36,7 @@ public class OutDialogFragment extends DialogFragment implements  DialogInterfac
 
         return new AlertDialog.Builder(getActivity())
                 .setTitle(Html.fromHtml(title))
-                .setIcon(null)
+                .setIcon(R.mipmap.ele_book)
                 .setMessage(message)
                 .setPositiveButton("YES", this)
                 .setNegativeButton("NO", this)

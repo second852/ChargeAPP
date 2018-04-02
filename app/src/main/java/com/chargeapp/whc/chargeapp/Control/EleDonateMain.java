@@ -39,7 +39,6 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         DonateViewPager.setAdapter(mAdapterViewPager);
         DonateViewPager.addOnPageChangeListener(this);
-        DonateViewPager.setCurrentItem(4);
         setcurrentpage();
         text=view.findViewById(R.id.text);
         movefirst=exportMoney.getWidth();

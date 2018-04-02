@@ -155,7 +155,7 @@ public class GoalListAll extends Fragment {
                 itemView = layoutInflater.inflate(R.layout.select_con_detail_list_item, parent, false);
             }
             final GoalVO goalVO = goalVOS.get(position);
-            StringBuffer sb = new StringBuffer();
+
             TextView title = itemView.findViewById(R.id.listTitle);
             TextView decribe = itemView.findViewById(R.id.listDetail);
             LinearLayout remindL = itemView.findViewById(R.id.remindL);
@@ -165,10 +165,13 @@ public class GoalListAll extends Fragment {
             Button deleteI = itemView.findViewById(R.id.deleteI);
             fixL.setVisibility(View.VISIBLE);
             title.setText(goalVO.getName());
-            String timeDec = goalVO.getTimeStatue().trim();
+            String timeDec =goalVO.getTimeStatue().trim();
 
             if (timeDec.equals("今日")) {
-                timeDec = Common.sTwo.format(goalVO.getStartTime()).trim() + " ~ " + Common.sTwo.format(goalVO.getEndTime()).trim() + "\n";
+                timeDec =" 起日 : " + Common.sTwo.format(goalVO.getStartTime()).trim() +
+                         "\n 迄日 : " + Common.sTwo.format(goalVO.getEndTime()).trim()+"\n" ;
+            }else{
+                timeDec=" 時態 : "+timeDec+"\n";
             }
             if (goalVO.isNotify()) {
                 remindL.setVisibility(View.VISIBLE);
@@ -183,7 +186,7 @@ public class GoalListAll extends Fragment {
                 fixL.setBackgroundColor(Color.parseColor("#7700FF"));
                 updateGoal=false;
             } else if (goalVO.getStatue() == 2) {
-                fixT.setText("完成");
+                fixT.setText("達成");
                 fixT.setTextColor(Color.parseColor("#FF8800"));
                 fixL.setBackgroundColor(Color.parseColor("#FF8800"));
                 updateGoal=false;
@@ -194,13 +197,8 @@ public class GoalListAll extends Fragment {
                 updateGoal=true;
             }
 
-
-
-
-            sb.append(" " + timeDec);
-            sb.append(goalVO.getType());
-            sb.append(goalVO.getMoney() + " 元");
-            decribe.setText(sb.toString());
+            timeDec=timeDec+goalVO.getType()+": "+goalVO.getMoney()+" 元";
+            decribe.setText(timeDec);
             if(updateGoal)
             {
                 update.setVisibility(View.VISIBLE);

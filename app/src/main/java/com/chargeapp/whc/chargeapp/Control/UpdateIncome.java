@@ -157,6 +157,8 @@ public class UpdateIncome extends Fragment {
                 {
                     gotoFramgent(fragment, bundle);
                 }
+                MainActivity.oldFramgent.add("UpdateIncome");
+                MainActivity.bundles.add(fragment.getArguments());
                 return;
             }
             name.setText(type);

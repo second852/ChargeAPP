@@ -24,14 +24,18 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
+import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -82,6 +86,9 @@ public class SelectShowCircleDe extends Fragment {
     private int position;
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOS;
+    private ArrayList<String> Okey;
+    private boolean ShowZero;
+    private List<PieEntry> yVals1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -151,27 +158,55 @@ public class SelectShowCircleDe extends Fragment {
     }
 
     private PieData addData() {
-        List<PieEntry> yVals1 = new ArrayList<PieEntry>();
+        Okey=new ArrayList<>();
+        yVals1 = new ArrayList<PieEntry>();
+        ChartEntry chartEntry=new ChartEntry("其他",0);
         for(String s:hashMap.keySet())
         {
             if(s.equals("O"))
             {
-                yVals1.add(new PieEntry(hashMap.get(s),"其他"));
+                chartEntry.setValue(chartEntry.getValue()+hashMap.get(s));
+                Okey.add(s);
             }else if(s.equals("0")){
-                yVals1.add(new PieEntry(hashMap.get(s),"未知"));
+                chartEntry.setValue(chartEntry.getValue()+hashMap.get(s));
+                Okey.add(s);
             }else {
                yVals1.add(new PieEntry(hashMap.get(s),s));
             }
         }
+
+        if(yVals1.size()>5)
+        {
+            Collections.sort(yVals1, new Comparator<PieEntry>() {
+                @Override
+                public int compare(PieEntry pieEntry, PieEntry t1) {
+                    return (int) -(pieEntry.getValue()-t1.getValue());
+                }
+            });
+            while (yVals1.size()>5)
+            {
+                Okey.add(yVals1.get(4).getLabel());
+                chartEntry.setValue((int) (chartEntry.getValue()+yVals1.get(4).getValue()));
+                yVals1.remove(4);
+            }
+        }
+
+        if(chartEntry.getValue()>0)
+        {
+            yVals1.add(new PieEntry(chartEntry.getValue(),chartEntry.getKey()));
+        }
+
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
         int size=yVals1.size();
         if(size<=0)
         {
+            ShowZero=true;
             dataSet.setDrawValues(false);
             yVals1.add(new PieEntry(1, "無花費"));
             int[] c={Color.parseColor("#CCEEFF")};
             dataSet.setColors(c);
         }else{
+            ShowZero=false;
             dataSet.setColors(Common.getColor(size));
             dataSet.setDrawValues(true);
             dataSet.setValueLinePart1OffsetPercentage(90.f);
@@ -193,7 +228,45 @@ public class SelectShowCircleDe extends Fragment {
         return data;
     }
 
-    public  void setLayout() {
+    private class pieValue implements OnChartValueSelectedListener {
+        @Override
+        public void onValueSelected(Entry e, Highlight h) {
+            if (ShowZero) {
+                return;
+            }
+            String key = yVals1.get((int) h.getX()).getLabel();
+            Bundle bundle = new Bundle();
+            Fragment fragment=new SelectShowCircleDeList();
+            if (key.equals("其他")) {
+                ArrayList<String> s=new ArrayList<>();
+                s.addAll(Okey);
+                bundle.putStringArrayList("OKey", s);
+            }
+            bundle.putSerializable("key",key);
+            bundle.putSerializable("total",(int)h.getY());
+            bundle.putSerializable("ShowConsume", ShowConsume);
+            bundle.putSerializable("ShowAllCarrier", ShowAllCarrier);
+            bundle.putSerializable("noShowCarrier", noShowCarrier);
+            bundle.putSerializable("year", year);
+            bundle.putSerializable("month", month);
+            bundle.putSerializable("day", day);
+            bundle.putSerializable("index", mainTitle);
+            bundle.putSerializable("carrier",carrier);
+            bundle.putSerializable("statue", Statue);
+            bundle.putSerializable("period", period);
+            bundle.putSerializable("dweek",dweek);
+            bundle.putSerializable("position",0);
+            fragment.setArguments(bundle);
+            switchFragment(fragment);
+        }
+
+        @Override
+        public void onNothingSelected() {
+
+        }
+    }
+
+    public void setLayout() {
         objects=new ArrayList<>();
         hashMap=new HashMap<>();
         int total=0;
@@ -253,12 +326,13 @@ public class SelectShowCircleDe extends Fragment {
         pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleRadius(7);
         pieChart.setTransparentCircleRadius(10);
-        pieChart.setRotationAngle(30);
+        pieChart.setRotationAngle(60);
         pieChart.setRotationEnabled(true);
         pieChart.setEntryLabelColor(Color.BLACK);
         pieChart.setDescription(Common.getDeescription());
         pieChart.getLegend().setEnabled(false);
         pieChart.invalidate();
+        pieChart.setOnChartValueSelectedListener(new pieValue());
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
         getActivity().setTitle(title);
         detail.setText(mainTitle+" : 共"+total+"元");
@@ -307,6 +381,7 @@ public class SelectShowCircleDe extends Fragment {
             Button update=itemView.findViewById(R.id.updateD);
             Button deleteI=itemView.findViewById(R.id.deleteI);
             LinearLayout fixL=itemView.findViewById(R.id.fixL);
+            TextView fixT=itemView.findViewById(R.id.fixT);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
             TextView remainT=itemView.findViewById(R.id.remainT);
             LinearLayout typeL=itemView.findViewById(R.id.typeL);
@@ -327,7 +402,7 @@ public class SelectShowCircleDe extends Fragment {
                 typeT.setTextColor(Color.parseColor("#008844"));
                 typeL.setBackgroundColor(Color.parseColor("#008844"));
 
-                sbTitle.append(sf.format(new Date(I.getTime().getTime()))+" ");
+                sbTitle.append(Common.sDay.format(new Date(I.getTime().getTime()))+" ");
                 if(I.getSecondtype().equals("O"))
                 {
                     sbTitle.append("其他");
@@ -406,39 +481,38 @@ public class SelectShowCircleDe extends Fragment {
                 final ConsumeVO c= (ConsumeVO) o;
 
                 typeT.setText("紙本發票");
-                typeT.setTextColor(Color.parseColor("#0044BB"));
-                typeL.setBackgroundColor(Color.parseColor("#0044BB"));
+                typeT.setTextColor(Color.parseColor("#CC6600"));
+                typeL.setBackgroundColor(Color.parseColor("#CC6600"));
                 typeL.setVisibility(View.VISIBLE);
+                if (c.isAuto()) {
+                    fixT.setText("自動");
+                    fixT.setTextColor(Color.parseColor("#7700BB"));
+                    fixL.setBackgroundColor(Color.parseColor("#7700BB"));
+                    fixL.setVisibility(View.VISIBLE);
+                }
 
-                if(c.isAuto())
-                {
-                    remainT.setText("自動");
-                    remainT.setTextColor(Color.parseColor("#7700BB"));
-                    remindL.setBackgroundColor(Color.parseColor("#7700BB"));
+                if (Boolean.valueOf(c.getNotify())) {
                     remindL.setVisibility(View.VISIBLE);
-                }else{
-                    if(Boolean.valueOf(c.getNotify()))
-                    {
-                        remainT.setText("提醒");
-                        remainT.setTextColor(Color.RED);
-                        remindL.setBackgroundColor(Color.RED);
-                        remindL.setVisibility(View.VISIBLE);
-                    }else{
-                        remindL.setVisibility(View.GONE);
-                    }
+                } else {
+                    remindL.setVisibility(View.GONE);
                 }
 
                 StringBuffer stringBuffer=new StringBuffer();
                 //設定 title
-                stringBuffer.append(Common.sTwo.format(c.getDate()));
+                stringBuffer.append(Common.sDay.format(c.getDate()));
                 stringBuffer.append(" "+c.getMaintype());
                 stringBuffer.append("\n共"+c.getMoney()+"元");
                 title.setText(stringBuffer.toString());
 
                 //設定 describe
-                if(c.getFixDate().equals("true")||c.isAuto())
+                if(c.getFixDate().equals("true"))
                 {
+
+                    fixT.setText("固定");
+                    fixT.setTextColor(Color.parseColor("#003C9D"));
+                    fixL.setBackgroundColor(Color.parseColor("#003C9D"));
                     fixL.setVisibility(View.VISIBLE);
+
                     stringBuffer=new StringBuffer();
                     JsonObject js=gson.fromJson(c.getFixDateDetail(),JsonObject.class);
                     stringBuffer.append(js.get("choicestatue").getAsString().trim());

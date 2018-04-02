@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.view.menu.MenuWrapperFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,10 +28,13 @@ import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import org.apache.poi.ss.formula.functions.T;
 
@@ -206,6 +210,7 @@ public class HomePage extends Fragment {
         pieChart.setData(data);
         pieChart.invalidate();
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
+        pieChart.setOnChartValueSelectedListener(new pieValue());
     }
 
 
@@ -289,7 +294,11 @@ public class HomePage extends Fragment {
                                   invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                           describeContent.append("花費 : 本年支出"+consumeCount+"元");
                       }
-                      title.setText("目標 : "+goalVO.getName()+" "+goalVO.getTimeStatue()+"支出"+goalVO.getMoney()+"元");
+
+                      //設定Title
+                      title.setText("目標 : "+goalVO.getName().trim()+goalVO.getTimeStatue().trim()+"支出"+goalVO.getMoney()+"元");
+
+
                       if(Integer.valueOf(goalVO.getMoney())>consumeCount)
                       {
                           resultT.setText("達成");
@@ -311,40 +320,42 @@ public class HomePage extends Fragment {
                                 invoiceDB.getTotalBytime(new Timestamp(goalVO.getStartTime().getTime()),new Timestamp(goalVO.getEndTime().getTime()));
                         int saveMoney=bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()),new Timestamp(goalVO.getEndTime().getTime()))-consumeCount;
 
-                        if(goalVO.getEndTime().getTime()>System.currentTimeMillis())
+                        if(goalVO.getEndTime().getTime()<System.currentTimeMillis())
                         {
-                            title.setText(" 目標 :"+goalVO.getName()+" "+Common.sTwo.format(goalVO.getEndTime())+"前儲蓄"+goalVO.getMoney()+"元");
+                            title.setText("目標 : "+goalVO.getName()+"\n"+Common.sTwo.format(goalVO.getEndTime())+"前 儲蓄"+goalVO.getMoney()+"元");
                             if(Integer.valueOf(goalVO.getMoney())<saveMoney)
                             {
                                 goalVO.setStatue(1);
-                                describeContent.append(Common.sTwo.format(goalVO.getEndTime())+"前已儲蓄"+saveMoney+"元");
+                                goalVO.setNotify(false);
+                                describeContent.append(Common.sTwo.format(goalVO.getEndTime())+"前\n已儲蓄"+saveMoney+"元");
                                 resultT.setText("達成");
                                 resultT.setTextColor(Color.parseColor("#2E8B57"));
                                 resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
                             }else{
                                 goalVO.setStatue(2);
-                                describeContent.append(Common.sTwo.format(goalVO.getEndTime())+"前已儲蓄"+saveMoney+"元");
+                                goalVO.setNotify(false);
+                                describeContent.append(Common.sTwo.format(goalVO.getEndTime())+"前\n已儲蓄"+saveMoney+"元");
                                 resultT.setText("失敗");
                                 resultT.setTextColor(Color.parseColor("#DC143C"));
                                 resultL.setBackgroundColor(Color.parseColor("#DC143C"));
                             }
                             goalDB.update(goalVO);
                         }else{
-                            title.setText(" 目標 :"+goalVO.getName()+" "+Common.sTwo.format(goalVO.getEndTime())+"前儲蓄"+goalVO.getMoney()+"元");
+                            title.setText("目標 : "+goalVO.getName()+"\n"+Common.sTwo.format(goalVO.getEndTime())+"前 儲蓄"+goalVO.getMoney()+"元");
                             double day=((goalVO.getEndTime().getTime()-System.currentTimeMillis())/(1000*60*60*24));
                             if(Integer.valueOf(goalVO.getMoney())<saveMoney)
                             {
                                 goalVO.setStatue(1);
-                                describeContent.append("倒數"+(int)day+"天 目前已儲蓄"+saveMoney+"元");
+                                describeContent.append("倒數"+(int)day+"天\n目前已儲蓄"+saveMoney+"元");
                                 resultT.setText("達成");
-                                resultT.setTextColor(Color.parseColor("#2E8B57"));
-                                resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
+                                resultT.setTextColor(Color.parseColor("#FF8800"));
+                                resultL.setBackgroundColor(Color.parseColor("#FF8800"));
                             }else{
                                 goalVO.setStatue(2);
-                                describeContent.append("倒數"+(int)day+"天 目前已儲蓄"+saveMoney+"元");
+                                describeContent.append("倒數"+(int)day+"天\n目前已儲蓄"+saveMoney+"元");
                                 resultT.setText("持續中");
-                                resultT.setTextColor(Color.parseColor("#DC143C"));
-                                resultL.setBackgroundColor(Color.parseColor("#DC143C"));
+                                resultT.setTextColor(Color.parseColor("#0000FF"));
+                                resultL.setBackgroundColor(Color.parseColor("#0000FF"));
                             }
                         }
                         describe.setText(describeContent.toString());
@@ -357,7 +368,7 @@ public class HomePage extends Fragment {
                                 invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                         int savemoney=bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))-consumeCount;
                         title.setText(" 目標 :"+goalVO.getName()+" 每月儲蓄"+goalVO.getMoney()+"元");
-                        describe.setText("目前 : 本月已存款"+savemoney+"元");
+                        describe.setText(" 目前 : 本月\n 已存款"+savemoney+"元");
                         if(Integer.valueOf(goalVO.getMoney())<savemoney)
                         {
                             resultT.setText("達成");
@@ -376,7 +387,7 @@ public class HomePage extends Fragment {
                                 invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                         int savemoney=bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))-consumeCount;
                         title.setText(" 目標 :"+goalVO.getName()+" 每年儲蓄"+goalVO.getMoney()+"元");
-                        describe.setText("目前 : 本年已存款"+savemoney+"元");
+                        describe.setText(" 目前 : 本年\n 已存款"+savemoney+"元");
                         if(Integer.valueOf(goalVO.getMoney())<savemoney)
                         {
                             resultT.setText("達成");
@@ -457,6 +468,47 @@ public class HomePage extends Fragment {
             }
             return itemView;
         }
+    }
+
+    private class pieValue implements OnChartValueSelectedListener {
+        @Override
+        public void onValueSelected(Entry e, Highlight h) {
+            if (ShowZero) {
+                return;
+            }
+            String key = yVals1.get((int) h.getX()).getLabel();
+            Bundle bundle = new Bundle();
+            Fragment fragment=new SelectShowCircleDeList();
+            if (key.equals("其他")) {
+                ArrayList<String> s=new ArrayList<>();
+                s.addAll(Okey);
+                bundle.putStringArrayList("OKey", s);
+            }
+            bundle.putSerializable("key",key);
+            bundle.putSerializable("total",(int)h.getY());
+            bundle.putSerializable("year", year);
+            bundle.putSerializable("month", month);
+            bundle.putSerializable("day", day);
+            bundle.putSerializable("position",0);
+            fragment.setArguments(bundle);
+            switchFragment(fragment);
+        }
+
+        @Override
+        public void onNothingSelected() {
+
+        }
+    }
+
+    private void switchFragment(Fragment fragment) {
+        MainActivity.oldFramgent.add("SelectShowCircleDe");
+        MainActivity.bundles.add(fragment.getArguments());
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        for (Fragment fragment1 :  getFragmentManager().getFragments()) {
+            fragmentTransaction.remove(fragment1);
+        }
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
     }
 }
 

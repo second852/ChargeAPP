@@ -121,19 +121,19 @@ public class Download extends AppCompatActivity {
         AdView adView = (AdView) this.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-        if(mNetworkInfo!=null)
-        {
-            getSQLDate=new GetSQLDate(this);
-            getSQLDate.setPercentage(percentage);
-            getSQLDate.setProgressT(progressT);
-            getSQLDate.execute("download");
-        }else{
-            tonNewActivity();
-            Common.showToast(this,"網路沒有開啟，無法下載!");
-        }
-//        tonNewActivity();
+//        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+//        if(mNetworkInfo!=null)
+//        {
+//            getSQLDate=new GetSQLDate(this);
+//            getSQLDate.setPercentage(percentage);
+//            getSQLDate.setProgressT(progressT);
+//            getSQLDate.execute("download");
+//        }else{
+//            tonNewActivity();
+//            Common.showToast(this,"網路沒有開啟，無法下載!");
+//        }
+        tonNewActivity();
     }
 
     private Runnable runnable=new Runnable() {

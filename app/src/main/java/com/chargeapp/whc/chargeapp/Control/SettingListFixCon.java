@@ -146,18 +146,17 @@ public class SettingListFixCon extends Fragment {
             }else {
                 if(consumeVO.getNotify().equals("true"))
                 {
-                    fixT.setText("提醒");
-                    fixT.setTextColor(Color.parseColor("#CC0000"));
-                    fixL.setBackgroundColor(Color.parseColor("#CC0000"));
-                    fixL.setVisibility(View.VISIBLE);
+                    remainT.setText("提醒");
+                    remainT.setTextColor(Color.parseColor("#CC0000"));
+                    remindL.setBackgroundColor(Color.parseColor("#CC0000"));
+                    remindL.setVisibility(View.VISIBLE);
                 }else {
-                    fixL.setVisibility(View.GONE);
+                    remindL.setVisibility(View.GONE);
                 }
-                remainT.setText("本體");
-                remainT.setTextColor(Color.parseColor("#0000FF"));
-                remindL.setBackgroundColor(Color.parseColor("#0000FF"));
-                remindL.setVisibility(View.VISIBLE);
-
+                fixT.setText("本體");
+                fixT.setTextColor(Color.parseColor("#0000FF"));
+                fixL.setBackgroundColor(Color.parseColor("#0000FF"));
+                fixL.setVisibility(View.VISIBLE);
             }
             //設定 title
             stringBuffer.append(Common.sTwo.format(consumeVO.getDate()));

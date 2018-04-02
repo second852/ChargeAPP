@@ -204,6 +204,8 @@ public class InsertConsumeType extends Fragment {
                 bundle.putSerializable("consumeVO", (ConsumeVO) object);
                 returnThisFramgent(new UpdateSpend(), bundle);
             }
+            MainActivity.bundles.remove(MainActivity.bundles.size()-1);
+            MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
             Common.showToast(getActivity(), "新增成功");
         }
     }
@@ -241,8 +243,19 @@ public class InsertConsumeType extends Fragment {
             fragment=new InsertSpend();
             bundle.putSerializable("needSet", getArguments().getSerializable("needSet"));
         }else if (action.equals("SettingListFixCon")) {
-
-
+            bundle.putSerializable("position", getArguments().getSerializable("position"));
+        }else if (action.equals("SelectShowCircleDeList")) {
+            bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
+            bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
+            bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
+            bundle.putSerializable("year", getArguments().getSerializable("year"));
+            bundle.putSerializable("month", getArguments().getSerializable("month"));
+            bundle.putSerializable("day", getArguments().getSerializable("day"));
+            bundle.putSerializable("key", getArguments().getSerializable("key"));
+            bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
+            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
+            bundle.putSerializable("period", getArguments().getSerializable("period"));
+            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
             bundle.putSerializable("position", getArguments().getSerializable("position"));
         }
         fragment.setArguments(bundle);
