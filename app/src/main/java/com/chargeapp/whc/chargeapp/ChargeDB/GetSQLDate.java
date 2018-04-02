@@ -17,6 +17,7 @@ import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
+import com.chargeapp.whc.chargeapp.Control.HomePagetList;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectDetList;
 import com.chargeapp.whc.chargeapp.Control.SelectListModelCom;
@@ -753,6 +754,13 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     selectShowCircleDeList.cancelshow();
                 } else {
                     selectShowCircleDeList.choiceLayout();
+                }
+            }else if (object instanceof HomePagetList) {
+                HomePagetList homePagetList = (HomePagetList) object;
+                if (s.equals("timeout") || s.equals("error")) {
+                    homePagetList.cancelshow();
+                } else {
+                    homePagetList.setChoiceLayout();
                 }
             }
         } catch (Exception e) {

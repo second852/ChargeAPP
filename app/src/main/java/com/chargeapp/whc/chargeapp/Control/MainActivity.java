@@ -320,6 +320,7 @@ public class MainActivity extends AppCompatActivity {
                     oldFramgent.clear();
                     bundles.clear();
                     if (i == 0) {
+                        Common.showfirstgrid=false;
                         drawerLayout.closeDrawer(GravityCompat.START);
                         fragment = new InsertActivity();
                         switchFragment(fragment);
@@ -639,6 +640,9 @@ public class MainActivity extends AppCompatActivity {
                     fragment.setArguments(bundle);
                 }else if (action.equals("UpdateIncome")) {
                     fragment = new UpdateIncome();
+                    fragment.setArguments(bundle);
+                }else if (action.equals("HomePage")) {
+                    fragment = new HomePage();
                     fragment.setArguments(bundle);
                 }
                 oldFramgent.remove(oldFramgent.size() - 1);

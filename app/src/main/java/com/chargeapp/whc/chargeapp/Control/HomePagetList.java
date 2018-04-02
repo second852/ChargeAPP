@@ -61,10 +61,8 @@ public class HomePagetList extends Fragment {
     private Calendar start,end;
     private TextView message;
     private int position;
-    private CarrierDB carrierDB;
-    private List<CarrierVO> carrierVOS;
     private int year,month,day;
-    private ArrayList<String> okey;
+    private ArrayList<String> Okey;
     private String title;
 
 
@@ -79,18 +77,63 @@ public class HomePagetList extends Fragment {
         year=end.get(Calendar.YEAR);
         month=end.get(Calendar.MONTH);
         day=end.get(Calendar.DAY_OF_MONTH);
+        progressDialog=new ProgressDialog(getActivity());
         start=new GregorianCalendar(year,month,day,0,0,0);
         end=new GregorianCalendar(year,month,day,23,59,59);
         key= (String) getArguments().getSerializable("key");
+        Okey=getArguments().getStringArrayList("OKey");
+        position= (int) getArguments().getSerializable("position");
         title=Common.sOne.format(new Date(start.getTimeInMillis()))+key;
         getActivity().setTitle(title);
-        setLayout();
+        setChoiceLayout();
         return view;
     }
 
     public void cancelshow(){
         progressDialog.cancel();
         Common.showToast(getActivity(),"財政部網路忙線~");
+    }
+
+    public void setChoiceLayout()
+    {
+        if(key.equals("其他"))
+        {
+            setOtherLayout();
+        }else{
+            setLayout();
+        }
+    }
+
+
+    public void setOtherLayout()
+    {
+
+        objects=new ArrayList<>();
+        for(String s:Okey)
+        {
+            consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),s);
+            objects.addAll(consumeVOS);
+            invoiceVOS=invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),s);
+            objects.addAll(invoiceVOS);
+        }
+
+        if(listView.getAdapter()!=null)
+        {
+            ListAdapter adapter= (ListAdapter) listView.getAdapter();
+            adapter.setObjects(objects);
+            adapter.notifyDataSetChanged();
+        }else {
+            listView.setAdapter(new ListAdapter(getActivity(),objects));
+        }
+        listView.setSelection(position);
+        if(objects.size()<=0)
+        {
+            message.setText(title+"\n"+key+"種類 無資料!");
+            message.setVisibility(View.VISIBLE);
+        }else{
+            message.setVisibility(View.GONE);
+        }
+        progressDialog.cancel();
     }
 
 
@@ -131,7 +174,6 @@ public class HomePagetList extends Fragment {
     private void setDB() {
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
     private class ListAdapter extends BaseAdapter {
@@ -340,9 +382,8 @@ public class HomePagetList extends Fragment {
 
     private void switchFragment(Fragment fragment,Bundle bundle) {
         bundle.putSerializable("action","HomePagetList");
-        bundle.putSerializable("year", year);
-        bundle.putSerializable("month", month);
-        bundle.putSerializable("day", day);
+        bundle.putStringArrayList("OKey",Okey);
+        bundle.putSerializable("position",0);
         bundle.putSerializable("key", key);
         fragment.setArguments(bundle);
         MainActivity.oldFramgent.add("HomePagetList");

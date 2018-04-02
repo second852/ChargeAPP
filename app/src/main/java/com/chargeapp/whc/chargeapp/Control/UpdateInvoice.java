@@ -331,6 +331,11 @@ public class UpdateInvoice extends Fragment {
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             bundle.putSerializable("period",  getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
+        }else if(action.equals("HomePagetList"))
+        {
+            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
+            bundle.putSerializable("position",getArguments().getSerializable("position"));
+            bundle.putSerializable("key", getArguments().getSerializable("key"));
         }
         fragment.setArguments(bundle);
         MainActivity.bundles.add(bundle);
@@ -396,6 +401,12 @@ public class UpdateInvoice extends Fragment {
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             bundle.putSerializable("period",  getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
+        }else if(action.equals("HomePagetList"))
+        {
+            fragment=new HomePagetList();
+            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
+            bundle.putSerializable("position",getArguments().getSerializable("position"));
+            bundle.putSerializable("key", getArguments().getSerializable("key"));
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);

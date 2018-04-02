@@ -65,6 +65,9 @@ public class HomePage extends Fragment {
     private Calendar start,end;
     private ListView listView;
     private int year,month,day;
+    private boolean ShowZero;
+    private  ArrayList<PieEntry> yVals1;
+    private ArrayList<String> Okey;
 
 
     @Override
@@ -163,7 +166,8 @@ public class HomePage extends Fragment {
 
     private void addData(HashMap<String, Integer> consumeVOS) {
         pieChartT.setText(Common.sDay.format(new Date(end.getTimeInMillis()))+"本日花費 : "+consumeVOS.get("total")+"元");
-        ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
+        yVals1 = new ArrayList<PieEntry>();
+        Okey=new ArrayList<>();
         boolean ShowZero = true;
         int total=consumeVOS.get("total");
         consumeVOS.remove("total");
@@ -179,6 +183,7 @@ public class HomePage extends Fragment {
                 i++;
             }else{
                 chartEntry.setValue(chartEntry.getValue()+consumeVOS.get(key));
+                Okey.add(key);
             }
         }
         if(chartEntry.getValue()>0)
@@ -474,21 +479,21 @@ public class HomePage extends Fragment {
         @Override
         public void onValueSelected(Entry e, Highlight h) {
             if (ShowZero) {
+                Fragment fragment=new InsertActivity();
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                for (Fragment fragment1 :  getFragmentManager().getFragments()) {
+                    fragmentTransaction.remove(fragment1);
+                }
+                fragmentTransaction.replace(R.id.body, fragment);
+                fragmentTransaction.commit();
                 return;
             }
             String key = yVals1.get((int) h.getX()).getLabel();
             Bundle bundle = new Bundle();
-            Fragment fragment=new SelectShowCircleDeList();
-            if (key.equals("其他")) {
-                ArrayList<String> s=new ArrayList<>();
-                s.addAll(Okey);
-                bundle.putStringArrayList("OKey", s);
-            }
+            Fragment fragment=new HomePagetList();
+            bundle.putStringArrayList("OKey", Okey);
             bundle.putSerializable("key",key);
             bundle.putSerializable("total",(int)h.getY());
-            bundle.putSerializable("year", year);
-            bundle.putSerializable("month", month);
-            bundle.putSerializable("day", day);
             bundle.putSerializable("position",0);
             fragment.setArguments(bundle);
             switchFragment(fragment);
@@ -501,7 +506,7 @@ public class HomePage extends Fragment {
     }
 
     private void switchFragment(Fragment fragment) {
-        MainActivity.oldFramgent.add("SelectShowCircleDe");
+        MainActivity.oldFramgent.add("HomePage");
         MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 :  getFragmentManager().getFragments()) {
