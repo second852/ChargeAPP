@@ -28,6 +28,7 @@ import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
+import com.chargeapp.whc.chargeapp.R;
 
 import java.util.Map;
 
@@ -114,7 +115,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
 
         return new AlertDialog.Builder(getActivity())
                 .setTitle(Html.fromHtml(title))
-                .setIcon(null)
+                .setIcon(R.drawable.warning)
                 .setMessage(message)
                 .setPositiveButton("YES", this)
                 .setNegativeButton("NO", this)
