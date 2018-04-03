@@ -68,7 +68,13 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         super(overlay);
         hashMap = new HashMap<>();
         this.context = context;
+
         priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        String sMax=priceDB.findMaxPeriod();
+        if(sMax!=null)
+        {
+            max= Integer.parseInt(sMax);
+        }
         mCurrentColorIndex = (mCurrentColorIndex + 1) % COLOR_CHOICES.length;
         final int selectedColor = COLOR_CHOICES[mCurrentColorIndex];
         mRectPaint = new Paint();
@@ -81,7 +87,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         mTextPaint.setTextSize(36.0f);
         levelprice = getHashLP();
         levellength = getlevellength();
-        max= Integer.parseInt(priceDB.findMaxPeriod());
+
     }
 
 

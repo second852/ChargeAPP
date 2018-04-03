@@ -210,7 +210,7 @@ public class SettingListFix extends Fragment {
                     public void onClick(View v) {
                         Fragment fragment=new SettingListFixIon();
                         Bundle bundle=new Bundle();
-                        bundle.putSerializable("BankVO",bankVO);
+                        bundle.putSerializable("bankVO",bankVO);
                         bundle.putSerializable("position",0);
                         fragment.setArguments(bundle);
                         switchFragment(fragment);

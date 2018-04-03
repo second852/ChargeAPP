@@ -144,6 +144,8 @@ public class InsertIncomeType extends Fragment {
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             }
+            MainActivity.bundles.remove(MainActivity.bundles.size()-1);
+            MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
             Common.showToast(getActivity(), "新增成功");
         }
     }
@@ -166,15 +168,9 @@ public class InsertIncomeType extends Fragment {
             bundle.putSerializable("day", getArguments().getSerializable("day"));
             bundle.putSerializable("statue", getArguments().getSerializable("statue"));
             bundle.putSerializable("index", getArguments().getSerializable("index"));
-        } else if (action.equals("SelectListPieIncome")) {
-            bundle.putSerializable("position", getArguments().getSerializable("position"));
-            bundle.putSerializable("year", getArguments().getSerializable("year"));
-            bundle.putSerializable("month", getArguments().getSerializable("month"));
-            bundle.putSerializable("day", getArguments().getSerializable("day"));
-            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
-            bundle.putSerializable("index", getArguments().getSerializable("index"));
         }else if(action.equals("SettingListFixIon"))
         {
+            fragment=new UpdateIncome();
             bundle.putSerializable("position",getArguments().getSerializable("position"));
         }else if(action.equals("SelectListModelIM"))
         {

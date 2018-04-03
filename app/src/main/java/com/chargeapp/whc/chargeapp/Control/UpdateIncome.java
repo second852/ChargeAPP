@@ -443,7 +443,7 @@ public class UpdateIncome extends Fragment {
                 gotoFramgent(fragment, bundle);
             } else if (action.equals("SettingListFixIon")) {
                 fragment = new SettingListFixIon();
-                bundle.putSerializable("BankVO", bankVO);
+                bundle.putSerializable("bankVO", bankVO);
                 bundle.putSerializable("action", action);
                 bundle.putSerializable("position", getArguments().getSerializable("position"));
                 fragment.setArguments(bundle);
@@ -566,7 +566,7 @@ public class UpdateIncome extends Fragment {
             MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
             Bundle bundle = new Bundle();
             Fragment fragment = new SettingListFixIon();
-            bundle.putSerializable("BankVO", bankVO);
+            bundle.putSerializable("bankVO", bankVO);
             bundle.putSerializable("action", action);
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             fragment.setArguments(bundle);

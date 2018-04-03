@@ -738,6 +738,9 @@ public class MainActivity extends AppCompatActivity {
                 }else if (action.equals("InsertSpend")||action.equals("InsertIncome")) {
                     fragment = new InsertActivity();
                     fragment.setArguments(bundle);
+                }else if (action.equals("SettingListType")) {
+                    fragment = new SettingListType();
+                    fragment.setArguments(bundle);
                 }
 
                 //關閉keyboart

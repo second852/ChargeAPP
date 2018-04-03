@@ -1,14 +1,17 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +20,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 
+import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
@@ -27,6 +33,7 @@ import com.chargeapp.whc.chargeapp.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,6 +49,8 @@ public class UpdateConsumeType extends Fragment {
     private TypeDetailVO typeDetailVO;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
+    private InvoiceDB invoiceDB;
+    private ConsumeDB consumeDB;
 
 
     @Nullable
@@ -51,6 +60,8 @@ public class UpdateConsumeType extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
         setGridPicture();
         setTypeDetail();
@@ -157,6 +168,28 @@ public class UpdateConsumeType extends Fragment {
                 return;
             }
 
+            TypeDetailVO old=typeDetailDB.findByname(secondName.getText().toString().trim(),mainName.getText().toString().trim());
+            if(old!=null)
+            {
+                secondName.setError("次項目不能重複");
+                return;
+            }
+
+            Common.showToast(getActivity(), "修改中");
+            List<InvoiceVO> invoiceVOS=invoiceDB.getInvoiceSecondType(typeDetailVO.getGroupNumber().trim(),typeDetailVO.getName().trim());
+            for(InvoiceVO i:invoiceVOS)
+            {
+                i.setMaintype(mainName.getText().toString().trim());
+                i.setSecondtype(secondName.getText().toString().trim());
+                invoiceDB.update(i);
+            }
+            List<ConsumeVO> consumeVOS=consumeDB.getSecondTypePeriod(typeDetailVO.getGroupNumber().trim(),typeDetailVO.getName().trim());
+            for(ConsumeVO c:consumeVOS)
+            {
+                c.setMaintype(mainName.getText().toString().trim());
+                c.setSecondType(secondName.getText().toString().trim());
+                consumeDB.update(c);
+            }
             typeDetailVO.setGroupNumber(mainName.getText().toString().trim());
             typeDetailVO.setName(secondName.getText().toString().trim());
             typeDetailVO.setKeyword(secondKey.getText().toString().trim());
@@ -168,10 +201,21 @@ public class UpdateConsumeType extends Fragment {
             fragment.setArguments(bundle);
             switchFramgent(fragment);
             Common.showToast(getActivity(), "修改成功");
+
         }
     }
 
     public void switchFramgent(Fragment fragment) {
+        //關閉鍵盤
+        View v =UpdateConsumeType.this.getActivity().getCurrentFocus();
+        if (v != null) {
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+
+        MainActivity.bundles.remove(MainActivity.bundles.size()-1);
+        MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
+
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

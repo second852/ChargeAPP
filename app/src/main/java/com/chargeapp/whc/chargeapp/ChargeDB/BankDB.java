@@ -114,7 +114,7 @@ public class BankDB {
         return BankVOList;
     }
 
-    public BankVO   getAutoBank(Timestamp start,Timestamp end,int id) {
+    public BankVO  getAutoBank(Timestamp start,Timestamp end,int id) {
         String sql = "SELECT * FROM BANK where autoId = '"+id+"' and date between '"+start.getTime()+"' and '"+end.getTime()+"' order by date;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
@@ -148,6 +148,8 @@ public class BankDB {
         return total;
     }
 
+
+
     public long getMinTime() {
         String sql = "SELECT min(date) FROM BANK ;";
         String[] args = {};
@@ -162,6 +164,29 @@ public class BankDB {
 
     public List<BankVO> getTimeAll(Timestamp start,Timestamp end,String type) {
         String sql = "SELECT * FROM BANK where date between '"+start.getTime()+"' and '"+end.getTime()+"' and maintype = '"+type+"'order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<BankVO> BankVOList = new ArrayList<>();
+        BankVO bankVO;
+        while (cursor.moveToNext()) {
+            bankVO=new BankVO();
+            bankVO.setId(cursor.getInt(0));
+            bankVO.setMaintype(cursor.getString(1));
+            bankVO.setMoney(cursor.getInt(2));
+            bankVO.setDate(new Date(cursor.getLong(3)));
+            bankVO.setFixDate(cursor.getString(4));
+            bankVO.setFixDateDetail(cursor.getString(5));
+            bankVO.setDetailname(cursor.getString(6));
+            bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
+            bankVO.setAutoId(cursor.getInt(8));
+            BankVOList.add(bankVO);
+        }
+        cursor.close();
+        return BankVOList;
+    }
+
+    public List<BankVO> getMainType(String mainType) {
+        String sql = "SELECT * FROM BANK where maintype = '"+mainType+"';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();

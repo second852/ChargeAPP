@@ -206,6 +206,9 @@ public class SettingListType extends Fragment {
 
 
     private void switchFragment(Fragment fragment) {
+        //紀錄
+        MainActivity.oldFramgent.add("SettingListType");
+        MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

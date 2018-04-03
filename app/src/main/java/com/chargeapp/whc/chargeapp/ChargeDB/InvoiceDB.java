@@ -433,6 +433,74 @@ public class InvoiceDB {
         return invoiceVOSList;
     }
 
+    public List<InvoiceVO> getInvoiceMainType(String mainType) {
+        String sql = "SELECT * FROM INVOICE  where maintype = '"+mainType+"';";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<InvoiceVO> invoiceVOSList = new ArrayList<>();
+        InvoiceVO invoiceVO;
+        while (cursor.moveToNext()) {
+            invoiceVO=new InvoiceVO();
+            invoiceVO.setId(cursor.getInt(0));
+            invoiceVO.setInvNum(cursor.getString(1));
+            invoiceVO.setCardType(cursor.getString(2));
+            invoiceVO.setCardNo(cursor.getString(3));
+            invoiceVO.setCardEncrypt(cursor.getString(4));
+            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
+            invoiceVO.setAmount(cursor.getInt(6));
+            invoiceVO.setDetail(cursor.getString(7));
+            invoiceVO.setSellerName(cursor.getString(8));
+            invoiceVO.setInvDonatable(cursor.getString(9));
+            invoiceVO.setDonateMark(cursor.getString(10));
+            invoiceVO.setCarrier(cursor.getString(11));
+            invoiceVO.setMaintype(cursor.getString(12));
+            invoiceVO.setSecondtype(cursor.getString(13));
+            invoiceVO.setHeartyteam(cursor.getString(14));
+            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
+            invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVOSList.add(invoiceVO);
+        }
+        cursor.close();
+        return invoiceVOSList;
+    }
+
+    public List<InvoiceVO> getInvoiceSecondType(String mainType,String second) {
+        String sql = "SELECT * FROM INVOICE  where maintype = '"+mainType+"' and secondtype = '"+second+"';";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<InvoiceVO> invoiceVOSList = new ArrayList<>();
+        InvoiceVO invoiceVO;
+        while (cursor.moveToNext()) {
+            invoiceVO=new InvoiceVO();
+            invoiceVO.setId(cursor.getInt(0));
+            invoiceVO.setInvNum(cursor.getString(1));
+            invoiceVO.setCardType(cursor.getString(2));
+            invoiceVO.setCardNo(cursor.getString(3));
+            invoiceVO.setCardEncrypt(cursor.getString(4));
+            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
+            invoiceVO.setAmount(cursor.getInt(6));
+            invoiceVO.setDetail(cursor.getString(7));
+            invoiceVO.setSellerName(cursor.getString(8));
+            invoiceVO.setInvDonatable(cursor.getString(9));
+            invoiceVO.setDonateMark(cursor.getString(10));
+            invoiceVO.setCarrier(cursor.getString(11));
+            invoiceVO.setMaintype(cursor.getString(12));
+            invoiceVO.setSecondtype(cursor.getString(13));
+            invoiceVO.setHeartyteam(cursor.getString(14));
+            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
+            invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVOSList.add(invoiceVO);
+        }
+        cursor.close();
+        return invoiceVOSList;
+    }
+
     public List<InvoiceVO> getInvoiceBytimeSecondType(Timestamp start,Timestamp end,String secondtype) {
         String sql = "SELECT * FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' and secondtype = '"+secondtype+"' order by time desc;";
         String[] args = {};

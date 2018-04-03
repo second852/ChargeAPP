@@ -79,7 +79,7 @@ public class Download extends AppCompatActivity {
     };
 
     private String food = "堡 三明治 優酪乳 肉 飯 雙手卷 腿 麵 麵包 熱狗 雞 手卷 肉 粉 蔬菜 牛 豬 起司 花生 豆 蛋 魚 菜 瓜 黑胡椒 土司 泡芙 排";
-    private String drink = "咖啡 茶 豆漿 拿鐵 乳 飲 ml 罐 酒 杯 水";
+    private String drink = "咖啡 茶 豆漿 拿鐵 乳 飲 ml 罐 酒 杯 水 奶 冰 珍珠";
     private Handler firstH,secondH;
     private static final int REQ_PERMISSIONS = 0;
     private GetSQLDate getSQLDate;
@@ -122,14 +122,6 @@ public class Download extends AppCompatActivity {
         AdView adView = (AdView) this.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-        InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        List<InvoiceVO> invoiceVOS=invoiceDB.getAll();
-        InvoiceVO invoiceVO=invoiceVOS.get(0);
-        invoiceVO.setMaintype("0");
-        invoiceVO.setSecondtype("0");
-        invoiceVO.setDetail("0");
-        invoiceDB.update(invoiceVO);
-
 //        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 //        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
 //        if(mNetworkInfo!=null)

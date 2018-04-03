@@ -50,6 +50,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
         setcurrentpage();
         text = view.findViewById(R.id.text);
         movefirst = -importMoney.getWidth();
+        getActivity().setTitle(R.string.text_DataPicture);
         return view;
     }
 
