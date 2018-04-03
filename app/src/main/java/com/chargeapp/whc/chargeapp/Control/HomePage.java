@@ -174,9 +174,12 @@ public class HomePage extends Fragment {
         ChartEntry chartEntry=new ChartEntry("其他",0);
         int i=0;
         for (String key:consumeVOS.keySet()) {
-            ShowZero = false;
-            double part=(consumeVOS.get(key)*100/total);
-            Log.d("XXXXX",part+" : "+total);
+            double part=0.0;
+            if(total>0)
+            {
+                ShowZero = false;
+                part=(consumeVOS.get(key)*100/total);
+            }
             if(i<4&&part>2&&(!key.equals("O"))&&(!key.equals("0")))
             {
                 yVals1.add(new PieEntry(consumeVOS.get(key),key));
@@ -478,7 +481,8 @@ public class HomePage extends Fragment {
     private class pieValue implements OnChartValueSelectedListener {
         @Override
         public void onValueSelected(Entry e, Highlight h) {
-            if (ShowZero) {
+            int size=yVals1.size();
+            if (size<=1) {
                 Fragment fragment=new InsertActivity();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 for (Fragment fragment1 :  getFragmentManager().getFragments()) {
@@ -487,16 +491,17 @@ public class HomePage extends Fragment {
                 fragmentTransaction.replace(R.id.body, fragment);
                 fragmentTransaction.commit();
                 return;
+            }else{
+                String key = yVals1.get((int) h.getX()).getLabel();
+                Bundle bundle = new Bundle();
+                Fragment fragment=new HomePagetList();
+                bundle.putStringArrayList("OKey", Okey);
+                bundle.putSerializable("key",key);
+                bundle.putSerializable("total",(int)h.getY());
+                bundle.putSerializable("position",0);
+                fragment.setArguments(bundle);
+                switchFragment(fragment);
             }
-            String key = yVals1.get((int) h.getX()).getLabel();
-            Bundle bundle = new Bundle();
-            Fragment fragment=new HomePagetList();
-            bundle.putStringArrayList("OKey", Okey);
-            bundle.putSerializable("key",key);
-            bundle.putSerializable("total",(int)h.getY());
-            bundle.putSerializable("position",0);
-            fragment.setArguments(bundle);
-            switchFragment(fragment);
         }
 
         @Override

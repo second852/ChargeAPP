@@ -220,7 +220,7 @@ public class UpdateSpend extends Fragment {
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             bundle.putSerializable("consumeVO",consumeVO);
         }else if (action.equals("SelectShowCircleDeList")) {
-            fragment = new SelectDetList();
+            fragment = new SelectShowCircleDeList();
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
             bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
             bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
@@ -233,6 +233,14 @@ public class UpdateSpend extends Fragment {
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             bundle.putSerializable("period", getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
+            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
+        }else if(action.equals("HomePagetList"))
+        {
+            fragment=new HomePagetList();
+            bundle.putSerializable("action","HomePagetList");
+            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
+            bundle.putSerializable("position",0);
+            bundle.putSerializable("key", getArguments().getSerializable("key"));
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);
@@ -287,6 +295,13 @@ public class UpdateSpend extends Fragment {
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             bundle.putSerializable("period", getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
+            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
+        }else if(action.equals("HomePagetList"))
+        {
+            bundle.putSerializable("action","HomePagetList");
+            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
+            bundle.putSerializable("position",0);
+            bundle.putSerializable("key", getArguments().getSerializable("key"));
         }
         fragment.setArguments(bundle);
         MainActivity.bundles.add(bundle);
@@ -386,7 +401,9 @@ public class UpdateSpend extends Fragment {
     private class dateClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            showdate.setVisibility(View.VISIBLE);
+                firstL.setVisibility(View.GONE);
+                secondL.setVisibility(View.GONE);
+                showdate.setVisibility(View.VISIBLE);
         }
 
     }
@@ -469,6 +486,21 @@ public class UpdateSpend extends Fragment {
     private class clearAllInput implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            //設定種類時 不能儲存
+            if(firstL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+            if(secondL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+
+            //date show not save
+            if(showdate.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
             name.setText(" ");
             secondname.setText(" ");
             money.setText(" ");
@@ -488,9 +520,25 @@ public class UpdateSpend extends Fragment {
     private class savecomsumer implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-
             name.setBackgroundColor(Color.parseColor("#FFEE99"));
             secondname.setBackgroundColor(Color.parseColor("#FFEE99"));
+
+            //設定種類時 不能儲存
+            if(firstL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+            if(secondL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+
+            //date show not save
+            if(showdate.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+
             if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
                 Common.showToast(getActivity(), "主項目不能空白");
@@ -586,8 +634,11 @@ public class UpdateSpend extends Fragment {
         public void onClick(View v) {
             MultiTrackerActivity.refresh = true;
             BarcodeGraphic.hashMap = new HashMap<>();
+            setConsume();
             Intent intent = new Intent(UpdateSpend.this.getActivity(), MultiTrackerActivity.class);
-            startActivityForResult(intent, 0);
+            intent.putExtra("action","UpdateSpend");
+            intent.putExtra("bundle",UpdateSpend.this.getArguments());
+            startActivityForResult(intent, 6);
         }
     }
 
@@ -607,6 +658,8 @@ public class UpdateSpend extends Fragment {
     private class showFirstG implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            secondL.setVisibility(View.GONE);
+            showdate.setVisibility(View.GONE);
             firstL.setVisibility(View.VISIBLE);
         }
     }
@@ -651,6 +704,8 @@ public class UpdateSpend extends Fragment {
     private class showSecondG implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            firstL.setVisibility(View.GONE);
+            showdate.setVisibility(View.GONE);
             secondL.setVisibility(View.VISIBLE);
         }
     }
@@ -659,6 +714,21 @@ public class UpdateSpend extends Fragment {
     private class saveAllConsume implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            //設定種類時 不能儲存
+            if(firstL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+            if(secondL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+
+            //date show not save
+            if(showdate.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
             name.setBackgroundColor(Color.parseColor("#FFEE99"));
             secondname.setBackgroundColor(Color.parseColor("#FFEE99"));
             if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {

@@ -171,6 +171,7 @@ public class UpdateIncome extends Fragment {
     private class showFirstG implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            showdate.setVisibility(View.GONE);
             firstL.setVisibility(View.VISIBLE);
         }
     }
@@ -242,6 +243,7 @@ public class UpdateIncome extends Fragment {
     private class dateClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            firstL.setVisibility(View.GONE);
             showdate.setVisibility(View.VISIBLE);
         }
 
@@ -327,6 +329,15 @@ public class UpdateIncome extends Fragment {
     private class clearAllInput implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            if(firstL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+            //date show not save
+            if(showdate.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
             name.setText(" ");
             money.setText(" ");
             fixdate.setChecked(false);
@@ -391,7 +402,17 @@ public class UpdateIncome extends Fragment {
         @Override
         public void onClick(View view) {
 
+
             name.setBackgroundColor(Color.parseColor("#FFEE99"));
+            if(firstL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+            //date show not save
+            if(showdate.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
             if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
                 Common.showToast(getActivity(), "主項目不能空白");

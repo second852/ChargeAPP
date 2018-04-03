@@ -145,7 +145,6 @@ public class InsertSpend extends Fragment {
             }
         }
         needSet=false;
-        Log.d("XXX", String.valueOf(updateChoice));
     }
 
 
@@ -279,6 +278,8 @@ public class InsertSpend extends Fragment {
     private class dateClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
+            firstL.setVisibility(View.GONE);
+            secondL.setVisibility(View.GONE);
             showdate.setVisibility(View.VISIBLE);
         }
 
@@ -353,6 +354,21 @@ public class InsertSpend extends Fragment {
     private class clearAllInput implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            //設定種類時 不能儲存
+            if(firstL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+            if(secondL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+
+            //date show not save
+            if(showdate.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
             name.setText(" ");
             secondname.setText(" ");
             money.setText(" ");
@@ -372,9 +388,25 @@ public class InsertSpend extends Fragment {
     private class savecomsumer implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-
             name.setBackgroundColor(Color.parseColor("#FFEE99"));
             secondname.setBackgroundColor(Color.parseColor("#FFEE99"));
+            //設定種類時 不能儲存
+            if(firstL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+            if(secondL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+
+            //date show not save
+            if(showdate.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+
+            //必填資料
             if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
                 Common.showToast(getActivity(), "主項目不能空白");
@@ -439,6 +471,7 @@ public class InsertSpend extends Fragment {
             MultiTrackerActivity.refresh = true;
             BarcodeGraphic.hashMap = new HashMap<>();
             Intent intent = new Intent(InsertSpend.this.getActivity(), MultiTrackerActivity.class);
+            intent.putExtra("action","setConsume");
             startActivityForResult(intent, 6);
         }
     }
@@ -452,6 +485,8 @@ public class InsertSpend extends Fragment {
     private class showFirstG implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            showdate.setVisibility(View.GONE);
+            secondL.setVisibility(View.GONE);
             firstL.setVisibility(View.VISIBLE);
         }
     }
@@ -500,6 +535,8 @@ public class InsertSpend extends Fragment {
     private class showSecondG implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            firstL.setVisibility(View.GONE);
+            showdate.setVisibility(View.GONE);
             secondL.setVisibility(View.VISIBLE);
         }
     }
@@ -513,6 +550,8 @@ public class InsertSpend extends Fragment {
         bundle.putSerializable("action","InsertSpend");
         bundle.putSerializable("needSet",true);
         fragment.setArguments(bundle);
+        MainActivity.oldFramgent.add("InsertSpend");
+        MainActivity.bundles.add(bundle);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

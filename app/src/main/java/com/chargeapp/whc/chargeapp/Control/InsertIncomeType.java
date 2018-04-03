@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -135,6 +137,13 @@ public class InsertIncomeType extends Fragment {
             bankTypeVO.setName(mainType);
             bankTybeDB.insert(bankTypeVO);
             gotoFramgent();
+
+            //關閉鍵盤
+            View v =InsertIncomeType.this.getActivity().getCurrentFocus();
+            if (v != null) {
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
             Common.showToast(getActivity(), "新增成功");
         }
     }
@@ -179,6 +188,10 @@ public class InsertIncomeType extends Fragment {
             bundle.putSerializable("day", getArguments().getSerializable("day"));
             bundle.putSerializable("statue", getArguments().getSerializable("statue"));
             bundle.putSerializable("index", getArguments().getSerializable("index"));
+        }else if(action.equals("InsertIncome"))
+        {
+            fragment=new InsertActivity();
+            bundle=MainActivity.bundles.getLast();
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);

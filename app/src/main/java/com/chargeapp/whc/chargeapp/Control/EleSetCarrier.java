@@ -246,11 +246,14 @@ public class EleSetCarrier extends Fragment {
             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
             if(mNetworkInfo!=null)
             {
+
+                //close keyboard
                 View v = EleSetCarrier.this.getActivity().getCurrentFocus();
-                if (view != null) {
+                if (v != null) {
                     InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
+
                 getIvnum= (GetSQLDate) new GetSQLDate(EleSetCarrier.this);
                 getIvnum.setProgressT(progressT);
                 getIvnum.setPercentage(percentage);

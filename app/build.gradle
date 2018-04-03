@@ -4,9 +4,9 @@ android {
     signingConfigs {
         Keystore {
             keyAlias 'key'
-            keyPassword 'second'
+            keyPassword 'hearty852'
             storeFile file('D:/second.jks')
-            storePassword 'second'
+            storePassword 'hearty852'
         }
     }
     compileSdkVersion 26

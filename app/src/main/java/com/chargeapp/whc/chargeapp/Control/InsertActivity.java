@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
+import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.R;
 
@@ -27,6 +28,8 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     private int nowpoint=0;
     private String needSet;
     private ConsumeVO consumeVO;
+    private static int position;
+    private BankVO bankVO;
 
 
 
@@ -36,10 +39,12 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         try {
             needSet=getArguments().getString("needSet");
             consumeVO= (ConsumeVO) getArguments().getSerializable("consumeVO");
+            bankVO= (BankVO) getArguments().getSerializable("bankVO");
         }catch (NullPointerException e)
         {
             needSet=null;
             consumeVO=null;
+            bankVO=null;
         }
 
         View view = inflater.inflate(R.layout.insert_main, container, false);
@@ -50,6 +55,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         goneMoney=view.findViewById(R.id.goneD);
         mViewPager.setAdapter(new MainPagerAdapter(getFragmentManager()));
         mViewPager.addOnPageChangeListener(this);
+        mViewPager.setCurrentItem(position);
         setcurrentpage();
         text=view.findViewById(R.id.text);
         return  view;
@@ -83,10 +89,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
                 Fragment fragment=new InsertSpend();
                 return fragment;
             } else  {
-                Bundle bundle=new Bundle();
-                bundle.putSerializable("needSet",false);
                 Fragment fragment=new InsertIncome();
-                fragment.setArguments(bundle);
                 return fragment;
             }
         }
@@ -96,6 +99,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     @Override
     public void onPageSelected(int position) {
         nowpoint=position;
+        InsertActivity.this.position=position;
         if(position==0)
         {
             setcurrentpage();

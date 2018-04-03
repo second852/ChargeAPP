@@ -41,7 +41,6 @@ public class UpdateDetail extends Fragment {
         View view = inflater.inflate(R.layout.updae_detail, container, false);
         detail=view.findViewById(R.id.detail);
         final InvoiceVO invoiceVO= (InvoiceVO) getArguments().getSerializable("invoiceVO");
-
         Gson gson=new Gson();
         Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
         List<JsonObject> js=gson.fromJson(invoiceVO.getDetail(), cdType);
@@ -64,11 +63,10 @@ public class UpdateDetail extends Fragment {
                 String action= (String) getArguments().getSerializable("action");
                 Fragment fragment=new UpdateInvoice();
                 Bundle bundle=new Bundle();
-                bundle.putSerializable("invoiceVO",invoiceVO);
                 bundle.putSerializable("action",action);
+                bundle.putSerializable("invoiceVO",invoiceVO);
                 if(action.equals("SelectDetList"))
                 {
-
                     bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
                     bundle.putSerializable("ShowAllCarrier",  getArguments().getSerializable("ShowAllCarrier"));
                     bundle.putSerializable("noShowCarrier",  getArguments().getSerializable("noShowCarrier"));
@@ -78,7 +76,9 @@ public class UpdateDetail extends Fragment {
                     bundle.putSerializable("key",  getArguments().getSerializable("key"));
                     bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
                     bundle.putSerializable("statue", getArguments().getSerializable("statue"));
-                    bundle.putSerializable("position",getArguments().getSerializable("position"));
+                    bundle.putSerializable("position", getArguments().getSerializable("position"));
+                    bundle.putSerializable("period",  getArguments().getSerializable("period"));
+                    bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
                 }else if(action.equals("SelectShowCircleDe"))
                 {
                     bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
@@ -93,6 +93,26 @@ public class UpdateDetail extends Fragment {
                     bundle.putSerializable("period", getArguments().getSerializable("period"));
                     bundle.putSerializable("dweek",getArguments().getSerializable("dweek"));
                     bundle.putSerializable("position",getArguments().getSerializable("position"));
+                }else if(action.equals("SelectShowCircleDeList"))
+                {
+                    bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
+                    bundle.putSerializable("ShowAllCarrier",  getArguments().getSerializable("ShowAllCarrier"));
+                    bundle.putSerializable("noShowCarrier",  getArguments().getSerializable("noShowCarrier"));
+                    bundle.putSerializable("year",  getArguments().getSerializable("year"));
+                    bundle.putSerializable("month",  getArguments().getSerializable("month"));
+                    bundle.putSerializable("day",  getArguments().getSerializable("day"));
+                    bundle.putSerializable("key",  getArguments().getSerializable("key"));
+                    bundle.putSerializable("carrier",  getArguments().getSerializable("carrier"));
+                    bundle.putSerializable("statue", getArguments().getSerializable("statue"));
+                    bundle.putSerializable("position", getArguments().getSerializable("position"));
+                    bundle.putSerializable("period",  getArguments().getSerializable("period"));
+                    bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
+                    bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
+                }else if(action.equals("HomePagetList"))
+                {
+                    bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
+                    bundle.putSerializable("position",getArguments().getSerializable("position"));
+                    bundle.putSerializable("key", getArguments().getSerializable("key"));
                 }
                 fragment.setArguments(bundle);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

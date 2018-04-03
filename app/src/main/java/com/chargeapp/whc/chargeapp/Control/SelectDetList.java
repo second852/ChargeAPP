@@ -153,7 +153,12 @@ public class SelectDetList extends Fragment {
         listView.setSelection(position);
         if(objects.size()<=0)
         {
-            message.setText(title+"\n"+key+"種類 無資料!");
+            if(key.equals("0")||key.equals("O"))
+            {
+                message.setText(title+"\n其他種類 無資料!");
+            }else {
+                message.setText(title+"\n"+key+"種類 無資料!");
+            }
             message.setVisibility(View.VISIBLE);
         }else{
             message.setVisibility(View.GONE);
@@ -312,8 +317,8 @@ public class SelectDetList extends Fragment {
                 StringBuffer stringBuffer=new StringBuffer();
                 //設定 title
                 stringBuffer.append(Common.sDay.format(c.getDate()));
-                stringBuffer.append(" "+c.getMaintype());
-                stringBuffer.append("\n共"+c.getMoney()+"元");
+                stringBuffer.append(c.getSecondType());
+                stringBuffer.append(" 共"+c.getMoney()+"元");
                 title.setText(stringBuffer.toString());
 
                 //設定 describe

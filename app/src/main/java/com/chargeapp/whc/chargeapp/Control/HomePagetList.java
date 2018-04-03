@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +23,11 @@ import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
+import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -83,6 +86,7 @@ public class HomePagetList extends Fragment {
         key= (String) getArguments().getSerializable("key");
         Okey=getArguments().getStringArrayList("OKey");
         position= (int) getArguments().getSerializable("position");
+
         title=Common.sOne.format(new Date(start.getTimeInMillis()))+key;
         getActivity().setTitle(title);
         setChoiceLayout();
@@ -128,8 +132,16 @@ public class HomePagetList extends Fragment {
         listView.setSelection(position);
         if(objects.size()<=0)
         {
-            message.setText(title+"\n"+key+"種類 無資料!");
-            message.setVisibility(View.VISIBLE);
+            if(key.equals("0")||key.equals("O"))
+            {
+                title=title.replace(key,"");
+                message.setText(title+"\n其他 無資料!");
+                message.setVisibility(View.VISIBLE);
+            }else{
+                title=title.replace(key,"");
+                message.setText(title+"\n"+key+"種類 無資料!");
+                message.setVisibility(View.VISIBLE);
+            }
         }else{
             message.setVisibility(View.GONE);
         }
@@ -155,8 +167,17 @@ public class HomePagetList extends Fragment {
         listView.setSelection(position);
         if(objects.size()<=0)
         {
-            message.setText(title+"\n"+key+"種類 無資料!");
-            message.setVisibility(View.VISIBLE);
+            if(key.equals("0")||key.equals("O"))
+            {
+                title=title.replace(key,"");
+                message.setText(title+"\n其他 無資料!");
+                message.setVisibility(View.VISIBLE);
+            }else{
+                title=title.replace(key,"");
+                message.setText(title+"\n"+key+"種類 無資料!");
+                message.setVisibility(View.VISIBLE);
+            }
+
         }else{
             message.setVisibility(View.GONE);
         }
@@ -230,15 +251,29 @@ public class HomePagetList extends Fragment {
                 typeT.setTextColor(Color.parseColor("#008844"));
                 typeL.setBackgroundColor(Color.parseColor("#008844"));
                 sbTitle.append(Common.sDay.format(new Date(I.getTime().getTime())));
-                if(I.getSecondtype().equals("O"))
+                if(key.equals("其他"))
                 {
-                    sbTitle.append("其他");
-                }else if(I.getSecondtype().equals("0")){
-                    sbTitle.append("未知");
-                }else{
-                    sbTitle.append(I.getSecondtype());
+                    if(I.getMaintype().equals("O"))
+                    {
+                        sbTitle.append("其他\n");
+                    }else if(I.getMaintype().equals("0")){
+                        sbTitle.append("未知\n");
+                    }else{
+                        sbTitle.append(I.getMaintype()+"("+I.getSecondtype()+")\n");
+                    }
+
+                }else {
+                    if(I.getSecondtype().equals("O"))
+                    {
+                        sbTitle.append("其他 ");
+                    }else if(I.getSecondtype().equals("0")){
+                        sbTitle.append("未知 ");
+                    }else{
+                        sbTitle.append(I.getSecondtype()+" ");
+                    }
                 }
-                sbTitle.append("  共"+I.getAmount()+"元");
+
+                sbTitle.append("共"+I.getAmount()+"元");
                 if(I.getDetail().equals("0"))
                 {
                     update.setText("下載");
@@ -313,8 +348,13 @@ public class HomePagetList extends Fragment {
                 StringBuffer stringBuffer=new StringBuffer();
                 //設定 title
                 stringBuffer.append(Common.sDay.format(c.getDate()));
-                stringBuffer.append(" "+c.getMaintype());
-                stringBuffer.append("\n共"+c.getMoney()+"元");
+                if(key.equals("其他"))
+                {
+                    stringBuffer.append(c.getMaintype()+"("+c.getSecondType()+")\n");
+                }else {
+                    stringBuffer.append(c.getSecondType()+" ");
+                }
+                stringBuffer.append("共"+c.getMoney()+"元");
                 title.setText(stringBuffer.toString());
 
                 //設定 describe

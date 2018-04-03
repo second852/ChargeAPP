@@ -168,7 +168,9 @@ public class SelectShowCircleDeList extends Fragment {
     {
         if(key.equals("其他"))
         {
-            Okey=getArguments().getStringArrayList("OKey");
+            Okey=new ArrayList<>();
+            ArrayList<String> o=getArguments().getStringArrayList("OKey");
+            Okey.addAll(o);
             setOtherLayout();
         }else {
             setLayout();
@@ -364,8 +366,8 @@ public class SelectShowCircleDeList extends Fragment {
                 StringBuffer stringBuffer=new StringBuffer();
                 //設定 title
                 stringBuffer.append(Common.sDay.format(c.getDate()));
-                stringBuffer.append(" "+c.getMaintype());
-                stringBuffer.append("\n共"+c.getMoney()+"元");
+                stringBuffer.append(c.getSecondType());
+                stringBuffer.append(" 共"+c.getMoney()+"元");
                 title.setText(stringBuffer.toString());
 
                 //設定 describe
@@ -444,6 +446,7 @@ public class SelectShowCircleDeList extends Fragment {
         bundle.putSerializable("statue",Statue);
         bundle.putSerializable("period", period);
         bundle.putSerializable("dweek",dweek);
+        bundle.putStringArrayList("OKey", SelectShowCircleDeList.this.getArguments().getStringArrayList("OKey"));
         fragment.setArguments(bundle);
         MainActivity.oldFramgent.add("SelectShowCircleDeList");
         MainActivity.bundles.add(fragment.getArguments());

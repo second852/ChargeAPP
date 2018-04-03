@@ -165,7 +165,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 jsonIn = searchHeartyTeam(keyworld);
                 return jsonIn;
             } else if (action.equals("reDownload")) {
-                jsonIn = getInvoiceDetail(invoiceVO);
+                jsonIn = getUpdateInvoiceDetail(invoiceVO);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -768,6 +768,44 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         }
     }
 
+    private String getUpdateInvoiceDetail(InvoiceVO invoiceVO) {
+        String urldetail = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
+        HashMap<String, String> hashMap = new HashMap();
+        hashMap.put("version", "0.3");
+        hashMap.put("cardType", "3J0002");
+        hashMap.put("cardNo", invoiceVO.getCarrier());
+        hashMap.put("expTimeStamp", "2147483647");
+        hashMap.put("action", "carrierInvDetail");
+        hashMap.put("timeStamp", String.valueOf(System.currentTimeMillis()));
+        hashMap.put("invNum", invoiceVO.getInvNum());
+        hashMap.put("invDate", sf.format(new Date(invoiceVO.getTime().getTime())));
+        hashMap.put("uuid", "second");
+        hashMap.put("sellerName", invoiceVO.getSellerName());
+        hashMap.put("amount", String.valueOf(invoiceVO.getAmount()));
+        hashMap.put("appID", "EINV3201711184648");
+        hashMap.put("cardEncrypt", invoiceVO.getCardEncrypt());
+        String detailjs = getRemoteData(urldetail, hashMap);
+        if (detailjs == null || detailjs.equals("error") || detailjs.equals("timeout")) {
+            return "timeout";
+        }
+        JsonObject jsonObject=null;
+        try {
+            jsonObject = gson.fromJson(detailjs, JsonObject.class);
+        }catch (Exception e)
+        {
+            Log.d("XXXXXX",detailjs);
+            Log.d("XXXXXX",e.getMessage());
+        }
+
+        if(jsonObject!=null)
+        {
+            invoiceVO.setDetail(jsonObject.get("details").toString());
+            InvoiceVO type = getType(invoiceVO);
+            invoiceDB.update(type);
+            detailjs = "success";
+        }
+        return detailjs;
+    }
 
 
     private String getInvoiceDetail(InvoiceVO invoiceVO) {

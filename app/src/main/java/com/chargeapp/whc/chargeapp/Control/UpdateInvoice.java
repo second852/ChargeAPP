@@ -218,6 +218,14 @@ public class UpdateInvoice extends Fragment {
     private class clearAllInput implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            if(firstL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+            if(secondL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
             name.setText(" ");
             secondname.setText(" ");
         }
@@ -331,6 +339,7 @@ public class UpdateInvoice extends Fragment {
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             bundle.putSerializable("period",  getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
+            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
         }else if(action.equals("HomePagetList"))
         {
             bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
@@ -401,6 +410,7 @@ public class UpdateInvoice extends Fragment {
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             bundle.putSerializable("period",  getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
+            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
         }else if(action.equals("HomePagetList"))
         {
             fragment=new HomePagetList();
@@ -426,6 +436,7 @@ public class UpdateInvoice extends Fragment {
     private class showFirstG implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            secondL.setVisibility(View.GONE);
             firstL.setVisibility(View.VISIBLE);
         }
     }
@@ -477,12 +488,14 @@ public class UpdateInvoice extends Fragment {
             }
             secondname.setText(type);
             secondL.setVisibility(View.GONE);
+            firstL.setVisibility(View.GONE);
         }
     }
 
     private class showSecondG implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            firstL.setVisibility(View.GONE);
             secondL.setVisibility(View.VISIBLE);
         }
     }

@@ -21,6 +21,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -29,6 +30,7 @@ import android.util.Log;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.google.android.gms.vision.barcode.Barcode;
 
@@ -132,7 +134,12 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             }
             if (hashMap.size() == 2) {
                 Intent intent = new Intent(context,MainActivity.class);
-                intent.putExtra("action","setConsume");
+                if(MultiTrackerActivity.action.equals("UpdateSpend"))
+                {
+                    Bundle bundle=context.getIntent().getBundleExtra("bundle");
+                    intent.putExtra("bundle",context.getIntent().getBundleExtra("bundle"));
+                }
+                intent.putExtra("action",MultiTrackerActivity.action);
                 context.startActivity(intent);
                 context.finish();
             }

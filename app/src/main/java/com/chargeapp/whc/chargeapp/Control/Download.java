@@ -52,6 +52,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -121,6 +122,14 @@ public class Download extends AppCompatActivity {
         AdView adView = (AdView) this.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
+        InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        List<InvoiceVO> invoiceVOS=invoiceDB.getAll();
+        InvoiceVO invoiceVO=invoiceVOS.get(0);
+        invoiceVO.setMaintype("0");
+        invoiceVO.setSecondtype("0");
+        invoiceVO.setDetail("0");
+        invoiceDB.update(invoiceVO);
+
 //        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 //        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
 //        if(mNetworkInfo!=null)

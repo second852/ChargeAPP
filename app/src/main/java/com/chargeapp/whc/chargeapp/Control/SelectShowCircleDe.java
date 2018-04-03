@@ -89,6 +89,7 @@ public class SelectShowCircleDe extends Fragment {
     private ArrayList<String> Okey;
     private boolean ShowZero;
     private List<PieEntry> yVals1;
+    private int total;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -161,8 +162,13 @@ public class SelectShowCircleDe extends Fragment {
         Okey=new ArrayList<>();
         yVals1 = new ArrayList<PieEntry>();
         ChartEntry chartEntry=new ChartEntry("其他",0);
+        double part=0.0;
         for(String s:hashMap.keySet())
         {
+            if(total>0)
+            {
+                part=(hashMap.get(s)*100/total);
+            }
             if(s.equals("O"))
             {
                 chartEntry.setValue(chartEntry.getValue()+hashMap.get(s));
@@ -171,7 +177,13 @@ public class SelectShowCircleDe extends Fragment {
                 chartEntry.setValue(chartEntry.getValue()+hashMap.get(s));
                 Okey.add(s);
             }else {
-               yVals1.add(new PieEntry(hashMap.get(s),s));
+                if(part>6)
+                {
+                    yVals1.add(new PieEntry(hashMap.get(s),s));
+                }else{
+                    chartEntry.setValue(chartEntry.getValue()+hashMap.get(s));
+                    Okey.add(s);
+                }
             }
         }
 
@@ -237,11 +249,7 @@ public class SelectShowCircleDe extends Fragment {
             String key = yVals1.get((int) h.getX()).getLabel();
             Bundle bundle = new Bundle();
             Fragment fragment=new SelectShowCircleDeList();
-            if (key.equals("其他")) {
-                ArrayList<String> s=new ArrayList<>();
-                s.addAll(Okey);
-                bundle.putStringArrayList("OKey", s);
-            }
+            bundle.putStringArrayList("OKey", Okey);
             bundle.putSerializable("key",key);
             bundle.putSerializable("total",(int)h.getY());
             bundle.putSerializable("ShowConsume", ShowConsume);
@@ -269,7 +277,7 @@ public class SelectShowCircleDe extends Fragment {
     public void setLayout() {
         objects=new ArrayList<>();
         hashMap=new HashMap<>();
-        int total=0;
+        total=0;
         if(ShowConsume)
         {
             consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),mainTitle);

@@ -86,11 +86,14 @@ public class SelectOtherCircle extends Fragment {
         month = (int) getArguments().getSerializable("month");
         day = (int) getArguments().getSerializable("day");
         carrier = (int) getArguments().getSerializable("carrier");
-        Okey = getArguments().getStringArrayList("OKey");
+        ArrayList<String> o = getArguments().getStringArrayList("OKey");
+        Okey=new ArrayList<>();
+        Okey.addAll(o);
         Statue = (int) getArguments().getSerializable("statue");
         period= (int) getArguments().getSerializable("period");
         dweek= (int) getArguments().getSerializable("dweek");
         countOther = (int) getArguments().getSerializable("total");
+        Log.d("XXXXXOkey", String.valueOf(Okey.size()));
         String title;
         if (Statue == 0) {
             start = new GregorianCalendar(year, month, day, 0, 0, 0);
@@ -205,6 +208,7 @@ public class SelectOtherCircle extends Fragment {
                 }else{
                     yVals1.add(new PieEntry(hashMap.get(Okey.get(j)), Okey.get(j)));
                 }
+
                 total=total+hashMap.get(Okey.get(j));
             }
         }else{
@@ -245,6 +249,7 @@ public class SelectOtherCircle extends Fragment {
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(14f);
         data.setValueTextColor(Color.BLACK);
+        Log.d("XXXXXOkey3", String.valueOf(Okey.size()));
         return data;
     }
 
@@ -330,6 +335,7 @@ public class SelectOtherCircle extends Fragment {
 
         @Override
         public void onValueSelected(Entry e, Highlight h) {
+            Log.d("XXXXXOkey4", String.valueOf(Okey.size()));
             Fragment fragment = new SelectDetList();
             Bundle bundle = new Bundle();
             bundle.putSerializable("ShowConsume", ShowConsume);
@@ -344,8 +350,8 @@ public class SelectOtherCircle extends Fragment {
             bundle.putSerializable("position",0);
             bundle.putSerializable("period", period);
             bundle.putSerializable("dweek",dweek);
-            bundle.putSerializable("total",getArguments().getSerializable("total"));
-            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
+            bundle.putSerializable("total",SelectOtherCircle.this.getArguments().getSerializable("total"));
+            bundle.putStringArrayList("OKey",SelectOtherCircle.this.getArguments().getStringArrayList("OKey"));
             fragment.setArguments(bundle);
             switchFragment(fragment);
         }

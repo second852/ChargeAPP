@@ -68,6 +68,7 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     public static String oldElu,p;
     public static boolean isold;
     public static int colorChange;
+    public static String action;
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -81,6 +82,7 @@ public final class MultiTrackerActivity extends AppCompatActivity {
         if(refresh)
         {
             answer.setVisibility(View.GONE);
+            action=getIntent().getStringExtra("action");
         }else {
             answer.setVisibility(View.VISIBLE);
         }

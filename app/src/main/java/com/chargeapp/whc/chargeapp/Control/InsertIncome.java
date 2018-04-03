@@ -54,10 +54,10 @@ public class InsertIncome extends Fragment {
     private BankDB bankDB;
     private LinearLayout firstL;
     private GridView firstG;
-    private boolean needSet;
+    private static boolean needSet;
     private int updateChoice;
-    private boolean first=true;
-    private BankVO bankVO;
+    private boolean first;
+    private static BankVO bankVO;
     private Handler handler,secondHander;
     private View view;
 
@@ -69,7 +69,11 @@ public class InsertIncome extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.insert_income, container, false);
-        needSet= (boolean) getArguments().getSerializable("needSet");
+        if(bankVO==null)
+        {
+            bankVO=new BankVO();
+        }
+        first=true;
         handler=new Handler();
         secondHander=new Handler();
         handler.post(runnable);
@@ -89,14 +93,6 @@ public class InsertIncome extends Fragment {
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setAdapter(arrayAdapter);
     }
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (Common.showfirstgrid) {
-            firstL.setVisibility(View.VISIBLE);
-            Common.showfirstgrid = false;
-        }
-    }
 
     private Runnable runnable=new Runnable() {
         @Override
@@ -105,6 +101,10 @@ public class InsertIncome extends Fragment {
             firstG = view.findViewById(R.id.firstG);
             firstL = view.findViewById(R.id.firstL);
             setFirstGrid();
+            if (Common.showfirstgrid) {
+                firstL.setVisibility(View.VISIBLE);
+                Common.showfirstgrid = false;
+            }
         }
     };
 
@@ -115,13 +115,12 @@ public class InsertIncome extends Fragment {
             gson=new Gson();
             bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
             date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
+            setSpinner();
+            setSetOnClickView();
             if(needSet)
             {
                 setIncome();
             }
-            setSpinner();
-            setSetOnClickView();
-
         }
     };
 
@@ -172,6 +171,7 @@ public class InsertIncome extends Fragment {
                 Bundle bundle=new Bundle();
                 bundle.putSerializable("bankVO",bankVO);
                 bundle.putSerializable("action","InsertIncome");
+                needSet=true;
                 fragment.setArguments(bundle);
                 switchFragment(fragment);
                 return;
@@ -183,6 +183,8 @@ public class InsertIncome extends Fragment {
     }
 
     private void switchFragment(Fragment fragment) {
+        MainActivity.oldFramgent.add("InsertIncome");
+        MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);
@@ -195,12 +197,12 @@ public class InsertIncome extends Fragment {
     private class showFirstG implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            showdate.setVisibility(View.GONE);
             firstL.setVisibility(View.VISIBLE);
         }
     }
     private void setIncome() {
         first=true;
-        bankVO= (BankVO) getArguments().getSerializable("bankVO");
         name.setText(bankVO.getMaintype());
         money.setText(String.valueOf(bankVO.getMoney()));
         date.setText(Common.sTwo.format(bankVO.getDate()));
@@ -208,6 +210,7 @@ public class InsertIncome extends Fragment {
         fixdate.setChecked(Boolean.valueOf(bankVO.getFixDate()));
         if(bankVO.getFixDate().equals("true"))
         {
+
             JsonObject js = gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
             String choicestatue= js.get("choicestatue").getAsString().trim();
             String choicedate=js.get("choicedate").getAsString().trim();
@@ -276,9 +279,9 @@ public class InsertIncome extends Fragment {
     private class dateClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-          showdate.setVisibility(View.VISIBLE);
+            firstL.setVisibility(View.GONE);
+            showdate.setVisibility(View.VISIBLE);
         }
-
     }
 
 
@@ -358,6 +361,18 @@ public class InsertIncome extends Fragment {
     private class clearAllInput implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+
+            //設定種類時 不能儲存
+            if(firstL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+
+            //date show not save
+            if(showdate.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
             name.setText(" ");
             money.setText(" ");
             fixdate.setChecked(false);
@@ -375,7 +390,6 @@ public class InsertIncome extends Fragment {
     }
 
     private void setBankVO() {
-        bankVO=new BankVO();
         Map<String, String> g = new HashMap<>();
         g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString()));
         g.put("choicedate", isnull(choiceday.getSelectedItem()));
@@ -397,12 +411,26 @@ public class InsertIncome extends Fragment {
         bankVO.setDetailname(detailname.getText().toString());
         bankVO.setAuto(false);
         bankVO.setAutoId(-1);
+        needSet=false;
     }
 
 
     private class savecomsumer implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            //設定種類時 不能儲存
+            if(firstL.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+
+            //date show not save
+            if(showdate.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
+
+
             if(name.getText().toString().trim()==null||name.getText().toString().trim().length()==0)
             {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
