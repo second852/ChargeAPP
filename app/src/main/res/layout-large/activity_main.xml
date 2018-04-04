@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/drawer_layout"
-    android:background="#FFFFFF"
+    android:background="#F5F5F5"
     android:orientation="vertical"
     tools:context="com.chargeapp.whc.chargeapp.Control.MainActivity">
     <FrameLayout
@@ -24,6 +24,7 @@
             android:divider="#666666"
             android:groupIndicator="@null"
             android:childDivider="#666666"
+            android:background="#dddddd"
             android:dividerHeight="1dp"
             android:layout_height="match_parent">
         </ExpandableListView>

@@ -6,7 +6,7 @@
     >
     <com.github.mikephil.charting.charts.PieChart
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="400dp"
         android:layout_centerHorizontal="true"
         android:id="@+id/pieChart"
         />
@@ -14,7 +14,7 @@
         android:id="@+id/pieChartT"
         android:textColor="#000000"
         android:gravity="center"
-        android:textSize="20sp"
+        android:textSize="40sp"
         android:layout_below="@+id/pieChart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

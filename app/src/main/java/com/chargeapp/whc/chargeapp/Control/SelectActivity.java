@@ -56,9 +56,22 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
 
     public void setcurrentpage() {
         int page = SViewPager.getCurrentItem();
-        exportMoney.setOnClickListener(new ChangePage(page));
-        importMoney.setOnClickListener(new ChangePage(page + 1));
-        getMoney.setOnClickListener(new ChangePage(page - 1));
+        if(page==0)
+        {
+            exportMoney.setOnClickListener(new ChangePage(page));
+            importMoney.setOnClickListener(new ChangePage(page + 1));
+            getMoney.setOnClickListener(new ChangePage(page +2));
+        }else if(page==1)
+        {
+            exportMoney.setOnClickListener(new ChangePage(page));
+            importMoney.setOnClickListener(new ChangePage(page + 1));
+            getMoney.setOnClickListener(new ChangePage(page - 1));
+        }else{
+            exportMoney.setOnClickListener(new ChangePage(page));
+            importMoney.setOnClickListener(new ChangePage(page -2));
+            getMoney.setOnClickListener(new ChangePage(page - 1));
+        }
+
     }
 
 

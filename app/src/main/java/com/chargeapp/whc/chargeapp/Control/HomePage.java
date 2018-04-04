@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
@@ -76,6 +77,10 @@ public class HomePage extends Fragment {
         pieChart=view.findViewById(R.id.pieChart);
         pieChartT=view.findViewById(R.id.pieChartT);
         listView=view.findViewById(R.id.list);
+        if(MainActivity.chargeAPPDB==null)
+        {
+            MainActivity.chargeAPPDB=new ChargeAPPDB(getActivity());
+        }
         goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -422,8 +427,10 @@ public class HomePage extends Fragment {
 
                 if(position==0)
                 {
+                    //顯示本周花費
                     imageView.setImageResource(R.drawable.bouns);
-                    int dweek=HomePage.this.start.get(Calendar.DAY_OF_WEEK);
+                    Calendar calendar=Calendar.getInstance();
+                    int dweek=calendar.get(Calendar.DAY_OF_WEEK);
                     start=new GregorianCalendar(year,month,day-dweek+1,0,0,0);
                     end=new GregorianCalendar(year,month,day,23,59,59);
                     consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+

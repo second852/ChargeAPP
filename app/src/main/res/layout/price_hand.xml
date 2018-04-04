@@ -59,7 +59,7 @@
             android:layout_margin="2dp"
             android:backgroundTint="#000000"
             android:gravity="center"
-            android:theme="@style/spinner"/>
+            android:theme="@style/spinner_normal"/>
     </RelativeLayout>
 
 

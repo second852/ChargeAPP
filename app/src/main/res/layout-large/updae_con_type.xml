@@ -19,13 +19,13 @@
                 android:textColor="#000000"
                 android:background="#DDDDDD"
                 android:layout_centerHorizontal="true"
-                android:textSize="20sp"
+                android:textSize="30sp"
                 />
             <LinearLayout
                 android:layout_below="@+id/mainTitle"
                 android:id="@+id/pictureL"
-                android:layout_width="80dp"
-                android:layout_height="90dp"
+                android:layout_width="150dp"
+                android:layout_height="130dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="30dp"
                 android:orientation="vertical"
@@ -33,8 +33,8 @@
                 <ImageView
                     android:id="@+id/mainImage"
                     android:src="@drawable/add"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
                     android:layout_gravity="center"
                     />
                 <TextView
@@ -43,17 +43,17 @@
                     android:text="設定圖片"
                     android:gravity="center"
                     android:textColor="#000000"
-                    android:textSize="18sp"
+                    android:textSize="28sp"
                     />
             </LinearLayout>
             <LinearLayout
                 android:layout_below="@+id/mainTitle"
-                android:layout_width="200dp"
-                android:layout_height="90dp"
+                android:layout_width="300dp"
+                android:layout_height="120dp"
                 android:layout_toRightOf="@+id/pictureL"
                 android:layout_marginTop="25dp"
                 android:layout_marginRight="30dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="30dp"
                 android:orientation="vertical"
                 >
                 <TextView
@@ -61,12 +61,12 @@
                     android:layout_height="wrap_content"
                     android:text="名稱"
                     android:textColor="#000000"
-                    android:textSize="18sp"
+                    android:textSize="28sp"
                     />
                 <EditText
                     android:id="@+id/mainName"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
                     android:background="#FFEE99"
                     android:gravity="center_vertical"
@@ -85,14 +85,14 @@
                 android:background="#DDDDDD"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/pictureL"
-                android:layout_marginTop="10dp"
-                android:textSize="20sp"
+                android:layout_marginTop="15dp"
+                android:textSize="30sp"
                 />
             <LinearLayout
                 android:layout_below="@+id/secondTitle"
                 android:id="@+id/secondL"
-                android:layout_width="80dp"
-                android:layout_height="120dp"
+                android:layout_width="150dp"
+                android:layout_height="130dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="30dp"
                 android:orientation="vertical"
@@ -101,8 +101,8 @@
                     android:layout_marginTop="25dp"
                     android:id="@+id/secondImage"
                     android:src="@drawable/add"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
                     android:layout_gravity="center"
                     />
                 <TextView
@@ -111,17 +111,17 @@
                     android:text="設定圖片"
                     android:gravity="center"
                     android:textColor="#000000"
-                    android:textSize="18sp"
+                    android:textSize="28sp"
                     />
             </LinearLayout>
             <LinearLayout
                 android:layout_below="@+id/secondTitle"
-                android:layout_width="200dp"
-                android:layout_height="120dp"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/pictureL"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="30dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="30dp"
                 android:orientation="vertical"
                 >
                 <TextView
@@ -129,12 +129,12 @@
                     android:layout_height="wrap_content"
                     android:text="名稱"
                     android:textColor="#000000"
-                    android:textSize="18sp"
+                    android:textSize="28sp"
                     />
                 <EditText
                     android:id="@+id/secondName"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
                     android:background="#FFEE99"
                     android:gravity="center_vertical"
@@ -149,12 +149,12 @@
                     android:gravity="left"
                     android:layout_marginTop="10dp"
                     android:textColor="#000000"
-                    android:textSize="18sp"
+                    android:textSize="28sp"
                     />
                 <EditText
                     android:id="@+id/secondKey"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
                     android:background="#FFEE99"
                     android:gravity="center_vertical"
@@ -173,8 +173,8 @@
                 android:background="#DDDDDD"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@+id/secondL"
-                android:layout_marginTop="10dp"
-                android:textSize="20sp"
+                android:layout_marginTop="50dp"
+                android:textSize="30sp"
                 />
             <TextView
                 android:id="@+id/standard"
@@ -184,33 +184,33 @@
                 android:layout_centerHorizontal="true"
                 />
             <Button
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="30dp"
                 android:layout_below="@+id/otherTitle"
                 android:id="@+id/save"
-                android:layout_width="60dp"
-                android:layout_height="40dp"
-                android:layout_marginRight="30dp"
+                android:layout_width="90dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="50dp"
                 android:layout_toLeftOf="@+id/standard"
                 android:background="#33CCFF"
                 android:gravity="center"
                 android:padding="5dp"
                 android:text="儲存"
                 android:textColor="#000000"
-                android:textSize="20sp" />
+                android:textSize="35sp" />
             <Button
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="30dp"
                 android:layout_below="@+id/otherTitle"
                 android:id="@+id/clear"
-                android:layout_width="60dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="30dp"
+                android:layout_width="90dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="50dp"
                 android:layout_toRightOf="@+id/standard"
                 android:background="#FF8888"
                 android:gravity="center"
                 android:padding="5dp"
                 android:text="取消"
                 android:textColor="#000000"
-                android:textSize="20sp" />
+                android:textSize="35sp" />
         </RelativeLayout>
     </ScrollView>
     <LinearLayout
@@ -246,4 +246,13 @@
             android:layout_marginBottom="1dp"
             android:background="#ffffff" />
     </LinearLayout>
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-5169620543343332/5257007139" />
 </RelativeLayout>

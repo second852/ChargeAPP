@@ -262,6 +262,16 @@ public class PriceHand extends Fragment {
         PIdateTittle.setText(showtime);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(speech!=null)
+        {
+            speech.stopListening();
+            speech.cancel();
+            speech.destroy();
+        }
+    }
 
     private void findViewById(View view) {
         PIdateL=view.findViewById(R.id.PIdateL);
@@ -506,6 +516,8 @@ public class PriceHand extends Fragment {
             autoSetInWin(matches.get(matchNul));
             startListening();
         }
+
+
 
         public void onPartialResults(Bundle partialResults) {
             Log.d("XXX", "onPartialResults");

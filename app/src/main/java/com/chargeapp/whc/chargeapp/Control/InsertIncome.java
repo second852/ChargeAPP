@@ -43,7 +43,7 @@ import java.util.Map;
 public class InsertIncome extends Fragment {
     private EditText money,detailname;
     private CheckBox fixdate;
-    private TextView name;
+    private TextView name,fixDateT;
     private TextView save, clear,date,datesave;
     private LinearLayout showdate,showfixdate;
     private DatePicker datePicker;
@@ -266,6 +266,7 @@ public class InsertIncome extends Fragment {
         choiceStatue=view.findViewById(R.id.choiceStatue);
         choiceday=view.findViewById(R.id.choiceday);
         detailname=view.findViewById(R.id.detailname);
+        fixDateT=view.findViewById(R.id.fixDateT);
         AdView adView = view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
@@ -300,14 +301,15 @@ public class InsertIncome extends Fragment {
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             if(b)
             {
-                fixdate.setVisibility(View.VISIBLE);
                 fixdate.setX(showfixdate.getWidth()/10);
+                fixDateT.setX(showfixdate.getWidth()/10+fixdate.getWidth());
                 choiceStatue.setX(showfixdate.getWidth()/2+showfixdate.getWidth()/10);
                 choiceStatue.setVisibility(View.VISIBLE);
             }else{
                 choiceStatue.setVisibility(View.GONE);
                 choiceday.setVisibility(View.GONE);
                 fixdate.setX(showfixdate.getWidth()/3);
+                fixDateT.setX(showfixdate.getWidth()/3+fixdate.getWidth());
             }
         }
     }
@@ -320,6 +322,7 @@ public class InsertIncome extends Fragment {
             {
                 choiceday.setVisibility(View.GONE);
                 fixdate.setX(showfixdate.getWidth()/10);
+                fixDateT.setX(showfixdate.getWidth()/10+fixdate.getWidth());
                 choiceStatue.setX(showfixdate.getWidth()/2+showfixdate.getWidth()/10);
                 choiceStatue.setVisibility(View.VISIBLE);
                 return;
@@ -341,6 +344,7 @@ public class InsertIncome extends Fragment {
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
             fixdate.setX(showfixdate.getWidth()/20);
+            fixDateT.setX(showfixdate.getWidth()/20+fixdate.getWidth());
             choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/10);
             choiceday.setX((showfixdate.getWidth()*2/3)+showfixdate.getWidth()/20);
             if (first) {
@@ -418,12 +422,14 @@ public class InsertIncome extends Fragment {
     private class savecomsumer implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            //重置Error 顏色
+            name.setBackgroundColor(Color.parseColor("#FFEE99"));
+
             //設定種類時 不能儲存
             if(firstL.getVisibility()==View.VISIBLE)
             {
                 return;
             }
-
             //date show not save
             if(showdate.getVisibility()==View.VISIBLE)
             {
@@ -444,7 +450,7 @@ public class InsertIncome extends Fragment {
             }
             if(date.getText().toString().trim()==null||date.getText().toString().trim().length()==0)
             {
-                name.setError(" ");
+                date.setError(" ");
                 Common.showToast(getActivity(),"日期不能空白");
                 return;
             }

@@ -80,9 +80,21 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
 
     public void setcurrentpage() {
         int page = priceViewPager.getCurrentItem();
-        exportMoney.setOnClickListener(new ChangePage(page));
-        importMoney.setOnClickListener(new ChangePage(page + 1));
-        showN.setOnClickListener(new ChangePage(page - 1));
+        if(page==0)
+        {
+            exportMoney.setOnClickListener(new ChangePage(page));
+            importMoney.setOnClickListener(new ChangePage(page + 1));
+            showN.setOnClickListener(new ChangePage(page +2));
+        }else if(page==1)
+        {
+            exportMoney.setOnClickListener(new ChangePage(page));
+            importMoney.setOnClickListener(new ChangePage(page + 1));
+            showN.setOnClickListener(new ChangePage(page - 1));
+        }else{
+            exportMoney.setOnClickListener(new ChangePage(page));
+            importMoney.setOnClickListener(new ChangePage(page - 2));
+            showN.setOnClickListener(new ChangePage(page - 1));
+        }
     }
 
 

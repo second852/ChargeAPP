@@ -67,7 +67,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:textColor="#FF3333"
-        android:textSize="30sp"
+        android:textSize="40sp"
         android:text="財政部電子發票整合服務平台忙線中!"
         android:visibility="gone"
         />

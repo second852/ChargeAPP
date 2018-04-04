@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
     private List<EleMainItemVO> getElemainItemList() {
         List<EleMainItemVO> list = new ArrayList<>();
         list.add(new EleMainItemVO(R.string.text_SetCarrier, R.drawable.cellphone));
+        list.add(new EleMainItemVO(R.string.text_ShowCal, R.drawable.barcode));
         list.add(new EleMainItemVO(R.string.text_DonateMain, R.drawable.health));
         list.add(new EleMainItemVO(R.string.text_HowSetC, R.drawable.easygo));
         list.add(new EleMainItemVO(R.string.text_NewCarrier, R.drawable.barcode));
@@ -331,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
                         listView.collapseGroup(i);
                         setTitle(R.string.text_Com);
                     } else if (i == 1) {
+                        setTitle(R.string.text_Ele);
                         if (doubleClick) {
                             listView.collapseGroup(1);
                             doubleClick = false;
@@ -406,23 +408,27 @@ public class MainActivity extends AppCompatActivity {
                         setTitle(R.string.text_SetCarrier);
                         switchFragment(fragment);
                     } else if (i1 == 1) {
+                        setTitle(R.string.text_ShowCal);
+                        fragment = new EleShowCarrier();
+                        switchFragment(fragment);
+                    }else if (i1 == 2) {
                         setTitle(R.string.text_DonateMain);
                         fragment = new EleDonateMain();
                         switchFragment(fragment);
-                    } else if (i1 == 2) {
+                    } else if (i1 == 3) {
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse("http://www.teach.ltu.edu.tw/public/News/11503/201412041535091.pdf"));
                         startActivity(intent);
-                    } else if (i1 == 3) {
+                    } else if (i1 == 4) {
                         setTitle(R.string.text_NewCarrier);
                         fragment = new EleNewCarrier();
                         switchFragment(fragment);
-                    } else if (i1 == 4) {
+                    } else if (i1 == 5) {
                         setTitle(R.string.text_EleBank);
                         fragment = new EleAddBank();
                         switchFragment(fragment);
-                    } else if (i1 == 5) {
+                    } else if (i1 == 6) {
                         setTitle(R.string.text_HowGet);
                         fragment = new HowGetPrice();
                         switchFragment(fragment);

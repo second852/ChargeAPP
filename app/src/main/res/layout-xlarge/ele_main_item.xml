@@ -8,8 +8,8 @@
     >
     <ImageView
         android:id="@+id/ivImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_centerVertical="true"
         android:layout_margin="10dp"
         android:padding="6dp" />
@@ -22,32 +22,32 @@
         android:padding="6dp"
         android:textColor="#000000"
         android:layout_centerVertical="true"
-        android:textSize="25sp"
+        android:textSize="40sp"
         android:text="ID" />
     <Button
         android:id="@+id/widgetShow"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="55dp"
         android:layout_toRightOf="@+id/deletecarrier"
         android:layout_marginRight="10dp"
         android:background="#FFDD55"
         android:layout_gravity="center_vertical"
         android:layout_centerVertical="true"
-        android:textSize="20sp"
+        android:textSize="40sp"
         android:textColor="#000000"
         android:visibility="gone"
         />
     <Button
         android:id="@+id/deletecarrier"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="55dp"
         android:layout_alignParentRight="true"
         android:layout_marginRight="30dp"
         android:background="#FF8888"
         android:layout_gravity="center_vertical"
         android:layout_centerVertical="true"
         android:text="刪除"
-        android:textSize="20sp"
+        android:textSize="40sp"
         android:textColor="#000000"
         android:visibility="gone"
         />
@@ -57,6 +57,6 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
+        android:layout_marginRight="40dp"
         />
 </RelativeLayout>

@@ -56,7 +56,7 @@ public class InsertSpend extends Fragment {
     private CheckBox fixdate, notify, noWek;
     private TextView secondname, name;
     private TextView save, clear, date, datesave;
-    private LinearLayout showdate, showfixdate;
+    private LinearLayout showdate;
     private DatePicker datePicker;
     private String choicedate;
     private Spinner choiceStatue, choiceday;
@@ -74,6 +74,8 @@ public class InsertSpend extends Fragment {
     private boolean first;
     private Handler handler,secondHander;
     private View view;
+    private TextView noWekT,notifyT;
+    private RelativeLayout showfixdate;
 
     @Nullable
     @Override
@@ -272,6 +274,8 @@ public class InsertSpend extends Fragment {
         name = view.findViewById(R.id.name);
         secondG = view.findViewById(R.id.secondG);
         secondL = view.findViewById(R.id.secondL);
+        noWekT=view.findViewById(R.id.noWekT);
+        notifyT=view.findViewById(R.id.notifyT);
     }
 
 
@@ -300,10 +304,14 @@ public class InsertSpend extends Fragment {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             if (b) {
+                notifyT.setVisibility(View.VISIBLE);
+                noWekT.setVisibility(View.VISIBLE);
                 notify.setVisibility(View.VISIBLE);
                 noWek.setVisibility(View.VISIBLE);
                 choiceStatue.setVisibility(View.VISIBLE);
             } else {
+                notifyT.setVisibility(View.GONE);
+                noWekT.setVisibility(View.GONE);
                 notify.setVisibility(View.GONE);
                 choiceStatue.setVisibility(View.GONE);
                 choiceday.setVisibility(View.GONE);
@@ -321,6 +329,8 @@ public class InsertSpend extends Fragment {
                 choiceday.setVisibility(View.GONE);
                 noWek.setVisibility(View.VISIBLE);
                 choiceStatue.setVisibility(View.VISIBLE);
+                notifyT.setVisibility(View.VISIBLE);
+                noWekT.setVisibility(View.VISIBLE);
                 return;
             }
             if (position==1) {
@@ -336,7 +346,9 @@ public class InsertSpend extends Fragment {
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
+            notifyT.setVisibility(View.VISIBLE);
             noWek.setVisibility(View.GONE);
+            noWekT.setVisibility(View.GONE);
             noWek.setChecked(false);
             if (first) {
                 choiceday.setSelection(updateChoice);

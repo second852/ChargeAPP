@@ -15,16 +15,17 @@
         android:gravity="center"
         android:text="手機條碼"
         android:textColor="#000000"
-        android:textSize="25dp" />
+        android:textSize="35dp" />
 
     <EditText
         android:id="@+id/cellphone"
-        android:layout_width="250dp"
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/cellphoneT"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
+        android:textSize="30sp"
         android:background="#FFEE99"
         android:gravity="center"
         android:hint="/XXXXXXX"
@@ -42,11 +43,11 @@
         android:gravity="center"
         android:text="驗證碼"
         android:textColor="#000000"
-        android:textSize="25dp" />
+        android:textSize="35dp" />
 
     <EditText
         android:id="@+id/certcode"
-        android:layout_width="250dp"
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/passWordT"
         android:layout_centerHorizontal="true"
@@ -58,22 +59,23 @@
         android:inputType="textPassword"
         android:singleLine="true"
         android:textColor="#000000"
+        android:textSize="30sp"
         android:textColorHint="#AAAAAA" />
 
     <TextView
         android:id="@+id/confirm"
-        android:layout_width="50dp"
-        android:layout_height="40dp"
+        android:layout_width="90dp"
+        android:layout_height="60dp"
         android:layout_below="@+id/certcode"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:background="#33CCFF"
         android:gravity="center"
         android:padding="1dp"
         android:text="確認"
         android:textColor="#000000"
-        android:textSize="20sp" />
+        android:textSize="35sp" />
 
     <TextView
         android:id="@+id/listtiitle"
@@ -107,8 +109,8 @@
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleLarge"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:indeterminateBehavior="repeat"
@@ -123,7 +125,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="0%"
-            android:textSize="25dp" />
+            android:textSize="40dp" />
 
         <TextView
             android:id="@+id/progressT"
@@ -133,7 +135,7 @@
             android:gravity="center"
             android:text=""
             android:textColor="#000000"
-            android:textSize="20dp" />
+            android:textSize="40dp" />
     </RelativeLayout>
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"

@@ -48,8 +48,14 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
     public void setcurrentpage()
     {
         int page=DonateViewPager.getCurrentItem();
-        exportMoney.setOnClickListener(new ChangePage(page));
-        importMoney.setOnClickListener(new ChangePage(page+1));
+        if(page==0)
+        {
+            exportMoney.setOnClickListener(new ChangePage(page));
+            importMoney.setOnClickListener(new ChangePage(page+1));
+        }else{
+            exportMoney.setOnClickListener(new ChangePage(page));
+            importMoney.setOnClickListener(new ChangePage(page-1));
+        }
     }
 
 

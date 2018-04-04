@@ -28,6 +28,8 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,6 +91,9 @@ public class InsertIncomeType extends Fragment {
         clear = view.findViewById(R.id.clear);
         choiceL = view.findViewById(R.id.choiceL);
         choiceG = view.findViewById(R.id.choiceG);
+        AdView adView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     private class showImage implements View.OnClickListener {

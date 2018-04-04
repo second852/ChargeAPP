@@ -43,7 +43,6 @@ public class PriceNumber extends Fragment {
     private Calendar now = Calendar.getInstance();
     private int month, year;
     private TextView PIdateTittle,superN,spcN,firstN,addsixN,showRemain;
-    private SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
     private PriceVO priceVO;
     private RelativeLayout showNul,PIdateL;
 

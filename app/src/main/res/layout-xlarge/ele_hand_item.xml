@@ -24,6 +24,6 @@
             android:layout_marginLeft="18dp"
             android:gravity="center"
             android:textColor="#000000"
-            android:textSize="18sp" />
+            android:textSize="38sp" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

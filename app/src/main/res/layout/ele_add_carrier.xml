@@ -18,7 +18,7 @@
     <Spinner
         android:layout_marginTop="15dp"
         android:id="@+id/carrier"
-        android:theme="@style/spinner"
+        android:theme="@style/spinner_normal"
         android:layout_below="@+id/mainTitle"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"

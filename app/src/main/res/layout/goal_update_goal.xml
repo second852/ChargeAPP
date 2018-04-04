@@ -276,7 +276,7 @@
             android:layout_height="wrap_content"
             android:calendarViewShown="false"
             android:datePickerMode="spinner"
-            android:theme="@style/spinner"
+            android:theme="@style/spinner_normal"
             android:spinnersShown="true">
         </DatePicker>
         <TextView

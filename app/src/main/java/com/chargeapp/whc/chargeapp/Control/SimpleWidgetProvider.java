@@ -76,7 +76,7 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
             }
         }catch (Exception e)
         {
-
+           Log.d("XXX",e.getMessage());
         }
     }
 
