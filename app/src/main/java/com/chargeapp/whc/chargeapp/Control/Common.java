@@ -148,11 +148,7 @@ public class Common {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }catch (Exception e)
         {
-            if(SettingDownloadFile.mGoogleApiClient!=null)
-            {
-                SettingDownloadFile.mGoogleApiClient.disconnect();
-                SettingDownloadFile.mGoogleApiClient=null;
-            }
+
         }
     }
 

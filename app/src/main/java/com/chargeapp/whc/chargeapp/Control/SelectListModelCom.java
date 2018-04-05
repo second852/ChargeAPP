@@ -124,9 +124,9 @@ public class SelectListModelCom extends Fragment {
                 long t1 = (o1 instanceof ConsumeVO) ? (((ConsumeVO) o1).getDate().getTime()) : (((InvoiceVO) o1).getTime().getTime());
                 long t2 = (o2 instanceof ConsumeVO) ? (((ConsumeVO) o2).getDate().getTime()) : (((InvoiceVO) o2).getTime().getTime());
                 if (t1 > t2) {
-                    return 1;
-                } else {
                     return -1;
+                } else {
+                    return 1;
                 }
             }
         });

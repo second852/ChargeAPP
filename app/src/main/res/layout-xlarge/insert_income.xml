@@ -33,6 +33,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="65dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:text="項目"
                     android:textColor="#000000"
                     android:textSize="80sp" />
@@ -63,6 +65,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="65dp"
                     android:text="金額"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textSize="80sp" />
 
@@ -74,7 +78,8 @@
                     android:background="#FFEE99"
                     android:inputType="number"
                     android:singleLine="true"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
                     android:textSize="80sp"
@@ -92,6 +97,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="65dp"
                     android:text="日期"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textSize="80sp" />
 
@@ -100,7 +107,8 @@
                     android:layout_width="400dp"
                     android:layout_height="90dp"
                     android:layout_marginLeft="25dp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:background="#FFEE99"
                     android:inputType="date"
                     android:singleLine="true"
@@ -121,6 +129,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="65dp"
                     android:text="明細"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textSize="80sp" />
 
@@ -132,7 +142,8 @@
                     android:background="#FFEE99"
                     android:inputType="text"
                     android:textSize="80sp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA" />

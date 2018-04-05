@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Log.d("XXXXXXX", "onStart");
+
         super.onStart();
         (getSupportActionBar()).setDisplayShowCustomEnabled(false);
 
@@ -153,46 +153,6 @@ public class MainActivity extends AppCompatActivity {
                 switchFragment(fragment);
             } else if (a.equals("setConsume")) {
                 setConsume();
-            }else if (a.equals("all")) {
-                Fragment fragment = new SettingUploadFile();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("action", "all");
-                fragment.setArguments(bundle);
-                switchFragment(fragment);
-            }else if (a.equals("uploadTxt")) {
-                Fragment fragment = new SettingUploadFile();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("action", "uploadTxt");
-                fragment.setArguments(bundle);
-                switchFragment(fragment);
-            }else if (a.equals("uploadExcel")) {
-                Fragment fragment = new SettingUploadFile();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("action", "uploadExcel");
-                fragment.setArguments(bundle);
-                switchFragment(fragment);
-            }else if (a.equals("no")) {
-                Fragment fragment = new SettingUploadFile();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("action", "no");
-                fragment.setArguments(bundle);
-                switchFragment(fragment);
-            }else if (a.equals("open")) {
-                Fragment fragment = new SettingDownloadFile();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("action", "open");
-                fragment.setArguments(bundle);
-                switchFragment(fragment);
-            }else if (a.equals("download")) {
-                Fragment fragment = new SettingDownloadFile();
-                Bundle bundle = new Bundle();
-                if(SettingDownloadFile.mSelectedFileDriveId!=null)
-                {
-                    bundle.putSerializable("action", "download");
-                }else{
-                    bundle.putSerializable("action", "no");
-                }
-                switchFragment(fragment);
             }else if(a.equals("UpdateSpend"))
             {
                 setUpdateConsume();
@@ -457,32 +417,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("XXXXXXXXX", requestCode + ":" + resultCode);
-        if (requestCode == 0) {
-            getIntent().putExtra("action","all");
-        } else if (requestCode == 1) {
-            getIntent().putExtra("action","uploadTxt");
-        } else if (requestCode == 2) {
-            getIntent().putExtra("action","uploadExcel");
-        } else if (requestCode == 3) {
-            getIntent().putExtra("action","no");
-            if (resultCode == -1) {
-                Common.showToast(this, "上傳成功");
-            } else {
-                Common.showToast(this, "上傳失敗");
-            }
-        } else if (requestCode == 4) {
-            getIntent().putExtra("action","open");
-        } else if (requestCode == 5) {
-            getIntent().putExtra("action","download");
-            if (resultCode == -1) {
-                SettingDownloadFile.mSelectedFileDriveId = data.getParcelableExtra(
-                        OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-                Common.showToast(this, "下傳成功");
-            } else {
-                Common.showToast(this, "下傳失敗");
-            }
-        }
+        super.onActivityResult(requestCode,resultCode,data);
+        List<Fragment> fragments=getSupportFragmentManager().getFragments();
+        Fragment fragment=fragments.get(fragments.size()-1);
+        fragment.onActivityResult(requestCode,resultCode,data);
     }
 
     private void setConsume() {
@@ -746,6 +684,10 @@ public class MainActivity extends AppCompatActivity {
                     fragment.setArguments(bundle);
                 }else if (action.equals("SettingListType")) {
                     fragment = new SettingListType();
+                    fragment.setArguments(bundle);
+                }else if(action.equals("SettingMain"))
+                {
+                    fragment = new SettingMain();
                     fragment.setArguments(bundle);
                 }
 

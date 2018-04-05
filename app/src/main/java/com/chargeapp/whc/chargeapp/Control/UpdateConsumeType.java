@@ -1,8 +1,10 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -18,6 +20,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
@@ -30,6 +33,8 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +56,8 @@ public class UpdateConsumeType extends Fragment {
     private TypeDetailDB typeDetailDB;
     private InvoiceDB invoiceDB;
     private ConsumeDB consumeDB;
+    private ProgressDialog progressDialog;
+    private Handler handler;
 
 
     @Nullable
@@ -62,6 +69,8 @@ public class UpdateConsumeType extends Fragment {
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        progressDialog=new ProgressDialog(getActivity());
+        handler=new Handler();
         findViewById(view);
         setGridPicture();
         setTypeDetail();
@@ -112,6 +121,9 @@ public class UpdateConsumeType extends Fragment {
         clear = view.findViewById(R.id.clear);
         choiceL = view.findViewById(R.id.choiceL);
         choiceG = view.findViewById(R.id.choiceG);
+        AdView adView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     private class showImage implements View.OnClickListener {
@@ -174,8 +186,24 @@ public class UpdateConsumeType extends Fragment {
                 secondName.setError("次項目不能重複");
                 return;
             }
+            progressDialog.setTitle("修改中…");
+            progressDialog.show();
+            handler.postDelayed(runnable,500);
+        }
+    }
 
-            Common.showToast(getActivity(), "修改中");
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(handler!=null)
+        {
+            handler.removeCallbacks(runnable);
+        }
+    }
+
+    private Runnable runnable=new Runnable() {
+        @Override
+        public void run() {
             List<InvoiceVO> invoiceVOS=invoiceDB.getInvoiceSecondType(typeDetailVO.getGroupNumber().trim(),typeDetailVO.getName().trim());
             for(InvoiceVO i:invoiceVOS)
             {
@@ -197,13 +225,14 @@ public class UpdateConsumeType extends Fragment {
             Bundle bundle=new Bundle();
             bundle.putSerializable("position",getArguments().getSerializable("position"));
             bundle.putSerializable("spinnerC",getArguments().getSerializable("spinnerC"));
+            progressDialog.cancel();
             Fragment fragment=new SettingListType();
             fragment.setArguments(bundle);
             switchFramgent(fragment);
+            progressDialog.cancel();
             Common.showToast(getActivity(), "修改成功");
-
         }
-    }
+    };
 
     public void switchFramgent(Fragment fragment) {
         //關閉鍵盤

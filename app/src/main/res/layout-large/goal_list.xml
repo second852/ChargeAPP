@@ -12,8 +12,8 @@
 
     <ImageView
         android:id="@+id/addGoal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:src="@drawable/addtwo"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"

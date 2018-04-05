@@ -23,22 +23,23 @@
                     android:layout_marginLeft="25dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
                     android:text="目標名稱"
                     android:textColor="#000000"
-                    android:textSize="20dp" />
+                    android:textSize="40dp" />
 
                 <EditText
                     android:id="@+id/name"
-                    android:layout_width="200dp"
+                    android:layout_width="500dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="115dp"
+                    android:layout_toRightOf="@+id/nameT"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="50dp"
                     android:background="#FFEE99"
                     android:inputType="text"
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="20sp" />
+                    android:textSize="40sp" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -52,23 +53,23 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_marginLeft="25dp"
-                    android:layout_centerVertical="true"
                     android:gravity="right"
                     android:text="目標金額"
                     android:textColor="#000000"
-                    android:textSize="20dp" />
+                    android:textSize="40dp" />
 
                 <EditText
                     android:id="@+id/money"
-                    android:layout_width="200dp"
+                    android:layout_width="500dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="115dp"
+                    android:layout_marginLeft="50dp"
+                    android:layout_toRightOf="@+id/moneyT"
                     android:background="#FFEE99"
                     android:inputType="number"
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="20sp" />
+                    android:textSize="40sp" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -81,20 +82,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
                     android:layout_marginLeft="25dp"
                     android:text="選擇類型"
                     android:textColor="#000000"
-                    android:textSize="20dp" />
+                    android:textSize="40dp" />
 
                 <TextView
                     android:id="@+id/spinnerT"
+                    android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
-                    android:layout_marginLeft="115dp"
+                    android:layout_toRightOf="@+id/typeT"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:textColor="#000000"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_vertical"
                     android:background="#DDDDDD"
                     android:visibility="visible"
                     android:textSize="20sp" />
@@ -110,20 +111,21 @@
                     android:id="@+id/dateT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
                     android:layout_marginLeft="25dp"
                     android:gravity="right"
                     android:text="目標時間"
                     android:textColor="#000000"
-                    android:textSize="20dp" />
+                    android:textSize="40dp" />
 
                 <Spinner
                     android:id="@+id/choiceStatue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="115dp"
-                    android:backgroundTint="#000000"
+                    android:layout_toRightOf="@+id/dateT"
+                    android:layout_marginLeft="50dp"
+                    android:theme="@style/spinner_xlarge"
+                    android:visibility="gone"
                     android:gravity="center" />
                 <TextView
                     android:id="@+id/shift"
@@ -131,17 +133,17 @@
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:layout_centerVertical="true"
+                    android:layout_marginLeft="50dp"
                     android:textColor="#000000"
                     android:gravity="center"
                     android:text="~"
-                    android:layout_gravity="center"
                     android:visibility="gone"
-                    android:textSize="18sp" />
+                    android:textSize="38sp" />
                 <TextView
                     android:id="@+id/limitP"
-                    android:layout_width="110dp"
+                    android:layout_width="wrap_content"
                     android:layout_toRightOf="@+id/shift"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="60dp"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:textColor="#000000"
@@ -151,79 +153,86 @@
                     android:layout_gravity="center"
                     android:background="#FFEE99"
                     android:visibility="gone"
-                    android:textSize="17sp" />
+                    android:textSize="37sp" />
             </RelativeLayout>
 
 
             <RelativeLayout
+                android:id="@+id/remindL"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="match_parent"
+                android:visibility="visible"
                 android:layout_marginTop="15dp">
 
-
                 <CheckBox
-                    android:layout_centerVertical="true"
+                    android:id="@+id/remind"
                     android:layout_centerHorizontal="true"
-                    android:id="@+id/noRemind"
+                    android:layout_toRightOf="@+id/remainT"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_centerVertical="true"
+                    android:button="@null"
+                    android:visibility="visible"
+                    android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:textColor="#000000" />
+                <TextView
+                    android:id="@+id/remindT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="40sp"
                     android:text="提醒"
+                    android:layout_centerHorizontal="true"
+                    android:layout_toRightOf="@+id/remind"
+                    android:textColor="#000000"
                     android:visibility="visible"
-                    android:textSize="20dp" />
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    />
 
-                <RelativeLayout
-                    android:id="@+id/remindL"
-                    android:layout_width="match_parent"
+                <Spinner
+                    android:id="@+id/remindS"
                     android:visibility="gone"
-                    android:layout_height="wrap_content">
-                    <CheckBox
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="25dp"
-                        android:id="@+id/remind"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="提醒"
-                        android:textSize="20dp" />
-
-                    <Spinner
-                        android:id="@+id/remindS"
-                        android:layout_marginLeft="115dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:backgroundTint="#000000"
-                        android:gravity="center">
-                    </Spinner>
-
-                    <Spinner
-                        android:id="@+id/remindD"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="30dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:backgroundTint="#000000"
-                        android:gravity="center" />
-                    <CheckBox
-                        android:id="@+id/noWeekend"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="50dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:buttonTint="#000000"
-                        android:gravity="center"
-                        android:text="假日除外"
-                        android:visibility="gone"
-                        android:textColor="#000000"
-                        android:textSize="20sp" />
-                </RelativeLayout>
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:theme="@style/spinner_xlarge"
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <Spinner
+                    android:id="@+id/remindD"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:theme="@style/spinner_xlarge"
+                    android:visibility="gone"
+                    />
+                <CheckBox
+                    android:id="@+id/noWeekend"
+                    android:layout_centerVertical="true"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:buttonTint="#00BBFF"
+                    android:layout_toLeftOf="@+id/noWeekendT"
+                    android:button="@null"
+                    android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:visibility="gone" />
+                <TextView
+                    android:id="@+id/noWeekendT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="40sp"
+                    android:text="假日除外"
+                    android:textColor="#000000"
+                    android:layout_alignParentRight="true"
+                    android:visibility="gone"
+                    android:layout_centerVertical="true"
+                    />
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="35dp">
+                android:layout_marginTop="55dp">
 
                 <TextView
                     android:id="@+id/standard"
@@ -234,29 +243,29 @@
 
                 <TextView
                     android:id="@+id/save"
-                    android:layout_width="60dp"
-                    android:layout_height="40dp"
-                    android:layout_marginRight="30dp"
+                    android:layout_width="120dp"
+                    android:layout_height="70dp"
+                    android:layout_marginRight="80dp"
                     android:layout_toLeftOf="@+id/standard"
                     android:background="#33CCFF"
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="儲存"
                     android:textColor="#000000"
-                    android:textSize="20sp" />
+                    android:textSize="40sp" />
 
                 <TextView
                     android:id="@+id/clear"
-                    android:layout_width="60dp"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="30dp"
+                    android:layout_width="120dp"
+                    android:layout_height="70dp"
+                    android:layout_marginLeft="80dp"
                     android:layout_toRightOf="@+id/standard"
                     android:background="#FF8888"
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="清除"
                     android:textColor="#000000"
-                    android:textSize="20sp" />
+                    android:textSize="40sp" />
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>
@@ -276,13 +285,13 @@
             android:layout_height="wrap_content"
             android:calendarViewShown="false"
             android:datePickerMode="spinner"
-            android:theme="@style/spinner_normal"
+            android:theme="@style/spinner_xlarge"
             android:spinnersShown="true">
         </DatePicker>
         <TextView
             android:id="@+id/dateSave"
-            android:layout_width="60dp"
-            android:layout_height="40dp"
+            android:layout_width="120dp"
+            android:layout_height="60dp"
             android:layout_marginTop="1dp"
             android:layout_marginBottom="5dp"
             android:background="#BDBDBD"
@@ -291,6 +300,15 @@
             android:padding="5dp"
             android:text="確認"
             android:textColor="#000000"
-            android:textSize="20sp" />
+            android:textSize="35sp" />
     </LinearLayout>
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-5169620543343332/5257007139" />
 </RelativeLayout>

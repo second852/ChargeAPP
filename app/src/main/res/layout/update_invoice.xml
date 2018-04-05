@@ -30,6 +30,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="25dp"
                     android:text="發票號碼"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textSize="20sp" />
 
@@ -37,6 +39,8 @@
                     android:id="@+id/number"
                     android:layout_width="200dp"
                     android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:layout_marginLeft="25dp"
                     android:background="#DDDDDD"
                     android:singleLine="true"
@@ -55,6 +59,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="45dp"
                     android:text="主項目"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textSize="20sp" />
 
@@ -63,9 +69,9 @@
                     android:layout_width="200dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:layout_marginLeft="25dp"
                     android:background="#FFEE99"
-                    android:gravity="center_vertical"
                     android:inputType="none"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
@@ -82,6 +88,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:layout_marginLeft="45dp"
                     android:text="次項目"
                     android:textColor="#000000"
@@ -92,9 +99,9 @@
                     android:layout_width="200dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:layout_marginLeft="25dp"
                     android:background="#FFEE99"
-                    android:gravity="center_vertical"
                     android:inputType="none"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
@@ -112,6 +119,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="65dp"
                     android:text="金額"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textSize="20sp" />
 
@@ -125,6 +134,8 @@
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
                     android:textSize="20sp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     />
             </LinearLayout>
 
@@ -139,6 +150,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="65dp"
                     android:text="日期"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textSize="20sp" />
 
@@ -147,6 +160,8 @@
                     android:layout_width="200dp"
                     android:layout_height="30dp"
                     android:layout_marginLeft="25dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:background="#DDDDDD"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"

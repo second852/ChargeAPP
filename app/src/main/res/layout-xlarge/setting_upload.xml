@@ -13,12 +13,12 @@
         android:layout_marginLeft="50dp"
         android:background="#aaaaaa"
         android:layout_centerHorizontal="true"
-        android:layout_height="40dp"
+        android:layout_height="80dp"
         >
         <Spinner
             android:gravity="center"
             android:id="@+id/choiceT"
-            android:theme="@style/spinner_normal"
+            android:theme="@style/spinner_xlarge"
             android:backgroundTint="#000000"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
@@ -43,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/message"
-        android:textSize="35sp"
+        android:textSize="55sp"
         android:textColor="#FF7744"
         android:visibility="gone"
         android:layout_centerHorizontal="true"
@@ -132,8 +132,8 @@
         >
         <ProgressBar
             android:id="@+id/progress"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="400dp"
+            android:layout_height="400dp"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             />
@@ -141,7 +141,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="執行中…"
-            android:textSize="25dp"
+            android:textSize="45dp"
             android:textColor="#000000"
             android:layout_below="@+id/progress"
             android:layout_centerHorizontal="true"

@@ -49,7 +49,7 @@ import java.util.Map;
 public class UpdateIncome extends Fragment {
     private EditText money, detailname;
     private CheckBox fixdate;
-    private TextView name;
+    private TextView name,fixDateT;
     private TextView save, clear, date, datesave;
     private LinearLayout showdate, showfixdate;
     private DatePicker datePicker;
@@ -236,6 +236,7 @@ public class UpdateIncome extends Fragment {
         firstG = view.findViewById(R.id.firstG);
         firstL = view.findViewById(R.id.firstL);
         standard = view.findViewById(R.id.standard);
+        fixDateT=view.findViewById(R.id.fixDateT);
         getActivity().setTitle("修改資料");
     }
 
@@ -263,14 +264,15 @@ public class UpdateIncome extends Fragment {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             if (b) {
-                fixdate.setVisibility(View.VISIBLE);
-                fixdate.setX(showfixdate.getWidth() / 10);
-                choiceStatue.setX(showfixdate.getWidth() / 2 + showfixdate.getWidth() / 10);
+                fixdate.setX(showfixdate.getWidth()/10);
+                fixDateT.setX(showfixdate.getWidth()/10+fixdate.getWidth());
+                choiceStatue.setX(showfixdate.getWidth()/2+showfixdate.getWidth()/10);
                 choiceStatue.setVisibility(View.VISIBLE);
             } else {
                 choiceStatue.setVisibility(View.GONE);
                 choiceday.setVisibility(View.GONE);
-                fixdate.setX(showfixdate.getWidth() / 3);
+                fixdate.setX(showfixdate.getWidth()/3);
+                fixDateT.setX(showfixdate.getWidth()/3+fixdate.getWidth());
             }
         }
     }
@@ -281,8 +283,9 @@ public class UpdateIncome extends Fragment {
             ArrayList<String> spinneritem = new ArrayList<>();
             if (position == 0) {
                 choiceday.setVisibility(View.GONE);
-                fixdate.setX(showfixdate.getWidth() / 10);
-                choiceStatue.setX(showfixdate.getWidth() / 2 + showfixdate.getWidth() / 10);
+                fixdate.setX(showfixdate.getWidth()/10);
+                fixDateT.setX(showfixdate.getWidth()/10+fixdate.getWidth());
+                choiceStatue.setX(showfixdate.getWidth()/2+showfixdate.getWidth()/10);
                 choiceStatue.setVisibility(View.VISIBLE);
                 return;
             }
@@ -305,17 +308,18 @@ public class UpdateIncome extends Fragment {
                     spinneritem.add(" " + String.valueOf(i) + "月");
                 }
             }
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, spinneritem);
+            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
+            fixdate.setX(showfixdate.getWidth()/20);
+            fixDateT.setX(showfixdate.getWidth()/20+fixdate.getWidth());
+            choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/10);
+            choiceday.setX((showfixdate.getWidth()*2/3)+showfixdate.getWidth()/20);
             if (first) {
                 choiceday.setSelection(updateChoice);
                 first = false;
             }
-            fixdate.setX(showfixdate.getWidth() / 20);
-            choiceStatue.setX(showfixdate.getWidth() / 3 + showfixdate.getWidth() / 10);
-            choiceday.setX((showfixdate.getWidth() * 2 / 3) + showfixdate.getWidth() / 20);
         }
 
 

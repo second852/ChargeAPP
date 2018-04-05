@@ -27,7 +27,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:layout_gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
@@ -35,6 +34,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="65dp"
                     android:text="項目"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textSize="40sp" />
 
@@ -42,7 +43,8 @@
                     android:id="@+id/name"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:layout_marginLeft="25dp"
                     android:background="#FFEE99"
                     android:inputType="none"
@@ -63,6 +65,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="65dp"
                     android:text="金額"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textSize="40sp" />
 
@@ -74,7 +78,8 @@
                     android:background="#FFEE99"
                     android:inputType="number"
                     android:singleLine="true"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
                     android:textSize="40sp"
@@ -92,6 +97,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="65dp"
                     android:text="日期"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textSize="40sp" />
 
@@ -103,7 +110,8 @@
                     android:background="#FFEE99"
                     android:inputType="date"
                     android:singleLine="true"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
                     android:textSize="40sp"
@@ -121,6 +129,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="65dp"
                     android:text="明細"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textSize="40sp" />
 
@@ -130,7 +140,8 @@
                     android:layout_height="45dp"
                     android:layout_marginLeft="25dp"
                     android:background="#FFEE99"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:inputType="text"
                     android:singleLine="true"
                     android:textSize="40sp"

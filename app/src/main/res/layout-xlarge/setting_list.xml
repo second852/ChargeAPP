@@ -7,7 +7,7 @@
     <RelativeLayout
         android:id="@+id/typeR"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="80dp"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginLeft="50dp"
@@ -23,7 +23,7 @@
             android:layout_margin="2dp"
             android:backgroundTint="#000000"
             android:gravity="center"
-            android:theme="@style/spinner_normal"/>
+            android:theme="@style/spinner_xlarge"/>
     </RelativeLayout>
     <ListView
             android:id="@+id/list"
@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/message"
-        android:textSize="35sp"
+        android:textSize="45sp"
         android:textColor="#FF7744"
         android:visibility="gone"
         android:layout_centerHorizontal="true"

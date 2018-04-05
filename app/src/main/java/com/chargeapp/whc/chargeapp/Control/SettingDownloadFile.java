@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,6 +58,7 @@ import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.journeyapps.barcodescanner.ViewfinderView;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -102,11 +104,11 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     private GoalDB goalDB;
     private CarrierDB carrierDB;
     private ElePeriodDB elePeriodDB;
-    public static GoogleApiClient mGoogleApiClient;
-    public static DriveId mSelectedFileDriveId;
+    public  GoogleApiClient mGoogleApiClient;
+    public  DriveId mSelectedFileDriveId;
     private RelativeLayout progressL;
     private ProgressBar mProgressBar;
-    private String action;
+
 
 
     @Override
@@ -129,23 +131,33 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
         listView.setAdapter(new ListAdapter(getActivity(), itemSon));
-        action = (String) getArguments().getSerializable("action");
         progressL.setVisibility(View.GONE);
         mProgressBar.setMax(100);
         return view;
     }
 
+
+
     @Override
-    public void onStart() {
-        super.onStart();
-        if (action.equals("download")) {
-            open();
-        } else if (action.equals("open")) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        progressL.setVisibility(View.GONE);
+        if(requestCode==4)
+        {
             openCloud();
-        } else {
-            if (mGoogleApiClient != null) {
-                mGoogleApiClient.disconnect();
-                mGoogleApiClient = null;
+        }else if(requestCode==5)
+        {
+            if (resultCode == -1) {
+                mSelectedFileDriveId = data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+                open();
+                Common.showToast(getActivity(), "下傳成功");
+            } else {
+                if(mGoogleApiClient!=null)
+                {
+                    mGoogleApiClient.disconnect();
+                    mGoogleApiClient=null;
+                }
+                Common.showToast(getActivity(), "下傳失敗");
             }
         }
     }
@@ -228,7 +240,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
             setTime.setVisibility(View.GONE);
             notify.setVisibility(View.GONE);
             if (position == 0) {
-                textView.setOnClickListener(new View.OnClickListener() {
+                itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         try {
@@ -245,7 +257,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                     }
                 });
             } else if (position == 1) {
-                textView.setOnClickListener(new View.OnClickListener() {
+                itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingDownloadFile.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);

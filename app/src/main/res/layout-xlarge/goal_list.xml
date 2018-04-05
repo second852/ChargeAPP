@@ -12,8 +12,8 @@
 
     <ImageView
         android:id="@+id/addGoal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:src="@drawable/addtwo"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/message"
-        android:textSize="26sp"
+        android:textSize="36sp"
         android:textColor="#FF7744"
         android:visibility="gone"
         android:layout_centerHorizontal="true"

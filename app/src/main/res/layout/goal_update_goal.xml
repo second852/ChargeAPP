@@ -23,7 +23,6 @@
                     android:layout_marginLeft="25dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
                     android:text="目標名稱"
                     android:textColor="#000000"
                     android:textSize="20dp" />
@@ -32,7 +31,7 @@
                     android:id="@+id/name"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="115dp"
+                    android:layout_marginLeft="130dp"
                     android:background="#FFEE99"
                     android:inputType="text"
                     android:singleLine="true"
@@ -52,7 +51,6 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_marginLeft="25dp"
-                    android:layout_centerVertical="true"
                     android:gravity="right"
                     android:text="目標金額"
                     android:textColor="#000000"
@@ -62,7 +60,7 @@
                     android:id="@+id/money"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="115dp"
+                    android:layout_marginLeft="130dp"
                     android:background="#FFEE99"
                     android:inputType="number"
                     android:singleLine="true"
@@ -81,7 +79,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
                     android:layout_marginLeft="25dp"
                     android:text="選擇類型"
                     android:textColor="#000000"
@@ -89,12 +86,12 @@
 
                 <TextView
                     android:id="@+id/spinnerT"
+                    android:layout_marginLeft="130dp"
                     android:layout_width="wrap_content"
-                    android:layout_marginLeft="115dp"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:textColor="#000000"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_vertical"
                     android:background="#DDDDDD"
                     android:visibility="visible"
                     android:textSize="20sp" />
@@ -110,9 +107,9 @@
                     android:id="@+id/dateT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
                     android:layout_marginLeft="25dp"
-                    android:gravity="right"
+                    android:layout_centerVertical="true"
+                    android:gravity="center_vertical"
                     android:text="目標時間"
                     android:textColor="#000000"
                     android:textSize="20dp" />
@@ -122,9 +119,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="115dp"
+                    android:theme="@style/spinner_normal"
+                    android:layout_marginLeft="120dp"
                     android:backgroundTint="#000000"
-                    android:gravity="center" />
+                    android:gravity="center_vertical" />
                 <TextView
                     android:id="@+id/shift"
                     android:layout_toRightOf="@+id/choiceStatue"
@@ -136,12 +134,12 @@
                     android:text="~"
                     android:layout_gravity="center"
                     android:visibility="gone"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
                 <TextView
                     android:id="@+id/limitP"
                     android:layout_width="110dp"
                     android:layout_toRightOf="@+id/shift"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="3dp"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:textColor="#000000"
@@ -151,73 +149,81 @@
                     android:layout_gravity="center"
                     android:background="#FFEE99"
                     android:visibility="gone"
-                    android:textSize="17sp" />
+                    android:textSize="16sp" />
             </RelativeLayout>
 
 
             <RelativeLayout
+                android:id="@+id/remindL"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="match_parent"
+                android:visibility="visible"
                 android:layout_marginTop="15dp">
 
-
                 <CheckBox
-                    android:layout_centerVertical="true"
+                    android:id="@+id/remind"
                     android:layout_centerHorizontal="true"
-                    android:id="@+id/noRemind"
+                    android:layout_toRightOf="@+id/remainT"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:gravity="center_vertical"
+                    android:layout_centerVertical="true"
+                    android:button="@null"
+                    android:visibility="visible"
+                    android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:textColor="#000000" />
+                <TextView
+                    android:id="@+id/remindT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="20sp"
                     android:text="提醒"
+                    android:layout_centerHorizontal="true"
+                    android:layout_toRightOf="@+id/remind"
+                    android:textColor="#000000"
                     android:visibility="visible"
-                    android:textSize="20dp" />
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    />
 
-                <RelativeLayout
-                    android:id="@+id/remindL"
-                    android:layout_width="match_parent"
+                <Spinner
+                    android:id="@+id/remindS"
                     android:visibility="gone"
-                    android:layout_height="wrap_content">
-                    <CheckBox
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="25dp"
-                        android:id="@+id/remind"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="提醒"
-                        android:textSize="20dp" />
-
-                    <Spinner
-                        android:id="@+id/remindS"
-                        android:layout_marginLeft="115dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:backgroundTint="#000000"
-                        android:gravity="center">
-                    </Spinner>
-
-                    <Spinner
-                        android:id="@+id/remindD"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="30dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:backgroundTint="#000000"
-                        android:gravity="center" />
-                    <CheckBox
-                        android:id="@+id/noWeekend"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="50dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:buttonTint="#000000"
-                        android:gravity="center"
-                        android:text="假日除外"
-                        android:visibility="gone"
-                        android:textColor="#000000"
-                        android:textSize="20sp" />
-                </RelativeLayout>
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:theme="@style/spinner_normal"
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <Spinner
+                    android:id="@+id/remindD"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:theme="@style/spinner_normal"
+                    android:visibility="gone"
+                    />
+                <CheckBox
+                    android:id="@+id/noWeekend"
+                    android:layout_centerVertical="true"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:buttonTint="#00BBFF"
+                    android:layout_toLeftOf="@+id/noWeekendT"
+                    android:button="@null"
+                    android:background="?android:attr/listChoiceIndicatorMultiple"
+                    android:visibility="gone" />
+                <TextView
+                    android:id="@+id/noWeekendT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="假日除外"
+                    android:textColor="#000000"
+                    android:layout_alignParentRight="true"
+                    android:visibility="gone"
+                    android:layout_centerVertical="true"
+                    />
             </RelativeLayout>
 
             <RelativeLayout
@@ -293,4 +299,14 @@
             android:textColor="#000000"
             android:textSize="20sp" />
     </LinearLayout>
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-5169620543343332/5257007139" />
 </RelativeLayout>

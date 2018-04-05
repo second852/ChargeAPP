@@ -15,11 +15,14 @@ import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,9 +39,9 @@ public class GoalInsert extends Fragment {
     private Spinner spinnerT,choiceStatue,remindS,remindD;
     private CheckBox remind,noWeekend;
     private LinearLayout showDate;
-    private TextView limitP,save,clear,shift;
+    private TextView limitP,save,clear,shift,noWeekendT,remindT;
     private DatePicker datePicker;
-    private View mainView;
+    private RelativeLayout remindL;
     private GoalDB goalDB;
     private String action;
     private ArrayList<String> listDayStatue;
@@ -50,7 +53,6 @@ public class GoalInsert extends Fragment {
         goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         action= (String) getArguments().getSerializable("action");
         getActivity().setTitle("新增目標");
-        mainView=view;
         findViewById(view);
         setSpinner();
         limitP.setOnClickListener(new showDate());
@@ -109,6 +111,12 @@ public class GoalInsert extends Fragment {
         save=view.findViewById(R.id.save);
         choiceStatue=view.findViewById(R.id.choiceStatue);
         shift=view.findViewById(R.id.shift);
+        noWeekendT=view.findViewById(R.id.noWeekendT);
+        remindT=view.findViewById(R.id.remindT);
+        remindL=view.findViewById(R.id.remindL);
+        AdView adView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     private class showDate implements View.OnClickListener {
@@ -133,21 +141,27 @@ public class GoalInsert extends Fragment {
     private class dateStatue implements CompoundButton.OnCheckedChangeListener {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            int width=mainView.getWidth();
             if(b)
             {
-                remind.setX(width/20);
-                remindS.setX(spinnerT.getX());
-                noWeekend.setX(width/2+remind.getWidth());
-                remindD.setX(width/2+remind.getWidth());
+
+                remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
+                remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
+                remindS.setX(remindL.getWidth()/3+remindL.getWidth()/10-remindL.getWidth()/20);
+                noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
+                noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/20);
+
                 remindS.setVisibility(View.VISIBLE);
                 noWeekend.setVisibility(View.VISIBLE);
+                noWeekendT.setVisibility(View.VISIBLE);
                 remindD.setVisibility(View.GONE);
             }else {
-                remind.setX(width/2-remind.getWidth()/2);
+                remind.setX(remindL.getWidth()/3);
+                remindT.setX(remindL.getWidth()/3+remind.getWidth());
+
                 remindD.setVisibility(View.GONE);
                 remindS.setVisibility(View.GONE);
                 noWeekend.setVisibility(View.GONE);
+                noWeekendT.setVisibility(View.GONE);
             }
         }
     }
@@ -157,9 +171,19 @@ public class GoalInsert extends Fragment {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
             ArrayList<String> spinneritem=new ArrayList<>();
+
             if(position==0)
             {
+
+                remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
+                remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
+                remindS.setX(remindL.getWidth()/3+remindL.getWidth()/10-remindL.getWidth()/20);
+                noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
+                noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/20);
+                remindD.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
+
                 noWeekend.setVisibility(View.VISIBLE);
+                noWeekendT.setVisibility(View.VISIBLE);
                 remindD.setVisibility(View.GONE);
                 return;
             }else if(position==1)
@@ -182,12 +206,23 @@ public class GoalInsert extends Fragment {
                     spinneritem.add(" "+String.valueOf(i)+"月");
                 }
             }
-            noWeekend.setChecked(false);
-            remindD.setVisibility(View.VISIBLE);
-            noWeekend.setVisibility(View.GONE);
+
             ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             remindD.setAdapter(arrayAdapter);
+            remindD.setVisibility(View.VISIBLE);
+            noWeekend.setChecked(false);
+            remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
+            remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
+            remindS.setX(remindL.getWidth()/3+remindL.getWidth()/10-remindL.getWidth()/20);
+            noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
+            noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/20);
+            remindD.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
+
+
+            noWeekend.setVisibility(View.GONE);
+            noWeekendT.setVisibility(View.GONE);
+
         }
 
         @Override
@@ -213,6 +248,13 @@ public class GoalInsert extends Fragment {
             String goalMoney = money.getText().toString().trim();
             String dayStatue=choiceStatue.getSelectedItem().toString().trim();
             String day=limitP.getText().toString().trim();
+
+            //showDate not save
+            if(showDate.getVisibility()==View.VISIBLE)
+            {
+              return;
+            }
+
             if (goalName == null || goalName.length() <= 0)
             {
                 name.setError("不能空白");

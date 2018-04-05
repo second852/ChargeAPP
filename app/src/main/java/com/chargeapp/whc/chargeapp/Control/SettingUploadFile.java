@@ -12,6 +12,8 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -132,25 +134,32 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         cancelF.setOnClickListener(new cancelOnClick());
         listView.setAdapter(new ListAdapter(getActivity(), itemSon));
         setSpinner();
-        action= (String) getArguments().getSerializable("action");
-        if(action.equals("all"))
-        {
-            txt=false;
-            openCloud();
-        }else if(action.equals("uploadTxt"))
-        {
-            txt=true;
-            openCloud();
-        }else if(action.equals("uploadExcel"))
-        {
-            txt=false;
-            openCloud();
-        }else
-        {
-            progressL.setVisibility(View.GONE);
-        }
         return view;
     }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode==0)
+        {
+            txt=false;
+            openCloud();
+        }else if(requestCode==1){
+            txt=true;
+            openCloud();
+        }else if(requestCode==2){
+            txt=false;
+            openCloud();
+        }else if(requestCode==3){
+            progressL.setVisibility(View.GONE);
+            if (resultCode == -1) {
+                Common.showToast(getActivity(), "上傳成功");
+            } else {
+                Common.showToast(getActivity(), "上傳失敗");
+            }
+        }
+    }
+
 
     private void setSpinner() {
         ArrayList<String> spinnerItem = new ArrayList();
@@ -242,7 +251,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             setTime.setVisibility(View.GONE);
             notify.setVisibility(View.GONE);
             if (position == 0) {
-                textView.setOnClickListener(new View.OnClickListener() {
+                itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         local = true;
@@ -258,7 +267,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 });
 
             } else if (position == 1) {
-                textView.setOnClickListener(new View.OnClickListener() {
+                itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         local = false;
@@ -443,18 +452,8 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode==-1)
-        {
-            Common.showToast(getActivity(), "上傳成功");
-        }else{
-            Common.showToast(getActivity(), "上傳失敗");
-        }
-    }
 
     private void outputExcel(OutputStream outputStream) {
-        progressL.setVisibility(View.VISIBLE);
         try {
             HSSFWorkbook workbook = new HSSFWorkbook();
             if (consume) {
@@ -661,25 +660,25 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 for (int i = 0; i < invoiceVOS.size(); i++) {
                     Row rowContent = sheetCon6.createRow(i);
                     InvoiceVO invoiceVO = invoiceVOS.get(i);
-                    rowContent.createCell(0).setCellValue(invoiceVO.getInvNum());
-                    rowContent.createCell(1).setCellValue(invoiceVO.getCardType());
-                    rowContent.createCell(2).setCellValue(invoiceVO.getCardNo());
-                    rowContent.createCell(3).setCellValue(invoiceVO.getCardEncrypt());
-                    rowContent.createCell(4).setCellValue(invoiceVO.getTime().getTime());
-                    rowContent.createCell(5).setCellValue(invoiceVO.getAmount());
-                    rowContent.createCell(6).setCellValue(invoiceVO.getDetail());
-                    rowContent.createCell(7).setCellValue(invoiceVO.getSellerName());
-                    rowContent.createCell(8).setCellValue(invoiceVO.getInvDonatable());
+                    rowContent.createCell(0).setCellValue(invoiceVO.getId());
+                    rowContent.createCell(1).setCellValue(invoiceVO.getInvNum());
+                    rowContent.createCell(2).setCellValue(invoiceVO.getCardType());
+                    rowContent.createCell(3).setCellValue(invoiceVO.getCardNo());
+                    rowContent.createCell(4).setCellValue(invoiceVO.getCardEncrypt());
+                    rowContent.createCell(5).setCellValue(invoiceVO.getTime().getTime());
+                    rowContent.createCell(6).setCellValue(invoiceVO.getAmount());
+                    rowContent.createCell(7).setCellValue(invoiceVO.getDetail());
+                    rowContent.createCell(8).setCellValue(invoiceVO.getSellerName());
                     rowContent.createCell(9).setCellValue(invoiceVO.getInvDonatable());
-                    rowContent.createCell(10).setCellValue(invoiceVO.getCarrier());
-                    rowContent.createCell(11).setCellValue(invoiceVO.getMaintype());
-                    rowContent.createCell(12).setCellValue(invoiceVO.getSecondtype());
-                    rowContent.createCell(13).setCellValue(invoiceVO.getHeartyteam());
-                    rowContent.createCell(14).setCellValue(invoiceVO.getTime().getTime());
-                    rowContent.createCell(15).setCellValue(invoiceVO.getIswin());
-                    rowContent.createCell(16).setCellValue(invoiceVO.getSellerBan());
-                    rowContent.createCell(17).setCellValue(invoiceVO.getSellerAddress());
-                    rowContent.createCell(18).setCellValue(invoiceVO.getId());
+                    rowContent.createCell(10).setCellValue(invoiceVO.getInvDonatable());
+                    rowContent.createCell(11).setCellValue(invoiceVO.getCarrier());
+                    rowContent.createCell(12).setCellValue(invoiceVO.getMaintype());
+                    rowContent.createCell(13).setCellValue(invoiceVO.getSecondtype());
+                    rowContent.createCell(14).setCellValue(invoiceVO.getHeartyteam());
+                    rowContent.createCell(15).setCellValue(invoiceVO.getTime().getTime());
+                    rowContent.createCell(16).setCellValue(invoiceVO.getIswin());
+                    rowContent.createCell(17).setCellValue(invoiceVO.getSellerBan());
+                    rowContent.createCell(18).setCellValue(invoiceVO.getSellerAddress());
                 }
                 //Carrier
                 Sheet sheetCon7 = workbook.createSheet("Carrier");
@@ -794,7 +793,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             Common.showToast(SettingUploadFile.this.getActivity(),"網路沒有開啟，無法下載!");
             return;
         }
-
+        progressL.setVisibility(View.VISIBLE);
         if (mGoogleApiClient == null) {
             // Create the API client and bind it to an instance variable.
             // We use this instance as the callback for connection and connection

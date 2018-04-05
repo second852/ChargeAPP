@@ -168,8 +168,8 @@ public class GoalListAll extends Fragment {
             String timeDec =goalVO.getTimeStatue().trim();
 
             if (timeDec.equals("今日")) {
-                timeDec =" 起日 : " + Common.sTwo.format(goalVO.getStartTime()).trim() +
-                         "\n 迄日 : " + Common.sTwo.format(goalVO.getEndTime()).trim()+"\n" ;
+                timeDec =" 起日 : \n " + Common.sTwo.format(goalVO.getStartTime()).trim() +
+                         "\n 迄日 :\n " + Common.sTwo.format(goalVO.getEndTime()).trim()+"\n" ;
             }else{
                 timeDec=" 時態 : "+timeDec+"\n";
             }

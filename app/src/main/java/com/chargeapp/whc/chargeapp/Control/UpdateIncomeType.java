@@ -1,7 +1,9 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -32,6 +34,8 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +47,7 @@ import java.util.Map;
  */
 
 public class UpdateIncomeType extends Fragment {
-    private ImageView mainImage,resultI;
+    private ImageView mainImage, resultI;
     private EditText mainName;
     private Button save, clear;
     private LinearLayout choiceL;
@@ -57,6 +61,8 @@ public class UpdateIncomeType extends Fragment {
     private InvoiceDB invoiceDB;
     private ConsumeDB consumeDB;
     private BankDB bankDB;
+    private ProgressDialog progressDialog;
+    private Handler handler;
 
 
     @Nullable
@@ -65,12 +71,14 @@ public class UpdateIncomeType extends Fragment {
         View view = inflater.inflate(R.layout.updae_inc_type, container, false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         action = (String) getArguments().getSerializable("action");
-        bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDB= new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB=new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        progressDialog = new ProgressDialog(getActivity());
+        handler = new Handler();
         findViewById(view);
         setGridPicture();
         getActivity().setTitle("修改類別");
@@ -78,23 +86,22 @@ public class UpdateIncomeType extends Fragment {
         clear.setOnClickListener(new clearOnClick());
         save.setOnClickListener(new insertType());
         mainImage.setOnClickListener(new showImage());
-        if(action.equals("updateT"))
-        {
+        if (action.equals("updateT")) {
             setTypeVO();
-        }else {
+        } else {
             setBankVO();
         }
         return view;
     }
 
     private void setBankVO() {
-        bankTypeVO= (BankTypeVO) getArguments().getSerializable("bankTypeVO");
+        bankTypeVO = (BankTypeVO) getArguments().getSerializable("bankTypeVO");
         mainImage.setImageResource(Download.imageAll[bankTypeVO.getImage()]);
         mainName.setText(bankTypeVO.getName());
     }
 
     private void setTypeVO() {
-        typeVO= (TypeVO) getArguments().getSerializable("typeVO");
+        typeVO = (TypeVO) getArguments().getSerializable("typeVO");
         mainImage.setImageResource(Download.imageAll[typeVO.getImage()]);
         mainName.setText(typeVO.getName());
     }
@@ -123,6 +130,9 @@ public class UpdateIncomeType extends Fragment {
         clear = view.findViewById(R.id.clear);
         choiceL = view.findViewById(R.id.choiceL);
         choiceG = view.findViewById(R.id.choiceG);
+        AdView adView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     private class showImage implements View.OnClickListener {
@@ -138,10 +148,9 @@ public class UpdateIncomeType extends Fragment {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             resultI.setImageResource(Download.imageAll[i]);
             choiceL.setVisibility(View.GONE);
-            if(action.equals("updateT"))
-            {
+            if (action.equals("updateT")) {
                 typeVO.setImage(i);
-            }else {
+            } else {
                 bankTypeVO.setImage(i);
             }
         }
@@ -163,87 +172,107 @@ public class UpdateIncomeType extends Fragment {
                 mainName.setError("項目種類不能空白");
                 return;
             }
-            if(mainType.indexOf(";")!=-1)
-            {
+            if (mainType.indexOf(";") != -1) {
                 mainName.setError("項目種類不能有特殊符號");
                 return;
             }
-            Bundle bundle=new Bundle();
-            Fragment fragment=new SettingListType();
-            if(action.equals("updateT"))
-            {
-                TypeVO oldTypeVO=typeDB.findTypeName(mainType);
-                if(oldTypeVO!=null)
-                {
+
+            if (action.equals("updateT")) {
+                TypeVO oldTypeVO = typeDB.findTypeName(mainType);
+                if (oldTypeVO != null) {
                     mainName.setError("項目不能重複");
                     return;
                 }
+                progressDialog.setTitle("修改中…");
+                progressDialog.show();
+                handler.postDelayed(consume,500);
 
-                Common.showToast(getActivity(), "修改中");
-                List<TypeDetailVO> typeDetailVOS=typeDetailDB.findByGroupname(typeVO.getName());
-                for(TypeDetailVO t:typeDetailVOS)
-                {
+            } else {
+
+                BankTypeVO old = bankTybeDB.findByName(mainType);
+                if (old != null) {
+                    mainName.setError("項目不能重複");
+                    return;
+                }
+                progressDialog.setTitle("修改中…");
+                progressDialog.show();
+                handler.postDelayed(income,500);
+            }
+        }
+
+        private Runnable consume = new Runnable() {
+            @Override
+            public void run() {
+                String mainType = mainName.getText().toString().trim();
+                List<TypeDetailVO> typeDetailVOS = typeDetailDB.findByGroupname(typeVO.getName());
+                for (TypeDetailVO t : typeDetailVOS) {
                     t.setGroupNumber(mainType);
                     typeDetailDB.update(t);
                 }
-                List<ConsumeVO> consumeVOS=consumeDB.getMainTypePeriod(typeVO.getName().trim());
-                for(ConsumeVO c:consumeVOS)
-                {
+                List<ConsumeVO> consumeVOS = consumeDB.getMainTypePeriod(typeVO.getName().trim());
+                for (ConsumeVO c : consumeVOS) {
                     c.setMaintype(mainType);
                     consumeDB.update(c);
                 }
-                List<InvoiceVO> invoiceVOS=invoiceDB.getInvoiceMainType(typeVO.getName().trim());
-                for(InvoiceVO i:invoiceVOS)
-                {
+                List<InvoiceVO> invoiceVOS = invoiceDB.getInvoiceMainType(typeVO.getName().trim());
+                for (InvoiceVO i : invoiceVOS) {
                     i.setMaintype(mainType);
                     invoiceDB.update(i);
                 }
                 typeVO.setGroupNumber(mainType);
                 typeVO.setName(mainType);
                 typeDB.update(typeVO);
-            }else {
+                progressDialog.cancel();
+                Bundle bundle = new Bundle();
+                Fragment fragment = new SettingListType();
+                bundle.putSerializable("position", getArguments().getSerializable("position"));
+                bundle.putSerializable("spinnerC", getArguments().getSerializable("spinnerC"));
+                fragment.setArguments(bundle);
+                switchFramgent(fragment);
+                Common.showToast(getActivity(), "修改成功!");
+            }
+        };
 
-                BankTypeVO old=bankTybeDB.findByName(mainType);
-                if(old!=null)
-                {
-                    mainName.setError("項目不能重複");
-                    return;
-                }
+        private Runnable income = new Runnable() {
+            @Override
+            public void run() {
+                String mainType = mainName.getText().toString().trim();
 
-                Common.showToast(getActivity(), "修改中");
-                List<BankVO> bankVOS=bankDB.getMainType(bankTypeVO.getName().trim());
-                for(BankVO b:bankVOS)
-                {
+                List<BankVO> bankVOS = bankDB.getMainType(bankTypeVO.getName().trim());
+                for (BankVO b : bankVOS) {
                     b.setMaintype(mainType);
                     bankDB.update(b);
                 }
                 bankTypeVO.setGroupNumber(mainType);
                 bankTypeVO.setName(mainType);
                 bankTybeDB.update(bankTypeVO);
+                progressDialog.cancel();
+                Bundle bundle = new Bundle();
+                Fragment fragment = new SettingListType();
+                bundle.putSerializable("position", getArguments().getSerializable("position"));
+                bundle.putSerializable("spinnerC", getArguments().getSerializable("spinnerC"));
+                fragment.setArguments(bundle);
+                switchFramgent(fragment);
+                Common.showToast(getActivity(), "修改成功!");
             }
-            bundle.putSerializable("position",getArguments().getSerializable("position"));
-            bundle.putSerializable("spinnerC",getArguments().getSerializable("spinnerC"));
-            fragment.setArguments(bundle);
-            switchFramgent(fragment);
-            Common.showToast(getActivity(), "修改成功!");
-        }
-    }
+        };
 
-
-    public void switchFramgent(Fragment fragment) {
-        MainActivity.bundles.remove(MainActivity.bundles.size()-1);
-        MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
-        //關閉鍵盤
-        View v =UpdateIncomeType.this.getActivity().getCurrentFocus();
-        if (v != null) {
-            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        public void switchFramgent(Fragment fragment) {
+            MainActivity.bundles.remove(MainActivity.bundles.size() - 1);
+            MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size() - 1);
+            //關閉鍵盤
+            View v = UpdateIncomeType.this.getActivity().getCurrentFocus();
+            if (v != null) {
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            for (Fragment fragment1 : getFragmentManager().getFragments()) {
+                fragmentTransaction.remove(fragment1);
+            }
+            fragmentTransaction.replace(R.id.body, fragment);
+            fragmentTransaction.commit();
         }
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        for (Fragment fragment1 : getFragmentManager().getFragments()) {
-            fragmentTransaction.remove(fragment1);
-        }
-        fragmentTransaction.replace(R.id.body, fragment);
-        fragmentTransaction.commit();
     }
 }
+

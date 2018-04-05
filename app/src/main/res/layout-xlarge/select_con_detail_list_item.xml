@@ -77,37 +77,14 @@
             android:textSize="20sp"
             />
         <LinearLayout
-            android:id="@+id/fixL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_toLeftOf="@+id/remindL"
-            android:layout_marginRight="7dp"
-            android:background="#EE7700"
-            android:visibility="gone"
-            >
-            <TextView
-                android:id="@+id/fixT"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="固定"
-                android:textColor="#EE7700"
-                android:background="#AAAAAA"
-                android:gravity="center"
-                android:padding="2dp"
-                android:layout_margin="1dp"
-                android:layout_gravity="center"
-                android:textSize="20sp"
-                />
-        </LinearLayout>
-        <LinearLayout
             android:id="@+id/remindL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="5dp"
             android:visibility="gone"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@+id/fixL"
             android:background="#FF0000"
             >
             <TextView
@@ -124,6 +101,32 @@
                 android:textSize="20sp"
                 />
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/fixL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="5dp"
+            android:background="#003C9D"
+            android:visibility="gone"
+            >
+            <TextView
+                android:id="@+id/fixT"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="固定"
+                android:textColor="#003C9D"
+                android:background="#AAAAAA"
+                android:gravity="center"
+                android:padding="2dp"
+                android:layout_margin="1dp"
+                android:layout_gravity="center"
+                android:textSize="20sp"
+                />
+        </LinearLayout>
+
     </RelativeLayout>
 
     <Button
