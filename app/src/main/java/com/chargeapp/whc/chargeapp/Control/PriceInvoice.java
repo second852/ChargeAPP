@@ -69,6 +69,7 @@ public class PriceInvoice extends Fragment {
     private ListView donateRL;
     private Handler handler;
     private ProgressDialog progressDialog;
+    public static  boolean first;
 
 
 
@@ -95,9 +96,13 @@ public class PriceInvoice extends Fragment {
         PIdateCut.setOnClickListener(new cutMonth());
         this.month=Integer.valueOf(period.substring(period.length() - 2));
         this.year= Integer.valueOf(period.substring(0, period.length() - 2));
-        progressDialog.setTitle("自動兌獎中…");
-        progressDialog.show();
-        handler.post(runnable);
+        if(first)
+        {
+            progressDialog.setTitle("自動兌獎中…");
+            progressDialog.show();
+            handler.post(runnable);
+            first=false;
+        }
         return view;
     }
 

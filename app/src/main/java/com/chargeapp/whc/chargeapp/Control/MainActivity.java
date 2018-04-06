@@ -304,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
                         drawerLayout.closeDrawer(GravityCompat.START);
                         fragment = new PriceActivity();
                         switchFragment(fragment);
+                        PriceInvoice.first=true;
                         setTitle(R.string.text_Price);
                         listView.collapseGroup(i);
                     } else if (i == 3) {

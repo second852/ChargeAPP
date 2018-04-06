@@ -63,16 +63,7 @@
     </RelativeLayout>
 
 
-    <TextView
-        android:id="@+id/priceTitle"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_below="@+id/modelR"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:text="請輸入後三碼"
-        android:textColor="#000000"
-        android:textSize="20sp" />
+
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/cardview"
         android:layout_width="match_parent"
@@ -80,7 +71,7 @@
         android:layout_below="@+id/priceTitle"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:padding="6dp"
         card_view:cardBackgroundColor="#ffdddddd"
         card_view:cardCornerRadius="12dp"
@@ -147,4 +138,14 @@
         android:textColor="#FF0000"
         android:visibility="gone"
         />
+    <TextView
+        android:id="@+id/priceTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/modelR"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="請輸入後三碼"
+        android:textColor="#000000"
+        android:textSize="20sp" />
 </RelativeLayout>

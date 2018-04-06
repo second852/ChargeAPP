@@ -183,28 +183,30 @@ public class PriceHand extends Fragment {
             totalmessage = allMessage.get(0);
             redF = totalmessage.lastIndexOf("獎");
             redE = redF - 3;
-        }
-        if (allMessage.get(1) != null) {
-            int length = (totalmessage == null ? 0 : totalmessage.length());
-            totalmessage = (totalmessage == null ? "" : totalmessage);
-            String old;
-            year = oldPriceVO.getInvoYm().substring(0, oldPriceVO.getInvoYm().length() - 2);
-            month = oldPriceVO.getInvoYm().substring(oldPriceVO.getInvoYm().length() - 2);
-            old = "上一期" + year + "年" + levelPrice.get(month) + allMessage.get(1);
-            printE = old.lastIndexOf("獎") + length;
-            printF = printE - 4;
-            totalmessage = totalmessage + old;
-        }
-        if (totalmessage != null) {
             Spannable content = new SpannableString(totalmessage);
             content.setSpan(new ForegroundColorSpan(Color.RED), redE, redF, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             content.setSpan(new ForegroundColorSpan(Color.MAGENTA), printF, printE, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             priceTitle.setText(content);
             return;
-        } else {
-            priceTitle.setText("沒有中獎!再接再厲!");
+
+        }
+        if (allMessage.get(1) != null) {
+            int length = (totalmessage == null ? 0 : totalmessage.length());
+            String old;
+            year = oldPriceVO.getInvoYm().substring(0, oldPriceVO.getInvoYm().length() - 2);
+            month = oldPriceVO.getInvoYm().substring(oldPriceVO.getInvoYm().length() - 2);
+            old = "上一期" + year + "年" + levelPrice.get(month)+"\n"+ allMessage.get(1);
+            printE = old.lastIndexOf("獎") + length;
+            printF = printE - 3;
+            Spannable content = new SpannableString(old);
+            content.setSpan(new ForegroundColorSpan(Color.MAGENTA), printF, printE, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            priceTitle.setText(content);
+            return;
         }
 
+        if (totalmessage == null) {
+            priceTitle.setText("沒有中獎!再接再厲!");
+        }
     }
 
 
