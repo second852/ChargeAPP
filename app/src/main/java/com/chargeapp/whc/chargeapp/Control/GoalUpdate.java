@@ -350,7 +350,7 @@ public class GoalUpdate extends Fragment {
             goalVO.setNotify(remind.isChecked());
             goalVO.setNotifyDate(reMa);
             goalVO.setNotifyStatue(remindS.getSelectedItem().toString());
-            if(poistion==0)
+            if(poistion==0&&goalVO.getType().trim().equals("儲蓄"))
             {
                 goalVO.setTimeStatue("今日");
             }else{

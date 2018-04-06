@@ -138,38 +138,38 @@ public class PriceHand extends Fragment {
             message = null;
             if (priceVO != null) {
                 if (nul.equals(priceVO.getSuperPrizeNo().substring(5))) {
-                    message = "特別獎?" + priceVO.getSuperPrizeNo() + "\n獎金一千萬";
+                    message = "特別獎?" + priceVO.getSuperPrizeNo() + "獎金一千萬";
                 }
                 if (nul.equals(priceVO.getSpcPrizeNo().substring(5))) {
-                    message = "特獎?" + priceVO.getSpcPrizeNo() + "\n獎金兩百萬";
+                    message = "特獎?" + priceVO.getSpcPrizeNo() + "獎金兩百萬";
                 }
                 if (nul.equals(priceVO.getFirstPrizeNo1().substring(5))) {
-                    message = "頭獎?" + priceVO.getFirstPrizeNo1() + "\n獎金20萬";
+                    message = "頭獎?" + priceVO.getFirstPrizeNo1() + "獎金20萬";
                 }
                 if (nul.equals(priceVO.getFirstPrizeNo2().substring(5))) {
-                    message = "頭獎?" + priceVO.getFirstPrizeNo2() + "\n獎金20萬";
+                    message = "頭獎?" + priceVO.getFirstPrizeNo2() + "獎金20萬";
                     ;
                 }
                 if (nul.equals(priceVO.getFirstPrizeNo3().substring(5))) {
-                    message = "頭獎?" + priceVO.getFirstPrizeNo3() + "\n獎金20萬";
+                    message = "頭獎?" + priceVO.getFirstPrizeNo3() + "獎金20萬";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo1())) {
-                    message = "六獎" + priceVO.getSixthPrizeNo1() + "\n獎金200";
+                    message = "六獎" + priceVO.getSixthPrizeNo1() + "獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo2())) {
-                    message = "六獎" + priceVO.getSixthPrizeNo2() + "\n獎金200";
+                    message = "六獎" + priceVO.getSixthPrizeNo2() + "獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo3())) {
-                    message = "六獎" + priceVO.getSixthPrizeNo3() + "\n獎金200";
+                    message = "六獎" + priceVO.getSixthPrizeNo3() + "獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo4())) {
-                    message = "六獎" + priceVO.getSixthPrizeNo4() + "\n獎金200";
+                    message = "六獎" + priceVO.getSixthPrizeNo4() + "獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo5())) {
-                    message = "六獎" + priceVO.getSixthPrizeNo5() + "\n獎金200";
+                    message = "六獎" + priceVO.getSixthPrizeNo5() + "獎金200";
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo6())) {
-                    message = "六獎" + priceVO.getSixthPrizeNo6() + "\n獎金200";
+                    message = "六獎" + priceVO.getSixthPrizeNo6() + "獎金200";
                 }
             }
             allMessage.put(i, message);
@@ -182,7 +182,7 @@ public class PriceHand extends Fragment {
         if (allMessage.get(0) != null) {
             totalmessage = allMessage.get(0);
             redF = totalmessage.lastIndexOf("獎");
-            redE = redF - 4;
+            redE = redF - 3;
         }
         if (allMessage.get(1) != null) {
             int length = (totalmessage == null ? 0 : totalmessage.length());

@@ -1,9 +1,11 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -62,10 +64,11 @@ public class PriceInvoice extends Fragment {
     private HashMap<String,Integer> levellength;
     private HashMap<String,String> levelMoney;
     private long start,end;
-    private RelativeLayout DRshow;
     private TextView showRemain;
     private int month,year;
     private ListView donateRL;
+    private Handler handler;
+    private ProgressDialog progressDialog;
 
 
 
@@ -75,6 +78,8 @@ public class PriceInvoice extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_invoice, container, false);
         findViewById(view);
+        progressDialog=new ProgressDialog(getActivity());
+        handler=new Handler();
         levelprice=Common.getPriceName();
         levellength=Common.getlevellength();
         levelMoney=Common.getPrice();
@@ -90,11 +95,19 @@ public class PriceInvoice extends Fragment {
         PIdateCut.setOnClickListener(new cutMonth());
         this.month=Integer.valueOf(period.substring(period.length() - 2));
         this.year= Integer.valueOf(period.substring(0, period.length() - 2));
-        setMonText("in");
+        progressDialog.setTitle("自動兌獎中…");
+        progressDialog.show();
+        handler.post(runnable);
         return view;
     }
 
-
+   private Runnable runnable=new Runnable() {
+       @Override
+       public void run() {
+           new Common().AutoSetPrice();
+           setMonText("in");
+       }
+   };
 
 
 
@@ -162,6 +175,7 @@ public class PriceInvoice extends Fragment {
 
 
     private void setlayout() {
+        progressDialog.cancel();
         List<Object> objectList=new ArrayList<>();
         List<InvoiceVO> invoiceVOS=invoiceDB.getWinIn(start,end);
         List<ConsumeVO> consumeVOS= consumeDB.getWinAll(start,end);
@@ -195,7 +209,6 @@ public class PriceInvoice extends Fragment {
         PIdateAdd = view.findViewById(R.id.PIdateAdd);
         PIdateCut = view.findViewById(R.id.PIdateCut);
         PIdateTittle = view.findViewById(R.id.PIdateTittle);
-        DRshow=view.findViewById(R.id.DRshow);
         showRemain=view.findViewById(R.id.showRemain);
         donateRL=view.findViewById(R.id.donateRL);
         showRemain.setText("(無實體電子發票專屬獎中獎清單\n請到財政部網站確認)");
@@ -348,19 +361,22 @@ public class PriceInvoice extends Fragment {
                 String secondAll=firstL+consumeVO.getIsWinNul();
                 String pIF="\n獎金 : ";
                 String detail=firstAll+secondAll+pIF+levelMoney.get(consumeVO.getIsWin());
-                int correctLength=-2;
-                if(consumeVO.getIsWinNul().trim().length()<5)
+                if(!consumeVO.getIsWinNul().equals("0"))
                 {
-                    correctLength=-7;
+                    int correctLength=-2;
+                    if(consumeVO.getIsWinNul().trim().length()<5)
+                    {
+                        correctLength=-7;
+                    }
+                    SpannableString detailC = new SpannableString(detail);
+                    detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstH.length()+levellength.get(consumeVO.getIsWin().trim()),
+                            firstAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstAll.length()+firstL.length()+levellength.get(consumeVO.getIsWin().trim())+correctLength,
+                            firstAll.length()+secondAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstAll.length()+secondAll.length()+pIF.length(),
+                            detail.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    describe.setText(detailC);
                 }
-                SpannableString detailC = new SpannableString(detail);
-                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstH.length()+levellength.get(consumeVO.getIsWin().trim()),
-                        firstAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstAll.length()+firstL.length()+levellength.get(consumeVO.getIsWin().trim())+correctLength,
-                        firstAll.length()+secondAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstAll.length()+secondAll.length()+pIF.length(),
-                        detail.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                describe.setText(detailC);
             }
             return itemView;
         }

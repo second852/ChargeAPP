@@ -55,7 +55,7 @@ public class EleShowCarrier extends Fragment {
         List<String> springItem=carrierDB.getAllNul();
         SharedPreferences sharedPreferences=getActivity().getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
         int b=sharedPreferences.getInt("carrier",0);
-        if(springItem.size()<0)
+        if(springItem.size()<=0)
         {
            barcode.setVisibility(View.GONE);
            barcodeT.setText("無載具資料，請新增載具");

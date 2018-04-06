@@ -41,12 +41,12 @@ public class SettingListFixCon extends Fragment {
 
 
     private ListView listView;
-    private int p;
+    public int p;
     private ConsumeDB consumeDB;
     private Gson gson;
     private TextView message;
-    private List<ConsumeVO> consumeVOS;
-    private ConsumeVO consumeVO;
+    public List<ConsumeVO> consumeVOS;
+    public ConsumeVO consumeVO;
 
 
     @Override
@@ -67,10 +67,6 @@ public class SettingListFixCon extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        setLayout();
-    }
-
-    public void setLayout() {
         if(consumeVO.isAuto())
         {
             consumeVOS=consumeDB.getAutoCreate(consumeVO.getAutoId());
@@ -79,6 +75,10 @@ public class SettingListFixCon extends Fragment {
             consumeVOS=consumeDB.getAutoCreate(consumeVO.getId());
             consumeVOS.add(0,consumeVO);
         }
+        setLayout();
+    }
+
+    public void setLayout() {
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {
             listView.setAdapter(new ListAdapter(getActivity(), consumeVOS));
@@ -91,7 +91,6 @@ public class SettingListFixCon extends Fragment {
         {
             message.setText("無資料!");
             message.setVisibility(View.VISIBLE);
-            return;
         }
         listView.setSelection(p);
     }
@@ -192,6 +191,7 @@ public class SettingListFixCon extends Fragment {
                 @Override
                 public void onClick(View v) {
                     DeleteDialogFragment aa= new DeleteDialogFragment();
+                    p=position;
                     aa.setObject(consumeVO);
                     aa.setFragement(SettingListFixCon.this);
                     aa.show(getFragmentManager(),"show");

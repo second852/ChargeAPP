@@ -193,10 +193,12 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 }else if(fragement instanceof SettingListFixCon)
                 {
                     SettingListFixCon settingListFixCon= (SettingListFixCon) fragement;
+                    settingListFixCon.consumeVOS.remove(settingListFixCon.p);
                     settingListFixCon.setLayout();
                 }else if(fragement instanceof SettingListFixIon)
                 {
                     SettingListFixIon settingListFixIon= (SettingListFixIon) fragement;
+                    settingListFixIon.bankVOS.remove(settingListFixIon.p);
                     settingListFixIon.setLayout();
                 }else if(fragement instanceof EleSetCarrier)
                 {

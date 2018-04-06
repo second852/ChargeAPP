@@ -37,23 +37,23 @@ public class SettingListFixIon extends Fragment {
 
 
     private ListView listView;
-    private int p;
+    public int p;
     private BankDB bankDB;
     private Gson gson;
     private TextView message;
-    private List<BankVO> bankVOS;
+    public List<BankVO> bankVOS;
     private BankVO bankVO;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        gson=new Gson();
-        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        gson = new Gson();
+        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         View view = inflater.inflate(R.layout.setting_main, container, false);
-        bankVO= (BankVO) getArguments().getSerializable("bankVO");
-        p= (int) getArguments().getSerializable("position");
-        listView=view.findViewById(R.id.list);
-        message=view.findViewById(R.id.message);
+        bankVO = (BankVO) getArguments().getSerializable("bankVO");
+        p = (int) getArguments().getSerializable("position");
+        listView = view.findViewById(R.id.list);
+        message = view.findViewById(R.id.message);
         AdView adView = view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
@@ -63,24 +63,21 @@ public class SettingListFixIon extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        if (bankVO.isAuto()) {
+            bankVOS = bankDB.getAutoSetting(bankVO.getAutoId());
+            BankVO bankVO1 = bankDB.findById(bankVO.getAutoId());
+            if (bankVO1 != null) {
+                bankVOS.add(0, bankVO1);
+            }
+        } else {
+            bankVOS = bankDB.getAutoSetting(bankVO.getId());
+            bankVOS.add(0, bankVO);
+        }
         setLayout();
     }
 
     public void setLayout() {
-        if(bankVO.isAuto())
-        {
-            bankVOS=bankDB.getAutoSetting(bankVO.getAutoId());
-            BankVO bankVO1=bankDB.findById(bankVO.getAutoId());
-            if(bankVO1!=null)
-            {
-                bankVOS.add(0,bankVO1);
-            }
 
-        }else{
-
-            bankVOS=bankDB.getAutoSetting(bankVO.getId());
-            bankVOS.add(0, bankVO);
-        }
 
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {
@@ -90,11 +87,9 @@ public class SettingListFixIon extends Fragment {
             adapter.notifyDataSetChanged();
             listView.invalidate();
         }
-        if(bankVOS.size()<=0)
-        {
+        if (bankVOS.size() <= 0) {
             message.setText("無資料!");
             message.setVisibility(View.VISIBLE);
-            return;
         }
         listView.setSelection(p);
     }
@@ -124,19 +119,18 @@ public class SettingListFixIon extends Fragment {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                 itemView = layoutInflater.inflate(R.layout.select_con_detail_list_item, parent, false);
             }
-            TextView title=itemView.findViewById(R.id.listTitle);
-            TextView decribe=itemView.findViewById(R.id.listDetail);
-            TextView fixT=itemView.findViewById(R.id.fixT);
-            TextView remainT=itemView.findViewById(R.id.remainT);
-            LinearLayout remindL=itemView.findViewById(R.id.remindL);
-            LinearLayout fixL=itemView.findViewById(R.id.fixL);
-            Button update=itemView.findViewById(R.id.updateD);
-            Button deleteI=itemView.findViewById(R.id.deleteI);
+            TextView title = itemView.findViewById(R.id.listTitle);
+            TextView decribe = itemView.findViewById(R.id.listDetail);
+            TextView fixT = itemView.findViewById(R.id.fixT);
+            TextView remainT = itemView.findViewById(R.id.remainT);
+            LinearLayout remindL = itemView.findViewById(R.id.remindL);
+            LinearLayout fixL = itemView.findViewById(R.id.fixL);
+            Button update = itemView.findViewById(R.id.updateD);
+            Button deleteI = itemView.findViewById(R.id.deleteI);
             update.setText("修改");
             StringBuffer stringBuffer = new StringBuffer();
-            final BankVO bankVO=bankVOS.get(position);
-            if(bankVO.isAuto())
-            {
+            final BankVO bankVO = bankVOS.get(position);
+            if (bankVO.isAuto()) {
                 fixL.setVisibility(View.VISIBLE);
                 fixT.setText("子體");
                 fixT.setTextColor(Color.parseColor("#7744FF"));
@@ -145,7 +139,7 @@ public class SettingListFixIon extends Fragment {
                 remainT.setText("自動");
                 remainT.setTextColor(Color.parseColor("#7700BB"));
                 remindL.setBackgroundColor(Color.parseColor("#7700BB"));
-            }else {
+            } else {
                 remindL.setVisibility(View.GONE);
                 fixL.setVisibility(View.VISIBLE);
                 fixL.setBackgroundColor(Color.parseColor("#0000FF"));
@@ -154,29 +148,28 @@ public class SettingListFixIon extends Fragment {
             }
             //設定 title
             stringBuffer.append(Common.sTwo.format(bankVO.getDate()));
-            stringBuffer.append(" "+bankVO.getMaintype());
-            stringBuffer.append("\n共"+bankVO.getMoney()+"元");
+            stringBuffer.append(" " + bankVO.getMaintype());
+            stringBuffer.append("\n共" + bankVO.getMoney() + "元");
             title.setText(stringBuffer.toString());
 
 
             //設定 describe
-            stringBuffer=new StringBuffer();
-            JsonObject js=gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
-            String daystatue=js.get("choicestatue").getAsString().trim();
+            stringBuffer = new StringBuffer();
+            JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);
+            String daystatue = js.get("choicestatue").getAsString().trim();
             stringBuffer.append(daystatue);
-            if(!daystatue.equals("每天"))
-            {
-                stringBuffer.append(" "+js.get("choicedate").getAsString().trim());
+            if (!daystatue.equals("每天")) {
+                stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
             }
-            decribe.setText(stringBuffer.toString()+" \n"+bankVO.getDetailname());
+            decribe.setText(stringBuffer.toString() + " \n" + bankVO.getDetailname());
             update.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Fragment fragment=new UpdateIncome();
-                    Bundle bundle=new Bundle();
-                    bundle.putSerializable("bankVO",bankVO);
-                    bundle.putSerializable("position",position);
-                    bundle.putSerializable("action","SettingListFixIon");
+                    Fragment fragment = new UpdateIncome();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("bankVO", bankVO);
+                    bundle.putSerializable("position", position);
+                    bundle.putSerializable("action", "SettingListFixIon");
                     fragment.setArguments(bundle);
                     switchFragment(fragment);
                 }
@@ -185,10 +178,11 @@ public class SettingListFixIon extends Fragment {
             deleteI.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DeleteDialogFragment aa= new DeleteDialogFragment();
+                    p=position;
+                    DeleteDialogFragment aa = new DeleteDialogFragment();
                     aa.setObject(bankVO);
                     aa.setFragement(SettingListFixIon.this);
-                    aa.show(getFragmentManager(),"show");
+                    aa.show(getFragmentManager(), "show");
                 }
             });
             return itemView;

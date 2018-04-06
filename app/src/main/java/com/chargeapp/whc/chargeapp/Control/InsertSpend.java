@@ -146,6 +146,7 @@ public class InsertSpend extends Fragment {
                 updateChoice = Integer.valueOf(choicedate.substring(0, choicedate.indexOf("月"))) - 1;
             }
         }
+        consumeVO=new ConsumeVO();
         needSet=false;
     }
 
@@ -386,6 +387,7 @@ public class InsertSpend extends Fragment {
             money.setText(" ");
             fixdate.setChecked(false);
             number.setText(" ");
+            detailname.setText(" ");
         }
     }
 
@@ -600,6 +602,7 @@ public class InsertSpend extends Fragment {
         consumeVO.setAuto(false);
         consumeVO.setAutoId(-1);
         consumeVO.setIsWin("0");
+        consumeVO.setIsWinNul("0");
     }
 }
 

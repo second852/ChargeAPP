@@ -79,7 +79,7 @@ public class EleDonate extends Fragment {
     private List<InvoiceVO> invoiceVOList;
     private Gson gson;
     private int poisition;
-
+    private TextView showM;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -102,8 +102,10 @@ public class EleDonate extends Fragment {
             listinviuce.setVisibility(View.GONE);
             choice.setVisibility(View.GONE);
             modelR.setVisibility(View.GONE);
+            showM.setVisibility(View.GONE);
             return view;
         }
+
         ArrayList<String> SpinnerItem = new ArrayList<>();
         for(CarrierVO c:carrierVOS)
         {

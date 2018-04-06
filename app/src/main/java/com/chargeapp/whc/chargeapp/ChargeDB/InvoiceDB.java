@@ -60,7 +60,8 @@ public class InvoiceDB {
     }
 
     public List<InvoiceVO> getCarrierDoAll(String carrrier) {
-        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and invDonatable = 'true' and donateMark = 'true' order by time desc;";
+        long showtime=getStartTime();
+        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and invDonatable = 'true' and donateMark = 'true'  and time >='"+showtime+"' order by time desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
@@ -285,7 +286,7 @@ public class InvoiceDB {
 
     public List<InvoiceVO> getisDonated(String carrrier) {
         long showtime=getStartTime();
-        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and donateMark='false' and invDonatable = 'false' and time >'"+showtime+"'order by donateTime desc;";
+        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and donateMark='false' and invDonatable = 'false' and time >='"+showtime+"'order by donateTime desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();

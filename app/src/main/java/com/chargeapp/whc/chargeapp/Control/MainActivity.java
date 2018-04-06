@@ -703,7 +703,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         }
-        return super.onKeyDown(keyCode, event);
+        return true;
     }
 }
 
