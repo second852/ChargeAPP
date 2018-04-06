@@ -102,6 +102,8 @@ public class PriceInvoice extends Fragment {
             progressDialog.show();
             handler.post(runnable);
             first=false;
+        }else{
+            setMonText("in");
         }
         return view;
     }
