@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Goal, R.drawable.goal));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Setting, R.drawable.settings));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Home, R.drawable.home));
+        eleMainItemVOList.add(new EleMainItemVO(R.string.text_Teach, R.drawable.teach));
         return eleMainItemVOList;
     }
 
@@ -336,12 +337,17 @@ public class MainActivity extends AppCompatActivity {
                         switchFragment(fragment);
                         setTitle(R.string.text_Setting);
                         listView.collapseGroup(i);
-                    } else {
+                    } else if(i==7){
                         setTitle(R.string.text_Home);
                         drawerLayout.closeDrawer(GravityCompat.START);
                         fragment = new HomePage();
                         switchFragment(fragment);
                         listView.collapseGroup(i);
+                    }else{
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse("https://www.youtube.com/playlist?list=PLrGq9ODiZ15rdXvKV_5FEIrdaP5ix0c55"));
+                        startActivity(intent);
                     }
 
                     //重置InsertConsume
