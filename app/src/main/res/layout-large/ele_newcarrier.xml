@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
         <WebView
             android:id="@+id/webView"
-            android:background="#f5f5f5f5"
+            android:background="#f5f5f5"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/mainTitle"
@@ -28,8 +28,8 @@
             />
         <ProgressBar
             android:id="@+id/myProgressBar"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             />

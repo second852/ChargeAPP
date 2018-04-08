@@ -144,20 +144,23 @@ public class SelectShowCircleDeList extends Fragment {
                 }
                 objects.addAll(invoiceVOS);
             }
-            if(listView.getAdapter()!=null)
+            ListAdapter adapter= (ListAdapter) listView.getAdapter();
+            if(adapter==null)
             {
-                ListAdapter adapter= (ListAdapter) listView.getAdapter();
+                listView.setAdapter(new ListAdapter(getActivity(),objects));
+            }else {
                 adapter.setObjects(objects);
                 adapter.notifyDataSetChanged();
-            }else {
-                listView.setAdapter(new ListAdapter(getActivity(),objects));
+                listView.invalidate();
             }
-            listView.setSelection(position);
+
             if(objects.size()<=0)
             {
                 message.setText(title+"\n"+key+"種類 無資料!");
                 message.setVisibility(View.VISIBLE);
             }else{
+
+                listView.setSelection(position);
                 message.setVisibility(View.GONE);
             }
             progressDialog.cancel();
@@ -168,9 +171,7 @@ public class SelectShowCircleDeList extends Fragment {
     {
         if(key.equals("其他"))
         {
-            Okey=new ArrayList<>();
-            ArrayList<String> o=getArguments().getStringArrayList("OKey");
-            Okey.addAll(o);
+            Okey=getArguments().getStringArrayList("OKey");
             setOtherLayout();
         }else {
             setLayout();
@@ -196,20 +197,22 @@ public class SelectShowCircleDeList extends Fragment {
             }
             objects.addAll(invoiceVOS);
         }
-        if(listView.getAdapter()!=null)
+        ListAdapter adapter= (ListAdapter) listView.getAdapter();
+        if(adapter==null)
         {
-            ListAdapter adapter= (ListAdapter) listView.getAdapter();
+            listView.setAdapter(new ListAdapter(getActivity(),objects));
+        }else {
             adapter.setObjects(objects);
             adapter.notifyDataSetChanged();
-        }else {
-            listView.setAdapter(new ListAdapter(getActivity(),objects));
+            listView.invalidate();
         }
-        listView.setSelection(position);
+
         if(objects.size()<=0)
         {
             message.setText(title+"\n"+key+"種類 無資料!");
             message.setVisibility(View.VISIBLE);
         }else{
+            listView.setSelection(position);
             message.setVisibility(View.GONE);
         }
         progressDialog.cancel();

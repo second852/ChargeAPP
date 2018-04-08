@@ -192,6 +192,8 @@ public class MainActivity extends AppCompatActivity {
 
     //設定目前選擇項目的顏色
     private void setColor(View v) {
+
+
         (getSupportActionBar()).setDisplayShowCustomEnabled(false);
         v.setBackgroundColor(Color.parseColor("#FFDD55"));
         if (oldMainView != null && v != oldMainView) {
@@ -341,7 +343,15 @@ public class MainActivity extends AppCompatActivity {
                         switchFragment(fragment);
                         listView.collapseGroup(i);
                     }
+
+                    //重置InsertConsume
+                    if(MainActivity.this.position!=0)
+                    {
+                        InsertSpend.consumeVO=new ConsumeVO();
+                        InsertSpend.needSet=false;
+                    }
                     setColor(v);
+
                 }
             });
             return view;
@@ -441,16 +451,22 @@ public class MainActivity extends AppCompatActivity {
                     String base64 = EleNulAll[5];
                     byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
                     if (EleNulAll[3].equals("1")) {
-                        sb.append(new String(bytes, "UTF-8") + "/1/" + InsertSpend.consumeVO.getMoney());
+                        sb.append(new String(bytes, "UTF-8") + " : " +InsertSpend.consumeVO.getMoney()+" X = "+InsertSpend.consumeVO.getMoney());
                     } else {
                         String debase64 = new String(bytes, "UTF-8");
                         String[] ddd = debase64.trim().split(":");
                         for (int j = 0; j < ddd.length; j = j + 2) {
-                            sb.append(ddd[j] + "/" + ddd[j + 1] + "/" + ddd[j + 2] + " ");
+                            int total=Integer.valueOf( ddd[j + 2].trim())*Integer.valueOf(ddd[j + 1].trim());
+                            if(ddd[j].length()>5)
+                            {
+                                sb.append(ddd[j] + " :\n" + ddd[j + 2] + " X " + ddd[j + 1] + " = "+total+"\n");
+                            }else{
+                                sb.append(ddd[j] + " : " + ddd[j + 2] + " X " + ddd[j + 1] + " = "+total+"\n");
+                            }
                         }
                     }
                 } catch (Exception e) {
-                    Common.showToast(this, e.getMessage());
+                    Common.showToast(this, "在試一次");
                 }
             } else if (EleNulAll[4].equals("0")) {
                 try {
@@ -464,31 +480,56 @@ public class MainActivity extends AppCompatActivity {
                         Gson gson = new Gson();
                         JsonObject jFT = gson.fromJson(a, JsonObject.class);
                         String s = jFT.get("details").toString();
-                        Type cdType = new TypeToken<List<JsonObject>>() {
-                        }.getType();
+                        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                         List<JsonObject> b = gson.fromJson(s, cdType);
                         for (JsonObject j : b) {
-                            sb.append(j.get("description").getAsString() + "/" + j.get("quantity").getAsString() + "/" + j.get("unitPrice").getAsString() + " ");
+                            int total=Integer.valueOf(j.get("unitPrice").getAsString().trim())*Integer.valueOf(j.get("quantity").getAsString().trim());
+                            String des=j.get("description").getAsString();
+                            if(des.trim().length()>5)
+                            {
+                                sb.append(des + " :\n"+j.get("unitPrice").getAsString()+" X "+ j.get("quantity").getAsString() + " = " +total+"\n");
+                            }else{
+                                sb.append(des+ " : "+j.get("unitPrice").getAsString()+" X "+ j.get("quantity").getAsString() + " = " +total+"\n");
+                            }
                         }
                     }else {
                         sb.append("該筆發票並無開立");
                     }
 
                 } catch (Exception e) {
-                    Common.showToast(this, e.getMessage());
+                    Common.showToast(this, "在試一次");
                 }
             } else {
-                if (EleNulAll[3].equals("1")) {
-                    sb.append(EleNulAll[5] + "/1/" + InsertSpend.consumeVO.getMoney());
-                } else {
-                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                        sb.append(EleNulAll[i] + "/" + EleNulAll[i + 1] + "/" + EleNulAll[i + 2] + " ");
+                try {
+                    if (EleNulAll[3].equals("1")) {
+                        sb.append(EleNulAll[5] + " : " + InsertSpend.consumeVO.getMoney()+" X 1 = "+InsertSpend.consumeVO.getMoney()+"\n");
+                    } else {
+                        for (int i = 5; i < EleNulAll.length; i = i + 3) {
+                            int total=Integer.valueOf(EleNulAll[i +2].trim())*Integer.valueOf(EleNulAll[i + 1].trim());
+
+                            if(EleNulAll[i].length()>5)
+                            {
+                                sb.append(EleNulAll[i] + " :\n" + EleNulAll[i +2] + " X " + EleNulAll[i + 1]+" = "+total+"\n");
+                            }else {
+                                sb.append(EleNulAll[i] + " : " + EleNulAll[i +2] + " X " + EleNulAll[i + 1]+" = "+total+"\n");
+                            }
+                        }
                     }
+                }catch (Exception e)
+                {
+                    Common.showToast(this, "在試一次");
                 }
             }
-            InsertSpend.consumeVO.setDetailname(sb.toString());
-            InsertSpend.consumeVO.setFixDate("false");
-            InsertSpend.consumeVO = getType(InsertSpend.consumeVO);
+
+            if(sb.toString().trim().length()>0)
+            {
+                InsertSpend.consumeVO.setDetailname(sb.toString());
+                InsertSpend.consumeVO = getType(InsertSpend.consumeVO);
+            }else{
+                InsertSpend.consumeVO.setDetailname(" ");
+                InsertSpend.consumeVO.setMaintype("O");
+                InsertSpend.consumeVO.setSecondType("O");
+            }
         }
         InsertSpend.needSet = true;
         Fragment fragment = new InsertActivity();
@@ -517,16 +558,22 @@ public class MainActivity extends AppCompatActivity {
                     String base64 = EleNulAll[5];
                     byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
                     if (EleNulAll[3].equals("1")) {
-                        sb.append(new String(bytes, "UTF-8") + "/1/" + InsertSpend.consumeVO.getMoney());
+                        sb.append(new String(bytes, "UTF-8") + " : " +consumeVO.getMoney()+" X = "+consumeVO.getMoney());
                     } else {
                         String debase64 = new String(bytes, "UTF-8");
                         String[] ddd = debase64.trim().split(":");
                         for (int j = 0; j < ddd.length; j = j + 2) {
-                            sb.append(ddd[j] + "/" + ddd[j + 1] + "/" + ddd[j + 2] + " ");
+                            int total=Integer.valueOf(ddd[j + 2].trim())*Integer.valueOf(ddd[j + 1].trim());
+                            if(ddd[j].length()>5)
+                            {
+                                sb.append(ddd[j] + " :\n" + ddd[j + 2] + " X " + ddd[j + 1] + " = "+total+"\n");
+                            }else{
+                                sb.append(ddd[j] + " : " + ddd[j + 2] + " X " + ddd[j + 1] + " = "+total+"\n");
+                            }
                         }
                     }
                 } catch (Exception e) {
-                    Common.showToast(this, e.getMessage());
+                    Common.showToast(this, "在試一次");
                 }
             } else if (EleNulAll[4].equals("0")) {
                 try {
@@ -540,33 +587,56 @@ public class MainActivity extends AppCompatActivity {
                         Gson gson = new Gson();
                         JsonObject jFT = gson.fromJson(a, JsonObject.class);
                         String s = jFT.get("details").toString();
-                        Type cdType = new TypeToken<List<JsonObject>>() {
-                        }.getType();
+                        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                         List<JsonObject> b = gson.fromJson(s, cdType);
                         for (JsonObject j : b) {
-                            sb.append(j.get("description").getAsString() + "/" + j.get("quantity").getAsString() + "/" + j.get("unitPrice").getAsString() + " ");
+                            int total=Integer.valueOf(j.get("unitPrice").getAsString().trim())*Integer.valueOf(j.get("quantity").getAsString().trim());
+                            String des=j.get("description").getAsString();
+                            if(des.trim().length()>5)
+                            {
+                                sb.append(des + " :\n"+j.get("unitPrice").getAsString()+" X "+ j.get("quantity").getAsString() + " = " +total+"\n");
+                            }else{
+                                sb.append(des+ " : "+j.get("unitPrice").getAsString()+" X "+ j.get("quantity").getAsString() + " = " +total+"\n");
+                            }
                         }
                     }else {
                         sb.append("該筆發票並無開立");
                     }
 
                 } catch (Exception e) {
-                    Common.showToast(this, e.getMessage());
+                    Common.showToast(this, "在試一次");
                 }
             } else {
-                if (EleNulAll[3].equals("1")) {
-                    sb.append(EleNulAll[5] + "/1/" + InsertSpend.consumeVO.getMoney());
-                } else {
-                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                        sb.append(EleNulAll[i] + "/" + EleNulAll[i + 1] + "/" + EleNulAll[i + 2] + " ");
+                try {
+                    if (EleNulAll[3].equals("1")) {
+                        sb.append(EleNulAll[5] + " : " + consumeVO.getMoney()+" X 1 = "+consumeVO.getMoney()+"\n");
+                    } else {
+                        for (int i = 5; i < EleNulAll.length; i = i + 3) {
+                            int total=Integer.valueOf(EleNulAll[i +2].trim())*Integer.valueOf(EleNulAll[i + 1].trim());
+                            if(EleNulAll[i].length()>5)
+                            {
+                                sb.append(EleNulAll[i] + " :\n" + EleNulAll[i +2] + " X " + EleNulAll[i + 1]+" = "+total+"\n");
+                            }else {
+                                sb.append(EleNulAll[i] + " : " + EleNulAll[i +2] + " X " + EleNulAll[i + 1]+" = "+total+"\n");
+                            }
+                        }
                     }
+                }catch (Exception e)
+                {
+                    Common.showToast(this, "在試一次");
                 }
             }
-            consumeVO.setDetailname(sb.toString());
-            consumeVO = getType(consumeVO);
 
+            if(sb.toString().trim().length()>0)
+            {
+                consumeVO.setDetailname(sb.toString());
+                consumeVO = getType(consumeVO);
+            }else{
+                consumeVO.setDetailname(" ");
+                consumeVO.setMaintype("O");
+                consumeVO.setSecondType("O");
+            }
         }
-
         bundle.putSerializable("consumeVO",consumeVO);
         Fragment fragment = new UpdateSpend();
         fragment.setArguments(bundle);

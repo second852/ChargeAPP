@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:textColor="#FFFFFFFF"
-        android:textSize="18sp"
+        android:textSize="38sp"
         android:text="發票兌獎" />
     <Button
         android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
         android:layout_centerVertical="true"
         android:text="如何領獎"
         android:layout_alignParentRight="true"
-        android:textSize="18sp"
+        android:textSize="38sp"
         android:gravity="center"
         android:id="@+id/howtogetprice"
         />

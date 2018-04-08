@@ -144,9 +144,23 @@ public class UpdateInvoice extends Fragment {
     private void setInvoice() {
         invoiceVO = (InvoiceVO) getArguments().getSerializable("invoiceVO");
         action= (String) getArguments().getSerializable("action");
-        name.setText(invoiceVO.getMaintype().equals("O")?"其他":invoiceVO.getMaintype());
+
+
+        if(invoiceVO.getMaintype().trim().equals("O"))
+        {
+            name.setText("其他");
+            secondname.setText("其他");
+        }else if(invoiceVO.getSecondtype().trim().equals("0"))
+        {
+            name.setText("未知");
+            secondname.setText("未知");
+        }else{
+            name.setText(invoiceVO.getMaintype());
+            secondname.setText(invoiceVO.getSecondtype());
+        }
+
+
         number.setText(invoiceVO.getInvNum());
-        secondname.setText(invoiceVO.getSecondtype().equals("O")?"其他":invoiceVO.getSecondtype());
         money.setText(String.valueOf(invoiceVO.getAmount()));
         date.setText(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())));
         setLayout();

@@ -206,7 +206,6 @@ public class Download extends AppCompatActivity {
         String[] permissions = {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.GET_ACCOUNTS,
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.CAMERA,
         };

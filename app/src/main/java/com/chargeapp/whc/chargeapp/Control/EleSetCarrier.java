@@ -1,16 +1,13 @@
 package com.chargeapp.whc.chargeapp.Control;
 
-import android.app.Notification;
-import android.app.ProgressDialog;
+
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -23,9 +20,7 @@ import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -37,9 +32,6 @@ import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-
-import org.apache.poi.ss.formula.functions.T;
-
 import java.util.List;
 
 
@@ -56,7 +48,6 @@ public class EleSetCarrier extends Fragment {
     private List<CarrierVO> carrierlist;
     public CarrierDB carrierDB;
     public TextView listtiitle;
-    private ConsumeDB consumeDB;
     private RelativeLayout progressbarL;
     private  SharedPreferences sharedPreferences;
     private  int position;
@@ -83,7 +74,6 @@ public class EleSetCarrier extends Fragment {
         confirm.setOnClickListener(new Confirmlisten());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB =new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         sharedPreferences=getActivity().getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         setListAdapt();
         return view;

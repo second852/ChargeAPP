@@ -14,7 +14,7 @@
         android:id="@+id/pieChartT"
         android:textColor="#000000"
         android:gravity="center"
-        android:textSize="40sp"
+        android:textSize="35sp"
         android:layout_below="@+id/pieChart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

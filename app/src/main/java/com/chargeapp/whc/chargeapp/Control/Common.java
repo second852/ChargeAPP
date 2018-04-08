@@ -50,12 +50,13 @@ public class Common {
     public static SimpleDateFormat sHour = new SimpleDateFormat("hh");
     public static SimpleDateFormat sYear = new SimpleDateFormat("yyy 年 MM 月");
 
-    public static int[] colorlist = {Color.parseColor("#FF8888"),
+    public static int[] colorlist = {
+            Color.parseColor("#FF8888"),
             Color.parseColor("#FFDD55"),
-            Color.parseColor("#66FF66"),
             Color.parseColor("#77DDFF"),
+            Color.parseColor("#9999FF"),
             Color.parseColor("#D28EFF"),
-            Color.parseColor("#aaaaaa")};
+            Color.parseColor("#00DDDD")};
 
     public static int[] getColor(int size)
     {

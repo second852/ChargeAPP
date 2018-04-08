@@ -47,7 +47,7 @@
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="60sp" />
+                    android:textSize="55sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -77,7 +77,7 @@
                     android:inputType="none"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="60sp" />
+                    android:textSize="55sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -107,7 +107,7 @@
                     android:inputType="none"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="60sp" />
+                    android:textSize="55sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -137,7 +137,7 @@
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="60sp" />
+                    android:textSize="55sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -166,7 +166,7 @@
                     android:background="#DDDDDD"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="60sp" />
+                    android:textSize="55sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -193,7 +193,7 @@
                     android:background="#DDDDDD"
                     android:gravity="center"
                     android:textColor="#000000"
-                    android:textSize="20sp" />
+                    android:textSize="55sp" />
             </LinearLayout>
 
             <RelativeLayout

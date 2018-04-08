@@ -44,7 +44,7 @@
             android:textColor="#000000"
             android:scaleX="3"
             android:scaleY="2"
-            android:textSize="20sp"
+            android:textSize="40sp"
             android:theme="@style/SCBSwitch"
             android:visibility="visible" />
 

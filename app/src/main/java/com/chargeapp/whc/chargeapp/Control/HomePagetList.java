@@ -120,16 +120,16 @@ public class HomePagetList extends Fragment {
             invoiceVOS=invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),s);
             objects.addAll(invoiceVOS);
         }
-
-        if(listView.getAdapter()!=null)
+        ListAdapter adapter= (ListAdapter) listView.getAdapter();
+        if(adapter!=null)
         {
-            ListAdapter adapter= (ListAdapter) listView.getAdapter();
             adapter.setObjects(objects);
             adapter.notifyDataSetChanged();
+            listView.invalidate();
         }else {
             listView.setAdapter(new ListAdapter(getActivity(),objects));
         }
-        listView.setSelection(position);
+
         if(objects.size()<=0)
         {
             if(key.equals("0")||key.equals("O"))
@@ -143,6 +143,7 @@ public class HomePagetList extends Fragment {
                 message.setVisibility(View.VISIBLE);
             }
         }else{
+            listView.setSelection(position);
             message.setVisibility(View.GONE);
         }
         progressDialog.cancel();
@@ -156,11 +157,12 @@ public class HomePagetList extends Fragment {
         objects.addAll(consumeVOS);
         invoiceVOS=invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),key);
         objects.addAll(invoiceVOS);
-        if(listView.getAdapter()!=null)
+        ListAdapter adapter= (ListAdapter) listView.getAdapter();
+        if(adapter!=null)
         {
-            ListAdapter adapter= (ListAdapter) listView.getAdapter();
             adapter.setObjects(objects);
             adapter.notifyDataSetChanged();
+            listView.invalidate();
         }else {
             listView.setAdapter(new ListAdapter(getActivity(),objects));
         }

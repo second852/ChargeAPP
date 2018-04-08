@@ -173,7 +173,7 @@ public class HomePage extends Fragment {
         pieChartT.setText(Common.sDay.format(new Date(end.getTimeInMillis()))+"本日花費 : "+consumeVOS.get("total")+"元");
         yVals1 = new ArrayList<PieEntry>();
         Okey=new ArrayList<>();
-        boolean ShowZero = true;
+        ShowZero = true;
         int total=consumeVOS.get("total");
         consumeVOS.remove("total");
         ChartEntry chartEntry=new ChartEntry("其他",0);
@@ -488,8 +488,8 @@ public class HomePage extends Fragment {
     private class pieValue implements OnChartValueSelectedListener {
         @Override
         public void onValueSelected(Entry e, Highlight h) {
-            int size=yVals1.size();
-            if (size<=1) {
+
+            if (ShowZero) {
                 Fragment fragment=new InsertActivity();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 for (Fragment fragment1 :  getFragmentManager().getFragments()) {

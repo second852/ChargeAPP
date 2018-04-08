@@ -13,9 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/choiceitem"
-        android:scrollbars="vertical"
         android:layout_marginTop="10dp"
-        >
+        android:scrollbars="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,41 +24,44 @@
             <RelativeLayout
                 android:id="@+id/qrcode"
                 android:layout_width="300dp"
-                android:background="#CCEEFF"
-                android:layout_gravity="center"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp">
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:background="#CCEEFF">
+
                 <ImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/qrcode"
                     android:layout_toLeftOf="@+id/qrText"
-                    />
+                    android:src="@drawable/qrcode" />
+
                 <TextView
                     android:id="@+id/qrText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
                     android:text="QRCode輸入"
                     android:textColor="#000000"
-                    android:layout_gravity="center"
-                    android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true"
                     android:textSize="35sp" />
             </RelativeLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:text="發票輸入"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="25dp"
                     android:gravity="center_vertical"
+                    android:text="發票輸入"
                     android:textColor="#000000"
                     android:textSize="40sp" />
 
@@ -67,17 +69,18 @@
                     android:id="@+id/number"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginLeft="25dp"
                     android:background="#FFEE99"
+                    android:gravity="center_vertical"
+                    android:hint="HF12345678"
                     android:inputType="text"
                     android:singleLine="true"
                     android:textColor="#000000"
-                    android:hint="HF12345678"
-                    android:textSize="40sp"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
-                    android:textColorHint="#AAAAAA" />
+                    android:textColorHint="#AAAAAA"
+                    android:textSize="35sp" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -87,10 +90,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="45dp"
-                    android:text="主項目"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="45dp"
                     android:gravity="center_vertical"
+                    android:text="主項目"
                     android:textColor="#000000"
                     android:textSize="40sp" />
 
@@ -99,12 +102,12 @@
                     android:layout_width="300dp"
                     android:layout_height="45dp"
                     android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
                     android:layout_marginLeft="45dp"
                     android:background="#FFEE99"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="40sp" />
+                    android:textSize="35sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -117,8 +120,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
                     android:layout_marginLeft="45dp"
+                    android:gravity="center_vertical"
                     android:text="次項目"
                     android:textColor="#000000"
                     android:textSize="40sp" />
@@ -127,13 +130,13 @@
                     android:id="@+id/secondname"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
-                    android:layout_marginLeft="45dp"
                     android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
+                    android:layout_marginLeft="45dp"
                     android:background="#FFEE99"
+                    android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="40sp" />
+                    android:textSize="35sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -145,10 +148,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="70dp"
-                    android:text="金額"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="70dp"
                     android:gravity="center_vertical"
+                    android:text="金額"
                     android:textColor="#000000"
                     android:textSize="40sp" />
 
@@ -156,16 +159,46 @@
                     android:id="@+id/money"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginLeft="60dp"
                     android:background="#FFEE99"
-                    android:inputType="number"
-                    android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
+                    android:inputType="number"
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="40sp"
-                    />
+                    android:textSize="35sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="70dp"
+                    android:gravity="center_vertical"
+                    android:text="日期"
+                    android:textColor="#000000"
+                    android:textSize="40sp" />
+
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="300dp"
+                    android:layout_height="45dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="60dp"
+                    android:background="#FFEE99"
+                    android:gravity="center_vertical"
+                    android:inputType="date"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#AAAAAA"
+                    android:textSize="35sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -178,191 +211,149 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="70dp"
-                    android:text="日期"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
+                    android:text="明細"
                     android:textColor="#000000"
                     android:textSize="40sp" />
-
                 <TextView
-                    android:id="@+id/date"
-                    android:layout_width="300dp"
-                    android:layout_height="45dp"
-                    android:layout_marginLeft="60dp"
-                    android:background="#FFEE99"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
-                    android:inputType="date"
-                    android:singleLine="true"
-                    android:textColor="#000000"
-                    android:textColorHint="#AAAAAA"
-                    android:textSize="40sp"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:orientation="horizontal">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="70dp"
-                        android:text="明細"
-                        android:textColor="#000000"
-                        android:textSize="40sp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="30dp"
-                        android:text="(名/數量/單價)"
-                        android:textColor="#e60000"
-                        android:textSize="22sp" />
-                </LinearLayout>
-                <EditText
                     android:id="@+id/detailname"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
-                    android:layout_marginLeft="40dp"
-                    android:background="#FFEE99"
-                    android:inputType="text"
-                    android:singleLine="true"
+                    android:layout_marginLeft="60dp"
+                    android:background="#DDDDDD"
+                    android:gravity="center"
+                    android:text="--點擊顯示/修改--"
                     android:textColor="#000000"
-                    android:textSize="40sp"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
-                    android:textColorHint="#AAAAAA" />
+                    android:textSize="35sp" />
             </LinearLayout>
-
 
 
             <RelativeLayout
                 android:id="@+id/showfixdate"
                 android:layout_width="match_parent"
-                android:layout_marginTop="15dp"
                 android:layout_height="wrap_content"
-                >
+                android:layout_marginTop="15dp">
+
                 <RelativeLayout
                     android:id="@+id/fixDateR"
-                    android:layout_centerHorizontal="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true">
+
                     <CheckBox
                         android:id="@+id/fixdate"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:buttonTint="#00BBFF"
-                        android:button="@null"
                         android:background="?android:attr/listChoiceIndicatorMultiple"
-                        android:visibility="visible"
-                        android:textColor="#000000" />
+                        android:button="@null"
+                        android:buttonTint="#00BBFF"
+                        android:textColor="#000000"
+                        android:visibility="visible" />
+
                     <TextView
                         android:id="@+id/fixDateT"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toRightOf="@+id/fixdate"
-                        android:textSize="30dp"
-                        android:text="定期支出"
-                        android:gravity="center"
-                        android:textColor="#000000"
                         android:layout_centerVertical="true"
-                        />
+                        android:layout_toRightOf="@+id/fixdate"
+                        android:gravity="center"
+                        android:text="定期支出"
+                        android:textColor="#000000"
+                        android:textSize="30dp" />
                 </RelativeLayout>
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
                     android:layout_below="@+id/fixDateR"
-                    >
+                    android:layout_marginTop="15dp">
+
                     <CheckBox
                         android:id="@+id/notify"
-                        android:layout_centerVertical="true"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
+                        android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/notifyT"
-                        android:buttonTint="#00BBFF"
-                        android:button="@null"
                         android:background="?android:attr/listChoiceIndicatorMultiple"
-                        android:visibility="gone"
-                        android:textColor="#000000" />
+                        android:button="@null"
+                        android:buttonTint="#00BBFF"
+                        android:textColor="#000000"
+                        android:visibility="gone" />
+
                     <TextView
                         android:id="@+id/notifyT"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="30sp"
+                        android:layout_centerVertical="true"
                         android:layout_marginRight="50dp"
+                        android:layout_toLeftOf="@+id/choiceStatue"
+                        android:gravity="center"
                         android:text="繳費提醒"
                         android:textColor="#000000"
-                        android:visibility="gone"
-                        android:gravity="center"
-                        android:layout_centerVertical="true"
-                        android:layout_toLeftOf="@+id/choiceStatue"
-                        />
+                        android:textSize="30sp"
+                        android:visibility="gone" />
+
                     <Spinner
                         android:id="@+id/choiceStatue"
-                        android:visibility="gone"
-                        android:theme="@style/spinner_large"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
                         android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:theme="@style/spinner_large"
+                        android:visibility="gone" />
+
                     <Spinner
                         android:id="@+id/choiceday"
                         android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="50dp"
-                        android:theme="@style/spinner_large"
-                        android:visibility="gone"
                         android:layout_toRightOf="@+id/choiceStatue"
-                        android:layout_height="wrap_content"/>
+                        android:theme="@style/spinner_large"
+                        android:visibility="gone" />
+
                     <CheckBox
                         android:id="@+id/noWek"
-                        android:layout_toRightOf="@+id/choiceStatue"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="50dp"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:buttonTint="#00BBFF"
-                        android:button="@null"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="50dp"
+                        android:layout_toRightOf="@+id/choiceStatue"
                         android:background="?android:attr/listChoiceIndicatorMultiple"
+                        android:button="@null"
+                        android:buttonTint="#00BBFF"
                         android:visibility="gone" />
+
                     <TextView
                         android:id="@+id/noWekT"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/noWek"
-                        android:textSize="30sp"
                         android:text="假日除外"
                         android:textColor="#000000"
-                        android:visibility="gone"
-                        android:layout_centerVertical="true"
-                        />
+                        android:textSize="30sp"
+                        android:visibility="gone" />
                 </RelativeLayout>
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                >
+                android:layout_marginTop="15dp">
+
                 <TextView
                     android:id="@+id/standard"
                     android:layout_width="100dp"
                     android:layout_height="60dp"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
+                    android:background="#AAAAAA"
+                    android:gravity="center"
                     android:textColor="#000000"
                     android:textSize="30sp"
-                    android:gravity="center"
-                    android:background="#AAAAAA"
-                    android:visibility="invisible"
-                    />
+                    android:visibility="invisible" />
+
                 <TextView
                     android:id="@+id/save"
                     android:layout_width="100dp"
@@ -375,6 +366,7 @@
                     android:text="儲存"
                     android:textColor="#000000"
                     android:textSize="30sp" />
+
                 <TextView
                     android:id="@+id/clear"
                     android:layout_width="100dp"
@@ -405,26 +397,29 @@
         android:background="#000000"
         android:orientation="vertical"
         android:visibility="gone">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="1dp"
             android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
             android:layout_marginTop="1dp"
+            android:background="#ffffff"
             android:gravity="center"
             android:text="主項目種類"
-            android:background="#ffffff"
             android:textColor="#000000"
             android:textSize="30dp" />
+
         <GridView
             android:id="@+id/firstG"
-            android:background="#ffffff"
-            android:layout_marginRight="1dp"
-            android:layout_marginLeft="1dp"
-            android:layout_marginBottom="1dp"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_marginBottom="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:background="#ffffff" />
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/secondL"
         android:layout_width="match_parent"
@@ -437,55 +432,57 @@
         android:background="#000000"
         android:orientation="vertical"
         android:visibility="gone">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginTop="1dp"
+            android:background="#ffffff"
+            android:gravity="center"
             android:text="次要項目種類"
             android:textColor="#000000"
-            android:background="#ffffff"
-            android:layout_marginRight="1dp"
-            android:layout_marginLeft="1dp"
-            android:layout_marginTop="1dp"
-            android:gravity="center"
-            />
+            android:textSize="30sp" />
+
         <GridView
             android:id="@+id/secondG"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="1dp"
-            android:layout_marginLeft="1dp"
             android:layout_marginBottom="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
             android:background="#ffffff" />
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/showdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:background="#ffffff"
-        android:visibility="gone"
-        >
+        android:orientation="vertical"
+        android:visibility="gone">
+
         <DatePicker
             android:id="@+id/datePicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:calendarViewShown="false"
             android:datePickerMode="spinner"
-            android:theme="@style/spinner_large"
-            android:spinnersShown="true">
-        </DatePicker>
+            android:spinnersShown="true"
+            android:theme="@style/spinner_large"/>
+
         <TextView
             android:id="@+id/datesave"
             android:layout_width="100dp"
             android:layout_height="60dp"
-            android:layout_marginTop="1dp"
+            android:layout_gravity="center"
             android:layout_marginBottom="5dp"
+            android:layout_marginTop="1dp"
             android:background="#BDBDBD"
             android:gravity="center"
-            android:layout_gravity="center"
             android:padding="5dp"
             android:text="確認"
             android:textColor="#000000"

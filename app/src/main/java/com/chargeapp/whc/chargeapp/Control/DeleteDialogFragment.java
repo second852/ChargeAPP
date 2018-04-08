@@ -212,6 +212,14 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 {
                     SelectListPieIncome selectListPieIncome= (SelectListPieIncome) fragement;
                     selectListPieIncome.setLayout();
+                }else if(fragement instanceof HomePagetList)
+                {
+                    HomePagetList homePagetList= (HomePagetList) fragement;
+                    homePagetList.setChoiceLayout();
+                }else if(fragement instanceof SelectShowCircleDeList)
+                {
+                    SelectShowCircleDeList selectShowCircleDeList= (SelectShowCircleDeList) fragement;
+                    selectShowCircleDeList.choiceLayout();
                 }
                 break;
             default:

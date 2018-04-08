@@ -22,12 +22,12 @@
         android:padding="6dp"
         android:textColor="#000000"
         android:layout_centerVertical="true"
-        android:textSize="40sp"
+        android:textSize="30sp"
         android:text="ID" />
     <Button
         android:id="@+id/widgetShow"
         android:layout_width="wrap_content"
-        android:layout_height="45dp"
+        android:layout_height="55dp"
         android:layout_toRightOf="@+id/deletecarrier"
         android:layout_marginRight="10dp"
         android:background="#FFDD55"
@@ -40,7 +40,7 @@
     <Button
         android:id="@+id/deletecarrier"
         android:layout_width="wrap_content"
-        android:layout_height="45dp"
+        android:layout_height="55dp"
         android:layout_alignParentRight="true"
         android:layout_marginRight="30dp"
         android:background="#FF8888"
@@ -48,6 +48,7 @@
         android:layout_centerVertical="true"
         android:text="刪除"
         android:textSize="30sp"
+        android:gravity="center"
         android:textColor="#000000"
         android:visibility="gone"
         />

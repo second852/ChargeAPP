@@ -508,7 +508,7 @@ public class SelectShowCircleDe extends Fragment {
                 StringBuffer stringBuffer=new StringBuffer();
                 //設定 title
                 stringBuffer.append(Common.sDay.format(c.getDate()));
-                stringBuffer.append(" "+c.getMaintype());
+                stringBuffer.append(" "+c.getSecondType());
                 stringBuffer.append("\n共"+c.getMoney()+"元");
                 title.setText(stringBuffer.toString());
 

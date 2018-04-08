@@ -8,8 +8,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +24,6 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
@@ -37,9 +34,7 @@ import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
 import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.Calendar;
@@ -47,15 +42,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
+
 
 
 public class InsertSpend extends Fragment {
-    private EditText money, number, detailname;
+    private EditText money, number;
     private CheckBox fixdate, notify, noWek;
-    private TextView secondname, name;
-    private TextView save, clear, date, datesave;
+    private TextView secondname, name,detailname;
+    private TextView save, clear, date;
     private LinearLayout showdate;
     private DatePicker datePicker;
     private String choicedate;
@@ -75,7 +69,7 @@ public class InsertSpend extends Fragment {
     private Handler handler,secondHander;
     private View view;
     private TextView noWekT,notifyT;
-    private RelativeLayout showfixdate;
+
 
     @Nullable
     @Override
@@ -103,12 +97,23 @@ public class InsertSpend extends Fragment {
 
     private void setUpdate() {
         first=true;
-        name.setText(consumeVO.getMaintype());
+
+        if(consumeVO.getMaintype().equals("O"))
+        {
+            name.setText("其他");
+            secondname.setText("其他");
+        }else if(consumeVO.getSecondType().equals("0"))
+        {
+            name.setText("未知");
+            secondname.setText("未知");
+        }else{
+            name.setText(consumeVO.getMaintype());
+            secondname.setText(consumeVO.getSecondType());
+        }
+
         number.setText(consumeVO.getNumber());
-        secondname.setText(consumeVO.getSecondType());
         money.setText(String.valueOf(consumeVO.getMoney()));
         date.setText(Common.sTwo.format(consumeVO.getDate()));
-        detailname.setText(consumeVO.getDetailname());
         if (consumeVO.getFixDate().equals("true")) {
             fixdate.setChecked(Boolean.valueOf(consumeVO.getFixDate()));
             notify.setChecked(Boolean.valueOf(consumeVO.getNotify()));
@@ -137,7 +142,6 @@ public class InsertSpend extends Fragment {
                     updateChoice = 6;
                 }
             } else if (choicestatue.trim().equals("每月")) {
-                Log.d("XXX", String.valueOf(choicedate));
                 choiceStatue.setSelection(2);
                 choicedate=choicedate.substring(0,choicedate.indexOf("日"));
                 updateChoice = Integer.valueOf(choicedate) - 1;
@@ -146,7 +150,6 @@ public class InsertSpend extends Fragment {
                 updateChoice = Integer.valueOf(choicedate.substring(0, choicedate.indexOf("月"))) - 1;
             }
         }
-        consumeVO=new ConsumeVO();
         needSet=false;
     }
 
@@ -206,6 +209,7 @@ public class InsertSpend extends Fragment {
         noWek.setOnCheckedChangeListener(new nowWekchange());
         qrcode.setOnClickListener(new QrCodeClick());
         name.setOnClickListener(new showFirstG());
+        detailname.setOnClickListener(new DetailEdit());
     }
 
     private void setSecondGrid() {
@@ -261,10 +265,8 @@ public class InsertSpend extends Fragment {
         fixdate = view.findViewById(R.id.fixdate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
-        datesave = view.findViewById(R.id.datesave);
         showdate = view.findViewById(R.id.showdate);
         datePicker = view.findViewById(R.id.datePicker);
-        showfixdate = view.findViewById(R.id.showfixdate);
         choiceStatue = view.findViewById(R.id.choiceStatue);
         choiceday = view.findViewById(R.id.choiceday);
         number = view.findViewById(R.id.number);
@@ -387,7 +389,6 @@ public class InsertSpend extends Fragment {
             money.setText(" ");
             fixdate.setChecked(false);
             number.setText(" ");
-            detailname.setText(" ");
         }
     }
 
@@ -598,11 +599,20 @@ public class InsertSpend extends Fragment {
         consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
         consumeVO.setFixDateDetail(fixdatedetail);
         consumeVO.setNotify(String.valueOf(notify.isChecked()));
-        consumeVO.setDetailname(detailname.getText().toString());
         consumeVO.setAuto(false);
         consumeVO.setAutoId(-1);
         consumeVO.setIsWin("0");
         consumeVO.setIsWinNul("0");
+    }
+
+
+
+    private class DetailEdit implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            Fragment fragment=new UpdateConsumeDetail();
+            returnThisFramgent(fragment);
+        }
     }
 }
 

@@ -26,27 +26,13 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     private HorizontalScrollView choiceitem;
     private LinearLayout text;
     private int nowpoint=0;
-    private String needSet;
-    private ConsumeVO consumeVO;
     private static int position;
-    private BankVO bankVO;
 
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            needSet=getArguments().getString("needSet");
-            consumeVO= (ConsumeVO) getArguments().getSerializable("consumeVO");
-            bankVO= (BankVO) getArguments().getSerializable("bankVO");
-        }catch (NullPointerException e)
-        {
-            needSet=null;
-            consumeVO=null;
-            bankVO=null;
-        }
-
         View view = inflater.inflate(R.layout.insert_main, container, false);
         mViewPager =  view.findViewById(R.id.insert_viewPager);
         exportMoney=view.findViewById(R.id.exportD);

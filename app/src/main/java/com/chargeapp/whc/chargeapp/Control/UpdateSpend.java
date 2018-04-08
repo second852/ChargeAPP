@@ -54,10 +54,10 @@ import static android.app.Activity.RESULT_OK;
 
 
 public class UpdateSpend extends Fragment {
-    private EditText money, number, detailname;
+    private EditText money, number;
     private CheckBox fixdate, notify, noWek;
-    private TextView secondname, name;
-    private TextView save, clear, date, datesave;
+    private TextView secondname, name,detailname;
+    private TextView save, clear, date;
     private LinearLayout showdate;
     private DatePicker datePicker;
     private String choicedate;
@@ -77,7 +77,6 @@ public class UpdateSpend extends Fragment {
     private TextView standard;
     private int year,month,day;
     private  Map<String, String> g;
-    private RelativeLayout showfixdate;
     private TextView noWekT,notifyT;
 
 
@@ -108,6 +107,7 @@ public class UpdateSpend extends Fragment {
         secondname.setOnClickListener(new showSecondG());
         firstG.setOnItemClickListener(new firstGridOnClick());
         secondG.setOnItemClickListener(new secondGridOnClick());
+        detailname.setOnClickListener(new showDetail());
         if (action.equals("SettingListFixCon") && (!consumeVO.isAuto())) {
             standard.setText("全部");
             standard.setVisibility(View.VISIBLE);
@@ -132,12 +132,23 @@ public class UpdateSpend extends Fragment {
     private void setUpdate() {
         first = true;
 
-        name.setText(consumeVO.getMaintype());
+        if(consumeVO.getMaintype().trim().equals("O"))
+        {
+            name.setText("其他");
+            secondname.setText("其他");
+        }else if(consumeVO.getSecondType().trim().equals("0"))
+        {
+            name.setText("未知");
+            secondname.setText("未知");
+        }else{
+            name.setText(consumeVO.getMaintype());
+            secondname.setText(consumeVO.getSecondType());
+        }
+
+
         number.setText(consumeVO.getNumber());
-        secondname.setText(consumeVO.getSecondType());
         money.setText(String.valueOf(consumeVO.getMoney()));
         date.setText(Common.sTwo.format(consumeVO.getDate()));
-        detailname.setText(consumeVO.getDetailname());
 
         //自動產生不能設fix
         if (consumeVO.isAuto()) {
@@ -251,7 +262,6 @@ public class UpdateSpend extends Fragment {
 
     private void returnThisFramgent(Fragment fragment) {
         setConsume();
-        Log.d("XXXXXXXX",consumeVO.getMaintype());
         Bundle bundle = new Bundle();
         bundle.putSerializable("object", consumeVO);
         bundle.putSerializable("consumeVO",consumeVO);
@@ -323,10 +333,8 @@ public class UpdateSpend extends Fragment {
         fixdate = view.findViewById(R.id.fixdate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
-        datesave = view.findViewById(R.id.datesave);
         showdate = view.findViewById(R.id.showdate);
         datePicker = view.findViewById(R.id.datePicker);
-        showfixdate = view.findViewById(R.id.showfixdate);
         choiceStatue = view.findViewById(R.id.choiceStatue);
         choiceday = view.findViewById(R.id.choiceday);
         number = view.findViewById(R.id.number);
@@ -626,7 +634,6 @@ public class UpdateSpend extends Fragment {
         consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
         consumeVO.setFixDateDetail(fixdatedetail);
         consumeVO.setNotify(String.valueOf(notify.isChecked()));
-        consumeVO.setDetailname(detailname.getText().toString());
     }
 
 
@@ -858,6 +865,13 @@ public class UpdateSpend extends Fragment {
             MainActivity.bundles.remove(MainActivity.bundles.size()-1);
             goBackFramgent();
             Common.showToast(getActivity(), "修改成功");
+        }
+    }
+
+    private class showDetail implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            returnThisFramgent(new UpdateConsumeDetail());
         }
     }
 }
