@@ -307,10 +307,10 @@ public class SelectListModelCom extends Fragment {
                     if (js.get("choicestatue").getAsString().trim().equals("每天") && noweek) {
                         stringBuffer.append(" 假日除外");
                     }
-                    decribe.setText(stringBuffer.toString() + " \n" + c.getDetailname());
+                    decribe.setText(stringBuffer.toString() + " \n" +(c.getDetailname()==null?"":c.getDetailname()));
                 } else {
                     fixL.setVisibility(View.GONE);
-                    decribe.setText(c.getDetailname());
+                    decribe.setText((c.getDetailname()==null?"":c.getDetailname()));
                 }
 
                 update.setOnClickListener(new View.OnClickListener() {

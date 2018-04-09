@@ -173,7 +173,7 @@ public class SettingListFixCon extends Fragment {
             {
                 stringBuffer.append(" 假日除外");
             }
-            decribe.setText(stringBuffer.toString()+" \n"+consumeVO.getDetailname());
+            decribe.setText(stringBuffer.toString()+" \n"+(consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
             update.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

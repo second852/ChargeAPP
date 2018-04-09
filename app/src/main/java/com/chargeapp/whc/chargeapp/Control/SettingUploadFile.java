@@ -384,7 +384,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         bw.append(consumeVO.getSecondType() + " ");
                         bw.append(consumeVO.getMoney() + " ");
                         bw.append(consumeVO.getNumber() + " ");
-                        bw.append(consumeVO.getDetailname() + " ");
+                        bw.append((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()) + " ");
                         bw.append(consumeVO.getIsWin() + " ");
                         bw.append("本機" + " ");
                         bw.append(consumeVO.getFixDate() + " ");
@@ -520,7 +520,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         rowContent.createCell(2).setCellValue(consumeVO.getSecondType());
                         rowContent.createCell(3).setCellValue(consumeVO.getMoney());
                         rowContent.createCell(4).setCellValue(consumeVO.getNumber());
-                        rowContent.createCell(5).setCellValue(consumeVO.getDetailname());
+                        rowContent.createCell(5).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
                         rowContent.createCell(6).setCellValue(consumeVO.getIsWin());
                         rowContent.createCell(7).setCellValue("本機");
                         rowContent.createCell(8).setCellValue(consumeVO.getFixDate());
@@ -648,7 +648,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(6).setCellValue(consumeVO.getFixDate());
                     rowContent.createCell(7).setCellValue(consumeVO.getFixDateDetail());
                     rowContent.createCell(8).setCellValue(consumeVO.getNotify());
-                    rowContent.createCell(9).setCellValue(consumeVO.getDetailname());
+                    rowContent.createCell(9).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
                     rowContent.createCell(10).setCellValue(consumeVO.getIsWin());
                     rowContent.createCell(11).setCellValue(consumeVO.isAuto());
                     rowContent.createCell(12).setCellValue(consumeVO.getAutoId());

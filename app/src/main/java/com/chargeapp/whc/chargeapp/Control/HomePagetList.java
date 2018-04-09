@@ -378,10 +378,10 @@ public class HomePagetList extends Fragment {
                     {
                         stringBuffer.append(" 假日除外");
                     }
-                    decribe.setText(stringBuffer.toString()+" \n"+c.getDetailname());
+                    decribe.setText(stringBuffer.toString()+" \n"+(c.getDetailname()==null?"":c.getDetailname()));
                     fixL.setVisibility(View.VISIBLE);
                 }else{
-                    decribe.setText(c.getDetailname());
+                    decribe.setText((c.getDetailname()==null?"":c.getDetailname()));
                     fixL.setVisibility(View.GONE);
                 }
 

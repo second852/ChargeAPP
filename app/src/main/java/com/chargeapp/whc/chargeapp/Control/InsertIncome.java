@@ -377,8 +377,8 @@ public class InsertIncome extends Fragment {
             {
                 return;
             }
-            name.setText(" ");
-            money.setText(" ");
+            name.setText("");
+            money.setText("");
             fixdate.setChecked(false);
             detailname.setText("");
         }
@@ -448,6 +448,18 @@ public class InsertIncome extends Fragment {
                 money.setError("金額不能空白");
                 return;
             }
+
+
+            try {
+                if (Integer.valueOf(money.getText().toString().trim()) == 0) {
+                    money.setError("金額不能為0");
+                    return;
+                }
+            } catch (Exception e) {
+                money.setError("只能輸入數字");
+                return;
+            }
+
             if(date.getText().toString().trim()==null||date.getText().toString().trim().length()==0)
             {
                 date.setError(" ");

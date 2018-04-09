@@ -321,6 +321,16 @@ public class GoalUpdate extends Fragment {
                 return;
             }
 
+            try {
+                if (Integer.valueOf(money.getText().toString().trim()) == 0) {
+                    money.setError("金額不能為0");
+                    return;
+                }
+            } catch (Exception e) {
+                money.setError("只能輸入數字");
+                return;
+            }
+
             if (dayStatue.equals(startTitle)) {
                 if (day == null || day.length() <= 0) {
                     limitP.setError("不能空白");

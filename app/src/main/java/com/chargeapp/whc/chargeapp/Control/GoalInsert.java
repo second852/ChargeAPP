@@ -265,6 +265,18 @@ public class GoalInsert extends Fragment {
                 money.setError("不能空白");
                 return;
             }
+
+            try {
+                if (Integer.valueOf(money.getText().toString().trim()) == 0) {
+                    money.setError("金額不能為0");
+                    return;
+                }
+            } catch (Exception e) {
+                money.setError("只能輸入數字");
+                return;
+            }
+
+
             if(dayStatue.equals("今日"))
             {
                 if(day==null||day.length()<=0)

@@ -434,7 +434,7 @@ public class ConsumeDB {
         values.put("fixdate",consumeVO.getFixDate());
         values.put("fixdatedetail",consumeVO.getFixDateDetail());
         values.put("notify",consumeVO.getNotify());
-        values.put("detailname",consumeVO.getDetailname());
+        values.put("detailname",(consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
         values.put("iswin",consumeVO.getIsWin());
         values.put("auto",String.valueOf(consumeVO.isAuto()));
         values.put("autoId",consumeVO.getAutoId());
@@ -453,7 +453,7 @@ public class ConsumeDB {
         values.put("fixdate",consumeVO.getFixDate());
         values.put("fixdatedetail",consumeVO.getFixDateDetail());
         values.put("notify",consumeVO.getNotify());
-        values.put("detailname",consumeVO.getDetailname());
+        values.put("detailname",(consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
         values.put("iswin",consumeVO.getIsWin());
         values.put("auto",String.valueOf(consumeVO.isAuto()));
         values.put("autoId",consumeVO.getAutoId());
@@ -472,7 +472,7 @@ public class ConsumeDB {
         values.put("fixdate",consumeVO.getFixDate());
         values.put("fixdatedetail",consumeVO.getFixDateDetail());
         values.put("notify",consumeVO.getNotify());
-        values.put("detailname",consumeVO.getDetailname());
+        values.put("detailname",(consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
         values.put("iswin",consumeVO.getIsWin());
         values.put("auto",String.valueOf(consumeVO.isAuto()));
         values.put("autoId",consumeVO.getAutoId());

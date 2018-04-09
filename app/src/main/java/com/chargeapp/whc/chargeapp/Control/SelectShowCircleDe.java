@@ -530,10 +530,10 @@ public class SelectShowCircleDe extends Fragment {
                     {
                         stringBuffer.append(" 假日除外");
                     }
-                    decribe.setText(stringBuffer.toString()+" \n"+c.getDetailname());
+                    decribe.setText(stringBuffer.toString()+" \n"+(c.getDetailname()==null?"":c.getDetailname()));
                 }else{
                     fixL.setVisibility(View.GONE);
-                    decribe.setText(c.getDetailname());
+                    decribe.setText(c.getDetailname()+(c.getDetailname()==null?"":c.getDetailname()));
                 }
 
                 update.setOnClickListener(new View.OnClickListener() {
