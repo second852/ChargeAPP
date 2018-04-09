@@ -140,7 +140,7 @@
                     android:textSize="28sp" />
                 <TextView
                     android:id="@+id/limitP"
-                    android:layout_width="210dp"
+                    android:layout_width="wrap_content"
                     android:layout_toRightOf="@+id/shift"
                     android:layout_marginLeft="10dp"
                     android:layout_height="wrap_content"
