@@ -18,6 +18,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
@@ -49,6 +50,8 @@ public class InsertConsumeType extends Fragment {
     private TypeDetailDB typeDetailDB;
     private Object object;
     private String action;
+    private boolean mainClick,secondClick;
+    private TextView mainT;
 
     @Nullable
     @Override
@@ -59,6 +62,8 @@ public class InsertConsumeType extends Fragment {
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         object = getArguments().getSerializable("object");
         action = (String) getArguments().getSerializable("action");
+        mainClick=false;
+        secondClick=false;
         findViewById(view);
         setGridPicture();
         if (Common.showsecondgrid) {
@@ -85,6 +90,7 @@ public class InsertConsumeType extends Fragment {
         mainName.setFocusable(false);
         mainName.setFocusableInTouchMode(false);
         mainName.setBackgroundColor(Color.parseColor("#DDDDDD"));
+        mainT.setText(typeVO.getName());
     }
 
     private void setGridPicture() {
@@ -114,6 +120,7 @@ public class InsertConsumeType extends Fragment {
         clear = view.findViewById(R.id.clear);
         choiceL = view.findViewById(R.id.choiceL);
         choiceG = view.findViewById(R.id.choiceG);
+        mainT=view.findViewById(R.id.mainT);
         AdView adView = view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
@@ -133,8 +140,10 @@ public class InsertConsumeType extends Fragment {
             resultI.setImageResource(Download.imageAll[i]);
             int id = resultI.getId();
             if (id == R.id.mainImage) {
+                mainClick=true;
                 typeVO.setImage(i);
             } else {
+                secondClick=true;
                 typeDetailVO.setImage(i);
             }
             choiceL.setVisibility(View.GONE);
@@ -144,11 +153,19 @@ public class InsertConsumeType extends Fragment {
     private class clearOnClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            mainImage.setImageResource(R.drawable.add);
-            secondImage.setImageResource(R.drawable.add);
-            mainName.setText(" ");
-            secondName.setText(" ");
-            secondKey.setText(" ");
+            if(Common.showsecondgrid)
+            {
+
+                secondImage.setImageResource(R.drawable.add);
+                secondName.setText("");
+                secondKey.setText("");
+            }else{
+                mainImage.setImageResource(R.drawable.add);
+                secondImage.setImageResource(R.drawable.add);
+                mainName.setText("");
+                secondName.setText("");
+                secondKey.setText("");
+            }
         }
     }
 
@@ -194,12 +211,25 @@ public class InsertConsumeType extends Fragment {
                 }
                 typeVO.setName(mainType);
                 typeVO.setGroupNumber(mainType);
+
+                //沒有選擇圖片情況
+                if(!mainClick)
+                {
+                    typeVO.setImage(0);
+                }
                 typeDB.insert(typeVO);
             }
 
             typeDetailVO.setGroupNumber(mainName.getText().toString().trim());
             typeDetailVO.setName(secondName.getText().toString().trim());
             typeDetailVO.setKeyword(secondKey.getText().toString().trim());
+
+            //沒有選擇圖片情況
+            if(!secondClick)
+            {
+                typeDetailVO.setImage(0);
+            }
+
             typeDetailDB.insert(typeDetailVO);
             if (object instanceof InvoiceVO) {
                 Bundle bundle = new Bundle();

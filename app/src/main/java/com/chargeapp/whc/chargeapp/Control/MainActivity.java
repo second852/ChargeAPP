@@ -32,6 +32,7 @@ import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
+import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
@@ -355,6 +356,8 @@ public class MainActivity extends AppCompatActivity {
                     {
                         InsertSpend.consumeVO=new ConsumeVO();
                         InsertSpend.needSet=false;
+                        InsertIncome.needSet=false;
+                        InsertIncome.bankVO=new BankVO();
                     }
                     setColor(v);
 

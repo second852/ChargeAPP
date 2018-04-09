@@ -23,7 +23,6 @@ import com.chargeapp.whc.chargeapp.R;
 public class InsertActivity extends Fragment implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
     private Button exportMoney,importMoney,goneMoney;
-    private HorizontalScrollView choiceitem;
     private LinearLayout text;
     private int nowpoint=0;
     private static int position;
@@ -37,7 +36,6 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         mViewPager =  view.findViewById(R.id.insert_viewPager);
         exportMoney=view.findViewById(R.id.exportD);
         importMoney=view.findViewById(R.id.showD);
-        choiceitem=view.findViewById(R.id.choiceitem);
         goneMoney=view.findViewById(R.id.goneD);
         mViewPager.setAdapter(new MainPagerAdapter(getFragmentManager()));
         mViewPager.addOnPageChangeListener(this);

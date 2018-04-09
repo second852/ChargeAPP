@@ -48,6 +48,7 @@ public class InsertIncomeType extends Fragment {
     private String action;
     private BankTybeDB bankTybeDB;
     private BankTypeVO bankTypeVO;
+    private boolean onClick;
 
     @Nullable
     @Override
@@ -57,6 +58,7 @@ public class InsertIncomeType extends Fragment {
         action = (String) getArguments().getSerializable("action");
         bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankTypeVO = new BankTypeVO();
+        onClick=false;
         findViewById(view);
         setGridPicture();
         getActivity().setTitle("新增項目類別");
@@ -107,6 +109,7 @@ public class InsertIncomeType extends Fragment {
     private class choicePicture implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            onClick=true;
             resultI.setImageResource(Download.imageAll[i]);
             choiceL.setVisibility(View.GONE);
             bankTypeVO.setImage(i);
@@ -138,6 +141,10 @@ public class InsertIncomeType extends Fragment {
                 mainName.setError("項目種類名稱不能重複");
                 return;
             }
+            if(!onClick)
+            {
+                bankTypeVO.setImage(0);
+            }
             bankTypeVO.setGroupNumber(mainType);
             bankTypeVO.setName(mainType);
             bankTybeDB.insert(bankTypeVO);
@@ -161,8 +168,7 @@ public class InsertIncomeType extends Fragment {
         bundle.putSerializable("action", action);
         bundle.putSerializable("bankVO", getArguments().getSerializable("bankVO"));
         if (action.equals("InsertIncome")) {
-            fragment = new InsertIncome();
-            bundle.putSerializable("needSet", true);
+            fragment = new InsertActivity();
         } else if (action.equals("SelectListPieIncome")) {
             fragment = new UpdateIncome();
             bundle.putSerializable("type", getArguments().getSerializable("type"));

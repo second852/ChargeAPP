@@ -54,12 +54,12 @@ public class InsertIncome extends Fragment {
     private BankDB bankDB;
     private LinearLayout firstL;
     private GridView firstG;
-    private static boolean needSet;
     private int updateChoice;
     private boolean first;
-    private static BankVO bankVO;
     private Handler handler,secondHander;
     private View view;
+    public static BankVO bankVO;
+    public static boolean needSet;
 
 
 

@@ -38,6 +38,7 @@
                     android:layout_gravity="center"
                     />
                 <TextView
+                    android:id="@+id/mainT"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="設定圖片"
