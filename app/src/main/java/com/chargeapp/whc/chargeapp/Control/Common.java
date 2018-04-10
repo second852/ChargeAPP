@@ -102,6 +102,7 @@ public class Common {
     }
 
 
+
     public static ArrayList<String> WeekSetSpinner()
     {
         ArrayList<String> strings=new ArrayList<>();
@@ -152,6 +153,20 @@ public class Common {
 
         }
     }
+
+    //電子發票 Card類別
+    public static HashMap<String,String> CardType() {
+        HashMap<String,String> hashMap=new HashMap<>();
+        hashMap.put("3J0002","手機條碼");
+        hashMap.put("1K0001","悠遊卡");
+        hashMap.put("1H0001","一卡通");
+        hashMap.put("2G0001","愛金卡");
+        return hashMap;
+    }
+
+
+
+
 
     //price month
     public static HashMap<Integer,String> getPriceMonth() {

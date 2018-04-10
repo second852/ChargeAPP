@@ -69,6 +69,7 @@ public class UpdateIncome extends Fragment {
     private Map<String, String> g;
 
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -99,6 +100,7 @@ public class UpdateIncome extends Fragment {
         if(bankVO.isAuto())
         {
             fixdate.setVisibility(View.GONE);
+            fixDateT.setVisibility(View.GONE);
         }
         setUpdate();
         return view;

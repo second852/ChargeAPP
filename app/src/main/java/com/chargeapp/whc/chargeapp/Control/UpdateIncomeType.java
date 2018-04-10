@@ -62,6 +62,7 @@ public class UpdateIncomeType extends Fragment {
     private BankDB bankDB;
     private ProgressDialog progressDialog;
     private Handler handler;
+    private String oldname;
 
 
     @Nullable
@@ -97,12 +98,14 @@ public class UpdateIncomeType extends Fragment {
         bankTypeVO = (BankTypeVO) getArguments().getSerializable("bankTypeVO");
         mainImage.setImageResource(Download.imageAll[bankTypeVO.getImage()]);
         mainName.setText(bankTypeVO.getName());
+        oldname=bankTypeVO.getName();
     }
 
     private void setTypeVO() {
         typeVO = (TypeVO) getArguments().getSerializable("typeVO");
         mainImage.setImageResource(Download.imageAll[typeVO.getImage()]);
         mainName.setText(typeVO.getName());
+        oldname=typeVO.getName();
     }
 
 
@@ -178,7 +181,7 @@ public class UpdateIncomeType extends Fragment {
 
             if (action.equals("updateT")) {
                 TypeVO oldTypeVO = typeDB.findTypeName(mainType);
-                if (oldTypeVO != null) {
+                if ((oldTypeVO != null)&&(!oldname.trim().equals(mainType))) {
                     mainName.setError("項目不能重複");
                     return;
                 }
@@ -189,7 +192,8 @@ public class UpdateIncomeType extends Fragment {
             } else {
 
                 BankTypeVO old = bankTybeDB.findByName(mainType);
-                if (old != null) {
+                if ((old != null)&&(!oldname.trim().equals(mainType)))
+                {
                     mainName.setError("項目不能重複");
                     return;
                 }

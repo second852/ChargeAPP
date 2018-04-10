@@ -44,11 +44,10 @@ public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("BootReceiver","ACTION_DATE_CHANGED");
-        sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        if (intent.getAction().equals(Intent.ACTION_DATE_CHANGED)) {
+        if (intent.getAction().equals(Intent.ACTION_DATE_CHANGED)||intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             Log.d("BootReceiver","ACTION_DATE_CHANGED");
             id = 0;
+            sf = new SimpleDateFormat("yyyy-MM-dd");
             chargeAPPDB = new ChargeAPPDB(context);
             consumeDB = new ConsumeDB(chargeAPPDB.getReadableDatabase());
             bankDB = new BankDB(chargeAPPDB.getReadableDatabase());
@@ -56,6 +55,7 @@ public class BootReceiver extends BroadcastReceiver {
             List<BankVO> bankVOS = bankDB.getFixDate();
             SharedPreferences sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
             boolean setNotify = sharedPreferences.getBoolean("notify", true);
+
             String setTime = sharedPreferences.getString("userTime", "6:00 p.m.").trim();
             int hour, min;
             if (setTime.indexOf("p") == -1) {
@@ -73,6 +73,15 @@ public class BootReceiver extends BroadcastReceiver {
             int day = date.get(Calendar.DAY_OF_MONTH);
             int dweek = date.get(Calendar.DAY_OF_WEEK);
             setNewTime = new GregorianCalendar(year, month, day, hour, min, 0);
+
+            //確認今天是否重設過
+            boolean todaySet=sharedPreferences.getBoolean(sf.format(new Date(setNewTime.getTimeInMillis())), false);
+            //表示今天已經跑過 不用再設定通知
+            if(todaySet)
+            {
+                return;
+            }
+
             if (consumerVOS.size() > 0 && consumerVOS != null) {
                 for (ConsumeVO consumeVO : consumerVOS) {
                     String detail = consumeVO.getFixDateDetail();
@@ -101,7 +110,6 @@ public class BootReceiver extends BroadcastReceiver {
                         }
                         if (notify && setNotify) {
                             NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
-                            Log.d("XXXXX", sf.format(setNewTime.getTimeInMillis()));
                         }
                     } else if ("每周".equals(action)) {
                         String fixdetail = jsonObject.get("choicedate").getAsString().trim();
@@ -117,9 +125,9 @@ public class BootReceiver extends BroadcastReceiver {
                                 consumeVO.setAutoId(consumeVO.getId());
                                 consumeVO.setDate(new Date((date.getTimeInMillis())));
                                 consumeDB.insert(consumeVO);
-                            }
-                            if (notify && setNotify) {
-                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+                                if (notify && setNotify) {
+                                    NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+                                }
                             }
                         }
                     } else if ("每月".equals(action)) {
@@ -138,10 +146,9 @@ public class BootReceiver extends BroadcastReceiver {
                                 consumeVO.setAutoId(consumeVO.getId());
                                 consumeVO.setDate(new Date((date.getTimeInMillis())));
                                 consumeDB.insert(consumeVO);
-                            }
-
-                            if (notify && setNotify) {
-                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+                                if (notify && setNotify) {
+                                    NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+                                }
                             }
                         }
                         if (Maxday < Integer.valueOf(fixdate) && day == Maxday) {
@@ -155,10 +162,9 @@ public class BootReceiver extends BroadcastReceiver {
                                 consumeVO.setAutoId(consumeVO.getId());
                                 consumeVO.setDate(new Date((date.getTimeInMillis())));
                                 consumeDB.insert(consumeVO);
-                            }
-
-                            if (notify && setNotify) {
-                                NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+                                if (notify && setNotify) {
+                                    NotifyUse(consumeVO, context, setNewTime.getTimeInMillis());
+                                }
                             }
                         }
                     } else
@@ -316,8 +322,11 @@ public class BootReceiver extends BroadcastReceiver {
                 }
                 id++;
             }
+            notifyLottery(context);
+
+            //今天設定過 存檔
+            sharedPreferences.edit().putBoolean(sf.format(new Date(setNewTime.getTimeInMillis())),true).apply();
         }
-        notifyLottery(context);
     }
 
     public void notifyLottery(Context context) {

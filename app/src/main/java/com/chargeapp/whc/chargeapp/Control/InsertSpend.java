@@ -415,11 +415,27 @@ public class InsertSpend extends Fragment {
                 Common.showToast(getActivity(), "主項目不能空白");
                 return;
             }
+
+            //必填資料
+            if (name.getText().toString().trim().equals("0") || name.getText().toString().trim().equals("O")) {
+                name.setBackgroundColor(Color.parseColor("#ff471a"));
+                Common.showToast(getActivity(), "主項目不能為其他");
+                return;
+            }
+
             if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
                 secondname.setBackgroundColor(Color.parseColor("#ff471a"));
                 Common.showToast(getActivity(), "次項目不能空白");
                 return;
             }
+
+            if (secondname.getText().toString().trim().equals("0") || secondname.getText().toString().trim().equals("O")) {
+                secondname.setBackgroundColor(Color.parseColor("#ff471a"));
+                Common.showToast(getActivity(), "次項目不能為其他");
+                return;
+            }
+
+
             if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
                 money.setError("金額不能空白");
                 return;

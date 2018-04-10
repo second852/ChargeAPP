@@ -321,9 +321,9 @@ public class SelectShowCircleDe extends Fragment {
                 long t2=(o2 instanceof ConsumeVO)?(((ConsumeVO) o2).getDate().getTime()):(((InvoiceVO) o2).getTime().getTime());
                 if(t1>t2)
                 {
-                    return 1;
-                }else {
                     return -1;
+                }else {
+                    return 1;
                 }
             }
         });
@@ -391,9 +391,14 @@ public class SelectShowCircleDe extends Fragment {
             LinearLayout fixL=itemView.findViewById(R.id.fixL);
             TextView fixT=itemView.findViewById(R.id.fixT);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
-            TextView remainT=itemView.findViewById(R.id.remainT);
             LinearLayout typeL=itemView.findViewById(R.id.typeL);
             TextView typeT=itemView.findViewById(R.id.typeT);
+
+            //新增ele Type
+            LinearLayout eleTypeL=itemView.findViewById(R.id.eleTypeL);
+            TextView eleTypeT=itemView.findViewById(R.id.eleTypeT);
+
+
             final Object o=objects.get(position);
             StringBuffer sbTitle=new StringBuffer();
             StringBuffer sbDecribe=new StringBuffer();
@@ -402,15 +407,28 @@ public class SelectShowCircleDe extends Fragment {
                 final InvoiceVO I= (InvoiceVO) o;
 
                 //設定標籤
-                remindL.setVisibility(View.GONE);
-                fixL.setVisibility(View.GONE);
-                typeL.setVisibility(View.VISIBLE);
+                remindL.setVisibility(View.INVISIBLE);
+                fixL.setVisibility(View.INVISIBLE);
 
+                typeL.setVisibility(View.VISIBLE);
                 typeT.setText("電子發票");
                 typeT.setTextColor(Color.parseColor("#008844"));
                 typeL.setBackgroundColor(Color.parseColor("#008844"));
 
+                //設定電子發票種類
+                try {
+                    eleTypeL.setVisibility(View.VISIBLE);
+                    eleTypeT.setText(Common.CardType().get(I.getCardType().trim()));
+                    eleTypeT.setTextColor(Color.parseColor("#000000"));
+                    eleTypeL.setBackgroundColor(Color.parseColor("#000000"));
+                }catch (Exception e)
+                {
+                    eleTypeL.setVisibility(View.GONE);
+                }
+
+                //set Title
                 sbTitle.append(Common.sDay.format(new Date(I.getTime().getTime()))+" ");
+                //無法分類顯示其他
                 if(I.getSecondtype().equals("O"))
                 {
                     sbTitle.append("其他");
@@ -420,6 +438,9 @@ public class SelectShowCircleDe extends Fragment {
                     sbTitle.append(I.getSecondtype());
                 }
                 sbTitle.append("\n共"+I.getAmount()+"元");
+
+
+                //set detail
                 if(I.getDetail().equals("0"))
                 {
                     update.setText("下載");
@@ -488,10 +509,16 @@ public class SelectShowCircleDe extends Fragment {
                 update.setText("修改");
                 final ConsumeVO c= (ConsumeVO) o;
 
+                //紙本無發票種類
+                eleTypeL.setVisibility(View.GONE);
+
                 typeT.setText("紙本發票");
-                typeT.setTextColor(Color.parseColor("#CC6600"));
-                typeL.setBackgroundColor(Color.parseColor("#CC6600"));
+                typeT.setTextColor(Color.parseColor("#008888"));
+                typeL.setBackgroundColor(Color.parseColor("#008888"));
                 typeL.setVisibility(View.VISIBLE);
+                fixL.setVisibility(View.INVISIBLE);
+
+
                 if (c.isAuto()) {
                     fixT.setText("自動");
                     fixT.setTextColor(Color.parseColor("#7700BB"));
@@ -499,42 +526,57 @@ public class SelectShowCircleDe extends Fragment {
                     fixL.setVisibility(View.VISIBLE);
                 }
 
+                //set Notify
                 if (Boolean.valueOf(c.getNotify())) {
                     remindL.setVisibility(View.VISIBLE);
                 } else {
-                    remindL.setVisibility(View.GONE);
+                    remindL.setVisibility(View.INVISIBLE);
                 }
 
-                StringBuffer stringBuffer=new StringBuffer();
+
                 //設定 title
+                StringBuffer stringBuffer=new StringBuffer();
                 stringBuffer.append(Common.sDay.format(c.getDate()));
                 stringBuffer.append(" "+c.getSecondType());
                 stringBuffer.append("\n共"+c.getMoney()+"元");
                 title.setText(stringBuffer.toString());
 
                 //設定 describe
-                if(c.getFixDate().equals("true"))
-                {
+                stringBuffer = new StringBuffer();
+                if (c.isAuto()) {
+                    fixT.setText("自動");
+                    fixT.setTextColor(Color.parseColor("#7700BB"));
+                    fixL.setBackgroundColor(Color.parseColor("#7700BB"));
+                    fixL.setVisibility(View.VISIBLE);
+                    JsonObject js = gson.fromJson(c.getFixDateDetail(), JsonObject.class);
+                    stringBuffer.append(js.get("choicestatue").getAsString().trim());
+                    stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
+                    boolean noweek = Boolean.parseBoolean(js.get("noweek").getAsString());
+                    if (js.get("choicestatue").getAsString().trim().equals("每天") && noweek) {
+                        stringBuffer.append(" 假日除外");
+                    }
+                    stringBuffer.append("\n");
+                }
 
+
+                if (c.getFixDate().equals("true")) {
                     fixT.setText("固定");
                     fixT.setTextColor(Color.parseColor("#003C9D"));
                     fixL.setBackgroundColor(Color.parseColor("#003C9D"));
                     fixL.setVisibility(View.VISIBLE);
-
-                    stringBuffer=new StringBuffer();
-                    JsonObject js=gson.fromJson(c.getFixDateDetail(),JsonObject.class);
+                    JsonObject js = gson.fromJson(c.getFixDateDetail(), JsonObject.class);
                     stringBuffer.append(js.get("choicestatue").getAsString().trim());
-                    stringBuffer.append(" "+js.get("choicedate").getAsString().trim());
-                    boolean noweek= Boolean.parseBoolean(js.get("noweek").getAsString());
-                    if(js.get("choicestatue").getAsString().trim().equals("每天")&&noweek)
-                    {
+                    stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
+                    boolean noweek = Boolean.parseBoolean(js.get("noweek").getAsString());
+                    if (js.get("choicestatue").getAsString().trim().equals("每天") && noweek) {
                         stringBuffer.append(" 假日除外");
                     }
-                    decribe.setText(stringBuffer.toString()+" \n"+(c.getDetailname()==null?"":c.getDetailname()));
-                }else{
-                    fixL.setVisibility(View.GONE);
-                    decribe.setText(c.getDetailname()+(c.getDetailname()==null?"":c.getDetailname()));
+                    stringBuffer.append("\n");
                 }
+
+                stringBuffer.append((c.getDetailname()==null?"":c.getDetailname()));
+                decribe.setText(stringBuffer.toString());
+
 
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override

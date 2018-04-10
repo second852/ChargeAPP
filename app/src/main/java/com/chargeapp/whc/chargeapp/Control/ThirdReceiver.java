@@ -31,7 +31,6 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 
 public class ThirdReceiver extends BroadcastReceiver {
-    private final static String TAG = "BootReceiver";
     private  NotificationManager notificationManager;
     private SimpleDateFormat sf;
 
@@ -80,7 +79,7 @@ public class ThirdReceiver extends BroadcastReceiver {
             {
                 message="民國"+year+"年9-10月開獎";
             }
-            showNotification(title,message,context,id+1);
+            showNotification(title,message,context,id);
         }
         if(action.equals("goalC"))
         {
@@ -201,12 +200,11 @@ public class ThirdReceiver extends BroadcastReceiver {
 
     private void showNotification(String title,String message,Context context,int NOTIFICATION_ID) {
         NotificationChannel channelLove = null;
-        String idLove="ChargeAPP";
+        String idLove="記帳小助手";
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             channelLove = new NotificationChannel(idLove,
-                    "Channel Love",
-                    NotificationManager.IMPORTANCE_HIGH);
-            channelLove.setDescription("最重要的人");
+                    "記帳小助手", NotificationManager.IMPORTANCE_HIGH);
+            channelLove.setDescription("重要提醒");
             channelLove.enableLights(true);
             channelLove.enableVibration(true);
             Notification.Builder builder =  new Notification.Builder(context,idLove)

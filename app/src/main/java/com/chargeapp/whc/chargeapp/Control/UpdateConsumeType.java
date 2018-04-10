@@ -58,6 +58,7 @@ public class UpdateConsumeType extends Fragment {
     private ConsumeDB consumeDB;
     private ProgressDialog progressDialog;
     private Handler handler;
+    private String oldName;
 
 
     @Nullable
@@ -92,6 +93,7 @@ public class UpdateConsumeType extends Fragment {
         secondImage.setImageResource(Download.imageAll[typeDetailVO.getImage()]);
         secondName.setText(typeDetailVO.getName());
         secondKey.setText(typeDetailVO.getKeyword());
+        oldName=typeDetailVO.getName();
     }
 
     private void setGridPicture() {
@@ -181,7 +183,7 @@ public class UpdateConsumeType extends Fragment {
             }
 
             TypeDetailVO old=typeDetailDB.findByname(secondName.getText().toString().trim(),mainName.getText().toString().trim());
-            if(old!=null)
+            if((old!=null)&&(!secondTitle.trim().equals(oldName.trim())))
             {
                 secondName.setError("次項目不能重複");
                 return;

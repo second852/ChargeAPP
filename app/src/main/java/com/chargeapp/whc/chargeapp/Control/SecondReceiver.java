@@ -33,6 +33,7 @@ public class SecondReceiver extends BroadcastReceiver {
     private final static String TAG = "BootReceiver";
     private  NotificationManager notificationManager;
     private SimpleDateFormat sf;
+    private int id=0;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -42,7 +43,7 @@ public class SecondReceiver extends BroadcastReceiver {
         Bundle bundle=intent.getExtras();
         String action= (String) bundle.get("action");
         String message,title;
-        int id;
+
         if(action.equals("notifyC"))
         {
 
@@ -79,7 +80,7 @@ public class SecondReceiver extends BroadcastReceiver {
             {
                 message="民國"+year+"年9-10月開獎";
             }
-            showNotification(title,message,context,id+1);
+            showNotification(title,message,context,id);
         }
         if(action.equals("goalC"))
         {
@@ -211,6 +212,5 @@ public class SecondReceiver extends BroadcastReceiver {
                 .setContentIntent(pendingIntent)
                 .build();
         notificationManager.notify(NOTIFICATION_ID, notification);
-        Log.d("XXXXXXXXxx", String.valueOf(NOTIFICATION_ID));
     }
 }

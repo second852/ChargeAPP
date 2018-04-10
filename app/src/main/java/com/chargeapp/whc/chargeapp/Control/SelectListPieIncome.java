@@ -167,29 +167,37 @@ public class SelectListPieIncome extends Fragment {
             LinearLayout typeL=itemView.findViewById(R.id.typeL);
 
 
-            StringBuffer stringBuffer = new StringBuffer();
-
             //設定標籤
-            remindL.setVisibility(View.GONE);
             typeL.setVisibility(View.GONE);
+            remindL.setVisibility(View.GONE);
+            fixL.setVisibility(View.GONE);
+
+
+
+            //設定 title
+            StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append(Common.sDay.format(bankVO.getDate()));
+            stringBuffer.append(" " + bankVO.getMaintype());
+            stringBuffer.append("\n共" + bankVO.getMoney() + "元");
+            title.setText(stringBuffer.toString());
+
+            //設定 describe
+            stringBuffer = new StringBuffer();
             if (bankVO.isAuto()) {
                 fixT.setText("自動");
                 fixT.setTextColor(Color.parseColor("#7700BB"));
                 fixL.setBackgroundColor(Color.parseColor("#7700BB"));
                 fixL.setVisibility(View.VISIBLE);
-            }else{
-                fixL.setVisibility(View.GONE);
+
+                JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);
+                String daystatue = js.get("choicestatue").getAsString().trim();
+                stringBuffer.append(daystatue);
+                if (!daystatue.equals("每天")) {
+                    stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
+                }
+                decribe.setText("\n");
             }
 
-
-
-            //設定 title
-            stringBuffer.append(Common.sDay.format(bankVO.getDate()));
-            stringBuffer.append(" "+bankVO.getMaintype());
-            stringBuffer.append("\n共"+bankVO.getMoney()+"元");
-            title.setText(stringBuffer.toString());
-
-            //設定 describe
             if (bankVO.getFixDate().equals("true")) {
 
                 fixT.setText("固定");
@@ -197,19 +205,16 @@ public class SelectListPieIncome extends Fragment {
                 fixL.setBackgroundColor(Color.parseColor("#003C9D"));
                 fixL.setVisibility(View.VISIBLE);
 
-                stringBuffer=new StringBuffer();
-                JsonObject js=gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
-                String daystatue=js.get("choicestatue").getAsString().trim();
+                JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);
+                String daystatue = js.get("choicestatue").getAsString().trim();
                 stringBuffer.append(daystatue);
-                if(!daystatue.equals("每天"))
-                {
-                    stringBuffer.append(" "+js.get("choicedate").getAsString().trim());
+                if (!daystatue.equals("每天")) {
+                    stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
                 }
-                decribe.setText(stringBuffer.toString()+" \n"+bankVO.getDetailname());
-            } else {
-                fixL.setVisibility(View.GONE);
-                decribe.setText(stringBuffer.toString());
+                decribe.setText("\n");
             }
+            stringBuffer.append(bankVO.getDetailname());
+            decribe.setText(stringBuffer.toString());
 
             update.setText("修改");
             update.setOnClickListener(new View.OnClickListener() {

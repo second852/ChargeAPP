@@ -164,7 +164,6 @@ public class SelectOtherCircle extends Fragment {
                     countOther=countOther+I.getAmount();
                 }
             }
-             Log.d("QQQQQQ",key+" : "+total);
 
             if(total>0)
             {

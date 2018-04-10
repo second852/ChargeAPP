@@ -157,19 +157,15 @@ public class SelectListModelIM extends Fragment {
             LinearLayout fixL = itemView.findViewById(R.id.fixL);
             LinearLayout typeL=itemView.findViewById(R.id.typeL);
 
-            StringBuffer stringBuffer = new StringBuffer();
+            //設定標籤
             typeL.setVisibility(View.GONE);
             remindL.setVisibility(View.GONE);
-            if (bankVO.isAuto()) {
-                fixT.setText("自動");
-                fixT.setTextColor(Color.parseColor("#7700BB"));
-                fixL.setBackgroundColor(Color.parseColor("#7700BB"));
-                fixL.setVisibility(View.VISIBLE);
-            }else {
-                fixL.setVisibility(View.GONE);
-            }
+            fixL.setVisibility(View.GONE);
+
+
 
             //設定 title
+            StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append(Common.sDay.format(bankVO.getDate()));
             stringBuffer.append(" " + bankVO.getMaintype());
             stringBuffer.append("\n共" + bankVO.getMoney() + "元");
@@ -177,6 +173,21 @@ public class SelectListModelIM extends Fragment {
 
             //設定 describe
             stringBuffer = new StringBuffer();
+            if (bankVO.isAuto()) {
+                fixT.setText("自動");
+                fixT.setTextColor(Color.parseColor("#7700BB"));
+                fixL.setBackgroundColor(Color.parseColor("#7700BB"));
+                fixL.setVisibility(View.VISIBLE);
+
+                JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);
+                String daystatue = js.get("choicestatue").getAsString().trim();
+                stringBuffer.append(daystatue);
+                if (!daystatue.equals("每天")) {
+                    stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
+                }
+                decribe.setText("\n");
+            }
+
             if (bankVO.getFixDate().equals("true")) {
 
                 fixT.setText("固定");
@@ -190,12 +201,10 @@ public class SelectListModelIM extends Fragment {
                 if (!daystatue.equals("每天")) {
                     stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
                 }
-                decribe.setText(stringBuffer.toString() + " \n" + bankVO.getDetailname());
-            } else {
-                fixL.setVisibility(View.GONE);
-                decribe.setText(bankVO.getDetailname());
+                decribe.setText("\n");
             }
-
+            stringBuffer.append(bankVO.getDetailname());
+            decribe.setText(stringBuffer.toString());
 
             update.setText("修改");
             update.setOnClickListener(new View.OnClickListener() {

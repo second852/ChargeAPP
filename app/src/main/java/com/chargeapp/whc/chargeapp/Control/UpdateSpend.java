@@ -56,7 +56,7 @@ import static android.app.Activity.RESULT_OK;
 public class UpdateSpend extends Fragment {
     private EditText money, number;
     private CheckBox fixdate, notify, noWek;
-    private TextView secondname, name,detailname;
+    private TextView secondname, name,detailname,fixDateT;
     private TextView save, clear, date;
     private LinearLayout showdate;
     private DatePicker datePicker;
@@ -153,8 +153,10 @@ public class UpdateSpend extends Fragment {
         //自動產生不能設fix
         if (consumeVO.isAuto()) {
             fixdate.setVisibility(View.GONE);
+            fixDateT.setVisibility(View.GONE);
             return;
         }
+
         if (consumeVO.getFixDate().equals("true")) {
             fixdate.setChecked(Boolean.valueOf(consumeVO.getFixDate()));
             notify.setChecked(Boolean.valueOf(consumeVO.getNotify()));
@@ -345,6 +347,7 @@ public class UpdateSpend extends Fragment {
         standard = view.findViewById(R.id.standard);
         noWekT=view.findViewById(R.id.noWekT);
         notifyT=view.findViewById(R.id.notifyT);
+        fixDateT=view.findViewById(R.id.fixDateT);
     }
 
     private void setFirstGrid() {
@@ -521,11 +524,11 @@ public class UpdateSpend extends Fragment {
             {
                 return;
             }
-            name.setText(" ");
-            secondname.setText(" ");
-            money.setText(" ");
+            name.setText("");
+            secondname.setText("");
+            money.setText("");
             fixdate.setChecked(false);
-            number.setText(" ");
+            number.setText("");
         }
     }
 
@@ -564,11 +567,27 @@ public class UpdateSpend extends Fragment {
                 Common.showToast(getActivity(), "主項目不能空白");
                 return;
             }
+
+            //無法分類自己設分類
+            if (name.getText().toString().trim().equals("O") || name.getText().toString().trim().equals("0")) {
+                name.setBackgroundColor(Color.parseColor("#ff471a"));
+                Common.showToast(getActivity(), "主項目不能為其他");
+                return;
+            }
+
             if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
                 secondname.setBackgroundColor(Color.parseColor("#ff471a"));
                 Common.showToast(getActivity(), "次項目不能空白");
                 return;
             }
+
+            //無法分類自己設分類
+            if (secondname.getText().toString().trim().equals("O") || secondname.getText().toString().equals("0")) {
+                secondname.setBackgroundColor(Color.parseColor("#ff471a"));
+                Common.showToast(getActivity(), "次項目不能為其他");
+                return;
+            }
+
             if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
                 money.setError("金額不能空白");
                 return;
@@ -767,11 +786,26 @@ public class UpdateSpend extends Fragment {
                 Common.showToast(getActivity(), "主項目不能空白");
                 return;
             }
+
+            if (name.getText().toString().trim().equals("O") || name.getText().toString().trim().equals("0")) {
+                name.setBackgroundColor(Color.parseColor("#ff471a"));
+                Common.showToast(getActivity(), "主項目不能為其他");
+                return;
+            }
+
+
             if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
                 secondname.setBackgroundColor(Color.parseColor("#ff471a"));
                 Common.showToast(getActivity(), "次項目不能空白");
                 return;
             }
+
+            if (secondname.getText().toString().trim().equals("O") || secondname.getText().toString().trim().equals("0")) {
+                secondname.setBackgroundColor(Color.parseColor("#ff471a"));
+                Common.showToast(getActivity(), "次項目不能為其他");
+                return;
+            }
+
             if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
                 money.setError("金額不能空白");
                 return;

@@ -21,8 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
-        android:visibility="invisible"
+        android:layout_marginRight="15dp"
+        android:visibility="gone"
         android:layout_toLeftOf="@+id/updateD"
         android:background="#FF0000"
         >
@@ -83,7 +83,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginRight="7dp"
             android:layout_marginBottom="5dp"
-            android:visibility="gone"
+            android:visibility="invisible"
             android:layout_toLeftOf="@+id/fixL"
             android:background="#FF0000"
             >
@@ -110,7 +110,7 @@
             android:layout_marginRight="7dp"
             android:layout_marginBottom="5dp"
             android:background="#003C9D"
-            android:visibility="gone"
+            android:visibility="invisible"
             >
             <TextView
                 android:id="@+id/fixT"
@@ -126,6 +126,34 @@
                 android:textSize="20sp"
                 />
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/eleTypeL"
+            android:layout_width="87dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="5dp"
+            android:background="#003C9D"
+            android:visibility="gone"
+            >
+            <TextView
+                android:id="@+id/eleTypeT"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="手機條碼"
+                android:textColor="#003C9D"
+                android:background="#AAAAAA"
+                android:gravity="center"
+                android:padding="2dp"
+                android:layout_margin="1dp"
+                android:layout_gravity="center"
+                android:textSize="20sp"
+                />
+        </LinearLayout>
+
+
 
     </RelativeLayout>
 

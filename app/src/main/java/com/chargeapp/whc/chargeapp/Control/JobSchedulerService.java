@@ -47,23 +47,28 @@ public class JobSchedulerService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
-        Calendar calendar=Calendar.getInstance();
-        sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        if(calendar.get(Calendar.HOUR_OF_DAY)!=0)
-        {
-            Log.d("JobSchedulerService","no :"+sf.format(new Date(calendar.getTimeInMillis())));
+        Calendar calendar = Calendar.getInstance();
+        sf = new SimpleDateFormat("yyyy-MM-dd");
+
+        SharedPreferences sharedPreferences = getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
+        boolean setNotify = sharedPreferences.getBoolean("notify", true);
+        String setTime = sharedPreferences.getString("userTime", "6:00 p.m.").trim();
+
+        //確認今天是否重設過
+        boolean todaySet = sharedPreferences.getBoolean(sf.format(new Date(calendar.getTimeInMillis())), false);
+        if (todaySet) {
             return true;
         }
-        Log.d("JobSchedulerService","yes :"+sf.format(new Date(calendar.getTimeInMillis())));
+
+
         id = 0;
         chargeAPPDB = new ChargeAPPDB(JobSchedulerService.this);
         consumeDB = new ConsumeDB(chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(chargeAPPDB.getReadableDatabase());
         goalDB = new GoalDB(chargeAPPDB.getReadableDatabase());
         List<BankVO> bankVOS = bankDB.getFixDate();
-        SharedPreferences sharedPreferences = getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
-        boolean setNotify = sharedPreferences.getBoolean("notify", true);
-        String setTime = sharedPreferences.getString("userTime", "6:00 p.m.").trim();
+
+
         int hour, min;
         if (setTime.indexOf("p") == -1) {
             hour = new Integer(setTime.substring(0, setTime.indexOf(":")));
@@ -82,6 +87,14 @@ public class JobSchedulerService extends JobService {
         setNewTime = new GregorianCalendar(year, month, day, hour, min, 0);
         if (consumerVOS.size() > 0 && consumerVOS != null) {
             for (ConsumeVO consumeVO : consumerVOS) {
+
+                //避免紀錄當天重複
+                if(sf.format(consumeVO.getDate()).equals(sf.format(new Date(setNewTime.getTimeInMillis()))))
+                {
+                    continue;
+                }
+
+
                 String detail = consumeVO.getFixDateDetail();
                 jsonObject = gson.fromJson(detail, JsonObject.class);
                 String action = jsonObject.get("choicestatue").getAsString().trim();
@@ -108,7 +121,6 @@ public class JobSchedulerService extends JobService {
                     }
                     if (notify && setNotify) {
                         NotifyUse(consumeVO, this, setNewTime.getTimeInMillis());
-                        Log.d("XXXXX", sf.format(setNewTime.getTimeInMillis()));
                     }
                 } else if ("每周".equals(action)) {
                     String fixdetail = jsonObject.get("choicedate").getAsString().trim();
@@ -173,6 +185,13 @@ public class JobSchedulerService extends JobService {
             }
         }
         for (BankVO b : bankVOS) {
+
+            //避免紀錄當天重複
+            if(sf.format(b.getDate()).equals(sf.format(new Date(setNewTime.getTimeInMillis()))))
+            {
+                continue;
+            }
+
             String detail = b.getFixDateDetail();
             jsonObject = gson.fromJson(detail, JsonObject.class);
             String action = jsonObject.get("choicestatue").getAsString().trim();
@@ -304,13 +323,15 @@ public class JobSchedulerService extends JobService {
             id++;
         }
 
-    notifyLottery(this);
+        notifyLottery(this);
+        //今天設定過 存檔
+        sharedPreferences.edit().putBoolean(sf.format(new Date(calendar.getTimeInMillis())), true).apply();
         return true;
-}
+    }
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
-        return true;
+        return false;
     }
 
 
@@ -324,7 +345,7 @@ public class JobSchedulerService extends JobService {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("action", "notifyNul");
                 bundle.putSerializable("id", id);
-                Intent alarmIntent = new Intent(context, SecondReceiver.class);
+                Intent alarmIntent = new Intent(context, ThirdReceiver.class);
                 alarmIntent.putExtras(bundle);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
                 manager.set(AlarmManager.RTC_WAKEUP, setNewTime.getTimeInMillis(), pendingIntent);
@@ -339,7 +360,7 @@ public class JobSchedulerService extends JobService {
         bundle.putSerializable("action", "notifyC");
         bundle.putSerializable("comsumer", message);
         bundle.putSerializable("id", id);
-        Intent alarmIntent = new Intent(context, SecondReceiver.class);
+        Intent alarmIntent = new Intent(context, ThirdReceiver.class);
         alarmIntent.putExtras(bundle);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, id);
         manager.set(AlarmManager.RTC_WAKEUP, settime, pendingIntent);
@@ -352,7 +373,7 @@ public class JobSchedulerService extends JobService {
         bundle.putSerializable("action", "goalC");
         bundle.putSerializable("id", id);
         bundle.putSerializable("goal", goalVO.getId());
-        Intent alarmIntent = new Intent(context, SecondReceiver.class);
+        Intent alarmIntent = new Intent(context, ThirdReceiver.class);
         alarmIntent.putExtras(bundle);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, id);
         manager.set(AlarmManager.RTC_WAKEUP, setNewTime.getTimeInMillis(), pendingIntent);

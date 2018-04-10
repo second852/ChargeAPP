@@ -139,7 +139,6 @@ public class SelectListBarIncome extends Fragment {
                 itemView = layoutInflater.inflate(R.layout.select_con_detail_list_item, parent, false);
             }
             final BankVO bankVO=bankVOS.get(position);
-
             TextView title=itemView.findViewById(R.id.listTitle);
             TextView decribe=itemView.findViewById(R.id.listDetail);
             Button update=itemView.findViewById(R.id.updateD);
@@ -147,26 +146,39 @@ public class SelectListBarIncome extends Fragment {
             TextView fixT = itemView.findViewById(R.id.fixT);
             LinearLayout fixL = itemView.findViewById(R.id.fixL);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
+            LinearLayout typeL=itemView.findViewById(R.id.typeL);
 
-            StringBuffer stringBuffer = new StringBuffer();
-
+            //設定標籤
+            typeL.setVisibility(View.GONE);
             remindL.setVisibility(View.GONE);
+            fixL.setVisibility(View.GONE);
+
+
+
+            //設定 title
+            StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append(Common.sDay.format(bankVO.getDate()));
+            stringBuffer.append(" " + bankVO.getMaintype());
+            stringBuffer.append("\n共" + bankVO.getMoney() + "元");
+            title.setText(stringBuffer.toString());
+
+            //設定 describe
+            stringBuffer = new StringBuffer();
             if (bankVO.isAuto()) {
                 fixT.setText("自動");
                 fixT.setTextColor(Color.parseColor("#7700BB"));
                 fixL.setBackgroundColor(Color.parseColor("#7700BB"));
                 fixL.setVisibility(View.VISIBLE);
-            }else{
-                fixL.setVisibility(View.GONE);
+
+                JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);
+                String daystatue = js.get("choicestatue").getAsString().trim();
+                stringBuffer.append(daystatue);
+                if (!daystatue.equals("每天")) {
+                    stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
+                }
+                decribe.setText("\n");
             }
 
-            //設定 title
-            stringBuffer.append(Common.sDay.format(bankVO.getDate()));
-            stringBuffer.append(" "+bankVO.getMaintype());
-            stringBuffer.append("\n共"+bankVO.getMoney()+"元");
-            title.setText(stringBuffer.toString());
-
-            //設定 describe
             if (bankVO.getFixDate().equals("true")) {
 
                 fixT.setText("固定");
@@ -174,20 +186,16 @@ public class SelectListBarIncome extends Fragment {
                 fixL.setBackgroundColor(Color.parseColor("#003C9D"));
                 fixL.setVisibility(View.VISIBLE);
 
-
-                stringBuffer=new StringBuffer();
-                JsonObject js=gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
-                String daystatue=js.get("choicestatue").getAsString().trim();
+                JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);
+                String daystatue = js.get("choicestatue").getAsString().trim();
                 stringBuffer.append(daystatue);
-                if(!daystatue.equals("每天"))
-                {
-                    stringBuffer.append(" "+js.get("choicedate").getAsString().trim());
+                if (!daystatue.equals("每天")) {
+                    stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
                 }
-                decribe.setText(stringBuffer.toString()+" \n"+bankVO.getDetailname());
-            } else {
-                fixL.setVisibility(View.GONE);
-                decribe.setText(bankVO.getDetailname());
+                decribe.setText("\n");
             }
+            stringBuffer.append(bankVO.getDetailname());
+            decribe.setText(stringBuffer.toString());
 
             update.setText("修改");
             update.setOnClickListener(new View.OnClickListener() {

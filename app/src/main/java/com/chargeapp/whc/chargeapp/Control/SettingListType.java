@@ -144,7 +144,6 @@ public class SettingListType extends Fragment {
                 saveT.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Common.showToast(getActivity(),typeVO.getName());
                         Fragment fragment = new UpdateIncomeType();
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("action","updateT");
