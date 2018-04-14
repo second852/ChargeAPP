@@ -1,9 +1,11 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -136,7 +139,14 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         return view;
     }
 
-
+    @Override
+    public void onStart() {
+        super.onStart();
+        int rc = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (rc != PackageManager.PERMISSION_GRANTED) {
+            Common.askPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,getActivity());
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -243,6 +253,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
                         try {
                             File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                             if (!dir.exists()) {
@@ -306,7 +317,6 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         typeVO.setName(row.getCell(2).getStringCellValue());
                         typeVO.setImage((int) row.getCell(3).getNumericCellValue());
                         typeDB.insertHId(typeVO);
-                        Log.d("xxxxxxxxx","xxxx");
                     } else if (sheetTitle.equals("TypeDetail")) {
                         TypeDetailVO typeDetailVO = new TypeDetailVO();
                         typeDetailVO.setId((int) row.getCell(0).getNumericCellValue());

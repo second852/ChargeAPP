@@ -1,13 +1,16 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
@@ -130,7 +133,7 @@ public class PriceHand extends Fragment {
     }
 
     private void autoSetInWin(String gnul) {
-        String message = null;
+        String message;
         HashMap<Integer, String> allMessage = new HashMap<>();
         int i = 0;
         for (PriceVO priceVO : priceVOS) {
@@ -317,7 +320,12 @@ public class PriceHand extends Fragment {
                     priceTitle.setText("請念後三碼");
                     showMi.setVisibility(View.VISIBLE);
                     donateRL.setVisibility(View.GONE);
+                    int rc = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO);
+                    if (rc != PackageManager.PERMISSION_GRANTED) {
+                        Common.askPermissions(Manifest.permission.RECORD_AUDIO,getActivity());
+                    }
                     startListening();
+
                 }else if(i==2)
                 {
                     Common.showToast(getActivity(),"載入資料中");

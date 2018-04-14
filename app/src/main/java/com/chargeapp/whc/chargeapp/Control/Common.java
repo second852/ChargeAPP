@@ -1,7 +1,12 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
@@ -26,9 +31,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by Wang on 2017/11/19.
@@ -151,6 +158,25 @@ public class Common {
         }catch (Exception e)
         {
 
+        }
+    }
+
+    public static void askPermissions(String s,Activity context) {
+        //因為是群組授權，所以請求ACCESS_COARSE_LOCATION就等同於請求ACCESS_FINE_LOCATION，因為同屬於LOCATION群組
+
+        String[] permissions={s};
+        Set<String> permissionsRequest = new HashSet<>();
+        for (String permission : permissions) {
+            int result = ContextCompat.checkSelfPermission(context, permission);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                permissionsRequest.add(permission);
+            }
+        }
+
+        if (!permissionsRequest.isEmpty()) {
+            ActivityCompat.requestPermissions(context,
+                    permissionsRequest.toArray(new String[permissionsRequest.size()]),
+                    0);
         }
     }
 

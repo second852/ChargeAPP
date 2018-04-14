@@ -82,7 +82,6 @@ public class Download extends AppCompatActivity {
     private String food = "堡 三明治 優酪乳 肉 飯 雙手卷 腿 麵 麵包 熱狗 雞 手卷 肉 粉 蔬菜 牛 豬 起司 花生 豆 蛋 魚 菜 瓜 黑胡椒 土司 泡芙 排";
     private String drink = "咖啡 茶 豆漿 拿鐵 乳 飲 ml 罐 酒 杯 水 奶 冰 珍珠";
     private Handler firstH,secondH;
-    private static final int REQ_PERMISSIONS = 0;
     private GetSQLDate getSQLDate;
     private TextView percentage,progressT;
 
@@ -116,7 +115,6 @@ public class Download extends AppCompatActivity {
         percentage=findViewById(R.id.percentage);
         if (MainActivity.chargeAPPDB == null) {
             MainActivity.chargeAPPDB = new ChargeAPPDB(Download.this);}
-        askPermissions();
         (getSupportActionBar()).hide();
         firstH=new Handler();
         firstH.post(runnable);
@@ -202,29 +200,7 @@ public class Download extends AppCompatActivity {
 
 
 
-    public void askPermissions() {
-        //因為是群組授權，所以請求ACCESS_COARSE_LOCATION就等同於請求ACCESS_FINE_LOCATION，因為同屬於LOCATION群組
-        String[] permissions = {
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.CAMERA,
-        };
 
-        Set<String> permissionsRequest = new HashSet<>();
-        for (String permission : permissions) {
-            int result = ContextCompat.checkSelfPermission(this, permission);
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                permissionsRequest.add(permission);
-            }
-        }
-
-        if (!permissionsRequest.isEmpty()) {
-            ActivityCompat.requestPermissions(this,
-                    permissionsRequest.toArray(new String[permissionsRequest.size()]),
-                    REQ_PERMISSIONS);
-        }
-    }
 
     public void setdate() {
         TypeDB typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());

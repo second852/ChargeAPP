@@ -2,15 +2,18 @@ package com.chargeapp.whc.chargeapp.Control;
 
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -137,6 +140,14 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         return view;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        int rc = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (rc != PackageManager.PERMISSION_GRANTED) {
+            Common.askPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,getActivity());
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
