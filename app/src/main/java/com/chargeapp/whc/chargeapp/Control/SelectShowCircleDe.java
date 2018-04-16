@@ -81,8 +81,6 @@ public class SelectShowCircleDe extends Fragment {
     private ProgressDialog progressDialog;
     private Gson gson;
     private String title;
-    private SimpleDateFormat sf=new SimpleDateFormat("yyyy/MM/dd");
-    private SimpleDateFormat sY=new SimpleDateFormat("yyyy 年 MM 月");
     private int position;
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOS;
@@ -116,23 +114,23 @@ public class SelectShowCircleDe extends Fragment {
         {
            start=new GregorianCalendar(year,month,day,0,0,0);
            end=new GregorianCalendar(year,month,day,23,59,59);
-           title=sf.format(new Date(start.getTimeInMillis()));
+           title=Common.sTwo.format(new Date(start.getTimeInMillis()));
         }else if(Statue==1)
         {
             start=new GregorianCalendar(year,month,day - dweek + 1,0,0,0);
             end=new GregorianCalendar(year,month,day - dweek + 1 + period-1,23,59,59);
-            title=sf.format(new Date(start.getTimeInMillis()))+" ~ "+sf.format(new Date(end.getTimeInMillis()));
+            title=Common.sTwo.format(new Date(start.getTimeInMillis()))+" ~ "+Common.sTwo.format(new Date(end.getTimeInMillis()));
         }else if(Statue==2)
         {
             start=new GregorianCalendar(year,month,1,0,0,0);
             end=new GregorianCalendar(year,month,start.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
-            title=sY.format(new Date(start.getTimeInMillis()));
+            title=Common.sThree.format(new Date(start.getTimeInMillis()));
             title=title.substring(0,title.indexOf("月")+1);
         }else
         {
             start=new GregorianCalendar(year,0,1,0,0,0);
             end=new GregorianCalendar(year,11,31,23,59,59);
-            title=sY.format(new Date(start.getTimeInMillis()));
+            title=Common.sThree.format(new Date(start.getTimeInMillis()));
             title=title.substring(0,title.indexOf("年")+1);
         }
         setLayout();
@@ -153,6 +151,7 @@ public class SelectShowCircleDe extends Fragment {
     }
 
     private void setDB() {
+        Common.setChargeDB(getActivity());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());

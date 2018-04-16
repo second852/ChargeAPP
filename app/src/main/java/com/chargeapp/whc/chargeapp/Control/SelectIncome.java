@@ -81,6 +81,7 @@ public class SelectIncome extends Fragment {
         month = end.get(Calendar.MONTH);
         year = end.get(Calendar.YEAR);
         day=end.get(Calendar.DAY_OF_MONTH);
+        Common.setChargeDB(getActivity());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());

@@ -85,6 +85,7 @@ public class EleDonate extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ele_setdenote, container, false);
         progressDialog = new ProgressDialog(getActivity());
+        Common.setChargeDB(getActivity());
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         gson=new Gson();

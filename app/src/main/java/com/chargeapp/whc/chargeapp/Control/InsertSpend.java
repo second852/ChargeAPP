@@ -74,6 +74,7 @@ public class InsertSpend extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.insert_spend, container, false);
+        Common.setChargeDB(getActivity());
         handler = new Handler();
         handler.post(runnable);
         secondHander = new Handler();

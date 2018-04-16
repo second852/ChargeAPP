@@ -113,8 +113,9 @@ public class Download extends AppCompatActivity {
 
         progressT=findViewById(R.id.progressT);
         percentage=findViewById(R.id.percentage);
-        if (MainActivity.chargeAPPDB == null) {
-            MainActivity.chargeAPPDB = new ChargeAPPDB(Download.this);}
+
+        //setDB
+        Common.setChargeDB(Download.this);
         (getSupportActionBar()).hide();
         firstH=new Handler();
         firstH.post(runnable);

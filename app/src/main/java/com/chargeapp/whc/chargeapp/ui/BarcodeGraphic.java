@@ -313,12 +313,16 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                     MultiTrackerActivity.answer.setText(content);
                 }
             } else {
-                String peroid = getPeriod(priceVO.getInvoYm());
-                peroid = peroid + levelprice.get("win") + levelprice.get(MultiTrackerActivity.result) + "\n中獎號碼" + MultiTrackerActivity.oldElu;
-                Spannable content = new SpannableString(peroid);
-                content.setSpan(new ForegroundColorSpan(Color.RED), 10, 10+levellength.get(MultiTrackerActivity.result), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                content.setSpan(new ForegroundColorSpan(Color.MAGENTA), peroid.length()-(levellength.get(MultiTrackerActivity.result)), peroid.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                MultiTrackerActivity.answer.setText(content);
+                if(priceVO!=null)
+                {
+                    String peroid = getPeriod(priceVO.getInvoYm());
+                    StringBuffer sb=new StringBuffer();
+                    sb.append(peroid).append(levelprice.get("win")).append(levelprice.get(MultiTrackerActivity.result)).append("\n中獎號碼").append(MultiTrackerActivity.oldElu);
+                    Spannable content = new SpannableString(sb.toString());
+                    content.setSpan(new ForegroundColorSpan(Color.RED), peroid.length()+levelprice.get("win").length()-levellength.get(MultiTrackerActivity.result),peroid.length()+levelprice.get("win").length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    content.setSpan(new ForegroundColorSpan(Color.MAGENTA), sb.length()-(levellength.get(MultiTrackerActivity.result)), sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    MultiTrackerActivity.answer.setText(content);
+                }
             }
         }
     }

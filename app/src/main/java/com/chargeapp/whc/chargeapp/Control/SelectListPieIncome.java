@@ -52,9 +52,6 @@ public class SelectListPieIncome extends Fragment {
     //    private LineChart lineChart;
     private ListView listView;
     private int year, month,day;
-    private HashMap<String, Integer> main;
-    private List<Object> objects;
-    private ProgressDialog progressDialog;
     private Calendar start, end;
     private int statue;
     private String key;
@@ -70,9 +67,8 @@ public class SelectListPieIncome extends Fragment {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
         findViewById(view);
         gson =new Gson();
-        main = new HashMap<>();
+        Common.setChargeDB(getActivity());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        progressDialog = new ProgressDialog(getActivity());
         year = (int) getArguments().getSerializable("year");
         month = (int) getArguments().getSerializable("month");
         key = (String) getArguments().getSerializable("type");
@@ -249,7 +245,7 @@ public class SelectListPieIncome extends Fragment {
 
         @Override
         public Object getItem(int position) {
-            return objects.get(position);
+            return bankVOS.get(position);
         }
 
         @Override

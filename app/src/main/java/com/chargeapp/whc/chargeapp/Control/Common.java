@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
@@ -56,6 +57,16 @@ public class Common {
     public static SimpleDateFormat sDay = new SimpleDateFormat("MM/dd");
     public static SimpleDateFormat sHour = new SimpleDateFormat("hh");
     public static SimpleDateFormat sYear = new SimpleDateFormat("yyy 年 MM 月");
+
+    public static void setChargeDB(Activity activity)
+    {
+        if(MainActivity.chargeAPPDB==null)
+        {
+            MainActivity.chargeAPPDB=new ChargeAPPDB(activity);
+        }
+    }
+
+
 
     public static int[] colorlist = {
             Color.parseColor("#FF8888"),

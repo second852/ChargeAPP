@@ -30,7 +30,6 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 
 public class SecondReceiver extends BroadcastReceiver {
-    private final static String TAG = "BootReceiver";
     private  NotificationManager notificationManager;
     private SimpleDateFormat sf;
     private int id=0;

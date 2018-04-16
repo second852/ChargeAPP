@@ -91,7 +91,6 @@ public class SelectConsume extends Fragment {
     private String TAG = "SelectConsume";
     private BarChart chart_bar;
     private TypeDB typeDB;
-    private List<TypeVO> typeList;
     private List<Map.Entry<String, Integer>> list_Data;
     private int month, year,day,dweek,extra;
     private Spinner choicePeriod, choiceCarrier;
@@ -124,7 +123,6 @@ public class SelectConsume extends Fragment {
         day = end.get(Calendar.DAY_OF_MONTH);
         setDB();
         findViewById(view);
-        typeList = typeDB.getAll();
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
         choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
@@ -160,6 +158,7 @@ public class SelectConsume extends Fragment {
 
 
     private void setDB() {
+        Common.setChargeDB(getActivity());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());

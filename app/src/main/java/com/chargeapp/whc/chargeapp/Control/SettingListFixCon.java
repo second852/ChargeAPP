@@ -52,6 +52,7 @@ public class SettingListFixCon extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         gson=new Gson();
+        Common.setChargeDB(getActivity());
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         View view = inflater.inflate(R.layout.setting_main, container, false);
         consumeVO= (ConsumeVO) getArguments().getSerializable("consumeVO");

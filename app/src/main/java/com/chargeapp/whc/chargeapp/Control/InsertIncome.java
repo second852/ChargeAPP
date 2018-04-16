@@ -44,7 +44,7 @@ public class InsertIncome extends Fragment {
     private EditText money,detailname;
     private CheckBox fixdate;
     private TextView name,fixDateT;
-    private TextView save, clear,date,datesave;
+    private TextView save, clear,date;
     private LinearLayout showdate,showfixdate;
     private DatePicker datePicker;
     private String choicedate;
@@ -69,6 +69,7 @@ public class InsertIncome extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.insert_income, container, false);
+        Common.setChargeDB(getActivity());
         if(bankVO==null)
         {
             bankVO=new BankVO();
@@ -259,7 +260,6 @@ public class InsertIncome extends Fragment {
         fixdate = view.findViewById(R.id.fixdate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
-        datesave=view.findViewById(R.id.datesave);
         showdate=view.findViewById(R.id.showdate);
         datePicker=view.findViewById(R.id.datePicker);
         showfixdate=view.findViewById(R.id.showfixdate);

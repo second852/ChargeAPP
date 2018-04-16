@@ -71,6 +71,7 @@ public class UpdateIncomeType extends Fragment {
         View view = inflater.inflate(R.layout.updae_inc_type, container, false);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         action = (String) getArguments().getSerializable("action");
+        Common.setChargeDB(getActivity());
         bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());

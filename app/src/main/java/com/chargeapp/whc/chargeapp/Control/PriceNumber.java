@@ -39,8 +39,8 @@ import java.util.List;
 
 public class PriceNumber extends Fragment {
     private ImageView PIdateAdd, PIdateCut;
-    private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-    private Calendar now = Calendar.getInstance();
+    private PriceDB priceDB;
+    private Calendar now;
     private int month, year;
     private TextView PIdateTittle,superN,spcN,firstN,addsixN,showRemain;
     private PriceVO priceVO;
@@ -50,6 +50,9 @@ public class PriceNumber extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_number, container, false);
+        now = Calendar.getInstance();
+        Common.setChargeDB(getActivity());
+        priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
         String period=priceDB.findMaxPeriod();
         if(period==null)

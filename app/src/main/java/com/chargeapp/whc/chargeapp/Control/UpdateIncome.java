@@ -81,6 +81,7 @@ public class UpdateIncome extends Fragment {
         action = (String) getArguments().getSerializable("action");
         bankVO = (BankVO) getArguments().getSerializable("bankVO");
         gson = new Gson();
+        Common.setChargeDB(getActivity());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         name.setOnClickListener(new showFirstG());

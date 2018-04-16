@@ -25,6 +25,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
@@ -57,8 +58,8 @@ public class PriceInvoice extends Fragment {
     private ImageView PIdateAdd, PIdateCut;
     private TextView  DRmessage, PIdateTittle;
     private RelativeLayout PIdateL;
-    private InvoiceDB invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-    private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+    private InvoiceDB invoiceDB;
+    private PriceDB priceDB;
     private ConsumeDB consumeDB;
     private HashMap<String,String> levelprice;
     private HashMap<String,Integer> levellength;
@@ -79,6 +80,9 @@ public class PriceInvoice extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_invoice, container, false);
         findViewById(view);
+        Common.setChargeDB(getActivity());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         progressDialog=new ProgressDialog(getActivity());
         handler=new Handler();
         levelprice=Common.getPriceName();

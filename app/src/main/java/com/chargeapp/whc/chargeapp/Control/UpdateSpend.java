@@ -91,6 +91,7 @@ public class UpdateSpend extends Fragment {
         getActivity().setTitle("修改資料");
         gson = new Gson();
         setSpinner();
+        Common.setChargeDB(getActivity());
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());

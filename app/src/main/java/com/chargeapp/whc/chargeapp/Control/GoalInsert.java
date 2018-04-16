@@ -50,6 +50,7 @@ public class GoalInsert extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.goal_setgoal, container, false);
+        Common.setChargeDB(getActivity());
         goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         action= (String) getArguments().getSerializable("action");
         getActivity().setTitle("新增目標");

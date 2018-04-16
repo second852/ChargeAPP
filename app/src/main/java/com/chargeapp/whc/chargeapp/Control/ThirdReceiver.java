@@ -32,11 +32,10 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class ThirdReceiver extends BroadcastReceiver {
     private  NotificationManager notificationManager;
-    private SimpleDateFormat sf;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         notificationManager =
                 (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         Bundle bundle=intent.getExtras();

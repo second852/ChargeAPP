@@ -39,7 +39,6 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("XXXXXXX","receive");
         super.onReceive(context, intent);
     }
 

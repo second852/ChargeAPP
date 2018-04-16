@@ -51,6 +51,7 @@ public class EleShowCarrier extends Fragment {
         barcodeT = view.findViewById(R.id.barcodeT);
         barcode=view.findViewById(R.id.barcode);
         teachW=view.findViewById(R.id.teachW);
+        Common.setChargeDB(getActivity());
         CarrierDB carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<String> springItem=carrierDB.getAllNul();
         SharedPreferences sharedPreferences=getActivity().getSharedPreferences("Charge_User", Context.MODE_PRIVATE);

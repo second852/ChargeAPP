@@ -36,7 +36,7 @@ public class BootReceiver extends BroadcastReceiver {
     private ChargeAPPDB chargeAPPDB;
     private ConsumeDB consumeDB;
     private BankDB bankDB;
-    private Gson gson = new Gson();
+    private Gson gson;
     private SimpleDateFormat sf;
     private Calendar setNewTime;
     private int id;
@@ -46,6 +46,7 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(Intent.ACTION_DATE_CHANGED)||intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             Log.d("BootReceiver","ACTION_DATE_CHANGED");
+            gson = new Gson();
             id = 0;
             sf = new SimpleDateFormat("yyyy-MM-dd");
             chargeAPPDB = new ChargeAPPDB(context);

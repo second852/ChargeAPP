@@ -77,10 +77,7 @@ public class HomePage extends Fragment {
         pieChart=view.findViewById(R.id.pieChart);
         pieChartT=view.findViewById(R.id.pieChartT);
         listView=view.findViewById(R.id.list);
-        if(MainActivity.chargeAPPDB==null)
-        {
-            MainActivity.chargeAPPDB=new ChargeAPPDB(getActivity());
-        }
+        Common.setChargeDB(getActivity());
         goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());

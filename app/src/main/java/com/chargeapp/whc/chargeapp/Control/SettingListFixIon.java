@@ -48,6 +48,7 @@ public class SettingListFixIon extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         gson = new Gson();
+        Common.setChargeDB(getActivity());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         View view = inflater.inflate(R.layout.setting_main, container, false);
         bankVO = (BankVO) getArguments().getSerializable("bankVO");

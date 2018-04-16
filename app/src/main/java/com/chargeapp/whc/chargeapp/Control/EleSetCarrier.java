@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,6 @@ public class EleSetCarrier extends Fragment {
     private EditText cellphone,certcode;
     private ListView listcarrier;
     private TextView confirm,percentage,progressT;
-    private InvoiceDB invoiceDB;
     public GetSQLDate getIvnum;
     private List<CarrierVO> carrierlist;
     public CarrierDB carrierDB;
@@ -52,13 +52,16 @@ public class EleSetCarrier extends Fragment {
     private  SharedPreferences sharedPreferences;
     private  int position;
     private CarrierVO carrierVO;
-    private Handler handler;
+    private Handler handler,adHadler;
+    private View view;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.ele_setcarrier, container, false);
+        view = inflater.inflate(R.layout.ele_setcarrier, container, false);
+        adHadler=new Handler();
+        adHadler.post(AdRunnable);
         carrierVO=new CarrierVO();
         cellphone = view.findViewById(R.id.cellphone);
         certcode = view.findViewById(R.id.certcode);
@@ -68,11 +71,8 @@ public class EleSetCarrier extends Fragment {
         progressbarL=view.findViewById(R.id.progressbarL);
         progressT=view.findViewById(R.id.progressT);
         percentage=view.findViewById(R.id.percentage);
-        AdView adView =view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
         confirm.setOnClickListener(new Confirmlisten());
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        Common.setChargeDB(getActivity());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         sharedPreferences=getActivity().getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         setListAdapt();
@@ -97,6 +97,15 @@ public class EleSetCarrier extends Fragment {
         }
     };
 
+    private Runnable AdRunnable=new Runnable() {
+        @Override
+        public void run() {
+            AdView adView =view.findViewById(R.id.adView);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            adView.loadAd(adRequest);
+        }
+    };
+
 
     @Override
     public void onStop() {
@@ -109,6 +118,7 @@ public class EleSetCarrier extends Fragment {
         {
             handler.removeCallbacks(runnable);
         }
+        adHadler.removeCallbacks(AdRunnable);
     }
 
     public void setListAdapt()

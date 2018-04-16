@@ -61,6 +61,7 @@ public class SettingListFix extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         gson=new Gson();
         View view = inflater.inflate(R.layout.setting_list, container, false);
+        Common.setChargeDB(getActivity());
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         listView = view.findViewById(R.id.list);

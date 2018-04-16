@@ -143,6 +143,7 @@ public class SelectDetCircle extends Fragment {
     }
 
     private void setDB() {
+        Common.setChargeDB(getActivity());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());

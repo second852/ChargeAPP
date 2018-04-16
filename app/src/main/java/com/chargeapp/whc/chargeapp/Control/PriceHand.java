@@ -54,8 +54,8 @@ public class PriceHand extends Fragment {
     private ImageView PIdateAdd, PIdateCut;
     private TextView priceTitle, PIdateTittle, inputNul, showRemain;
     private RecyclerView donateRL;
-    private PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-    private Calendar now = Calendar.getInstance();
+    private PriceDB priceDB;
+    private Calendar now;
     private int month, year;
     private PriceVO priceVO, oldPriceVO;
     private String message = "";
@@ -64,8 +64,8 @@ public class PriceHand extends Fragment {
     private RelativeLayout showMi,modelR;
     private Spinner choiceModel;
     private CardView cardview;
-    private static SpeechRecognizer speech = null;
-    private static Intent recognizerIntent;
+    private SpeechRecognizer speech = null;
+    private Intent recognizerIntent;
     private RelativeLayout PIdateL;
 
 
@@ -73,6 +73,9 @@ public class PriceHand extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_hand, container, false);
+        Common.setChargeDB(getActivity());
+        priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        now = Calendar.getInstance();
         findViewById(view);
         String period = priceDB.findMaxPeriod();
         if (period == null) {

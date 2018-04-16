@@ -142,9 +142,7 @@ public class MainActivity extends AppCompatActivity {
         (getSupportActionBar()).show();
         setUpActionBar();
         initDrawer();
-        if (chargeAPPDB == null) {
-            chargeAPPDB = new ChargeAPPDB(this);
-        }
+        Common.setChargeDB(this);
         String a = getIntent().getStringExtra("action");
         if (a == null) {
             Fragment fragment = new HomePage();

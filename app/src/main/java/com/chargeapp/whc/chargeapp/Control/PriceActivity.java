@@ -27,10 +27,8 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
     private FragmentPagerAdapter mAdapterViewPager;
     private Button importMoney, showN, howtogetprice;
     public Button goneMoney;
-    private HorizontalScrollView choiceitem;
     private LinearLayout text;
     private int nowpoint = 0;
-    private float movefirst;
     private Button exportMoney;
 
 
@@ -44,7 +42,6 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
         priceViewPager.addOnPageChangeListener(this);
         exportMoney = view.findViewById(R.id.exportD);
         importMoney = view.findViewById(R.id.showD);
-        choiceitem = view.findViewById(R.id.choiceitem);
         goneMoney = view.findViewById(R.id.goneD);
         showN = view.findViewById(R.id.showN);
         text = view.findViewById(R.id.text);
@@ -151,9 +148,9 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         if (nowpoint > position) {
-            text.setX(movefirst + (1 - positionOffset) * goneMoney.getWidth() * 2);
+            text.setX( (1 - positionOffset) * goneMoney.getWidth() * 2);
         } else {
-            text.setX(movefirst - (positionOffset * goneMoney.getWidth() * 2));
+            text.setX(-(positionOffset * goneMoney.getWidth() * 2));
         }
     }
 

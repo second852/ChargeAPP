@@ -56,6 +56,7 @@ public class GoalUpdate extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.goal_update_goal, container, false);
+        Common.setChargeDB(getActivity());
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalVO = (GoalVO) getArguments().getSerializable("goalVO");
         findViewById(view);

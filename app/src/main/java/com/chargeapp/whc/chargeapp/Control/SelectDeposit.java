@@ -55,7 +55,7 @@ public class SelectDeposit extends Fragment {
     private TextView PIdateTittle, describeT, describeD;
     private ImageView PIdateCut, PIdateAdd;
     private String TAG = "SelectDeposit";
-    private int month, year, day;
+    private int month, year;
     private Calendar end;
     private Spinner choicePeriod;
     private LineChart chart_line;
@@ -78,6 +78,7 @@ public class SelectDeposit extends Fragment {
         goalVO = goalDB.getFindType("儲蓄");
         end = Calendar.getInstance();
         year = end.get(Calendar.YEAR);
+        Common.setChargeDB(getActivity());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());

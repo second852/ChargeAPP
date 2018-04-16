@@ -103,7 +103,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     public static int position;
     private boolean local, consume, income, all, show = true, txt;
     private GoogleApiClient mGoogleApiClient;
-    private String action;
     private RelativeLayout progressL;
     private ElePeriodDB elePeriodDB;
 
@@ -112,6 +111,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.setting_upload, container, false);
+        Common.setChargeDB(getActivity());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());

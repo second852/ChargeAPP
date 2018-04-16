@@ -39,7 +39,7 @@ public class JobSchedulerService extends JobService {
     private ChargeAPPDB chargeAPPDB;
     private ConsumeDB consumeDB;
     private BankDB bankDB;
-    private Gson gson = new Gson();
+    private Gson gson;
     private SimpleDateFormat sf;
     private Calendar setNewTime;
     private int id;
@@ -47,9 +47,9 @@ public class JobSchedulerService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
+        gson = new Gson();
         Calendar calendar = Calendar.getInstance();
         sf = new SimpleDateFormat("yyyy-MM-dd");
-
         SharedPreferences sharedPreferences = getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
         boolean setNotify = sharedPreferences.getBoolean("notify", true);
         String setTime = sharedPreferences.getString("userTime", "6:00 p.m.").trim();

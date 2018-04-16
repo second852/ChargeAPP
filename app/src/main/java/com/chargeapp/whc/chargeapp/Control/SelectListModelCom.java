@@ -58,8 +58,8 @@ public class SelectListModelCom extends Fragment {
     private ImageView DRadd, DRcut;
     private TextView DRcarrier;
     private ListView listView;
-    private InvoiceDB invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-    private ConsumeDB consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+    private InvoiceDB invoiceDB;
+    private ConsumeDB consumeDB;
     private List<Object> objects;
     public static int month, year;
     private ProgressDialog progressDialog;
@@ -71,6 +71,9 @@ public class SelectListModelCom extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_list, container, false);
+        Common.setChargeDB(getActivity());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
         progressDialog = new ProgressDialog(getActivity());
         DRadd.setOnClickListener(new addOnClick());

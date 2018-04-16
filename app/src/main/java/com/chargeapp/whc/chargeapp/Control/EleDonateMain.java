@@ -21,7 +21,6 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
     private FragmentPagerAdapter mAdapterViewPager;
     private Button importMoney,exportMoney;
     public  Button goneMoney;
-    private HorizontalScrollView choiceitem;
     private LinearLayout text;
     private int nowpoint=0;
     private float movefirst;
@@ -34,7 +33,6 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
         DonateViewPager = (ViewPager) view.findViewById(R.id.DonateViewPager);
         exportMoney=view.findViewById(R.id.exportD);
         importMoney=view.findViewById(R.id.showD);
-        choiceitem=view.findViewById(R.id.choiceitem);
         goneMoney=view.findViewById(R.id.goneD);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         DonateViewPager.setAdapter(mAdapterViewPager);

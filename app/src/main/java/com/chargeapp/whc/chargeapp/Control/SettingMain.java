@@ -55,7 +55,6 @@ public class SettingMain extends Fragment {
 
 
     private ListView listView;
-    private CarrierDB carrierDB;
     private SharedPreferences sharedPreferences;
 
 
@@ -67,7 +66,6 @@ public class SettingMain extends Fragment {
         AdView adView = view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-        carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<EleMainItemVO> itemSon = getNewItem();
         listView.setAdapter(new ListAdapter(getActivity(), itemSon));
         return view;

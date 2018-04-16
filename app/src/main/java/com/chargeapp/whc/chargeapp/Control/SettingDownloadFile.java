@@ -117,6 +117,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.setting_main, container, false);
+        Common.setChargeDB(getActivity());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -397,7 +398,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         invoiceVO.setSellerBan(row.getCell(17).getStringCellValue());
                         invoiceVO.setSellerAddress(row.getCell(18).getStringCellValue());
                         invoiceDB.insertHid(invoiceVO);
-                    } else if (sheetTitle.equals("Invoice")) {
+                    } else if (sheetTitle.equals("Carrier")) {
                         CarrierVO carrierVO = new CarrierVO();
                         carrierVO.setId((int) row.getCell(0).getNumericCellValue());
                         carrierVO.setCarNul(row.getCell(1).getStringCellValue());

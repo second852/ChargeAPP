@@ -52,6 +52,7 @@ public class SelectListModelIM extends Fragment {
         View view = inflater.inflate(R.layout.select_con_list, container, false);
         gson = new Gson();
         findViewById(view);
+        Common.setChargeDB(getActivity());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         setLayout();
         return view;
