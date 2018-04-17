@@ -376,11 +376,11 @@ public class InsertSpend extends Fragment {
             if (showdate.getVisibility() == View.VISIBLE) {
                 return;
             }
-            name.setText(" ");
-            secondname.setText(" ");
-            money.setText(" ");
+            name.setText("");
+            secondname.setText("");
+            money.setText("");
             fixdate.setChecked(false);
-            number.setText(" ");
+            number.setText("");
         }
     }
 
@@ -481,6 +481,12 @@ public class InsertSpend extends Fragment {
             setConsume();
             consumeDB.insert(consumeVO);
             Common.showToast(getActivity(), "新增成功");
+            consumeVO=new ConsumeVO();
+            name.setText("");
+            secondname.setText("");
+            money.setText("");
+            fixdate.setChecked(false);
+            number.setText("");
         }
     }
 

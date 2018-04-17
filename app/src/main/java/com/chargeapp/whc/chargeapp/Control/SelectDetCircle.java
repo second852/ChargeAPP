@@ -54,13 +54,14 @@ public class SelectDetCircle extends Fragment {
     private boolean ShowConsume;
     private boolean ShowAllCarrier;
     private boolean noShowCarrier;
-    private int year, month, day, index;
+    private int year, month, day, index,statue;
     private int carrier;
     private List<InvoiceVO> invoiceVOS;
     private List<ConsumeVO> consumeVOS;
     private HashMap<String, HashMap<String, Integer>> hashMap;
     private int size;
     private CarrierDB carrierDB;
+    private Calendar start,end;
 
 
     @Override
@@ -79,15 +80,22 @@ public class SelectDetCircle extends Fragment {
         day = (int) getArguments().getSerializable("day");
         index = (int) getArguments().getSerializable("index");
         carrier = (int) getArguments().getSerializable("carrier");
+        statue= (int) getArguments().getSerializable("statue");
         List<CarrierVO> carrierVOS=carrierDB.getAll();
         if(carrierVOS.size()<=0)
         {
             noShowCarrier=true;
         }
-        Calendar start = new GregorianCalendar(year, month, day + index, 0, 0, 0);
-        Calendar end = new GregorianCalendar(year, month, day + index, 23, 59, 59);
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy 年 MM 月 dd 日");
-        Log.d("XXXXXX", sf.format(new Date(start.getTimeInMillis())) + " / " + sf.format(new Date(end.getTimeInMillis())));
+        if(statue==0)
+        {
+            start = new GregorianCalendar(year, month, day + index, 0, 0, 0);
+            end = new GregorianCalendar(year, month, day + index, 23, 59, 59);
+        }else{
+             start = new GregorianCalendar(year, month, day + index, 0, 0, 0);
+             end = new GregorianCalendar(year, month, day + index, 23, 59, 59);
+        }
+
+        Log.d("XXXXXX", Common.sOne.format(new Date(start.getTimeInMillis())) + " / " + Common.sOne.format(new Date(end.getTimeInMillis())));
         int total = 0;
         if (ShowConsume) {
             consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
@@ -131,7 +139,7 @@ public class SelectDetCircle extends Fragment {
                 total = total + I.getAmount();
             }
         }
-        getActivity().setTitle(sf.format(new Date(start.getTimeInMillis())));
+        getActivity().setTitle(Common.sOne.format(new Date(start.getTimeInMillis())));
         List<String> stringList = new ArrayList<>(hashMap.keySet());
         size = stringList.size();
         listView.setAdapter(new ListAdapter(getActivity(), stringList));

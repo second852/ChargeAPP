@@ -464,12 +464,7 @@ public class MainActivity extends AppCompatActivity {
                         String[] ddd = debase64.trim().split(":");
                         for (int j = 0; j < ddd.length; j = j + 2) {
                             int total=Integer.valueOf( ddd[j + 2].trim())*Integer.valueOf(ddd[j + 1].trim());
-                            if(ddd[j].length()>5)
-                            {
-                                sb.append(ddd[j] + " :\n" + ddd[j + 2] + " X " + ddd[j + 1] + " = "+total+"\n");
-                            }else{
-                                sb.append(ddd[j] + " : " + ddd[j + 2] + " X " + ddd[j + 1] + " = "+total+"\n");
-                            }
+                            sb.append(ddd[j]).append(" :\n").append(ddd[j + 2] + " X ").append(ddd[j + 1]).append( " = "+total+"\n");
                         }
                     }
                 } catch (Exception e) {
@@ -490,14 +485,9 @@ public class MainActivity extends AppCompatActivity {
                         Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                         List<JsonObject> b = gson.fromJson(s, cdType);
                         for (JsonObject j : b) {
-                            int total=Integer.valueOf(j.get("unitPrice").getAsString().trim())*Integer.valueOf(j.get("quantity").getAsString().trim());
-                            String des=j.get("description").getAsString();
-                            if(des.trim().length()>5)
-                            {
-                                sb.append(des + " :\n"+j.get("unitPrice").getAsString()+" X "+ j.get("quantity").getAsString() + " = " +total+"\n");
-                            }else{
-                                sb.append(des+ " : "+j.get("unitPrice").getAsString()+" X "+ j.get("quantity").getAsString() + " = " +total+"\n");
-                            }
+                            int total = Integer.valueOf(j.get("unitPrice").getAsString().trim()) * Integer.valueOf(j.get("quantity").getAsString().trim());
+                            sb.append(j.get("description").getAsString());
+                            sb.append(" :\n" + j.get("unitPrice").getAsString() + " X " + j.get("quantity").getAsString() + " = " + total + "\n");
                         }
                     }else {
                         sb.append("該筆發票並無開立");
@@ -513,13 +503,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         for (int i = 5; i < EleNulAll.length; i = i + 3) {
                             int total=Integer.valueOf(EleNulAll[i +2].trim())*Integer.valueOf(EleNulAll[i + 1].trim());
-
-                            if(EleNulAll[i].length()>5)
-                            {
-                                sb.append(EleNulAll[i] + " :\n" + EleNulAll[i +2] + " X " + EleNulAll[i + 1]+" = "+total+"\n");
-                            }else {
-                                sb.append(EleNulAll[i] + " : " + EleNulAll[i +2] + " X " + EleNulAll[i + 1]+" = "+total+"\n");
-                            }
+                            sb.append(EleNulAll[i] + " :\n" + EleNulAll[i +2] + " X " + EleNulAll[i + 1]+" = "+total+"\n");
                         }
                     }
                 }catch (Exception e)

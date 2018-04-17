@@ -734,6 +734,7 @@ public class SelectConsume extends Fragment {
                 bundle.putSerializable("total",(int)e.getY());
                 bundle.putSerializable("period", period);
                 bundle.putSerializable("dweek",dweek);
+                bundle.putSerializable("statue",Statue);
                 fragment.setArguments(bundle);
                 switchFragment(fragment);
             }

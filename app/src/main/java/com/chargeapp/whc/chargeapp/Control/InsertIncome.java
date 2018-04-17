@@ -469,6 +469,11 @@ public class InsertIncome extends Fragment {
             setBankVO();
             bankDB.insert(bankVO);
             Common.showToast(getActivity(),"新增成功");
+            bankVO=new BankVO();
+            name.setText("");
+            money.setText("");
+            fixdate.setChecked(false);
+            detailname.setText("");
         }
     }
 }
