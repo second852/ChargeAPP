@@ -444,6 +444,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setConsume() {
+        if(BarcodeGraphic.hashMap==null)
+        {
+            return;
+        }
         if(BarcodeGraphic.hashMap.size()==2){
             String all = BarcodeGraphic.hashMap.get(1).trim() + BarcodeGraphic.hashMap.get(2).trim();
             String[] EleNulAll = all.split(":");
@@ -530,6 +534,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void setUpdateConsume() {
+        if(BarcodeGraphic.hashMap==null)
+        {
+            return;
+        }
         Bundle bundle=getIntent().getBundleExtra("bundle");
         ConsumeVO consumeVO= (ConsumeVO) bundle.getSerializable("consumeVO");
         if(BarcodeGraphic.hashMap.size()==2)
