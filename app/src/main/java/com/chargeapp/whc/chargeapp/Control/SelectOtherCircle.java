@@ -231,7 +231,7 @@ public class SelectOtherCircle extends Fragment {
         dataSet.setColors(Common.getColor(yVals1.size()));
         dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         dataSet.setSliceSpace(0);
-        dataSet.setSelectionShift(30);
+        dataSet.setSelectionShift(50);
         dataSet.setValueTextColor(Color.BLACK);
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
