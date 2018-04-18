@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.Control;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -105,13 +106,24 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private GoogleApiClient mGoogleApiClient;
     private RelativeLayout progressL;
     private ElePeriodDB elePeriodDB;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.setting_upload, container, false);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -135,7 +147,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         excel.setOnClickListener(new excelOnClick());
         txtFile.setOnClickListener(new txtOnClick());
         cancelF.setOnClickListener(new cancelOnClick());
-        listView.setAdapter(new ListAdapter(getActivity(), itemSon));
+        listView.setAdapter(new ListAdapter(context, itemSon));
         setSpinner();
         return view;
     }
@@ -143,9 +155,9 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     @Override
     public void onStart() {
         super.onStart();
-        int rc = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int rc = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (rc != PackageManager.PERMISSION_GRANTED) {
-            Common.askPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,getActivity());
+            Common.askPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,context);
         }
     }
 
@@ -164,9 +176,9 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         }else if(requestCode==3){
             progressL.setVisibility(View.GONE);
             if (resultCode == -1) {
-                Common.showToast(getActivity(), "上傳成功");
+                Common.showToast(context, "上傳成功");
             } else {
-                Common.showToast(getActivity(), "上傳失敗");
+                Common.showToast(context, "上傳失敗");
             }
         }
     }
@@ -178,7 +190,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         spinnerItem.add("全部");
         spinnerItem.add("支出");
         spinnerItem.add("收入");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, spinnerItem);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, spinnerItem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceT.setAdapter(arrayAdapter);
         choiceT.setOnItemSelectedListener(new choiceAction());
@@ -207,22 +219,22 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     public void onConnectionFailed(@NonNull ConnectionResult result) {
         if (!result.hasResolution()) {
             // show the localized error dialog.
-            GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), result.getErrorCode(), 0).show();
+            GoogleApiAvailability.getInstance().getErrorDialog(context, result.getErrorCode(), 0).show();
             return;
         }
         // Called typically when the app is not yet authorized, and authorization dialog is displayed to the user.
         try {
             if(position==0)
             {
-                result.startResolutionForResult(getActivity(), 0);
+                result.startResolutionForResult(context, 0);
             }
             else
             {
                 if(txt)
                 {
-                    result.startResolutionForResult(getActivity(), 1);
+                    result.startResolutionForResult(context, 1);
                 }else{
-                    result.startResolutionForResult(getActivity(), 2);
+                    result.startResolutionForResult(context, 2);
                 }
             }
         } catch (IntentSender.SendIntentException e) {
@@ -320,7 +332,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             FileOutputStream fs = new FileOutputStream(file);
             OutPutTxt(fs);
         } catch (Exception e) {
-            Common.showToast(getActivity(), "File Error!");
+            Common.showToast(context, "File Error!");
         }
     }
 
@@ -442,7 +454,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             if(local)
             {
                 progressL.setVisibility(View.GONE);
-                Common.showToast(getActivity(), "匯出成功，檔名為記帳小助手.txt，路徑為" + "/Download/記帳小助手.txt");
+                Common.showToast(context, "匯出成功，檔名為記帳小助手.txt，路徑為" + "/Download/記帳小助手.txt");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -459,7 +471,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             OutputStream outputStream = new FileOutputStream(file);
             outputExcel(outputStream);
         } catch (Exception e) {
-            Common.showToast(getActivity(), "File Error");
+            Common.showToast(context, "File Error");
         }
     }
 
@@ -719,7 +731,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             outputStream.close();
             if(local)
             {
-                Common.showToast(getActivity(), "匯出成功，檔名為記帳小助手.xls，路徑為" + "/Download/記帳小助手.xls");
+                Common.showToast(context, "匯出成功，檔名為記帳小助手.xls，路徑為" + "/Download/記帳小助手.xls");
                 progressL.setVisibility(View.GONE);
             }
 
@@ -797,11 +809,11 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     }
 
     public void openCloud() {
-        ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingUploadFile.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingUploadFile.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
         if(mNetworkInfo==null)
         {
-            Common.showToast(SettingUploadFile.this.getActivity(),"網路沒有開啟，無法下載!");
+            Common.showToast(SettingUploadFile.this.context,"網路沒有開啟，無法下載!");
             return;
         }
         progressL.setVisibility(View.VISIBLE);
@@ -810,7 +822,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             // We use this instance as the callback for connection and connection
             // failures.
             // Since no account name is passed, the user is prompted to choose.
-            mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+            mGoogleApiClient = new GoogleApiClient.Builder(context)
                     .addApi(Drive.API)
                     .addScope(Drive.SCOPE_FILE)
                     .addConnectionCallbacks(this)
@@ -844,7 +856,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         // and must
                         // fail.
                         if (!result.getStatus().isSuccess()) {
-                            Common.showToast(getActivity(),"連線失敗!");
+                            Common.showToast(context,"連線失敗!");
                             return;
                         }
                         // Otherwise, we can write our data to the new contents.
@@ -880,7 +892,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                                 .setInitialDriveContents(result.getDriveContents())
                                 .build(mGoogleApiClient);
                         try {
-                            getActivity().startIntentSenderForResult(
+                            context.startIntentSenderForResult(
                                     intentSender, 3, null, 0, 0, 0);
                         } catch (IntentSender.SendIntentException e) {
 

@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -43,12 +44,23 @@ public class SettingListFixIon extends Fragment {
     private TextView message;
     public List<BankVO> bankVOS;
     private BankVO bankVO;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         gson = new Gson();
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         View view = inflater.inflate(R.layout.setting_main, container, false);
         bankVO = (BankVO) getArguments().getSerializable("bankVO");
@@ -82,7 +94,7 @@ public class SettingListFixIon extends Fragment {
 
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {
-            listView.setAdapter(new ListAdapter(getActivity(), bankVOS));
+            listView.setAdapter(new ListAdapter(context, bankVOS));
         } else {
             adapter.setObjects(bankVOS);
             adapter.notifyDataSetChanged();

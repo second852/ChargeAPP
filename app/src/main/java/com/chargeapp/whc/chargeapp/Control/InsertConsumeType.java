@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -52,13 +53,25 @@ public class InsertConsumeType extends Fragment {
     private String action;
     private boolean mainClick,secondClick;
     private TextView mainT;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.updae_con_type, container, false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
-        Common.setChargeDB(getActivity());
+        ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        Common.setChargeDB(context);
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         object = getArguments().getSerializable("object");
@@ -70,10 +83,10 @@ public class InsertConsumeType extends Fragment {
         if (Common.showsecondgrid) {
             setType();
             mainImage.setOnClickListener(null);
-            getActivity().setTitle("新增次項目類別");
+            context.setTitle("新增次項目類別");
         } else {
             typeVO = new TypeVO();
-            getActivity().setTitle("新增主/次項目類別");
+            context.setTitle("新增主/次項目類別");
             mainImage.setOnClickListener(new showImage());
         }
         secondImage.setOnClickListener(new showImage());
@@ -103,7 +116,7 @@ public class InsertConsumeType extends Fragment {
             item.put("text", " ");
             items.add(item);
         }
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+        SimpleAdapter adapter = new SimpleAdapter(context,
                 items, R.layout.main_item, new String[]{"image", "text"},
                 new int[]{R.id.image, R.id.text});
         choiceG.setAdapter(adapter);
@@ -243,10 +256,10 @@ public class InsertConsumeType extends Fragment {
             }
             MainActivity.bundles.remove(MainActivity.bundles.size()-1);
             MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
-            Common.showToast(getActivity(), "新增成功");
-            View v =InsertConsumeType.this.getActivity().getCurrentFocus();
+            Common.showToast(context, "新增成功");
+            View v =InsertConsumeType.this.context.getCurrentFocus();
             if (v != null) {
-                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             }
         }

@@ -1,6 +1,8 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -66,15 +68,25 @@ public class InsertSpend extends Fragment {
     private int updateChoice;
     private boolean first;
     private Handler handler, secondHander;
-    private View view;
     private TextView noWekT, notifyT;
+    private Context context;
 
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.insert_spend, container, false);
-        Common.setChargeDB(getActivity());
+        View view = inflater.inflate(R.layout.insert_spend, container, false);
+        Common.setChargeDB(context);
+        findviewByid(view);
+        if (consumeVO == null) {
+            consumeVO = new ConsumeVO();
+        }
         handler = new Handler();
         handler.post(runnable);
         secondHander = new Handler();
@@ -83,7 +95,7 @@ public class InsertSpend extends Fragment {
     }
 
     private void setSpinner() {
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, Common.DateStatueSetSpinner());
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, Common.DateStatueSetSpinner());
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setAdapter(arrayAdapter);
     }
@@ -112,6 +124,10 @@ public class InsertSpend extends Fragment {
         number.setText(consumeVO.getNumber());
         money.setText(String.valueOf(consumeVO.getMoney()));
         date.setText(Common.sTwo.format(consumeVO.getDate()));
+        if(consumeVO.getFixDate()==null)
+        {
+           return;
+        }
         if (consumeVO.getFixDate().equals("true")) {
             fixdate.setChecked(Boolean.valueOf(consumeVO.getFixDate()));
             notify.setChecked(Boolean.valueOf(consumeVO.getNotify()));
@@ -158,8 +174,6 @@ public class InsertSpend extends Fragment {
             typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
             typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
             consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            firstG = view.findViewById(R.id.firstG);
-            firstL = view.findViewById(R.id.firstL);
             setFirstGrid();
             firstG.setOnItemClickListener(new firstGridOnClick());
             if (Common.showfirstgrid) {
@@ -173,10 +187,6 @@ public class InsertSpend extends Fragment {
     private Runnable setOnClick = new Runnable() {
         @Override
         public void run() {
-            if (consumeVO == null) {
-                consumeVO = new ConsumeVO();
-            }
-            findviewByid(view);
             gson = new Gson();
             setSpinner();
             setSetOnClickView();
@@ -225,32 +235,38 @@ public class InsertSpend extends Fragment {
         item.put("image", R.drawable.add);
         item.put("text", "新增");
         items.add(item);
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+        SimpleAdapter adapter = new SimpleAdapter(context,
                 items, R.layout.main_item, new String[]{"image", "text"},
                 new int[]{R.id.image, R.id.text});
         secondG.setAdapter(adapter);
         secondG.setNumColumns(4);
     }
 
+
+
     private void setFirstGrid() {
-        HashMap item;
-        ArrayList items = new ArrayList<Map<String, Object>>();
-        List<TypeVO> typeVOS = typeDB.getAll();
-        for (TypeVO t : typeVOS) {
+        try {
+            HashMap item;
+            ArrayList items = new ArrayList<Map<String, Object>>();
+            List<TypeVO> typeVOS = typeDB.getAll();
+            for (TypeVO t : typeVOS) {
+                item = new HashMap<String, Object>();
+                item.put("image", Download.imageAll[t.getImage()]);
+                item.put("text", t.getName());
+                items.add(item);
+            }
             item = new HashMap<String, Object>();
-            item.put("image", Download.imageAll[t.getImage()]);
-            item.put("text", t.getName());
+            item.put("image", R.drawable.add);
+            item.put("text", "新增");
             items.add(item);
+            SimpleAdapter adapter = new SimpleAdapter(context, items, R.layout.main_item, new String[]{"image", "text"},
+                    new int[]{R.id.image, R.id.text});
+            firstG.setAdapter(adapter);
+            firstG.setNumColumns(4);
+        }catch (Exception e)
+        {
+
         }
-        item = new HashMap<String, Object>();
-        item.put("image", R.drawable.add);
-        item.put("text", "新增");
-        items.add(item);
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(),
-                items, R.layout.main_item, new String[]{"image", "text"},
-                new int[]{R.id.image, R.id.text});
-        firstG.setAdapter(adapter);
-        firstG.setNumColumns(4);
     }
 
     public void findviewByid(View view) {
@@ -274,6 +290,8 @@ public class InsertSpend extends Fragment {
         secondL = view.findViewById(R.id.secondL);
         noWekT = view.findViewById(R.id.noWekT);
         notifyT = view.findViewById(R.id.notifyT);
+        firstG = view.findViewById(R.id.firstG);
+        firstL = view.findViewById(R.id.firstL);
     }
 
 
@@ -340,7 +358,7 @@ public class InsertSpend extends Fragment {
             if (position == 3) {
                 spinneritem = Common.MonthSetSpinner();
             }
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, spinneritem);
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, spinneritem);
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
@@ -413,26 +431,26 @@ public class InsertSpend extends Fragment {
             //必填資料
             if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "主項目不能空白");
+                Common.showToast(context, "主項目不能空白");
                 return;
             }
 
             //必填資料
             if (name.getText().toString().trim().equals("0") || name.getText().toString().trim().equals("O")) {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "主項目不能為其他");
+                Common.showToast(context, "主項目不能為其他");
                 return;
             }
 
             if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
                 secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "次項目不能空白");
+                Common.showToast(context, "次項目不能空白");
                 return;
             }
 
             if (secondname.getText().toString().trim().equals("0") || secondname.getText().toString().trim().equals("O")) {
                 secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "次項目不能為其他");
+                Common.showToast(context, "次項目不能為其他");
                 return;
             }
 
@@ -455,7 +473,7 @@ public class InsertSpend extends Fragment {
 
             if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
                 name.setError(" ");
-                Common.showToast(getActivity(), "日期不能空白");
+                Common.showToast(context, "日期不能空白");
                 return;
             }
 
@@ -480,7 +498,7 @@ public class InsertSpend extends Fragment {
             }
             setConsume();
             consumeDB.insert(consumeVO);
-            Common.showToast(getActivity(), "新增成功");
+            Common.showToast(context, "新增成功");
             consumeVO=new ConsumeVO();
             name.setText("");
             secondname.setText("");
@@ -508,7 +526,7 @@ public class InsertSpend extends Fragment {
             setConsume();
             MultiTrackerActivity.refresh = true;
             BarcodeGraphic.hashMap = new HashMap<>();
-            Intent intent = new Intent(InsertSpend.this.getActivity(), MultiTrackerActivity.class);
+            Intent intent = new Intent(InsertSpend.this.context, MultiTrackerActivity.class);
             intent.putExtra("action", "setConsume");
             startActivityForResult(intent, 6);
         }

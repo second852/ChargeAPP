@@ -1,6 +1,8 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,7 +62,18 @@ public class InsertIncome extends Fragment {
     private View view;
     public static BankVO bankVO;
     public static boolean needSet;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
 
@@ -69,7 +82,7 @@ public class InsertIncome extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.insert_income, container, false);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         if(bankVO==null)
         {
             bankVO=new BankVO();
@@ -90,7 +103,7 @@ public class InsertIncome extends Fragment {
     }
 
     private void setSpinner() {
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, Common.DateStatueSetSpinner());
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, Common.DateStatueSetSpinner());
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setAdapter(arrayAdapter);
     }
@@ -153,7 +166,7 @@ public class InsertIncome extends Fragment {
         item.put("image", R.drawable.add);
         item.put("text", "新增");
         items.add(item);
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+        SimpleAdapter adapter = new SimpleAdapter(context,
                 items, R.layout.main_item, new String[]{"image", "text"},
                 new int[]{R.id.image, R.id.text});
         firstG.setAdapter(adapter);
@@ -339,7 +352,7 @@ public class InsertIncome extends Fragment {
             {
                 spinneritem=Common.MonthSetSpinner();
             }
-            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
+            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(context,R.layout.spinneritem,spinneritem);
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
@@ -440,7 +453,7 @@ public class InsertIncome extends Fragment {
             if(name.getText().toString().trim()==null||name.getText().toString().trim().length()==0)
             {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(),"主項目不能空白");
+                Common.showToast(context,"主項目不能空白");
                 return;
             }
             if(money.getText().toString().trim()==null||money.getText().toString().trim().length()==0)
@@ -463,12 +476,12 @@ public class InsertIncome extends Fragment {
             if(date.getText().toString().trim()==null||date.getText().toString().trim().length()==0)
             {
                 date.setError(" ");
-                Common.showToast(getActivity(),"日期不能空白");
+                Common.showToast(context,"日期不能空白");
                 return;
             }
             setBankVO();
             bankDB.insert(bankVO);
-            Common.showToast(getActivity(),"新增成功");
+            Common.showToast(context,"新增成功");
             bankVO=new BankVO();
             name.setText("");
             money.setText("");

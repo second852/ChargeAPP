@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -66,16 +67,28 @@ public class SelectListModelCom extends Fragment {
     private Gson gson = new Gson();
     public static int p;
     private TextView message;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_list, container, false);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
-        progressDialog = new ProgressDialog(getActivity());
+        progressDialog = new ProgressDialog(context);
         DRadd.setOnClickListener(new addOnClick());
         DRcut.setOnClickListener(new cutOnClick());
         setLayout();
@@ -84,7 +97,7 @@ public class SelectListModelCom extends Fragment {
 
     public void cancelshow() {
         progressDialog.cancel();
-        Common.showToast(getActivity(), "財政部網路忙線~");
+        Common.showToast(context, "財政部網路忙線~");
     }
 
     private class cutOnClick implements View.OnClickListener {
@@ -147,7 +160,7 @@ public class SelectListModelCom extends Fragment {
             adapter.setObjects(objects);
             adapter.notifyDataSetChanged();
         } else {
-            listView.setAdapter(new ListAdapter(getActivity(), objects));
+            listView.setAdapter(new ListAdapter(context, objects));
         }
         listView.setSelection(p);
         progressDialog.cancel();
@@ -253,7 +266,7 @@ public class SelectListModelCom extends Fragment {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SelectListModelCom.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SelectListModelCom.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
                             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                             if (mNetworkInfo != null) {
                                 p = position;
@@ -261,7 +274,7 @@ public class SelectListModelCom extends Fragment {
                                 progressDialog.setMessage("正在下傳資料,請稍候...");
                                 progressDialog.show();
                             } else {
-                                Common.showToast(SelectListModelCom.this.getActivity(), "網路沒有開啟，無法下載!");
+                                Common.showToast(SelectListModelCom.this.context, "網路沒有開啟，無法下載!");
                             }
 
                         }

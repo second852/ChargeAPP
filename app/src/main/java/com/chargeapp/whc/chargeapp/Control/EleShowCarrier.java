@@ -42,7 +42,13 @@ public class EleShowCarrier extends Fragment {
 
     private TextView barcodeT,teachW;
     private ImageView barcode;
+    private Context context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
 
     @Nullable
     @Override
@@ -51,10 +57,10 @@ public class EleShowCarrier extends Fragment {
         barcodeT = view.findViewById(R.id.barcodeT);
         barcode=view.findViewById(R.id.barcode);
         teachW=view.findViewById(R.id.teachW);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         CarrierDB carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<String> springItem=carrierDB.getAllNul();
-        SharedPreferences sharedPreferences=getActivity().getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences=context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
         int b=sharedPreferences.getInt("carrier",0);
         if(springItem.size()<=0)
         {

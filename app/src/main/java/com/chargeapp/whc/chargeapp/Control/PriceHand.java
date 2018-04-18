@@ -1,6 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -67,13 +68,24 @@ public class PriceHand extends Fragment {
     private SpeechRecognizer speech = null;
     private Intent recognizerIntent;
     private RelativeLayout PIdateL;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_hand, container, false);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         now = Calendar.getInstance();
         findViewById(view);
@@ -93,9 +105,9 @@ public class PriceHand extends Fragment {
         setMonText("in");
         PIdateAdd.setOnClickListener(new addMonth());
         PIdateCut.setOnClickListener(new cutMonth());
-        donateRL.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        donateRL.setLayoutManager(new GridLayoutManager(context, 3));
         List<String> number = getInputN();
-        donateRL.setAdapter(new InputAdapter(getActivity(), number));
+        donateRL.setAdapter(new InputAdapter(context, number));
         showMi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -255,7 +267,7 @@ public class PriceHand extends Fragment {
                 year = year - 1;
             }
             setMonText("add");
-            Common.showToast(getActivity(), showtime + "尚未開獎");
+            Common.showToast(context, showtime + "尚未開獎");
             return;
         }
         if (priceVO == null && action.equals("cut")) {
@@ -264,7 +276,7 @@ public class PriceHand extends Fragment {
                 month = 2;
                 year = year + 1;
             }
-            Common.showToast(getActivity(), "沒有資料");
+            Common.showToast(context, "沒有資料");
             return;
         }
         PIdateTittle.setText(showtime);
@@ -301,7 +313,7 @@ public class PriceHand extends Fragment {
         SpinnerItem.add("鍵盤");
         SpinnerItem.add("聲音");
         SpinnerItem.add("QRCode掃描");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, SpinnerItem);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceModel.setAdapter(arrayAdapter);
         choiceModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -323,17 +335,17 @@ public class PriceHand extends Fragment {
                     priceTitle.setText("請念後三碼");
                     showMi.setVisibility(View.VISIBLE);
                     donateRL.setVisibility(View.GONE);
-                    int rc = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO);
+                    int rc = ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO);
                     if (rc != PackageManager.PERMISSION_GRANTED) {
-                        Common.askPermissions(Manifest.permission.RECORD_AUDIO,getActivity());
+                        Common.askPermissions(Manifest.permission.RECORD_AUDIO,context);
                     }
                     startListening();
 
                 }else if(i==2)
                 {
-                    Common.showToast(getActivity(),"載入資料中");
+                    Common.showToast(context,"載入資料中");
                     MultiTrackerActivity.refresh = false;
-                    Intent intent = new Intent(getActivity(), MultiTrackerActivity.class);
+                    Intent intent = new Intent(context, MultiTrackerActivity.class);
                     startActivity(intent);
                 }
             }
@@ -456,19 +468,19 @@ public class PriceHand extends Fragment {
     }
 
     public void startListening() {
-        if (SpeechRecognizer.isRecognitionAvailable(getActivity())) {
+        if (SpeechRecognizer.isRecognitionAvailable(context)) {
                 startSR();
         }
     }
 
     public void startSR() {
-        speech = SpeechRecognizer.createSpeechRecognizer(getActivity());
+        speech = SpeechRecognizer.createSpeechRecognizer(context);
         speech.setRecognitionListener(new listener());
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
                 "en");
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
-                getActivity().getPackageName());
+                context.getPackageName());
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);

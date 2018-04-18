@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -45,7 +46,18 @@ public class SettingListType extends Fragment {
     private Spinner typeH;
     private int spinnerC;
     private ArrayList<Object> objects;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -55,7 +67,7 @@ public class SettingListType extends Fragment {
         AdView adView = view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -72,7 +84,7 @@ public class SettingListType extends Fragment {
         spinnerItem.add("主項目種類");
         spinnerItem.add("次項目種類");
         spinnerItem.add("收入種類");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, spinnerItem);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, spinnerItem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         typeH.setAdapter(arrayAdapter);
         typeH.setSelection(spinnerC);
@@ -89,7 +101,7 @@ public class SettingListType extends Fragment {
         }
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {
-            listView.setAdapter(new ListAdapter(getActivity(), objects));
+            listView.setAdapter(new ListAdapter(context, objects));
         } else {
             adapter.setObjects(objects);
             adapter.notifyDataSetChanged();

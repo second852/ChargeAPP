@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -71,7 +72,18 @@ public class SelectDetList extends Fragment {
     private int position;
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOS;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
 
@@ -83,7 +95,7 @@ public class SelectDetList extends Fragment {
         carrierVOS=carrierDB.getAll();
         findViewById(view);
         main=new HashMap<>();
-        progressDialog=new ProgressDialog(getActivity());
+        progressDialog=new ProgressDialog(context);
         ShowConsume= (boolean) getArguments().getSerializable("ShowConsume");
         ShowAllCarrier= (boolean) getArguments().getSerializable("ShowAllCarrier");
         noShowCarrier= (boolean) getArguments().getSerializable("noShowCarrier");
@@ -113,14 +125,14 @@ public class SelectDetList extends Fragment {
             end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
             title = Common.sFour.format(new Date(start.getTimeInMillis()));
         }
-        getActivity().setTitle(title);
+        context.setTitle(title);
         setLayout();
         return view;
     }
 
     public void cancelshow(){
         progressDialog.cancel();
-        Common.showToast(getActivity(),"財政部網路忙線~");
+        Common.showToast(context,"財政部網路忙線~");
     }
 
 
@@ -148,7 +160,7 @@ public class SelectDetList extends Fragment {
             adapter.setObjects(objects);
             adapter.notifyDataSetChanged();
         }else {
-            listView.setAdapter(new ListAdapter(getActivity(),objects));
+            listView.setAdapter(new ListAdapter(context,objects));
         }
         listView.setSelection(position);
         if(objects.size()<=0)
@@ -175,7 +187,7 @@ public class SelectDetList extends Fragment {
     }
 
     private void setDB() {
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -272,7 +284,7 @@ public class SelectDetList extends Fragment {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SelectDetList.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SelectDetList.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
                             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                             if(mNetworkInfo!=null)
                             {
@@ -280,7 +292,7 @@ public class SelectDetList extends Fragment {
                                 progressDialog.setMessage("正在下傳資料,請稍候...");
                                 progressDialog.show();
                             }else{
-                                Common.showToast(SelectDetList.this.getActivity(),"網路沒有開啟，無法下載!");
+                                Common.showToast(SelectDetList.this.context,"網路沒有開啟，無法下載!");
                             }
                         }
                     });

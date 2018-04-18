@@ -80,12 +80,20 @@ public class EleDonate extends Fragment {
     private Gson gson;
     private int poisition;
     private TextView showM;
+    private Context context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ele_setdenote, container, false);
-        progressDialog = new ProgressDialog(getActivity());
-        Common.setChargeDB(getActivity());
+        progressDialog = new ProgressDialog(context);
+        Common.setChargeDB(context);
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         gson=new Gson();
@@ -112,7 +120,7 @@ public class EleDonate extends Fragment {
         {
             SpinnerItem.add(c.getCarNul());
         }
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, SpinnerItem);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceModel.setAdapter(arrayAdapter);
         choiceModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -147,7 +155,6 @@ public class EleDonate extends Fragment {
     public void setlistTeam(String jsonin) {
         cancelDialog();
         try {
-             Log.d("XXXXXx",jsonin);
             if (jsonin.indexOf("details") != -1) {
                 Gson gson = new Gson();
                 JsonObject jFS = gson.fromJson(jsonin, JsonObject.class);
@@ -155,9 +162,9 @@ public class EleDonate extends Fragment {
                 Type cdType = new TypeToken<List<JsonObject>>() {
                 }.getType();
                 List<JsonObject> jSS = gson.fromJson(jFSDT, cdType);
-                heartyList.setAdapter(new HeartyAdapter(getActivity(), jSS));
+                heartyList.setAdapter(new HeartyAdapter(context, jSS));
             } else {
-                Common.showToast(getActivity(), "查無資料");
+                Common.showToast(context, "查無資料");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -177,12 +184,13 @@ public class EleDonate extends Fragment {
             listinviuce.setVisibility(View.VISIBLE);
         }
         listinviuce.setAdapter(null);
-        listinviuce.setAdapter(new ListAdapter(getActivity(), invoiceVOList));
+        listinviuce.setAdapter(new ListAdapter(context, invoiceVOList));
         listinviuce.setSelection(poisition);
     }
 
     public void donateOK()
     {
+
         cancelDialog();
         Fragment fragment=new EleDonateMain();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
@@ -241,7 +249,7 @@ public class EleDonate extends Fragment {
         @Override
         public void onClick(View v) {
             if (donateMap.size() == 0) {
-                Common.showToast(getActivity(), "請勾選要捐獻發票");
+                Common.showToast(context, "請勾選要捐獻發票");
                 return;
             }
             searchRL.setVisibility(View.VISIBLE);
@@ -251,14 +259,14 @@ public class EleDonate extends Fragment {
     private class searchHeartyTeam implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            ConnectivityManager mConnectivityManager = (ConnectivityManager) EleDonate.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager mConnectivityManager = (ConnectivityManager) EleDonate.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
             if(mNetworkInfo!=null)
             {
                 new GetSQLDate(EleDonate.this).execute("searchHeartyTeam", inputH.getText().toString());
                 progressbar.setVisibility(View.VISIBLE);
             }else{
-                Common.showToast(EleDonate.this.getActivity(),"網路沒有開啟，無法下載!");
+                Common.showToast(EleDonate.this.context,"網路沒有開啟，無法下載!");
             }
 
         }
@@ -380,7 +388,7 @@ public class EleDonate extends Fragment {
                 updateD.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ConnectivityManager mConnectivityManager = (ConnectivityManager) EleDonate.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                        ConnectivityManager mConnectivityManager = (ConnectivityManager) EleDonate.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
                         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                         if(mNetworkInfo!=null)
                         {
@@ -389,7 +397,7 @@ public class EleDonate extends Fragment {
                             progressDialog.show();
                             EleDonate.this.poisition=position;
                         }else{
-                            Common.showToast(EleDonate.this.getActivity(),"網路沒有開啟，無法下載!");
+                            Common.showToast(EleDonate.this.context,"網路沒有開啟，無法下載!");
                         }
 
                     }

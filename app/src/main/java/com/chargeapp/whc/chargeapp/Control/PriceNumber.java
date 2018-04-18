@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -45,13 +46,25 @@ public class PriceNumber extends Fragment {
     private TextView PIdateTittle,superN,spcN,firstN,addsixN,showRemain;
     private PriceVO priceVO;
     private RelativeLayout showNul,PIdateL;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_number, container, false);
         now = Calendar.getInstance();
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
         String period=priceDB.findMaxPeriod();
@@ -104,7 +117,7 @@ public class PriceNumber extends Fragment {
                 year=year-1;
             }
             setMonText("add");
-            Common.showToast(getActivity(), showtime+"尚未開獎");
+            Common.showToast(context, showtime+"尚未開獎");
             return;
         }
         if (priceVO == null && action.equals("cut")) {
@@ -114,7 +127,7 @@ public class PriceNumber extends Fragment {
                 month=2;
                 year=year+1;
             }
-            Common.showToast(getActivity(), "沒有資料");
+            Common.showToast(context, "沒有資料");
             return;
         }
         PIdateTittle.setText(showtime);

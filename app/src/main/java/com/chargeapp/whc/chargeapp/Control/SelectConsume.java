@@ -1,7 +1,9 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -111,7 +113,18 @@ public class SelectConsume extends Fragment {
     public static int Statue;
     public static Calendar end;
     public static int CStatue;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
     @Override
@@ -158,7 +171,7 @@ public class SelectConsume extends Fragment {
 
 
     private void setDB() {
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -181,7 +194,7 @@ public class SelectConsume extends Fragment {
         SpinnerItem1.add("  周  ");
         SpinnerItem1.add("  月  ");
         SpinnerItem1.add("  年  ");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, SpinnerItem1);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem1);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         ArrayList<String> SpinnerItem2 = new ArrayList<>();
         choicePeriod.setAdapter(arrayAdapter);
@@ -194,7 +207,7 @@ public class SelectConsume extends Fragment {
         for (CarrierVO c : carrierVOS) {
             SpinnerItem2.add(" " + c.getCarNul() + " ");
         }
-        arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, SpinnerItem2);
+        arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem2);
         choiceCarrier.setAdapter(arrayAdapter);
     }
 

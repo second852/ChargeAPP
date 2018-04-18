@@ -1,17 +1,15 @@
 package com.chargeapp.whc.chargeapp.Control;
 
-import android.app.PendingIntent;
+
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
@@ -42,8 +40,13 @@ public class EleAddBank extends Fragment {
     private List<CarrierVO> carrierVOS;
     private CarrierVO carrierVO;
     public String url;
-    private SwipeRefreshLayout reSw;
+    private android.content.Context context;
 
+    @Override
+    public void onAttach(android.content.Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
 
     @Nullable
     @Override
@@ -52,22 +55,6 @@ public class EleAddBank extends Fragment {
         findViewById(view);
         setSpinner();
         myProgressBar.setVisibility(View.GONE);
-        reSw.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                reSw.setRefreshing(true);
-                if(carrierVOS==null||carrierVOS.size()<=0)
-                {
-                    reSw.setRefreshing(false);
-                    return;
-                }
-                url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierBankAccBlank?UUID=second&appID=EINV3201711184648&CardCode=3J0002&";
-                url=url+"CardNo="+carrierVO.getCarNul()+"&VerifyCode="+carrierVO.getPassword();
-                webViewSetting();
-                showError.setVisibility(View.GONE);
-                reSw.setRefreshing(false);
-            }
-        });
         return view;
     }
 
@@ -85,7 +72,7 @@ public class EleAddBank extends Fragment {
         {
             carrierNul.add(c.getCarNul());
         }
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,carrierNul);
+        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(context,R.layout.spinneritem,carrierNul);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         carrier.setAdapter(arrayAdapter);
         carrier.setOnItemSelectedListener(new choiceStateItem());
@@ -96,12 +83,13 @@ public class EleAddBank extends Fragment {
     private void webViewSetting() {
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setBuiltInZoomControls(true);//设置缩放按钮
-        webView.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
+        webView.setInitialScale(10);
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setAllowContentAccess(true);
         webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
-
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
@@ -119,11 +107,11 @@ public class EleAddBank extends Fragment {
                 {
                     myProgressBar.setVisibility(View.VISIBLE);
                     webView.setVisibility(View.GONE);
-                    Common.showToast(getActivity(),"正在連線!");
+                    Common.showToast(context,"正在連線!");
                 }else {
                     myProgressBar.setVisibility(View.VISIBLE);
                     webView.setVisibility(View.GONE);
-                    Common.showToast(getActivity(),"正在更新!");
+                    Common.showToast(context,"正在更新!");
                 }
 
             }
@@ -148,26 +136,26 @@ public class EleAddBank extends Fragment {
                 {
                     showError.setVisibility(View.VISIBLE);
                     webView.setVisibility(View.GONE);
-                    Common.showToast(getActivity(),"連線失敗!請確認網路狀態!");
+                    Common.showToast(context,"連線失敗!請確認網路狀態!");
                     return;
                 }
                 if(seconderror)
                 {
                     showError.setVisibility(View.VISIBLE);
                     webView.setVisibility(View.GONE);
-                    Common.showToast(getActivity(),"更新失敗!請確認網路狀態!");
+                    Common.showToast(context,"更新失敗!請確認網路狀態!");
                     return;
                 }
                 if(first)
                 {
                     myProgressBar.setVisibility(View.GONE);
                     webView.setVisibility(View.VISIBLE);
-                    Common.showToast(getActivity(),"連線成功!");
+                    Common.showToast(context,"連線成功!");
                     first=false;
                 }else{
                     myProgressBar.setVisibility(View.GONE);
                     webView.setVisibility(View.VISIBLE);
-                    Common.showToast(getActivity(),"更新成功!");
+                    Common.showToast(context,"更新成功!");
                 }
 
             }
@@ -182,7 +170,6 @@ public class EleAddBank extends Fragment {
         showError=view.findViewById(R.id.showError);
         carrier=view.findViewById(R.id.carrier);
         enter=view.findViewById(R.id.enter);
-        reSw=view.findViewById(R.id.reSw);
     }
 
     private class CliientListener implements View.OnClickListener {

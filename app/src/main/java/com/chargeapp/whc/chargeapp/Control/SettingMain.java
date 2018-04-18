@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -56,18 +57,30 @@ public class SettingMain extends Fragment {
 
     private ListView listView;
     private SharedPreferences sharedPreferences;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.setting_main, container, false);
-        sharedPreferences=getActivity().getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
+        sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         listView = view.findViewById(R.id.list);
         AdView adView = view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
         List<EleMainItemVO> itemSon = getNewItem();
-        listView.setAdapter(new ListAdapter(getActivity(), itemSon));
+        listView.setAdapter(new ListAdapter(context, itemSon));
         return view;
     }
 
@@ -85,8 +98,8 @@ public class SettingMain extends Fragment {
 
     public void deleteAll()
     {
-        getActivity().deleteDatabase("ChargeAPP");
-        MainActivity.chargeAPPDB=new ChargeAPPDB(getActivity());
+        context.deleteDatabase("ChargeAPP");
+        MainActivity.chargeAPPDB=new ChargeAPPDB(context);
         new Download().setdate();
     }
 
@@ -156,7 +169,7 @@ public class SettingMain extends Fragment {
                 setTime.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new TimePickerDialog(SettingMain.this.getActivity(), new TimePickerDialog.OnTimeSetListener() {
+                        new TimePickerDialog(SettingMain.this.context, new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                                 int hour =(hourOfDay>12)?(hourOfDay-12): hourOfDay ;
@@ -169,12 +182,12 @@ public class SettingMain extends Fragment {
                                 Calendar setNotifyTime=new GregorianCalendar(now.get(Calendar.YEAR),now.get(Calendar.MONTH),now.get(Calendar.DAY_OF_MONTH),hourOfDay,minute);
                                 if(now.getTimeInMillis()<setNotifyTime.getTimeInMillis())
                                 {
-                                    NotificationManager notificationManager= (NotificationManager) SettingMain.this.getActivity().getSystemService(NOTIFICATION_SERVICE);
+                                    NotificationManager notificationManager= (NotificationManager) SettingMain.this.context.getSystemService(NOTIFICATION_SERVICE);
                                     notificationManager.cancelAll();
                                     BootReceiver bootReceiver=new BootReceiver();
                                     Intent intent=new Intent();
                                     intent.setAction(Intent.ACTION_DATE_CHANGED);
-                                    bootReceiver.onReceive(SettingMain.this.getActivity(),intent);
+                                    bootReceiver.onReceive(SettingMain.this.context,intent);
                                 }
                             }
                         }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();

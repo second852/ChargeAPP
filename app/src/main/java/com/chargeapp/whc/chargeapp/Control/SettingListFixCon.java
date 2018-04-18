@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -47,12 +48,23 @@ public class SettingListFixCon extends Fragment {
     private TextView message;
     public List<ConsumeVO> consumeVOS;
     public ConsumeVO consumeVO;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         gson=new Gson();
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         View view = inflater.inflate(R.layout.setting_main, container, false);
         consumeVO= (ConsumeVO) getArguments().getSerializable("consumeVO");
@@ -82,7 +94,7 @@ public class SettingListFixCon extends Fragment {
     public void setLayout() {
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {
-            listView.setAdapter(new ListAdapter(getActivity(), consumeVOS));
+            listView.setAdapter(new ListAdapter(context, consumeVOS));
         } else {
             adapter.setObjects(consumeVOS);
             adapter.notifyDataSetChanged();

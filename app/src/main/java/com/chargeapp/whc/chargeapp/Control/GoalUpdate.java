@@ -1,6 +1,8 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -51,12 +53,23 @@ public class GoalUpdate extends Fragment {
     private String startTitle;
     private ArrayList<String> listDayStatue;
     private int poistion;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.goal_update_goal, container, false);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalVO = (GoalVO) getArguments().getSerializable("goalVO");
         findViewById(view);
@@ -77,7 +90,7 @@ public class GoalUpdate extends Fragment {
         listDayStatue.add(" 每周 ");
         listDayStatue.add(" 每月 ");
         listDayStatue.add(" 每年 ");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, listDayStatue);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, listDayStatue);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         remindS.setAdapter(arrayAdapter);
     }
@@ -146,7 +159,7 @@ public class GoalUpdate extends Fragment {
             spinneritem.add(" 每月 ");
             spinneritem.add(" 每年 ");
         }
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, spinneritem);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, spinneritem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setAdapter(arrayAdapter);
         int choice = spinneritem.indexOf(goalVO.getTimeStatue());
@@ -258,7 +271,7 @@ public class GoalUpdate extends Fragment {
                 }
             }
             noWeekend.setChecked(false);
-            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
+            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(context,R.layout.spinneritem,spinneritem);
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             remindD.setAdapter(arrayAdapter);
             remindD.setVisibility(View.VISIBLE);
@@ -335,15 +348,15 @@ public class GoalUpdate extends Fragment {
             if (dayStatue.equals(startTitle)) {
                 if (day == null || day.length() <= 0) {
                     limitP.setError("不能空白");
-                    Common.showToast(getActivity(), "不能空白");
+                    Common.showToast(context, "不能空白");
                     return;
                 }
                 String[] dates = day.split("/");
                 Calendar c = new GregorianCalendar(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
                 Date d = new Date(c.getTimeInMillis());
                 if (d.getTime() < System.currentTimeMillis()) {
-                    limitP.setError(" ");
-                    Common.showToast(getActivity(), "不能過去時間");
+                    limitP.setError("");
+                    Common.showToast(context, "不能過去時間");
                     return;
                 }
                 goalVO.setEndTime(d);
@@ -378,7 +391,7 @@ public class GoalUpdate extends Fragment {
             }
             fragmentTransaction.replace(R.id.body, fragment);
             fragmentTransaction.commit();
-            Common.showToast(getActivity(), "修改成功!");
+            Common.showToast(context, "修改成功!");
         }
     }
 

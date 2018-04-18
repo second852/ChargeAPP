@@ -1,5 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,7 +34,18 @@ import java.util.List;
 
 public class UpdateDetail extends Fragment {
     private TextView detail;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
     @Override
@@ -56,7 +69,7 @@ public class UpdateDetail extends Fragment {
                 detail.append(j.get("description").getAsString()+" : \n"+0+"X"+0+"="+0+"元\n");
             }
         }
-      getActivity().setTitle("細節");
+       context.setTitle("細節");
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

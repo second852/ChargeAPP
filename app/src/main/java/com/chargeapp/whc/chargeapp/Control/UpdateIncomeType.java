@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -63,26 +64,37 @@ public class UpdateIncomeType extends Fragment {
     private ProgressDialog progressDialog;
     private Handler handler;
     private String oldname;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.updae_inc_type, container, false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         action = (String) getArguments().getSerializable("action");
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        progressDialog = new ProgressDialog(getActivity());
+        progressDialog = new ProgressDialog(context);
         handler = new Handler();
         findViewById(view);
         setGridPicture();
-        getActivity().setTitle("修改類別");
+        context.setTitle("修改類別");
         choiceG.setOnItemClickListener(new choicePicture());
         clear.setOnClickListener(new clearOnClick());
         save.setOnClickListener(new insertType());
@@ -119,7 +131,7 @@ public class UpdateIncomeType extends Fragment {
             item.put("text", " ");
             items.add(item);
         }
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+        SimpleAdapter adapter = new SimpleAdapter(context,
                 items, R.layout.main_item, new String[]{"image", "text"},
                 new int[]{R.id.image, R.id.text});
         choiceG.setAdapter(adapter);
@@ -233,7 +245,7 @@ public class UpdateIncomeType extends Fragment {
                 bundle.putSerializable("spinnerC", getArguments().getSerializable("spinnerC"));
                 fragment.setArguments(bundle);
                 switchFramgent(fragment);
-                Common.showToast(getActivity(), "修改成功!");
+                Common.showToast(context, "修改成功!");
             }
         };
 
@@ -257,7 +269,7 @@ public class UpdateIncomeType extends Fragment {
                 bundle.putSerializable("spinnerC", getArguments().getSerializable("spinnerC"));
                 fragment.setArguments(bundle);
                 switchFramgent(fragment);
-                Common.showToast(getActivity(), "修改成功!");
+                Common.showToast(context, "修改成功!");
             }
         };
 
@@ -265,9 +277,9 @@ public class UpdateIncomeType extends Fragment {
             MainActivity.bundles.remove(MainActivity.bundles.size() - 1);
             MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size() - 1);
             //關閉鍵盤
-            View v = UpdateIncomeType.this.getActivity().getCurrentFocus();
+            View v = UpdateIncomeType.this.context.getCurrentFocus();
             if (v != null) {
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             }
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

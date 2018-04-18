@@ -484,7 +484,7 @@ public class MainActivity extends AppCompatActivity {
                         Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                         List<JsonObject> b = gson.fromJson(s, cdType);
                         for (JsonObject j : b) {
-                            int total = Integer.valueOf(j.get("unitPrice").getAsString().trim()) * Integer.valueOf(j.get("quantity").getAsString().trim());
+                            double total = Double.valueOf(j.get("unitPrice").getAsString().trim()) * Double.valueOf(j.get("quantity").getAsString().trim());
                             sb.append(j.get("description").getAsString());
                             sb.append(" :\n" + j.get("unitPrice").getAsString() + " X " + j.get("quantity").getAsString() + " = " + total + "\n");
                         }
@@ -493,6 +493,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     Common.showToast(this, "在試一次");
                 }
             } else {
@@ -507,6 +508,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }catch (Exception e)
                 {
+
                     Common.showToast(this, "在試一次");
                 }
             }
@@ -571,7 +573,7 @@ public class MainActivity extends AppCompatActivity {
                         Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                         List<JsonObject> b = gson.fromJson(s, cdType);
                         for (JsonObject j : b) {
-                            int total=Integer.valueOf(j.get("unitPrice").getAsString().trim())*Integer.valueOf(j.get("quantity").getAsString().trim());
+                            double total=Double.valueOf(j.get("unitPrice").getAsString().trim())*Double.valueOf(j.get("quantity").getAsString().trim());
                             String des=j.get("description").getAsString();
                             sb.append(des + " :\n"+j.get("unitPrice").getAsString()+" X "+ j.get("quantity").getAsString() + " = " +total+"\n");
                         }

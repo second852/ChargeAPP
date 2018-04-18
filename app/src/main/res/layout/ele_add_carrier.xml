@@ -38,15 +38,10 @@
         android:background="#33CCFF"
         android:layout_marginLeft="25dp"
         />
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:layout_marginTop="15dp"
-        android:id="@+id/reSw"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/carrier"
-        >
+
         <WebView
             android:id="@+id/webView"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/carrier"
@@ -59,8 +54,8 @@
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:visibility="gone"
             />
-    </android.support.v4.widget.SwipeRefreshLayout>
     <TextView
         android:id="@+id/showError"
         android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -64,18 +65,29 @@ public class SelectDetCircle extends Fragment {
     private int size;
     private CarrierDB carrierDB;
     private Calendar start,end;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        ((AppCompatActivity)context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         AdView adView = (AdView) view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
         setDB();
         findViewById(view);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
         hashMap = new HashMap<>();
         ShowConsume = (boolean) getArguments().getSerializable("ShowConsume");
         ShowAllCarrier = (boolean) getArguments().getSerializable("ShowAllCarrier");
@@ -141,10 +153,10 @@ public class SelectDetCircle extends Fragment {
                 total = total + I.getAmount();
             }
         }
-        getActivity().setTitle(Common.sOne.format(new Date(start.getTimeInMillis())));
+        context.setTitle(Common.sOne.format(new Date(start.getTimeInMillis())));
         List<String> stringList = new ArrayList<>(hashMap.keySet());
         size = stringList.size();
-        listView.setAdapter(new ListAdapter(getActivity(), stringList));
+        listView.setAdapter(new ListAdapter(context, stringList));
         return view;
     }
 
@@ -153,7 +165,7 @@ public class SelectDetCircle extends Fragment {
     }
 
     private void setDB() {
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());

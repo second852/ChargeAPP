@@ -1,5 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
@@ -31,7 +33,18 @@ public class UpdateConsumeDetail extends Fragment {
     private EditText detail;
     private String action;
     private ConsumeVO consumeVO;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
     @Override
@@ -40,7 +53,7 @@ public class UpdateConsumeDetail extends Fragment {
         View view = inflater.inflate(R.layout.update_consume_detail, container, false);
         detail=view.findViewById(R.id.detail);
         action= (String) getArguments().getSerializable("action");
-        getActivity().setTitle("細節");
+        context.setTitle("細節");
         if(action.equals("InsertSpend"))
         {
             if(InsertSpend.consumeVO.getDetailname()==null)

@@ -58,7 +58,7 @@ public class Common {
     public static SimpleDateFormat sHour = new SimpleDateFormat("hh");
     public static SimpleDateFormat sYear = new SimpleDateFormat("yyy 年 MM 月");
 
-    public static void setChargeDB(Activity activity)
+    public static void setChargeDB(Context activity)
     {
         if(MainActivity.chargeAPPDB==null)
         {

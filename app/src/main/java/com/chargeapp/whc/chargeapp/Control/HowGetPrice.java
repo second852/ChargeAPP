@@ -2,6 +2,7 @@ package com.chargeapp.whc.chargeapp.Control;
 
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -38,6 +39,18 @@ import java.util.List;
 public class HowGetPrice extends Fragment {
   private TextView needcarrier;
   private ListView list;
+  private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -53,7 +66,7 @@ public class HowGetPrice extends Fragment {
         title.add("25處指定郵局兌領位置");
         title.add("電子發票綁定銀行帳戶(本地)");
         title.add("電子發票綁定銀行帳戶(財政部網站)");
-        list.setAdapter(new ListAdapter(getActivity(),title));
+        list.setAdapter(new ListAdapter(context,title));
      return view;
     }
 
@@ -94,7 +107,7 @@ public class HowGetPrice extends Fragment {
                 itemView = layoutInflater.inflate(R.layout.ele_hand_item, parent, false);
             }
             TextView qrcode = itemView.findViewById(R.id.QrCodeA);
-            CardView cardView = itemView.findViewById(R.id.cardview);
+            final CardView cardView = itemView.findViewById(R.id.cardview);
             qrcode.setText(strings.get(position));
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -110,7 +123,7 @@ public class HowGetPrice extends Fragment {
                         intent.setData(Uri.parse("https://www.post.gov.tw/post/internet/B_saving/index.jsp?ID=30306#localpost"));
                         startActivity(intent);
                     } else if (position == 2) {
-                        getActivity().setTitle(R.string.text_EleBank);
+                        HowGetPrice.this.context.setTitle(R.string.text_EleBank);
                         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                         for (Fragment f : getFragmentManager().getFragments()) {
                             fragmentTransaction.remove(f);

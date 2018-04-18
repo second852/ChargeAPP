@@ -1,14 +1,13 @@
 package com.chargeapp.whc.chargeapp.Control;
 
-import android.content.ClipData;
+
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.view.menu.MenuWrapperFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +68,18 @@ public class HomePage extends Fragment {
     private boolean ShowZero;
     private  ArrayList<PieEntry> yVals1;
     private ArrayList<String> Okey;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
     @Override
@@ -77,7 +88,7 @@ public class HomePage extends Fragment {
         pieChart=view.findViewById(R.id.pieChart);
         pieChartT=view.findViewById(R.id.pieChartT);
         listView=view.findViewById(R.id.list);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -109,7 +120,7 @@ public class HomePage extends Fragment {
         ListAdapter listAdapter= (ListAdapter) listView.getAdapter();
         if(listAdapter==null)
         {
-            listView.setAdapter(new ListAdapter(getActivity(),objects));
+            listView.setAdapter(new ListAdapter(context,objects));
         }else{
             listAdapter.setObjects(objects);
             listAdapter.notifyDataSetChanged();

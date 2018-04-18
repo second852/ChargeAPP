@@ -1,6 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -54,7 +55,19 @@ public class EleSetCarrier extends Fragment {
     private CarrierVO carrierVO;
     private Handler handler,adHadler;
     private View view;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else {
+            this.context=getActivity();
+        }
+
+    }
 
     @Nullable
     @Override
@@ -72,9 +85,9 @@ public class EleSetCarrier extends Fragment {
         progressT=view.findViewById(R.id.progressT);
         percentage=view.findViewById(R.id.percentage);
         confirm.setOnClickListener(new Confirmlisten());
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        sharedPreferences=getActivity().getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
+        sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         setListAdapt();
         return view;
     }
@@ -125,11 +138,11 @@ public class EleSetCarrier extends Fragment {
     {
         position=sharedPreferences.getInt("carrier",0);
         carrierlist=carrierDB.getAll();
-        Intent intent = new Intent(getActivity(), SimpleWidgetProvider.class);
+        Intent intent = new Intent(context, SimpleWidgetProvider.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        int[] ids = AppWidgetManager.getInstance(getActivity().getApplication()).getAppWidgetIds(new ComponentName(getActivity().getApplication(), SimpleWidgetProvider.class));
+        int[] ids = AppWidgetManager.getInstance(context.getApplication()).getAppWidgetIds(new ComponentName(context.getApplication(), SimpleWidgetProvider.class));
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-        getActivity().sendBroadcast(intent);
+        context.sendBroadcast(intent);
         if(carrierlist!=null&&carrierlist.size()>0)
         {
             listtiitle.setVisibility(View.VISIBLE);
@@ -139,7 +152,7 @@ public class EleSetCarrier extends Fragment {
         Adapter adapter=listcarrier.getAdapter();
         if(adapter==null)
         {
-            listcarrier.setAdapter(new EleSetCarrierAdapter(getActivity(),carrierlist));
+            listcarrier.setAdapter(new EleSetCarrierAdapter(context,carrierlist));
         }else{
             EleSetCarrierAdapter adapter1 = (EleSetCarrierAdapter) listcarrier.getAdapter();
             adapter1.setCarNulList(carrierlist);
@@ -237,20 +250,20 @@ public class EleSetCarrier extends Fragment {
             Boolean exist=checkExist(user);
             if(exist)
             {
-                Common.showToast(getActivity(),"載具已新增過");
+                Common.showToast(context,"載具已新增過");
                 return;
             }
             carrierVO.setCarNul(user);
             carrierVO.setPassword(password);
-            ConnectivityManager mConnectivityManager = (ConnectivityManager)EleSetCarrier.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager mConnectivityManager = (ConnectivityManager)EleSetCarrier.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
             if(mNetworkInfo!=null)
             {
 
                 //close keyboard
-                View v = EleSetCarrier.this.getActivity().getCurrentFocus();
+                View v = EleSetCarrier.this.context.getCurrentFocus();
                 if (v != null) {
-                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
 
@@ -260,7 +273,7 @@ public class EleSetCarrier extends Fragment {
                 getIvnum.execute("getInvoice",user,password);
                 progressbarL.setVisibility(View.VISIBLE);
             }else{
-                Common.showToast(EleSetCarrier.this.getActivity(),"網路沒有開啟，無法下載!");
+                Common.showToast(EleSetCarrier.this.context,"網路沒有開啟，無法下載!");
             }
 
         }

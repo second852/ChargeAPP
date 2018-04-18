@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -47,7 +48,18 @@ public class SelectListBarIncome extends Fragment {
     private TextView message;
     private String title;
     private Gson gson;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
 
@@ -56,10 +68,10 @@ public class SelectListBarIncome extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        ((AppCompatActivity)context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         gson=new Gson();
         findViewById(view);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         year= (int) getArguments().getSerializable("year");
         month= (int) getArguments().getSerializable("month");
@@ -75,7 +87,7 @@ public class SelectListBarIncome extends Fragment {
             end=new GregorianCalendar(year,month+index,start.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
             title =Common.sThree.format(new Date(start.getTimeInMillis()));
         }
-        getActivity().setTitle(title);
+        context.setTitle(title);
         setLayout();
         return view;
     }
@@ -89,7 +101,7 @@ public class SelectListBarIncome extends Fragment {
         ListAdapter baseAdapter= (ListAdapter) listView.getAdapter();
         if(baseAdapter==null)
         {
-            listView.setAdapter(new ListAdapter(getActivity(),bankVOS));
+            listView.setAdapter(new ListAdapter(context,bankVOS));
         }else{
             baseAdapter.setBankVOs(bankVOS);
             baseAdapter.notifyDataSetChanged();

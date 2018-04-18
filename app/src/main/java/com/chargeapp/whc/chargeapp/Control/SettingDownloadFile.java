@@ -2,6 +2,7 @@ package com.chargeapp.whc.chargeapp.Control;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -111,13 +112,24 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     public  DriveId mSelectedFileDriveId;
     private RelativeLayout progressL;
     private ProgressBar mProgressBar;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.setting_main, container, false);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -134,7 +146,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         AdView adView = view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-        listView.setAdapter(new ListAdapter(getActivity(), itemSon));
+        listView.setAdapter(new ListAdapter(context, itemSon));
         progressL.setVisibility(View.GONE);
         mProgressBar.setMax(100);
         return view;
@@ -143,9 +155,9 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     @Override
     public void onStart() {
         super.onStart();
-        int rc = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
+        int rc = ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
         if (rc != PackageManager.PERMISSION_GRANTED) {
-            Common.askPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,getActivity());
+            Common.askPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,context);
         }
     }
 
@@ -161,14 +173,14 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
             if (resultCode == -1) {
                 mSelectedFileDriveId = data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
                 open();
-                Common.showToast(getActivity(), "下傳成功");
+                Common.showToast(context, "下傳成功");
             } else {
                 if(mGoogleApiClient!=null)
                 {
                     mGoogleApiClient.disconnect();
                     mGoogleApiClient=null;
                 }
-                Common.showToast(getActivity(), "下傳失敗");
+                Common.showToast(context, "下傳失敗");
             }
         }
     }
@@ -194,7 +206,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                 .setMimeType(new String[]{"file/xls"})
                 .build(mGoogleApiClient);
         try {
-           getActivity().startIntentSenderForResult(intentSender, 5, null, 0, 0, 0);
+           context.startIntentSenderForResult(intentSender, 5, null, 0, 0, 0);
         } catch (IntentSender.SendIntentException e) {
         }
     }
@@ -209,12 +221,12 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         // Called whenever the API client fails to connect.
         if (!result.hasResolution()) {
             // show the localized error dialog.
-            GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), result.getErrorCode(), 0).show();
+            GoogleApiAvailability.getInstance().getErrorDialog(context, result.getErrorCode(), 0).show();
             return;
         }
         // Called typically when the app is not yet authorized, and authorization dialog is displayed to the user.
         try {
-            result.startResolutionForResult(getActivity(), 4);
+            result.startResolutionForResult(context, 4);
         } catch (IntentSender.SendIntentException e) {
         }
     }
@@ -264,7 +276,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                             InputStream inp = new FileInputStream(file);
                             inputExcel(inp);
                         } catch (Exception e) {
-                            Common.showToast(getActivity(), "請將檔案放置在/Download，檔名為記帳小助手.xls");
+                            Common.showToast(context, "請將檔案放置在/Download，檔名為記帳小助手.xls");
                         }
                     }
                 });
@@ -272,13 +284,13 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingDownloadFile.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                        ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingDownloadFile.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
                         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                         if(mNetworkInfo!=null)
                         {
                             openCloud();
                         }else{
-                            Common.showToast(SettingDownloadFile.this.getActivity(),"網路沒有開啟，無法下載!");
+                            Common.showToast(SettingDownloadFile.this.context,"網路沒有開啟，無法下載!");
                         }
                     }
                 });
@@ -305,7 +317,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
             for (Sheet sheet : workbook) {
                 String sheetTitle = sheet.getSheetName();
                 if ((!sheetTitle.equals("Type") && i == 0)) {
-                    Common.showToast(getActivity(), "不是備份檔");
+                    Common.showToast(context, "不是備份檔");
                     workbook.close();
                     inp.close();
                     return;
@@ -419,7 +431,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
             workbook.close();
             inp.close();
 
-            Common.showToast(getActivity(),"匯入成功");
+            Common.showToast(context,"匯入成功");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -429,7 +441,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
 
     public void openCloud() {
         if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+            mGoogleApiClient = new GoogleApiClient.Builder(context)
                     .addApi(Drive.API)
                     .addScope(Drive.SCOPE_FILE)
                     .addConnectionCallbacks(this)
@@ -465,7 +477,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                 @Override
                 public void onResult(@NonNull DriveApi.DriveContentsResult result) {
                     if (!result.getStatus().isSuccess()) {
-                        Common.showToast(getActivity(), "連線失敗!");
+                        Common.showToast(context, "連線失敗!");
                         return;
                     }
                     // Read from the input stream an print to LOGCAT

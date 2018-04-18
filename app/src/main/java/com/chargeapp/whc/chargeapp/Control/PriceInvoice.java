@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -71,6 +72,18 @@ public class PriceInvoice extends Fragment {
     private Handler handler;
     private ProgressDialog progressDialog;
     public static  boolean first;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
 
@@ -80,10 +93,10 @@ public class PriceInvoice extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_invoice, container, false);
         findViewById(view);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        progressDialog=new ProgressDialog(getActivity());
+        progressDialog=new ProgressDialog(context);
         handler=new Handler();
         levelprice=Common.getPriceName();
         levellength=Common.getlevellength();
@@ -165,7 +178,7 @@ public class PriceInvoice extends Fragment {
                year=year-1;
             }
             setMonText("add");
-            Common.showToast(getActivity(), showtime+"尚未開獎");
+            Common.showToast(context, showtime+"尚未開獎");
             return;
         }
         if (priceVO == null && action.equals("cut")) {
@@ -176,7 +189,7 @@ public class PriceInvoice extends Fragment {
               year=year+1;
             }
             setMonText("cut");
-            Common.showToast(getActivity(), "沒有資料");
+            Common.showToast(context, "沒有資料");
             return;
         }
         PIdateTittle.setText(showtime);
@@ -199,7 +212,7 @@ public class PriceInvoice extends Fragment {
             ListAdapter listAdapter= (ListAdapter) donateRL.getAdapter();
             if(listAdapter==null)
             {
-                listAdapter=new ListAdapter(getActivity(),objectList);
+                listAdapter=new ListAdapter(context,objectList);
                 donateRL.setAdapter(listAdapter);
             }else{
                 listAdapter.setObjects(objectList);

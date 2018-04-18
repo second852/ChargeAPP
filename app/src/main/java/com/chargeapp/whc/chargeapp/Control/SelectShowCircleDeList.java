@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -59,10 +60,10 @@ public class SelectShowCircleDeList extends Fragment {
     private int carrier;
     private List<InvoiceVO> invoiceVOS;
     private List<ConsumeVO> consumeVOS;
-    private HashMap<String,Integer> main;
+
     private String key;
     private List<Object> objects;
-    private Gson gson=new Gson();
+    private Gson gson;
     private ProgressDialog progressDialog;
     private Calendar start,end;
     private int Statue,period,dweek;
@@ -72,7 +73,18 @@ public class SelectShowCircleDeList extends Fragment {
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOS;
     private List<String> Okey;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
 
@@ -80,11 +92,11 @@ public class SelectShowCircleDeList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
+        gson=new Gson();
         setDB();
         carrierVOS=carrierDB.getAll();
         findViewById(view);
-        main=new HashMap<>();
-        progressDialog=new ProgressDialog(getActivity());
+        progressDialog=new ProgressDialog(context);
         ShowConsume= (boolean) getArguments().getSerializable("ShowConsume");
         ShowAllCarrier= (boolean) getArguments().getSerializable("ShowAllCarrier");
         noShowCarrier= (boolean) getArguments().getSerializable("noShowCarrier");
@@ -114,14 +126,14 @@ public class SelectShowCircleDeList extends Fragment {
             end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
             title = Common.sFour.format(new Date(start.getTimeInMillis()));
         }
-        getActivity().setTitle(title);
+        context.setTitle(title);
         choiceLayout();
         return view;
     }
 
     public void cancelshow(){
         progressDialog.cancel();
-        Common.showToast(getActivity(),"財政部網路忙線~");
+        Common.showToast(context,"財政部網路忙線~");
     }
 
     public void setOtherLayout()
@@ -147,7 +159,7 @@ public class SelectShowCircleDeList extends Fragment {
             ListAdapter adapter= (ListAdapter) listView.getAdapter();
             if(adapter==null)
             {
-                listView.setAdapter(new ListAdapter(getActivity(),objects));
+                listView.setAdapter(new ListAdapter(context,objects));
             }else {
                 adapter.setObjects(objects);
                 adapter.notifyDataSetChanged();
@@ -200,7 +212,7 @@ public class SelectShowCircleDeList extends Fragment {
         ListAdapter adapter= (ListAdapter) listView.getAdapter();
         if(adapter==null)
         {
-            listView.setAdapter(new ListAdapter(getActivity(),objects));
+            listView.setAdapter(new ListAdapter(context,objects));
         }else {
             adapter.setObjects(objects);
             adapter.notifyDataSetChanged();
@@ -227,7 +239,7 @@ public class SelectShowCircleDeList extends Fragment {
     }
 
     private void setDB() {
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -326,7 +338,7 @@ public class SelectShowCircleDeList extends Fragment {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SelectShowCircleDeList.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SelectShowCircleDeList.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
                             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                             if(mNetworkInfo!=null)
                             {
@@ -334,7 +346,7 @@ public class SelectShowCircleDeList extends Fragment {
                                 progressDialog.setMessage("正在下傳資料,請稍候...");
                                 progressDialog.show();
                             }else{
-                                Common.showToast(SelectShowCircleDeList.this.getActivity(),"網路沒有開啟，無法下載!");
+                                Common.showToast(SelectShowCircleDeList.this.context,"網路沒有開啟，無法下載!");
                             }
                         }
                     });

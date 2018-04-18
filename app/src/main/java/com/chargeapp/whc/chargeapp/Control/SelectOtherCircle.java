@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -70,12 +71,24 @@ public class SelectOtherCircle extends Fragment {
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOS;
     private String title;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         setDB();
         carrierVOS = carrierDB.getAll();
         ListKey=new ArrayList<>();
@@ -109,7 +122,7 @@ public class SelectOtherCircle extends Fragment {
             end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
             title = Common.sFour.format(new Date(start.getTimeInMillis()));
         }
-        getActivity().setTitle(title);
+        context.setTitle(title);
         setLayout();
         return view;
     }
@@ -180,7 +193,7 @@ public class SelectOtherCircle extends Fragment {
                 mapHashMap.put("total", totalOther);
             }
             listView.setVisibility(View.VISIBLE);
-            listView.setAdapter(new ListAdapter(getActivity(), ListKey));
+            listView.setAdapter(new ListAdapter(context, ListKey));
         } else {
             message.setText(title + "\n其他種類 無資料!");
             message.setVisibility(View.VISIBLE);
@@ -191,7 +204,7 @@ public class SelectOtherCircle extends Fragment {
 
 
     private void setDB() {
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());

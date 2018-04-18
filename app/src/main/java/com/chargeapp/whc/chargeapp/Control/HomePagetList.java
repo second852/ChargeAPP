@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -67,7 +68,18 @@ public class HomePagetList extends Fragment {
     private int year,month,day;
     private ArrayList<String> Okey;
     private String title;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
 
@@ -80,7 +92,7 @@ public class HomePagetList extends Fragment {
         year=end.get(Calendar.YEAR);
         month=end.get(Calendar.MONTH);
         day=end.get(Calendar.DAY_OF_MONTH);
-        progressDialog=new ProgressDialog(getActivity());
+        progressDialog=new ProgressDialog(context);
         start=new GregorianCalendar(year,month,day,0,0,0);
         end=new GregorianCalendar(year,month,day,23,59,59);
         key= (String) getArguments().getSerializable("key");
@@ -88,14 +100,14 @@ public class HomePagetList extends Fragment {
         position= (int) getArguments().getSerializable("position");
 
         title=Common.sOne.format(new Date(start.getTimeInMillis()))+key;
-        getActivity().setTitle(title);
+        context.setTitle(title);
         setChoiceLayout();
         return view;
     }
 
     public void cancelshow(){
         progressDialog.cancel();
-        Common.showToast(getActivity(),"財政部網路忙線~");
+        Common.showToast(context,"財政部網路忙線~");
     }
 
     public void setChoiceLayout()
@@ -127,7 +139,7 @@ public class HomePagetList extends Fragment {
             adapter.notifyDataSetChanged();
             listView.invalidate();
         }else {
-            listView.setAdapter(new ListAdapter(getActivity(),objects));
+            listView.setAdapter(new ListAdapter(context,objects));
         }
 
         if(objects.size()<=0)
@@ -164,7 +176,7 @@ public class HomePagetList extends Fragment {
             adapter.notifyDataSetChanged();
             listView.invalidate();
         }else {
-            listView.setAdapter(new ListAdapter(getActivity(),objects));
+            listView.setAdapter(new ListAdapter(context,objects));
         }
         listView.setSelection(position);
         if(objects.size()<=0)
@@ -195,7 +207,7 @@ public class HomePagetList extends Fragment {
     }
 
     private void setDB() {
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
@@ -284,7 +296,7 @@ public class HomePagetList extends Fragment {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            ConnectivityManager mConnectivityManager = (ConnectivityManager) HomePagetList.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                            ConnectivityManager mConnectivityManager = (ConnectivityManager) HomePagetList.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
                             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                             if(mNetworkInfo!=null)
                             {
@@ -292,7 +304,7 @@ public class HomePagetList extends Fragment {
                                 progressDialog.setMessage("正在下傳資料,請稍候...");
                                 progressDialog.show();
                             }else{
-                                Common.showToast(HomePagetList.this.getActivity(),"網路沒有開啟，無法下載!");
+                                Common.showToast(HomePagetList.this.context,"網路沒有開啟，無法下載!");
                             }
                         }
                     });

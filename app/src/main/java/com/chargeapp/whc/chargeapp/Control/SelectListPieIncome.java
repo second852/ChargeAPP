@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -60,6 +61,18 @@ public class SelectListPieIncome extends Fragment {
     private TextView message;
     private String title;
     private Gson gson;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
     @Override
@@ -67,7 +80,7 @@ public class SelectListPieIncome extends Fragment {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
         findViewById(view);
         gson =new Gson();
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         year = (int) getArguments().getSerializable("year");
         month = (int) getArguments().getSerializable("month");
@@ -85,7 +98,7 @@ public class SelectListPieIncome extends Fragment {
             end = new GregorianCalendar(calendar.get(Calendar.YEAR), 11, 31, 23, 59, 59);
             title = Common.sFour.format(new Date(start.getTimeInMillis()));
         }
-        getActivity().setTitle(title);
+        context.setTitle(title);
         setLayout();
         return view;
     }
@@ -104,7 +117,7 @@ public class SelectListPieIncome extends Fragment {
 
         ListAdapter baseAdapter = (ListAdapter) listView.getAdapter();
         if (baseAdapter == null) {
-            listView.setAdapter(new ListAdapter(getActivity(), bankVOS));
+            listView.setAdapter(new ListAdapter(context, bankVOS));
         } else {
             baseAdapter.setBankVOs(bankVOS);
             baseAdapter.notifyDataSetChanged();

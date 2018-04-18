@@ -1,6 +1,8 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -67,6 +69,18 @@ public class UpdateIncome extends Fragment {
     private TextView standard;
     private int year, month, day;
     private Map<String, String> g;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
 
@@ -76,12 +90,12 @@ public class UpdateIncome extends Fragment {
         View view = inflater.inflate(R.layout.insert_income, container, false);
         findviewByid(view);
         setSpinner();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
-        getActivity().setTitle("修改資料");
+        ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        context.setTitle("修改資料");
         action = (String) getArguments().getSerializable("action");
         bankVO = (BankVO) getArguments().getSerializable("bankVO");
         gson = new Gson();
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         name.setOnClickListener(new showFirstG());
@@ -113,7 +127,7 @@ public class UpdateIncome extends Fragment {
         strings.add("每周");
         strings.add("每月");
         strings.add("每年");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, strings);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, strings);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setAdapter(arrayAdapter);
     }
@@ -240,7 +254,7 @@ public class UpdateIncome extends Fragment {
         firstL = view.findViewById(R.id.firstL);
         standard = view.findViewById(R.id.standard);
         fixDateT=view.findViewById(R.id.fixDateT);
-        getActivity().setTitle("修改資料");
+        context.setTitle("修改資料");
     }
 
 
@@ -311,7 +325,7 @@ public class UpdateIncome extends Fragment {
                     spinneritem.add(" " + String.valueOf(i) + "月");
                 }
             }
-            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
+            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(context,R.layout.spinneritem,spinneritem);
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
@@ -397,7 +411,7 @@ public class UpdateIncome extends Fragment {
         item.put("image", R.drawable.add);
         item.put("text", "新增");
         items.add(item);
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+        SimpleAdapter adapter = new SimpleAdapter(context,
                 items, R.layout.main_item, new String[]{"image", "text"},
                 new int[]{R.id.image, R.id.text});
         firstG.setAdapter(adapter);
@@ -422,7 +436,7 @@ public class UpdateIncome extends Fragment {
             }
             if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "主項目不能空白");
+                Common.showToast(context, "主項目不能空白");
                 return;
             }
             if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
@@ -443,7 +457,7 @@ public class UpdateIncome extends Fragment {
 
             if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
                 name.setError(" ");
-                Common.showToast(getActivity(), "日期不能空白");
+                Common.showToast(context, "日期不能空白");
                 return;
             }
             setBankVO();
@@ -472,7 +486,7 @@ public class UpdateIncome extends Fragment {
                 fragment=new SelectListModelActivity();
                 switchFragment(fragment);
             }
-            Common.showToast(getActivity(), "修改成功");
+            Common.showToast(context, "修改成功");
         }
     }
 
@@ -505,7 +519,7 @@ public class UpdateIncome extends Fragment {
             name.setBackgroundColor(Color.parseColor("#FFEE99"));
             if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "主項目不能空白");
+                Common.showToast(context, "主項目不能空白");
                 return;
             }
             if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
@@ -524,7 +538,7 @@ public class UpdateIncome extends Fragment {
             }
             if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
                 name.setError(" ");
-                Common.showToast(getActivity(), "日期不能空白");
+                Common.showToast(context, "日期不能空白");
                 return;
             }
             setBankVO();
@@ -600,7 +614,7 @@ public class UpdateIncome extends Fragment {
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             fragment.setArguments(bundle);
             switchFragment(fragment);
-            Common.showToast(getActivity(), "修改成功");
+            Common.showToast(context, "修改成功");
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -44,11 +45,24 @@ public class GoalListAll extends Fragment {
     private boolean goalConsumeComplete;
     private TextView message;
     private int p;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.goal_list, container, false);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -102,7 +116,7 @@ public class GoalListAll extends Fragment {
 
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {
-            adapter = new ListAdapter(getActivity(), goalVOS);
+            adapter = new ListAdapter(context, goalVOS);
             listView.setAdapter(adapter);
         } else {
             adapter.setGoalVOS(goalVOS);

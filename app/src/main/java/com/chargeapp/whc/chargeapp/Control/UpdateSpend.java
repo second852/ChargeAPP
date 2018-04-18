@@ -1,6 +1,8 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -79,7 +81,18 @@ public class UpdateSpend extends Fragment {
     private int year,month,day;
     private  Map<String, String> g;
     private TextView noWekT,notifyT;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Nullable
     @Override
@@ -88,11 +101,11 @@ public class UpdateSpend extends Fragment {
         findviewByid(view);
         action = (String) getArguments().getSerializable("action");
         consumeVO = (ConsumeVO) getArguments().getSerializable("consumeVO");
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
-        getActivity().setTitle("修改資料");
+        ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        context.setTitle("修改資料");
         gson = new Gson();
         setSpinner();
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -125,7 +138,7 @@ public class UpdateSpend extends Fragment {
         strings.add("每周");
         strings.add("每月");
         strings.add("每年");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, strings);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, strings);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setAdapter(arrayAdapter);
     }
@@ -367,7 +380,7 @@ public class UpdateSpend extends Fragment {
         item.put("image", R.drawable.add);
         item.put("text", "新增");
         items.add(item);
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+        SimpleAdapter adapter = new SimpleAdapter(context,
                 items, R.layout.main_item, new String[]{"image", "text"},
                 new int[]{R.id.image, R.id.text});
         firstG.setAdapter(adapter);
@@ -409,7 +422,7 @@ public class UpdateSpend extends Fragment {
         item.put("image", R.drawable.add);
         item.put("text", "新增");
         items.add(item);
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+        SimpleAdapter adapter = new SimpleAdapter(context,
                 items, R.layout.main_item, new String[]{"image", "text"},
                 new int[]{R.id.image, R.id.text});
         secondG.setAdapter(adapter);
@@ -489,7 +502,7 @@ public class UpdateSpend extends Fragment {
                     spinneritem.add(" " + String.valueOf(i) + "月");
                 }
             }
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, spinneritem);
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, spinneritem);
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             choiceday.setAdapter(arrayAdapter);
             choiceday.setVisibility(View.VISIBLE);
@@ -567,27 +580,27 @@ public class UpdateSpend extends Fragment {
 
             if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "主項目不能空白");
+                Common.showToast(context, "主項目不能空白");
                 return;
             }
 
             //無法分類自己設分類
             if (name.getText().toString().trim().equals("O") || name.getText().toString().trim().equals("0")) {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "主項目不能為其他");
+                Common.showToast(context, "主項目不能為其他");
                 return;
             }
 
             if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
                 secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "次項目不能空白");
+                Common.showToast(context, "次項目不能空白");
                 return;
             }
 
             //無法分類自己設分類
             if (secondname.getText().toString().trim().equals("O") || secondname.getText().toString().equals("0")) {
                 secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "次項目不能為其他");
+                Common.showToast(context, "次項目不能為其他");
                 return;
             }
 
@@ -609,7 +622,7 @@ public class UpdateSpend extends Fragment {
 
             if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
                 name.setError(" ");
-                Common.showToast(getActivity(), "日期不能空白");
+                Common.showToast(context, "日期不能空白");
                 return;
             }
 
@@ -637,7 +650,7 @@ public class UpdateSpend extends Fragment {
             setConsume();
             consumeDB.update(consumeVO);
             goBackFramgent();
-            Common.showToast(getActivity(), "修改成功");
+            Common.showToast(context, "修改成功");
 
         }
     }
@@ -688,7 +701,7 @@ public class UpdateSpend extends Fragment {
             MultiTrackerActivity.refresh = true;
             BarcodeGraphic.hashMap = new HashMap<>();
             setConsume();
-            Intent intent = new Intent(UpdateSpend.this.getActivity(), MultiTrackerActivity.class);
+            Intent intent = new Intent(UpdateSpend.this.context, MultiTrackerActivity.class);
             intent.putExtra("action","UpdateSpend");
             intent.putExtra("bundle",UpdateSpend.this.getArguments());
             startActivityForResult(intent, 6);
@@ -786,26 +799,26 @@ public class UpdateSpend extends Fragment {
             secondname.setBackgroundColor(Color.parseColor("#FFEE99"));
             if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "主項目不能空白");
+                Common.showToast(context, "主項目不能空白");
                 return;
             }
 
             if (name.getText().toString().trim().equals("O") || name.getText().toString().trim().equals("0")) {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "主項目不能為其他");
+                Common.showToast(context, "主項目不能為其他");
                 return;
             }
 
 
             if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
                 secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "次項目不能空白");
+                Common.showToast(context, "次項目不能空白");
                 return;
             }
 
             if (secondname.getText().toString().trim().equals("O") || secondname.getText().toString().trim().equals("0")) {
                 secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(getActivity(), "次項目不能為其他");
+                Common.showToast(context, "次項目不能為其他");
                 return;
             }
 
@@ -826,7 +839,7 @@ public class UpdateSpend extends Fragment {
 
             if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
                 name.setError(" ");
-                Common.showToast(getActivity(), "日期不能空白");
+                Common.showToast(context, "日期不能空白");
                 return;
             }
 
@@ -924,7 +937,7 @@ public class UpdateSpend extends Fragment {
             MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
             MainActivity.bundles.remove(MainActivity.bundles.size()-1);
             goBackFramgent();
-            Common.showToast(getActivity(), "修改成功");
+            Common.showToast(context, "修改成功");
         }
     }
 

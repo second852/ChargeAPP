@@ -1,26 +1,17 @@
 package com.chargeapp.whc.chargeapp.Control;
 
-import android.annotation.TargetApi;
-import android.app.ProgressDialog;
+
 import android.graphics.Bitmap;
-import android.net.http.SslError;
-import android.os.Build;
 import android.os.Bundle;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.ClientCertRequest;
 import android.webkit.JsResult;
-import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -39,7 +30,6 @@ public class EleNewCarrier extends Fragment {
     private WebView webView;
     protected ProgressBar myProgressBar;
     private TextView showError;
-    private SwipeRefreshLayout reSw;
     private String url;
 
     @Nullable
@@ -49,17 +39,7 @@ public class EleNewCarrier extends Fragment {
         webView = view.findViewById(R.id.webView);
         myProgressBar = view.findViewById(R.id.myProgressBar);
         showError = view.findViewById(R.id.showError);
-        reSw=view.findViewById(R.id.reSw);
         url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/generalCarrierRegBlank?UUID=second&appID=EINV3201711184648";
-        reSw.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                reSw.setRefreshing(true);
-                webViewSetting();
-                showError.setVisibility(View.GONE);
-                reSw.setRefreshing(false);
-            }
-        });
         webViewSetting();
         return view;
     }
@@ -67,7 +47,9 @@ public class EleNewCarrier extends Fragment {
     private void webViewSetting() {
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setBuiltInZoomControls(true);//设置缩放按钮
-        webView.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
+        webView.setInitialScale(1);
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setAllowContentAccess(true);
         webView.getSettings().setAppCacheEnabled(true);

@@ -1,6 +1,8 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -45,15 +47,26 @@ public class GoalInsert extends Fragment {
     private GoalDB goalDB;
     private String action;
     private ArrayList<String> listDayStatue;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.goal_setgoal, container, false);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         action= (String) getArguments().getSerializable("action");
-        getActivity().setTitle("新增目標");
+        context.setTitle("新增目標");
         findViewById(view);
         setSpinner();
         limitP.setOnClickListener(new showDate());
@@ -73,7 +86,7 @@ public class GoalInsert extends Fragment {
         listDayStatue.add(" 每周 ");
         listDayStatue.add(" 每月 ");
         listDayStatue.add(" 每年 ");
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,listDayStatue);
+        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(context,R.layout.spinneritem,listDayStatue);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         remindS.setAdapter(arrayAdapter);
     }
@@ -92,7 +105,7 @@ public class GoalInsert extends Fragment {
         }else{
             spinneritem.add(" 儲蓄 ");
         }
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
+        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(context,R.layout.spinneritem,spinneritem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         spinnerT.setAdapter(arrayAdapter);
     }
@@ -208,7 +221,7 @@ public class GoalInsert extends Fragment {
                 }
             }
 
-            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
+            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(context,R.layout.spinneritem,spinneritem);
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             remindD.setAdapter(arrayAdapter);
             remindD.setVisibility(View.VISIBLE);
@@ -283,7 +296,7 @@ public class GoalInsert extends Fragment {
                 if(day==null||day.length()<=0)
                 {
                     limitP.setError("不能空白");
-                    Common.showToast(getActivity(),"不能空白");
+                    Common.showToast(context,"不能空白");
                     return;
                 }
                 String[] dates = day.split("/");
@@ -292,7 +305,7 @@ public class GoalInsert extends Fragment {
                 if(d.getTime()<System.currentTimeMillis())
                 {
                     limitP.setError(" ");
-                    Common.showToast(getActivity(),"不能過去時間");
+                    Common.showToast(context,"不能過去時間");
                     return;
                 }
                 goalVO.setEndTime(d);
@@ -320,7 +333,7 @@ public class GoalInsert extends Fragment {
             }
             fragmentTransaction.replace(R.id.body, fragment);
             fragmentTransaction.commit();
-            Common.showToast(getActivity(),"新增成功!");
+            Common.showToast(context,"新增成功!");
         }
     }
 
@@ -338,7 +351,7 @@ public class GoalInsert extends Fragment {
                 spinneritem.add(" 每月 ");
                 spinneritem.add(" 每年 ");
             }
-            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),R.layout.spinneritem,spinneritem);
+            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(context,R.layout.spinneritem,spinneritem);
             arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
             choiceStatue.setAdapter(arrayAdapter);
         }

@@ -23,7 +23,6 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
     private ViewPager SelAllviewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button exportMoney, importMoney, goneMoney;
-    private HorizontalScrollView choiceitem;
     private LinearLayout text;
     private int nowpoint = 0;
     private float movefirst;
@@ -38,7 +37,6 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
         goneMoney = view.findViewById(R.id.goneD);
         exportMoney = view.findViewById(R.id.exportD);
         importMoney = view.findViewById(R.id.showD);
-        choiceitem = view.findViewById(R.id.choiceitem);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         SelAllviewPager.setAdapter(mAdapterViewPager);
         SelAllviewPager.addOnPageChangeListener(this);

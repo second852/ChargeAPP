@@ -1,6 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
-import android.app.ListActivity;
+
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -8,16 +8,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.opengl.Visibility;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.RemoteViews;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
-import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -25,11 +21,10 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+
 
 /**
  * Created by 1709008NB01 on 2018/3/13.

@@ -1,6 +1,8 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,7 +32,18 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
     private LinearLayout text;
     private int nowpoint = 0;
     private Button exportMoney;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -51,23 +64,23 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
 
 
     public void setloyout() {
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        ActionBar actionBar = ((AppCompatActivity) context).getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
-        View actionbarLayout = LayoutInflater.from(getActivity()).inflate(R.layout.actionbar_layout, null);
+        View actionbarLayout = LayoutInflater.from(context).inflate(R.layout.actionbar_layout, null);
         actionBar.setCustomView(actionbarLayout);
         setcurrentpage();
         howtogetprice = actionbarLayout.findViewById(R.id.howtogetprice);
         howtogetprice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+                ActionBar actionBar = ((AppCompatActivity) context).getSupportActionBar();
                 actionBar.setDisplayShowCustomEnabled(false);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 List<Fragment> fragments = getFragmentManager().getFragments();
                 for (Fragment f : fragments) {
                     fragmentTransaction.remove(f);
                 }
-                getActivity().setTitle(R.string.text_HowGet);
+                context.setTitle(R.string.text_HowGet);
                 Fragment fragment = new HowGetPrice();
                 fragmentTransaction.replace(R.id.body, fragment);
                 fragmentTransaction.commit();

@@ -1,5 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -32,7 +34,18 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
     private float movefirst;
     public TextView mainTitle;
     public static int position;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -50,7 +63,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
         setcurrentpage();
         text = view.findViewById(R.id.text);
         movefirst = -importMoney.getWidth();
-        getActivity().setTitle(R.string.text_DataPicture);
+        context.setTitle(R.string.text_DataPicture);
         return view;
     }
 

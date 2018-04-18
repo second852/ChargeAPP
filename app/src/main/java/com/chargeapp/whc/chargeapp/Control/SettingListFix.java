@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -56,12 +57,24 @@ public class SettingListFix extends Fragment {
     private TextView message;
     public static int p;
     public static int spinnerC;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         gson=new Gson();
         View view = inflater.inflate(R.layout.setting_list, container, false);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         listView = view.findViewById(R.id.list);
@@ -80,7 +93,7 @@ public class SettingListFix extends Fragment {
         ArrayList<String> spinnerItem = new ArrayList<>();
         spinnerItem.add("定期支出");
         spinnerItem.add("定期收入");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, spinnerItem);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, spinnerItem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         typeH.setAdapter(arrayAdapter);
         typeH.setSelection(spinnerC);
@@ -96,7 +109,7 @@ public class SettingListFix extends Fragment {
         }
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {
-            listView.setAdapter(new ListAdapter(getActivity(), objects));
+            listView.setAdapter(new ListAdapter(context, objects));
         } else {
             adapter.setObjects(objects);
             adapter.notifyDataSetChanged();

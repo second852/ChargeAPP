@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -45,6 +46,18 @@ public class SelectListModelIM extends Fragment {
     private TextView DRcarrier;
     private TextView message;
     private Gson gson;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
 
     @Override
@@ -52,7 +65,7 @@ public class SelectListModelIM extends Fragment {
         View view = inflater.inflate(R.layout.select_con_list, container, false);
         gson = new Gson();
         findViewById(view);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         setLayout();
         return view;
@@ -74,7 +87,7 @@ public class SelectListModelIM extends Fragment {
 
         ListAdapter baseAdapter = (ListAdapter) listView.getAdapter();
         if (baseAdapter == null) {
-            listView.setAdapter(new ListAdapter(getActivity(), bankVOS));
+            listView.setAdapter(new ListAdapter(context, bankVOS));
         } else {
             baseAdapter.setBankVOs(bankVOS);
             baseAdapter.notifyDataSetChanged();

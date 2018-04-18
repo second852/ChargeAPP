@@ -41,12 +41,19 @@ public class EleDonateRecord extends Fragment {
     private List<CarrierVO> carrierVOS;
     private List<InvoiceVO> invoiceVOS;
     public  int choiceca = 0;
+    private Context context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context=context;
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.ele_setdenote_record, container, false);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
@@ -63,7 +70,7 @@ public class EleDonateRecord extends Fragment {
         {
             SpinnerItem.add(c.getCarNul());
         }
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, SpinnerItem);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceModel.setAdapter(arrayAdapter);
         choiceModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -93,7 +100,7 @@ public class EleDonateRecord extends Fragment {
         ListAdapter adapter= (ListAdapter) donateRL.getAdapter();
         if(adapter==null)
         {
-            donateRL.setAdapter(new ListAdapter(getActivity(),invoiceVOS));
+            donateRL.setAdapter(new ListAdapter(context,invoiceVOS));
         }else{
             adapter.setObjects(invoiceVOS);
             adapter.notifyDataSetChanged();

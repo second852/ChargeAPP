@@ -1,6 +1,8 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -74,6 +76,18 @@ public class SelectIncome extends Fragment {
     private List<String> type;
     public static Calendar end;
     public static int Statue;
+    private Activity context;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -81,7 +95,7 @@ public class SelectIncome extends Fragment {
         month = end.get(Calendar.MONTH);
         year = end.get(Calendar.YEAR);
         day=end.get(Calendar.DAY_OF_MONTH);
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(context);
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());
@@ -105,7 +119,7 @@ public class SelectIncome extends Fragment {
         ArrayList<String> SpinnerItem1 = new ArrayList<>();
         SpinnerItem1.add(" 月 ");
         SpinnerItem1.add(" 年 ");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.spinneritem, SpinnerItem1);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem1);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choicePeriod.setAdapter(arrayAdapter);
     }

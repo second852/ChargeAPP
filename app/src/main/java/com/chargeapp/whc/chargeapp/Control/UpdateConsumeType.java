@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -59,19 +60,30 @@ public class UpdateConsumeType extends Fragment {
     private ProgressDialog progressDialog;
     private Handler handler;
     private String oldName;
+    private Activity context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.updae_con_type, container, false);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
-        Common.setChargeDB(getActivity());
+        ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        Common.setChargeDB(context);
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        progressDialog=new ProgressDialog(getActivity());
+        progressDialog=new ProgressDialog(context);
         handler=new Handler();
         findViewById(view);
         setGridPicture();
@@ -106,7 +118,7 @@ public class UpdateConsumeType extends Fragment {
             item.put("text", " ");
             items.add(item);
         }
-        SimpleAdapter adapter = new SimpleAdapter(getActivity(),
+        SimpleAdapter adapter = new SimpleAdapter(context,
                 items, R.layout.main_item, new String[]{"image", "text"},
                 new int[]{R.id.image, R.id.text});
         choiceG.setAdapter(adapter);
@@ -233,15 +245,15 @@ public class UpdateConsumeType extends Fragment {
             fragment.setArguments(bundle);
             switchFramgent(fragment);
             progressDialog.cancel();
-            Common.showToast(getActivity(), "修改成功");
+            Common.showToast(context, "修改成功");
         }
     };
 
     public void switchFramgent(Fragment fragment) {
         //關閉鍵盤
-        View v =UpdateConsumeType.this.getActivity().getCurrentFocus();
+        View v =UpdateConsumeType.this.context.getCurrentFocus();
         if (v != null) {
-            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         }
 
