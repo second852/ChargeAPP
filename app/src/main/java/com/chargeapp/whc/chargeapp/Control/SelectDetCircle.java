@@ -30,6 +30,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -54,7 +56,7 @@ public class SelectDetCircle extends Fragment {
     private boolean ShowConsume;
     private boolean ShowAllCarrier;
     private boolean noShowCarrier;
-    private int year, month, day, index,statue;
+    private int year, month, day, index,statue,dweek;
     private int carrier;
     private List<InvoiceVO> invoiceVOS;
     private List<ConsumeVO> consumeVOS;
@@ -68,6 +70,9 @@ public class SelectDetCircle extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        AdView adView = (AdView) view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
         setDB();
         findViewById(view);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
@@ -81,21 +86,18 @@ public class SelectDetCircle extends Fragment {
         index = (int) getArguments().getSerializable("index");
         carrier = (int) getArguments().getSerializable("carrier");
         statue= (int) getArguments().getSerializable("statue");
+        dweek= (int) getArguments().getSerializable("dweek");
         List<CarrierVO> carrierVOS=carrierDB.getAll();
         if(carrierVOS.size()<=0)
         {
             noShowCarrier=true;
         }
-        if(statue==0)
-        {
-            start = new GregorianCalendar(year, month, day + index, 0, 0, 0);
-            end = new GregorianCalendar(year, month, day + index, 23, 59, 59);
-        }else{
-             start = new GregorianCalendar(year, month, day + index, 0, 0, 0);
-             end = new GregorianCalendar(year, month, day + index, 23, 59, 59);
-        }
 
-        Log.d("XXXXXX", Common.sOne.format(new Date(start.getTimeInMillis())) + " / " + Common.sOne.format(new Date(end.getTimeInMillis())));
+        if(statue==1) {
+            day = day - dweek + 1 + index;
+        }
+        start = new GregorianCalendar(year, month, day , 0, 0, 0);
+        end = new GregorianCalendar(year, month, day, 23, 59, 59);
         int total = 0;
         if (ShowConsume) {
             consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
@@ -181,7 +183,7 @@ public class SelectDetCircle extends Fragment {
         // create pie data set
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
         dataSet.setSliceSpace(0);
-        dataSet.setSelectionShift(30);
+        dataSet.setSelectionShift(50);
         dataSet.setColors(Common.getColor(yVals1.size()));
         dataSet.setValueLinePart1OffsetPercentage(90.f);
         dataSet.setValueLinePart1Length(1f);
@@ -228,6 +230,7 @@ public class SelectDetCircle extends Fragment {
             pieChart.setDrawHoleEnabled(true);
             pieChart.setHoleRadius(7);
             pieChart.setTransparentCircleRadius(10);
+
             // enable rotation of the chart by touch
             pieChart.setRotationAngle(60);
             pieChart.setRotationEnabled(true);
@@ -267,7 +270,7 @@ public class SelectDetCircle extends Fragment {
             bundle.putSerializable("noShowCarrier", noShowCarrier);
             bundle.putSerializable("year", year);
             bundle.putSerializable("month", month);
-            bundle.putSerializable("day", day + index);
+            bundle.putSerializable("day", day );
             bundle.putSerializable("key", key);
             bundle.putSerializable("carrier", carrier);
             bundle.putSerializable("index",index);

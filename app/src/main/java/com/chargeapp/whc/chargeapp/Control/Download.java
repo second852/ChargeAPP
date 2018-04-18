@@ -95,7 +95,7 @@ public class Download extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
             ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);;
             JobInfo.Builder builder = new JobInfo.Builder(0, mServiceComponent);
             builder.setPeriodic(1000*60);
@@ -103,16 +103,10 @@ public class Download extends AppCompatActivity {
             builder.setRequiresCharging(false);
             builder.setRequiresDeviceIdle(false);
             JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            JobInfo job=tm.getPendingJob(0);
-            if(job!=null)
-            {
-                tm.cancel(0);
-            }
+            tm.cancel(0);
             tm.schedule(builder.build());
-        }
-
-        progressT=findViewById(R.id.progressT);
-        percentage=findViewById(R.id.percentage);
+            progressT=findViewById(R.id.progressT);
+            percentage=findViewById(R.id.percentage);
 
         //setDB
         Common.setChargeDB(Download.this);

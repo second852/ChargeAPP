@@ -48,12 +48,7 @@
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode,face" />
 
-        <receiver android:name=".Control.BootReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.DATE_CHANGED" />
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            </intent-filter>
-        </receiver>
+        <receiver android:name=".Control.BootReceiver"/>
         <receiver android:name=".Control.SecondReceiver" />
         <receiver android:name=".Control.ThirdReceiver" />
 

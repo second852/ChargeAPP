@@ -39,6 +39,7 @@ import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.google.zxing.qrcode.encoder.QRCode;
 
 import java.lang.reflect.Type;
 import java.sql.Date;
@@ -151,10 +152,11 @@ public class UpdateSpend extends Fragment {
         money.setText(String.valueOf(consumeVO.getMoney()));
         date.setText(Common.sTwo.format(consumeVO.getDate()));
 
-        //自動產生不能設fix
+        //自動產生不能設fix和QRcode 掃描
         if (consumeVO.isAuto()) {
             fixdate.setVisibility(View.GONE);
             fixDateT.setVisibility(View.GONE);
+            qrcode.setVisibility(View.GONE);
             return;
         }
 

@@ -1,11 +1,14 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -132,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
 
         super.onStart();
         (getSupportActionBar()).setDisplayShowCustomEnabled(false);
-
         if(oldFramgent==null)
         {
             oldFramgent = new LinkedList<>();
@@ -457,16 +459,13 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     String base64 = EleNulAll[5];
                     byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
-                    if (EleNulAll[3].equals("1")) {
-                        sb.append(new String(bytes, "UTF-8") + " : " +InsertSpend.consumeVO.getMoney()+" X = "+InsertSpend.consumeVO.getMoney());
-                    } else {
-                        String debase64 = new String(bytes, "UTF-8");
-                        String[] ddd = debase64.trim().split(":");
-                        for (int j = 0; j < ddd.length; j = j + 2) {
-                            int total=Integer.valueOf( ddd[j + 2].trim())*Integer.valueOf(ddd[j + 1].trim());
+                    String debase64 = new String(bytes, "UTF-8");
+                    String[] ddd = debase64.trim().split(":");
+                    for (int j = 0; j < ddd.length; j = j +3) {
+                            int total=Integer.valueOf(ddd[j + 2].trim())*Integer.valueOf(ddd[j + 1].trim());
                             sb.append(ddd[j]).append(" :\n").append(ddd[j + 2] + " X ").append(ddd[j + 1]).append( " = "+total+"\n");
                         }
-                    }
+
                 } catch (Exception e) {
                     Common.showToast(this, "在試一次");
                 }
@@ -517,7 +516,7 @@ public class MainActivity extends AppCompatActivity {
                 InsertSpend.consumeVO.setDetailname(sb.toString());
                 InsertSpend.consumeVO = getType(InsertSpend.consumeVO);
             }else{
-                InsertSpend.consumeVO.setDetailname(" ");
+                InsertSpend.consumeVO.setDetailname("");
                 InsertSpend.consumeVO.setMaintype("O");
                 InsertSpend.consumeVO.setSecondType("O");
             }
@@ -548,20 +547,11 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     String base64 = EleNulAll[5];
                     byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
-                    if (EleNulAll[3].equals("1")) {
-                        sb.append(new String(bytes, "UTF-8") + " : " +consumeVO.getMoney()+" X = "+consumeVO.getMoney());
-                    } else {
-                        String debase64 = new String(bytes, "UTF-8");
-                        String[] ddd = debase64.trim().split(":");
-                        for (int j = 0; j < ddd.length; j = j + 2) {
-                            int total=Integer.valueOf(ddd[j + 2].trim())*Integer.valueOf(ddd[j + 1].trim());
-                            if(ddd[j].length()>5)
-                            {
-                                sb.append(ddd[j] + " :\n" + ddd[j + 2] + " X " + ddd[j + 1] + " = "+total+"\n");
-                            }else{
-                                sb.append(ddd[j] + " : " + ddd[j + 2] + " X " + ddd[j + 1] + " = "+total+"\n");
-                            }
-                        }
+                    String debase64 = new String(bytes, "UTF-8");
+                    String[] ddd = debase64.trim().split(":");
+                    for (int j = 0; j < ddd.length; j = j +3) {
+                        int total=Integer.valueOf(ddd[j + 2].trim())*Integer.valueOf(ddd[j + 1].trim());
+                        sb.append(ddd[j]).append(" :\n").append(ddd[j + 2] + " X ").append(ddd[j + 1]).append( " = "+total+"\n");
                     }
                 } catch (Exception e) {
                     Common.showToast(this, "在試一次");
@@ -583,12 +573,7 @@ public class MainActivity extends AppCompatActivity {
                         for (JsonObject j : b) {
                             int total=Integer.valueOf(j.get("unitPrice").getAsString().trim())*Integer.valueOf(j.get("quantity").getAsString().trim());
                             String des=j.get("description").getAsString();
-                            if(des.trim().length()>5)
-                            {
-                                sb.append(des + " :\n"+j.get("unitPrice").getAsString()+" X "+ j.get("quantity").getAsString() + " = " +total+"\n");
-                            }else{
-                                sb.append(des+ " : "+j.get("unitPrice").getAsString()+" X "+ j.get("quantity").getAsString() + " = " +total+"\n");
-                            }
+                            sb.append(des + " :\n"+j.get("unitPrice").getAsString()+" X "+ j.get("quantity").getAsString() + " = " +total+"\n");
                         }
                     }else {
                         sb.append("該筆發票並無開立");
@@ -604,12 +589,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         for (int i = 5; i < EleNulAll.length; i = i + 3) {
                             int total=Integer.valueOf(EleNulAll[i +2].trim())*Integer.valueOf(EleNulAll[i + 1].trim());
-                            if(EleNulAll[i].length()>5)
-                            {
-                                sb.append(EleNulAll[i] + " :\n" + EleNulAll[i +2] + " X " + EleNulAll[i + 1]+" = "+total+"\n");
-                            }else {
-                                sb.append(EleNulAll[i] + " : " + EleNulAll[i +2] + " X " + EleNulAll[i + 1]+" = "+total+"\n");
-                            }
+                            sb.append(EleNulAll[i] + " :\n" + EleNulAll[i +2] + " X " + EleNulAll[i + 1]+" = "+total+"\n");
                         }
                     }
                 }catch (Exception e)
@@ -623,7 +603,7 @@ public class MainActivity extends AppCompatActivity {
                 consumeVO.setDetailname(sb.toString());
                 consumeVO = getType(consumeVO);
             }else{
-                consumeVO.setDetailname(" ");
+                consumeVO.setDetailname("");
                 consumeVO.setMaintype("O");
                 consumeVO.setSecondType("O");
             }
@@ -710,9 +690,6 @@ public class MainActivity extends AppCompatActivity {
                     fragment.setArguments(bundle);
                 } else if (action.equals("SelectDetCircle")) {
                     fragment = new SelectDetCircle();
-                    int index = (int) bundle.getSerializable("index");
-                    int day = (int) bundle.getSerializable("day");
-                    bundle.putSerializable("day", day - index);
                     fragment.setArguments(bundle);
                 } else if (action.equals("SettingListFix")) {
                     fragment = new SettingListFix();

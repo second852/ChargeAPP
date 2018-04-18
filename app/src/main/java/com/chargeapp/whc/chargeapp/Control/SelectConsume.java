@@ -728,7 +728,7 @@ public class SelectConsume extends Fragment {
                 bundle.putSerializable("noShowCarrier", noShowCarrier);
                 bundle.putSerializable("year", year);
                 bundle.putSerializable("month", month);
-                bundle.putSerializable("day", day-dweek+1);
+                bundle.putSerializable("day", day);
                 bundle.putSerializable("index", (int) e.getX());
                 bundle.putSerializable("carrier",choiceD);
                 bundle.putSerializable("total",(int)e.getY());

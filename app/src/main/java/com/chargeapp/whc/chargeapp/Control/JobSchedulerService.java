@@ -8,8 +8,9 @@ import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
@@ -44,9 +45,11 @@ public class JobSchedulerService extends JobService {
     private Calendar setNewTime;
     private int id;
     private GoalDB goalDB;
+    private Intent alarmIntent;
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
+
         gson = new Gson();
         Calendar calendar = Calendar.getInstance();
         sf = new SimpleDateFormat("yyyy-MM-dd");
@@ -56,10 +59,10 @@ public class JobSchedulerService extends JobService {
 
         //確認今天是否重設過
         boolean todaySet = sharedPreferences.getBoolean(sf.format(new Date(calendar.getTimeInMillis())), false);
+
         if (todaySet) {
             return true;
         }
-
 
         id = 0;
         chargeAPPDB = new ChargeAPPDB(JobSchedulerService.this);
@@ -67,6 +70,13 @@ public class JobSchedulerService extends JobService {
         bankDB = new BankDB(chargeAPPDB.getReadableDatabase());
         goalDB = new GoalDB(chargeAPPDB.getReadableDatabase());
         List<BankVO> bankVOS = bankDB.getFixDate();
+
+        //版本判斷
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            alarmIntent = new Intent(this, ThirdReceiver.class);
+        }else{
+            alarmIntent = new Intent(this, SecondReceiver.class);
+        }
 
 
         int hour, min;
@@ -331,7 +341,7 @@ public class JobSchedulerService extends JobService {
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
-        return false;
+        return true;
     }
 
 
@@ -345,7 +355,6 @@ public class JobSchedulerService extends JobService {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("action", "notifyNul");
                 bundle.putSerializable("id", id);
-                Intent alarmIntent = new Intent(context, ThirdReceiver.class);
                 alarmIntent.putExtras(bundle);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
                 manager.set(AlarmManager.RTC_WAKEUP, setNewTime.getTimeInMillis(), pendingIntent);
@@ -360,11 +369,9 @@ public class JobSchedulerService extends JobService {
         bundle.putSerializable("action", "notifyC");
         bundle.putSerializable("comsumer", message);
         bundle.putSerializable("id", id);
-        Intent alarmIntent = new Intent(context, ThirdReceiver.class);
         alarmIntent.putExtras(bundle);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, id);
         manager.set(AlarmManager.RTC_WAKEUP, settime, pendingIntent);
-        Log.d("xxxx", message);
     }
 
     public void NotifyUse(Context context, GoalVO goalVO) {
