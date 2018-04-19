@@ -76,92 +76,109 @@ public class Download extends AppCompatActivity {
             R.drawable.ticket, R.drawable.supplement, R.drawable.subway, R.drawable.rent, R.drawable.rentfilled, R.drawable.phonet,
             R.drawable.origin, R.drawable.movie, R.drawable.microphone, R.drawable.lunch, R.drawable.losemoney, R.drawable.lipgloss, R.drawable.train
             , R.drawable.salary, R.drawable.lotto, R.drawable.bouns, R.drawable.interest, R.drawable.fund, R.drawable.bank, R.drawable.health,
-            R.drawable.shose,R.drawable.book,R.drawable.setting,R.drawable.search,R.drawable.export
+            R.drawable.shose, R.drawable.book, R.drawable.setting, R.drawable.search, R.drawable.export
     };
 
     private String food = "堡 三明治 優酪乳 肉 飯 雙手卷 腿 麵 麵包 熱狗 雞 手卷 肉 粉 蔬菜 牛 豬 起司 花生 豆 蛋 魚 菜 瓜 黑胡椒 土司 泡芙 排";
     private String drink = "咖啡 茶 豆漿 拿鐵 乳 飲 ml 罐 酒 杯 水 奶 冰 珍珠";
-    private Handler firstH,secondH;
+    private Handler firstH, secondH;
     private GetSQLDate getSQLDate;
-    private TextView percentage,progressT;
+    private TextView percentage, progressT;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.download_main);
+        progressT = findViewById(R.id.progressT);
+        percentage = findViewById(R.id.percentage);
+        AdView adView = (AdView) this.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
+
+    private void setJob()
+    {
+        int jobId=0;
+        JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        boolean hasBeenScheduled=false;
+        for (JobInfo jobInfo : tm.getAllPendingJobs()) {
+            if (jobInfo.getId() == jobId) {
+                hasBeenScheduled = true;
+                break;
+            }
+        }
+        if(hasBeenScheduled)
+        {
+            return;
+        }
+        ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);
+        JobInfo.Builder builder = new JobInfo.Builder(jobId, mServiceComponent);
+        builder.setPeriodic(1000 * 30);
+        builder.setPersisted(true);
+        builder.setRequiresCharging(false);
+        builder.setRequiresDeviceIdle(false);
+        tm.schedule(builder.build());
+    }
+
+
 
     @Override
     protected void onStart() {
         super.onStart();
 
-            ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);;
-            JobInfo.Builder builder = new JobInfo.Builder(0, mServiceComponent);
-            builder.setPeriodic(1000*60);
-            builder.setPersisted(true);
-            builder.setRequiresCharging(false);
-            builder.setRequiresDeviceIdle(false);
-            JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            tm.cancel(0);
-            tm.schedule(builder.build());
-            progressT=findViewById(R.id.progressT);
-            percentage=findViewById(R.id.percentage);
+        //setJob
+        setJob();
 
         //setDB
         Common.setChargeDB(Download.this);
         (getSupportActionBar()).hide();
-        firstH=new Handler();
+        firstH = new Handler();
         firstH.post(runnable);
-        AdView adView = (AdView) this.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
         ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-        if(mNetworkInfo!=null)
-        {
-            getSQLDate=new GetSQLDate(this);
+        if (mNetworkInfo != null) {
+            getSQLDate = new GetSQLDate(this);
             getSQLDate.setPercentage(percentage);
             getSQLDate.setProgressT(progressT);
             getSQLDate.execute("download");
-        }else{
+        } else {
             tonNewActivity();
-            Common.showToast(this,"網路沒有開啟，無法下載!");
+            Common.showToast(this, "網路沒有開啟，無法下載!");
         }
 //        tonNewActivity();
     }
 
-    private Runnable runnable=new Runnable() {
+    private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            SelectIncome.end= Calendar.getInstance();
-            SelectIncome.Statue=0;
-            Calendar calendar=Calendar.getInstance();
-            SelectListModelCom.year=calendar.get(Calendar.YEAR);
-            SelectListModelCom.month=calendar.get(Calendar.MONTH);
-            SelectListModelCom.p=0;
-            SelectListModelIM.year=calendar.get(Calendar.YEAR);
-            SelectListModelIM.month=calendar.get(Calendar.MONTH);
-            SelectListModelIM.p=0;
-            SelectConsume.Statue=1;
-            SelectConsume.end=Calendar.getInstance();
-            SelectConsume.CStatue=0;
-            SettingListFix.spinnerC=0;
-            SettingListFix.p=0;
+            SelectIncome.end = Calendar.getInstance();
+            SelectIncome.Statue = 0;
+            Calendar calendar = Calendar.getInstance();
+            SelectListModelCom.year = calendar.get(Calendar.YEAR);
+            SelectListModelCom.month = calendar.get(Calendar.MONTH);
+            SelectListModelCom.p = 0;
+            SelectListModelIM.year = calendar.get(Calendar.YEAR);
+            SelectListModelIM.month = calendar.get(Calendar.MONTH);
+            SelectListModelIM.p = 0;
+            SelectConsume.Statue = 1;
+            SelectConsume.end = Calendar.getInstance();
+            SelectConsume.CStatue = 0;
+            SettingListFix.spinnerC = 0;
+            SettingListFix.p = 0;
             setdate();
         }
     };
 
 
-    private Runnable runToNeW=new Runnable() {
+    private Runnable runToNeW = new Runnable() {
         @Override
         public void run() {
             (new Common()).AutoSetPrice();
-            String a=getIntent().getStringExtra("action");
-            Intent intent=new Intent();
-            if(a!=null)
-            {
-                intent.putExtra("action",a);
+            String a = getIntent().getStringExtra("action");
+            Intent intent = new Intent();
+            if (a != null) {
+                intent.putExtra("action", a);
             }
             startActivity(intent.setClass(Download.this, MainActivity.class));
             finish();
@@ -169,32 +186,24 @@ public class Download extends AppCompatActivity {
     };
 
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (firstH!=null)
-        {
+        if (firstH != null) {
             firstH.removeCallbacks(runnable);
         }
-        if(getSQLDate!=null)
-        {
+        if (getSQLDate != null) {
             getSQLDate.cancel(true);
         }
-        if(secondH!=null)
-        {
+        if (secondH != null) {
             secondH.removeCallbacks(runToNeW);
         }
     }
 
-    public void tonNewActivity()
-    {
-        secondH=new Handler();
-        secondH.postDelayed(runToNeW,500);
+    public void tonNewActivity() {
+        secondH = new Handler();
+        secondH.postDelayed(runToNeW, 500);
     }
-
-
-
 
 
     public void setdate() {
