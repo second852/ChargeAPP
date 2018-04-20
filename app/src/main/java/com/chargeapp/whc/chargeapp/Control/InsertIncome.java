@@ -394,6 +394,8 @@ public class InsertIncome extends Fragment {
             money.setText("");
             fixdate.setChecked(false);
             detailname.setText("");
+            choiceStatue.setSelection(0);
+            choiceday.setSelection(0);
         }
     }
 
@@ -487,6 +489,8 @@ public class InsertIncome extends Fragment {
             money.setText("");
             fixdate.setChecked(false);
             detailname.setText("");
+            choiceStatue.setSelection(0);
+            choiceday.setSelection(0);
         }
     }
 }

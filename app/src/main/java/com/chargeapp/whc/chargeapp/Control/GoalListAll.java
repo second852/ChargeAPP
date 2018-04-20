@@ -23,6 +23,8 @@ import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -62,6 +64,9 @@ public class GoalListAll extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.goal_list, container, false);
+        AdView adView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
         Common.setChargeDB(context);
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -167,10 +172,9 @@ public class GoalListAll extends Fragment {
         public View getView(final int position, View itemView, final ViewGroup parent) {
             if (itemView == null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
-                itemView = layoutInflater.inflate(R.layout.select_con_detail_list_item, parent, false);
+                itemView = layoutInflater.inflate(R.layout.goal_list_item, parent, false);
             }
             final GoalVO goalVO = goalVOS.get(position);
-
             TextView title = itemView.findViewById(R.id.listTitle);
             TextView decribe = itemView.findViewById(R.id.listDetail);
             LinearLayout remindL = itemView.findViewById(R.id.remindL);
@@ -180,19 +184,26 @@ public class GoalListAll extends Fragment {
             Button deleteI = itemView.findViewById(R.id.deleteI);
             fixL.setVisibility(View.VISIBLE);
             title.setText(goalVO.getName());
-            String timeDec =goalVO.getTimeStatue().trim();
+            StringBuffer sb=new StringBuffer();
 
-            if (timeDec.equals("今日")) {
-                timeDec =" 起日 : \n " + Common.sTwo.format(goalVO.getStartTime()).trim() +
-                         "\n 迄日 :\n " + Common.sTwo.format(goalVO.getEndTime()).trim()+"\n" ;
-            }else{
-                timeDec=" 時態 : "+timeDec+"\n";
-            }
             if (goalVO.isNotify()) {
+                sb.append(" 1."+goalVO.getNotifyStatue().trim()).append(" "+goalVO.getNotifyDate());
+                if(goalVO.isNoWeekend()&&goalVO.getNotifyStatue().trim().equals("每天"))
+                {
+                    sb.append("假日除外");
+                }
                 remindL.setVisibility(View.VISIBLE);
             }else{
                 remindL.setVisibility(View.GONE);
             }
+            String timeDec =goalVO.getTimeStatue().trim();
+            if (timeDec.equals("今日")) {
+                timeDec ="\n 2.起日 : " + Common.sTwo.format(goalVO.getStartTime()).trim() +
+                         "\n    迄日 : " + Common.sTwo.format(goalVO.getEndTime()).trim()+"\n" ;
+            }else{
+                timeDec="\n 2.時態 : "+timeDec+"\n ";
+            }
+
 
             boolean updateGoal;
             if (goalVO.getStatue() == 1) {
@@ -211,9 +222,9 @@ public class GoalListAll extends Fragment {
                 fixT.setText("進行中");
                 updateGoal=true;
             }
-
-            timeDec=timeDec+goalVO.getType()+": "+goalVO.getMoney()+" 元";
-            decribe.setText(timeDec);
+            timeDec=timeDec+" 3."+goalVO.getType().trim()+" : "+goalVO.getMoney()+" 元";
+            sb.append(timeDec);
+            decribe.setText(sb.toString());
             if(updateGoal)
             {
                 update.setVisibility(View.VISIBLE);

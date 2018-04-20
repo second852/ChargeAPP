@@ -3,6 +3,9 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,6 +42,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -153,11 +157,55 @@ public class SettingMain extends Fragment {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         sharedPreferences.edit().putBoolean("notify",isChecked).apply();
+                        NotificationManager notificationManager= (NotificationManager) SettingMain.this.context.getSystemService(NOTIFICATION_SERVICE);
+                        notificationManager.cancelAll();
+
                         if(isChecked)
                         {
                             textView.setText("關閉提醒");
                         }else{
                             textView.setText("打開提醒");
+                            //重製job
+                            String setTime = sharedPreferences.getString("userTime", "6:00 p.m.").trim();
+                            int hour, min;
+                            if (setTime.indexOf("p") == -1) {
+                                hour = new Integer(setTime.substring(0, setTime.indexOf(":")));
+                                min = new Integer(setTime.substring(setTime.indexOf(":") + 1, setTime.indexOf("a")).trim());
+                            } else {
+                                hour = new Integer(setTime.substring(0, setTime.indexOf(":"))) + 12;
+                                min = new Integer(setTime.substring(setTime.indexOf(":") + 1, setTime.indexOf("p")).trim());
+                            }
+                            Calendar date = Calendar.getInstance();
+                            int year = date.get(Calendar.YEAR);
+                            int month = date.get(Calendar.MONTH);
+                            int day = date.get(Calendar.DAY_OF_MONTH);
+                            Calendar setNewTime = new GregorianCalendar(year, month, day, hour, min, 0);
+                            if(setNewTime.getTimeInMillis()>System.currentTimeMillis())
+                            {
+                                //避免重複執行
+                                JobScheduler tm = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                                boolean hasBeenScheduled=false;
+                                for (JobInfo jobInfo : tm.getAllPendingJobs()) {
+                                    if (jobInfo.getId() == 1) {
+                                        hasBeenScheduled = true;
+                                        break;
+                                    }
+                                }
+                                if (hasBeenScheduled) {
+                                    tm.cancel(1);
+                                }
+
+                                //重製job
+                                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+                                sharedPreferences.edit().putBoolean(sf.format(new Date(System.currentTimeMillis())), false).apply();
+                                ComponentName mServiceComponent = new ComponentName(context, JobSchedulerService.class);
+                                JobInfo.Builder builder = new JobInfo.Builder(1, mServiceComponent);
+                                builder.setMinimumLatency(1);
+                                builder.setPersisted(true);
+                                builder.setRequiresCharging(false);
+                                builder.setRequiresDeviceIdle(false);
+                                tm.schedule(builder.build());
+                            }
                         }
                     }
                 });
@@ -184,10 +232,30 @@ public class SettingMain extends Fragment {
                                 {
                                     NotificationManager notificationManager= (NotificationManager) SettingMain.this.context.getSystemService(NOTIFICATION_SERVICE);
                                     notificationManager.cancelAll();
-                                    BootReceiver bootReceiver=new BootReceiver();
-                                    Intent intent=new Intent();
-                                    intent.setAction(Intent.ACTION_DATE_CHANGED);
-                                    bootReceiver.onReceive(SettingMain.this.context,intent);
+
+                                    //避免重複執行
+                                    JobScheduler tm = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                                    boolean hasBeenScheduled=false;
+                                    for (JobInfo jobInfo : tm.getAllPendingJobs()) {
+                                        if (jobInfo.getId() == 1) {
+                                            hasBeenScheduled = true;
+                                            break;
+                                        }
+                                    }
+                                    if (hasBeenScheduled) {
+                                        tm.cancel(1);
+                                    }
+
+                                    //重製job
+                                    SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+                                    sharedPreferences.edit().putBoolean(sf.format(new Date(System.currentTimeMillis())), false).apply();
+                                    ComponentName mServiceComponent = new ComponentName(context, JobSchedulerService.class);
+                                    JobInfo.Builder builder = new JobInfo.Builder(1, mServiceComponent);
+                                    builder.setMinimumLatency(1);
+                                    builder.setPersisted(true);
+                                    builder.setRequiresCharging(false);
+                                    builder.setRequiresDeviceIdle(false);
+                                    tm.schedule(builder.build());
                                 }
                             }
                         }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();

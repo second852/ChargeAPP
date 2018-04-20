@@ -399,6 +399,8 @@ public class InsertSpend extends Fragment {
             money.setText("");
             fixdate.setChecked(false);
             number.setText("");
+            choiceStatue.setSelection(0);
+            choiceday.setSelection(0);
         }
     }
 
@@ -505,6 +507,8 @@ public class InsertSpend extends Fragment {
             money.setText("");
             fixdate.setChecked(false);
             number.setText("");
+            choiceStatue.setSelection(0);
+            choiceday.setSelection(0);
         }
     }
 

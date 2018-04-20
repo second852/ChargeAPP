@@ -31,7 +31,7 @@
                     android:id="@+id/name"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="130dp"
+                    android:layout_marginLeft="120dp"
                     android:background="#FFEE99"
                     android:inputType="text"
                     android:singleLine="true"
@@ -60,7 +60,7 @@
                     android:id="@+id/money"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="130dp"
+                    android:layout_marginLeft="120dp"
                     android:background="#FFEE99"
                     android:inputType="number"
                     android:singleLine="true"
@@ -86,7 +86,7 @@
 
                 <TextView
                     android:id="@+id/spinnerT"
-                    android:layout_marginLeft="130dp"
+                    android:layout_marginLeft="120dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"

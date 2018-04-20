@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
@@ -45,11 +46,11 @@ public class JobSchedulerService extends JobService {
     private Calendar setNewTime;
     private int id;
     private GoalDB goalDB;
-    private Intent alarmIntent;
+
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
-
+        Log.d("service","service start");
         gson = new Gson();
         Calendar calendar = Calendar.getInstance();
         sf = new SimpleDateFormat("yyyy-MM-dd");
@@ -57,12 +58,12 @@ public class JobSchedulerService extends JobService {
         boolean setNotify = sharedPreferences.getBoolean("notify", true);
         String setTime = sharedPreferences.getString("userTime", "6:00 p.m.").trim();
 
-        //確認今天是否重設過
-        boolean todaySet = sharedPreferences.getBoolean(sf.format(new Date(calendar.getTimeInMillis())), false);
-
-        if (todaySet) {
-            return true;
-        }
+//        //確認今天是否重設過
+//        boolean todaySet = sharedPreferences.getBoolean(sf.format(new Date(calendar.getTimeInMillis())), false);
+//
+//        if (todaySet) {
+//            return true;
+//        }
 
         id = 0;
         chargeAPPDB = new ChargeAPPDB(JobSchedulerService.this);
@@ -71,12 +72,7 @@ public class JobSchedulerService extends JobService {
         goalDB = new GoalDB(chargeAPPDB.getReadableDatabase());
         List<BankVO> bankVOS = bankDB.getFixDate();
 
-        //版本判斷
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            alarmIntent = new Intent(this, ThirdReceiver.class);
-        }else{
-            alarmIntent = new Intent(this, SecondReceiver.class);
-        }
+
 
 
         int hour, min;
@@ -97,7 +93,6 @@ public class JobSchedulerService extends JobService {
         setNewTime = new GregorianCalendar(year, month, day, hour, min, 0);
         if (consumerVOS.size() > 0 && consumerVOS != null) {
             for (ConsumeVO consumeVO : consumerVOS) {
-
                 //避免紀錄當天重複
                 if(sf.format(consumeVO.getDate()).equals(sf.format(new Date(setNewTime.getTimeInMillis()))))
                 {
@@ -127,7 +122,6 @@ public class JobSchedulerService extends JobService {
                         consumeVO.setAutoId(consumeVO.getId());
                         consumeVO.setDate(new Date(setNewTime.getTimeInMillis()));
                         consumeDB.insert(consumeVO);
-
                     }
                     if (notify && setNotify) {
                         NotifyUse(consumeVO, this, setNewTime.getTimeInMillis());
@@ -156,7 +150,6 @@ public class JobSchedulerService extends JobService {
                     String fixdate = jsonObject.get("choicedate").getAsString().trim();
                     fixdate = fixdate.substring(0, fixdate.indexOf("日"));
                     if (fixdate.equals(String.valueOf(day))) {
-
                         Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                         Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
                         ConsumeVO cccc = consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getId());
@@ -190,8 +183,8 @@ public class JobSchedulerService extends JobService {
                             NotifyUse(consumeVO, this, setNewTime.getTimeInMillis());
                         }
                     }
-                } else
-                    id++;
+                }
+                id++;
             }
         }
         for (BankVO b : bankVOS) {
@@ -231,7 +224,6 @@ public class JobSchedulerService extends JobService {
                         b.setDate(new Date((date.getTimeInMillis())));
                         bankDB.insert(b);
                     }
-
                 }
             } else if ("每月".equals(action)) {
                 int Maxday = date.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -285,9 +277,11 @@ public class JobSchedulerService extends JobService {
                     }
                 }
             }
+
         }
         List<GoalVO> goalVOS = goalDB.getNotify();
 
+        Log.d("service", String.valueOf(goalVOS.size()));
         for (GoalVO goalVO : goalVOS) {
             String statue = goalVO.getNotifyStatue().trim();
             if (statue.equals("每天")) {
@@ -355,6 +349,14 @@ public class JobSchedulerService extends JobService {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("action", "notifyNul");
                 bundle.putSerializable("id", id);
+                Intent alarmIntent;
+                //版本判斷
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Log.d("service","ThirdReceiver");
+                    alarmIntent = new Intent(this, ThirdReceiver.class);
+                }else{
+                    alarmIntent = new Intent(this, SecondReceiver.class);
+                }
                 alarmIntent.putExtras(bundle);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
                 manager.set(AlarmManager.RTC_WAKEUP, setNewTime.getTimeInMillis(), pendingIntent);
@@ -369,9 +371,18 @@ public class JobSchedulerService extends JobService {
         bundle.putSerializable("action", "notifyC");
         bundle.putSerializable("comsumer", message);
         bundle.putSerializable("id", id);
+        Intent alarmIntent;
+        //版本判斷
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Log.d("service","ThirdReceiver");
+            alarmIntent = new Intent(this, ThirdReceiver.class);
+        }else{
+            alarmIntent = new Intent(this, SecondReceiver.class);
+        }
         alarmIntent.putExtras(bundle);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, id);
         manager.set(AlarmManager.RTC_WAKEUP, settime, pendingIntent);
+        Log.d("service time",String.valueOf(settime)+" id"+id);
     }
 
     public void NotifyUse(Context context, GoalVO goalVO) {
@@ -380,10 +391,17 @@ public class JobSchedulerService extends JobService {
         bundle.putSerializable("action", "goalC");
         bundle.putSerializable("id", id);
         bundle.putSerializable("goal", goalVO.getId());
-        Intent alarmIntent = new Intent(context, ThirdReceiver.class);
+        Intent alarmIntent;
+        //版本判斷
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            alarmIntent = new Intent(this, ThirdReceiver.class);
+        }else{
+            alarmIntent = new Intent(this, SecondReceiver.class);
+        }
         alarmIntent.putExtras(bundle);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, id);
         manager.set(AlarmManager.RTC_WAKEUP, setNewTime.getTimeInMillis(), pendingIntent);
+        Log.d("service time G",String.valueOf(setNewTime.getTimeInMillis())+" id"+id);
     }
 
 

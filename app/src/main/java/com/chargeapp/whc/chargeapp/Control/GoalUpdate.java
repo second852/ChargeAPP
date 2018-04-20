@@ -73,6 +73,7 @@ public class GoalUpdate extends Fragment {
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalVO = (GoalVO) getArguments().getSerializable("goalVO");
         findViewById(view);
+        setGoalVO();
         setRemindS();
         limitP.setOnClickListener(new showDate());
         showDate.setOnClickListener(new choicedateClick());
@@ -95,20 +96,16 @@ public class GoalUpdate extends Fragment {
         remindS.setAdapter(arrayAdapter);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        setGoalVO();
-    }
 
     private void setGoalVO() {
         name.setText(goalVO.getName());
         money.setText(String.valueOf(goalVO.getMoney()));
         spinnerT.setText(goalVO.getType());
-        setSpinnerT();
         limitP.setText(Common.sTwo.format(goalVO.getEndTime()));
         remind.setChecked(goalVO.isNotify());
         noWeekend.setChecked(goalVO.isNoWeekend());
+
+        setSpinnerT();
         String[] strings = getResources().getStringArray(R.array.fixDay);
         List<String> b = Arrays.asList(strings);
         remindS.setSelection(b.indexOf(goalVO.getNotifyStatue().trim()));
@@ -149,9 +146,11 @@ public class GoalUpdate extends Fragment {
         if (goalVO.getType().trim().equals("支出")) {
             spinneritem = listDayStatue;
         } else {
-            if (goalVO.getEndTime().getTime() <= 100) {
+            Date date=new Date(0);
+            if (goalVO.getEndTime().getTime()==date.getTime()) {
                 spinneritem.add(" 今日 ");
                 startTitle = "今日";
+                limitP.setText("");
             } else {
                 startTitle = Common.sTwo.format(goalVO.getStartTime());
                 spinneritem.add(startTitle);
@@ -162,7 +161,7 @@ public class GoalUpdate extends Fragment {
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, spinneritem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setAdapter(arrayAdapter);
-        int choice = spinneritem.indexOf(goalVO.getTimeStatue());
+        int choice = spinneritem.indexOf(" "+goalVO.getTimeStatue()+" ");
         if (goalVO.getTimeStatue().trim().equals("今日")) {
             choiceStatue.setSelection(0);
         } else {
@@ -380,6 +379,8 @@ public class GoalUpdate extends Fragment {
             }else{
                 goalVO.setTimeStatue(choiceStatue.getSelectedItem().toString().trim());
             }
+
+            Log.d("XXXXXXXupdate",goalVO.getTimeStatue());
             goalDB.update(goalVO);
             Fragment fragment = new GoalListAll();
             Bundle bundle = new Bundle();

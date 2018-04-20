@@ -2,6 +2,7 @@ package com.chargeapp.whc.chargeapp.Control;
 
 import android.Manifest;
 import android.app.job.JobInfo;
+import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
 import android.app.job.JobService;
 import android.content.ComponentName;
@@ -99,11 +100,12 @@ public class Download extends AppCompatActivity {
 
     private void setJob()
     {
-        int jobId=0;
         JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        tm.cancelAll();
+        //判斷是否建立過
         boolean hasBeenScheduled=false;
         for (JobInfo jobInfo : tm.getAllPendingJobs()) {
-            if (jobInfo.getId() == jobId) {
+            if (jobInfo.getId() == 0) {
                 hasBeenScheduled = true;
                 break;
             }
@@ -113,14 +115,13 @@ public class Download extends AppCompatActivity {
             return;
         }
         ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(jobId, mServiceComponent);
-        builder.setPeriodic(1000 * 30);
+        JobInfo.Builder builder = new JobInfo.Builder(0, mServiceComponent);
+        builder.setPeriodic(1000*30);
         builder.setPersisted(true);
         builder.setRequiresCharging(false);
         builder.setRequiresDeviceIdle(false);
         tm.schedule(builder.build());
     }
-
 
 
     @Override
@@ -129,6 +130,8 @@ public class Download extends AppCompatActivity {
 
         //setJob
         setJob();
+
+
 
         //setDB
         Common.setChargeDB(Download.this);
