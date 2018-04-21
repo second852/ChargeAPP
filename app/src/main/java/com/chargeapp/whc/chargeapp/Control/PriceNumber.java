@@ -153,10 +153,6 @@ public class PriceNumber extends Fragment {
             {
                 sb.append(","+priceVO.getSixthPrizeNo3());
             }
-            if(!priceVO.getSixthPrizeNo3().equals("0"))
-            {
-                sb.append(","+priceVO.getSixthPrizeNo1());
-            }
             if(!priceVO.getSixthPrizeNo4().equals("0"))
             {
                 sb.append(","+priceVO.getSixthPrizeNo4());

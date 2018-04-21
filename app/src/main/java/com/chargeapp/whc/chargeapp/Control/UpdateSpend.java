@@ -245,7 +245,7 @@ public class UpdateSpend extends Fragment {
             bundle.putSerializable("period", getArguments().getSerializable("period"));
             bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
         } else if (action.equals("SelectListModelCom")) {
-            fragment = new SelectListModelCom();
+            fragment = new SelectListModelActivity();
         }else if (action.equals("SettingListFixCon")) {
             fragment = new SettingListFixCon();
             bundle.putSerializable("position", getArguments().getSerializable("position"));

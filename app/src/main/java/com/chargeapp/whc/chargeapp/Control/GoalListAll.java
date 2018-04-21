@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,7 @@ public class GoalListAll extends Fragment {
     private InvoiceDB invoiceDB;
     private BankDB bankDB;
     private ImageView addGoal;
-    private boolean goalSaveComplete;
+    private int goalSaveComplete;
     private boolean goalConsumeComplete;
     private TextView message;
     private int p;
@@ -82,7 +83,7 @@ public class GoalListAll extends Fragment {
 
 
     public void setLayout() {
-        goalSaveComplete = true;
+        goalSaveComplete = 0;
         goalConsumeComplete = true;
         List<GoalVO> goalVOS = goalDB.getAll();
         if(goalVOS.size()<=0)
@@ -92,6 +93,7 @@ public class GoalListAll extends Fragment {
         }else{
             message.setVisibility(View.GONE);
         }
+
         for (GoalVO g : goalVOS) {
             if (g.getTimeStatue().trim().equals("今日") && g.getStatue() == 0) {
                 if (g.getEndTime().getTime() < System.currentTimeMillis()) {
@@ -112,9 +114,7 @@ public class GoalListAll extends Fragment {
                 goalConsumeComplete = false;
             } else {
                 if (g.getStatue() == 0) {
-                    goalSaveComplete = false;
-                } else {
-                    goalSaveComplete = true;
+                    goalSaveComplete++;
                 }
             }
         }
@@ -132,7 +132,7 @@ public class GoalListAll extends Fragment {
         if (goalConsumeComplete) {
             addGoal.setVisibility(View.VISIBLE);
             addGoal.setOnClickListener(new addNewGoalClick());
-        } else if (goalSaveComplete) {
+        } else if (goalSaveComplete==0) {
             addGoal.setVisibility(View.VISIBLE);
             addGoal.setOnClickListener(new addNewGoalClick());
         } else {
@@ -184,10 +184,24 @@ public class GoalListAll extends Fragment {
             Button deleteI = itemView.findViewById(R.id.deleteI);
             fixL.setVisibility(View.VISIBLE);
             title.setText(goalVO.getName());
+            //設定敘述
+            int serial=1;
             StringBuffer sb=new StringBuffer();
+            String timeDec =goalVO.getTimeStatue().trim();
+            if (timeDec.equals("今日")) {
+                timeDec ="  "+serial+".起日 : " + Common.sTwo.format(goalVO.getStartTime()).trim() +
+                         "\n     迄日 : " + Common.sTwo.format(goalVO.getEndTime()).trim()+"\n" ;
+                serial++;
+                timeDec=timeDec+"  "+serial+"."+goalVO.getType().trim()+" : "+goalVO.getMoney()+" 元";
+            }else {
+                sb.append("  "+serial+".時間 : ");
+                timeDec=timeDec+goalVO.getType().trim()+" "+goalVO.getMoney()+" 元";
+            }
 
+            sb.append(timeDec);
             if (goalVO.isNotify()) {
-                sb.append(" 1."+goalVO.getNotifyStatue().trim()).append(" "+goalVO.getNotifyDate());
+                serial++;
+                sb.append("\n  "+serial+".提醒 : "+goalVO.getNotifyStatue().trim()).append(" "+goalVO.getNotifyDate());
                 if(goalVO.isNoWeekend()&&goalVO.getNotifyStatue().trim().equals("每天"))
                 {
                     sb.append("假日除外");
@@ -196,14 +210,8 @@ public class GoalListAll extends Fragment {
             }else{
                 remindL.setVisibility(View.GONE);
             }
-            String timeDec =goalVO.getTimeStatue().trim();
-            if (timeDec.equals("今日")) {
-                timeDec ="\n 2.起日 : " + Common.sTwo.format(goalVO.getStartTime()).trim() +
-                         "\n    迄日 : " + Common.sTwo.format(goalVO.getEndTime()).trim()+"\n" ;
-            }else{
-                timeDec="\n 2.時態 : "+timeDec+"\n ";
-            }
 
+            decribe.setText(sb.toString());
 
             boolean updateGoal;
             if (goalVO.getStatue() == 1) {
@@ -222,9 +230,7 @@ public class GoalListAll extends Fragment {
                 fixT.setText("進行中");
                 updateGoal=true;
             }
-            timeDec=timeDec+" 3."+goalVO.getType().trim()+" : "+goalVO.getMoney()+" 元";
-            sb.append(timeDec);
-            decribe.setText(sb.toString());
+
             if(updateGoal)
             {
                 update.setVisibility(View.VISIBLE);
@@ -282,11 +288,11 @@ public class GoalListAll extends Fragment {
         public void onClick(View v) {
             Fragment fragment = new GoalInsert();
             Bundle bundle=new Bundle();
-            if(goalConsumeComplete&&goalSaveComplete){
+            if(goalConsumeComplete&&(goalSaveComplete==0)){
                 bundle.putSerializable("action","all");
             } else if (goalConsumeComplete) {
                 bundle.putSerializable("action","Consume");
-            } else if (goalSaveComplete) {
+            } else if (goalSaveComplete==0) {
                 bundle.putSerializable("action","Save");
             }
             fragment.setArguments(bundle);

@@ -354,6 +354,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 priceDB.insert(priceVO);
                 Log.d(TAG, "insert" + priceVO.getInvoYm());
             }
+            if (jsonin.indexOf("901") != -1) {
+                break;
+            }
             month = month - 2;
         }
         return jsonin;

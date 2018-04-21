@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -160,7 +161,7 @@ public class GoalInsert extends Fragment {
 
                 remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
                 remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
-                remindS.setX(remindL.getWidth()/3+remindL.getWidth()/10-remindL.getWidth()/20);
+                remindS.setX(spinnerT.getX());
                 noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
                 noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/20);
 
@@ -191,7 +192,7 @@ public class GoalInsert extends Fragment {
 
                 remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
                 remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
-                remindS.setX(remindL.getWidth()/3+remindL.getWidth()/10-remindL.getWidth()/20);
+                remindS.setX(spinnerT.getX());
                 noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
                 noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/20);
                 remindD.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
@@ -212,7 +213,7 @@ public class GoalInsert extends Fragment {
             }else if(position==2)
             {
                 for(int i=1;i<=31;i++) {
-                    spinneritem.add("    "+String.valueOf(i)+"   ");
+                    spinneritem.add(" "+String.valueOf(i)+"日");
                 }
 
             }else{
@@ -228,7 +229,7 @@ public class GoalInsert extends Fragment {
             noWeekend.setChecked(false);
             remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
             remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
-            remindS.setX(remindL.getWidth()/3+remindL.getWidth()/10-remindL.getWidth()/20);
+            remindS.setX(spinnerT.getX());
             noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
             noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/20);
             remindD.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
@@ -323,6 +324,9 @@ public class GoalInsert extends Fragment {
             goalVO.setType(spinnerT.getSelectedItem().toString());
             goalVO.setTimeStatue(dayStatue);
             goalDB.insert(goalVO);
+
+            Log.d("XXXXXXX",String.valueOf(goalVO.isNoWeekend()));
+
             Fragment fragment = new GoalListAll();
             Bundle bundle=new Bundle();
             bundle.putSerializable("position",0);

@@ -5,8 +5,6 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -40,24 +38,18 @@ public class ThirdReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sf=new SimpleDateFormat("yyyy-MM-dd");
         notificationManager =
                 (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         Bundle bundle=intent.getExtras();
         String action= (String) bundle.get("action");
         String message,title;
-        Log.d("ThirdReceiver",sf.format(new Date(System.currentTimeMillis())));
         id= (int) bundle.getSerializable("id");
         if(action.equals("notifyC"))
         {
             message= (String) bundle.getSerializable("comsumer");
-            title="繳費提醒";
-            try {
-                showNotification(title,message,context,id);
-            }catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+            title=" "+sf.format(new Date(System.currentTimeMillis()))+"今天繳費提醒";
+            showNotification(title,message,context,id);
         }
 
         if(action.equals("notifyNul"))

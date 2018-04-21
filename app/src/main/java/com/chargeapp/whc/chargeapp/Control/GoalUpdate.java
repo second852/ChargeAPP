@@ -51,7 +51,6 @@ public class GoalUpdate extends Fragment {
     private Boolean first = true;
     private int updateChoice;
     private String startTitle;
-    private ArrayList<String> listDayStatue;
     private int poistion;
     private Activity context;
 
@@ -73,8 +72,6 @@ public class GoalUpdate extends Fragment {
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalVO = (GoalVO) getArguments().getSerializable("goalVO");
         findViewById(view);
-        setGoalVO();
-        setRemindS();
         limitP.setOnClickListener(new showDate());
         showDate.setOnClickListener(new choicedateClick());
         remind.setOnCheckedChangeListener(new dateStatue());
@@ -82,16 +79,13 @@ public class GoalUpdate extends Fragment {
         clear.setOnClickListener(new clearOnClick());
         save.setOnClickListener(new saveOnClick());
         choiceStatue.setOnItemSelectedListener(new choiceStatueSelected());
+        setRemindS();
+        setGoalVO();
         return view;
     }
 
     private void setRemindS() {
-        listDayStatue = new ArrayList<>();
-        listDayStatue.add(" 每天 ");
-        listDayStatue.add(" 每周 ");
-        listDayStatue.add(" 每月 ");
-        listDayStatue.add(" 每年 ");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, listDayStatue);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, Common.DateStatueSetSpinner());
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         remindS.setAdapter(arrayAdapter);
     }
@@ -133,7 +127,9 @@ public class GoalUpdate extends Fragment {
                 }
             } else if (choicestatue.trim().equals("每月")) {
                 remindS.setSelection(2);
-                updateChoice = Integer.valueOf(choicedate) - 1;
+                String dateStatue = goalVO.getNotifyDate().trim();
+                dateStatue = dateStatue.substring(0, dateStatue.indexOf("日"));
+                updateChoice = Integer.valueOf(dateStatue.trim()) - 1;
             } else {
                 remindS.setSelection(3);
                 updateChoice = Integer.valueOf(choicedate.substring(0, choicedate.indexOf("月"))) - 1;
@@ -144,24 +140,25 @@ public class GoalUpdate extends Fragment {
     private void setSpinnerT() {
         ArrayList<String> spinneritem = new ArrayList<>();
         if (goalVO.getType().trim().equals("支出")) {
-            spinneritem = listDayStatue;
+            spinneritem = Common.DateStatueSetSpinner();
         } else {
             Date date=new Date(0);
             if (goalVO.getEndTime().getTime()==date.getTime()) {
-                spinneritem.add(" 今日 ");
+                spinneritem.add("今日");
                 startTitle = "今日";
                 limitP.setText("");
             } else {
                 startTitle = Common.sTwo.format(goalVO.getStartTime());
                 spinneritem.add(startTitle);
             }
-            spinneritem.add(" 每月 ");
-            spinneritem.add(" 每年 ");
+            spinneritem.add("每月");
+            spinneritem.add("每年");
         }
+
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, spinneritem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setAdapter(arrayAdapter);
-        int choice = spinneritem.indexOf(" "+goalVO.getTimeStatue()+" ");
+        int choice = spinneritem.indexOf(goalVO.getTimeStatue().trim());
         if (goalVO.getTimeStatue().trim().equals("今日")) {
             choiceStatue.setSelection(0);
         } else {
@@ -214,7 +211,7 @@ public class GoalUpdate extends Fragment {
             if (b) {
                 remind.setX(remindL.getWidth() / 10 - remindL.getWidth() / 20);
                 remindT.setX(remindL.getWidth() / 10 + remind.getWidth() - remindL.getWidth() / 20);
-                remindS.setX(remindL.getWidth() / 3 + remindL.getWidth() / 10 - remindL.getWidth() / 20);
+                remindS.setX(spinnerT.getX());
                 noWeekend.setX((remindL.getWidth() * 2 / 3) + remindL.getWidth() / 20 - remindL.getWidth() / 20);
                 noWeekendT.setX((remindL.getWidth() * 2 / 3) + remindL.getWidth() / 20 + noWeekend.getWidth() - remindL.getWidth() / 20);
 
@@ -242,7 +239,7 @@ public class GoalUpdate extends Fragment {
             if (position == 0) {
                 remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
                 remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
-                remindS.setX(remindL.getWidth()/3+remindL.getWidth()/10-remindL.getWidth()/20);
+                remindS.setX(spinnerT.getX());
                 noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
                 noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/20);
                 remindD.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
@@ -261,7 +258,7 @@ public class GoalUpdate extends Fragment {
                 spinneritem.add("星期日");
             } else if (position == 2) {
                 for (int i = 1; i <= 31; i++) {
-                    spinneritem.add("  " + String.valueOf(i) + "  ");
+                    spinneritem.add(" " + String.valueOf(i) + "日");
                 }
 
             } else {
@@ -277,7 +274,7 @@ public class GoalUpdate extends Fragment {
             noWeekend.setChecked(false);
             remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
             remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
-            remindS.setX(remindL.getWidth()/3+remindL.getWidth()/10-remindL.getWidth()/20);
+            remindS.setX(spinnerT.getX());
             noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
             noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/20);
             remindD.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);

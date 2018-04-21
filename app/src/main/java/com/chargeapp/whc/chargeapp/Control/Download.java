@@ -101,7 +101,6 @@ public class Download extends AppCompatActivity {
     private void setJob()
     {
         JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        tm.cancelAll();
         //判斷是否建立過
         boolean hasBeenScheduled=false;
         for (JobInfo jobInfo : tm.getAllPendingJobs()) {
@@ -130,8 +129,6 @@ public class Download extends AppCompatActivity {
 
         //setJob
         setJob();
-
-
 
         //setDB
         Common.setChargeDB(Download.this);

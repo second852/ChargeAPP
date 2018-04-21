@@ -22,7 +22,7 @@ public class GoalDB {
     }
 
     public List<GoalVO> getAll() {
-        String sql = "SELECT * FROM goal order by statue desc,endTime desc;";
+        String sql = "SELECT * FROM goal order by statue,endTime desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<GoalVO> goalVOS = new ArrayList<>();

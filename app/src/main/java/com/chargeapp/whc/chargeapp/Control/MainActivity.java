@@ -1,14 +1,13 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
-import android.Manifest;
+
 import android.content.Context;
 import android.content.Intent;
 
-import android.content.pm.PackageManager;
+
 import android.graphics.Color;
 import android.net.Uri;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -41,7 +40,6 @@ import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
-import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;

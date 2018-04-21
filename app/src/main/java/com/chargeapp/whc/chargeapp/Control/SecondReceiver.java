@@ -35,7 +35,8 @@ public class SecondReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        sf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Log.d("service","onReceive");
+        sf=new SimpleDateFormat("yyyy-MM-dd");
         notificationManager =
                 (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         Bundle bundle=intent.getExtras();
@@ -46,7 +47,7 @@ public class SecondReceiver extends BroadcastReceiver {
         {
 
             message= (String) bundle.getSerializable("comsumer");
-            title=" 繳費提醒";
+            title=" "+sf.format(new Date(System.currentTimeMillis()))+"今天繳費提醒";
             showNotification(title,message,context,id);
         }
 
@@ -199,7 +200,6 @@ public class SecondReceiver extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 intent, 0);
         Notification notification = new Notification.Builder(context)
-                .setTicker(sf.format(new Date(System.currentTimeMillis())))
                 .setContentTitle(title)
                 .setContentText(message)
                 .setSmallIcon(R.mipmap.ele_book)

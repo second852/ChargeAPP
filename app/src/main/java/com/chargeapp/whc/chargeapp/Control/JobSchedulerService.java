@@ -51,6 +51,7 @@ public class JobSchedulerService extends JobService {
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.d("service","service start");
+
         gson = new Gson();
         Calendar calendar = Calendar.getInstance();
         sf = new SimpleDateFormat("yyyy-MM-dd");
@@ -58,23 +59,20 @@ public class JobSchedulerService extends JobService {
         boolean setNotify = sharedPreferences.getBoolean("notify", true);
         String setTime = sharedPreferences.getString("userTime", "6:00 p.m.").trim();
 
-//        //確認今天是否重設過
-//        boolean todaySet = sharedPreferences.getBoolean(sf.format(new Date(calendar.getTimeInMillis())), false);
-//
-//        if (todaySet) {
-//            return true;
-//        }
+        //確認今天是否重設過
+        boolean todaySet = sharedPreferences.getBoolean(sf.format(new Date(calendar.getTimeInMillis())), false);
+        if (todaySet) {
+            return true;
+        }
 
         id = 0;
         chargeAPPDB = new ChargeAPPDB(JobSchedulerService.this);
         consumeDB = new ConsumeDB(chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(chargeAPPDB.getReadableDatabase());
         goalDB = new GoalDB(chargeAPPDB.getReadableDatabase());
+
         List<BankVO> bankVOS = bankDB.getFixDate();
-
-
-
-
+        List<ConsumeVO> consumerVOS = consumeDB.getFixdate();
         int hour, min;
         if (setTime.indexOf("p") == -1) {
             hour = new Integer(setTime.substring(0, setTime.indexOf(":")));
@@ -83,7 +81,7 @@ public class JobSchedulerService extends JobService {
             hour = new Integer(setTime.substring(0, setTime.indexOf(":"))) + 12;
             min = new Integer(setTime.substring(setTime.indexOf(":") + 1, setTime.indexOf("p")).trim());
         }
-        List<ConsumeVO> consumerVOS = consumeDB.getFixdate();
+
         JsonObject jsonObject;
         Calendar date = Calendar.getInstance();
         int year = date.get(Calendar.YEAR);
@@ -91,6 +89,8 @@ public class JobSchedulerService extends JobService {
         int day = date.get(Calendar.DAY_OF_MONTH);
         int dweek = date.get(Calendar.DAY_OF_WEEK);
         setNewTime = new GregorianCalendar(year, month, day, hour, min, 0);
+
+
         if (consumerVOS.size() > 0 && consumerVOS != null) {
             for (ConsumeVO consumeVO : consumerVOS) {
                 //避免紀錄當天重複
@@ -99,18 +99,18 @@ public class JobSchedulerService extends JobService {
                     continue;
                 }
 
-
                 String detail = consumeVO.getFixDateDetail();
                 jsonObject = gson.fromJson(detail, JsonObject.class);
                 String action = jsonObject.get("choicestatue").getAsString().trim();
                 boolean notify = Boolean.valueOf(consumeVO.getNotify());
                 if ("每天".equals(action)) {
+                    Log.d("service", "bankVOS");
                     boolean noWeekend = jsonObject.get("noweek").getAsBoolean();
                     if (noWeekend && dweek == 7) {
-                        return true;
+                        continue;
                     }
                     if (noWeekend && dweek == 1) {
-                        return true;
+                        continue;
                     }
                     Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                     Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
@@ -183,10 +183,33 @@ public class JobSchedulerService extends JobService {
                             NotifyUse(consumeVO, this, setNewTime.getTimeInMillis());
                         }
                     }
+                }else{
+                    //每年
+                    String fixdate = jsonObject.get("choicedate").getAsString().trim();
+                    fixdate = fixdate.substring(0, fixdate.indexOf("月"));
+                    int d = Integer.valueOf(fixdate) - 1;
+                    if (month == d && day == 1) {
+                        Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
+                        Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
+                        ConsumeVO cccc = consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getId());
+                        if (cccc == null) {
+                            consumeVO.setNotify("false");
+                            consumeVO.setFixDate("false");
+                            consumeVO.setAuto(true);
+                            consumeVO.setAutoId(consumeVO.getId());
+                            consumeVO.setDate(new Date((date.getTimeInMillis())));
+                            consumeDB.insert(consumeVO);
+                        }
+                        if (notify && setNotify) {
+                            NotifyUse(consumeVO, this, setNewTime.getTimeInMillis());
+                        }
+                    }
                 }
                 id++;
             }
         }
+
+
         for (BankVO b : bankVOS) {
 
             //避免紀錄當天重複
@@ -277,17 +300,18 @@ public class JobSchedulerService extends JobService {
                     }
                 }
             }
-
         }
-        List<GoalVO> goalVOS = goalDB.getNotify();
 
-        Log.d("service", String.valueOf(goalVOS.size()));
+
+
+        List<GoalVO> goalVOS = goalDB.getNotify();
         for (GoalVO goalVO : goalVOS) {
+            Log.d("service", String.valueOf(goalVO.isNoWeekend()));
             String statue = goalVO.getNotifyStatue().trim();
             if (statue.equals("每天")) {
                 if (goalVO.isNoWeekend()) {
                     if (dweek == 1 || dweek == 7) {
-                        return true;
+                        continue;
                     }
                 }
                 if (setNotify) {
@@ -304,6 +328,8 @@ public class JobSchedulerService extends JobService {
             } else if (statue.equals("每月")) {
                 int max = date.getActualMaximum(Calendar.DAY_OF_MONTH);
                 String dateStatue = goalVO.getNotifyDate().trim();
+                dateStatue = dateStatue.substring(0, dateStatue.indexOf("日"));
+                Log.d("service",dateStatue+" : "+day);
                 if (dateStatue.equals(String.valueOf(day))) {
                     if (setNotify) {
                         NotifyUse(this, goalVO);
@@ -365,7 +391,7 @@ public class JobSchedulerService extends JobService {
     }
 
     public void NotifyUse(ConsumeVO consumeVO, Context context, long settime) {
-        String message = "繳納" + consumeVO.getSecondType() + "費用:" + consumeVO.getMoney();
+        String message = " 繳納" + consumeVO.getSecondType() + "費用:" + consumeVO.getMoney();
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Bundle bundle = new Bundle();
         bundle.putSerializable("action", "notifyC");
