@@ -376,8 +376,6 @@ public class GoalUpdate extends Fragment {
             }else{
                 goalVO.setTimeStatue(choiceStatue.getSelectedItem().toString().trim());
             }
-
-            Log.d("XXXXXXXupdate",goalVO.getTimeStatue());
             goalDB.update(goalVO);
             Fragment fragment = new GoalListAll();
             Bundle bundle = new Bundle();
@@ -389,6 +387,8 @@ public class GoalUpdate extends Fragment {
             }
             fragmentTransaction.replace(R.id.body, fragment);
             fragmentTransaction.commit();
+            MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
+            MainActivity.bundles.remove(MainActivity.bundles.size()-1);
             Common.showToast(context, "修改成功!");
         }
     }

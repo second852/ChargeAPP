@@ -325,7 +325,7 @@ public class GoalInsert extends Fragment {
             goalVO.setTimeStatue(dayStatue);
             goalDB.insert(goalVO);
 
-            Log.d("XXXXXXX",String.valueOf(goalVO.isNoWeekend()));
+
 
             Fragment fragment = new GoalListAll();
             Bundle bundle=new Bundle();
@@ -337,6 +337,8 @@ public class GoalInsert extends Fragment {
             }
             fragmentTransaction.replace(R.id.body, fragment);
             fragmentTransaction.commit();
+            MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
+            MainActivity.bundles.remove(MainActivity.bundles.size()-1);
             Common.showToast(context,"新增成功!");
         }
     }

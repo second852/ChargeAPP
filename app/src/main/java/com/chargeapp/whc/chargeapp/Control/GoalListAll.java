@@ -275,6 +275,8 @@ public class GoalListAll extends Fragment {
 
 
     private void switchFragment(Fragment fragment) {
+        MainActivity.bundles.add(fragment.getArguments());
+        MainActivity.oldFramgent.add("GoalListAll");
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

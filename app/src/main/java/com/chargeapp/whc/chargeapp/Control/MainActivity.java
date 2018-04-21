@@ -736,6 +736,10 @@ public class MainActivity extends AppCompatActivity {
                 {
                     fragment = new SettingMain();
                     fragment.setArguments(bundle);
+                }else if(action.equals("GoalListAll"))
+                {
+                    fragment = new GoalListAll();
+                    fragment.setArguments(bundle);
                 }
 
                 //關閉keyboart
