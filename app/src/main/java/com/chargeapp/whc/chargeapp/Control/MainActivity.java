@@ -131,14 +131,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        (getSupportActionBar()).setDisplayShowCustomEnabled(false);
         if(oldFramgent==null)
         {
             oldFramgent = new LinkedList<>();
             bundles = new LinkedList<>();
         }
         setContentView(R.layout.activity_main);
-        (getSupportActionBar()).show();
         setUpActionBar();
         initDrawer();
         Common.setChargeDB(this);
@@ -185,14 +183,13 @@ public class MainActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.show();
         }
     }
 
 
     //設定目前選擇項目的顏色
     private void setColor(View v) {
-
-
         (getSupportActionBar()).setDisplayShowCustomEnabled(false);
         v.setBackgroundColor(Color.parseColor("#FFDD55"));
         if (oldMainView != null && v != oldMainView) {
