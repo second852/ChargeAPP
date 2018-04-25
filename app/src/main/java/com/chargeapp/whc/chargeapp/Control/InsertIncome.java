@@ -59,7 +59,6 @@ public class InsertIncome extends Fragment {
     private int updateChoice;
     private boolean first;
     private Handler handler,secondHander;
-    private View view;
     public static BankVO bankVO;
     public static boolean needSet;
     private Activity context;
@@ -81,7 +80,8 @@ public class InsertIncome extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.insert_income, container, false);
+        View view = inflater.inflate(R.layout.insert_income, container, false);
+        findviewByid(view);
         Common.setChargeDB(context);
         if(bankVO==null)
         {
@@ -112,8 +112,6 @@ public class InsertIncome extends Fragment {
         @Override
         public void run() {
             bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            firstG = view.findViewById(R.id.firstG);
-            firstL = view.findViewById(R.id.firstL);
             setFirstGrid();
             if (Common.showfirstgrid) {
                 firstL.setVisibility(View.VISIBLE);
@@ -125,7 +123,6 @@ public class InsertIncome extends Fragment {
     private Runnable setOnClick=new Runnable() {
         @Override
         public void run() {
-            findviewByid(view);
             gson=new Gson();
             bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
             date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
@@ -280,6 +277,8 @@ public class InsertIncome extends Fragment {
         choiceday=view.findViewById(R.id.choiceday);
         detailname=view.findViewById(R.id.detailname);
         fixDateT=view.findViewById(R.id.fixDateT);
+        firstG = view.findViewById(R.id.firstG);
+        firstL = view.findViewById(R.id.firstL);
         AdView adView = view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);

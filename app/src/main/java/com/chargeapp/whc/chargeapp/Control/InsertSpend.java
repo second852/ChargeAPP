@@ -265,7 +265,7 @@ public class InsertSpend extends Fragment {
             firstG.setNumColumns(4);
         }catch (Exception e)
         {
-
+            e.printStackTrace();
         }
     }
 

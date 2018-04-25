@@ -82,9 +82,10 @@ public class Download extends AppCompatActivity {
 
     private String food = "堡 三明治 優酪乳 肉 飯 雙手卷 腿 麵 麵包 熱狗 雞 手卷 肉 粉 蔬菜 牛 豬 起司 花生 豆 蛋 魚 菜 瓜 黑胡椒 土司 泡芙 排";
     private String drink = "咖啡 茶 豆漿 拿鐵 乳 飲 ml 罐 酒 杯 水 奶 冰 珍珠";
-    private Handler firstH, secondH;
+    private Handler firstH;
     private GetSQLDate getSQLDate;
     private TextView percentage, progressT;
+
 
 
     @Override
@@ -93,7 +94,7 @@ public class Download extends AppCompatActivity {
         setContentView(R.layout.download_main);
         progressT = findViewById(R.id.progressT);
         percentage = findViewById(R.id.percentage);
-        AdView adView = (AdView) this.findViewById(R.id.adView);
+        AdView adView =findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
     }
@@ -126,15 +127,9 @@ public class Download extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        //setJob
-        setJob();
-
         //setDB
         Common.setChargeDB(Download.this);
         (getSupportActionBar()).hide();
-        firstH = new Handler();
-        firstH.post(runnable);
         ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
         if (mNetworkInfo != null) {
@@ -149,26 +144,7 @@ public class Download extends AppCompatActivity {
 //        tonNewActivity();
     }
 
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            SelectIncome.end = Calendar.getInstance();
-            SelectIncome.Statue = 0;
-            Calendar calendar = Calendar.getInstance();
-            SelectListModelCom.year = calendar.get(Calendar.YEAR);
-            SelectListModelCom.month = calendar.get(Calendar.MONTH);
-            SelectListModelCom.p = 0;
-            SelectListModelIM.year = calendar.get(Calendar.YEAR);
-            SelectListModelIM.month = calendar.get(Calendar.MONTH);
-            SelectListModelIM.p = 0;
-            SelectConsume.Statue = 1;
-            SelectConsume.end = Calendar.getInstance();
-            SelectConsume.CStatue = 0;
-            SettingListFix.spinnerC = 0;
-            SettingListFix.p = 0;
-            setdate();
-        }
-    };
+
 
 
     private Runnable runToNeW = new Runnable() {
@@ -190,19 +166,33 @@ public class Download extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (firstH != null) {
-            firstH.removeCallbacks(runnable);
+            firstH.removeCallbacks(runToNeW);
         }
         if (getSQLDate != null) {
             getSQLDate.cancel(true);
         }
-        if (secondH != null) {
-            secondH.removeCallbacks(runToNeW);
-        }
     }
 
     public void tonNewActivity() {
-        secondH = new Handler();
-        secondH.postDelayed(runToNeW, 500);
+        //setJob
+        setJob();
+        SelectIncome.end = Calendar.getInstance();
+        SelectIncome.Statue = 0;
+        Calendar calendar = Calendar.getInstance();
+        SelectListModelCom.year = calendar.get(Calendar.YEAR);
+        SelectListModelCom.month = calendar.get(Calendar.MONTH);
+        SelectListModelCom.p = 0;
+        SelectListModelIM.year = calendar.get(Calendar.YEAR);
+        SelectListModelIM.month = calendar.get(Calendar.MONTH);
+        SelectListModelIM.p = 0;
+        SelectConsume.Statue = 1;
+        SelectConsume.end = Calendar.getInstance();
+        SelectConsume.CStatue = 0;
+        SettingListFix.spinnerC = 0;
+        SettingListFix.p = 0;
+        setdate();
+        firstH = new Handler();
+        firstH.postDelayed(runToNeW, 500);
     }
 
 

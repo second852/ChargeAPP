@@ -130,6 +130,10 @@ public class SelectConsume extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_consume, container, false);
+        if(end==null)
+        {
+            end=Calendar.getInstance();
+        }
         month = end.get(Calendar.MONTH);
         year = end.get(Calendar.YEAR);
         dweek = end.get(Calendar.DAY_OF_WEEK);
