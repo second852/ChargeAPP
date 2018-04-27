@@ -186,11 +186,11 @@ public class SelectDetCircle extends Fragment {
             total = total + second.get(s);
         }
         if (key.equals("O")) {
-            detail.setText("其他 : " + total + "元");
+            detail.setText("其他 : " +Common.nf.format(total)  + "元");
         } else if(key.equals("0")){
-            detail.setText("未知 : " + total + "元");
+            detail.setText("未知 : " + Common.nf.format(total) + "元");
         }else{
-            detail.setText(key + " : " + total + "元");
+            detail.setText(key + " : " + Common.nf.format(total) + "元");
         }
         // create pie data set
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");

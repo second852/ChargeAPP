@@ -274,7 +274,7 @@ public class SelectDetList extends Fragment {
                 }else{
                     sbTitle.append(I.getSecondtype());
                 }
-                sbTitle.append("  共"+I.getAmount()+"元");
+                sbTitle.append("\n共"+Common.nf.format(I.getAmount())+"元");
 
                 //set detail
                 if(I.getDetail().equals("0"))
@@ -353,7 +353,7 @@ public class SelectDetList extends Fragment {
                 StringBuffer stringBuffer=new StringBuffer();
                 stringBuffer.append(Common.sDay.format(c.getDate()));
                 stringBuffer.append(c.getSecondType());
-                stringBuffer.append(" 共"+c.getMoney()+"元");
+                stringBuffer.append("\n共"+Common.nf.format(c.getMoney())+"元");
                 title.setText(stringBuffer.toString());
 
                 //設定 describe

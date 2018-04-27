@@ -27,6 +27,7 @@ import com.github.mikephil.charting.components.Description;
 import com.google.gson.JsonObject;
 
 import java.sql.Date;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,6 +58,7 @@ public class Common {
     public static SimpleDateFormat sDay = new SimpleDateFormat("MM/dd");
     public static SimpleDateFormat sHour = new SimpleDateFormat("hh");
     public static SimpleDateFormat sYear = new SimpleDateFormat("yyy 年 MM 月");
+    public static NumberFormat nf = NumberFormat.getNumberInstance();;
 
     public static void setChargeDB(Context activity)
     {

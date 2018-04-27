@@ -59,6 +59,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 
 
 import java.sql.Timestamp;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -74,6 +75,8 @@ import java.util.Set;
 
 
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+
+import static com.chargeapp.whc.chargeapp.Control.Common.nf;
 
 
 /**
@@ -114,6 +117,7 @@ public class SelectConsume extends Fragment {
     public static Calendar end;
     public static int CStatue;
     private Activity context;
+
 
     @Override
     public void onAttach(Context context) {
@@ -553,7 +557,7 @@ public class SelectConsume extends Fragment {
     }
 
     private void addData() {
-        describe.setText(DesTittle + total + "元");
+        describe.setText(DesTittle +nf.format(total) + "元");
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
         ShowZero = true;
         for (int i = 0; i < list_Data.size(); i++) {

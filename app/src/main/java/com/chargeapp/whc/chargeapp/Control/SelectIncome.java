@@ -336,7 +336,7 @@ public class SelectIncome extends Fragment {
 
     private void addData() {
         type = new ArrayList<>();
-        describe.setText(DesTittle + total + "元");
+        describe.setText(DesTittle + Common.nf.format(total) + "元");
         ArrayList<PieEntry> pieEntries = new ArrayList<PieEntry>();
         boolean ShowZero = true;
         ChartEntry other = new ChartEntry("其他", 0);

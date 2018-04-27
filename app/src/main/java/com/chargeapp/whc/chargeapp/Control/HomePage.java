@@ -39,6 +39,7 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import org.apache.poi.ss.formula.functions.T;
 
 import java.sql.Timestamp;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -178,7 +179,8 @@ public class HomePage extends Fragment {
     }
 
     private void addData(HashMap<String, Integer> consumeVOS) {
-        pieChartT.setText(Common.sDay.format(new Date(end.getTimeInMillis()))+"本日花費 : "+consumeVOS.get("total")+"元");
+        NumberFormat nf = NumberFormat.getNumberInstance();
+        pieChartT.setText(Common.sDay.format(new Date(end.getTimeInMillis()))+"本日花費 : "+nf.format(consumeVOS.get("total"))+"元");
         yVals1 = new ArrayList<PieEntry>();
         Okey=new ArrayList<>();
         ShowZero = true;
@@ -269,6 +271,7 @@ public class HomePage extends Fragment {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                 itemView = layoutInflater.inflate(R.layout.home_page_item, parent, false);
             }
+            NumberFormat nf = NumberFormat.getNumberInstance();
             Object o=objects.get(position);
             ImageView imageView=itemView.findViewById(R.id.ivImage);
             TextView title=itemView.findViewById(R.id.goal);
@@ -290,7 +293,7 @@ public class HomePage extends Fragment {
                       {
                           consumeCount=consumeDB.getTimeTotal(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(HomePage.this.end.getTimeInMillis()))+
                           invoiceDB.getTotalBytime(new Timestamp(HomePage.this.start.getTimeInMillis()),new Timestamp(HomePage.this.end.getTimeInMillis()));
-                          describeContent.append("花費 : 本日支出"+consumeCount+"元");
+                          describeContent.append("花費 : 本日支出"+nf.format(consumeCount)+"元");
                       }else if(timeStatue.equals("每周"))
                       {
                           int dweek=HomePage.this.start.get(Calendar.DAY_OF_WEEK);
@@ -298,14 +301,14 @@ public class HomePage extends Fragment {
                           end=new GregorianCalendar(year,month,day,23,59,59);
                           consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
                                   invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
-                          describeContent.append("花費 : 本周支出"+consumeCount+"元");
+                          describeContent.append("花費 : 本周支出"+nf.format(consumeCount)+"元");
                       }else if(timeStatue.equals("每月"))
                       {
                           start=new GregorianCalendar(year,month,1,0,0,0);
                           end=new GregorianCalendar(year,month,day,23,59,59);
                           consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
                                   invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
-                          describeContent.append("花費 : 本月支出"+consumeCount+"元");
+                          describeContent.append("花費 : 本月支出"+nf.format(consumeCount)+"元");
                       }else if(timeStatue.equals("每年"))
                       {
                           int max=HomePage.this.start.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -313,11 +316,11 @@ public class HomePage extends Fragment {
                           end=new GregorianCalendar(year,month,max,23,59,59);
                           consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
                                   invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
-                          describeContent.append("花費 : 本年支出"+consumeCount+"元");
+                          describeContent.append("花費 : 本年支出"+nf.format(consumeCount)+"元");
                       }
 
                       //設定Title
-                      title.setText("目標 : "+goalVO.getName().trim()+goalVO.getTimeStatue().trim()+"支出"+goalVO.getMoney()+"元");
+                      title.setText("目標 : "+goalVO.getName().trim()+goalVO.getTimeStatue().trim()+"支出"+nf.format(goalVO.getMoney())+"元");
 
 
                       if(Integer.valueOf(goalVO.getMoney())>consumeCount)
@@ -343,37 +346,37 @@ public class HomePage extends Fragment {
 
                         if(goalVO.getEndTime().getTime()<System.currentTimeMillis())
                         {
-                            title.setText("目標 : "+goalVO.getName()+"\n"+Common.sTwo.format(goalVO.getEndTime())+"前 儲蓄"+goalVO.getMoney()+"元");
+                            title.setText("目標 : "+goalVO.getName()+"\n"+Common.sTwo.format(goalVO.getEndTime())+"前 儲蓄"+nf.format(goalVO.getMoney())+"元");
                             if(Integer.valueOf(goalVO.getMoney())<saveMoney)
                             {
                                 goalVO.setStatue(1);
                                 goalVO.setNotify(false);
-                                describeContent.append(Common.sTwo.format(goalVO.getEndTime())+"前\n已儲蓄"+saveMoney+"元");
+                                describeContent.append(Common.sTwo.format(goalVO.getEndTime())+"前\n已儲蓄"+nf.format(saveMoney)+"元");
                                 resultT.setText("達成");
                                 resultT.setTextColor(Color.parseColor("#2E8B57"));
                                 resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
                             }else{
                                 goalVO.setStatue(2);
                                 goalVO.setNotify(false);
-                                describeContent.append(Common.sTwo.format(goalVO.getEndTime())+"前\n已儲蓄"+saveMoney+"元");
+                                describeContent.append(Common.sTwo.format(goalVO.getEndTime())+"前\n已儲蓄"+nf.format(saveMoney)+"元");
                                 resultT.setText("失敗");
                                 resultT.setTextColor(Color.parseColor("#DC143C"));
                                 resultL.setBackgroundColor(Color.parseColor("#DC143C"));
                             }
                             goalDB.update(goalVO);
                         }else{
-                            title.setText("目標 : "+goalVO.getName()+"\n"+Common.sTwo.format(goalVO.getEndTime())+"前 儲蓄"+goalVO.getMoney()+"元");
+                            title.setText("目標 : "+goalVO.getName()+"\n"+Common.sTwo.format(goalVO.getEndTime())+"前 儲蓄"+nf.format(goalVO.getMoney())+"元");
                             double day=((goalVO.getEndTime().getTime()-System.currentTimeMillis())/(1000*60*60*24));
                             if(Integer.valueOf(goalVO.getMoney())<saveMoney)
                             {
                                 goalVO.setStatue(1);
-                                describeContent.append("倒數"+(int)day+"天\n目前已儲蓄"+saveMoney+"元");
+                                describeContent.append("倒數"+(int)day+"天\n目前已儲蓄"+nf.format(saveMoney)+"元");
                                 resultT.setText("達成");
                                 resultT.setTextColor(Color.parseColor("#FF8800"));
                                 resultL.setBackgroundColor(Color.parseColor("#FF8800"));
                             }else{
                                 goalVO.setStatue(2);
-                                describeContent.append("倒數"+(int)day+"天\n目前已儲蓄"+saveMoney+"元");
+                                describeContent.append("倒數"+(int)day+"天\n目前已儲蓄"+nf.format(saveMoney)+"元");
                                 resultT.setText("持續中");
                                 resultT.setTextColor(Color.parseColor("#0000FF"));
                                 resultL.setBackgroundColor(Color.parseColor("#0000FF"));
@@ -388,8 +391,8 @@ public class HomePage extends Fragment {
                         consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
                                 invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                         int savemoney=bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))-consumeCount;
-                        title.setText(" 目標 :"+goalVO.getName()+" 每月儲蓄"+goalVO.getMoney()+"元");
-                        describe.setText(" 目前 : 本月\n 已存款"+savemoney+"元");
+                        title.setText(" 目標 :"+goalVO.getName()+" 每月儲蓄"+nf.format(goalVO.getMoney())+"元");
+                        describe.setText(" 目前 : 本月\n 已存款"+nf.format(savemoney)+"元");
                         if(Integer.valueOf(goalVO.getMoney())<savemoney)
                         {
                             resultT.setText("達成");
@@ -407,8 +410,8 @@ public class HomePage extends Fragment {
                         consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
                                 invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                         int savemoney=bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))-consumeCount;
-                        title.setText(" 目標 :"+goalVO.getName()+" 每年儲蓄"+goalVO.getMoney()+"元");
-                        describe.setText(" 目前 : 本年\n 已存款"+savemoney+"元");
+                        title.setText(" 目標 :"+goalVO.getName()+" 每年儲蓄"+nf.format(goalVO.getMoney())+"元");
+                        describe.setText(" 目前 : 本年\n 已存款"+nf.format(savemoney)+"元");
                         if(Integer.valueOf(goalVO.getMoney())<savemoney)
                         {
                             resultT.setText("達成");
@@ -443,7 +446,7 @@ public class HomePage extends Fragment {
                     end=new GregorianCalendar(year,month,day,23,59,59);
                     consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
                             invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
-                    title.setText("本周支出 : "+consumeCount+"元");
+                    title.setText("本周支出 : "+nf.format(consumeCount)+"元");
                     List<ChartEntry> consumeVOS=consumeDB.getTimeMaxType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                     List<ChartEntry> invoiceVOS=invoiceDB.getInvoiceBytimeMaxType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                     chartEntries.addAll(consumeVOS);
@@ -456,7 +459,7 @@ public class HomePage extends Fragment {
                     end=new GregorianCalendar(year,month,max,23,59,59);
                     consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
                             invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
-                    title.setText("本年支出 : "+consumeCount+"元");
+                    title.setText("本年支出 : "+nf.format(consumeCount)+"元");
                     List<ChartEntry> consumeVOS=consumeDB.getTimeMaxType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                     List<ChartEntry> invoiceVOS=invoiceDB.getInvoiceBytimeMaxType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                     chartEntries.addAll(consumeVOS);
@@ -483,7 +486,7 @@ public class HomePage extends Fragment {
                             hashMap.put(chartEntry.getKey(),hashMap.get(chartEntry.getKey())+chartEntry.getValue());
                         }
                     }
-                    describe.setText("最多花費 : "+(strings.get(0).equals("O")?"其他":strings.get(0))+" "+ hashMap.get(strings.get(0))+"元");
+                    describe.setText("最多花費 : "+(strings.get(0).equals("O")?"其他":strings.get(0))+" "+ nf.format(hashMap.get(strings.get(0))) +"元");
                     describe.setVisibility(View.VISIBLE);
                 }else{
                     describe.setVisibility(View.GONE);

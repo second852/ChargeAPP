@@ -342,7 +342,7 @@ public class SelectShowCircleDe extends Fragment {
         pieChart.setOnChartValueSelectedListener(new pieValue());
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
         getActivity().setTitle(title);
-        detail.setText(mainTitle+" : 共"+total+"元");
+        detail.setText(mainTitle+" : 共"+Common.nf.format(total)+"元");
         if(listView.getAdapter()!=null)
         {
             ListAdapter adapter= (ListAdapter) listView.getAdapter();
@@ -436,7 +436,7 @@ public class SelectShowCircleDe extends Fragment {
                 }else{
                     sbTitle.append(I.getSecondtype());
                 }
-                sbTitle.append("\n共"+I.getAmount()+"元");
+                sbTitle.append("\n共"+Common.nf.format(I.getAmount())+"元");
 
 
                 //set detail
@@ -537,7 +537,7 @@ public class SelectShowCircleDe extends Fragment {
                 StringBuffer stringBuffer=new StringBuffer();
                 stringBuffer.append(Common.sDay.format(c.getDate()));
                 stringBuffer.append(" "+c.getSecondType());
-                stringBuffer.append("\n共"+c.getMoney()+"元");
+                stringBuffer.append("\n共"+Common.nf.format(c.getMoney())+"元");
                 title.setText(stringBuffer.toString());
 
                 //設定 describe

@@ -214,26 +214,37 @@ public class SelectOtherCircle extends Fragment {
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
         int total = 0;
 
-        for (String s : hashMap.keySet()) {
-            if (s.equals("O")) {
-                yVals1.add(new PieEntry(hashMap.get(s), "其他"));
-            } else if (s.equals("0")) {
-                yVals1.add(new PieEntry(hashMap.get(s), "未知"));
-            } else {
-                yVals1.add(new PieEntry(hashMap.get(s), s));
+        if(key.equals("total"))
+        {
+            int size=ListKey.size();
+            for (int i=1;i<size;i++)
+            {
+                yVals1.add(new PieEntry(hashMap.get(ListKey.get(i)), ListKey.get(i)));
             }
-            total = total + hashMap.get(s);
+
+        }else{
+            for (String s : hashMap.keySet()) {
+                if (s.equals("O")) {
+                    yVals1.add(new PieEntry(hashMap.get(s), "其他"));
+                } else if (s.equals("0")) {
+                    yVals1.add(new PieEntry(hashMap.get(s), "未知"));
+                } else {
+                    yVals1.add(new PieEntry(hashMap.get(s), s));
+                }
+                total = total + hashMap.get(s);
+            }
         }
 
 
+
         if (key.equals("O")) {
-            detail.setText("其他" + " : 總共" + total + "元");
+            detail.setText("其他" + " : 總共" + Common.nf.format(total) + "元");
         } else if (key.equals("total")) {
-            detail.setText("其他細項 : 總共" + countOther + "元");
+            detail.setText("其他細項 : 總共" + Common.nf.format(countOther) + "元");
         } else if (key.equals("0")) {
-            detail.setText("未知" + " : 總共" + total + "元");
+            detail.setText("未知" + " : 總共" + Common.nf.format(total) + "元");
         } else {
-            detail.setText(key + " : 總共" + total + "元");
+            detail.setText(key + " : 總共" + Common.nf.format(total) + "元");
         }
 
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");

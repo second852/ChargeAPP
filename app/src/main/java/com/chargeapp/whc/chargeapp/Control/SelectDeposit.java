@@ -38,6 +38,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
 import java.sql.Timestamp;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -170,8 +171,9 @@ public class SelectDeposit extends Fragment {
                 PIdateL.setVisibility(View.GONE);
             }
         }
-        desTittleTop = "累計收入 : " + Allincome + "元  累計花費 : " + Allconsume + "元";
-        desTittleDown = "累計存款 : " + Alltotal + "元";
+        NumberFormat nf = NumberFormat.getNumberInstance();
+        desTittleTop = "累計收入 : " + nf.format(Allincome)+ "元  累計花費 : " + nf.format(Allconsume) + "元";
+        desTittleDown = "累計存款 : " + nf.format(Alltotal) + "元";
         SpannableString span = new SpannableString(desTittleTop);
         span.setSpan(new ForegroundColorSpan(Color.MAGENTA), 0, desTittleTop.indexOf("元") + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         span.setSpan(new ForegroundColorSpan(Color.BLUE), desTittleTop.indexOf("元") + 1, desTittleTop.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -183,10 +185,9 @@ public class SelectDeposit extends Fragment {
         dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
         dataSet.setDrawFilled(true);
         dataSet.setColor(Color.BLACK);
-        dataSet.setFillColor(Color.BLUE);
+        dataSet.setFillColor(Common.getColor(3)[0]);
         dataSet.setHighlightEnabled(false);
-        dataSet.setValueTextSize(12f);
-        dataSet.setDrawValues(true);
+        dataSet.setDrawValues(false);
         LineData data = new LineData(dataSet);
         XAxis xAxis = chart_line.getXAxis();
         xAxis.setGranularity(1f);
