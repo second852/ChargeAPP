@@ -73,7 +73,12 @@ public class GoalListAll extends Fragment {
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        p= (int) getArguments().getSerializable("position");
+        try {
+            p= (int) getArguments().getSerializable("position");
+        }catch (Exception e)
+        {
+            p=0;
+        }
         findViewById(view);
         setLayout();
         return view;
