@@ -154,7 +154,6 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         adView.loadAd(adRequest);
         listView.setAdapter(new ListAdapter(context, itemSon));
         progressL.setVisibility(View.GONE);
-        mProgressBar.setMax(100);
         return view;
     }
 
@@ -170,7 +169,6 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        progressL.setVisibility(View.GONE);
         if(requestCode==4)
         {
             openCloud();
@@ -179,6 +177,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
             if (resultCode == -1) {
                 mSelectedFileDriveId = data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
                 open();
+                progressL.setVisibility(View.VISIBLE);
                 Common.showToast(context, "下傳成功");
             } else {
                 if(mGoogleApiClient!=null)
@@ -457,7 +456,9 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         elePeriodDB.insertHid(elePeriod);
                     }
                 }
+                mProgressBar.setProgress(i*10);
                 i++;
+
             }
             workbook.close();
             inp.close();
@@ -465,6 +466,8 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         } catch (Exception e) {
             e.printStackTrace();
             Common.showToast(context,"檔案格式不對");
+        }finally {
+            progressL.setVisibility(View.GONE);
         }
     }
 
@@ -487,15 +490,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
             public void onProgress(long bytesDownloaded, long bytesExpected) {
                 // Update progress dialog with the latest progress.
                 int progress = (int) (bytesDownloaded * 100 / bytesExpected);
-                mProgressBar.setProgress(progress);
-                progressL.setVisibility(View.VISIBLE);
-                if(progress==0)
-                {
-                    Timer timer=new Timer();//实例化Timer类
-                    timer.schedule(new TimerTask(){
-                        public void run(){ this.cancel();}},500);//五百毫秒
-                    progressL.setVisibility(View.GONE);
-                }
+
             }
         };
 
@@ -522,4 +517,5 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                     mGoogleApiClient = null;
                 }
             };
+
 }

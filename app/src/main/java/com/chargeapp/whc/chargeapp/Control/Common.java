@@ -246,6 +246,25 @@ public class Common {
         return hashMap;
     }
 
+    public static HashMap<String,String> getOtherType() {
+        HashMap<String,String> hashMap=new HashMap<>();
+        hashMap.put("O","其他");
+        hashMap.put("0","未知");
+        return hashMap;
+    }
+
+    public static String getType(String s)
+    {
+        String a=getOtherType().get(s);
+        if(a==null)
+        {
+          return s;
+        }else{
+            return a;
+        }
+    }
+
+
     public static HashMap<String,String> getPrice() {
         HashMap<String,String> hashMap=new HashMap<>();
         hashMap.put("super","1000萬元");

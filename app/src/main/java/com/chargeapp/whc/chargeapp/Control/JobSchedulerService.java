@@ -119,6 +119,9 @@ public class JobSchedulerService extends JobService {
                         consumeVO.setNotify("false");
                         consumeVO.setFixDate("false");
                         consumeVO.setAuto(true);
+                        consumeVO.setIsWin("0");
+                        consumeVO.setNumber("");
+                        consumeVO.setIsWinNul("0");
                         consumeVO.setAutoId(consumeVO.getId());
                         consumeVO.setDate(new Date(setNewTime.getTimeInMillis()));
                         consumeDB.insert(consumeVO);
@@ -137,6 +140,9 @@ public class JobSchedulerService extends JobService {
                             consumeVO.setNotify("false");
                             consumeVO.setFixDate("false");
                             consumeVO.setAuto(true);
+                            consumeVO.setIsWin("0");
+                            consumeVO.setNumber("");
+                            consumeVO.setIsWinNul("0");
                             consumeVO.setAutoId(consumeVO.getId());
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumeDB.insert(consumeVO);
@@ -157,6 +163,9 @@ public class JobSchedulerService extends JobService {
                             consumeVO.setNotify("false");
                             consumeVO.setFixDate("false");
                             consumeVO.setAuto(true);
+                            consumeVO.setIsWin("0");
+                            consumeVO.setNumber("");
+                            consumeVO.setIsWinNul("0");
                             consumeVO.setAutoId(consumeVO.getId());
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumeDB.insert(consumeVO);
@@ -174,6 +183,9 @@ public class JobSchedulerService extends JobService {
                             consumeVO.setNotify("false");
                             consumeVO.setFixDate("false");
                             consumeVO.setAuto(true);
+                            consumeVO.setIsWin("0");
+                            consumeVO.setNumber("");
+                            consumeVO.setIsWinNul("0");
                             consumeVO.setAutoId(consumeVO.getId());
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumeDB.insert(consumeVO);
@@ -193,9 +205,12 @@ public class JobSchedulerService extends JobService {
                         Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
                         ConsumeVO cccc = consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getId());
                         if (cccc == null) {
+                            consumeVO.setNumber("");
                             consumeVO.setNotify("false");
                             consumeVO.setFixDate("false");
                             consumeVO.setAuto(true);
+                            consumeVO.setIsWin("0");
+                            consumeVO.setIsWinNul("0");
                             consumeVO.setAutoId(consumeVO.getId());
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumeDB.insert(consumeVO);

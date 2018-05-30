@@ -139,37 +139,60 @@ public class PriceNumber extends Fragment {
         {
             superN.setText(priceVO.getSuperPrizeNo()+" \t");
             spcN.setText(priceVO.getSpcPrizeNo()+" \t");
-            firstN.setText(priceVO.getFirstPrizeNo1()+"\n"+priceVO.getFirstPrizeNo2()+"\n"+priceVO.getFirstPrizeNo3());
+            String firstNumber=priceVO.getFirstPrizeNo1()+"\n"+priceVO.getFirstPrizeNo2()+"\n"+priceVO.getFirstPrizeNo3();
+            SpannableString detailC = new SpannableString(firstNumber);
+            detailC.setSpan(new ForegroundColorSpan(Color.RED),5,
+                    8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            detailC.setSpan(new ForegroundColorSpan(Color.RED),14,
+                    17, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            detailC.setSpan(new ForegroundColorSpan(Color.RED),23,
+                    26, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            firstN.setText(detailC);
             StringBuffer sb=new StringBuffer();
+            int r=0;
             if(!priceVO.getSixthPrizeNo1().equals("0"))
             {
                 sb.append(" "+priceVO.getSixthPrizeNo1()+" ");
+                r=r+1;
             }
             if(!priceVO.getSixthPrizeNo2().equals("0"))
             {
                 sb.append(", "+priceVO.getSixthPrizeNo2()+" ");
+                r=r+1;
             }
             if(!priceVO.getSixthPrizeNo3().equals("0"))
             {
                 sb.append(", "+priceVO.getSixthPrizeNo3()+" ");
+                r=r+1;
             }
             if(!priceVO.getSixthPrizeNo4().equals("0"))
             {
                 sb.append(", "+priceVO.getSixthPrizeNo4()+" ");
+                r=r+1;
             }
             if(!priceVO.getSixthPrizeNo5().equals("0"))
             {
                 sb.append(", "+priceVO.getSixthPrizeNo5()+" ");
+                r=r+1;
             }
             if(!priceVO.getSixthPrizeNo6().equals("0"))
             {
                 sb.append(", "+priceVO.getSixthPrizeNo6()+" ");
+                r=r+1;
             }
             if(sb.toString().trim().length()<=0)
             {
                 sb.append("本期無加開號碼");
+                addsixN.setText(sb.toString());
+                return;
             }
-            addsixN.setText(sb.toString());
+            SpannableString detailS = new SpannableString(sb.toString());
+            for(int i=0;i<r;i++)
+            {
+                detailS.setSpan(new ForegroundColorSpan(Color.RED),6*i,
+                        6*i+4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            addsixN.setText(detailS);
         }
     }
 
