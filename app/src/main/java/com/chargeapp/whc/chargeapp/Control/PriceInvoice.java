@@ -327,9 +327,9 @@ public class PriceInvoice extends Fragment {
                 remindL.setVisibility(View.VISIBLE);
                 if(invoiceVO.getDonateMark().equals("true"))
                 {
-                    donateL.setVisibility(View.VISIBLE);
-                }else{
                     donateL.setVisibility(View.GONE);
+                }else{
+                    donateL.setVisibility(View.VISIBLE);
                 }
                 //標題
                 day=Common.sDay.format(new Date(invoiceVO.getTime().getTime()))+" ";

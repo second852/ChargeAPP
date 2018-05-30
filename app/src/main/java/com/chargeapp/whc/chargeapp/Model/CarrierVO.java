@@ -6,9 +6,9 @@ package com.chargeapp.whc.chargeapp.Model;
 
 public class CarrierVO {
 
-    private String CarNul;
-    private String password;
-    private int id;
+    private String CarNul;//手機載具號碼
+    private String password;//手機載具密碼
+    private int id;//手機載具ID
 
     public int getId() {
         return id;

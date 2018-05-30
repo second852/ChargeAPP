@@ -7,19 +7,10 @@ import java.io.Serializable;
  */
 
 public class BankTypeVO implements Serializable {
-    /*
-    * 種類細節編號
-    * */
-    private int id;
-    /*
-    * 種類細節名子
-    * */
-    private String name;
-    /*
-    * 種類細節代號
-    * */
-    private String groupNumber;
 
+    private int id;//種類細節編號
+    private String name;//種類細節名子
+    private String groupNumber;//種類細節代號
     private int image;
 
 

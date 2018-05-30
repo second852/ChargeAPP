@@ -9,30 +9,18 @@ import java.sql.Date;
 
 public class GoalVO implements Serializable{
 
-    private int id;
-
-    private String type;
-
-    private String name;
-
-    private int money;
-
-    private String timeStatue;
-
-    private Date startTime;
-
-    private Date endTime;
-
-    private boolean notify;
-
-    private String notifyStatue;
-
-    private String notifyDate;
-
-    private boolean noWeekend;
-
-    /* 0:init 1:fail 2:complete*/
-    private int statue;
+    private int id;        //0目標ID
+    private String type;   //1目標種類
+    private String name;   //2目標名子
+    private int money;     //3目標金額
+    private String timeStatue;  //4目標時間狀態
+    private Date startTime;     //5目標開始時間
+    private Date endTime;       //6目標結束時間
+    private boolean notify;     //7目標通知時間
+    private String notifyStatue; //8目標通知時間狀態
+    private String notifyDate;   //9目標通知日期
+    private boolean noWeekend;   //10目標假日是否通知
+    private int statue; //11目標狀態 0:init 1:fail 2:complete
 
     public int getStatue() {
         return statue;

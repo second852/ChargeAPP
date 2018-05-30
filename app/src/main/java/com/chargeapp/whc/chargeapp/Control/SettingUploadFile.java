@@ -39,6 +39,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ElePeriodDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
@@ -49,6 +50,7 @@ import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.Model.ElePeriod;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
+import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -101,6 +103,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private BankTybeDB bankTybeDB;
     private GoalDB goalDB;
     private CarrierDB carrierDB;
+    private PriceDB priceDB;
     public static int position;
     private boolean local, consume, income, all, show = true, txt;
     private GoogleApiClient mGoogleApiClient;
@@ -133,6 +136,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         elePeriodDB=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<EleMainItemVO> itemSon = getNewItem();
         listView = view.findViewById(R.id.list);
         fileChoice = view.findViewById(R.id.fileChoice);
@@ -593,7 +597,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(1).setCellValue(typeVO.getGroupNumber());
                     rowContent.createCell(2).setCellValue(typeVO.getName());
                     rowContent.createCell(3).setCellValue(typeVO.getImage());
-                    rowContent.createCell(4).setCellValue(typeVO.getKeyword());
                 }
                 //TypeDetail
                 Sheet sheetCon1 = workbook.createSheet("TypeDetail");
@@ -672,9 +675,10 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(7).setCellValue(consumeVO.getFixDateDetail());
                     rowContent.createCell(8).setCellValue(consumeVO.getNotify());
                     rowContent.createCell(9).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
-                    rowContent.createCell(10).setCellValue(consumeVO.getIsWin());
-                    rowContent.createCell(11).setCellValue(consumeVO.isAuto());
-                    rowContent.createCell(12).setCellValue(consumeVO.getAutoId());
+                    rowContent.createCell(10).setCellValue(consumeVO.isAuto());
+                    rowContent.createCell(11).setCellValue(consumeVO.getAutoId());
+                    rowContent.createCell(12).setCellValue(consumeVO.getIsWin());
+                    rowContent.createCell(13).setCellValue(consumeVO.getIsWinNul());
                 }
 
                 //Invoice
@@ -691,17 +695,18 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(5).setCellValue(invoiceVO.getTime().getTime());
                     rowContent.createCell(6).setCellValue(invoiceVO.getAmount());
                     rowContent.createCell(7).setCellValue(invoiceVO.getDetail());
-                    rowContent.createCell(8).setCellValue(invoiceVO.getSellerName());
-                    rowContent.createCell(9).setCellValue(invoiceVO.getInvDonatable());
-                    rowContent.createCell(10).setCellValue(invoiceVO.getInvDonatable());
-                    rowContent.createCell(11).setCellValue(invoiceVO.getCarrier());
-                    rowContent.createCell(12).setCellValue(invoiceVO.getMaintype());
-                    rowContent.createCell(13).setCellValue(invoiceVO.getSecondtype());
-                    rowContent.createCell(14).setCellValue(invoiceVO.getHeartyteam());
-                    rowContent.createCell(15).setCellValue(invoiceVO.getTime().getTime());
-                    rowContent.createCell(16).setCellValue(invoiceVO.getIswin());
-                    rowContent.createCell(17).setCellValue(invoiceVO.getSellerBan());
-                    rowContent.createCell(18).setCellValue(invoiceVO.getSellerAddress());
+                    rowContent.createCell(8).setCellValue(invoiceVO.getInvDonatable());
+                    rowContent.createCell(9).setCellValue(invoiceVO.getDonateMark());
+                    rowContent.createCell(10).setCellValue(invoiceVO.getCarrier());
+                    rowContent.createCell(11).setCellValue(invoiceVO.getMaintype());
+                    rowContent.createCell(12).setCellValue(invoiceVO.getSecondtype());
+                    rowContent.createCell(13).setCellValue(invoiceVO.getHeartyteam());
+                    rowContent.createCell(14).setCellValue(invoiceVO.getDonateTime().getTime());
+                    rowContent.createCell(15).setCellValue(invoiceVO.getSellerBan());
+                    rowContent.createCell(16).setCellValue(invoiceVO.getSellerName());
+                    rowContent.createCell(17).setCellValue(invoiceVO.getSellerAddress());
+                    rowContent.createCell(18).setCellValue(invoiceVO.getIswin());
+                    rowContent.createCell(19).setCellValue(invoiceVO.getIsWinNul());
                 }
                 //Carrier
                 Sheet sheetCon7 = workbook.createSheet("Carrier");
@@ -713,11 +718,39 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(1).setCellValue(carrierVO.getCarNul());
                     rowContent.createCell(2).setCellValue(carrierVO.getPassword());
                 }
+                //Price
+                Sheet sheetCon8 = workbook.createSheet("Price");
+                List<PriceVO> priceVOS =priceDB.getAll();
+                for (int i = 0; i < priceVOS.size(); i++) {
+                    Row rowContent = sheetCon8.createRow(i);
+                    PriceVO priceVO=priceVOS.get(i);
+                    rowContent.createCell(0).setCellValue(priceVO.getInvoYm());
+                    rowContent.createCell(1).setCellValue(priceVO.getSuperPrizeNo());
+                    rowContent.createCell(2).setCellValue(priceVO.getSpcPrizeNo());
+                    rowContent.createCell(3).setCellValue(priceVO.getFirstPrizeNo1());
+                    rowContent.createCell(4).setCellValue( priceVO.getFirstPrizeNo2());
+                    rowContent.createCell(5).setCellValue( priceVO.getFirstPrizeNo3());
+                    rowContent.createCell(6).setCellValue( priceVO.getSixthPrizeNo1());
+                    rowContent.createCell(7).setCellValue( priceVO.getSixthPrizeNo2());
+                    rowContent.createCell(8).setCellValue( priceVO.getSixthPrizeNo3());
+                    rowContent.createCell(9).setCellValue( priceVO.getSuperPrizeAmt());
+                    rowContent.createCell(10).setCellValue( priceVO.getSpcPrizeAmt());
+                    rowContent.createCell(11).setCellValue( priceVO.getFirstPrizeAmt());
+                    rowContent.createCell(12).setCellValue( priceVO.getSecondPrizeAmt());
+                    rowContent.createCell(13).setCellValue( priceVO.getThirdPrizeAmt());
+                    rowContent.createCell(14).setCellValue( priceVO.getFourthPrizeAmt());
+                    rowContent.createCell(15).setCellValue( priceVO.getFifthPrizeAmt());
+                    rowContent.createCell(16).setCellValue( priceVO.getSixthPrizeAmt());
+                    rowContent.createCell(17).setCellValue( priceVO.getSixthPrizeNo4());
+                    rowContent.createCell(18).setCellValue( priceVO.getSixthPrizeNo5());
+                    rowContent.createCell(19).setCellValue( priceVO.getSixthPrizeNo6());
+                }
+
                 //ElePeriod
-                Sheet sheetCon8 = workbook.createSheet("ElePeriod");
+                Sheet sheetCon9 = workbook.createSheet("ElePeriod");
                 List<ElePeriod> elePeriods = elePeriodDB.getAll();
                 for (int i = 0; i < elePeriods.size(); i++) {
-                    Row rowContent = sheetCon8.createRow(i);
+                    Row rowContent = sheetCon9.createRow(i);
                     ElePeriod elePeriod = elePeriods.get(i);
                     rowContent.createCell(0).setCellValue(elePeriod.getId());
                     rowContent.createCell(1).setCellValue(elePeriod.getCarNul());

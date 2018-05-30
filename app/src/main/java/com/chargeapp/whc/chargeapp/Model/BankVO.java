@@ -9,36 +9,19 @@ import java.sql.Date;
 
 public class BankVO implements Serializable{
 
-    /*
-       * 種類
-       * */
-    private String maintype;
+    private int id;//0 收入序號
+    private String maintype;//1種類
+    private int money;//2薪水金額
+    private Date date;//3記帳日期
+    private String fixDate;//4 固定收入時時間狀態
+    private String fixDateDetail; //5 固定收入時間細節Json
+    private String detailname;// 6 收入細節內容
+    private boolean auto; //7 是否自動產生
+    private int autoId;   //8 自動產生的母ID (-1:無)
 
-    /*
-   *  薪水名稱
-   * */
-    private String detailname;
-    /*
-    *   薪水金額
-    * */
-    private int money;
-    /*
-    * 入帳日期
-    * */
-    private Date date;
 
-    /*
-    * 入帳時間
-    * */
-    private String fixDate;
 
-    private int id;
 
-    private String fixDateDetail;
-
-    private boolean auto;
-
-    private int autoId;
 
     public boolean isAuto() {
         return auto;

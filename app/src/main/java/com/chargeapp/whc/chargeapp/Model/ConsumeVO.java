@@ -11,52 +11,20 @@ import java.sql.Date;
 
 public class ConsumeVO implements Serializable{
 
-    private int id;
-    /*
-    * 花費名稱
-    * */
-    private String detailname;
-    /*
-    * 花費金額
-    * */
-    private int money;
-    /*
-    * 花費日期
-    * */
-    private Date date;
-    /*
-    * 發票編碼
-    * */
-    private String number;
-    /*
-    * 主要種類
-    * */
-    private String maintype;
-    /*
-    * 次要種類
-    * */
-    private String secondType;
-    /*
-    * 固定扣款日期
-    * */
-    private String fixDate;
-    /*
-     *
-     **/
-    private String fixDateDetail;
-    /*
-    *  繳費通知確認
-    * */
-    private String  notify;
-
-    private String isWin;
-
-    private boolean auto;
-
-    private int autoId;
-
-    //中獎號碼
-    private String isWinNul;
+    private int id;//0花費名稱
+    private String maintype;//1次要種類
+    private String secondType;//2固定扣款日期
+    private int money;//3花費日期
+    private Date date;//4發票編碼
+    private String number;//5主要種類
+    private String fixDate;//6固定日期時狀態
+    private String fixDateDetail;//7固定日期時間細節
+    private String  notify;//8繳費通知確認
+    private String detailname;//9花費金額
+    private boolean auto;//10是否自動產生
+    private int autoId;//11自動產生母ID(-1:無)
+    private String isWin;//12是否中獎
+    private String isWinNul;//13中獎號碼
 
     public String getIsWinNul() {
         return isWinNul;

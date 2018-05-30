@@ -1,15 +1,12 @@
 package com.chargeapp.whc.chargeapp.ChargeDB;
 
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+
 import android.os.AsyncTask;
 
 
-import android.os.Handler;
+
 import android.util.Log;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 

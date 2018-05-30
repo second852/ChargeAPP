@@ -5,15 +5,12 @@ package com.chargeapp.whc.chargeapp.Model;
  */
 
 public class ElePeriod {
-    int id;
-    //yyyy
-    int year;
-    //MM
-    int month;
 
-    String carNul;
-
-    boolean download;
+    int id;   //序號
+    int year; //yyyy
+    int month; //MM
+    String carNul; //載具號碼
+    boolean download; //是否下載
 
     public ElePeriod(int year, int month, String carNul, boolean download) {
         this.year = year;

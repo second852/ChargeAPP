@@ -7,27 +7,15 @@ import java.io.Serializable;
  */
 
 public class TypeDetailVO implements Serializable{
-    /*
-    * 種類細節編號
-    * */
-    private int id;
-    /*
-    * 種類細節名子
-    * */
-    private String name;
-    /*
-    * 種類細節代號
-    * */
-    private String groupNumber;
 
-    private int image;
-
-    private String keyword;
+    private int id;//種類細節編號
+    private String name;//種類細節名子
+    private String groupNumber;//種類細節代號
+    private int image;//種類細節
+    private String keyword;//種類細節關鍵字
 
 
-    public TypeDetailVO() {
-    }
-
+    public TypeDetailVO() { }
 
     public TypeDetailVO(int id, String groupNumber, String name, int image) {
         this.id = id;

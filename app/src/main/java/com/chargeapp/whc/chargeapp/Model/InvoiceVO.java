@@ -9,29 +9,26 @@ import java.util.Date;
  */
 
 public class InvoiceVO implements Serializable{
-    private int id;
-    private String invNum;
-    private String cardType;
-    private String cardNo;
-    private String cardEncrypt;
-    private Timestamp time;
-    private int amount;
-    private String detail;
-    private String invDonatable;
-    private String donateMark;
-    private String carrier;
-    private String maintype;
-    private String secondtype;
-    private String heartyteam;
-    private Timestamp donateTime;
-    private String sellerBan;
-    private String sellerName;
-    private String sellerAddress;
-
-    //中獎資訊
-    private String iswin;
-    //中獎號碼
-    private String isWinNul;
+    private int id;  //0電子發票ID
+    private String invNum;//1電子發票號碼
+    private String cardType;//2電子發票載具種類
+    private String cardNo;//3電子發票載具號碼
+    private String cardEncrypt;//4電子發票密碼
+    private Timestamp time;//5電子發票時間
+    private int amount;//6電子發票金額
+    private String detail;//7電子發票細節
+    private String invDonatable;//8電子發票是否捐贈
+    private String donateMark;//9電子發票是否可以捐贈
+    private String carrier;//10電子發票手機載具
+    private String maintype;//11電子發票消費主種類
+    private String secondtype;//12電子發票消費次種類
+    private String heartyteam;//13電子發票捐贈單位
+    private Timestamp donateTime;//14電子發票捐贈時間
+    private String sellerBan;//15電子發票
+    private String sellerName;//16電子發票
+    private String sellerAddress;//17電子發票
+    private String iswin; //18電子發票中獎資訊
+    private String isWinNul; //19電子發票中獎號碼
 
     public String getIsWinNul() {
         return isWinNul;

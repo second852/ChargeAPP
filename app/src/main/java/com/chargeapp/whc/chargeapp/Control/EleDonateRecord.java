@@ -163,8 +163,22 @@ public class EleDonateRecord extends Fragment {
             TextView fixT=itemView.findViewById(R.id.fixT);
             LinearLayout donateL=itemView.findViewById(R.id.donateL);
             InvoiceVO invoiceVO=invoiceVOS.get(position);
-            Title.setText(Common.sTwo.format(new Date(invoiceVO.getTime().getTime()))+" "+invoiceVO.getInvNum());
-            describe.setText(invoiceVO.getHeartyteam());
+            Title.setText(invoiceVO.getInvNum());
+            StringBuffer sb=new StringBuffer();
+            sb.append("發票日期 : "+Common.sOne.format(new Date(invoiceVO.getTime().getTime()))+"\n");
+            sb.append("捐贈機構 : ");
+            if(invoiceVO.getHeartyteam()!=null)
+            {
+                if(invoiceVO.getHeartyteam().trim().length()>0)
+                {
+                    sb.append(invoiceVO.getHeartyteam());
+                }else{
+                    sb.append("無資料");
+                }
+            }else{
+                sb.append("無資料");
+            }
+            describe.setText(sb.toString());
             remindL.setVisibility(View.VISIBLE);
             remainT.setText("以捐贈");
             return itemView;

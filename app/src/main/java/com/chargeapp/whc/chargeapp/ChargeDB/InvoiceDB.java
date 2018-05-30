@@ -231,6 +231,20 @@ public class InvoiceDB {
         cursor.close();
         return invoiceVOSList;
     }
+    public long getMinTimeDonate(String carrrier)
+    {
+        long minTime=0;
+        String sql = "SELECT min(time) FROM INVOICE  where carrier = '"+carrrier+"' and donateMark = 'true' ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        if(cursor.moveToNext())
+        {
+            minTime=cursor.getLong(0);
+        }
+        cursor.close();
+        return minTime;
+    }
+
 
     public long getStartTime()
     {
@@ -285,7 +299,10 @@ public class InvoiceDB {
 
 
     public List<InvoiceVO> getisDonated(String carrrier) {
-        long showtime=getStartTime();
+        long showtime=getMinTimeDonate(carrrier);
+        if(showtime==0) {
+            showtime=getStartTime();
+        }
         String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and donateMark='false' and invDonatable = 'false' and time >='"+showtime+"'order by donateTime desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);

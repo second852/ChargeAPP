@@ -137,33 +137,33 @@ public class PriceNumber extends Fragment {
     private void setNul() {
         if(priceVO!=null)
         {
-            superN.setText(priceVO.getSuperPrizeNo());
-            spcN.setText(priceVO.getSpcPrizeNo());
+            superN.setText(priceVO.getSuperPrizeNo()+" \t");
+            spcN.setText(priceVO.getSpcPrizeNo()+" \t");
             firstN.setText(priceVO.getFirstPrizeNo1()+"\n"+priceVO.getFirstPrizeNo2()+"\n"+priceVO.getFirstPrizeNo3());
             StringBuffer sb=new StringBuffer();
             if(!priceVO.getSixthPrizeNo1().equals("0"))
             {
-                sb.append(priceVO.getSixthPrizeNo1());
+                sb.append(" "+priceVO.getSixthPrizeNo1()+" ");
             }
             if(!priceVO.getSixthPrizeNo2().equals("0"))
             {
-                sb.append(","+priceVO.getSixthPrizeNo2());
+                sb.append(", "+priceVO.getSixthPrizeNo2()+" ");
             }
             if(!priceVO.getSixthPrizeNo3().equals("0"))
             {
-                sb.append(","+priceVO.getSixthPrizeNo3());
+                sb.append(", "+priceVO.getSixthPrizeNo3()+" ");
             }
             if(!priceVO.getSixthPrizeNo4().equals("0"))
             {
-                sb.append(","+priceVO.getSixthPrizeNo4());
+                sb.append(", "+priceVO.getSixthPrizeNo4()+" ");
             }
             if(!priceVO.getSixthPrizeNo5().equals("0"))
             {
-                sb.append(","+priceVO.getSixthPrizeNo5());
+                sb.append(", "+priceVO.getSixthPrizeNo5()+" ");
             }
             if(!priceVO.getSixthPrizeNo6().equals("0"))
             {
-                sb.append(","+priceVO.getSixthPrizeNo6());
+                sb.append(", "+priceVO.getSixthPrizeNo6()+" ");
             }
             if(sb.toString().trim().length()<=0)
             {
