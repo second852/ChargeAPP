@@ -397,12 +397,14 @@ public class PriceHand extends Fragment {
         class MyViewHolder extends RecyclerView.ViewHolder {
             TextView day;
             CardView cardview;
+            View itemView;
 
 
             MyViewHolder(View itemView) {
                 super(itemView);
                 day = itemView.findViewById(R.id.QrCodeA);
                 cardview = itemView.findViewById(R.id.cardview);
+                this.itemView=itemView;
             }
         }
 
@@ -422,7 +424,7 @@ public class PriceHand extends Fragment {
         public void onBindViewHolder(PriceHand.InputAdapter.MyViewHolder viewHolder, int position) {
             final String number = numberList.get(position);
             viewHolder.day.setText(number);
-            viewHolder.cardview.setOnClickListener(new View.OnClickListener() {
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     SpannableString content;
