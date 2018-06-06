@@ -403,12 +403,18 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         //電子發票細節
                         List<JsonObject> js = gson.fromJson(invoiceVO.getDetail(), cdType);
                         sb=new StringBuffer();
-                        int price, n;
+                        float price,amout,n;
                         for (JsonObject j : js) {
                             try {
-                                n = j.get("amount").getAsInt();
-                                price = j.get("unitPrice").getAsInt();
-                                sb.append(j.get("description").getAsString() + " : \n" + price + "X" + n / price + "=" + n + "元\n");
+                                amout=j.get("amount").getAsFloat();
+                                n = j.get("quantity").getAsFloat();
+                                price = j.get("unitPrice").getAsFloat();
+                                if(price==0)
+                                {
+                                    sb.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
+                                }else{
+                                    sb.append(j.get("description").getAsString() + " : \n" + (int)price + "X" + (int)n + "=" + (int)amout + "元\n");
+                                }
                             } catch (Exception e) {
                                 sb.append(j.get("description").getAsString() + " : \n" + 0 + "X" + 0 + "=" + 0 + "元\n");
                             }
@@ -573,12 +579,18 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         //電子發票細節
                         List<JsonObject> js = gson.fromJson(invoiceVO.getDetail(), cdType);
                         sb=new StringBuffer();
-                        int price, n;
+                        float price,amout,n;
                         for (JsonObject j : js) {
                             try {
-                                n = j.get("amount").getAsInt();
-                                price = j.get("unitPrice").getAsInt();
-                                sb.append(j.get("description").getAsString() + " : \n" + price + "X" + n / price + "=" + n + "元\n");
+                                amout=j.get("amount").getAsFloat();
+                                n = j.get("quantity").getAsFloat();
+                                price = j.get("unitPrice").getAsFloat();
+                                if(price==0)
+                                {
+                                    sb.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
+                                }else{
+                                    sb.append(j.get("description").getAsString() + " : \n" + (int)price + "X" + (int)n + "=" + (int)amout + "元\n");
+                                }
                             } catch (Exception e) {
                                 sb.append(j.get("description").getAsString() + " : \n" + 0 + "X" + 0 + "=" + 0 + "元\n");
                             }

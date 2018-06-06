@@ -200,6 +200,7 @@ public class Common {
         hashMap.put("1K0001","悠遊卡");
         hashMap.put("1H0001","一卡通");
         hashMap.put("2G0001","愛金卡");
+        hashMap.put("EG0002","家樂福");
         return hashMap;
     }
 

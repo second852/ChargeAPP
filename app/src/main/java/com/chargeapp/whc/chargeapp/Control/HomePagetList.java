@@ -266,6 +266,24 @@ public class HomePagetList extends Fragment {
                 typeT.setTextColor(Color.parseColor("#008844"));
                 typeL.setBackgroundColor(Color.parseColor("#008844"));
                 sbTitle.append(Common.sDay.format(new Date(I.getTime().getTime())));
+
+                //新增ele Type
+                LinearLayout eleTypeL=itemView.findViewById(R.id.eleTypeL);
+                TextView eleTypeT=itemView.findViewById(R.id.eleTypeT);
+
+                //設定電子發票種類
+                try {
+                    eleTypeL.setVisibility(View.VISIBLE);
+                    eleTypeT.setText(Common.CardType().get(I.getCardType().trim()));
+                    eleTypeT.setTextColor(Color.parseColor("#000000"));
+                    eleTypeL.setBackgroundColor(Color.parseColor("#000000"));
+                }catch (Exception e)
+                {
+                    eleTypeL.setVisibility(View.GONE);
+                }
+
+
+
                 if(key.equals("其他"))
                 {
                     if(I.getMaintype().equals("O"))
@@ -312,18 +330,22 @@ public class HomePagetList extends Fragment {
                     update.setText("修改");
                     Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                     List<JsonObject> js=gson.fromJson(I.getDetail(), cdType);
-                    int price,n;
-                        for(JsonObject j:js)
-                        {
-                            try {
-                                n=j.get("amount").getAsInt();
-                                price=j.get("unitPrice").getAsInt();
-                                sbDecribe.append(j.get("description").getAsString()+" : \n"+price+"X"+n/price+"="+n+"元\n");
-                            }catch (Exception e)
+                    float price,amout,n;
+                    for (JsonObject j : js) {
+                        try {
+                            amout=j.get("amount").getAsFloat();
+                            n = j.get("quantity").getAsFloat();
+                            price = j.get("unitPrice").getAsFloat();
+                            if(price==0)
                             {
-                                sbDecribe.append(j.get("description").getAsString()+" : \n"+0+"X"+0+"="+0+"元\n");
+                                sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
+                            }else{
+                                sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)price + "X" + (int)n + "=" + (int)amout + "元\n");
                             }
+                        } catch (Exception e) {
+                            sbDecribe.append(j.get("description").getAsString() + " : \n" + 0 + "X" + 0 + "=" + 0 + "元\n");
                         }
+                    }
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
