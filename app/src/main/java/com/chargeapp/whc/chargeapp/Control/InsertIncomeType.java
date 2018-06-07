@@ -51,6 +51,7 @@ public class InsertIncomeType extends Fragment {
     private BankTypeVO bankTypeVO;
     private boolean onClick;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -106,9 +107,8 @@ public class InsertIncomeType extends Fragment {
         clear = view.findViewById(R.id.clear);
         choiceL = view.findViewById(R.id.choiceL);
         choiceG = view.findViewById(R.id.choiceG);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
     }
 
     private class showImage implements View.OnClickListener {

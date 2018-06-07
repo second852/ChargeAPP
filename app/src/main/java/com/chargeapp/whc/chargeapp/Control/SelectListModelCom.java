@@ -69,6 +69,7 @@ public class SelectListModelCom extends Fragment {
     private TextView message;
     private Activity context;
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -172,9 +173,6 @@ public class SelectListModelCom extends Fragment {
         DRcarrier = view.findViewById(R.id.DRcarrier);
         listView = view.findViewById(R.id.list);
         message = view.findViewById(R.id.message);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
     }
 
     private class ListAdapter extends BaseAdapter {
@@ -231,7 +229,6 @@ public class SelectListModelCom extends Fragment {
                 typeT.setText("電子發票");
                 typeT.setTextColor(Color.parseColor("#008844"));
                 typeL.setBackgroundColor(Color.parseColor("#008844"));
-                Log.d("XXXXXX",I.getDetail());
                 //設定電子發票種類
                 try {
                     eleTypeL.setVisibility(View.VISIBLE);
@@ -283,22 +280,26 @@ public class SelectListModelCom extends Fragment {
                     update.setText("修改");
                     Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                     List<JsonObject> js = gson.fromJson(I.getDetail(), cdType);
-                    float price,amout,n;
+                    float amout,n;
                     for (JsonObject j : js) {
                         try {
                             amout=j.get("amount").getAsFloat();
-                            n = j.get("quantity").getAsFloat();
-                            price = j.get("unitPrice").getAsFloat();
-                            if(price==0)
-                            {
-                                sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
-                            }else{
-                                sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)price + "X" + (int)n + "=" + (int)amout + "元\n");
-                            }
                         } catch (Exception e) {
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + 0 + "X" + 0 + "=" + 0 + "元\n");
+                            amout=0;
+                        }
+                        try {
+                            n = j.get("quantity").getAsFloat();
+                        } catch (Exception e) {
+                            n=0;
+                        }
+                        if(n!=0)
+                        {
+                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
+                        }else{
+                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)amout + "X" + 1 + "=" + (int)amout + "元\n");
                         }
                     }
+
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

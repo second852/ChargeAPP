@@ -118,6 +118,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private Type cdType;
     private Gson gson;
     private StringBuffer sb;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -156,9 +157,10 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         cancelF = view.findViewById(R.id.cancelF);
         choiceT = view.findViewById(R.id.choiceT);
         progressL=view.findViewById(R.id.progressL);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        //廣告
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
+
         excel.setOnClickListener(new excelOnClick());
         txtFile.setOnClickListener(new txtOnClick());
         cancelF.setOnClickListener(new cancelOnClick());

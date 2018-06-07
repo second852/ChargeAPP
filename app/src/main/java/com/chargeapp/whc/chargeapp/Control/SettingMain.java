@@ -62,6 +62,7 @@ public class SettingMain extends Fragment {
     private ListView listView;
     private SharedPreferences sharedPreferences;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -80,9 +81,9 @@ public class SettingMain extends Fragment {
         View view = inflater.inflate(R.layout.setting_main, container, false);
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         listView = view.findViewById(R.id.list);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
+
         List<EleMainItemVO> itemSon = getNewItem();
         listView.setAdapter(new ListAdapter(context, itemSon));
         return view;

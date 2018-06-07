@@ -49,6 +49,7 @@ public class SettingListFixCon extends Fragment {
     public List<ConsumeVO> consumeVOS;
     public ConsumeVO consumeVO;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -71,9 +72,8 @@ public class SettingListFixCon extends Fragment {
         p= (int) getArguments().getSerializable("position");
         listView=view.findViewById(R.id.list);
         message=view.findViewById(R.id.message);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
         return view;
     }
 

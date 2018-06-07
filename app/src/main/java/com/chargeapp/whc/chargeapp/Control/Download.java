@@ -85,7 +85,7 @@ public class Download extends AppCompatActivity {
     private Handler firstH;
     private GetSQLDate getSQLDate;
     private TextView percentage, progressT;
-
+    private AdView adView;
 
 
     @Override
@@ -94,9 +94,8 @@ public class Download extends AppCompatActivity {
         setContentView(R.layout.download_main);
         progressT = findViewById(R.id.progressT);
         percentage = findViewById(R.id.percentage);
-        AdView adView =findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        adView =findViewById(R.id.adView);
+        Common.setAdView(adView,this);
     }
 
     private void setJob()

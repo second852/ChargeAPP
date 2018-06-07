@@ -118,6 +118,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     private RelativeLayout progressL;
     private ProgressBar mProgressBar;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -149,9 +150,10 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         listView = view.findViewById(R.id.list);
         progressL = view.findViewById(R.id.progressL);
         mProgressBar = view.findViewById(R.id.progress);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        //廣告
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
+
         listView.setAdapter(new ListAdapter(context, itemSon));
         progressL.setVisibility(View.GONE);
         return view;

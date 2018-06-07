@@ -48,6 +48,7 @@ public class SelectListModelIM extends Fragment {
     private Gson gson;
     private Activity context;
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -104,9 +105,6 @@ public class SelectListModelIM extends Fragment {
         message = view.findViewById(R.id.message);
         DRadd.setOnClickListener(new addOnClick());
         DRcut.setOnClickListener(new cutOnClick());
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
     }
 
 

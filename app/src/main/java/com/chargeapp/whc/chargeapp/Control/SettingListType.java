@@ -47,6 +47,7 @@ public class SettingListType extends Fragment {
     private int spinnerC;
     private ArrayList<Object> objects;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -64,9 +65,10 @@ public class SettingListType extends Fragment {
         View view = inflater.inflate(R.layout.setting_list, container, false);
         listView = view.findViewById(R.id.list);
         typeH = view.findViewById(R.id.typeH);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+
+
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
         Common.setChargeDB(context);
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());

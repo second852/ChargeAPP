@@ -56,6 +56,7 @@ public class EleSetCarrier extends Fragment {
     private Handler handler,adHadler;
     private View view;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -113,9 +114,8 @@ public class EleSetCarrier extends Fragment {
     private Runnable AdRunnable=new Runnable() {
         @Override
         public void run() {
-            AdView adView =view.findViewById(R.id.adView);
-            AdRequest adRequest = new AdRequest.Builder().build();
-            adView.loadAd(adRequest);
+            adView =view.findViewById(R.id.adView);
+            Common.setAdView(adView,context);
         }
     };
 

@@ -54,6 +54,7 @@ public class InsertConsumeType extends Fragment {
     private boolean mainClick,secondClick;
     private TextView mainT;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -135,9 +136,8 @@ public class InsertConsumeType extends Fragment {
         choiceL = view.findViewById(R.id.choiceL);
         choiceG = view.findViewById(R.id.choiceG);
         mainT=view.findViewById(R.id.mainT);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
     }
 
     private class showImage implements View.OnClickListener {

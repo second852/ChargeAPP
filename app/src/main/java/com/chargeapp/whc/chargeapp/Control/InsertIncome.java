@@ -31,6 +31,7 @@ import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -62,6 +63,7 @@ public class InsertIncome extends Fragment {
     public static BankVO bankVO;
     public static boolean needSet;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -279,9 +281,8 @@ public class InsertIncome extends Fragment {
         fixDateT=view.findViewById(R.id.fixDateT);
         firstG = view.findViewById(R.id.firstG);
         firstL = view.findViewById(R.id.firstL);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
     }
 
 

@@ -62,6 +62,7 @@ public class SelectListPieIncome extends Fragment {
     private String title;
     private Gson gson;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -134,9 +135,8 @@ public class SelectListPieIncome extends Fragment {
     private void findViewById(View view) {
         listView = view.findViewById(R.id.listCircle);
         message = view.findViewById(R.id.message);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
     }
 
 

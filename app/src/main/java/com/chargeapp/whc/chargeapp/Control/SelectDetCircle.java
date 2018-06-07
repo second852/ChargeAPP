@@ -66,6 +66,7 @@ public class SelectDetCircle extends Fragment {
     private CarrierDB carrierDB;
     private Calendar start,end;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -83,9 +84,8 @@ public class SelectDetCircle extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
         ((AppCompatActivity)context).getSupportActionBar().setDisplayShowCustomEnabled(false);
-        AdView adView = (AdView) view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        adView =view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
         setDB();
         findViewById(view);
         hashMap = new HashMap<>();

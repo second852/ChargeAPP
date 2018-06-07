@@ -24,6 +24,10 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.components.Description;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.gson.JsonObject;
 
 import java.sql.Date;
@@ -65,6 +69,25 @@ public class Common {
         if(MainActivity.chargeAPPDB==null)
         {
             MainActivity.chargeAPPDB=new ChargeAPPDB(activity);
+        }
+    }
+
+    public static void setAdView(final AdView adView, Context activity)
+    {
+        try {
+            MobileAds.initialize(activity, "ca-app-pub-5169620543343332~2865524734");
+            AdRequest adRequest = new AdRequest.Builder().build();
+            adView.loadAd(adRequest);
+            adView.setAdListener(new AdListener() {
+                @Override
+                public void onAdFailedToLoad(int i) {
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    adView.loadAd(adRequest);
+                }
+            });
+        }catch (Exception e)
+        {
+            Log.d("adError",e.toString());
         }
     }
 
@@ -319,6 +342,7 @@ public class Common {
         for (ConsumeVO consumeVO : consumeVOS) {
             String nul = consumeVO.getNumber().trim();
             consumeVO.setIsWin("N");
+            consumeVO.setIsWinNul("N");
             if (nul != null && nul.trim().length() == 10) {
                 nul = nul.substring(2);
                 List<String> result = anwswer(nul, priceVO);
@@ -350,25 +374,30 @@ public class Common {
         List<CarrierVO> carrierVOS = carrierDB.getAll();
         for (CarrierVO c : carrierVOS) {
             List<InvoiceVO> invoiceVOS = invoiceDB.getNotSetWin(c.getCarNul(), startTime, endTime);
-            Log.d("Common",priceVO.getInvoYm()+" : "+sTwo.format(new Date(startTime))+" : "+sTwo.format(new Date(endTime))+" : "+invoiceVOS.size());
             for (InvoiceVO i : invoiceVOS) {
-                String nul = i.getInvNum().trim().substring(2);
-                List<String> inWin = anwswer(nul, priceVO);
-                i.setIswin(inWin.get(0));
-                i.setIsWinNul(inWin.get(1));
-                invoiceDB.update(i);
-                if(!i.getIswin().trim().equals("N"))
+                String nul = i.getInvNum().trim();
+                i.setIswin("N");
+                i.setIsWinNul("N");
+                if (nul != null && nul.trim().length() == 10)
                 {
-                    BankVO bankVO=new BankVO();
-                    bankVO.setFixDate("false");
-                    bankVO.setMoney(getIntPrice().get(i.getIswin()));
-                    bankVO.setDate(new Date(System.currentTimeMillis()));
-                    bankVO.setMaintype("中獎");
-                    int month= Integer.parseInt(priceVO.getInvoYm().substring(3));
-                    String detail=priceVO.getInvoYm().substring(0,3)+"年"+getPriceMonth().get(month)
-                            +getPriceName().get(i.getIswin())+" : "+getPrice().get(i.getIswin());
-                    bankVO.setDetailname(detail);
-                    bankDB.insert(bankVO);
+                    nul=nul.substring(2);
+                    List<String> inWin = anwswer(nul, priceVO);
+                    i.setIswin(inWin.get(0));
+                    i.setIsWinNul(inWin.get(1));
+                    invoiceDB.update(i);
+                    if(!i.getIswin().trim().equals("N"))
+                    {
+                        BankVO bankVO=new BankVO();
+                        bankVO.setFixDate("false");
+                        bankVO.setMoney(getIntPrice().get(i.getIswin()));
+                        bankVO.setDate(new Date(System.currentTimeMillis()));
+                        bankVO.setMaintype("中獎");
+                        int month= Integer.parseInt(priceVO.getInvoYm().substring(3));
+                        String detail=priceVO.getInvoYm().substring(0,3)+"年"+getPriceMonth().get(month)
+                                +getPriceName().get(i.getIswin())+" : "+getPrice().get(i.getIswin());
+                        bankVO.setDetailname(detail);
+                        bankDB.insert(bankVO);
+                    }
                 }
             }
         }

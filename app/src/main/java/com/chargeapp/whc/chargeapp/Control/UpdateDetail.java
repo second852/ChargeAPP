@@ -61,16 +61,25 @@ public class UpdateDetail extends Fragment {
         for (JsonObject j : js) {
             try {
                 amout=j.get("amount").getAsFloat();
-                n = j.get("quantity").getAsFloat();
-                price = j.get("unitPrice").getAsFloat();
-                if(price==0)
-                {
-                    detail.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
-                }else{
-                    detail.append(j.get("description").getAsString() + " : \n" + (int)price + "X" + (int)n + "=" + (int)amout + "元\n");
-                }
             } catch (Exception e) {
-                detail.append(j.get("description").getAsString() + " : \n" + 0 + "X" + 0 + "=" + 0 + "元\n");
+                amout=0;
+            }
+            try {
+                n = j.get("quantity").getAsFloat();
+            } catch (Exception e) {
+                n=0;
+            }
+            try {
+                price = j.get("unitPrice").getAsFloat();
+            } catch (Exception e) {
+                price=0;
+            }
+
+            if(price==0)
+            {
+                detail.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
+            }else{
+                detail.append(j.get("description").getAsString() + " : \n" + (int)price + "X" + (int)n + "=" + (int)amout + "元\n");
             }
         }
        context.setTitle("細節");

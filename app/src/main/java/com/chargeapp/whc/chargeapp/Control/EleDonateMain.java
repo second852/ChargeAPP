@@ -1,5 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +17,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdView;
 
 public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeListener {
     private ViewPager DonateViewPager;
@@ -24,8 +27,20 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
     private LinearLayout text;
     private int nowpoint=0;
     private float movefirst;
+    private AdView adView;
+    private Context context;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            this.context=context;
+        }else{
+            this.context=getActivity();
+        }
 
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -34,6 +49,8 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
         exportMoney=view.findViewById(R.id.exportD);
         importMoney=view.findViewById(R.id.showD);
         goneMoney=view.findViewById(R.id.goneD);
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         DonateViewPager.setAdapter(mAdapterViewPager);
         DonateViewPager.addOnPageChangeListener(this);

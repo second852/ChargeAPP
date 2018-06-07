@@ -73,6 +73,7 @@ public class SelectDetList extends Fragment {
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOS;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -181,9 +182,8 @@ public class SelectDetList extends Fragment {
     private void findViewById(View view) {
         listView=view.findViewById(R.id.listCircle);
         message=view.findViewById(R.id.message);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
     }
 
     private void setDB() {
@@ -302,20 +302,24 @@ public class SelectDetList extends Fragment {
                     update.setText("修改");
                     Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                     List<JsonObject> js=gson.fromJson(I.getDetail(), cdType);
-                    float price,amout,n;
+                    float amout,n;
                     for (JsonObject j : js) {
                         try {
                             amout=j.get("amount").getAsFloat();
-                            n = j.get("quantity").getAsFloat();
-                            price = j.get("unitPrice").getAsFloat();
-                            if(price==0)
-                            {
-                                sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
-                            }else{
-                                sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)price + "X" + (int)n + "=" + (int)amout + "元\n");
-                            }
                         } catch (Exception e) {
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + 0 + "X" + 0 + "=" + 0 + "元\n");
+                            amout=0;
+                        }
+                        try {
+                            n = j.get("quantity").getAsFloat();
+                        } catch (Exception e) {
+                            n=0;
+                        }
+
+                        if(n!=0)
+                        {
+                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
+                        }else{
+                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)amout + "X" + 1 + "=" + (int)amout + "元\n");
                         }
                     }
                     update.setOnClickListener(new View.OnClickListener() {

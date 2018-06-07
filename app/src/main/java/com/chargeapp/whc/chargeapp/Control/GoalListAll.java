@@ -49,6 +49,7 @@ public class GoalListAll extends Fragment {
     private TextView message;
     private int p;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -65,9 +66,8 @@ public class GoalListAll extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.goal_list, container, false);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
         Common.setChargeDB(context);
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());

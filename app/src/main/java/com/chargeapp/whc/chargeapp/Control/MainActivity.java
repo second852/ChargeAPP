@@ -40,6 +40,9 @@ import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
     }
 
 
@@ -136,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
             oldFramgent = new LinkedList<>();
             bundles = new LinkedList<>();
         }
-        setContentView(R.layout.activity_main);
         setUpActionBar();
         initDrawer();
         Common.setChargeDB(this);

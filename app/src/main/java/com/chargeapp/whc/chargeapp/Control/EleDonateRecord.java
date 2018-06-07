@@ -1,4 +1,5 @@
 package com.chargeapp.whc.chargeapp.Control;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -43,10 +44,16 @@ public class EleDonateRecord extends Fragment {
     public  int choiceca = 0;
     private Context context;
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context=context;
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
     }
 
     @Nullable
@@ -113,9 +120,6 @@ public class EleDonateRecord extends Fragment {
         donateRL=view.findViewById(R.id.donateRL);
         DRmessage=view.findViewById(R.id.DRmessage);
         choiceModel=view.findViewById(R.id.choiceModel);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
     }
 
 

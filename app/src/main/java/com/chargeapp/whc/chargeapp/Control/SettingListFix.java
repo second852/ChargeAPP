@@ -58,6 +58,7 @@ public class SettingListFix extends Fragment {
     public static int p;
     public static int spinnerC;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -80,9 +81,8 @@ public class SettingListFix extends Fragment {
         listView = view.findViewById(R.id.list);
         typeH = view.findViewById(R.id.typeH);
         message=view.findViewById(R.id.message);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
         typeH.setOnItemSelectedListener(new choiceType());
         setSpinner();
         setLayout();

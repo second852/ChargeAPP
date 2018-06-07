@@ -49,6 +49,7 @@ public class GoalInsert extends Fragment {
     private String action;
     private ArrayList<String> listDayStatue;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -129,9 +130,8 @@ public class GoalInsert extends Fragment {
         noWeekendT=view.findViewById(R.id.noWeekendT);
         remindT=view.findViewById(R.id.remindT);
         remindL=view.findViewById(R.id.remindL);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
     }
 
     private class showDate implements View.OnClickListener {

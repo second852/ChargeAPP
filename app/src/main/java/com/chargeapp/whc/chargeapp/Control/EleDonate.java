@@ -1,4 +1,5 @@
 package com.chargeapp.whc.chargeapp.Control;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -82,10 +83,16 @@ public class EleDonate extends Fragment {
     private TextView showM;
     private Context context;
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context=context;
+        if(context instanceof Activity)
+        {
+            this.context=(Activity) context;
+        }else{
+            this.context=getActivity();
+        }
     }
 
     @Nullable
@@ -218,9 +225,6 @@ public class EleDonate extends Fragment {
         choice=view.findViewById(R.id.choice);
         modelR=view.findViewById(R.id.modelR);
         choiceModel=view.findViewById(R.id.choiceModel);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
     }
 
 
@@ -406,22 +410,28 @@ public class EleDonate extends Fragment {
                 updateD.setVisibility(View.GONE);
                 Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                 List<JsonObject> js=gson.fromJson(invoiceVO.getDetail(), cdType);
-                float price,amout,n;
+                float amout,n;
+
                 for (JsonObject j : js) {
                     try {
                         amout=j.get("amount").getAsFloat();
-                        n = j.get("quantity").getAsFloat();
-                        price = j.get("unitPrice").getAsFloat();
-                        if(price==0)
-                        {
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
-                        }else{
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)price + "X" + (int)n + "=" + (int)amout + "元\n");
-                        }
                     } catch (Exception e) {
-                        sbDecribe.append(j.get("description").getAsString() + " : \n" + 0 + "X" + 0 + "=" + 0 + "元\n");
+                        amout=0;
+                    }
+                    try {
+                        n = j.get("quantity").getAsFloat();
+                    } catch (Exception e) {
+                        n=0;
+                    }
+
+                    if(n!=0)
+                    {
+                        sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
+                    }else{
+                        sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)amout + "X" + 1 + "=" + (int)amout + "元\n");
                     }
                 }
+
             }
             describe.setText(sbDecribe.toString());
 

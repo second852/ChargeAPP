@@ -73,6 +73,7 @@ public class PriceInvoice extends Fragment {
     private ProgressDialog progressDialog;
     public static  boolean first;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -237,9 +238,8 @@ public class PriceInvoice extends Fragment {
         donateRL=view.findViewById(R.id.donateRL);
         showRemain.setText("(無實體電子發票專屬獎中獎清單\n請到財政部網站確認)");
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
     }
 
 

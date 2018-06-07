@@ -65,6 +65,7 @@ public class UpdateIncomeType extends Fragment {
     private Handler handler;
     private String oldname;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
@@ -145,9 +146,9 @@ public class UpdateIncomeType extends Fragment {
         clear = view.findViewById(R.id.clear);
         choiceL = view.findViewById(R.id.choiceL);
         choiceG = view.findViewById(R.id.choiceG);
-        AdView adView = view.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        //廣告
+        adView = view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
     }
 
     private class showImage implements View.OnClickListener {

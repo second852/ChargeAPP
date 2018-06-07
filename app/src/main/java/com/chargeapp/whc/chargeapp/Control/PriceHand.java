@@ -323,7 +323,7 @@ public class PriceHand extends Fragment {
                 {
                     donateRL.setVisibility(View.VISIBLE);
                     showMi.setVisibility(View.GONE);
-                    priceTitle.setText("請輸入後三碼");
+                    priceTitle.setText("請輸入末三碼");
                     if(speech!=null)
                     {
                         speech.stopListening();
@@ -332,7 +332,7 @@ public class PriceHand extends Fragment {
                     }
                 }else if(i==1)
                 {
-                    priceTitle.setText("請念後三碼");
+                    priceTitle.setText("請念末三碼");
                     showMi.setVisibility(View.VISIBLE);
                     donateRL.setVisibility(View.GONE);
                     int rc = ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO);
@@ -444,13 +444,15 @@ public class PriceHand extends Fragment {
                             return;
                         } else {
                             message = "";
+                            priceTitle.setText("請輸入末三碼");
+                            inputNul.setText(message);
+                            return;
                         }
-                        inputNul.setText(message);
-                        return;
                     }
                     if (number.equals("C")) {
                         message = "";
                         inputNul.setText(message);
+                        priceTitle.setText("請輸入末三碼");
                         return;
                     }
                     message = message + number;

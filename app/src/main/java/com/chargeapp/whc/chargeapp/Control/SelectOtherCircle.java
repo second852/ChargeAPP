@@ -32,6 +32,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.google.android.gms.ads.AdView;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -60,7 +61,7 @@ public class SelectOtherCircle extends Fragment {
     private int carrier;
     private List<InvoiceVO> invoiceVOS;
     private List<ConsumeVO> consumeVOS;
-    private ArrayList<String> Okey,ListKey;
+    private ArrayList<String> Okey, ListKey;
     private Calendar start, end;
     private int Statue;
     private int total, period, dweek;
@@ -72,15 +73,15 @@ public class SelectOtherCircle extends Fragment {
     private List<CarrierVO> carrierVOS;
     private String title;
     private Activity context;
+    private AdView adView;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof Activity)
-        {
-            this.context=(Activity) context;
-        }else{
-            this.context=getActivity();
+        if (context instanceof Activity) {
+            this.context = (Activity) context;
+        } else {
+            this.context = getActivity();
         }
     }
 
@@ -91,9 +92,14 @@ public class SelectOtherCircle extends Fragment {
         ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         setDB();
         carrierVOS = carrierDB.getAll();
-        ListKey=new ArrayList<>();
+        ListKey = new ArrayList<>();
         listView = view.findViewById(R.id.listCircle);
         message = view.findViewById(R.id.message);
+
+        //廣告
+        adView=view.findViewById(R.id.adView);
+        Common.setAdView(adView,context);
+
         ShowConsume = (boolean) getArguments().getSerializable("ShowConsume");
         ShowAllCarrier = (boolean) getArguments().getSerializable("ShowAllCarrier");
         noShowCarrier = (boolean) getArguments().getSerializable("noShowCarrier");
@@ -122,7 +128,7 @@ public class SelectOtherCircle extends Fragment {
             end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
             title = Common.sFour.format(new Date(start.getTimeInMillis()));
         }
-        context.setTitle(title);
+
         setLayout();
         return view;
     }
@@ -151,7 +157,7 @@ public class SelectOtherCircle extends Fragment {
                     }
                     mapHashMap.put(c.getMaintype(), second);
                     total = total + c.getMoney();
-                    countOther=countOther+c.getMoney();
+                    countOther = countOther + c.getMoney();
                 }
             }
             if (!noShowCarrier && carrierVOS.size() > 0) {
@@ -174,24 +180,19 @@ public class SelectOtherCircle extends Fragment {
                     }
                     mapHashMap.put(I.getMaintype(), second);
                     total = total + I.getAmount();
-                    countOther=countOther+I.getAmount();
+                    countOther = countOther + I.getAmount();
                 }
             }
 
-            if(total>0)
-            {
+            if (total > 0) {
                 ListKey.add(Okey.get(i));
                 totalOther.put(key, total);
             }
         }
 
-
+        context.setTitle(title+" 其他雜項 : 共"+total+"元");
 
         if (ListKey.size() > 0) {
-            if (ListKey.size() > 1) {
-                ListKey.add(0, "total");
-                mapHashMap.put("total", totalOther);
-            }
             listView.setVisibility(View.VISIBLE);
             listView.setAdapter(new ListAdapter(context, ListKey));
         } else {
@@ -214,27 +215,16 @@ public class SelectOtherCircle extends Fragment {
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
         int total = 0;
 
-        if(key.equals("total"))
-        {
-            int size=ListKey.size();
-            for (int i=1;i<size;i++)
-            {
-                yVals1.add(new PieEntry(hashMap.get(ListKey.get(i)), ListKey.get(i)));
+        for (String s : hashMap.keySet()) {
+            if (s.equals("O")) {
+                yVals1.add(new PieEntry(hashMap.get(s), "其他"));
+            } else if (s.equals("0")) {
+                yVals1.add(new PieEntry(hashMap.get(s), "未知"));
+            } else {
+                yVals1.add(new PieEntry(hashMap.get(s), s));
             }
-
-        }else{
-            for (String s : hashMap.keySet()) {
-                if (s.equals("O")) {
-                    yVals1.add(new PieEntry(hashMap.get(s), "其他"));
-                } else if (s.equals("0")) {
-                    yVals1.add(new PieEntry(hashMap.get(s), "未知"));
-                } else {
-                    yVals1.add(new PieEntry(hashMap.get(s), s));
-                }
-                total = total + hashMap.get(s);
-            }
+            total = total + hashMap.get(s);
         }
-
 
 
         if (key.equals("O")) {
@@ -290,11 +280,7 @@ public class SelectOtherCircle extends Fragment {
             HashMap<String, Integer> hashMap = mapHashMap.get(key);
             if (hashMap != null) {
                 pieChart.setData(addData(key, detail, hashMap));
-                if (key.equals("total")) {
-                    pieChart.setOnChartValueSelectedListener(new choiceTotal());
-                } else {
-                    pieChart.setOnChartValueSelectedListener(new changeToNewF(key));
-                }
+                pieChart.setOnChartValueSelectedListener(new changeToNewF(key));
                 pieChart.highlightValues(null);
                 pieChart.setUsePercentValues(true);
                 pieChart.setDrawHoleEnabled(true);
@@ -322,19 +308,6 @@ public class SelectOtherCircle extends Fragment {
         }
     }
 
-    private class choiceTotal implements com.github.mikephil.charting.listener.OnChartValueSelectedListener {
-
-        @Override
-        public void onValueSelected(Entry e, Highlight h) {
-            int index = (int) h.getX();
-            index = index + 1;
-            listView.smoothScrollToPosition(index);
-        }
-
-        @Override
-        public void onNothingSelected() {
-        }
-    }
 
     private class changeToNewF implements com.github.mikephil.charting.listener.OnChartValueSelectedListener {
         private String key;
