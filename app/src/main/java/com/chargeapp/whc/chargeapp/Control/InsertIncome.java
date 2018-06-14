@@ -165,6 +165,10 @@ public class InsertIncome extends Fragment {
         item.put("image", R.drawable.add);
         item.put("text", "新增");
         items.add(item);
+        item = new HashMap<String, Object>();
+        item.put("image", R.drawable.cancel);
+        item.put("text", "取消");
+        items.add(item);
         SimpleAdapter adapter = new SimpleAdapter(context,
                 items, R.layout.main_item, new String[]{"image", "text"},
                 new int[]{R.id.image, R.id.text});
@@ -187,6 +191,11 @@ public class InsertIncome extends Fragment {
                 needSet=true;
                 fragment.setArguments(bundle);
                 switchFragment(fragment);
+                return;
+            }
+            if (type.equals("取消")) {
+                firstL.setVisibility(View.GONE);
+                Common.showfirstgrid=false;
                 return;
             }
             name.setText(type);

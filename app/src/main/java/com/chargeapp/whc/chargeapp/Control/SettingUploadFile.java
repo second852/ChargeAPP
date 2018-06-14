@@ -119,6 +119,8 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private Gson gson;
     private StringBuffer sb;
     private AdView adView;
+    private boolean firstEnter;
+
 
     @Override
     public void onAttach(Context context) {
@@ -138,7 +140,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         Common.setChargeDB(context);
         cdType = new TypeToken<List<JsonObject>>() {}.getType();
         gson=new Gson();
-
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -240,6 +241,13 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             return;
         }
         // Called typically when the app is not yet authorized, and authorization dialog is displayed to the user.
+       if(!firstEnter)
+       {
+           Common.showToast(context, "登入失敗");
+           progressL.setVisibility(View.GONE);
+           return;
+       }
+        firstEnter=false;
         try {
             if(position==0)
             {
@@ -311,6 +319,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     @Override
                     public void onClick(View v) {
                         local = false;
+                        firstEnter=true;
                         if (SettingUploadFile.this.position == 0) {
                             openCloud();
                             txt = false;

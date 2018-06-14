@@ -70,6 +70,7 @@ public class InsertSpend extends Fragment {
     private Handler handler, secondHander;
     private TextView noWekT, notifyT;
     private Context context;
+    private String oldMainType;
 
 
     @Override
@@ -235,6 +236,10 @@ public class InsertSpend extends Fragment {
         item.put("image", R.drawable.add);
         item.put("text", "新增");
         items.add(item);
+        item = new HashMap<String, Object>();
+        item.put("image", R.drawable.cancel);
+        item.put("text", "取消");
+        items.add(item);
         SimpleAdapter adapter = new SimpleAdapter(context,
                 items, R.layout.main_item, new String[]{"image", "text"},
                 new int[]{R.id.image, R.id.text});
@@ -258,6 +263,10 @@ public class InsertSpend extends Fragment {
             item = new HashMap<String, Object>();
             item.put("image", R.drawable.add);
             item.put("text", "新增");
+            items.add(item);
+            item = new HashMap<String, Object>();
+            item.put("image", R.drawable.cancel);
+            item.put("text", "取消");
             items.add(item);
             SimpleAdapter adapter = new SimpleAdapter(context, items, R.layout.main_item, new String[]{"image", "text"},
                     new int[]{R.id.image, R.id.text});
@@ -456,6 +465,12 @@ public class InsertSpend extends Fragment {
                 return;
             }
 
+            if(!oldMainType.equals(name.getText().toString().trim()))
+            {
+                secondname.setBackgroundColor(Color.parseColor("#ff471a"));
+                Common.showToast(context, "次項目不屬於主項目種類");
+                return;
+            }
 
             if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
                 money.setError("金額不能空白");
@@ -562,6 +577,11 @@ public class InsertSpend extends Fragment {
                 returnThisFramgent(new InsertConsumeType());
                 return;
             }
+            if (type.equals("取消")) {
+                firstL.setVisibility(View.GONE);
+                Common.showfirstgrid=false;
+                return;
+            }
             name.setText(type);
             setSecondGrid();
             firstL.setVisibility(View.GONE);
@@ -586,6 +606,12 @@ public class InsertSpend extends Fragment {
                 returnThisFramgent(new InsertConsumeType());
                 return;
             }
+            if (type.equals("取消")) {
+                Common.showsecondgrid = false;
+                secondL.setVisibility(View.GONE);
+                return;
+            }
+            oldMainType=name.getText().toString().trim();
             secondname.setText(type);
             secondL.setVisibility(View.GONE);
             Common.showsecondgrid = false;

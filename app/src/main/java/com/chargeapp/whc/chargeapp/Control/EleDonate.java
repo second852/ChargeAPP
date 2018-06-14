@@ -80,7 +80,6 @@ public class EleDonate extends Fragment {
     private List<InvoiceVO> invoiceVOList;
     private Gson gson;
     private int poisition;
-    private TextView showM;
     private Context context;
 
 
@@ -118,7 +117,6 @@ public class EleDonate extends Fragment {
             listinviuce.setVisibility(View.GONE);
             choice.setVisibility(View.GONE);
             modelR.setVisibility(View.GONE);
-            showM.setVisibility(View.GONE);
             return view;
         }
 

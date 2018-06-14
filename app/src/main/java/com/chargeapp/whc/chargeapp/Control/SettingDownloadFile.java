@@ -119,6 +119,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     private ProgressBar mProgressBar;
     private Activity context;
     private AdView adView;
+    private boolean firstEnter;
 
     @Override
     public void onAttach(Context context) {
@@ -232,6 +233,13 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
             return;
         }
         // Called typically when the app is not yet authorized, and authorization dialog is displayed to the user.
+        if(!firstEnter)
+        {
+            Common.showToast(context,"登入失敗");
+            progressL.setVisibility(View.GONE);
+            return;
+        }
+        firstEnter=false;
         try {
             result.startResolutionForResult(context, 4);
         } catch (IntentSender.SendIntentException e) {
@@ -295,6 +303,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                         if(mNetworkInfo!=null)
                         {
+                            firstEnter=true;
                             openCloud();
                         }else{
                             Common.showToast(SettingDownloadFile.this.context,"網路沒有開啟，無法下載!");
