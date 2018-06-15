@@ -22,7 +22,9 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
@@ -50,7 +52,7 @@ public class UpdateConsumeType extends Fragment {
     private ImageView mainImage, secondImage, resultI;
     private EditText mainName, secondName, secondKey;
     private Button save, clear;
-    private LinearLayout choiceL;
+    private RelativeLayout choiceL;
     private GridView choiceG;
     private TypeDetailVO typeDetailVO;
     private TypeDB typeDB;
@@ -62,6 +64,7 @@ public class UpdateConsumeType extends Fragment {
     private String oldName;
     private Activity context;
     private AdView adView;
+    private TextView button;
 
     @Override
     public void onAttach(Context context) {
@@ -93,6 +96,12 @@ public class UpdateConsumeType extends Fragment {
         choiceG.setOnItemClickListener(new choicePicture());
         clear.setOnClickListener(new clearOnClick());
         save.setOnClickListener(new insertType());
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                choiceL.setVisibility(View.GONE);
+            }
+        });
         return view;
     }
 
@@ -138,6 +147,7 @@ public class UpdateConsumeType extends Fragment {
         choiceL = view.findViewById(R.id.choiceL);
         choiceG = view.findViewById(R.id.choiceG);
         adView = view.findViewById(R.id.adView);
+        button=view.findViewById(R.id.button);
         Common.setAdView(adView,context);
     }
 

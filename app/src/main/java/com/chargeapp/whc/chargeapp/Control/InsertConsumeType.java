@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -28,7 +29,6 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class InsertConsumeType extends Fragment {
     private ImageView mainImage, secondImage, resultI;
     private EditText mainName, secondName, secondKey;
     private Button save, clear;
-    private LinearLayout choiceL;
+    private RelativeLayout choiceL;
     private GridView choiceG;
     private TypeVO typeVO;
     private TypeDetailVO typeDetailVO;
@@ -52,7 +52,7 @@ public class InsertConsumeType extends Fragment {
     private Object object;
     private String action;
     private boolean mainClick,secondClick;
-    private TextView mainT;
+    private TextView mainT,button;
     private Activity context;
     private AdView adView;
 
@@ -94,6 +94,12 @@ public class InsertConsumeType extends Fragment {
         choiceG.setOnItemClickListener(new choicePicture());
         clear.setOnClickListener(new clearOnClick());
         save.setOnClickListener(new insertType());
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                choiceL.setVisibility(View.GONE);
+            }
+        });
         return view;
     }
 
@@ -137,6 +143,7 @@ public class InsertConsumeType extends Fragment {
         choiceG = view.findViewById(R.id.choiceG);
         mainT=view.findViewById(R.id.mainT);
         adView = view.findViewById(R.id.adView);
+        button=view.findViewById(R.id.button);
         Common.setAdView(adView,context);
     }
 

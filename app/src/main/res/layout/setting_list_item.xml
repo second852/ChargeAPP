@@ -17,8 +17,8 @@
 
         <ImageView
             android:id="@+id/image"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp" />
 
@@ -32,15 +32,15 @@
             android:gravity="center"
             android:padding="2dp"
             android:textColor="#000000"
-            android:textSize="25sp" />
+            android:textSize="22sp" />
 
         <Button
             android:id="@+id/saveT"
-            android:layout_width="60dp"
+            android:layout_width="50dp"
             android:layout_height="40dp"
             android:layout_toLeftOf="@+id/deleteT"
             android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="10dp"
             android:background="#33CCFF"
             android:gravity="center"
             android:padding="5dp"
@@ -53,7 +53,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
-            android:layout_width="60dp"
+            android:layout_width="50dp"
             android:layout_height="40dp"
             android:background="#FF8888"
             android:gravity="center"

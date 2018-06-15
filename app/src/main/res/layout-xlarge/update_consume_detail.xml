@@ -7,7 +7,7 @@
     <EditText
         android:id="@+id/detail"
         android:layout_width="500dp"
-        android:layout_height="wrap_content"
+        android:layout_height="450dp"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:background="#FFEE99"

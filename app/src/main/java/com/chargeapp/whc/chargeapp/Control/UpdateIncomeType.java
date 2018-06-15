@@ -19,7 +19,9 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
@@ -50,7 +52,7 @@ public class UpdateIncomeType extends Fragment {
     private ImageView mainImage, resultI;
     private EditText mainName;
     private Button save, clear;
-    private LinearLayout choiceL;
+    private RelativeLayout choiceL;
     private GridView choiceG;
     private String action;
     private BankTybeDB bankTybeDB;
@@ -66,6 +68,7 @@ public class UpdateIncomeType extends Fragment {
     private String oldname;
     private Activity context;
     private AdView adView;
+    private TextView button;
 
     @Override
     public void onAttach(Context context) {
@@ -105,6 +108,12 @@ public class UpdateIncomeType extends Fragment {
         } else {
             setBankVO();
         }
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                choiceL.setVisibility(View.GONE);
+            }
+        });
         return view;
     }
 
@@ -146,6 +155,7 @@ public class UpdateIncomeType extends Fragment {
         clear = view.findViewById(R.id.clear);
         choiceL = view.findViewById(R.id.choiceL);
         choiceG = view.findViewById(R.id.choiceG);
+        button=view.findViewById(R.id.button);
         //廣告
         adView = view.findViewById(R.id.adView);
         Common.setAdView(adView,context);
