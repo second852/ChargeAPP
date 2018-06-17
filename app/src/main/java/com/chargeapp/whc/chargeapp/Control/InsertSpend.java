@@ -465,12 +465,18 @@ public class InsertSpend extends Fragment {
                 return;
             }
 
-            if(!oldMainType.equals(name.getText().toString().trim()))
+            try {
+                if(!oldMainType.equals(name.getText().toString().trim()))
+                {
+                    secondname.setBackgroundColor(Color.parseColor("#ff471a"));
+                    Common.showToast(context, "次項目不屬於主項目種類");
+                    return;
+                }
+            }catch (Exception e)
             {
-                secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(context, "次項目不屬於主項目種類");
-                return;
+
             }
+
 
             if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
                 money.setError("金額不能空白");

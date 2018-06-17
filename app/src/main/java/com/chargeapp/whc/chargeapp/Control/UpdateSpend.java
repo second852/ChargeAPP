@@ -605,14 +605,17 @@ public class UpdateSpend extends Fragment {
                 Common.showToast(context, "次項目不能空白");
                 return;
             }
+           try {
+               if(!oldMainType.equals(name.getText().toString().trim()))
+               {
+                   secondname.setBackgroundColor(Color.parseColor("#ff471a"));
+                   Common.showToast(context, "次項目不屬於主項目種類");
+                   return;
+               }
+           }catch (Exception e)
+           {
 
-            if(!oldMainType.equals(name.getText().toString().trim()))
-            {
-                secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(context, "次項目不屬於主項目種類");
-                return;
-            }
-
+           }
             //無法分類自己設分類
             if (secondname.getText().toString().trim().equals("O") || secondname.getText().toString().equals("0")) {
                 secondname.setBackgroundColor(Color.parseColor("#ff471a"));
@@ -848,14 +851,17 @@ public class UpdateSpend extends Fragment {
                 Common.showToast(context, "次項目不能為其他");
                 return;
             }
+           try {
+               if(!oldMainType.equals(name.getText().toString().trim()))
+               {
+                   secondname.setBackgroundColor(Color.parseColor("#ff471a"));
+                   Common.showToast(context, "次項目不屬於主項目種類");
+                   return;
+               }
+           }catch (Exception e)
+           {
 
-            if(!oldMainType.equals(name.getText().toString().trim()))
-            {
-                secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(context, "次項目不屬於主項目種類");
-                return;
-            }
-
+           }
             if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
                 money.setError("金額不能空白");
                 return;
