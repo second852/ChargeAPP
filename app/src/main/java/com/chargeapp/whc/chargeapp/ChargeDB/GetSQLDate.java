@@ -784,7 +784,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private String getUpdateInvoiceDetail(InvoiceVO invoiceVO) {
         String urldetail = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
         HashMap<String, String> hashMap = new HashMap();
-        hashMap.put("version", "0.3");
+        hashMap.put("version", "0.4");
         hashMap.put("cardType", "3J0002");
         hashMap.put("cardNo", invoiceVO.getCarrier());
         hashMap.put("expTimeStamp", "2147483647");
@@ -824,7 +824,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private String getInvoiceDetail(InvoiceVO invoiceVO) {
         String urldetail = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
         HashMap<String, String> hashMap = new HashMap();
-        hashMap.put("version", "0.3");
+        hashMap.put("version", "0.4");
         hashMap.put("cardType", "3J0002");
         hashMap.put("cardNo", invoiceVO.getCarrier());
         hashMap.put("expTimeStamp", "2147483647");
@@ -865,7 +865,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private String updateInvoiceDetail(InvoiceVO invoiceVO) {
         String urldetail = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
         HashMap<String, String> hashMap = new HashMap();
-        hashMap.put("version", "0.3");
+        hashMap.put("version", "0.4");
         hashMap.put("cardType", "3J0002");
         hashMap.put("cardNo", invoiceVO.getCarrier());
         hashMap.put("expTimeStamp", "2147483647");
@@ -930,7 +930,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
     private HashMap<String, String> getInvoice(String user, String password, String startDate, String endDate, String iswin) {
         HashMap<String, String> hashMap = new HashMap();
-        hashMap.put("version", "0.3");
+        hashMap.put("version", "0.4");
         hashMap.put("cardType", "3J0002");
         hashMap.put("cardNo", user);
         hashMap.put("expTimeStamp", "2147483647");

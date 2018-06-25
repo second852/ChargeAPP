@@ -91,7 +91,7 @@
             android:id="@+id/searchHTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="查詢的愛心碼/統編之關鍵字"
+            android:text="查詢的捐贈碼/統編之關鍵字"
             android:textSize="20sp"
             android:gravity="center"
             android:textColor="#000000"

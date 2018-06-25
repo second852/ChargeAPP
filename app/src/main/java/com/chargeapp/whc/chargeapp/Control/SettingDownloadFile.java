@@ -420,7 +420,13 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         invoiceVO.setCarrier(row.getCell(10).getStringCellValue());
                         invoiceVO.setMaintype(row.getCell(11).getStringCellValue());
                         invoiceVO.setSecondtype(row.getCell(12).getStringCellValue());
-                        invoiceVO.setHeartyteam(row.getCell(13).getStringCellValue());
+                        try {
+                            String value=row.getCell(13).getStringCellValue();
+                            invoiceVO.setHeartyteam(value.trim().length()>0?value:null);
+                        }catch (Exception e)
+                        {
+                            invoiceVO.setHeartyteam(null);
+                        }
                         invoiceVO.setDonateTime(new Timestamp((long) row.getCell(14).getNumericCellValue()));
                         invoiceVO.setSellerBan(row.getCell(15).getStringCellValue());
                         invoiceVO.setSellerName(row.getCell(16).getStringCellValue());

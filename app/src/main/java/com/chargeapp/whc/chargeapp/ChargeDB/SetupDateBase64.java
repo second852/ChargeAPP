@@ -108,7 +108,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
         } else {
             period = period.substring(0, 5);
         }
-        data.put("version","0.3");
+        data.put("version","0.4");
         data.put("type","Barcode");
         data.put("invNum",imformation.substring(0,10));
         data.put("action","qryInvDetail");

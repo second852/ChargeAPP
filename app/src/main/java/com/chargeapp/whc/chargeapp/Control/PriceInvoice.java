@@ -236,7 +236,7 @@ public class PriceInvoice extends Fragment {
         PIdateTittle = view.findViewById(R.id.PIdateTittle);
         showRemain=view.findViewById(R.id.showRemain);
         donateRL=view.findViewById(R.id.donateRL);
-        showRemain.setText("(無實體電子發票專屬獎中獎清單\n請到財政部網站確認)");
+        showRemain.setText("(雲端發票專屬獎中獎清單\n請到財政部網站確認)");
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         adView = view.findViewById(R.id.adView);
         Common.setAdView(adView,context);
