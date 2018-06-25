@@ -513,25 +513,26 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         if (jsonIn.indexOf("200") == -1) {
             return jsonIn;
         }
-        Calendar cal = last;
-        Timestamp start = new Timestamp(cal.getTimeInMillis() - 86400000);
-        Timestamp end = new Timestamp(cal.getTimeInMillis() + 86400000);
-        List<InvoiceVO> newInvoicelist = todayjsonIn(jsonIn, password, user);
-        List<InvoiceVO> oldInvoicelist = invoiceDB.getInvoiceBytime(start, end, user);
-        for (InvoiceVO i : newInvoicelist) {
-            boolean isequals = false;
-            for (InvoiceVO old : oldInvoicelist) {
-                Log.d(TAG, "check : " + i.getInvNum() + " : " + old.getInvNum() + " : " + old.getInvNum().equals(i.getInvNum()));
-                if (old.getInvNum().equals(i.getInvNum())) {
-                    isequals = true;
-                    break;
-                }
-            }
-            if (!isequals) {
-                getInvoiceDetail(i);
-                Log.d(TAG, "insert new :" + i.getInvNum());
-            }
-        }
+        jsonIn=getjsonIn(jsonIn,password,user);
+//        Calendar cal = last;
+//        Timestamp start = new Timestamp(cal.getTimeInMillis() - 86400000);
+//        Timestamp end = new Timestamp(cal.getTimeInMillis() + 86400000);
+//        List<InvoiceVO> newInvoicelist = todayjsonIn(jsonIn, password, user);
+//        List<InvoiceVO> oldInvoicelist = invoiceDB.getInvoiceBytime(start, end, user);
+//        for (InvoiceVO i : newInvoicelist) {
+//            boolean isequals = false;
+//            for (InvoiceVO old : oldInvoicelist) {
+//                Log.d(TAG, "check : " + i.getInvNum() + " : " + old.getInvNum() + " : " + old.getInvNum().equals(i.getInvNum()));
+//                if (old.getInvNum().equals(i.getInvNum())) {
+//                    isequals = true;
+//                    break;
+//                }
+//            }
+//            if (!isequals) {
+//                getInvoiceDetail(i);
+//                Log.d(TAG, "insert new :" + i.getInvNum());
+//            }
+//        }
         return jsonIn;
     }
 
@@ -559,6 +560,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private String getjsonIn(String jsonIn, String password, String user) {
         try {
             InvoiceVO invoiceVO;
+            List<InvoiceVO> oldInvoiceList;
+            Calendar start=Calendar.getInstance();
+            Calendar end=Calendar.getInstance();
             JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
             Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
             String s = js.get("details").toString();
@@ -569,6 +573,15 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             for (JsonObject j : b) {
                 invoiceVO = jsonToInVoice(j, password, user);
                 if (invoiceVO != null) {
+                    start.setTime(new Date(invoiceVO.getTime().getTime()));
+                    start.add(Calendar.MONTH,-1);
+                    end.setTime(new Date(invoiceVO.getTime().getTime()));
+                    end.add(Calendar.MONTH,1);
+                    oldInvoiceList=invoiceDB.checkInvoiceRepeat(start,end,invoiceVO.getInvNum());
+                    if(oldInvoiceList.size()>0)
+                    {
+                        continue;
+                    }
                     result = getInvoiceDetail(invoiceVO);
                     total = total + divide;
                     publishProgress(0, month, (int) total);

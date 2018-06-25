@@ -26,13 +26,9 @@ import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.R;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+
 import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
+
 
 /**
  * Created by 1709008NB01 on 2017/12/22.
@@ -137,8 +133,8 @@ public class PriceNumber extends Fragment {
     private void setNul() {
         if(priceVO!=null)
         {
-            superN.setText(priceVO.getSuperPrizeNo()+" \t");
-            spcN.setText(priceVO.getSpcPrizeNo()+" \t");
+            superN.setText(priceVO.getSuperPrizeNo()+"\n");
+            spcN.setText(priceVO.getSpcPrizeNo()+"\n");
             String firstNumber=priceVO.getFirstPrizeNo1()+"\n"+priceVO.getFirstPrizeNo2()+"\n"+priceVO.getFirstPrizeNo3();
             SpannableString detailC = new SpannableString(firstNumber);
             detailC.setSpan(new ForegroundColorSpan(Color.RED),5,

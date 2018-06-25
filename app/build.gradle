@@ -14,8 +14,8 @@ android {
         applicationId "com.chargeapp.whc.chargeapp"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 21
-        versionName "1.92"
+        versionCode 22
+        versionName "1.93"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

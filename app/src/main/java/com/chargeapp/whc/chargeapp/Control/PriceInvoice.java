@@ -313,7 +313,6 @@ public class PriceInvoice extends Fragment {
             TextView remainT=itemView.findViewById(R.id.remainT);
             LinearLayout fixL=itemView.findViewById(R.id.fixL);
             TextView fixT=itemView.findViewById(R.id.fixT);
-            LinearLayout donateL=itemView.findViewById(R.id.donateL);
             String title,day;
             Object o=objects.get(position);
             //區別電子發票
@@ -325,12 +324,6 @@ public class PriceInvoice extends Fragment {
                 remainT.setTextColor(Color.parseColor("#008844"));
                 remindL.setBackgroundColor(Color.parseColor("#008844"));
                 remindL.setVisibility(View.VISIBLE);
-                if(invoiceVO.getDonateMark().equals("true"))
-                {
-                    donateL.setVisibility(View.GONE);
-                }else{
-                    donateL.setVisibility(View.VISIBLE);
-                }
                 //標題
                 day=Common.sDay.format(new Date(invoiceVO.getTime().getTime()))+" ";
                 title=day+invoiceVO.getMaintype();

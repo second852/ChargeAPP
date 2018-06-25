@@ -163,11 +163,10 @@ public class EleDonateRecord extends Fragment {
             TextView describe=itemView.findViewById(R.id.listDetail);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
             TextView remainT=itemView.findViewById(R.id.remainT);
-            LinearLayout fixL=itemView.findViewById(R.id.fixL);
-            TextView fixT=itemView.findViewById(R.id.fixT);
-            LinearLayout donateL=itemView.findViewById(R.id.donateL);
             InvoiceVO invoiceVO=invoiceVOS.get(position);
-            Title.setText(invoiceVO.getInvNum());
+            String title=invoiceVO.getInvNum();
+            title=title.substring(0,7);
+            Title.setText(title+"***");
             StringBuffer sb=new StringBuffer();
             sb.append("發票日期 : "+Common.sOne.format(new Date(invoiceVO.getTime().getTime()))+"\n");
             sb.append("捐贈機構 : ");

@@ -459,7 +459,7 @@ public class HomePage extends Fragment {
                     end=new GregorianCalendar(year,month,max,23,59,59);
                     consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
                             invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
-                    title.setText("本年支出 : "+nf.format(consumeCount)+"元");
+                    title.setText("本月支出 : "+nf.format(consumeCount)+"元");
                     List<ChartEntry> consumeVOS=consumeDB.getTimeMaxType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                     List<ChartEntry> invoiceVOS=invoiceDB.getInvoiceBytimeMaxType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                     chartEntries.addAll(consumeVOS);
