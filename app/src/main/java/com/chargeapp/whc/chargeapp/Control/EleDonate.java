@@ -80,7 +80,7 @@ public class EleDonate extends Fragment {
     private List<InvoiceVO> invoiceVOList;
     private Gson gson;
     private int poisition;
-    private Context context;
+    private Activity context;
 
 
     @Override
@@ -314,6 +314,7 @@ public class EleDonate extends Fragment {
                     AlertDialogFragment aa= new AlertDialogFragment();
                     aa.setObject(EleDonate.this);
                     aa.show(getFragmentManager(),"show");
+                    Common.clossKeyword(EleDonate.this.context);
                 }
             });
             return itemView;

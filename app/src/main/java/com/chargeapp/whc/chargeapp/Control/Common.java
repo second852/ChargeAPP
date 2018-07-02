@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
@@ -42,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
  * Created by Wang on 2017/11/19.
@@ -196,6 +199,14 @@ public class Common {
 
         }
     }
+    //收鍵盤
+    public static void  clossKeyword(Activity context)
+    {
+        InputMethodManager imm = (InputMethodManager)context
+        .getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(context.getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
 
     public static void askPermissions(String s,Activity context) {
         //因為是群組授權，所以請求ACCESS_COARSE_LOCATION就等同於請求ACCESS_FINE_LOCATION，因為同屬於LOCATION群組

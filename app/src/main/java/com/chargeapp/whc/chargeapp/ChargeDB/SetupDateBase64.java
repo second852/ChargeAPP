@@ -126,7 +126,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
     }
 
 
-    private HashMap<String,String> getupdateHeartyTeam(int seriel,InvoiceVO invoiceVO) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
+    private HashMap<String,String> getupdateHeartyTeam(int seriel,InvoiceVO invoiceVO) throws Exception {
         HashMap<String,String> data=new HashMap<>();
         data.put("version","0.1");
         data.put("serial",String.valueOf(seriel));
@@ -141,7 +141,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
         data.put("uuid","second");
         data.put("appID",appId);
         data.put("cardEncrypt",invoiceVO.getCardEncrypt());
-        data.put("signature",sha1(singure(data)));
+        data.put("signature",encodeSHA256(singure(data)));
         return data;
     }
 
