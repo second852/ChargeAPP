@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -167,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -393,6 +395,9 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new EleDonateMain();
                         switchFragment(fragment);
                     } else if (i1 == 3) {
+//                        setTitle(R.string.text_NewCarrier);
+//                        fragment = new EleAddCarrier();
+//                        switchFragment(fragment);
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse("http://www.teach.ltu.edu.tw/public/News/11503/201412041535091.pdf"));
