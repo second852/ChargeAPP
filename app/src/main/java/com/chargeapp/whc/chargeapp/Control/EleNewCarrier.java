@@ -11,14 +11,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -50,6 +48,10 @@ public class EleNewCarrier extends Fragment {
         }else {
             activity=getActivity();
         }
+        if(activity.getRequestedOrientation()!= ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+
     }
 
     @Override
@@ -58,36 +60,40 @@ public class EleNewCarrier extends Fragment {
         if(activity.getRequestedOrientation()!= ActivityInfo.SCREEN_ORIENTATION_PORTRAIT){
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.ele_newcarrier, container, false);
+        final View view = inflater.inflate(R.layout.ele_newcarrier, container, false);
         webView = view.findViewById(R.id.webView);
         myProgressBar = view.findViewById(R.id.myProgressBar);
         showError = view.findViewById(R.id.showError);
+        drawerLayout = activity.findViewById(R.id.drawer_layout);
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/generalCarrierRegBlank?UUID=second&appID=EINV3201711184648";
         webViewSetting();
-        drawerLayout = activity.findViewById(R.id.drawer_layout);
-
-        if(activity.getRequestedOrientation()!= ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
-            activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        }
-
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
     }
 
     private void webViewSetting() {
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setBuiltInZoomControls(true);//设置缩放按钮
-        webView.setInitialScale(400);
+        webView.setInitialScale(300);
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -109,8 +115,6 @@ public class EleNewCarrier extends Fragment {
             boolean showerror= false;
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-
-                    drawerLayout.closeDrawer(GravityCompat.START);
                     myProgressBar.setVisibility(View.VISIBLE);
                     webView.setVisibility(View.GONE);
                     Common.showToast(getActivity(),"正在連線!");
@@ -124,6 +128,7 @@ public class EleNewCarrier extends Fragment {
             public void onPageFinished(WebView view, String url) {
                 // Do something when page loading finished
                 myProgressBar.setVisibility(View.GONE);
+
                 if(showerror)
                 {
                     showError.setVisibility(View.VISIBLE);

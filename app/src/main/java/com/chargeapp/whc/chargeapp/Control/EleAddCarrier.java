@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -40,7 +41,7 @@ public class EleAddCarrier extends Fragment {
 
     private WebView webView;
     protected ProgressBar myProgressBar;
-    private TextView showError;
+    private TextView showError,carrierM;
     private TextView enter;
     private Spinner carrier;
     private CarrierDB carrierDB;
@@ -59,6 +60,9 @@ public class EleAddCarrier extends Fragment {
         }else {
             this.context=getActivity();
         }
+        if(this.context.getRequestedOrientation()!= ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+            this.context.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
     }
 
     @Nullable
@@ -69,6 +73,15 @@ public class EleAddCarrier extends Fragment {
         setSpinner();
         myProgressBar.setVisibility(View.GONE);
         drawerLayout = context.findViewById(R.id.drawer_layout);
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         return view;
     }
 
@@ -78,6 +91,10 @@ public class EleAddCarrier extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if(context.getRequestedOrientation()!= ActivityInfo.SCREEN_ORIENTATION_PORTRAIT){
+            context.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+
     }
 
     private void setSpinner() {
@@ -86,7 +103,7 @@ public class EleAddCarrier extends Fragment {
         {
             webView.setVisibility(View.GONE);
             showError.setVisibility(View.VISIBLE);
-            showError.setText("目前沒有載具，請新增載具!");
+            showError.setText("請新增載具!");
             return;
         }
         ArrayList<String> carrierNul=new ArrayList<>();
@@ -105,7 +122,7 @@ public class EleAddCarrier extends Fragment {
     private void webViewSetting() {
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setBuiltInZoomControls(true);//设置缩放按钮
-        webView.setInitialScale(400);
+        webView.setInitialScale(300);
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -113,9 +130,22 @@ public class EleAddCarrier extends Fragment {
         webView.getSettings().setAppCacheEnabled(true);
         webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         webView.setWebChromeClient(new WebChromeClient() {
+
+            @Override
+            public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, JsPromptResult result) {
+                Common.showToast(context,message);
+                return super.onJsPrompt(view, url, message, defaultValue, result);
+            }
+
+            @Override
+            public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {
+                Common.showToast(context,message);
+                return super.onJsConfirm(view, url, message, result);
+            }
+
             @Override
             public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-                webView.loadUrl(EleAddCarrier.this.url);
+                 Common.showToast(context,message);
                 return super.onJsAlert(view, url, message, result);
             }
         });
@@ -192,6 +222,9 @@ public class EleAddCarrier extends Fragment {
         showError=view.findViewById(R.id.showError);
         carrier=view.findViewById(R.id.carrier);
         enter=view.findViewById(R.id.enter);
+        carrierM=view.findViewById(R.id.carrierM);
+        carrierM.setVisibility(View.VISIBLE);
+        carrierM.setText("悠遊卡號碼為卡片隱碼，歸戶請參考 : \"悠遊卡如何載具歸戶?\"");
     }
 
     private class CliientListener implements View.OnClickListener {

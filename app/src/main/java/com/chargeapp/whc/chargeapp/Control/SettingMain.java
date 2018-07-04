@@ -15,10 +15,13 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.AppCompatImageView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -63,6 +66,7 @@ public class SettingMain extends Fragment {
     private SharedPreferences sharedPreferences;
     private Activity context;
     private AdView adView;
+    private DrawerLayout drawerLayout;
 
     @Override
     public void onAttach(Context context) {
@@ -78,14 +82,23 @@ public class SettingMain extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.setting_main, container, false);
+        final View view = inflater.inflate(R.layout.setting_main, container, false);
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         listView = view.findViewById(R.id.list);
         adView = view.findViewById(R.id.adView);
         Common.setAdView(adView,context);
-
         List<EleMainItemVO> itemSon = getNewItem();
         listView.setAdapter(new ListAdapter(context, itemSon));
+        drawerLayout = context.findViewById(R.id.drawer_layout);
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         return view;
     }
 

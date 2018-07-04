@@ -7,7 +7,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
@@ -237,8 +241,6 @@ public class Common {
         hashMap.put("EG0002","家樂福");
         return hashMap;
     }
-
-
 
 
 

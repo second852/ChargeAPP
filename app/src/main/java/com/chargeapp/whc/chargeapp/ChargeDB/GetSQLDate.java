@@ -64,7 +64,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
     private TypeDetailDB typeDetailDB;
     private String action;
-    private List<TypeDetailVO> typeDetailVOS;
     private SimpleDateFormat sd = new SimpleDateFormat("HH");
     private InvoiceVO invoiceVO;
     private TextView percentage, progressT;
@@ -80,7 +79,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         elePeriodDB = new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailVOS = typeDetailDB.getHaveDetailTypdAll();
     }
 
     public GetSQLDate(Object object, InvoiceVO invoiceVO) {
@@ -89,7 +87,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailVOS = typeDetailDB.getHaveDetailTypdAll();
     }
 
 

@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
+
     private void initDrawer() {
         drawerLayout = findViewById(R.id.drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.text_Open, R.string.text_Close);
@@ -93,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
         final List<EleMainItemVO> itemSon = getElemainItemList();
         listView.setAdapter(new ExpandableAdapter(this, itemVOS, itemSon));
     }
+
+
 
     private List<EleMainItemVO> getElemainItemList() {
         List<EleMainItemVO> list = new ArrayList<>();
@@ -289,7 +293,6 @@ public class MainActivity extends AppCompatActivity {
                     bundles.clear();
                     if (i == 0) {
                         Common.showfirstgrid=false;
-                        drawerLayout.closeDrawer(GravityCompat.START);
                         fragment = new InsertActivity();
                         switchFragment(fragment);
                         listView.collapseGroup(i);
@@ -304,26 +307,22 @@ public class MainActivity extends AppCompatActivity {
                             doubleClick = true;
                         }
                     } else if (i == 2) {
-                        drawerLayout.closeDrawer(GravityCompat.START);
                         fragment = new PriceActivity();
                         switchFragment(fragment);
                         PriceInvoice.first=true;
                         setTitle(R.string.text_Price);
                         listView.collapseGroup(i);
                     } else if (i == 3) {
-                        drawerLayout.closeDrawer(GravityCompat.START);
                         fragment = new SelectActivity();
                         switchFragment(fragment);
                         listView.collapseGroup(i);
                         setTitle(R.string.text_DataPicture);
                     } else if (i == 4) {
-                        drawerLayout.closeDrawer(GravityCompat.START);
                         fragment = new SelectListModelActivity();
                         switchFragment(fragment);
                         listView.collapseGroup(i);
                         setTitle(R.string.text_DataList);
                     } else if (i == 5) {
-                        drawerLayout.closeDrawer(GravityCompat.START);
                         fragment = new GoalListAll();
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("position", 0);
@@ -332,24 +331,22 @@ public class MainActivity extends AppCompatActivity {
                         listView.collapseGroup(i);
                         setTitle(R.string.text_Goal);
                     } else if (i == 6) {
-                        drawerLayout.closeDrawer(GravityCompat.START);
                         fragment = new SettingMain();
                         switchFragment(fragment);
                         setTitle(R.string.text_Setting);
                         listView.collapseGroup(i);
                     } else if(i==7){
                         setTitle(R.string.text_Home);
-                        drawerLayout.closeDrawer(GravityCompat.START);
                         fragment = new HomePage();
                         switchFragment(fragment);
                         listView.collapseGroup(i);
                     }else{
+                        drawerLayout.closeDrawer(GravityCompat.START);
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse("https://www.youtube.com/playlist?list=PLrGq9ODiZ15rdXvKV_5FEIrdaP5ix0c55"));
                         startActivity(intent);
                     }
-
                     //重置InsertConsume
                     if(MainActivity.this.position!=0)
                     {
@@ -381,7 +378,13 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Fragment fragment;
-                    drawerLayout.closeDrawer(GravityCompat.START);
+
+                    if (oldSecondView != null && oldSecondView != view) {
+                        oldSecondView.setBackgroundColor(Color.WHITE);
+                    }
+                    oldSecondView = view;
+                    view.setBackgroundColor(Color.parseColor("#EEFFBB"));
+
                     if (i1 == 0) {
                         fragment = new EleSetCarrier();
                         setTitle(R.string.text_SetCarrier);
@@ -395,17 +398,19 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new EleDonateMain();
                         switchFragment(fragment);
                     } else if (i1 == 3) {
-//                        setTitle(R.string.text_NewCarrier);
-//                        fragment = new EleAddCarrier();
-//                        switchFragment(fragment);
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("http://www.teach.ltu.edu.tw/public/News/11503/201412041535091.pdf"));
-                        startActivity(intent);
+                        setTitle(R.string.text_NewCarrier);
+                        fragment = new EleAddCarrier();
+                        switchFragment(fragment);
+                        return;
+//                        Intent intent = new Intent();
+//                        intent.setAction(Intent.ACTION_VIEW);
+//                        intent.setData(Uri.parse("http://www.teach.ltu.edu.tw/public/News/11503/201412041535091.pdf"));
+//                        startActivity(intent);
                     } else if (i1 == 4) {
                         setTitle(R.string.text_NewCarrier);
                         fragment = new EleNewCarrier();
                         switchFragment(fragment);
+                        return;
                     } else if (i1 == 5) {
                         setTitle(R.string.text_EleBank);
                         fragment = new EleAddBank();
@@ -420,11 +425,12 @@ public class MainActivity extends AppCompatActivity {
                         intent.setData(Uri.parse("http://www.nknu.edu.tw/~psl/new.file/103/08/1030825reciept1.pdf"));
                         startActivity(intent);
                     }
-                    if (oldSecondView != null && oldSecondView != view) {
-                        oldSecondView.setBackgroundColor(Color.WHITE);
+
+                    //close drawer
+                    if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                        drawerLayout.closeDrawer(GravityCompat.START);
                     }
-                    oldSecondView = view;
-                    view.setBackgroundColor(Color.parseColor("#EEFFBB"));
+
                 }
             });
             return view;

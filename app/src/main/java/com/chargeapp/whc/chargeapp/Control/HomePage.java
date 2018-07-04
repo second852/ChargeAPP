@@ -8,9 +8,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -70,6 +73,7 @@ public class HomePage extends Fragment {
     private  ArrayList<PieEntry> yVals1;
     private ArrayList<String> Okey;
     private Activity context;
+    private DrawerLayout drawerLayout;
 
     @Override
     public void onAttach(Context context) {
@@ -85,7 +89,7 @@ public class HomePage extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.home_page, container, false);
+        final View view = inflater.inflate(R.layout.home_page, container, false);
         pieChart=view.findViewById(R.id.pieChart);
         pieChartT=view.findViewById(R.id.pieChartT);
         listView=view.findViewById(R.id.list);
@@ -100,6 +104,16 @@ public class HomePage extends Fragment {
         day=end.get(Calendar.DAY_OF_MONTH);
         start=new GregorianCalendar(year,month,day,0,0,0);
         end=new GregorianCalendar(year,month,day,23,59,59);
+        drawerLayout = context.findViewById(R.id.drawer_layout);
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         return view;
     }
 

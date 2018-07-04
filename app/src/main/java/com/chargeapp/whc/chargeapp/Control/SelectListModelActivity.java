@@ -8,12 +8,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -33,6 +36,7 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
     public static int page;
     private AdView adView;
     private Activity context;
+    private DrawerLayout drawerLayout;
 
     @Override
     public void onAttach(Context context) {
@@ -47,7 +51,7 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.select_list_main, container, false);
+        final View view = inflater.inflate(R.layout.select_list_main, container, false);
         SelAllviewPager = (ViewPager) view.findViewById(R.id.SelAllviewPager);
         goneMoney = view.findViewById(R.id.goneD);
         exportMoney = view.findViewById(R.id.exportD);
@@ -61,6 +65,16 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
         setcurrentpage();
         text = view.findViewById(R.id.text);
         movefirst = -importMoney.getWidth();
+        drawerLayout = context.findViewById(R.id.drawer_layout);
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         return view;
     }
 

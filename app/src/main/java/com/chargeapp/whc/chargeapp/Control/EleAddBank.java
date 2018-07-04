@@ -1,10 +1,12 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +23,12 @@ import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.R;
-
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 1709008NB01 on 2018/1/5.
@@ -39,13 +44,18 @@ public class EleAddBank extends Fragment {
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOS;
     private CarrierVO carrierVO;
-    public String url;
-    private android.content.Context context;
+    private Activity context;
+
 
     @Override
     public void onAttach(android.content.Context context) {
         super.onAttach(context);
-        this.context=context;
+        if(context instanceof Activity)
+        {
+            this.context= (Activity) context;
+        }else{
+            this.context=getActivity();
+        }
     }
 
     @Nullable
@@ -64,7 +74,7 @@ public class EleAddBank extends Fragment {
         {
             webView.setVisibility(View.GONE);
             showError.setVisibility(View.VISIBLE);
-            showError.setText("目前沒有載具，請新增載具!");
+            showError.setText("請新增載具!");
             return;
         }
         ArrayList<String> carrierNul=new ArrayList<>();
@@ -83,7 +93,7 @@ public class EleAddBank extends Fragment {
     private void webViewSetting() {
         webView.getSettings().setSupportZoom(true);
         webView.getSettings().setBuiltInZoomControls(true);//设置缩放按钮
-        webView.setInitialScale(400);
+        webView.setInitialScale(300);
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -93,7 +103,7 @@ public class EleAddBank extends Fragment {
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-                webView.loadUrl(EleAddBank.this.url);
+//                webView.loadUrl(EleAddBank.this.url);
                 return super.onJsAlert(view, url, message, result);
             }
         });
@@ -160,7 +170,20 @@ public class EleAddBank extends Fragment {
 
             }
         });
-        webView.loadUrl(url);
+        try {
+            HashMap<String,String> data=new HashMap();
+            data.put("UUID","second");
+            data.put("appID","EINV3201711184648");
+            data.put("CardCode","3J0002");
+            data.put("CardNo",carrierVO.getCarNul());
+            data.put("VerifyCode",carrierVO.getPassword());
+            String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierBankAccBlank?";
+            url=url+getPostDataString(data);
+            webView.loadUrl(url);
+        }catch (Exception e)
+        {
+               Log.d("XXXXXXX",e.getMessage());
+        }
     }
 
     private void findViewById(View view) {
@@ -172,11 +195,26 @@ public class EleAddBank extends Fragment {
         enter=view.findViewById(R.id.enter);
     }
 
+
+    private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+        }
+        return result.toString();
+    }
+
     private class CliientListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierBankAccBlank?UUID=second&appID=EINV3201711184648&CardCode=3J0002";
-            url=url+"CardNo="+carrierVO.getCarNul()+"&VerifyCode="+carrierVO.getPassword();
             webViewSetting();
             showError.setVisibility(View.GONE);
         }

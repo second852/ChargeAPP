@@ -9,12 +9,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -33,6 +36,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
     private int nowpoint = 0;
     private Button exportMoney;
     private Activity context;
+    private DrawerLayout drawerLayout;
 
     @Override
     public void onAttach(Context context) {
@@ -48,7 +52,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = inflater.inflate(R.layout.price_main, container, false);
+        final View view = inflater.inflate(R.layout.price_main, container, false);
         priceViewPager = (ViewPager) view.findViewById(R.id.priceViewPager);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         priceViewPager.setAdapter(mAdapterViewPager);
@@ -58,6 +62,16 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
         goneMoney = view.findViewById(R.id.goneD);
         showN = view.findViewById(R.id.showN);
         text = view.findViewById(R.id.text);
+        drawerLayout = context.findViewById(R.id.drawer_layout);
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         setloyout();
         return view;
     }

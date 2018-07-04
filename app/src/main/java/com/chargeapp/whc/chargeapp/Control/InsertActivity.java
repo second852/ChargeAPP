@@ -1,11 +1,16 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,13 +31,25 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     private LinearLayout text;
     private int nowpoint=0;
     private static int position;
+    private Activity activity;
+    private DrawerLayout drawerLayout;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            activity= (Activity) context;
+        }else {
+            activity=getActivity();
+        }
 
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = inflater.inflate(R.layout.insert_main, container, false);
+        final View view = inflater.inflate(R.layout.insert_main, container, false);
         mViewPager =  view.findViewById(R.id.insert_viewPager);
         exportMoney=view.findViewById(R.id.exportD);
         importMoney=view.findViewById(R.id.showD);
@@ -42,6 +59,16 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         mViewPager.setCurrentItem(position);
         setcurrentpage();
         text=view.findViewById(R.id.text);
+        drawerLayout = activity.findViewById(R.id.drawer_layout);
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         return  view;
     }
 
