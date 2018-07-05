@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         list.add(new EleMainItemVO(R.string.text_SetCarrier, R.drawable.cellphone));
         list.add(new EleMainItemVO(R.string.text_ShowCal, R.drawable.barcode));
         list.add(new EleMainItemVO(R.string.text_DonateMain, R.drawable.health));
+        list.add(new EleMainItemVO(R.string.text_AddCarrier, R.drawable.treatment));
         list.add(new EleMainItemVO(R.string.text_HowSetC, R.drawable.easygo));
         list.add(new EleMainItemVO(R.string.text_NewCarrier, R.drawable.barcode));
         list.add(new EleMainItemVO(R.string.text_EleBank, R.drawable.bank));
@@ -398,39 +399,41 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new EleDonateMain();
                         switchFragment(fragment);
                     } else if (i1 == 3) {
-                        setTitle(R.string.text_NewCarrier);
+                        setTitle(R.string.text_AddCarrier);
                         fragment = new EleAddCarrier();
                         switchFragment(fragment);
-                        return;
-//                        Intent intent = new Intent();
-//                        intent.setAction(Intent.ACTION_VIEW);
-//                        intent.setData(Uri.parse("http://www.teach.ltu.edu.tw/public/News/11503/201412041535091.pdf"));
-//                        startActivity(intent);
-                    } else if (i1 == 4) {
+                    }else if (i1 == 4) {
+                        //close drawer
+                        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                            drawerLayout.closeDrawer(GravityCompat.START);
+                        }
+                        Intent intent = new Intent();
+                        intent.setAction(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse("http://www.teach.ltu.edu.tw/public/News/11503/201412041535091.pdf"));
+                        startActivity(intent);
+                    } else if (i1 == 5) {
                         setTitle(R.string.text_NewCarrier);
                         fragment = new EleNewCarrier();
                         switchFragment(fragment);
                         return;
-                    } else if (i1 == 5) {
+                    } else if (i1 == 6) {
                         setTitle(R.string.text_EleBank);
                         fragment = new EleAddBank();
                         switchFragment(fragment);
-                    } else if (i1 == 6) {
+                    } else if (i1 == 7) {
                         setTitle(R.string.text_HowGet);
                         fragment = new HowGetPrice();
                         switchFragment(fragment);
                     } else {
+                        //close drawer
+                        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                            drawerLayout.closeDrawer(GravityCompat.START);
+                        }
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse("http://www.nknu.edu.tw/~psl/new.file/103/08/1030825reciept1.pdf"));
                         startActivity(intent);
                     }
-
-                    //close drawer
-                    if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                    }
-
                 }
             });
             return view;

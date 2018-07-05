@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,10 +9,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -42,18 +46,25 @@ public class EleShowCarrier extends Fragment {
 
     private TextView barcodeT,teachW;
     private ImageView barcode;
-    private Context context;
+    private Activity context;
+    private DrawerLayout drawerLayout;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context=context;
+        if(context instanceof Activity)
+        {
+            this.context= (Activity) context;
+        }else {
+            this.context=getActivity();
+        }
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.ele_show_carrier, container, false);
+        final View view = inflater.inflate(R.layout.ele_show_carrier, container, false);
         barcodeT = view.findViewById(R.id.barcodeT);
         barcode=view.findViewById(R.id.barcode);
         teachW=view.findViewById(R.id.teachW);
@@ -81,6 +92,16 @@ public class EleShowCarrier extends Fragment {
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("https://youtu.be/IPWk9t_02Gc"));
                 startActivity(intent);
+            }
+        });
+        drawerLayout = this.context.findViewById(R.id.drawer_layout);
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
             }
         });
         return view;

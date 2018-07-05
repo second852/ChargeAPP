@@ -7,11 +7,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -28,14 +31,15 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
     private int nowpoint=0;
     private float movefirst;
     private AdView adView;
-    private Context context;
+    private Activity context;
+    private DrawerLayout drawerLayout;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if(context instanceof Activity)
         {
-            this.context=context;
+            this.context= (Activity) context;
         }else{
             this.context=getActivity();
         }
@@ -44,7 +48,7 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.ele_setdenote_main, container, false);
+        final View view = inflater.inflate(R.layout.ele_setdenote_main, container, false);
         DonateViewPager = (ViewPager) view.findViewById(R.id.DonateViewPager);
         exportMoney=view.findViewById(R.id.exportD);
         importMoney=view.findViewById(R.id.showD);
@@ -57,6 +61,16 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
         setcurrentpage();
         text=view.findViewById(R.id.text);
         movefirst=exportMoney.getWidth();
+        drawerLayout = this.context.findViewById(R.id.drawer_layout);
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         return view;
     }
 

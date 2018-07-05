@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.R;
 
+import java.util.HashMap;
+
 
 /**
  * Created by 1709008NB01 on 2018/1/5.
@@ -34,9 +37,9 @@ public class EleNewCarrier extends Fragment {
     private WebView webView;
     protected ProgressBar myProgressBar;
     private TextView showError;
-    private String url;
     private Activity activity;
     private DrawerLayout drawerLayout;
+
 
 
     @Override
@@ -51,7 +54,6 @@ public class EleNewCarrier extends Fragment {
         if(activity.getRequestedOrientation()!= ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
-
     }
 
     @Override
@@ -71,16 +73,16 @@ public class EleNewCarrier extends Fragment {
         myProgressBar = view.findViewById(R.id.myProgressBar);
         showError = view.findViewById(R.id.showError);
         drawerLayout = activity.findViewById(R.id.drawer_layout);
-        ViewTreeObserver vto = view.getViewTreeObserver();
+        final ViewTreeObserver vto = view.getViewTreeObserver();
         vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
+
                 drawerLayout.closeDrawer(GravityCompat.START);
                 view.getViewTreeObserver().removeOnPreDrawListener(this);
                 return true;
             }
         });
-        url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/generalCarrierRegBlank?UUID=second&appID=EINV3201711184648";
         webViewSetting();
         return view;
     }
@@ -141,7 +143,21 @@ public class EleNewCarrier extends Fragment {
                     Common.showToast(getActivity(),"連線成功!");
             }
         });
-        webView.loadUrl(url);
+
+
+        try {
+            HashMap<String,String> data=new HashMap();
+            data.put("UUID","second");
+            data.put("appID","EINV3201711184648");
+            StringBuffer sURL=new StringBuffer();
+            sURL.append("https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/generalCarrierRegBlank?");
+            sURL.append(Common.Utf8forURL(data));
+            webView.loadUrl(sURL.toString());
+        }catch (Exception e)
+        {
+            Common.showToast(activity,"資料有誤");
+            Log.d("XXXXXXX",e.getMessage());
+        }
     }
 }
 

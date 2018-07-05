@@ -6,10 +6,13 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -45,6 +48,7 @@ public class EleAddBank extends Fragment {
     private List<CarrierVO> carrierVOS;
     private CarrierVO carrierVO;
     private Activity context;
+    private DrawerLayout drawerLayout;
 
 
     @Override
@@ -61,10 +65,20 @@ public class EleAddBank extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.ele_add_carrier, container, false);
+        final View view = inflater.inflate(R.layout.ele_add_carrier, container, false);
         findViewById(view);
         setSpinner();
         myProgressBar.setVisibility(View.GONE);
+        drawerLayout = this.context.findViewById(R.id.drawer_layout);
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         return view;
     }
 
@@ -177,12 +191,14 @@ public class EleAddBank extends Fragment {
             data.put("CardCode","3J0002");
             data.put("CardNo",carrierVO.getCarNul());
             data.put("VerifyCode",carrierVO.getPassword());
-            String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierBankAccBlank?";
-            url=url+getPostDataString(data);
-            webView.loadUrl(url);
+            StringBuffer sURL=new StringBuffer();
+            sURL.append("https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierBankAccBlank?");
+            sURL.append(Common.Utf8forURL(data));
+            webView.loadUrl(sURL.toString());
         }catch (Exception e)
         {
-               Log.d("XXXXXXX",e.getMessage());
+            Common.showToast(context,"手機載具有問題!");
+            Log.d("XXXXXXX",e.getMessage());
         }
     }
 
@@ -195,22 +211,6 @@ public class EleAddBank extends Fragment {
         enter=view.findViewById(R.id.enter);
     }
 
-
-    private String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-        }
-        return result.toString();
-    }
 
     private class CliientListener implements View.OnClickListener {
         @Override

@@ -13,10 +13,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Adapter;
 import android.widget.BaseAdapter;
@@ -57,6 +60,7 @@ public class EleSetCarrier extends Fragment {
     private View view;
     private Activity context;
     private AdView adView;
+    private DrawerLayout drawerLayout;
 
     @Override
     public void onAttach(Context context) {
@@ -85,10 +89,20 @@ public class EleSetCarrier extends Fragment {
         progressbarL=view.findViewById(R.id.progressbarL);
         progressT=view.findViewById(R.id.progressT);
         percentage=view.findViewById(R.id.percentage);
+        drawerLayout = this.context.findViewById(R.id.drawer_layout);
         confirm.setOnClickListener(new Confirmlisten());
         Common.setChargeDB(context);
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                drawerLayout.closeDrawer(GravityCompat.START);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         setListAdapt();
         return view;
     }
