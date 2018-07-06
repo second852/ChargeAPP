@@ -1,10 +1,12 @@
 package com.chargeapp.whc.chargeapp.Model;
 
+import java.io.Serializable;
+
 /**
  * Created by 1709008NB01 on 2017/12/21.
  */
 
-public class CarrierVO {
+public class CarrierVO implements Serializable {
 
     private String CarNul;//手機載具號碼
     private String password;//手機載具密碼

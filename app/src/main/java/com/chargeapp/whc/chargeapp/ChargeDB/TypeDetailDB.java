@@ -123,18 +123,18 @@ public class TypeDetailDB {
         return typeDetailVOlist;
     }
 
-    public TypeDetailVO findByname(String n,String t) {
-        String sql = "SELECT * FROM TypeDetail where name = '"+n+"' and groupNumber = '"+t+"';";
+    public TypeDetailVO findByname(String name,String groupNumber) {
+        String sql = "SELECT * FROM TypeDetail where name = '"+name+"' and groupNumber = '"+groupNumber+"';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         TypeDetailVO typeDetailVO = null;
         if (cursor.moveToNext()) {
             int id = cursor.getInt(0);
-            String groupNumber = cursor.getString(1);
-            String name = cursor.getString(2);
+            String GetGroupNumber = cursor.getString(1);
+            String GetName = cursor.getString(2);
             int image=cursor.getInt(3);
             String keyword=cursor.getString(4);
-            typeDetailVO=new TypeDetailVO(id,groupNumber,name,image,keyword);
+            typeDetailVO=new TypeDetailVO(id,GetGroupNumber,GetName,image,keyword);
         }
         cursor.close();
         return typeDetailVO;

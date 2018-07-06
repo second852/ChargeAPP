@@ -424,6 +424,35 @@ public class ConsumeDB {
         return consumeVO;
     }
 
+
+    public ConsumeVO findOldCon(ConsumeVO consumeVO) {
+        String sql = "SELECT * FROM Consumer where maintype = '"+consumeVO.getMaintype()+"' " +
+                "and secondtype = '"+consumeVO.getSecondType()+"' and date = '"+consumeVO.getDate().getTime()+"'" +
+                "and money = '"+consumeVO.getMoney()+"';";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        ConsumeVO c=null;
+        if (cursor.moveToNext()) {
+            c=new ConsumeVO();
+            c.setId(cursor.getInt(0));
+            c.setMaintype(cursor.getString(1));
+            c.setSecondType(cursor.getString(2));
+            c.setMoney(cursor.getInt(3));
+            c.setDate(new Date(cursor.getLong(4)));
+            c.setNumber(cursor.getString(5));
+            c.setFixDate(cursor.getString(6));
+            c.setFixDateDetail(cursor.getString(7));
+            c.setNotify(cursor.getString(8));
+            c.setDetailname(cursor.getString(9));
+            c.setIsWin(cursor.getString(10));
+            c.setAuto(Boolean.valueOf(cursor.getString(11)));
+            c.setAutoId(cursor.getInt(12));
+            c.setIsWinNul(cursor.getString(13));
+        }
+        cursor.close();
+        return c;
+    }
+
     public long insert(ConsumeVO consumeVO) {
         ContentValues values = new ContentValues();
         values.put("maintype",consumeVO.getMaintype());

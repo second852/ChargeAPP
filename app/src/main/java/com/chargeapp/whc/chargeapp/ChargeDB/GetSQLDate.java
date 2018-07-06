@@ -1,6 +1,8 @@
 package com.chargeapp.whc.chargeapp.ChargeDB;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 
@@ -12,6 +14,7 @@ import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
+import com.chargeapp.whc.chargeapp.Control.EleUpdateCarrier;
 import com.chargeapp.whc.chargeapp.Control.HomePagetList;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectDetList;
@@ -71,6 +74,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private double total;
     private ElePeriodDB elePeriodDB;
     private HashMap<Integer, String> priceMonth;
+    public static List<CarrierVO> lostCarrier;
 
     public GetSQLDate(Object object) {
         total = 0;
@@ -154,7 +158,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 } else {
                     jsonIn = searchNewPriceNul();
                 }
-                updateInvoice();
+                jsonIn=updateInvoice();
                 return jsonIn;
             } else if (action.equals("searchHeartyTeam")) {
                 String keyworld = params[1].toString();
@@ -162,6 +166,13 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 return jsonIn;
             } else if (action.equals("reDownload")) {
                 jsonIn = getUpdateInvoiceDetail(invoiceVO);
+            }else if (action.equals("checkCarrier")) {
+                user = params[1].toString();
+                password = params[2].toString();
+                Calendar cal = Calendar.getInstance();
+                year = cal.get(Calendar.YEAR);
+                month = cal.get(Calendar.MONTH);
+                jsonIn = findMonthHead(year, month, user, password);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -170,14 +181,28 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         return jsonIn;
     }
 
-    private void updateInvoice() throws IOException {
+    private String updateInvoice() throws IOException {
         downloadS = "invoice";
+        String jsonIn=null;
         List<CarrierVO> carrierVOS = carrierDB.getAll();
+        lostCarrier=new ArrayList<>();
         //沒有載具不用更新
         if (carrierVOS.size() <= 0) {
-            return;
+            return "NoCarrier";
         }
         for (CarrierVO carrierVO : carrierVOS) {
+            //確認帳密
+            user = carrierVO.getCarNul();
+            password = carrierVO.getPassword();
+            Calendar cal = Calendar.getInstance();
+            year = cal.get(Calendar.YEAR);
+            month = cal.get(Calendar.MONTH);
+            jsonIn = findMonthHead(year, month, user, password);
+            if(jsonIn.indexOf("919")!=-1)
+            {
+                lostCarrier.add(carrierVO);
+                continue;
+            }
             //找載具最新的月
             Calendar differCal = new GregorianCalendar();
             long maxTime = invoiceDB.findIVByMaxDate(carrierVO.getCarNul());
@@ -185,15 +210,16 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             differCal.setTime(new Date(differTime));
             if (differCal.get(Calendar.MONTH) >= 6 && differTime > 0) {
                 //超過6個月
-                searchNewInvoice(carrierVO);
+                jsonIn=searchNewInvoice(carrierVO);
             } else {
                 //未超過6個月
-                searchToMonth(carrierVO, maxTime);
+                jsonIn=searchToMonth(carrierVO, maxTime);
             }
         }
+        return jsonIn;
     }
 
-    private void searchNewInvoice(CarrierVO carrierVO) {
+    private String searchNewInvoice(CarrierVO carrierVO) {
         user = carrierVO.getCarNul();
         password = carrierVO.getPassword();
         //處理old period
@@ -234,6 +260,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 }
             }
         }
+        return jsonIn;
     }
 
     private String againMethod() {
@@ -735,6 +762,16 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 Download download = (Download) object;
                 percentage.setText("100%");
                 progressT.setText("下載完成!\n更新中");
+                if(lostCarrier.size()>0)
+                {
+                    StringBuffer sb=new StringBuffer();
+                    for(CarrierVO c:lostCarrier)
+                    {
+                      sb.append(c.getCarNul()+" ");
+                    }
+                    sb.append("驗證碼錯誤，請到雲端發票 : \n\"綁定/取消載具修改\"");
+                    Common.showToast(download,sb.toString());
+                }
                 download.tonNewActivity();
             } else if (object instanceof SelectDetList) {
                 SelectDetList selectDetList = (SelectDetList) object;
@@ -778,6 +815,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 } else {
                     homePagetList.setChoiceLayout();
                 }
+            }else if (object instanceof EleUpdateCarrier) {
+                EleUpdateCarrier eleUpdateCarrier = (EleUpdateCarrier) object;
+                eleUpdateCarrier.check(s);
             }
         } catch (Exception e) {
            Log.d(TAG,"onPostExecute"+e.getMessage());

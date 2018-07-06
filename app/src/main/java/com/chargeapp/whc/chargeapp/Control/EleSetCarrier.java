@@ -7,12 +7,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -37,6 +39,9 @@ import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+
+import org.apache.poi.ss.formula.functions.T;
+
 import java.util.List;
 
 
@@ -176,6 +181,17 @@ public class EleSetCarrier extends Fragment {
         closeDialog();
     }
 
+    private void switchFragment(Fragment fragment) {
+        MainActivity.oldFramgent.add("EleSetCarrier");
+        MainActivity.bundles.add(fragment.getArguments());
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        for (Fragment fragment1 : getFragmentManager().getFragments()) {
+            fragmentTransaction.remove(fragment1);
+        }
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
+    }
+
     private class EleSetCarrierAdapter extends BaseAdapter {
         Context context;
         List<CarrierVO> CarNulList;
@@ -202,14 +218,26 @@ public class EleSetCarrier extends Fragment {
             }
             final CarrierVO carrierVO = CarNulList.get(position);
             TextView tvId = (TextView) itemView.findViewById(R.id.tvId);
-            Button deletecarrier=itemView.findViewById(R.id.deletecarrier);
-            Button widgetShow=itemView.findViewById(R.id.widgetShow);
+            TextView deletecarrier=itemView.findViewById(R.id.deletecarrier);
+            TextView widgetShow=itemView.findViewById(R.id.widgetShow);
+            TextView updateC=itemView.findViewById(R.id.updateC);
+            widgetShow.setVisibility(View.GONE);
             deletecarrier.setVisibility(View.VISIBLE);
-            widgetShow.setVisibility(View.VISIBLE);
-            //綁定工具列
-            if(position!=EleSetCarrier.this.position)
+            updateC.setVisibility(View.VISIBLE);
+            //顯示有問題帳號
+            for (CarrierVO c:GetSQLDate.lostCarrier)
             {
-                widgetShow.setText("設置條碼");
+                if(c.getCarNul().equals(carrierVO.getCarNul()))
+                {
+                    itemView.setBackgroundColor(Color.RED);
+                    break;
+                }
+            }
+
+            //小工具綁定工具列
+            if(carrierlist.size()>1&&position!=EleSetCarrier.this.position)
+            {
+                widgetShow.setVisibility(View.VISIBLE);
                 widgetShow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -229,6 +257,17 @@ public class EleSetCarrier extends Fragment {
                     aa.setFragement(EleSetCarrier.this);
                     aa.show(getFragmentManager(),"show");
 
+                }
+            });
+
+            updateC.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                  Fragment fragment=new EleUpdateCarrier();
+                  Bundle bundle=new Bundle();
+                  bundle.putSerializable("carrier",carrierVO);
+                  fragment.setArguments(bundle);
+                  switchFragment(fragment);
                 }
             });
             return itemView;

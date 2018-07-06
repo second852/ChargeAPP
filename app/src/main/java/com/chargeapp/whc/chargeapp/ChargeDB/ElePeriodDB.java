@@ -60,6 +60,24 @@ public class ElePeriodDB {
         return elePeriods;
     }
 
+    public ElePeriod OldElePeriod(ElePeriod oldElePeriod) {
+        String sql = "SELECT * FROM ElePeriod where CARNUL = '"+oldElePeriod.getCarNul()+"' " +
+                "and year = '"+oldElePeriod.getYear()+"'and month = '"+oldElePeriod.getMonth()+"';";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        ElePeriod elePeriod =null;
+        if (cursor.moveToNext()) {
+            elePeriod=new ElePeriod();
+            elePeriod.setId(cursor.getInt(0));
+            elePeriod.setCarNul(cursor.getString(1));
+            elePeriod.setYear(cursor.getInt(2));
+            elePeriod.setMonth(cursor.getInt(3));
+            elePeriod.setDownload(Boolean.valueOf(cursor.getString(4)));
+        }
+        cursor.close();
+        return elePeriod;
+    }
+
     public long insert(ElePeriod elePeriod) {
         ContentValues values = new ContentValues();
         values.put("CARNUL",elePeriod.getCarNul());

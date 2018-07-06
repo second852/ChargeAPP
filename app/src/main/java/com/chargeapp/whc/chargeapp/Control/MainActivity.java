@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
@@ -273,6 +274,10 @@ public class MainActivity extends AppCompatActivity {
             indicator.setVisibility(View.GONE);
             if (i == 1) {
                 indicator.setVisibility(View.VISIBLE);
+                if(GetSQLDate.lostCarrier.size()>0)
+                {
+                    view.setBackgroundColor(Color.RED);
+                }
                 if (b) {
                     indicator.setImageResource(R.drawable.arrow_up);
                 } else {
@@ -292,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
                     MainActivity.this.position = i;
                     oldFramgent.clear();
                     bundles.clear();
+                    setColor(v);
                     if (i == 0) {
                         Common.showfirstgrid=false;
                         fragment = new InsertActivity();
@@ -356,8 +362,6 @@ public class MainActivity extends AppCompatActivity {
                         InsertIncome.needSet=false;
                         InsertIncome.bankVO=new BankVO();
                     }
-                    setColor(v);
-
                 }
             });
             return view;
@@ -375,6 +379,13 @@ public class MainActivity extends AppCompatActivity {
             String mystring = getResources().getString(member.getIdstring());
             TextView tvId = (TextView) view.findViewById(R.id.tvId);
             tvId.setText(mystring);
+
+            if(i1==0&&GetSQLDate.lostCarrier.size()>0)
+            {
+                view.setBackgroundColor(Color.RED);
+            }
+
+
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -752,6 +763,10 @@ public class MainActivity extends AppCompatActivity {
                 }else if(action.equals("GoalListAll"))
                 {
                     fragment = new GoalListAll();
+                    fragment.setArguments(bundle);
+                }else if(action.equals("EleSetCarrier"))
+                {
+                    fragment = new EleSetCarrier();
                     fragment.setArguments(bundle);
                 }
 

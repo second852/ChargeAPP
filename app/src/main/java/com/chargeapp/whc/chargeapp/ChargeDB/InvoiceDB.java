@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
@@ -162,6 +163,10 @@ public class InvoiceDB {
         cursor.close();
         return invoiceVOSList;
     }
+
+
+
+
 
     public List<InvoiceVO> getWinIn(long startTime,long endTime) {
         String sql = "SELECT * FROM INVOICE  where iswin != 'N' and heartyteam is null and time >= '"+startTime+"' and time <'"+endTime+"' order by time desc;";
@@ -587,6 +592,42 @@ public class InvoiceDB {
         return invoiceVOSList;
     }
 
+
+    public InvoiceVO findOldInvoiceVO(InvoiceVO oldInvoiceVO) {
+        String sql = "SELECT * FROM INVOICE  where maintype ='"+oldInvoiceVO.getMaintype()+"' " +
+                "and  secondtype = '"+oldInvoiceVO.getSecondtype()+"' and " +
+                "time = '"+oldInvoiceVO.getTime().getTime()+"' and amount = '"+oldInvoiceVO.getAmount()+"';";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        InvoiceVO invoiceVO=null;
+        if (cursor.moveToNext()) {
+            invoiceVO=new InvoiceVO();
+            invoiceVO.setId(cursor.getInt(0));
+            invoiceVO.setInvNum(cursor.getString(1));
+            invoiceVO.setCardType(cursor.getString(2));
+            invoiceVO.setCardNo(cursor.getString(3));
+            invoiceVO.setCardEncrypt(cursor.getString(4));
+            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
+            invoiceVO.setAmount(cursor.getInt(6));
+            invoiceVO.setDetail(cursor.getString(7));
+            invoiceVO.setSellerName(cursor.getString(8));
+            invoiceVO.setInvDonatable(cursor.getString(9));
+            invoiceVO.setDonateMark(cursor.getString(10));
+            invoiceVO.setCarrier(cursor.getString(11));
+            invoiceVO.setMaintype(cursor.getString(12));
+            invoiceVO.setSecondtype(cursor.getString(13));
+            invoiceVO.setHeartyteam(cursor.getString(14));
+            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
+            invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
+        }
+        cursor.close();
+        return invoiceVO;
+    }
+
+
     public List<ChartEntry> getInvoiceBytimeMaxType(Timestamp start, Timestamp end) {
         String sql = "SELECT SUM(amount), maintype FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' group by maintype;";
         String[] args = {};
@@ -830,6 +871,19 @@ public class InvoiceDB {
         String[] whereArgs = {Integer.toString(invoiceVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);
     }
+
+
+
+    public int updateCarrier(CarrierVO oldCarrier,CarrierVO newCarrier) {
+        ContentValues values = new ContentValues();
+        values.put("cardEncrypt",newCarrier.getPassword());
+        values.put("carrier",newCarrier.getCarNul());
+        String whereClause = "carrier = ?;";
+        String[] whereArgs = {oldCarrier.getCarNul()};
+        return db.update(TABLE_NAME, values, whereClause, whereArgs);
+    }
+
+
     public int deleteById(int id) {
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {String.valueOf(id)};

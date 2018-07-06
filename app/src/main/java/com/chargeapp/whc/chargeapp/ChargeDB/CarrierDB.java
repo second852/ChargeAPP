@@ -39,6 +39,22 @@ public class CarrierDB {
         return carrierVOS;
     }
 
+    public CarrierVO findOldCarrier(CarrierVO oldCarrierVO) {
+        String sql = "SELECT * FROM CARRIER where CARNUL = '"+oldCarrierVO.getCarNul()+"' " +
+                "and  PASSWORD = '"+oldCarrierVO.getPassword()+"';";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        CarrierVO carrierVO=null;
+        if (cursor.moveToNext()) {
+            carrierVO=new CarrierVO();
+            carrierVO.setId(cursor.getInt(0));
+            carrierVO.setCarNul(cursor.getString(1));
+            carrierVO.setPassword(cursor.getString(2));
+        }
+        cursor.close();
+        return carrierVO;
+    }
+
     public List<String> getAllNul() {
         String sql = "SELECT * FROM CARRIER order by id;";
         String[] args = {};

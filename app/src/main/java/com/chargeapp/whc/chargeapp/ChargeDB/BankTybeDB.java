@@ -62,6 +62,22 @@ public class BankTybeDB {
         return BankTypeVOlist;
     }
 
+    public BankTypeVO findExist(String groupName,String name) {
+        String sql = "SELECT * FROM BANKTYPE where groupNumber = '"+groupName+"' and name = '"+name+"'  order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        BankTypeVO bankTypeVO=null;
+        if (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            String GN =cursor.getString(1);
+            String n=cursor.getString(2);
+            int image=cursor.getInt(3);
+            bankTypeVO=new BankTypeVO(id,GN,n,image);
+        }
+        cursor.close();
+        return bankTypeVO;
+    }
+
     public BankTypeVO findByName(String n) {
         String[] columns = {
                 "id,groupNumber,name,image"

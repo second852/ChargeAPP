@@ -11,6 +11,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -84,6 +86,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,7 +119,6 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     public  GoogleApiClient mGoogleApiClient;
     public  DriveId mSelectedFileDriveId;
     private RelativeLayout progressL;
-    private ProgressBar mProgressBar;
     private Activity context;
     private AdView adView;
     private boolean firstEnter;
@@ -131,6 +133,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
             this.context=getActivity();
         }
     }
+
 
 
     @Override
@@ -150,7 +153,6 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         List<EleMainItemVO> itemSon = getNewItem();
         listView = view.findViewById(R.id.list);
         progressL = view.findViewById(R.id.progressL);
-        mProgressBar = view.findViewById(R.id.progress);
         //廣告
         adView = view.findViewById(R.id.adView);
         Common.setAdView(adView,context);
@@ -345,7 +347,11 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         typeVO.setGroupNumber(row.getCell(1).getStringCellValue());
                         typeVO.setName(row.getCell(2).getStringCellValue());
                         typeVO.setImage((int) row.getCell(3).getNumericCellValue());
-                        typeDB.insertHId(typeVO);
+                        TypeVO oldTypeVO=typeDB.findTypeName(typeVO.getGroupNumber(),typeVO.getName());
+                        if(oldTypeVO==null)
+                        {
+                            typeDB.insert(typeVO);
+                        }
                     } else if (sheetTitle.equals("TypeDetail")) {
                         TypeDetailVO typeDetailVO = new TypeDetailVO();
                         typeDetailVO.setId((int) row.getCell(0).getNumericCellValue());
@@ -353,14 +359,22 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         typeDetailVO.setName(row.getCell(2).getStringCellValue());
                         typeDetailVO.setImage((int) row.getCell(3).getNumericCellValue());
                         typeDetailVO.setKeyword(row.getCell(4).getStringCellValue());
-                        typeDetailDB.insertHid(typeDetailVO);
+                        TypeDetailVO oldTypeDetail=typeDetailDB.findByname(typeDetailVO.getName(),typeDetailVO.getGroupNumber());
+                        if(oldTypeDetail==null)
+                        {
+                            typeDetailDB.insert(typeDetailVO);
+                        }
                     } else if (sheetTitle.equals("BankType")) {
                         BankTypeVO bankTypeVO = new BankTypeVO();
                         bankTypeVO.setId((int) row.getCell(0).getNumericCellValue());
                         bankTypeVO.setGroupNumber(row.getCell(1).getStringCellValue());
                         bankTypeVO.setName(row.getCell(2).getStringCellValue());
                         bankTypeVO.setImage((int) row.getCell(3).getNumericCellValue());
-                        bankTybeDB.insert(bankTypeVO);
+                        BankTypeVO oldBankTypeVO=bankTybeDB.findExist(bankTypeVO.getGroupNumber(),bankTypeVO.getName());
+                        if(oldBankTypeVO==null)
+                        {
+                            bankTybeDB.insert(bankTypeVO);
+                        }
                     } else if (sheetTitle.equals("Goal")) {
                         GoalVO goalVO = new GoalVO();
                         goalVO.setId((int) row.getCell(0).getNumericCellValue());
@@ -375,7 +389,11 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         goalVO.setNotifyDate(row.getCell(9).getStringCellValue());
                         goalVO.setNoWeekend(row.getCell(10).getBooleanCellValue());
                         goalVO.setStatue((int) row.getCell(11).getNumericCellValue());
-                        goalDB.insertHid(goalVO);
+                        GoalVO oldGoalVO=goalDB.getFindType(goalVO.getType(),goalVO.getName());
+                        if(oldGoalVO==null)
+                        {
+                            goalDB.insert(goalVO);
+                        }
                     } else if (sheetTitle.equals("Bank")) {
                         BankVO bankVO = new BankVO();
                         bankVO.setId((int) row.getCell(0).getNumericCellValue());
@@ -387,7 +405,11 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         bankVO.setDetailname(row.getCell(6).getStringCellValue());
                         bankVO.setAuto(row.getCell(7).getBooleanCellValue());
                         bankVO.setAutoId((int) row.getCell(8).getNumericCellValue());
-                        bankDB.insertHid(bankVO);
+                        BankVO oldBankVO=bankDB.getFindOldBank(bankVO);
+                        if(oldBankVO==null)
+                        {
+                            bankDB.insert(bankVO);
+                        }
                     } else if (sheetTitle.equals("Consume")) {
                         ConsumeVO consumeVO = new ConsumeVO();
                         consumeVO.setId((int) row.getCell(0).getNumericCellValue());
@@ -404,7 +426,11 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         consumeVO.setAutoId((int) row.getCell(11).getNumericCellValue());
                         consumeVO.setIsWin(row.getCell(12).getStringCellValue());
                         consumeVO.setIsWinNul(row.getCell(13).getStringCellValue());
-                        consumeDB.insertHid(consumeVO);
+                        ConsumeVO oldConsume=consumeDB.findOldCon(consumeVO);
+                        if(oldConsume==null)
+                        {
+                            consumeDB.insert(consumeVO);
+                        }
                     } else if (sheetTitle.equals("Invoice")) {
                         InvoiceVO invoiceVO = new InvoiceVO();
                         invoiceVO.setId((int) row.getCell(0).getNumericCellValue());
@@ -433,13 +459,21 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         invoiceVO.setSellerAddress(row.getCell(17).getStringCellValue());
                         invoiceVO.setIswin(row.getCell(18).getStringCellValue());
                         invoiceVO.setIsWinNul(row.getCell(19).getStringCellValue());
-                        invoiceDB.insertHid(invoiceVO);
+                        InvoiceVO oldInvoiceVO=invoiceDB.findOldInvoiceVO(invoiceVO);
+                        if(oldInvoiceVO==null)
+                        {
+                            invoiceDB.insert(invoiceVO);
+                        }
                     } else if (sheetTitle.equals("Carrier")) {
                         CarrierVO carrierVO = new CarrierVO();
                         carrierVO.setId((int) row.getCell(0).getNumericCellValue());
                         carrierVO.setCarNul(row.getCell(1).getStringCellValue());
                         carrierVO.setPassword(row.getCell(2).getStringCellValue());
-                        carrierDB.insertHid(carrierVO);
+                        CarrierVO oldCarrierVO=carrierDB.findOldCarrier(carrierVO);
+                        if(oldCarrierVO==null)
+                        {
+                            carrierDB.insert(carrierVO);
+                        }
                     }else if (sheetTitle.equals("Price")) {
                         PriceVO priceVO = new PriceVO();
                         priceVO.setInvoYm(row.getCell(0).getStringCellValue());
@@ -462,7 +496,11 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         priceVO.setSixthPrizeNo4(row.getCell(17).getStringCellValue());
                         priceVO.setSixthPrizeNo5(row.getCell(18).getStringCellValue());
                         priceVO.setSixthPrizeNo6(row.getCell(19).getStringCellValue());
-                        priceDB.insert(priceVO);
+                        PriceVO oldPriceVO=priceDB.getPeriodAll(priceVO.getInvoYm());
+                        if(oldPriceVO==null)
+                        {
+                            priceDB.insert(priceVO);
+                        }
                     }else if (sheetTitle.equals("ElePeriod")) {
                         ElePeriod elePeriod = new ElePeriod();
                         elePeriod.setId((int) row.getCell(0).getNumericCellValue());
@@ -470,12 +508,14 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         elePeriod.setYear((int) row.getCell(2).getNumericCellValue());
                         elePeriod.setMonth((int) row.getCell(3).getNumericCellValue());
                         elePeriod.setDownload(row.getCell(4).getBooleanCellValue());
-                        elePeriodDB.insertHid(elePeriod);
+                        ElePeriod oldElePeriod=elePeriodDB.OldElePeriod(elePeriod);
+                        if(oldElePeriod==null)
+                        {
+                            elePeriodDB.insert(elePeriod);
+                        }
                     }
                 }
-                mProgressBar.setProgress(i*10);
                 i++;
-
             }
             workbook.close();
             inp.close();

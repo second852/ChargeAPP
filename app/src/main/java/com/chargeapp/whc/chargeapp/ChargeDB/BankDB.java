@@ -135,6 +135,27 @@ public class BankDB {
         return bankVO;
     }
 
+    public BankVO  getFindOldBank(BankVO bankVO) {
+        String sql = "SELECT * FROM BANK where maintype = '"+bankVO.getMaintype()+"' and money = '"+bankVO.getMoney()+"' and date = '"+bankVO.getDate().getTime()+"';";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        BankVO b =null;
+        if (cursor.moveToNext()) {
+            b=new BankVO();
+            b.setId(cursor.getInt(0));
+            b.setMaintype(cursor.getString(1));
+            b.setMoney(cursor.getInt(2));
+            b.setDate(new Date(cursor.getLong(3)));
+            b.setFixDate(cursor.getString(4));
+            b.setFixDateDetail(cursor.getString(5));
+            b.setDetailname(cursor.getString(6));
+            b.setAuto(Boolean.valueOf(cursor.getString(7)));
+            b.setAutoId(cursor.getInt(8));
+        }
+        cursor.close();
+        return b;
+    }
+
 
     public Integer getTimeTotal(Timestamp start,Timestamp end) {
         String sql = "SELECT money  FROM BANK where date between '"+start.getTime()+"' and '"+end.getTime()+"' order by id;";

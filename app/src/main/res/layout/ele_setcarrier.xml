@@ -55,7 +55,7 @@
         android:background="#FFEE99"
         android:gravity="center"
         android:hint="XXXX"
-        android:inputType="textPassword"
+        android:inputType="text"
         android:singleLine="true"
         android:textColor="#000000"
         android:textColorHint="#AAAAAA" />
