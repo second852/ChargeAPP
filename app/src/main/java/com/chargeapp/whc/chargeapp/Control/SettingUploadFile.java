@@ -12,6 +12,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -120,6 +122,34 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private StringBuffer sb;
     private AdView adView;
     private boolean firstEnter;
+
+    Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what)
+            {
+                case 0:
+                    progressL.setVisibility(View.VISIBLE);
+                    break;
+                case 1:
+                    progressL.setVisibility(View.GONE);
+                    break;
+                case 2:
+                    progressL.setVisibility(View.GONE);
+                    Common.showToast(context, "匯出成功，檔名為記帳小助手.txt，路徑為" + "/Download/記帳小助手.txt");
+                    break;
+                case 3:
+                    progressL.setVisibility(View.GONE);
+                    Common.showToast(context,"輸出失敗");
+                    break;
+                case 4:
+                    progressL.setVisibility(View.GONE);
+                    Common.showToast(context,"匯出成功，檔名為記帳小助手.xls，路徑為" + "/Download/記帳小助手.xls");
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
 
 
     @Override
@@ -321,8 +351,8 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         local = false;
                         firstEnter=true;
                         if (SettingUploadFile.this.position == 0) {
-                            openCloud();
                             txt = false;
+                            openCloud();
                         } else {
                             if (show) {
                                 fileChoice.setVisibility(View.VISIBLE);
@@ -348,22 +378,31 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     }
 
     private void TxtToLocal() {
-        try {
-            File dir = Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_DOWNLOADS);
-            if (!dir.exists()) {
-                dir.mkdirs();
+        progressL.setVisibility(View.VISIBLE);
+        Runnable runnable=new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    File dir = Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_DOWNLOADS);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                    File file = new File(dir, "記帳小助手.txt");
+                    FileOutputStream fs = new FileOutputStream(file);
+                    OutPutTxt(fs);
+                } catch (Exception e) {
+                    Message message=handler.obtainMessage();
+                    message.what=3;
+                    message.sendToTarget();
+                }
             }
-            File file = new File(dir, "記帳小助手.txt");
-            FileOutputStream fs = new FileOutputStream(file);
-            OutPutTxt(fs);
-        } catch (Exception e) {
-            Common.showToast(context, "File Error!");
-        }
+        };
+        new Thread(runnable).start();
     }
 
     private void OutPutTxt(OutputStream outputStream) {
-        progressL.setVisibility(View.VISIBLE);
         try {
             OutputStreamWriter ow = new OutputStreamWriter(outputStream);
             BufferedWriter bw = new BufferedWriter(ow);
@@ -499,8 +538,9 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             bw.close();
             if(local)
             {
-                progressL.setVisibility(View.GONE);
-                Common.showToast(context, "匯出成功，檔名為記帳小助手.txt，路徑為" + "/Download/記帳小助手.txt");
+                Message message=handler.obtainMessage();
+                message.what=2;
+                message.sendToTarget();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -508,17 +548,26 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     }
 
     private void FileTOLocal() {
-        try {
-            File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-            if (!dir.exists()) {
-                dir.mkdirs();
+        progressL.setVisibility(View.VISIBLE);
+        Runnable runnable=new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                    File file = new File(dir, "記帳小助手.xls");
+                    OutputStream outputStream = new FileOutputStream(file);
+                    outputExcel(outputStream);
+                } catch (Exception e) {
+                   Message message=handler.obtainMessage();
+                   message.what=3;
+                   message.sendToTarget();
+                }
             }
-            File file = new File(dir, "記帳小助手.xls");
-            OutputStream outputStream = new FileOutputStream(file);
-            outputExcel(outputStream);
-        } catch (Exception e) {
-            Common.showToast(context, "File Error");
-        }
+        };
+        new Thread(runnable).start();
     }
 
 
@@ -831,8 +880,9 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             outputStream.close();
             if(local)
             {
-                Common.showToast(context, "匯出成功，檔名為記帳小助手.xls，路徑為" + "/Download/記帳小助手.xls");
-                progressL.setVisibility(View.GONE);
+                Message message=handler.obtainMessage();
+                message.what=4;
+                message.sendToTarget();
             }
 
         } catch (IOException e) {
@@ -916,7 +966,9 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             Common.showToast(SettingUploadFile.this.context,"網路沒有開啟，無法下載!");
             return;
         }
-        progressL.setVisibility(View.VISIBLE);
+        Message message=handler.obtainMessage();
+        message.what=0;
+        message.sendToTarget();
         if (mGoogleApiClient == null) {
             // Create the API client and bind it to an instance variable.
             // We use this instance as the callback for connection and connection
@@ -951,7 +1003,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 .setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
 
                     @Override
-                    public void onResult(DriveApi.DriveContentsResult result) {
+                    public void onResult(final DriveApi.DriveContentsResult result) {
                         // If the operation was not successful, we cannot do anything
                         // and must
                         // fail.
@@ -959,44 +1011,50 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                             Common.showToast(context,"連線失敗!");
                             return;
                         }
-                        // Otherwise, we can write our data to the new contents.
-                        // Get an output stream for the contents.
-                        OutputStream outputStream = result.getDriveContents().getOutputStream();
-                        // Write the bitmap data from it.
-                        ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
-                        String fileName, fileType;
-                        if (txt) {
-                            fileName = "記帳小助手.txt";
-                            fileType = "File/txt";
-                            OutPutTxt(bitmapStream);
-                        } else {
-                            fileName = "記帳小助手.xls";
-                            fileType = "File/xls";
-                            outputExcel(bitmapStream);
-                        }
+                        Runnable runnable=new Runnable() {
+                            @Override
+                            public void run() {
+                                // Otherwise, we can write our data to the new contents.
+                                // Get an output stream for the contents.
+                                OutputStream outputStream = result.getDriveContents().getOutputStream();
+                                // Write the bitmap data from it.
+                                ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
+                                String fileName, fileType;
+                                if (txt) {
+                                    fileName = "記帳小助手.txt";
+                                    fileType = "File/txt";
+                                    OutPutTxt(bitmapStream);
+                                } else {
+                                    fileName = "記帳小助手.xls";
+                                    fileType = "File/xls";
+                                    outputExcel(bitmapStream);
+                                }
 
 
-                        try {
-                            outputStream.write(bitmapStream.toByteArray());
-                        } catch (IOException e1) {
+                                try {
+                                    outputStream.write(bitmapStream.toByteArray());
+                                } catch (IOException e1) {
 
-                        }
-                        // Create the initial metadata - MIME type and title.
-                        // Note that the user will be able to change the title later.
-                        MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
-                                .setMimeType(fileType).setTitle(fileName).build();
-                        // Create an intent for the file chooser, and start it.
-                        IntentSender intentSender = Drive.DriveApi
-                                .newCreateFileActivityBuilder()
-                                .setInitialMetadata(metadataChangeSet)
-                                .setInitialDriveContents(result.getDriveContents())
-                                .build(mGoogleApiClient);
-                        try {
-                            context.startIntentSenderForResult(
-                                    intentSender, 3, null, 0, 0, 0);
-                        } catch (IntentSender.SendIntentException e) {
+                                }
+                                // Create the initial metadata - MIME type and title.
+                                // Note that the user will be able to change the title later.
+                                MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                                        .setMimeType(fileType).setTitle(fileName).build();
+                                // Create an intent for the file chooser, and start it.
+                                IntentSender intentSender = Drive.DriveApi
+                                        .newCreateFileActivityBuilder()
+                                        .setInitialMetadata(metadataChangeSet)
+                                        .setInitialDriveContents(result.getDriveContents())
+                                        .build(mGoogleApiClient);
+                                try {
+                                    context.startIntentSenderForResult(
+                                            intentSender, 3, null, 0, 0, 0);
+                                } catch (IntentSender.SendIntentException e) {
 
-                        }
+                                }
+                            }
+                        };
+                        new Thread(runnable).start();
                     }
                 });
     }

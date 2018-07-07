@@ -104,7 +104,7 @@ public class JobSchedulerService extends JobService {
                 String action = jsonObject.get("choicestatue").getAsString().trim();
                 boolean notify = Boolean.valueOf(consumeVO.getNotify());
                 if ("每天".equals(action)) {
-                    Log.d("service", "bankVOS");
+                    Log.d("service", "consumeVO");
                     boolean noWeekend = jsonObject.get("noweek").getAsBoolean();
                     if (noWeekend && dweek == 7) {
                         continue;
@@ -226,7 +226,7 @@ public class JobSchedulerService extends JobService {
 
 
         for (BankVO b : bankVOS) {
-
+            Log.d("service", "bankVOS");
             //避免紀錄當天重複
             if(sf.format(b.getDate()).equals(sf.format(new Date(setNewTime.getTimeInMillis()))))
             {
@@ -321,7 +321,7 @@ public class JobSchedulerService extends JobService {
 
         List<GoalVO> goalVOS = goalDB.getNotify();
         for (GoalVO goalVO : goalVOS) {
-            Log.d("service", String.valueOf(goalVO.isNoWeekend()));
+            Log.d("service", "goalVO");
             String statue = goalVO.getNotifyStatue().trim();
             if (statue.equals("每天")) {
                 if (goalVO.isNoWeekend()) {

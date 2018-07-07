@@ -40,8 +40,7 @@ public class CarrierDB {
     }
 
     public CarrierVO findOldCarrier(CarrierVO oldCarrierVO) {
-        String sql = "SELECT * FROM CARRIER where CARNUL = '"+oldCarrierVO.getCarNul()+"' " +
-                "and  PASSWORD = '"+oldCarrierVO.getPassword()+"';";
+        String sql = "SELECT * FROM CARRIER where CARNUL = '"+oldCarrierVO.getCarNul()+"';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         CarrierVO carrierVO=null;

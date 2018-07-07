@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/progress"
             android:layout_centerHorizontal="true"
-            android:text="執行中…"
+            android:text="匯入資料中…"
             android:textColor="#000000"
             android:textSize="35dp" />
     </RelativeLayout>

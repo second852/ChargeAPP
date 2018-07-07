@@ -183,14 +183,14 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                 mSelectedFileDriveId = data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
                 open();
                 progressL.setVisibility(View.VISIBLE);
-                Common.showToast(context, "下傳成功");
+                Common.showToast(context, "下載成功");
             } else {
                 if(mGoogleApiClient!=null)
                 {
                     mGoogleApiClient.disconnect();
                     mGoogleApiClient=null;
                 }
-                Common.showToast(context, "下傳失敗");
+                Common.showToast(context, "下載失敗");
             }
         }
     }
@@ -283,18 +283,27 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                   progressL.setVisibility(View.VISIBLE);
+                         Runnable runnable=new Runnable() {
+                            @Override
+                            public void run() {
 
-                        try {
-                            File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                            if (!dir.exists()) {
-                                dir.mkdirs();
+                                try {
+                                    File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                                    if (!dir.exists()) {
+                                        dir.mkdirs();
+                                    }
+                                    File file = new File(dir, "記帳小助手.xls");
+                                    InputStream inp = new FileInputStream(file);
+                                    inputExcel(inp);
+                                } catch (Exception e) {
+                                    Message message=handler.obtainMessage();
+                                    message.what=3;
+                                    message.sendToTarget();
+                                }
                             }
-                            File file = new File(dir, "記帳小助手.xls");
-                            InputStream inp = new FileInputStream(file);
-                            inputExcel(inp);
-                        } catch (Exception e) {
-                            Common.showToast(context, "請將檔案放置在/Download，檔名為記帳小助手.xls");
-                        }
+                        };
+                       new Thread(runnable).start();
                     }
                 });
             } else if (position == 1) {
@@ -330,12 +339,13 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
 
     private void inputExcel(InputStream inp) {
         int i = 0;
+        Message msg = handler.obtainMessage();
         try {
             Workbook workbook = new HSSFWorkbook(inp);
             for (Sheet sheet : workbook) {
                 String sheetTitle = sheet.getSheetName();
                 if ((!sheetTitle.equals("Type") && i == 0)) {
-                    Common.showToast(context, "不是備份檔");
+                    msg.what=2;
                     workbook.close();
                     inp.close();
                     return;
@@ -517,16 +527,39 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                 }
                 i++;
             }
+            msg.what=0;
             workbook.close();
             inp.close();
-            Common.showToast(context,"匯入成功");
         } catch (Exception e) {
+            msg.what=1;
             e.printStackTrace();
-            Common.showToast(context,"檔案格式不對");
         }finally {
-            progressL.setVisibility(View.GONE);
+            msg.sendToTarget();
         }
     }
+
+    Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    Common.showToast(context,"匯入成功");
+                    break;
+                case 1:
+                    Common.showToast(context,"檔案格式不對");
+                    break;
+                case 2:
+                    Common.showToast(context, "不是備份檔");
+                    break;
+                case 3:
+                    Common.showToast(context, "請將檔案放置在/Download，檔名為記帳小助手.xls");
+                    break;
+            }
+            progressL.setVisibility(View.GONE);
+            super.handleMessage(msg);
+        }
+    };
+
 
 
     public void openCloud() {
@@ -550,12 +583,13 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
 
             }
         };
-
+        Log.d("XXXX","open");
         DriveFile driveFile = mSelectedFileDriveId.asDriveFile();
         driveFile.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, listener)
                 .setResultCallback(driveContentsCallback);
         mSelectedFileDriveId = null;
     }
+
 
     private final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback =
             new ResultCallback<DriveApi.DriveContentsResult>() {
@@ -566,12 +600,21 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         return;
                     }
                     // Read from the input stream an print to LOGCAT
-                    DriveContents driveContents = result.getDriveContents();
-                    inputExcel(driveContents.getInputStream());
-                    // Close file contents
-                    driveContents.discard(mGoogleApiClient);
-                    mGoogleApiClient.disconnect();
-                    mGoogleApiClient = null;
+                    final DriveContents driveContents = result.getDriveContents();
+                    Runnable runnable=new Runnable() {
+                        @Override
+                        public void run() {
+
+                            inputExcel(driveContents.getInputStream());
+                            // Close file contents
+                            driveContents.discard(mGoogleApiClient);
+                            mGoogleApiClient.disconnect();
+                            mGoogleApiClient = null;
+                        }
+                    };
+                    Thread thread=new Thread(runnable);
+                    thread.start();
+
                 }
             };
 
