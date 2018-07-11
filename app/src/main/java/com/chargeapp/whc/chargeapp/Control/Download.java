@@ -130,6 +130,7 @@ public class Download extends AppCompatActivity {
         Common.setChargeDB(Download.this);
         (getSupportActionBar()).hide();
         ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        GetSQLDate.lostCarrier=new ArrayList<>();
         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
         if (mNetworkInfo != null) {
             getSQLDate = new GetSQLDate(this);

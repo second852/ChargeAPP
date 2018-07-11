@@ -154,9 +154,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
                 priceMonth = Common.getPriceMonth();
                 if (priceDB.getAll().size() <= 0) {
-                    jsonIn = searchPriceNul();
+                    searchPriceNul();
                 } else {
-                    jsonIn = searchNewPriceNul();
+                    searchNewPriceNul();
                 }
                 jsonIn=updateInvoice();
                 return jsonIn;
@@ -185,7 +185,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         downloadS = "invoice";
         String jsonIn=null;
         List<CarrierVO> carrierVOS = carrierDB.getAll();
-        lostCarrier=new ArrayList<>();
         //沒有載具不用更新
         if (carrierVOS.size() <= 0) {
             return "NoCarrier";

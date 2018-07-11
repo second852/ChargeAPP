@@ -482,63 +482,98 @@ public class MainActivity extends AppCompatActivity {
             InsertSpend.consumeVO.setDate(new Date(calendar.getTimeInMillis()));
             StringBuffer sb = new StringBuffer();
             if (EleNulAll[4].equals("2")) {
+                //Base64
                 try {
                     String base64 = EleNulAll[5];
                     byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
                     String debase64 = new String(bytes, "UTF-8");
                     String[] ddd = debase64.trim().split(":");
+                    Double price;
                     for (int j = 0; j < ddd.length; j = j +3) {
-                            int total=Integer.valueOf(ddd[j + 2].trim())*Integer.valueOf(ddd[j + 1].trim());
-                            sb.append(ddd[j]).append(" :\n").append(ddd[j + 2] + " X ").append(ddd[j + 1]).append( " = "+total+"\n");
+                        if(ddd[j +2].indexOf("-")!=-1)
+                        {
+                            String s=ddd[j +2].replaceAll("\\s+", "").substring(1);
+                            price=Double.valueOf(s);
+                        }else{
+                            price=Double.valueOf(ddd[j +2].replaceAll("\\s+", ""));
+                        }
+                            Double total=price*Double.valueOf(ddd[j + 1].trim());
+                            sb.append(ddd[j].replaceAll("\\s+", "")).append(" :\n").append(ddd[j + 2].replaceAll("\\s+", "") + " X ").append(ddd[j + 1].replaceAll("\\s+", "")).append( " = "+total+"\n");
                         }
 
                 } catch (Exception e) {
-                    Common.showToast(this, "在試一次");
+                    sb=new StringBuffer();
+                    String name,amount,price;
+                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
+                        name=EleNulAll[i].replaceAll("\\s+", "");
+                        price= EleNulAll[i + 2].replaceAll("\\s+", "");
+                        amount=EleNulAll[i +1].replaceAll("\\s+", "");
+                        sb.append(name+" : "+price+" : "+amount+"\n");
+                    }
                 }
             } else if (EleNulAll[4].equals("0")) {
                 try {
-                    String a = new SetupDateBase64(this).execute("getThisDetail").get();
-                    if (a.equals("InternetError")) {
-                        Common.showToast(this, "連線逾時,請從新掃QRCODE");
-                        return;
-                    }
-                    if(a.indexOf("details")!=-1)
-                    {
-                        Gson gson = new Gson();
-                        JsonObject jFT = gson.fromJson(a, JsonObject.class);
-                        String s = jFT.get("details").toString();
-                        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
-                        List<JsonObject> b = gson.fromJson(s, cdType);
-                        for (JsonObject j : b) {
-                            double total = Double.valueOf(j.get("unitPrice").getAsString().trim()) * Double.valueOf(j.get("quantity").getAsString().trim());
-                            sb.append(j.get("description").getAsString());
-                            sb.append(" :\n" + j.get("unitPrice").getAsString() + " X " + j.get("quantity").getAsString() + " = " + total + "\n");
+                    //Big5
+                    sb=new StringBuffer();
+                    String name;
+                    double price;
+                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
+                        name=EleNulAll[i].replaceAll("\\s+", "");
+                        name=new String(name.getBytes("ISO-8859-1"), "Big5");
+                        if(EleNulAll[i +2].indexOf("-")!=-1)
+                        {
+                            String s=EleNulAll[i +2].replaceAll("\\s+", "").substring(1);
+                            price=Double.valueOf(s);
+                        }else{
+                            price=Double.valueOf(EleNulAll[i +2].replaceAll("\\s+", ""));
                         }
-                    }else {
-                        sb.append("該筆發票並無開立");
+                        Double total= price*Double.valueOf(EleNulAll[i + 1].trim());
+                        sb.append(name+" :\n"+EleNulAll[i +2].replaceAll("\\s+", "")+" X "+EleNulAll[i +1].replaceAll("\\s+", "")+" = "+total+"\n");
                     }
 
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    Common.showToast(this, "在試一次");
+                    sb=new StringBuffer();
+                    String name,amount,price;
+                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
+                        name=EleNulAll[i].replaceAll("\\s+", "");
+                        price= EleNulAll[i + 2].replaceAll("\\s+", "");
+                        amount=EleNulAll[i +1].replaceAll("\\s+", "");
+                        sb.append(name+" : "+price+" : "+amount+"\n");
+                    }
                 }
             } else {
                 try {
+                    //UTF-8
+                    //數量為1
                     if (EleNulAll[3].equals("1")) {
                         sb.append(EleNulAll[5] + " : " + InsertSpend.consumeVO.getMoney()+" X 1 = "+InsertSpend.consumeVO.getMoney()+"\n");
                     } else {
+                        //全部數量
+                        Double price;
                         for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                            int total=Integer.valueOf(EleNulAll[i +2].trim())*Integer.valueOf(EleNulAll[i + 1].trim());
-                            sb.append(EleNulAll[i] + " :\n" + EleNulAll[i +2] + " X " + EleNulAll[i + 1]+" = "+total+"\n");
+                            if(EleNulAll[i +2].indexOf("-")!=-1)
+                            {
+                                String s=EleNulAll[i +2].replaceAll("\\s+", "").substring(1);
+                                price=Double.valueOf(s);
+                            }else{
+                                price=Double.valueOf(EleNulAll[i +2].replaceAll("\\s+", ""));
+                            }
+                            Double total=price*Integer.valueOf(EleNulAll[i + 1].trim());
+                            sb.append(EleNulAll[i].replaceAll("\\s+", "") + " :\n" + EleNulAll[i +2].replaceAll("\\s+", "") + " X " + EleNulAll[i + 1].replaceAll("\\s+", "")+" = "+total+"\n");
                         }
                     }
                 }catch (Exception e)
                 {
-
-                    Common.showToast(this, "在試一次");
+                    sb=new StringBuffer();
+                    String name,amount,price;
+                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
+                        name=EleNulAll[i].replaceAll("\\s+", "");
+                        price= EleNulAll[i + 2].replaceAll("\\s+", "");
+                        amount=EleNulAll[i +1].replaceAll("\\s+", "");
+                        sb.append(name+" : "+price+" : "+amount+"\n");
+                    }
                 }
             }
-
             if(sb.toString().trim().length()>0)
             {
                 InsertSpend.consumeVO.setDetailname(sb.toString());
@@ -576,57 +611,96 @@ public class MainActivity extends AppCompatActivity {
             consumeVO.setDate(new Date(calendar.getTimeInMillis()));
             StringBuffer sb = new StringBuffer();
             if (EleNulAll[4].equals("2")) {
+                //Base64
                 try {
                     String base64 = EleNulAll[5];
                     byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
                     String debase64 = new String(bytes, "UTF-8");
                     String[] ddd = debase64.trim().split(":");
+                    Double price;
                     for (int j = 0; j < ddd.length; j = j +3) {
-                        int total=Integer.valueOf(ddd[j + 2].trim())*Integer.valueOf(ddd[j + 1].trim());
-                        sb.append(ddd[j]).append(" :\n").append(ddd[j + 2] + " X ").append(ddd[j + 1]).append( " = "+total+"\n");
-                    }
-                } catch (Exception e) {
-                    Common.showToast(this, "在試一次");
-                }
-            } else if (EleNulAll[4].equals("0")) {
-                try {
-                    String a = new SetupDateBase64(this).execute("getThisDetail").get();
-                    if (a.equals("InternetError")) {
-                        Common.showToast(this, "連線逾時,請從新掃QRCODE");
-                        return;
-                    }
-                    if(a.indexOf("details")!=-1)
-                    {
-                        Gson gson = new Gson();
-                        JsonObject jFT = gson.fromJson(a, JsonObject.class);
-                        String s = jFT.get("details").toString();
-                        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
-                        List<JsonObject> b = gson.fromJson(s, cdType);
-                        for (JsonObject j : b) {
-                            double total=Double.valueOf(j.get("unitPrice").getAsString().trim())*Double.valueOf(j.get("quantity").getAsString().trim());
-                            String des=j.get("description").getAsString();
-                            sb.append(des + " :\n"+j.get("unitPrice").getAsString()+" X "+ j.get("quantity").getAsString() + " = " +total+"\n");
+                        if(ddd[j +2].indexOf("-")!=-1)
+                        {
+                            String s=ddd[j +2].replaceAll("\\s+", "").substring(1);
+                            price=Double.valueOf(s);
+                        }else{
+                            price=Double.valueOf(ddd[j +2].replaceAll("\\s+", ""));
                         }
-                    }else {
-                        sb.append("該筆發票並無開立");
+                        Double total=price*Double.valueOf(ddd[j + 1].trim());
+                        sb.append(ddd[j].replaceAll("\\s+", "")).append(" :\n").append(ddd[j + 2].replaceAll("\\s+", "") + " X ").append(ddd[j + 1].replaceAll("\\s+", "")).append( " = "+total+"\n");
                     }
 
                 } catch (Exception e) {
-                    Common.showToast(this, "在試一次");
+                    sb=new StringBuffer();
+                    String name,amount,price;
+                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
+                        name=EleNulAll[i].replaceAll("\\s+", "");
+                        price= EleNulAll[i + 2].replaceAll("\\s+", "");
+                        amount=EleNulAll[i +1].replaceAll("\\s+", "");
+                        sb.append(name+" : "+price+" : "+amount+"\n");
+                    }
+                }
+            } else if (EleNulAll[4].equals("0")) {
+                try {
+                    //Big5
+                    sb=new StringBuffer();
+                    String name;
+                    double price;
+                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
+                        name=EleNulAll[i].replaceAll("\\s+", "");
+                        name=new String(name.getBytes("ISO-8859-1"), "Big5");
+                        if(EleNulAll[i +2].indexOf("-")!=-1)
+                        {
+                            String s=EleNulAll[i +2].replaceAll("\\s+", "").substring(1);
+                            price=Double.valueOf(s);
+                        }else{
+                            price=Double.valueOf(EleNulAll[i +2].replaceAll("\\s+", ""));
+                        }
+                        Double total= price*Double.valueOf(EleNulAll[i + 1].trim());
+                        sb.append(name+" :\n"+EleNulAll[i +2].replaceAll("\\s+", "")+" X "+EleNulAll[i +1].replaceAll("\\s+", "")+" = "+total+"\n");
+                    }
+
+                } catch (Exception e) {
+                    sb=new StringBuffer();
+                    String name,amount,price;
+                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
+                        name=EleNulAll[i].replaceAll("\\s+", "");
+                        price= EleNulAll[i + 2].replaceAll("\\s+", "");
+                        amount=EleNulAll[i +1].replaceAll("\\s+", "");
+                        sb.append(name+" : "+price+" : "+amount+"\n");
+                    }
                 }
             } else {
                 try {
+                    //UTF-8
+                    //數量為1
                     if (EleNulAll[3].equals("1")) {
-                        sb.append(EleNulAll[5] + " : " + consumeVO.getMoney()+" X 1 = "+consumeVO.getMoney()+"\n");
+                        sb.append(EleNulAll[5] + " : " + InsertSpend.consumeVO.getMoney()+" X 1 = "+InsertSpend.consumeVO.getMoney()+"\n");
                     } else {
+                        //全部數量
+                        Double price;
                         for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                            int total=Integer.valueOf(EleNulAll[i +2].trim())*Integer.valueOf(EleNulAll[i + 1].trim());
-                            sb.append(EleNulAll[i] + " :\n" + EleNulAll[i +2] + " X " + EleNulAll[i + 1]+" = "+total+"\n");
+                            if(EleNulAll[i +2].indexOf("-")!=-1)
+                            {
+                                String s=EleNulAll[i +2].replaceAll("\\s+", "").substring(1);
+                                price=Double.valueOf(s);
+                            }else{
+                                price=Double.valueOf(EleNulAll[i +2].replaceAll("\\s+", ""));
+                            }
+                            Double total=price*Integer.valueOf(EleNulAll[i + 1].trim());
+                            sb.append(EleNulAll[i].replaceAll("\\s+", "") + " :\n" + EleNulAll[i +2].replaceAll("\\s+", "") + " X " + EleNulAll[i + 1].replaceAll("\\s+", "")+" = "+total+"\n");
                         }
                     }
                 }catch (Exception e)
                 {
-                    Common.showToast(this, "在試一次");
+                    sb=new StringBuffer();
+                    String name,amount,price;
+                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
+                        name=EleNulAll[i].replaceAll("\\s+", "");
+                        price= EleNulAll[i + 2].replaceAll("\\s+", "");
+                        amount=EleNulAll[i +1].replaceAll("\\s+", "");
+                        sb.append(name+" : "+price+" : "+amount+"\n");
+                    }
                 }
             }
 
