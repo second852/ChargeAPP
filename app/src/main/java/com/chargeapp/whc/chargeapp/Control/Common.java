@@ -71,7 +71,9 @@ public class Common {
     public static SimpleDateFormat sDay = new SimpleDateFormat("MM/dd");
     public static SimpleDateFormat sHour = new SimpleDateFormat("hh");
     public static SimpleDateFormat sYear = new SimpleDateFormat("yyy 年 MM 月");
-    public static NumberFormat nf = NumberFormat.getNumberInstance();;
+    public static NumberFormat nf = NumberFormat.getNumberInstance();
+    public static List<CarrierVO> lostCarrier;
+
 
     public static void setChargeDB(Context activity)
     {

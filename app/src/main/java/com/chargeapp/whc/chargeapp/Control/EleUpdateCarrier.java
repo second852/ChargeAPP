@@ -191,14 +191,18 @@ public class EleUpdateCarrier extends Fragment {
             InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
             invoiceDB.updateCarrier(oldCarrierVO,carrierVO);
             int i=0;
-            for (CarrierVO c:GetSQLDate.lostCarrier)
+            if(Common.lostCarrier!=null)
             {
-                if(c.getCarNul().equals(oldCarrierVO.getCarNul()))
+                for (CarrierVO c:Common.lostCarrier)
                 {
-                    GetSQLDate.lostCarrier.remove(i);
-                    break;
+                    if(c.getCarNul().equals(oldCarrierVO.getCarNul()))
+                    {
+                        Common.lostCarrier.remove(i);
+                        break;
+                    }
+                    i++;
                 }
-                i++;
+
             }
             Fragment fragment=new EleSetCarrier();
             switchFragment(fragment);

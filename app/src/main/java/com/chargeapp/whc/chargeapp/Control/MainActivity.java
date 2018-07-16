@@ -274,9 +274,12 @@ public class MainActivity extends AppCompatActivity {
             indicator.setVisibility(View.GONE);
             if (i == 1) {
                 indicator.setVisibility(View.VISIBLE);
-                if(GetSQLDate.lostCarrier.size()>0)
+                if(Common.lostCarrier!=null)
                 {
-                    view.setBackgroundColor(Color.RED);
+                    if(Common.lostCarrier.size()>0)
+                    {
+                        view.setBackgroundColor(Color.RED);
+                    }
                 }
                 if (b) {
                     indicator.setImageResource(R.drawable.arrow_up);
@@ -380,10 +383,14 @@ public class MainActivity extends AppCompatActivity {
             TextView tvId = (TextView) view.findViewById(R.id.tvId);
             tvId.setText(mystring);
 
-            if(i1==0&&GetSQLDate.lostCarrier.size()>0)
+            if(Common.lostCarrier!=null)
             {
-                view.setBackgroundColor(Color.RED);
+                if(i1==0&&Common.lostCarrier.size()>0)
+                {
+                    view.setBackgroundColor(Color.RED);
+                }
             }
+
 
 
             view.setOnClickListener(new View.OnClickListener() {

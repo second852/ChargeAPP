@@ -74,7 +74,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private double total;
     private ElePeriodDB elePeriodDB;
     private HashMap<Integer, String> priceMonth;
-    public static List<CarrierVO> lostCarrier;
 
     public GetSQLDate(Object object) {
         total = 0;
@@ -199,7 +198,11 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             jsonIn = findMonthHead(year, month, user, password);
             if(jsonIn.indexOf("919")!=-1)
             {
-                lostCarrier.add(carrierVO);
+                if(Common.lostCarrier==null)
+                {
+                    Common.lostCarrier=new ArrayList<>();
+                }
+                Common.lostCarrier.add(carrierVO);
                 continue;
             }
             //找載具最新的月
@@ -761,15 +764,18 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 Download download = (Download) object;
                 percentage.setText("100%");
                 progressT.setText("下載完成!\n更新中");
-                if(lostCarrier.size()>0)
+                if(Common.lostCarrier!=null)
                 {
-                    StringBuffer sb=new StringBuffer();
-                    for(CarrierVO c:lostCarrier)
+                    if(Common.lostCarrier.size()>0)
                     {
-                      sb.append(c.getCarNul()+" ");
+                        StringBuffer sb=new StringBuffer();
+                        for(CarrierVO c:Common.lostCarrier)
+                        {
+                            sb.append(c.getCarNul()+" ");
+                        }
+                        sb.append("驗證碼錯誤，請到雲端發票 : \n\"綁定/取消載具修改\"");
+                        Common.showToast(download,sb.toString());
                     }
-                    sb.append("驗證碼錯誤，請到雲端發票 : \n\"綁定/取消載具修改\"");
-                    Common.showToast(download,sb.toString());
                 }
                 download.tonNewActivity();
             } else if (object instanceof SelectDetList) {

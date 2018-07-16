@@ -225,14 +225,19 @@ public class EleSetCarrier extends Fragment {
             deletecarrier.setVisibility(View.VISIBLE);
             updateC.setVisibility(View.VISIBLE);
             //顯示有問題帳號
-            for (CarrierVO c:GetSQLDate.lostCarrier)
+            if(Common.lostCarrier!=null)
             {
-                if(c.getCarNul().equals(carrierVO.getCarNul()))
+                for (CarrierVO c:Common.lostCarrier)
                 {
-                    itemView.setBackgroundColor(Color.RED);
-                    break;
+                    if(c.getCarNul().equals(carrierVO.getCarNul()))
+                    {
+                        itemView.setBackgroundColor(Color.RED);
+                        break;
+                    }
                 }
+
             }
+
 
             //小工具綁定工具列
             if(carrierlist.size()>1&&position!=EleSetCarrier.this.position)

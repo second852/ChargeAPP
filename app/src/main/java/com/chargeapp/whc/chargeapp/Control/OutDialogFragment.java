@@ -50,6 +50,7 @@ public class OutDialogFragment extends DialogFragment implements  DialogInterfac
             case DialogInterface.BUTTON_POSITIVE:
                 MainActivity mainActivity= (MainActivity) object;
                 mainActivity.finish();
+                System.exit(0);
                 break;
             default:
                 dialog.cancel();
