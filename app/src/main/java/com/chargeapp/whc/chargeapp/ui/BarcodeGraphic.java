@@ -142,11 +142,10 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 Intent intent = new Intent(context,MainActivity.class);
                 if(MultiTrackerActivity.action.equals("UpdateSpend"))
                 {
-                    Bundle bundle=context.getIntent().getBundleExtra("bundle");
                     intent.putExtra("bundle",context.getIntent().getBundleExtra("bundle"));
                 }
                 intent.putExtra("action",MultiTrackerActivity.action);
-                context.startActivity(intent);
+                context.setResult(10,intent);
                 context.finish();
             }
         } else {

@@ -49,6 +49,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 
@@ -73,6 +75,7 @@ public class Common {
     public static SimpleDateFormat sYear = new SimpleDateFormat("yyy 年 MM 月");
     public static NumberFormat nf = NumberFormat.getNumberInstance();
     public static List<CarrierVO> lostCarrier;
+
 
 
     public static void setChargeDB(Context activity)
@@ -197,6 +200,18 @@ public class Common {
         strings.add("每年");
         return strings;
     }
+    //純數字
+    public static String onlyNumber(String s){
+        StringBuilder sb=new StringBuilder();
+        Pattern ptn=Pattern.compile("[0-9]|[.]");
+        Matcher mch=ptn.matcher(s);
+        while(mch.find()) {
+            sb.append(mch.group());
+        }
+        return sb.toString();
+    }
+
+
 
 
     public static void showToast(Context context, String message) {

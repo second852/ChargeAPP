@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean doubleClick = false;
     public static LinkedList<String> oldFramgent;
     public static LinkedList<Bundle> bundles;
+    public  Intent intent;
+
 
 
     @Override
@@ -150,30 +152,24 @@ public class MainActivity extends AppCompatActivity {
         setUpActionBar();
         initDrawer();
         Common.setChargeDB(this);
-        String a = getIntent().getStringExtra("action");
-        if (a == null) {
+        if (intent == null) {
             Fragment fragment = new HomePage();
             switchFragment(fragment);
-        } else {
-            if (a.equals("setCarrier")) {
-                Fragment fragment = new EleSetCarrier();
-                switchFragment(fragment);
-            } else if (a.equals("setConsume")) {
-                setConsume();
-            }else if(a.equals("UpdateSpend"))
-            {
-                setUpdateConsume();
-            }
+        }else{
+            intent=null;
         }
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Intent intent=new Intent(this,Download.class);
-        startActivity(intent);
-        finish();
+        if (intent == null) {
+            Intent intent=new Intent(this,Download.class);
+            startActivity(intent);
+            finish();
+        }
     }
+
 
 
     @Override
@@ -467,9 +463,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
-        List<Fragment> fragments=getSupportFragmentManager().getFragments();
-        Fragment fragment=fragments.get(fragments.size()-1);
-        fragment.onActivityResult(requestCode,resultCode,data);
+        intent=data;
+        String a;
+        try {
+             a = data.getStringExtra("action");
+        }catch (NullPointerException e)
+        {
+            a=null;
+        }
+        if (a == null) {
+            List<Fragment> fragments=getSupportFragmentManager().getFragments();
+            Fragment fragment=fragments.get(fragments.size()-1);
+            fragment.onActivityResult(requestCode,resultCode,data);
+        } else {
+            if (a.equals("setCarrier")) {
+                Fragment fragment = new EleSetCarrier();
+                switchFragment(fragment);
+            } else if (a.equals("setConsume")) {
+                setConsume();
+            }else if(a.equals("UpdateSpend"))
+            {
+                setUpdateConsume();
+            }
+        }
     }
 
     private void setConsume() {
@@ -495,57 +511,83 @@ public class MainActivity extends AppCompatActivity {
                     byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
                     String debase64 = new String(bytes, "UTF-8");
                     String[] ddd = debase64.trim().split(":");
-                    Double price;
-                    for (int j = 0; j < ddd.length; j = j +3) {
-                        if(ddd[j +2].indexOf("-")!=-1)
-                        {
-                            String s=ddd[j +2].replaceAll("\\s+", "").substring(1);
-                            price=Double.valueOf(s);
-                        }else{
-                            price=Double.valueOf(ddd[j +2].replaceAll("\\s+", ""));
+                    ArrayList<String> result=new ArrayList<>();
+                    Double total,price,amount;
+                    for (String s:ddd) {
+                        result.add(s.replaceAll("\\s+", ""));
+                        if (result.size() == 3) {
+                            price = Double.valueOf(Common.onlyNumber(result.get(2)));
+                            amount = Double.valueOf(Common.onlyNumber(result.get(1)));
+                            total = price * amount;
+                            sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append((int)Math.ceil(total) + "\n");
+                            result.clear();
                         }
-                            Double total=price*Double.valueOf(ddd[j + 1].trim());
-                            sb.append(ddd[j].replaceAll("\\s+", "")).append(" :\n").append(ddd[j + 2].replaceAll("\\s+", "") + " X ").append(ddd[j + 1].replaceAll("\\s+", "")).append( " = "+total+"\n");
-                        }
-
+                    }
                 } catch (Exception e) {
+                    int i=0;
                     sb=new StringBuffer();
-                    String name,amount,price;
-                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                        name=EleNulAll[i].replaceAll("\\s+", "");
-                        price= EleNulAll[i + 2].replaceAll("\\s+", "");
-                        amount=EleNulAll[i +1].replaceAll("\\s+", "");
-                        sb.append(name+" : "+price+" : "+amount+"\n");
+                    for (String s:EleNulAll) {
+                        if(i>=5)
+                        {
+                            sb.append(s.replaceAll("\\s+", ""));
+                            int j=(i-5)%3;
+                            if(j==2)
+                            {
+                                sb.append("\n");
+                            }else {
+                                sb.append(":");
+                            }
+                        }
+                        i++;
                     }
                 }
             } else if (EleNulAll[4].equals("0")) {
                 try {
                     //Big5
-                    sb=new StringBuffer();
+                    int i=0;
                     String name;
-                    double price;
-                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                        name=EleNulAll[i].replaceAll("\\s+", "");
-                        name=new String(name.getBytes("ISO-8859-1"), "Big5");
-                        if(EleNulAll[i +2].indexOf("-")!=-1)
-                        {
-                            String s=EleNulAll[i +2].replaceAll("\\s+", "").substring(1);
-                            price=Double.valueOf(s);
-                        }else{
-                            price=Double.valueOf(EleNulAll[i +2].replaceAll("\\s+", ""));
-                        }
-                        Double total= price*Double.valueOf(EleNulAll[i + 1].trim());
-                        sb.append(name+" :\n"+EleNulAll[i +2].replaceAll("\\s+", "")+" X "+EleNulAll[i +1].replaceAll("\\s+", "")+" = "+total+"\n");
-                    }
-
-                } catch (Exception e) {
                     sb=new StringBuffer();
-                    String name,amount,price;
-                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                        name=EleNulAll[i].replaceAll("\\s+", "");
-                        price= EleNulAll[i + 2].replaceAll("\\s+", "");
-                        amount=EleNulAll[i +1].replaceAll("\\s+", "");
-                        sb.append(name+" : "+price+" : "+amount+"\n");
+                    double price,amount,total;
+                    List<String> result=new ArrayList<>();
+                    for (String s:EleNulAll) {
+                        if(i>=5)
+                        {
+                            //轉換失敗
+                            try {
+                                name=s.replaceAll("\\s+", "");
+                                name=new String(name.getBytes("ISO-8859-1"), "Big5");
+                            }catch (Exception e)
+                            {
+                                name=s;
+                            }
+                            result.add(name);
+                            if(result.size()==3)
+                            {
+                                price=Double.valueOf(Common.onlyNumber(result.get(2)));
+                                amount=Double.valueOf(Common.onlyNumber(result.get(1)));
+                                total=price*amount;
+                                sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append((int)Math.ceil(total) + "\n");
+                                result.clear();
+                            }
+                        }
+                        i++;
+                    }
+                } catch (Exception e) {
+                    int i=0;
+                    sb=new StringBuffer();
+                    for (String s:EleNulAll) {
+                        if(i>=5)
+                        {
+                            sb.append(s.replaceAll("\\s+", ""));
+                            int j=(i-5)%3;
+                            if(j==2)
+                            {
+                                sb.append("\n");
+                            }else {
+                                sb.append(":");
+                            }
+                        }
+                        i++;
                     }
                 }
             } else {
@@ -556,28 +598,42 @@ public class MainActivity extends AppCompatActivity {
                         sb.append(EleNulAll[5] + " : " + InsertSpend.consumeVO.getMoney()+" X 1 = "+InsertSpend.consumeVO.getMoney()+"\n");
                     } else {
                         //全部數量
-                        Double price;
-                        for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                            if(EleNulAll[i +2].indexOf("-")!=-1)
+                        int i=0;
+                        Double total,price,amount;
+                        ArrayList<String> result=new ArrayList<>();
+                        for (String s:EleNulAll) {
+                            if(i>=5)
                             {
-                                String s=EleNulAll[i +2].replaceAll("\\s+", "").substring(1);
-                                price=Double.valueOf(s);
-                            }else{
-                                price=Double.valueOf(EleNulAll[i +2].replaceAll("\\s+", ""));
+                                result.add(s.replaceAll("\\s+", ""));
+                                if(result.size()==3)
+                                {
+                                    price=Double.valueOf(Common.onlyNumber(result.get(2)));
+                                    amount=Double.valueOf(Common.onlyNumber(result.get(1)));
+                                    total=price*amount;
+                                    sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append((int)Math.ceil(total) + "\n");
+                                    result.clear();
+                                }
                             }
-                            Double total=price*Integer.valueOf(EleNulAll[i + 1].trim());
-                            sb.append(EleNulAll[i].replaceAll("\\s+", "") + " :\n" + EleNulAll[i +2].replaceAll("\\s+", "") + " X " + EleNulAll[i + 1].replaceAll("\\s+", "")+" = "+total+"\n");
+                            i++;
                         }
                     }
                 }catch (Exception e)
                 {
+                    int i=0;
                     sb=new StringBuffer();
-                    String name,amount,price;
-                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                        name=EleNulAll[i].replaceAll("\\s+", "");
-                        price= EleNulAll[i + 2].replaceAll("\\s+", "");
-                        amount=EleNulAll[i +1].replaceAll("\\s+", "");
-                        sb.append(name+" : "+price+" : "+amount+"\n");
+                    for (String s:EleNulAll) {
+                        if(i>=5)
+                        {
+                            sb.append(s.replaceAll("\\s+", ""));
+                            int j=(i-5)%3;
+                            if(j==2)
+                            {
+                                sb.append("\n");
+                            }else {
+                                sb.append(":");
+                            }
+                        }
+                        i++;
                     }
                 }
             }
@@ -602,7 +658,7 @@ public class MainActivity extends AppCompatActivity {
         {
             return;
         }
-        Bundle bundle=getIntent().getBundleExtra("bundle");
+        Bundle bundle=intent.getBundleExtra("bundle");
         ConsumeVO consumeVO= (ConsumeVO) bundle.getSerializable("consumeVO");
         if(BarcodeGraphic.hashMap.size()==2)
         {
@@ -624,57 +680,84 @@ public class MainActivity extends AppCompatActivity {
                     byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
                     String debase64 = new String(bytes, "UTF-8");
                     String[] ddd = debase64.trim().split(":");
-                    Double price;
-                    for (int j = 0; j < ddd.length; j = j +3) {
-                        if(ddd[j +2].indexOf("-")!=-1)
-                        {
-                            String s=ddd[j +2].replaceAll("\\s+", "").substring(1);
-                            price=Double.valueOf(s);
-                        }else{
-                            price=Double.valueOf(ddd[j +2].replaceAll("\\s+", ""));
+                    ArrayList<String> result=new ArrayList<>();
+                    Double total,price,amount;
+                    for (String s:ddd) {
+                        result.add(s.replaceAll("\\s+", ""));
+                        if (result.size() == 3) {
+                            price = Double.valueOf(Common.onlyNumber(result.get(2)));
+                            amount = Double.valueOf(Common.onlyNumber(result.get(1)));
+                            total = price * amount;
+                            sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append((int)Math.ceil(total) + "\n");
+                            result.clear();
                         }
-                        Double total=price*Double.valueOf(ddd[j + 1].trim());
-                        sb.append(ddd[j].replaceAll("\\s+", "")).append(" :\n").append(ddd[j + 2].replaceAll("\\s+", "") + " X ").append(ddd[j + 1].replaceAll("\\s+", "")).append( " = "+total+"\n");
                     }
-
                 } catch (Exception e) {
+                    int i=0;
                     sb=new StringBuffer();
-                    String name,amount,price;
-                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                        name=EleNulAll[i].replaceAll("\\s+", "");
-                        price= EleNulAll[i + 2].replaceAll("\\s+", "");
-                        amount=EleNulAll[i +1].replaceAll("\\s+", "");
-                        sb.append(name+" : "+price+" : "+amount+"\n");
+                    for (String s:EleNulAll) {
+                        if(i>=5)
+                        {
+                            sb.append(s.replaceAll("\\s+", ""));
+                            int j=(i-5)%3;
+                            if(j==2)
+                            {
+                                sb.append("\n");
+                            }else {
+                                sb.append(":");
+                            }
+
+                        }
+                        i++;
                     }
                 }
             } else if (EleNulAll[4].equals("0")) {
                 try {
                     //Big5
+                    int i=0;
                     sb=new StringBuffer();
                     String name;
-                    double price;
-                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                        name=EleNulAll[i].replaceAll("\\s+", "");
-                        name=new String(name.getBytes("ISO-8859-1"), "Big5");
-                        if(EleNulAll[i +2].indexOf("-")!=-1)
+                    double price,amount,total;
+                    List<String> result=new ArrayList<>();
+                    for (String s:EleNulAll) {
+                        if(i>=5)
                         {
-                            String s=EleNulAll[i +2].replaceAll("\\s+", "").substring(1);
-                            price=Double.valueOf(s);
-                        }else{
-                            price=Double.valueOf(EleNulAll[i +2].replaceAll("\\s+", ""));
+                            //轉換失敗
+                            try {
+                                name=s.replaceAll("\\s+", "");
+                                name=new String(name.getBytes("ISO-8859-1"), "Big5");
+                            }catch (Exception e)
+                            {
+                                name=s;
+                            }
+                            result.add(name);
+                            if(result.size()==3)
+                            {
+                                price=Double.valueOf(Common.onlyNumber(result.get(2)));
+                                amount=Double.valueOf(Common.onlyNumber(result.get(1)));
+                                total=price*amount;
+                                sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append((int)Math.ceil(total) + "\n");
+                                result.clear();
+                            }
                         }
-                        Double total= price*Double.valueOf(EleNulAll[i + 1].trim());
-                        sb.append(name+" :\n"+EleNulAll[i +2].replaceAll("\\s+", "")+" X "+EleNulAll[i +1].replaceAll("\\s+", "")+" = "+total+"\n");
+                        i++;
                     }
-
                 } catch (Exception e) {
+                    int i=0;
                     sb=new StringBuffer();
-                    String name,amount,price;
-                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                        name=EleNulAll[i].replaceAll("\\s+", "");
-                        price= EleNulAll[i + 2].replaceAll("\\s+", "");
-                        amount=EleNulAll[i +1].replaceAll("\\s+", "");
-                        sb.append(name+" : "+price+" : "+amount+"\n");
+                    for (String s:EleNulAll) {
+                        if(i>=5)
+                        {
+                            sb.append(s.replaceAll("\\s+", ""));
+                            int j=(i-5)%3;
+                            if(j==2)
+                            {
+                                sb.append("\n");
+                            }else {
+                                sb.append(":");
+                            }
+                        }
+                        i++;
                     }
                 }
             } else {
@@ -684,29 +767,43 @@ public class MainActivity extends AppCompatActivity {
                     if (EleNulAll[3].equals("1")) {
                         sb.append(EleNulAll[5] + " : " + InsertSpend.consumeVO.getMoney()+" X 1 = "+InsertSpend.consumeVO.getMoney()+"\n");
                     } else {
-                        //全部數量
-                        Double price;
-                        for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                            if(EleNulAll[i +2].indexOf("-")!=-1)
+                        //數量超過1
+                        int i=0;
+                        Double total,price,amount;
+                        ArrayList<String> result=new ArrayList<>();
+                        for (String s:EleNulAll) {
+                            if(i>=5)
                             {
-                                String s=EleNulAll[i +2].replaceAll("\\s+", "").substring(1);
-                                price=Double.valueOf(s);
-                            }else{
-                                price=Double.valueOf(EleNulAll[i +2].replaceAll("\\s+", ""));
+                                result.add(s.replaceAll("\\s+", ""));
+                                if(result.size()==3)
+                                {
+                                    price=Double.valueOf(Common.onlyNumber(result.get(2)));
+                                    amount=Double.valueOf(Common.onlyNumber(result.get(1)));
+                                    total=price*amount;
+                                    sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append((int)Math.ceil(total) + "\n");
+                                    result.clear();
+                                }
                             }
-                            Double total=price*Integer.valueOf(EleNulAll[i + 1].trim());
-                            sb.append(EleNulAll[i].replaceAll("\\s+", "") + " :\n" + EleNulAll[i +2].replaceAll("\\s+", "") + " X " + EleNulAll[i + 1].replaceAll("\\s+", "")+" = "+total+"\n");
+                            i++;
                         }
                     }
                 }catch (Exception e)
                 {
+                    int i=0;
                     sb=new StringBuffer();
-                    String name,amount,price;
-                    for (int i = 5; i < EleNulAll.length; i = i + 3) {
-                        name=EleNulAll[i].replaceAll("\\s+", "");
-                        price= EleNulAll[i + 2].replaceAll("\\s+", "");
-                        amount=EleNulAll[i +1].replaceAll("\\s+", "");
-                        sb.append(name+" : "+price+" : "+amount+"\n");
+                    for (String s:EleNulAll) {
+                        if(i>=5)
+                        {
+                            sb.append(s.replaceAll("\\s+", ""));
+                            int j=(i-5)%3;
+                            if(j==2)
+                            {
+                                sb.append("\n");
+                            }else {
+                                sb.append(":");
+                            }
+                        }
+                        i++;
                     }
                 }
             }

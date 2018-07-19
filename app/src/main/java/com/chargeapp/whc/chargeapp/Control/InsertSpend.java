@@ -2,6 +2,7 @@ package com.chargeapp.whc.chargeapp.Control;
 
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -69,14 +70,20 @@ public class InsertSpend extends Fragment {
     private boolean first;
     private Handler handler, secondHander;
     private TextView noWekT, notifyT;
-    private Context context;
+    private Activity context;
     private String oldMainType;
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context=context;
+        if(context instanceof  Activity)
+        {
+            this.context= (Activity) context;
+        }else {
+            this.context=getActivity();
+        }
+
     }
 
     @Nullable
