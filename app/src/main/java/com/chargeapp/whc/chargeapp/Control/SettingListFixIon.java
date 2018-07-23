@@ -162,7 +162,7 @@ public class SettingListFixIon extends Fragment {
             //設定 title
             stringBuffer.append(Common.sTwo.format(bankVO.getDate()));
             stringBuffer.append(" " + bankVO.getMaintype());
-            stringBuffer.append("\n共" + bankVO.getMoney() + "元");
+            stringBuffer.append(" 共" + bankVO.getMoney() + "元");
             title.setText(stringBuffer.toString());
 
 

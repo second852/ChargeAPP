@@ -34,10 +34,10 @@
             android:textColor="#000000"
             android:textSize="22sp" />
 
-        <Button
+        <TextView
             android:id="@+id/saveT"
-            android:layout_width="50dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/deleteT"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
@@ -48,13 +48,13 @@
             android:textColor="#000000"
             android:textSize="20sp" />
 
-        <Button
+        <TextView
             android:id="@+id/deleteT"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
-            android:layout_width="50dp"
-            android:layout_height="40dp"
+            android:layout_marginRight="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="#FF8888"
             android:gravity="center"
             android:padding="5dp"

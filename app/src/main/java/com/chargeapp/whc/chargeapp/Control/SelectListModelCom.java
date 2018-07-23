@@ -221,20 +221,19 @@ public class SelectListModelCom extends Fragment {
                 final InvoiceVO I = (InvoiceVO) o;
 
                 //設定標籤
-                remindL.setVisibility(View.INVISIBLE);
-                fixL.setVisibility(View.INVISIBLE);
-
+                remindL.setVisibility(View.GONE);
+                fixL.setVisibility(View.GONE);
 
                 typeL.setVisibility(View.VISIBLE);
-                typeT.setText("電子發票");
+                typeT.setText("雲端發票");
                 typeT.setTextColor(Color.parseColor("#008844"));
                 typeL.setBackgroundColor(Color.parseColor("#008844"));
-                //設定電子發票種類
+                //設定雲端發票種類
                 try {
                     eleTypeL.setVisibility(View.VISIBLE);
                     eleTypeT.setText(Common.CardType().get(I.getCardType().trim()));
-                    eleTypeT.setTextColor(Color.parseColor("#000000"));
-                    eleTypeL.setBackgroundColor(Color.parseColor("#000000"));
+                    eleTypeT.setTextColor(Color.parseColor("#003377"));
+                    eleTypeL.setBackgroundColor(Color.parseColor("#003377"));
                 }catch (Exception e)
                 {
                     eleTypeL.setVisibility(View.GONE);
@@ -254,7 +253,7 @@ public class SelectListModelCom extends Fragment {
                 }else{
                     sbTitle.append(I.getSecondtype());
                 }
-                sbTitle.append("\n共" + Common.nf.format(I.getAmount()) + "元  ");
+                sbTitle.append(" 共" + Common.nf.format(I.getAmount()) + "元");
 
                 //set detail
                 if (I.getDetail().equals("0")) {
@@ -273,7 +272,6 @@ public class SelectListModelCom extends Fragment {
                             } else {
                                 Common.showToast(SelectListModelCom.this.context, "網路沒有開啟，無法下載!");
                             }
-
                         }
                     });
                 } else {
@@ -319,21 +317,28 @@ public class SelectListModelCom extends Fragment {
                 update.setText("修改");
                 final ConsumeVO c = (ConsumeVO) o;
 
-                //紙本無發票種類
+                //紙本發票種類
                 eleTypeL.setVisibility(View.GONE);
 
-                typeT.setText("紙本發票");
-                typeT.setTextColor(Color.parseColor("#008888"));
-                typeL.setBackgroundColor(Color.parseColor("#008888"));
+
                 typeL.setVisibility(View.VISIBLE);
-                fixL.setVisibility(View.INVISIBLE);
+                if(c.getNumber()==null||c.getNumber().trim().length()<=0)
+                {
+                    typeT.setText("無發票");
+                    typeT.setTextColor(Color.parseColor("#550088"));
+                    typeL.setBackgroundColor(Color.parseColor("#550088"));
+                }else{
+                    typeT.setText("紙本發票");
+                    typeT.setTextColor(Color.parseColor("#008888"));
+                    typeL.setBackgroundColor(Color.parseColor("#008888"));
+                }
 
 
                 //set Notify
                 if (Boolean.valueOf(c.getNotify())) {
                     remindL.setVisibility(View.VISIBLE);
                 } else {
-                    remindL.setVisibility(View.INVISIBLE);
+                    remindL.setVisibility(View.GONE);
                 }
 
 
@@ -341,11 +346,12 @@ public class SelectListModelCom extends Fragment {
                 StringBuffer stringBuffer = new StringBuffer();
                 stringBuffer.append(Common.sDay.format(c.getDate()));
                 stringBuffer.append(" " + c.getSecondType());
-                stringBuffer.append("\n共" + Common.nf.format(c.getMoney()) + "元");
+                stringBuffer.append(" 共" + Common.nf.format(c.getMoney()) + "元");
                 title.setText(stringBuffer.toString());
 
                 //設定 describe
                 stringBuffer = new StringBuffer();
+                fixL.setVisibility(View.GONE);
                 if (c.isAuto()) {
                     fixT.setText("自動");
                     fixT.setTextColor(Color.parseColor("#7700BB"));

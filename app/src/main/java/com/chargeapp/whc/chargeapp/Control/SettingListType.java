@@ -139,8 +139,8 @@ public class SettingListType extends Fragment {
             }
             ImageView image = itemView.findViewById(R.id.image);
             TextView listTitle = itemView.findViewById(R.id.listTitle);
-            Button saveT = itemView.findViewById(R.id.saveT);
-            Button deleteT = itemView.findViewById(R.id.deleteT);
+            TextView saveT = itemView.findViewById(R.id.saveT);
+            TextView deleteT = itemView.findViewById(R.id.deleteT);
             final Object o = objects.get(position);
             deleteT.setOnClickListener(new View.OnClickListener() {
                 @Override

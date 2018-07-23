@@ -166,7 +166,7 @@ public class SettingListFix extends Fragment {
                 final ConsumeVO consumeVO= (ConsumeVO) o;
                 stringBuffer.append(Common.sTwo.format(consumeVO.getDate()));
                 stringBuffer.append(" "+consumeVO.getMaintype());
-                stringBuffer.append("\n共"+consumeVO.getMoney()+"元");
+                stringBuffer.append(" 共"+consumeVO.getMoney()+"元");
                 title.setText(stringBuffer.toString());
                 stringBuffer=new StringBuffer();
 
@@ -207,7 +207,7 @@ public class SettingListFix extends Fragment {
                 final BankVO bankVO= (BankVO) o;
                 stringBuffer.append(Common.sTwo.format(bankVO.getDate()));
                 stringBuffer.append(" "+bankVO.getMaintype());
-                stringBuffer.append("\n共"+bankVO.getMoney()+"元");
+                stringBuffer.append(" 共"+bankVO.getMoney()+"元");
                 title.setText(stringBuffer.toString());
                 //descide
                 stringBuffer=new StringBuffer();

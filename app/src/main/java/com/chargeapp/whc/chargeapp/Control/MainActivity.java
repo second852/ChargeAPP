@@ -519,7 +519,7 @@ public class MainActivity extends AppCompatActivity {
                             price = Double.valueOf(Common.onlyNumber(result.get(2)));
                             amount = Double.valueOf(Common.onlyNumber(result.get(1)));
                             total = price * amount;
-                            sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append((int)Math.ceil(total) + "\n");
+                            sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
                             result.clear();
                         }
                     }
@@ -566,7 +566,7 @@ public class MainActivity extends AppCompatActivity {
                                 price=Double.valueOf(Common.onlyNumber(result.get(2)));
                                 amount=Double.valueOf(Common.onlyNumber(result.get(1)));
                                 total=price*amount;
-                                sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append((int)Math.ceil(total) + "\n");
+                                sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
                                 result.clear();
                             }
                         }
@@ -610,7 +610,7 @@ public class MainActivity extends AppCompatActivity {
                                     price=Double.valueOf(Common.onlyNumber(result.get(2)));
                                     amount=Double.valueOf(Common.onlyNumber(result.get(1)));
                                     total=price*amount;
-                                    sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append((int)Math.ceil(total) + "\n");
+                                    sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
                                     result.clear();
                                 }
                             }
@@ -688,7 +688,7 @@ public class MainActivity extends AppCompatActivity {
                             price = Double.valueOf(Common.onlyNumber(result.get(2)));
                             amount = Double.valueOf(Common.onlyNumber(result.get(1)));
                             total = price * amount;
-                            sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append((int)Math.ceil(total) + "\n");
+                            sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
                             result.clear();
                         }
                     }
@@ -736,7 +736,7 @@ public class MainActivity extends AppCompatActivity {
                                 price=Double.valueOf(Common.onlyNumber(result.get(2)));
                                 amount=Double.valueOf(Common.onlyNumber(result.get(1)));
                                 total=price*amount;
-                                sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append((int)Math.ceil(total) + "\n");
+                                sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
                                 result.clear();
                             }
                         }
@@ -780,7 +780,7 @@ public class MainActivity extends AppCompatActivity {
                                     price=Double.valueOf(Common.onlyNumber(result.get(2)));
                                     amount=Double.valueOf(Common.onlyNumber(result.get(1)));
                                     total=price*amount;
-                                    sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append((int)Math.ceil(total) + "\n");
+                                    sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
                                     result.clear();
                                 }
                             }

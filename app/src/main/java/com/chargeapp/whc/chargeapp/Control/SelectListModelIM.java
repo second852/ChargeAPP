@@ -180,7 +180,7 @@ public class SelectListModelIM extends Fragment {
             StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append(Common.sDay.format(bankVO.getDate()));
             stringBuffer.append(" " + bankVO.getMaintype());
-            stringBuffer.append("\n共" + Common.nf.format(bankVO.getMoney()) + "元");
+            stringBuffer.append(" 共" + Common.nf.format(bankVO.getMoney()) + "元");
             title.setText(stringBuffer.toString());
 
             //設定 describe

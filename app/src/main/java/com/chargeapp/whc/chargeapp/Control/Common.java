@@ -36,6 +36,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.gson.JsonObject;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.sql.Date;
 import java.text.NumberFormat;
@@ -156,6 +157,15 @@ public class Common {
     {
         description.setText(" ");
         return description;
+    }
+
+    //四捨五入
+    public static int DoubleToInt(double a)
+    {
+        double b = new BigDecimal(a)
+                .setScale(0, BigDecimal.ROUND_HALF_UP)
+                .doubleValue();
+        return (int)b;
     }
 
 

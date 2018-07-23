@@ -173,7 +173,7 @@ public class SettingListFixCon extends Fragment {
             //設定 title
             stringBuffer.append(Common.sTwo.format(consumeVO.getDate()));
             stringBuffer.append(" "+consumeVO.getMaintype());
-            stringBuffer.append("\n共"+consumeVO.getMoney()+"元");
+            stringBuffer.append(" 共"+consumeVO.getMoney()+"元");
             title.setText(stringBuffer.toString());
 
             //設定 describe

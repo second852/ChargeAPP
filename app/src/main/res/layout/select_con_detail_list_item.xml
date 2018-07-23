@@ -16,32 +16,6 @@
     android:layout_height="match_parent"
     android:background="#DDDDDD"
     >
-    <LinearLayout
-        android:id="@+id/typeL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="15dp"
-        android:visibility="gone"
-        android:layout_toLeftOf="@+id/updateD"
-        android:background="#FF0000"
-        >
-        <TextView
-            android:id="@+id/typeT"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="提醒"
-            android:textColor="#FF0000"
-            android:background="#DDDDDD"
-            android:gravity="center"
-            android:padding="2dp"
-            android:layout_margin="1dp"
-            android:layout_gravity="center"
-            android:textSize="20sp"
-            />
-    </LinearLayout>
-
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,49 +25,34 @@
         android:layout_marginRight="2dp"
         android:layout_gravity="center"
         android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/typeL"
+        android:layout_toLeftOf="@+id/updateD"
         android:textColor="#000000"
         android:textSize="20sp"
         android:gravity="left"
         android:padding="2dp"
         />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#AAAAAA"
-        android:layout_margin="8dp"
         android:layout_below="@+id/listTitle"
-        android:layout_toLeftOf="@+id/deleteI"
+        android:id="@+id/tagR"
         >
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:padding="2dp"
-            android:id="@+id/listDetail"
-            android:textColor="#000000"
-            android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/remindL"
-            android:textSize="20sp"
-            />
         <LinearLayout
-            android:id="@+id/remindL"
+            android:id="@+id/typeL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="7dp"
-            android:layout_marginBottom="5dp"
-            android:visibility="invisible"
-            android:layout_toLeftOf="@+id/fixL"
+            android:layout_marginLeft="8dp"
+            android:visibility="gone"
             android:background="#FF0000"
             >
             <TextView
-                android:id="@+id/remainT"
+                android:id="@+id/typeT"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="提醒"
+                android:text="發票種類"
                 android:textColor="#FF0000"
-                android:background="#AAAAAA"
+                android:background="#DDDDDD"
                 android:gravity="center"
                 android:padding="2dp"
                 android:layout_margin="1dp"
@@ -101,16 +60,15 @@
                 android:textSize="20sp"
                 />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/fixL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="7dp"
-            android:layout_marginBottom="5dp"
+            android:layout_toRightOf="@+id/typeL"
+            android:layout_marginLeft="5dp"
             android:background="#003C9D"
-            android:visibility="invisible"
+            android:visibility="gone"
             >
             <TextView
                 android:id="@+id/fixT"
@@ -118,7 +76,7 @@
                 android:layout_height="match_parent"
                 android:text="固定"
                 android:textColor="#003C9D"
-                android:background="#AAAAAA"
+                android:background="#DDDDDD"
                 android:gravity="center"
                 android:padding="2dp"
                 android:layout_margin="1dp"
@@ -129,12 +87,10 @@
 
         <LinearLayout
             android:id="@+id/eleTypeL"
-            android:layout_width="87dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="7dp"
-            android:layout_marginBottom="5dp"
+            android:layout_toRightOf="@+id/typeL"
+            android:layout_marginLeft="5dp"
             android:background="#003C9D"
             android:visibility="gone"
             >
@@ -142,9 +98,9 @@
                 android:id="@+id/eleTypeT"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="手機條碼"
+                android:text="悠遊卡"
                 android:textColor="#003C9D"
-                android:background="#AAAAAA"
+                android:background="#DDDDDD"
                 android:gravity="center"
                 android:padding="2dp"
                 android:layout_margin="1dp"
@@ -153,8 +109,49 @@
                 />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/remindL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:visibility="gone"
+            android:layout_toRightOf="@+id/fixL"
+            android:background="#FF0000"
+            >
+            <TextView
+                android:id="@+id/remainT"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="提醒"
+                android:textColor="#FF0000"
+                android:background="#DDDDDD"
+                android:gravity="center"
+                android:padding="2dp"
+                android:layout_margin="1dp"
+                android:layout_gravity="center"
+                android:textSize="20sp"
+                />
+        </LinearLayout>
+    </RelativeLayout>
 
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#AAAAAA"
+        android:layout_margin="8dp"
+        android:layout_below="@+id/tagR"
+        android:layout_toLeftOf="@+id/deleteI"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:padding="2dp"
+            android:id="@+id/listDetail"
+            android:textColor="#000000"
+            android:layout_alignParentLeft="true"
+            android:textSize="20sp"
+            />
     </RelativeLayout>
 
     <Button
