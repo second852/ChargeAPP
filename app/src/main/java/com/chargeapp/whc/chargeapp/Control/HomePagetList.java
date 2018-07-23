@@ -369,8 +369,8 @@ public class HomePagetList extends Fragment {
                 if(c.getNumber()==null||c.getNumber().trim().length()<=0)
                 {
                     typeT.setText("無發票");
-                    typeT.setTextColor(Color.parseColor("#550088"));
-                    typeL.setBackgroundColor(Color.parseColor("#550088"));
+                    typeT.setTextColor(Color.parseColor("#8B4513"));
+                    typeL.setBackgroundColor(Color.parseColor("#8B4513"));
                 }else{
                     typeT.setText("紙本發票");
                     typeT.setTextColor(Color.parseColor("#008888"));
@@ -428,6 +428,7 @@ public class HomePagetList extends Fragment {
                 }
 
                 stringBuffer.append((c.getDetailname()==null?"":c.getDetailname()));
+                stringBuffer.append("\n");
                 decribe.setText(stringBuffer.toString());
 
 
