@@ -36,13 +36,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/listTitle"
+        android:layout_marginLeft="5dp"
         android:id="@+id/tagR"
         >
         <LinearLayout
             android:id="@+id/typeL"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="5dp"
             android:visibility="gone"
             android:background="#FF0000"
             >

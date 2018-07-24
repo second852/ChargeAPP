@@ -461,7 +461,10 @@ public class SelectShowCircleDeList extends Fragment {
                 }
 
                 stringBuffer.append((c.getDetailname()==null?"":c.getDetailname()));
-                stringBuffer.append("\n");
+                if(stringBuffer.indexOf("\n")==-1)
+                {
+                    stringBuffer.append("\n");
+                }
                 decribe.setText(stringBuffer.toString());
 
                 update.setOnClickListener(new View.OnClickListener() {

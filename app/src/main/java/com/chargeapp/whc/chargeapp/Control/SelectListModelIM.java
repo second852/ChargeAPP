@@ -216,6 +216,10 @@ public class SelectListModelIM extends Fragment {
                 decribe.setText("\n");
             }
             stringBuffer.append(bankVO.getDetailname());
+            if(stringBuffer.indexOf("\n")==-1)
+            {
+                stringBuffer.append("\n");
+            }
             decribe.setText(stringBuffer.toString());
 
             update.setText("修改");
