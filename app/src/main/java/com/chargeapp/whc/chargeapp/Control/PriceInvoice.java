@@ -320,7 +320,7 @@ public class PriceInvoice extends Fragment {
             {
                 //電子發票
                 InvoiceVO invoiceVO= (InvoiceVO) o;
-                remainT.setText("電子發票");
+                remainT.setText("雲端發票");
                 remainT.setTextColor(Color.parseColor("#008844"));
                 remindL.setBackgroundColor(Color.parseColor("#008844"));
                 remindL.setVisibility(View.VISIBLE);

@@ -484,7 +484,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         {
                             bw.append("尚未兌獎");
                         }
-                        bw.append("電子發票" + " ");
+                        bw.append("雲端發票" + " ");
                         bw.newLine();
                         bw.write("\r\n");
                     } else {
@@ -509,7 +509,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         {
                             bw.append("尚未兌獎");
                         }
-                        bw.append("紙本發票" + " ");
+                        if(consumeVO.getNumber()==null||consumeVO.getNumber().trim().length()>0)
+                        {
+                            bw.append("無發票" + " ");
+                        }else{
+                            bw.append("紙本發票" + " ");
+                        }
                         bw.newLine();
                         bw.write("\r\n");
                     }
@@ -635,7 +640,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         {
                             rowContent.createCell(5).setCellValue("尚未兌獎");
                         }
-                        rowContent.createCell(6).setCellValue("電子發票");
+                        rowContent.createCell(6).setCellValue("雲端發票");
                         //電子發票細節
                         List<JsonObject> js = gson.fromJson(invoiceVO.getDetail(), cdType);
                         sb=new StringBuffer();
@@ -677,7 +682,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         {
                             rowContent.createCell(5).setCellValue("尚未兌獎");
                         }
-                        rowContent.createCell(6).setCellValue("紙本發票");
+                        if(consumeVO.getNumber()==null||consumeVO.getNumber().length()>0)
+                        {
+                            rowContent.createCell(6).setCellValue("無發票");
+                        }else{
+                            rowContent.createCell(6).setCellValue("紙本發票");
+                        }
                         rowContent.createCell(7).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
                     }
                 }

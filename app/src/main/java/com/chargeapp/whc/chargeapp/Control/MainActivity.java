@@ -1,7 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
-
 import android.content.Context;
 import android.content.Intent;
 
@@ -70,8 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean doubleClick = false;
     public static LinkedList<String> oldFramgent;
     public static LinkedList<Bundle> bundles;
-    public  Intent intent;
-
+    public Intent intent;
 
 
     @Override
@@ -98,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
         final List<EleMainItemVO> itemSon = getElemainItemList();
         listView.setAdapter(new ExpandableAdapter(this, itemVOS, itemSon));
     }
-
 
 
     private List<EleMainItemVO> getElemainItemList() {
@@ -140,12 +137,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onStart() {
         super.onStart();
-        if(oldFramgent==null)
-        {
+        if (oldFramgent == null) {
             oldFramgent = new LinkedList<>();
             bundles = new LinkedList<>();
         }
@@ -155,8 +150,8 @@ public class MainActivity extends AppCompatActivity {
         if (intent == null) {
             Fragment fragment = new HomePage();
             switchFragment(fragment);
-        }else{
-            intent=null;
+        } else {
+            intent = null;
         }
     }
 
@@ -164,12 +159,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         if (intent == null) {
-            Intent intent=new Intent(this,Download.class);
+            Intent intent = new Intent(this, Download.class);
             startActivity(intent);
             finish();
         }
     }
-
 
 
     @Override
@@ -270,10 +264,8 @@ public class MainActivity extends AppCompatActivity {
             indicator.setVisibility(View.GONE);
             if (i == 1) {
                 indicator.setVisibility(View.VISIBLE);
-                if(Common.lostCarrier!=null)
-                {
-                    if(Common.lostCarrier.size()>0)
-                    {
+                if (Common.lostCarrier != null) {
+                    if (Common.lostCarrier.size() > 0) {
                         view.setBackgroundColor(Color.RED);
                     }
                 }
@@ -298,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                     bundles.clear();
                     setColor(v);
                     if (i == 0) {
-                        Common.showfirstgrid=false;
+                        Common.showfirstgrid = false;
                         fragment = new InsertActivity();
                         switchFragment(fragment);
                         listView.collapseGroup(i);
@@ -315,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
                     } else if (i == 2) {
                         fragment = new PriceActivity();
                         switchFragment(fragment);
-                        PriceInvoice.first=true;
+                        PriceInvoice.first = true;
                         setTitle(R.string.text_Price);
                         listView.collapseGroup(i);
                     } else if (i == 3) {
@@ -341,12 +333,12 @@ public class MainActivity extends AppCompatActivity {
                         switchFragment(fragment);
                         setTitle(R.string.text_Setting);
                         listView.collapseGroup(i);
-                    } else if(i==7){
+                    } else if (i == 7) {
                         setTitle(R.string.text_Home);
                         fragment = new HomePage();
                         switchFragment(fragment);
                         listView.collapseGroup(i);
-                    }else{
+                    } else {
                         drawerLayout.closeDrawer(GravityCompat.START);
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_VIEW);
@@ -354,12 +346,11 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                     //重置InsertConsume
-                    if(MainActivity.this.position!=0)
-                    {
-                        InsertSpend.consumeVO=new ConsumeVO();
-                        InsertSpend.needSet=false;
-                        InsertIncome.needSet=false;
-                        InsertIncome.bankVO=new BankVO();
+                    if (MainActivity.this.position != 0) {
+                        InsertSpend.consumeVO = new ConsumeVO();
+                        InsertSpend.needSet = false;
+                        InsertIncome.needSet = false;
+                        InsertIncome.bankVO = new BankVO();
                     }
                 }
             });
@@ -379,14 +370,11 @@ public class MainActivity extends AppCompatActivity {
             TextView tvId = (TextView) view.findViewById(R.id.tvId);
             tvId.setText(mystring);
 
-            if(Common.lostCarrier!=null)
-            {
-                if(i1==0&&Common.lostCarrier.size()>0)
-                {
+            if (Common.lostCarrier != null) {
+                if (i1 == 0 && Common.lostCarrier.size() > 0) {
                     view.setBackgroundColor(Color.RED);
                 }
             }
-
 
 
             view.setOnClickListener(new View.OnClickListener() {
@@ -408,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
                         setTitle(R.string.text_ShowCal);
                         fragment = new EleShowCarrier();
                         switchFragment(fragment);
-                    }else if (i1 == 2) {
+                    } else if (i1 == 2) {
                         setTitle(R.string.text_DonateMain);
                         fragment = new EleDonateMain();
                         switchFragment(fragment);
@@ -416,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
                         setTitle(R.string.text_AddCarrier);
                         fragment = new EleAddCarrier();
                         switchFragment(fragment);
-                    }else if (i1 == 4) {
+                    } else if (i1 == 4) {
                         //close drawer
                         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                             drawerLayout.closeDrawer(GravityCompat.START);
@@ -462,44 +450,41 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
-        intent=data;
+        super.onActivityResult(requestCode, resultCode, data);
+        intent = data;
         String a;
         try {
-             a = data.getStringExtra("action");
-        }catch (NullPointerException e)
-        {
-            a=null;
+            a = data.getStringExtra("action");
+        } catch (NullPointerException e) {
+            a = null;
         }
         if (a == null) {
-            List<Fragment> fragments=getSupportFragmentManager().getFragments();
-            Fragment fragment=fragments.get(fragments.size()-1);
-            fragment.onActivityResult(requestCode,resultCode,data);
+            List<Fragment> fragments = getSupportFragmentManager().getFragments();
+            Fragment fragment = fragments.get(fragments.size() - 1);
+            fragment.onActivityResult(requestCode, resultCode, data);
         } else {
             if (a.equals("setCarrier")) {
                 Fragment fragment = new EleSetCarrier();
                 switchFragment(fragment);
             } else if (a.equals("setConsume")) {
                 setConsume();
-            }else if(a.equals("UpdateSpend"))
-            {
+            } else if (a.equals("UpdateSpend")) {
                 setUpdateConsume();
             }
         }
     }
 
     private void setConsume() {
-        if(BarcodeGraphic.hashMap==null)
-        {
+        if (BarcodeGraphic.hashMap == null) {
             return;
         }
-        if(BarcodeGraphic.hashMap.size()==2){
+        if (BarcodeGraphic.hashMap.size() == 2) {
             String all = BarcodeGraphic.hashMap.get(1).trim() + BarcodeGraphic.hashMap.get(2).trim();
             String[] EleNulAll = all.split(":");
             String EleNul = EleNulAll[0].substring(0, 10);
             String day = EleNulAll[0].substring(10, 17);
             String m = EleNulAll[0].substring(29, 37);
-            Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5))-1), Integer.valueOf(day.substring(5)), 12, 0, 0);
+            Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
             InsertSpend.consumeVO.setMoney(Integer.parseInt(m, 16));
             InsertSpend.consumeVO.setNumber(EleNul);
             InsertSpend.consumeVO.setDate(new Date(calendar.getTimeInMillis()));
@@ -511,9 +496,9 @@ public class MainActivity extends AppCompatActivity {
                     byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
                     String debase64 = new String(bytes, "UTF-8");
                     String[] ddd = debase64.trim().split(":");
-                    ArrayList<String> result=new ArrayList<>();
-                    Double total,price,amount;
-                    for (String s:ddd) {
+                    ArrayList<String> result = new ArrayList<>();
+                    Double total, price, amount;
+                    for (String s : ddd) {
                         result.add(s.replaceAll("\\s+", ""));
                         if (result.size() == 3) {
                             price = Double.valueOf(Common.onlyNumber(result.get(2)));
@@ -524,17 +509,15 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 } catch (Exception e) {
-                    int i=0;
-                    sb=new StringBuffer();
-                    for (String s:EleNulAll) {
-                        if(i>=5)
-                        {
+                    int i = 0;
+                    sb = new StringBuffer();
+                    for (String s : EleNulAll) {
+                        if (i >= 5) {
                             sb.append(s.replaceAll("\\s+", ""));
-                            int j=(i-5)%3;
-                            if(j==2)
-                            {
+                            int j = (i - 5) % 3;
+                            if (j == 2) {
                                 sb.append("\n");
-                            }else {
+                            } else {
                                 sb.append(":");
                             }
                         }
@@ -544,28 +527,25 @@ public class MainActivity extends AppCompatActivity {
             } else if (EleNulAll[4].equals("0")) {
                 try {
                     //Big5
-                    int i=0;
+                    int i = 0;
                     String name;
-                    sb=new StringBuffer();
-                    double price,amount,total;
-                    List<String> result=new ArrayList<>();
-                    for (String s:EleNulAll) {
-                        if(i>=5)
-                        {
+                    sb = new StringBuffer();
+                    double price, amount, total;
+                    List<String> result = new ArrayList<>();
+                    for (String s : EleNulAll) {
+                        if (i >= 5) {
                             //轉換失敗
                             try {
-                                name=s.replaceAll("\\s+", "");
-                                name=new String(name.getBytes("ISO-8859-1"), "Big5");
-                            }catch (Exception e)
-                            {
-                                name=s;
+                                name = s.replaceAll("\\s+", "");
+                                name = new String(name.getBytes("ISO-8859-1"), "Big5");
+                            } catch (Exception e) {
+                                name = s;
                             }
                             result.add(name);
-                            if(result.size()==3)
-                            {
-                                price=Double.valueOf(Common.onlyNumber(result.get(2)));
-                                amount=Double.valueOf(Common.onlyNumber(result.get(1)));
-                                total=price*amount;
+                            if (result.size() == 3) {
+                                price = Double.valueOf(Common.onlyNumber(result.get(2)));
+                                amount = Double.valueOf(Common.onlyNumber(result.get(1)));
+                                total = price * amount;
                                 sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
                                 result.clear();
                             }
@@ -573,17 +553,15 @@ public class MainActivity extends AppCompatActivity {
                         i++;
                     }
                 } catch (Exception e) {
-                    int i=0;
-                    sb=new StringBuffer();
-                    for (String s:EleNulAll) {
-                        if(i>=5)
-                        {
+                    int i = 0;
+                    sb = new StringBuffer();
+                    for (String s : EleNulAll) {
+                        if (i >= 5) {
                             sb.append(s.replaceAll("\\s+", ""));
-                            int j=(i-5)%3;
-                            if(j==2)
-                            {
+                            int j = (i - 5) % 3;
+                            if (j == 2) {
                                 sb.append("\n");
-                            }else {
+                            } else {
                                 sb.append(":");
                             }
                         }
@@ -595,21 +573,19 @@ public class MainActivity extends AppCompatActivity {
                     //UTF-8
                     //數量為1
                     if (EleNulAll[3].equals("1")) {
-                        sb.append(EleNulAll[5] + " : " + InsertSpend.consumeVO.getMoney()+" X 1 = "+InsertSpend.consumeVO.getMoney()+"\n");
+                        sb.append(EleNulAll[5].replaceAll("\\s+", "") + " :\n" + InsertSpend.consumeVO.getMoney() + " X 1 = " + InsertSpend.consumeVO.getMoney() + "\n");
                     } else {
                         //全部數量
-                        int i=0;
-                        Double total,price,amount;
-                        ArrayList<String> result=new ArrayList<>();
-                        for (String s:EleNulAll) {
-                            if(i>=5)
-                            {
+                        int i = 0;
+                        Double total, price, amount;
+                        ArrayList<String> result = new ArrayList<>();
+                        for (String s : EleNulAll) {
+                            if (i >= 5) {
                                 result.add(s.replaceAll("\\s+", ""));
-                                if(result.size()==3)
-                                {
-                                    price=Double.valueOf(Common.onlyNumber(result.get(2)));
-                                    amount=Double.valueOf(Common.onlyNumber(result.get(1)));
-                                    total=price*amount;
+                                if (result.size() == 3) {
+                                    price = Double.valueOf(Common.onlyNumber(result.get(2)));
+                                    amount = Double.valueOf(Common.onlyNumber(result.get(1)));
+                                    total = price * amount;
                                     sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
                                     result.clear();
                                 }
@@ -617,19 +593,16 @@ public class MainActivity extends AppCompatActivity {
                             i++;
                         }
                     }
-                }catch (Exception e)
-                {
-                    int i=0;
-                    sb=new StringBuffer();
-                    for (String s:EleNulAll) {
-                        if(i>=5)
-                        {
+                } catch (Exception e) {
+                    int i = 0;
+                    sb = new StringBuffer();
+                    for (String s : EleNulAll) {
+                        if (i >= 5) {
                             sb.append(s.replaceAll("\\s+", ""));
-                            int j=(i-5)%3;
-                            if(j==2)
-                            {
+                            int j = (i - 5) % 3;
+                            if (j == 2) {
                                 sb.append("\n");
-                            }else {
+                            } else {
                                 sb.append(":");
                             }
                         }
@@ -637,11 +610,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-            if(sb.toString().trim().length()>0)
-            {
+            if (sb.toString().trim().length() > 0) {
                 InsertSpend.consumeVO.setDetailname(sb.toString());
                 InsertSpend.consumeVO = getType(InsertSpend.consumeVO);
-            }else{
+            } else {
                 InsertSpend.consumeVO.setDetailname("");
                 InsertSpend.consumeVO.setMaintype("O");
                 InsertSpend.consumeVO.setSecondType("O");
@@ -654,21 +626,19 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void setUpdateConsume() {
-        if(BarcodeGraphic.hashMap==null)
-        {
+        if (BarcodeGraphic.hashMap == null) {
             return;
         }
-        Bundle bundle=intent.getBundleExtra("bundle");
-        ConsumeVO consumeVO= (ConsumeVO) bundle.getSerializable("consumeVO");
-        if(BarcodeGraphic.hashMap.size()==2)
-        {
+        Bundle bundle = intent.getBundleExtra("bundle");
+        ConsumeVO consumeVO = (ConsumeVO) bundle.getSerializable("consumeVO");
+        if (BarcodeGraphic.hashMap.size() == 2) {
             String all = BarcodeGraphic.hashMap.get(1).trim() + BarcodeGraphic.hashMap.get(2).trim();
             String[] EleNulAll = all.split(":");
             String EleNul = EleNulAll[0].substring(0, 10);
             String day = EleNulAll[0].substring(10, 17);
             String m = EleNulAll[0].substring(29, 37);
 
-            Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5))-1), Integer.valueOf(day.substring(5)), 12, 0, 0);
+            Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
             consumeVO.setMoney(Integer.parseInt(m, 16));
             consumeVO.setNumber(EleNul);
             consumeVO.setDate(new Date(calendar.getTimeInMillis()));
@@ -680,9 +650,9 @@ public class MainActivity extends AppCompatActivity {
                     byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
                     String debase64 = new String(bytes, "UTF-8");
                     String[] ddd = debase64.trim().split(":");
-                    ArrayList<String> result=new ArrayList<>();
-                    Double total,price,amount;
-                    for (String s:ddd) {
+                    ArrayList<String> result = new ArrayList<>();
+                    Double total, price, amount;
+                    for (String s : ddd) {
                         result.add(s.replaceAll("\\s+", ""));
                         if (result.size() == 3) {
                             price = Double.valueOf(Common.onlyNumber(result.get(2)));
@@ -693,17 +663,15 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 } catch (Exception e) {
-                    int i=0;
-                    sb=new StringBuffer();
-                    for (String s:EleNulAll) {
-                        if(i>=5)
-                        {
+                    int i = 0;
+                    sb = new StringBuffer();
+                    for (String s : EleNulAll) {
+                        if (i >= 5) {
                             sb.append(s.replaceAll("\\s+", ""));
-                            int j=(i-5)%3;
-                            if(j==2)
-                            {
+                            int j = (i - 5) % 3;
+                            if (j == 2) {
                                 sb.append("\n");
-                            }else {
+                            } else {
                                 sb.append(":");
                             }
 
@@ -714,28 +682,25 @@ public class MainActivity extends AppCompatActivity {
             } else if (EleNulAll[4].equals("0")) {
                 try {
                     //Big5
-                    int i=0;
-                    sb=new StringBuffer();
+                    int i = 0;
+                    sb = new StringBuffer();
                     String name;
-                    double price,amount,total;
-                    List<String> result=new ArrayList<>();
-                    for (String s:EleNulAll) {
-                        if(i>=5)
-                        {
+                    double price, amount, total;
+                    List<String> result = new ArrayList<>();
+                    for (String s : EleNulAll) {
+                        if (i >= 5) {
                             //轉換失敗
                             try {
-                                name=s.replaceAll("\\s+", "");
-                                name=new String(name.getBytes("ISO-8859-1"), "Big5");
-                            }catch (Exception e)
-                            {
-                                name=s;
+                                name = s.replaceAll("\\s+", "");
+                                name = new String(name.getBytes("ISO-8859-1"), "Big5");
+                            } catch (Exception e) {
+                                name = s;
                             }
                             result.add(name);
-                            if(result.size()==3)
-                            {
-                                price=Double.valueOf(Common.onlyNumber(result.get(2)));
-                                amount=Double.valueOf(Common.onlyNumber(result.get(1)));
-                                total=price*amount;
+                            if (result.size() == 3) {
+                                price = Double.valueOf(Common.onlyNumber(result.get(2)));
+                                amount = Double.valueOf(Common.onlyNumber(result.get(1)));
+                                total = price * amount;
                                 sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
                                 result.clear();
                             }
@@ -743,17 +708,15 @@ public class MainActivity extends AppCompatActivity {
                         i++;
                     }
                 } catch (Exception e) {
-                    int i=0;
-                    sb=new StringBuffer();
-                    for (String s:EleNulAll) {
-                        if(i>=5)
-                        {
+                    int i = 0;
+                    sb = new StringBuffer();
+                    for (String s : EleNulAll) {
+                        if (i >= 5) {
                             sb.append(s.replaceAll("\\s+", ""));
-                            int j=(i-5)%3;
-                            if(j==2)
-                            {
+                            int j = (i - 5) % 3;
+                            if (j == 2) {
                                 sb.append("\n");
-                            }else {
+                            } else {
                                 sb.append(":");
                             }
                         }
@@ -763,43 +726,32 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 try {
                     //UTF-8
-                    //數量為1
-                    if (EleNulAll[3].equals("1")) {
-                        sb.append(EleNulAll[5] + " : " + InsertSpend.consumeVO.getMoney()+" X 1 = "+InsertSpend.consumeVO.getMoney()+"\n");
-                    } else {
-                        //數量超過1
-                        int i=0;
-                        Double total,price,amount;
-                        ArrayList<String> result=new ArrayList<>();
-                        for (String s:EleNulAll) {
-                            if(i>=5)
-                            {
-                                result.add(s.replaceAll("\\s+", ""));
-                                if(result.size()==3)
-                                {
-                                    price=Double.valueOf(Common.onlyNumber(result.get(2)));
-                                    amount=Double.valueOf(Common.onlyNumber(result.get(1)));
-                                    total=price*amount;
-                                    sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
-                                    result.clear();
-                                }
+                    int i = 0;
+                    Double total, price, amount;
+                    ArrayList<String> result = new ArrayList<>();
+                    for (String s : EleNulAll) {
+                        if (i >= 5) {
+                            result.add(s.replaceAll("\\s+", ""));
+                            if (result.size() == 3) {
+                                price = Double.valueOf(Common.onlyNumber(result.get(2)));
+                                amount = Double.valueOf(Common.onlyNumber(result.get(1)));
+                                total = price * amount;
+                                sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
+                                result.clear();
                             }
-                            i++;
                         }
+                        i++;
                     }
-                }catch (Exception e)
-                {
-                    int i=0;
-                    sb=new StringBuffer();
-                    for (String s:EleNulAll) {
-                        if(i>=5)
-                        {
+                } catch (Exception e) {
+                    int i = 0;
+                    sb = new StringBuffer();
+                    for (String s : EleNulAll) {
+                        if (i >= 5) {
                             sb.append(s.replaceAll("\\s+", ""));
-                            int j=(i-5)%3;
-                            if(j==2)
-                            {
+                            int j = (i - 5) % 3;
+                            if (j == 2) {
                                 sb.append("\n");
-                            }else {
+                            } else {
                                 sb.append(":");
                             }
                         }
@@ -808,17 +760,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            if(sb.toString().trim().length()>0)
-            {
+            if (sb.toString().trim().length() > 0) {
                 consumeVO.setDetailname(sb.toString());
                 consumeVO = getType(consumeVO);
-            }else{
+            } else {
                 consumeVO.setDetailname("");
                 consumeVO.setMaintype("O");
                 consumeVO.setSecondType("O");
             }
         }
-        bundle.putSerializable("consumeVO",consumeVO);
+        bundle.putSerializable("consumeVO", consumeVO);
         Fragment fragment = new UpdateSpend();
         fragment.setArguments(bundle);
         switchFragment(fragment);
@@ -860,7 +811,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.d("MainActivity", String.valueOf(oldFramgent.size())+":"+String.valueOf(bundles.size()));
+        Log.d("MainActivity", String.valueOf(oldFramgent.size()) + ":" + String.valueOf(bundles.size()));
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (oldFramgent.size() == 0 || bundles.size() == 0) {
                 OutDialogFragment aa = new OutDialogFragment();
@@ -910,48 +861,45 @@ public class MainActivity extends AppCompatActivity {
                 } else if (action.equals("SettingListFixCon")) {
                     fragment = new SettingListFixCon();
                     fragment.setArguments(bundle);
-                }else if (action.equals("SelectShowCircleDeList")) {
+                } else if (action.equals("SelectShowCircleDeList")) {
                     fragment = new SelectShowCircleDeList();
                     fragment.setArguments(bundle);
-                }else if (action.equals("UpdateInvoice")) {
+                } else if (action.equals("UpdateInvoice")) {
                     fragment = new UpdateInvoice();
                     fragment.setArguments(bundle);
-                }else if (action.equals("UpdateSpend")) {
+                } else if (action.equals("UpdateSpend")) {
                     fragment = new UpdateSpend();
                     fragment.setArguments(bundle);
-                }else if (action.equals("UpdateIncome")) {
+                } else if (action.equals("UpdateIncome")) {
                     fragment = new UpdateIncome();
                     fragment.setArguments(bundle);
-                }else if (action.equals("HomePage")) {
+                } else if (action.equals("HomePage")) {
                     fragment = new HomePage();
                     fragment.setArguments(bundle);
-                }else if (action.equals("HomePagetList")) {
+                } else if (action.equals("HomePagetList")) {
                     fragment = new HomePagetList();
                     fragment.setArguments(bundle);
-                }else if (action.equals("InsertSpend")||action.equals("InsertIncome")) {
+                } else if (action.equals("InsertSpend") || action.equals("InsertIncome")) {
                     fragment = new InsertActivity();
                     fragment.setArguments(bundle);
-                }else if (action.equals("SettingListType")) {
+                } else if (action.equals("SettingListType")) {
                     fragment = new SettingListType();
                     fragment.setArguments(bundle);
-                }else if(action.equals("SettingMain"))
-                {
+                } else if (action.equals("SettingMain")) {
                     fragment = new SettingMain();
                     fragment.setArguments(bundle);
-                }else if(action.equals("GoalListAll"))
-                {
+                } else if (action.equals("GoalListAll")) {
                     fragment = new GoalListAll();
                     fragment.setArguments(bundle);
-                }else if(action.equals("EleSetCarrier"))
-                {
+                } else if (action.equals("EleSetCarrier")) {
                     fragment = new EleSetCarrier();
                     fragment.setArguments(bundle);
                 }
 
                 //關閉keyboart
-                View v =this.getCurrentFocus();
-                if (v!= null) {
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                View v = this.getCurrentFocus();
+                if (v != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
                 oldFramgent.remove(oldFramgent.size() - 1);

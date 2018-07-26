@@ -59,7 +59,7 @@ public class HowGetPrice extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.how_get_price, container, false);
         needcarrier = view.findViewById(R.id.needcarrier);
-        needcarrier.setText("1.需攜帶中獎發票、中獎人印章、身分證到郵局領獎。\n\n2.無實體發票需列印出來，如果有綁定帳戶會自動匯到該戶頭。\n\n3.特別獎、特獎、頭獎及無實體電子發票專屬百萬獎：中獎金額20萬元以上（含20萬元），請至25處指定郵局儲匯窗口兌領。");
+        needcarrier.setText("1.需攜帶中獎發票、中獎人印章、身分證到郵局領獎。\n\n2.無實體發票需列印出來，如果有綁定帳戶會自動匯到該戶頭。\n\n3.特別獎、特獎、頭獎及無實體雲端發票專屬百萬獎：中獎金額20萬元以上（含20萬元），請至25處指定郵局儲匯窗口兌領。");
         list = view.findViewById(R.id.list);
         adView = view.findViewById(R.id.adView);
         Common.setAdView(adView, context);
@@ -67,8 +67,8 @@ public class HowGetPrice extends Fragment {
         List<String> title = new ArrayList<>();
         title.add("如何印無實體中獎發票");
         title.add("25處指定郵局兌領位置");
-        title.add("電子發票綁定銀行帳戶(本地)");
-        title.add("電子發票綁定銀行帳戶(財政部網站)");
+        title.add("雲端發票綁定銀行帳戶(本地)");
+        title.add("雲端發票綁定銀行帳戶(財政部網站)");
         list.setAdapter(new ListAdapter(context, title));
         drawerLayout = this.context.findViewById(R.id.drawer_layout);
         ViewTreeObserver vto = view.getViewTreeObserver();

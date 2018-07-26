@@ -1030,7 +1030,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 if (percent > 100) {
                     percent = 100;
                 }
-                totalS = (year - 1911) + "年" + (month + 1) + "月電子發票\n" + s;
+                totalS = (year - 1911) + "年" + (month + 1) + "月雲端發票\n" + s;
             }
             progressT.setText(totalS);
             percentage.setText(String.valueOf(percent) + "%");
