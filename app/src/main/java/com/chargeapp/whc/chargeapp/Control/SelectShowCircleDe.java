@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -29,6 +30,8 @@ import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -341,6 +344,23 @@ public class SelectShowCircleDe extends Fragment {
         pieChart.invalidate();
         pieChart.setOnChartValueSelectedListener(new pieValue());
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
+        pieChart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                pieChart.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int pieChartwidth = pieChart.getHeight();
+                if(pieChartwidth>500)
+                {
+                    PieDataSet dataSet = (PieDataSet) pieChart.getData().getDataSet();
+                    dataSet.setValueTextSize(25f);
+                    dataSet.setSelectionShift(30f);
+                    pieChart.setEntryLabelTextSize(25f);
+                    pieChart.invalidate();
+                }
+            }
+        });
+
+
         getActivity().setTitle(title);
         detail.setText(mainTitle+" : 共"+Common.nf.format(total)+"元");
         if(listView.getAdapter()!=null)
@@ -557,28 +577,38 @@ public class SelectShowCircleDe extends Fragment {
                     fixT.setTextColor(Color.parseColor("#7700BB"));
                     fixL.setBackgroundColor(Color.parseColor("#7700BB"));
                     fixL.setVisibility(View.VISIBLE);
-                    JsonObject js = gson.fromJson(c.getFixDateDetail(), JsonObject.class);
-                    stringBuffer.append(js.get("choicestatue").getAsString().trim());
-                    stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
-                    boolean noweek = Boolean.parseBoolean(js.get("noweek").getAsString());
-                    if (js.get("choicestatue").getAsString().trim().equals("每天") && noweek) {
-                        stringBuffer.append(" 假日除外");
+                    try{
+                        JsonObject js = gson.fromJson(c.getFixDateDetail(), JsonObject.class);
+                        stringBuffer.append(js.get("choicestatue").getAsString().trim());
+                        stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
+                        boolean noweek = Boolean.parseBoolean(js.get("noweek").getAsString());
+                        if (js.get("choicestatue").getAsString().trim().equals("每天") && noweek) {
+                            stringBuffer.append(" 假日除外");
+                        }
+                    }catch (Exception e)
+                    {
+                        stringBuffer.append(" ");
                     }
                     stringBuffer.append("\n");
                 }
 
 
-                if (c.getFixDate().equals("true")) {
+                if (c.getFixDate()!=null&&c.getFixDate().equals("true")) {
                     fixT.setText("固定");
                     fixT.setTextColor(Color.parseColor("#003C9D"));
                     fixL.setBackgroundColor(Color.parseColor("#003C9D"));
                     fixL.setVisibility(View.VISIBLE);
-                    JsonObject js = gson.fromJson(c.getFixDateDetail(), JsonObject.class);
-                    stringBuffer.append(js.get("choicestatue").getAsString().trim());
-                    stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
-                    boolean noweek = Boolean.parseBoolean(js.get("noweek").getAsString());
-                    if (js.get("choicestatue").getAsString().trim().equals("每天") && noweek) {
-                        stringBuffer.append(" 假日除外");
+                    try {
+                        JsonObject js = gson.fromJson(c.getFixDateDetail(), JsonObject.class);
+                        stringBuffer.append(js.get("choicestatue").getAsString().trim());
+                        stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
+                        boolean noweek = Boolean.parseBoolean(js.get("noweek").getAsString());
+                        if (js.get("choicestatue").getAsString().trim().equals("每天") && noweek) {
+                            stringBuffer.append(" 假日除外");
+                        }
+                    }catch (Exception e)
+                    {
+                        stringBuffer.append(" ");
                     }
                     stringBuffer.append("\n");
                 }

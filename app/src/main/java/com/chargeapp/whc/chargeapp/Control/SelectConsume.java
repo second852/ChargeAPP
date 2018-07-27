@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -117,6 +118,7 @@ public class SelectConsume extends Fragment {
     public static Calendar end;
     public static int CStatue;
     private Activity context;
+    private int pieChartwidth;
 
 
     @Override
@@ -501,7 +503,7 @@ public class SelectConsume extends Fragment {
         }
         chart_bar.setDrawGridBackground(false);
         chart_bar.setDragEnabled(true);
-        chart_bar.setScaleEnabled(true);
+        chart_bar.setScaleEnabled(false);
         chart_bar.setEnabled(true);
         xAxis = chart_bar.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -558,7 +560,7 @@ public class SelectConsume extends Fragment {
 
     private void addData() {
         describe.setText(DesTittle +nf.format(total) + "元");
-        ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
+        final ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
         ShowZero = true;
         for (int i = 0; i < list_Data.size(); i++) {
             if (list_Data.get(i).getValue() > 0) {
@@ -568,7 +570,7 @@ public class SelectConsume extends Fragment {
         }
 
         // create pie data set
-        PieDataSet dataSet = new PieDataSet(yVals1, "種類");
+         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
         if (ShowZero) {
             dataSet.setDrawValues(false);
             yVals1.add(new PieEntry(1, "無花費"));
@@ -593,6 +595,33 @@ public class SelectConsume extends Fragment {
         chart_pie.setData(data);
         chart_pie.invalidate();
         chart_pie.setBackgroundColor(Color.parseColor("#f5f5f5"));
+        chart_pie.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                chart_pie.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                pieChartwidth=chart_pie.getHeight();
+                if(pieChartwidth>500)
+                {
+                    PieDataSet dataSet = (PieDataSet) chart_pie.getData().getDataSet();
+                    dataSet.setValueTextSize(25f);
+                    dataSet.setSelectionShift(30f);
+                    chart_pie.setEntryLabelTextSize(25f);
+                    chart_pie.invalidate();
+                    xAxis.setTextSize(20f);
+                    YAxis yAxis = chart_bar.getAxis(YAxis.AxisDependency.LEFT);
+                    YAxis yAxis1 = chart_bar.getAxis(YAxis.AxisDependency.RIGHT);
+                    yAxis.setTextSize(20f);
+                    yAxis1.setTextSize(20f);
+                    Legend l = chart_bar.getLegend();
+                    l.setTextSize(20f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(20f);
+                    chart_bar.invalidate();
+                    chart_bar.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
 

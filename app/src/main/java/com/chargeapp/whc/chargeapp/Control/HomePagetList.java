@@ -401,28 +401,39 @@ public class HomePagetList extends Fragment {
                     fixT.setTextColor(Color.parseColor("#7700BB"));
                     fixL.setBackgroundColor(Color.parseColor("#7700BB"));
                     fixL.setVisibility(View.VISIBLE);
-                    JsonObject js = gson.fromJson(c.getFixDateDetail(), JsonObject.class);
-                    stringBuffer.append(js.get("choicestatue").getAsString().trim());
-                    stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
-                    boolean noweek = Boolean.parseBoolean(js.get("noweek").getAsString());
-                    if (js.get("choicestatue").getAsString().trim().equals("每天") && noweek) {
-                        stringBuffer.append(" 假日除外");
+                    try {
+                        JsonObject js = gson.fromJson(c.getFixDateDetail(), JsonObject.class);
+                        stringBuffer.append(js.get("choicestatue").getAsString().trim());
+                        stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
+                        boolean noweek = Boolean.parseBoolean(js.get("noweek").getAsString());
+                        if (js.get("choicestatue").getAsString().trim().equals("每天") && noweek) {
+                            stringBuffer.append(" 假日除外");
+                        }
+                    }catch (Exception e)
+                    {
+                        stringBuffer.append(" ");
                     }
+
                     stringBuffer.append("\n");
                 }
 
-                if (c.getFixDate().equals("true")) {
+                if (c.getFixDate()!=null&&c.getFixDate().equals("true")) {
 
                     fixT.setText("固定");
                     fixT.setTextColor(Color.parseColor("#003C9D"));
                     fixL.setBackgroundColor(Color.parseColor("#003C9D"));
                     fixL.setVisibility(View.VISIBLE);
-                    JsonObject js = gson.fromJson(c.getFixDateDetail(), JsonObject.class);
-                    stringBuffer.append(js.get("choicestatue").getAsString().trim());
-                    stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
-                    boolean noweek = Boolean.parseBoolean(js.get("noweek").getAsString());
-                    if (js.get("choicestatue").getAsString().trim().equals("每天") && noweek) {
-                        stringBuffer.append(" 假日除外");
+                    try {
+                        JsonObject js = gson.fromJson(c.getFixDateDetail(), JsonObject.class);
+                        stringBuffer.append(js.get("choicestatue").getAsString().trim());
+                        stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
+                        boolean noweek = Boolean.parseBoolean(js.get("noweek").getAsString());
+                        if (js.get("choicestatue").getAsString().trim().equals("每天") && noweek) {
+                            stringBuffer.append(" 假日除外");
+                        }
+                    }catch (Exception e)
+                    {
+                        stringBuffer.append(" ");
                     }
                     stringBuffer.append("\n");
                 }

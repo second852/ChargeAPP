@@ -29,13 +29,18 @@
         android:layout_height="match_parent"
         android:background="#ffffff"
         android:visibility="gone">
-
         <ProgressBar
             android:id="@+id/progress"
+            style="?android:attr/progressBarStyleLarge"
             android:layout_width="400dp"
             android:layout_height="400dp"
+            android:indeterminateBehavior="repeat"
+            android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true" />
+            android:indeterminateDrawable="@drawable/ring_rotate"
+            android:indeterminateDuration="1500"
+            android:indeterminateOnly="true" />
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -54,6 +59,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="5dp"
-        ads:adSize="BANNER"
+        ads:adSize="LEADERBOARD"
         ads:adUnitId="ca-app-pub-5169620543343332/5257007139" />
 </RelativeLayout>

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -25,6 +26,7 @@ import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -77,6 +79,7 @@ public class SelectIncome extends Fragment {
     public static Calendar end;
     public static int Statue;
     private Activity context;
+    private int pieChartwidth;
 
     @Override
     public void onAttach(Context context) {
@@ -332,6 +335,34 @@ public class SelectIncome extends Fragment {
         chart_pie.setDescription(Common.getDeescription());
         addData();
         chart_pie.getLegend().setEnabled(false);
+        chart_pie.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                chart_pie.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                pieChartwidth=chart_pie.getHeight();
+                if(pieChartwidth>500)
+                {
+                    PieDataSet dataSet = (PieDataSet) chart_pie.getData().getDataSet();
+                    dataSet.setValueTextSize(25f);
+                    dataSet.setSelectionShift(30f);
+                    chart_pie.setEntryLabelTextSize(25f);
+                    chart_pie.invalidate();
+                    XAxis xAxis=chart_bar.getXAxis();
+                    xAxis.setTextSize(20f);
+                    YAxis yAxis = chart_bar.getAxis(YAxis.AxisDependency.LEFT);
+                    YAxis yAxis1 = chart_bar.getAxis(YAxis.AxisDependency.RIGHT);
+                    yAxis.setTextSize(20f);
+                    yAxis1.setTextSize(20f);
+                    Legend l = chart_bar.getLegend();
+                    l.setTextSize(20f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(20f);
+                    chart_bar.invalidate();
+                    chart_bar.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     private void addData() {

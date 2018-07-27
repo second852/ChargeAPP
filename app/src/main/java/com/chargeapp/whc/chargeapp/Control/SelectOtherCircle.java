@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -274,7 +276,7 @@ public class SelectOtherCircle extends Fragment {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                 itemView = layoutInflater.inflate(R.layout.select_con_detail_item, parent, false);
             }
-            PieChart pieChart = itemView.findViewById(R.id.pieChart);
+            final PieChart pieChart = itemView.findViewById(R.id.pieChart);
             TextView detail = itemView.findViewById(R.id.detail);
             String key = KeyList.get(position);
             HashMap<String, Integer> hashMap = mapHashMap.get(key);
@@ -293,6 +295,21 @@ public class SelectOtherCircle extends Fragment {
                 pieChart.setDescription(Common.getDeescription());
                 pieChart.invalidate();
                 pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
+                pieChart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        pieChart.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        int pieChartwidth = pieChart.getHeight();
+                        if(pieChartwidth>500)
+                        {
+                            PieDataSet dataSet = (PieDataSet) pieChart.getData().getDataSet();
+                            dataSet.setValueTextSize(25f);
+                            dataSet.setSelectionShift(30f);
+                            pieChart.setEntryLabelTextSize(25f);
+                            pieChart.invalidate();
+                        }
+                    }
+                });
             }
             return itemView;
         }

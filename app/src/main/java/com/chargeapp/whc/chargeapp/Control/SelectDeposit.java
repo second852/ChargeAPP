@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -29,12 +30,14 @@ import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
 import java.sql.Timestamp;
@@ -189,7 +192,7 @@ public class SelectDeposit extends Fragment {
         dataSet.setHighlightEnabled(false);
         dataSet.setDrawValues(false);
         LineData data = new LineData(dataSet);
-        XAxis xAxis = chart_line.getXAxis();
+        final XAxis xAxis = chart_line.getXAxis();
         xAxis.setGranularity(1f);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setValueFormatter(new IAxisValueFormatter() {
@@ -236,6 +239,29 @@ public class SelectDeposit extends Fragment {
             }
         }
         chart_line.invalidate();
+        chart_line.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                chart_line.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int pieChartwidth = chart_line.getHeight();
+                if(pieChartwidth>500)
+                {
+                    XAxis xAxis=chart_line.getXAxis();
+                    xAxis.setTextSize(20f);
+                    YAxis yAxis = chart_line.getAxis(YAxis.AxisDependency.LEFT);
+                    YAxis yAxis1 = chart_line.getAxis(YAxis.AxisDependency.RIGHT);
+                    yAxis.setTextSize(20f);
+                    yAxis1.setTextSize(20f);
+                    Legend l = chart_line.getLegend();
+                    l.setTextSize(20f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(20f);
+                    chart_line.invalidate();
+                    chart_line.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     private List<String> getLabels() {

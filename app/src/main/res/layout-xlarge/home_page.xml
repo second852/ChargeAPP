@@ -6,10 +6,9 @@
     >
     <com.github.mikephil.charting.charts.PieChart
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="400dp"
         android:layout_centerHorizontal="true"
-        android:id="@+id/pieChart"
-        />
+        android:id="@+id/pieChart"/>
     <TextView
         android:id="@+id/pieChartT"
         android:textColor="#000000"

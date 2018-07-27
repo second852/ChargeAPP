@@ -29,13 +29,17 @@
         android:layout_height="match_parent"
         android:background="#ffffff"
         android:visibility="gone">
-
         <ProgressBar
             android:id="@+id/progress"
+            style="?android:attr/progressBarStyleLarge"
             android:layout_width="300dp"
             android:layout_height="300dp"
+            android:indeterminateBehavior="repeat"
+            android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true" />
+            android:indeterminateDrawable="@drawable/ring_rotate"
+            android:indeterminateDuration="1500"
+            android:indeterminateOnly="true" />
 
         <TextView
             android:layout_width="wrap_content"

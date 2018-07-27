@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +75,7 @@ public class HomePage extends Fragment {
     private ArrayList<String> Okey;
     private Activity context;
     private DrawerLayout drawerLayout;
+    private int pieChartwidth;
 
     @Override
     public void onAttach(Context context) {
@@ -223,7 +225,7 @@ public class HomePage extends Fragment {
             yVals1.add(new PieEntry(chartEntry.getValue(),chartEntry.getKey()));
         }
         // create pie data set
-        PieDataSet dataSet = new PieDataSet(yVals1, "種類");
+        final PieDataSet dataSet = new PieDataSet(yVals1, "種類");
         if (ShowZero) {
             dataSet.setDrawValues(false);
             yVals1.add(new PieEntry(1, "無花費"));
@@ -240,6 +242,20 @@ public class HomePage extends Fragment {
         dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         dataSet.setSliceSpace(0);
         dataSet.setSelectionShift(20f);
+        pieChart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                pieChart.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                pieChartwidth=pieChart.getHeight();
+                if(pieChartwidth>500)
+                {
+                    dataSet.setValueTextSize(25f);
+                    pieChart.setEntryLabelTextSize(25f);
+                    pieChart.invalidate();
+                }
+            }
+        });
+
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(11f);

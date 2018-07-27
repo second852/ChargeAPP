@@ -182,28 +182,37 @@ public class SelectListBarIncome extends Fragment {
                 fixT.setTextColor(Color.parseColor("#7700BB"));
                 fixL.setBackgroundColor(Color.parseColor("#7700BB"));
                 fixL.setVisibility(View.VISIBLE);
+                 try {
+                     JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);
+                     String daystatue = js.get("choicestatue").getAsString().trim();
+                     stringBuffer.append(daystatue);
+                     if (!daystatue.equals("每天")) {
+                         stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
+                     }
+                 }catch (Exception e)
+                 {
+                     decribe.setText(" ");
+                 }
 
-                JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);
-                String daystatue = js.get("choicestatue").getAsString().trim();
-                stringBuffer.append(daystatue);
-                if (!daystatue.equals("每天")) {
-                    stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
-                }
                 decribe.setText("\n");
             }
 
-            if (bankVO.getFixDate().equals("true")) {
+            if (bankVO.getFixDate()!=null&&bankVO.getFixDate().equals("true")) {
 
                 fixT.setText("固定");
                 fixT.setTextColor(Color.parseColor("#003C9D"));
                 fixL.setBackgroundColor(Color.parseColor("#003C9D"));
                 fixL.setVisibility(View.VISIBLE);
-
-                JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);
-                String daystatue = js.get("choicestatue").getAsString().trim();
-                stringBuffer.append(daystatue);
-                if (!daystatue.equals("每天")) {
-                    stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
+                try {
+                    JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);
+                    String daystatue = js.get("choicestatue").getAsString().trim();
+                    stringBuffer.append(daystatue);
+                    if (!daystatue.equals("每天")) {
+                        stringBuffer.append(" " + js.get("choicedate").getAsString().trim());
+                    }
+                }catch (Exception e)
+                {
+                    decribe.setText(" ");
                 }
                 decribe.setText("\n");
             }

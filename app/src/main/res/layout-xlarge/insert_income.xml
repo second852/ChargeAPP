@@ -26,7 +26,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -37,27 +37,27 @@
                     android:gravity="center_vertical"
                     android:text="項目"
                     android:textColor="#000000"
-                    android:textSize="80sp" />
+                    android:textSize="40sp" />
 
                 <TextView
                     android:id="@+id/name"
                     android:layout_width="400dp"
-                    android:layout_height="90dp"
+                    android:layout_height="60dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginLeft="85dp"
                     android:background="#FFEE99"
                     android:gravity="center_vertical"
                     android:inputType="none"
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="80sp" />
+                    android:textSize="45sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -68,13 +68,13 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:textColor="#000000"
-                    android:textSize="80sp" />
+                    android:textSize="40sp" />
 
                 <EditText
                     android:id="@+id/money"
                     android:layout_width="400dp"
-                    android:layout_height="90dp"
-                    android:layout_marginLeft="25dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="85dp"
                     android:background="#FFEE99"
                     android:inputType="number"
                     android:singleLine="true"
@@ -82,14 +82,14 @@
                     android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="80sp"
+                    android:textSize="45sp"
                     />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -100,13 +100,13 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:textColor="#000000"
-                    android:textSize="80sp" />
+                    android:textSize="40sp" />
 
                 <TextView
                     android:id="@+id/date"
                     android:layout_width="400dp"
-                    android:layout_height="90dp"
-                    android:layout_marginLeft="25dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="85dp"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:background="#FFEE99"
@@ -114,14 +114,14 @@
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="80sp"
+                    android:textSize="45sp"
                     />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -132,16 +132,16 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:textColor="#000000"
-                    android:textSize="80sp" />
+                    android:textSize="40sp" />
 
                 <EditText
                     android:id="@+id/detailname"
                     android:layout_width="400dp"
-                    android:layout_height="90dp"
-                    android:layout_marginLeft="25dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="85dp"
                     android:background="#FFEE99"
                     android:inputType="text"
-                    android:textSize="80sp"
+                    android:textSize="45sp"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:singleLine="true"
@@ -160,12 +160,12 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="20dp"
                     >
                     <CheckBox
                         android:id="@+id/fixdate"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
                         android:layout_marginLeft="250dp"
                         android:buttonTint="#00BBFF"
                         android:button="@null"
@@ -177,7 +177,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@+id/fixdate"
-                        android:textSize="60sp"
+                        android:textSize="40sp"
                         android:text="定期收入"
                         android:textColor="#000000"
                         android:gravity="center"
@@ -202,12 +202,12 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="25dp"
                 >
                 <TextView
                     android:id="@+id/standard"
-                    android:layout_width="120dp"
-                    android:layout_height="80dp"
+                    android:layout_width="90dp"
+                    android:layout_height="60dp"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:textColor="#000000"
@@ -218,8 +218,8 @@
                     />
                 <TextView
                     android:id="@+id/save"
-                    android:layout_width="120dp"
-                    android:layout_height="80dp"
+                    android:layout_width="90dp"
+                    android:layout_height="60dp"
                     android:layout_marginRight="70dp"
                     android:layout_toLeftOf="@+id/standard"
                     android:background="#33CCFF"
@@ -230,8 +230,8 @@
                     android:textSize="40sp" />
                 <TextView
                     android:id="@+id/clear"
-                    android:layout_width="120dp"
-                    android:layout_height="80dp"
+                    android:layout_width="90dp"
+                    android:layout_height="60dp"
                     android:layout_marginLeft="70dp"
                     android:layout_toRightOf="@+id/standard"
                     android:background="#FF8888"
@@ -319,6 +319,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        ads:adSize="BANNER"
+        ads:adSize="LEADERBOARD"
         ads:adUnitId="ca-app-pub-5169620543343332/5257007139"/>
 </RelativeLayout>
