@@ -13,7 +13,7 @@
         android:id="@+id/detail"
         android:layout_gravity="center"
         android:textColor="#000000"
-        android:textSize="40sp"
+        android:textSize="35sp"
         />
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pieChart"

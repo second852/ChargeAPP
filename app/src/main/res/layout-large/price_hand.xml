@@ -47,7 +47,7 @@
         android:layout_height="60dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/PIdateL"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:background="#aaaaaa">
 
         <Spinner
@@ -68,7 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/modelR"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:gravity="center"
         android:text="請輸入後三碼"
         android:textColor="#000000"
@@ -80,7 +80,7 @@
         android:layout_below="@+id/priceTitle"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:padding="6dp"
         card_view:cardBackgroundColor="#ffdddddd"
         card_view:cardCornerRadius="12dp"
@@ -91,6 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="25dp"
+
                 android:gravity="right"
                 android:hint="000"
                 android:textColorHint="#666666"
@@ -102,7 +103,7 @@
         android:id="@+id/donateRL"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </android.support.v7.widget.RecyclerView>

@@ -106,12 +106,15 @@ public class InsertConsumeType extends Fragment {
     private void setType() {
         String type = (object instanceof InvoiceVO) ? ((InvoiceVO) object).getMaintype() : ((ConsumeVO) object).getMaintype();
         typeVO = typeDB.findTypeName(type);
-        mainImage.setImageResource(Download.imageAll[typeVO.getImage()]);
-        mainName.setText(typeVO.getName().trim());
-        mainName.setFocusable(false);
-        mainName.setFocusableInTouchMode(false);
-        mainName.setBackgroundColor(Color.parseColor("#DDDDDD"));
-        mainT.setText(typeVO.getName());
+        if(typeVO!=null)
+        {
+            mainImage.setImageResource(Download.imageAll[typeVO.getImage()]);
+            mainName.setText(typeVO.getName().trim());
+            mainName.setFocusable(false);
+            mainName.setFocusableInTouchMode(false);
+            mainName.setBackgroundColor(Color.parseColor("#DDDDDD"));
+            mainT.setText(typeVO.getName());
+        }
     }
 
     private void setGridPicture() {
@@ -193,7 +196,7 @@ public class InsertConsumeType extends Fragment {
     private class insertType implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            String mainType = mainName.getText().toString();
+            String mainType = mainName.getText().toString().trim();
             String secondTitle = secondName.getText().toString().trim();
             String keyWorld = secondKey.getText().toString().trim();
             if (mainType == null || mainType.isEmpty()) {
@@ -241,9 +244,9 @@ public class InsertConsumeType extends Fragment {
                 typeDB.insert(typeVO);
             }
 
-            typeDetailVO.setGroupNumber(mainName.getText().toString().trim());
-            typeDetailVO.setName(secondName.getText().toString().trim());
-            typeDetailVO.setKeyword(secondKey.getText().toString().trim());
+            typeDetailVO.setGroupNumber(mainType);
+            typeDetailVO.setName(secondTitle);
+            typeDetailVO.setKeyword(keyWorld);
 
             //沒有選擇圖片情況
             if(!secondClick)
@@ -264,11 +267,7 @@ public class InsertConsumeType extends Fragment {
             MainActivity.bundles.remove(MainActivity.bundles.size()-1);
             MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
             Common.showToast(context, "新增成功");
-            View v =InsertConsumeType.this.context.getCurrentFocus();
-            if (v != null) {
-                InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-            }
+            Common.clossKeyword(context);
         }
     }
 
@@ -302,7 +301,7 @@ public class InsertConsumeType extends Fragment {
             bundle.putSerializable("position", getArguments().getSerializable("position"));
         }else if(action.equals("InsertSpend"))
         {
-            fragment=new InsertSpend();
+            fragment=new InsertActivity();
             bundle.putSerializable("needSet", getArguments().getSerializable("needSet"));
         }else if (action.equals("SettingListFixCon")) {
             bundle.putSerializable("position", getArguments().getSerializable("position"));

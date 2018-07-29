@@ -20,7 +20,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp" />
+            android:layout_marginLeft="100dp" />
 
         <TextView
             android:id="@+id/listTitle"
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_gravity="center"
-            android:layout_marginLeft="120dp"
+            android:layout_centerHorizontal="true"
             android:gravity="center"
             android:padding="2dp"
             android:textColor="#000000"
@@ -46,13 +46,13 @@
             android:padding="5dp"
             android:text="修改"
             android:textColor="#000000"
-            android:textSize="30sp" />
+            android:textSize="25sp" />
 
         <TextView
             android:id="@+id/deleteT"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
+            android:layout_marginRight="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#FF8888"
@@ -60,6 +60,6 @@
             android:padding="5dp"
             android:text="刪除"
             android:textColor="#000000"
-            android:textSize="30sp" />
+            android:textSize="25sp" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

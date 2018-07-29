@@ -92,13 +92,12 @@ public class SelectConsume extends Fragment {
     private ConsumeDB consumeDB;
     private TextView PIdateTittle, describe;
     private ImageView PIdateCut, PIdateAdd;
-    public  int choiceD;
+    public int choiceD;
     private List<CarrierVO> carrierVOS;
     private String TAG = "SelectConsume";
     private BarChart chart_bar;
-    private TypeDB typeDB;
     private List<Map.Entry<String, Integer>> list_Data;
-    private int month, year,day,dweek,extra;
+    private int month, year, day, dweek, extra;
     private Spinner choicePeriod, choiceCarrier;
     private PieChart chart_pie;
     private int total, period;
@@ -118,17 +117,16 @@ public class SelectConsume extends Fragment {
     public static Calendar end;
     public static int CStatue;
     private Activity context;
-    private int pieChartwidth;
+
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof Activity)
-        {
-            this.context=(Activity) context;
-        }else{
-            this.context=getActivity();
+        if (context instanceof Activity) {
+            this.context = (Activity) context;
+        } else {
+            this.context = getActivity();
         }
     }
 
@@ -136,9 +134,8 @@ public class SelectConsume extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_consume, container, false);
-        if(end==null)
-        {
-            end=Calendar.getInstance();
+        if (end == null) {
+            end = Calendar.getInstance();
         }
         month = end.get(Calendar.MONTH);
         year = end.get(Calendar.YEAR);
@@ -152,29 +149,24 @@ public class SelectConsume extends Fragment {
         choiceCarrier.setOnItemSelectedListener(new ChoiceCarrier());
         chart_bar.setOnChartValueSelectedListener(new charvalue());
         chart_pie.setOnChartValueSelectedListener(new pievalue());
-        goalVO=goalDB.getFindType("支出");
+        goalVO = goalDB.getFindType("支出");
         choiceCarrier.setSelection(CStatue);
         choicePeriod.setSelection(Statue);
         return view;
     }
 
     private void setGoalVO(Calendar month) {
-        if(goalVO!=null)
-        {
-            String goalTimeStatue=goalVO.getTimeStatue().trim();
-            if(goalTimeStatue.equals("每天"))
-            {
-                Max= goalVO.getMoney();
-            }else if(goalTimeStatue.equals("每周"))
-            {
-                Max= goalVO.getMoney()/7;
-            }else if(goalTimeStatue.equals("每月"))
-            {
-                int day=month.getActualMaximum(Calendar.DAY_OF_MONTH);
-                Max= goalVO.getMoney()/day;
-            }else if(goalTimeStatue.equals("每年"))
-            {
-                Max= goalVO.getMoney()/365;
+        if (goalVO != null) {
+            String goalTimeStatue = goalVO.getTimeStatue().trim();
+            if (goalTimeStatue.equals("每天")) {
+                Max = goalVO.getMoney();
+            } else if (goalTimeStatue.equals("每周")) {
+                Max = goalVO.getMoney() / 7;
+            } else if (goalTimeStatue.equals("每月")) {
+                int day = month.getActualMaximum(Calendar.DAY_OF_MONTH);
+                Max = goalVO.getMoney() / day;
+            } else if (goalTimeStatue.equals("每年")) {
+                Max = goalVO.getMoney() / 365;
             }
         }
     }
@@ -185,8 +177,7 @@ public class SelectConsume extends Fragment {
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
 
@@ -223,7 +214,7 @@ public class SelectConsume extends Fragment {
 
 
     private BarData getBarData() {
-        String [] stack=getStackLabels();
+        String[] stack = getStackLabels();
         BarDataSet dataSetA = new BarDataSet(getChartData(), " ");
         dataSetA.setColors(Common.getColor(stack.length));
         dataSetA.setStackLabels(stack);
@@ -232,7 +223,6 @@ public class SelectConsume extends Fragment {
         barData.setBarWidth(0.9f);
         return barData;
     }
-
 
 
     private String[] getStackLabels() {
@@ -256,8 +246,8 @@ public class SelectConsume extends Fragment {
             PIdateTittle.setText(Common.sOne.format(new Date(start.getTimeInMillis())));
         } else if (Statue == 1) {
             DesTittle = "這周花費";
-            start = new GregorianCalendar(year, month, day - dweek + 1 , 0, 0, 0);
-            end = new GregorianCalendar(year, month, day - dweek + 1 + period-1, 23, 59, 59);
+            start = new GregorianCalendar(year, month, day - dweek + 1, 0, 0, 0);
+            end = new GregorianCalendar(year, month, day - dweek + 1 + period - 1, 23, 59, 59);
             PIdateTittle.setText(Common.sTwo.format(new Date(start.getTimeInMillis())) + " ~ " + Common.sTwo.format(new Date(end.getTimeInMillis())));
         } else if (Statue == 2) {
             DesTittle = "本月花費";
@@ -271,7 +261,7 @@ public class SelectConsume extends Fragment {
             PIdateTittle.setText(Common.sFour.format(new Date(start.getTimeInMillis())));
         }
 
-        if (!noShowCarrier&&carrierVOS.size()>0) {
+        if (!noShowCarrier && carrierVOS.size() > 0) {
             List<InvoiceVO> invoiceVOS;
             if (ShowAllCarrier) {
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
@@ -279,7 +269,7 @@ public class SelectConsume extends Fragment {
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrierVOS.get(choiceD).getCarNul());
             }
             for (InvoiceVO I : invoiceVOS) {
-                if (I.getMaintype().equals("0")||I.getMaintype().equals("O")) {
+                if (I.getMaintype().equals("0") || I.getMaintype().equals("O")) {
                     other.setValue(other.getValue() + Integer.valueOf(I.getAmount()));
                     OKey.add(I.getMaintype());
                     continue;
@@ -321,7 +311,7 @@ public class SelectConsume extends Fragment {
                 other.setValue(other.getValue() + list_Data.get(i).getValue());
                 list_Data.remove(i);
                 i--;
-                Log.d(TAG,i+" : "+list_Data.size());
+                Log.d(TAG, i + " : " + list_Data.size());
                 continue;
             }
             if (i >= 4) {
@@ -329,7 +319,7 @@ public class SelectConsume extends Fragment {
                 OKey.add(list_Data.get(4).getKey());
                 Log.d(TAG, list_Data.get(4).getKey());
                 list_Data.remove(4);
-                Log.d(TAG,"over"+i+" : "+list_Data.size());
+                Log.d(TAG, "over" + i + " : " + list_Data.size());
                 i--;
             }
         }
@@ -367,7 +357,7 @@ public class SelectConsume extends Fragment {
         if (Statue == 0) {
             start = new GregorianCalendar(year, month, day, 0, 0, 0);
             end = new GregorianCalendar(year, month, day, 23, 59, 59);
-            BarEntry barEntry = new BarEntry(0, Periodfloat(start,end));
+            BarEntry barEntry = new BarEntry(0, Periodfloat(start, end));
             chartData.add(barEntry);
             setGoalVO(start);
         } else if (Statue == 1) {
@@ -376,23 +366,23 @@ public class SelectConsume extends Fragment {
             for (int i = 0; i < period; i++) {
                 start = new GregorianCalendar(year, month, day - dweek + 1 + i, 0, 0, 0);
                 end = new GregorianCalendar(year, month, day - dweek + 1 + i, 23, 59, 59);
-                Log.d(TAG,"start"+Common.sDay.format(new Date(start.getTimeInMillis())));
-                BarEntry barEntry = new BarEntry(i, Periodfloat(start,end));
+                Log.d(TAG, "start" + Common.sDay.format(new Date(start.getTimeInMillis())));
+                BarEntry barEntry = new BarEntry(i, Periodfloat(start, end));
                 chartData.add(barEntry);
             }
         } else if (Statue == 2) {
             Calendar calendar = new GregorianCalendar(year, month, 1, 0, 0, 0);
             start = new GregorianCalendar(year, month, 1, 0, 0, 0);
             setGoalVO(start);
-            Max=Max*7;
+            Max = Max * 7;
             calendar.set(Calendar.WEEK_OF_MONTH, 1);
             calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
             end = new GregorianCalendar(year, month, calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
             BarEntry barEntry;
             for (int i = 2; i < period; i++) {
-                barEntry = new BarEntry(i - 2, Periodfloat(start,end));
+                barEntry = new BarEntry(i - 2, Periodfloat(start, end));
                 chartData.add(barEntry);
-                Log.d(TAG,"week "+String.valueOf(i - 2)+":"+Common.sDay.format(new Date(start.getTimeInMillis()))+"~"+Common.sDay.format(new Date(end.getTimeInMillis())));
+                Log.d(TAG, "week " + String.valueOf(i - 2) + ":" + Common.sDay.format(new Date(start.getTimeInMillis())) + "~" + Common.sDay.format(new Date(end.getTimeInMillis())));
                 calendar.set(Calendar.WEEK_OF_MONTH, i);
                 calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                 start = new GregorianCalendar(year, month, calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
@@ -402,22 +392,22 @@ public class SelectConsume extends Fragment {
             }
             barEntry = new BarEntry(period - 2, Periodfloat(start, end));
             chartData.add(barEntry);
-            Log.d(TAG,"week "+String.valueOf(period - 2)+":"+Common.sDay.format(new Date(start.getTimeInMillis()))+"~"+Common.sDay.format(new Date(end.getTimeInMillis())));
+            Log.d(TAG, "week " + String.valueOf(period - 2) + ":" + Common.sDay.format(new Date(start.getTimeInMillis())) + "~" + Common.sDay.format(new Date(end.getTimeInMillis())));
             calendar.set(Calendar.WEEK_OF_MONTH, period);
             calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
             start = new GregorianCalendar(year, month, calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
             end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
             barEntry = new BarEntry(period - 1, Periodfloat(start, end));
             chartData.add(barEntry);
-            Log.d(TAG,"week "+String.valueOf(period - 1)+":"+Common.sDay.format(new Date(start.getTimeInMillis()))+"~"+Common.sDay.format(new Date(end.getTimeInMillis())));
+            Log.d(TAG, "week " + String.valueOf(period - 1) + ":" + Common.sDay.format(new Date(start.getTimeInMillis())) + "~" + Common.sDay.format(new Date(end.getTimeInMillis())));
         } else {
-            start = new GregorianCalendar(year, month , 1, 0, 0, 0);
+            start = new GregorianCalendar(year, month, 1, 0, 0, 0);
             setGoalVO(start);
-            Max=Max*365/12;
+            Max = Max * 365 / 12;
             for (int i = 0; i < period; i++) {
                 start = new GregorianCalendar(year, month + i, 1, 0, 0, 0);
                 end = new GregorianCalendar(year, month + i, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
-                BarEntry barEntry = new BarEntry(i, Periodfloat(start,end));
+                BarEntry barEntry = new BarEntry(i, Periodfloat(start, end));
                 chartData.add(barEntry);
             }
         }
@@ -429,8 +419,8 @@ public class SelectConsume extends Fragment {
         boolean isOther;
         float[] f = new float[list_Data.size()];
         ChartEntry other = new ChartEntry("其他", 0);
-        if (!noShowCarrier&&carrierVOS.size()>0) {
-            String carrier=carrierVOS.get(choiceD).getCarNul();
+        if (!noShowCarrier && carrierVOS.size() > 0) {
+            String carrier = carrierVOS.get(choiceD).getCarNul();
             List<InvoiceVO> periodInvoice;
             if (ShowAllCarrier) {
                 periodInvoice = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
@@ -491,14 +481,12 @@ public class SelectConsume extends Fragment {
     }
 
 
-
     public void dataAnalyze() {
         chart_bar.clear();
         findMaxFive();
         Description description = new Description();
         description.setText(" ");
-        if(list_Data.size()<=0)
-        {
+        if (list_Data.size() <= 0) {
             return;
         }
         chart_bar.setDrawGridBackground(false);
@@ -507,7 +495,6 @@ public class SelectConsume extends Fragment {
         chart_bar.setEnabled(true);
         xAxis = chart_bar.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setTextSize(12f);
         xAxis.setGranularity(1f);
         xAxis.setGranularityEnabled(true);
         YAxis yAxis = chart_bar.getAxis(YAxis.AxisDependency.LEFT);
@@ -535,10 +522,9 @@ public class SelectConsume extends Fragment {
         chart_bar.setDoubleTapToZoomEnabled(false);
         chart_bar.setDescription(description);
         chart_bar.setHighlightFullBarEnabled(false);
-        if(goalVO!=null)
-        {
+        if (goalVO != null) {
             yAxis.removeAllLimitLines();
-            LimitLine yLimitLine = new LimitLine(Max,"支出目標");
+            LimitLine yLimitLine = new LimitLine(Max, "支出目標");
             yLimitLine.setLineColor(Color.parseColor("#191970"));
             yLimitLine.setTextColor(Color.parseColor("#191970"));
             yAxis.addLimitLine(yLimitLine);
@@ -559,7 +545,7 @@ public class SelectConsume extends Fragment {
     }
 
     private void addData() {
-        describe.setText(DesTittle +nf.format(total) + "元");
+        describe.setText(DesTittle + nf.format(total) + "元");
         final ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
         ShowZero = true;
         for (int i = 0; i < list_Data.size(); i++) {
@@ -570,7 +556,7 @@ public class SelectConsume extends Fragment {
         }
 
         // create pie data set
-         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
+        PieDataSet dataSet = new PieDataSet(yVals1, "種類");
         if (ShowZero) {
             dataSet.setDrawValues(false);
             yVals1.add(new PieEntry(1, "無花費"));
@@ -579,7 +565,6 @@ public class SelectConsume extends Fragment {
         } else {
             dataSet.setColors(Common.getColor(yVals1.size()));
             dataSet.setDrawValues(true);
-
         }
         dataSet.setValueLinePart1OffsetPercentage(90.f);
         dataSet.setValueLinePart1Length(1f);
@@ -587,41 +572,51 @@ public class SelectConsume extends Fragment {
         dataSet.setValueTextColor(Color.BLACK);
         dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         dataSet.setSliceSpace(0);
-        dataSet.setSelectionShift(20f);
+        dataSet.setSelectionShift(30f);
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(11f);
         data.setValueTextColor(Color.BLACK);
         chart_pie.setData(data);
-        chart_pie.invalidate();
         chart_pie.setBackgroundColor(Color.parseColor("#f5f5f5"));
-        chart_pie.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                chart_pie.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                pieChartwidth=chart_pie.getHeight();
-                if(pieChartwidth>500)
-                {
-                    PieDataSet dataSet = (PieDataSet) chart_pie.getData().getDataSet();
-                    dataSet.setValueTextSize(25f);
-                    dataSet.setSelectionShift(30f);
-                    chart_pie.setEntryLabelTextSize(25f);
-                    chart_pie.invalidate();
-                    xAxis.setTextSize(20f);
-                    YAxis yAxis = chart_bar.getAxis(YAxis.AxisDependency.LEFT);
-                    YAxis yAxis1 = chart_bar.getAxis(YAxis.AxisDependency.RIGHT);
-                    yAxis.setTextSize(20f);
-                    yAxis1.setTextSize(20f);
-                    Legend l = chart_bar.getLegend();
-                    l.setTextSize(20f);
-                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                    l.setYEntrySpace(5f);
-                    l.setFormSize(20f);
-                    chart_bar.invalidate();
-                    chart_bar.notifyDataSetChanged();
-                }
-            }
-        });
+        YAxis yAxis = chart_bar.getAxis(YAxis.AxisDependency.LEFT);
+        YAxis yAxis1 = chart_bar.getAxis(YAxis.AxisDependency.RIGHT);
+        Legend l = chart_bar.getLegend();
+        switch (Common.screenSize){
+            case xLarge:
+                dataSet.setValueTextSize(25f);
+                chart_pie.setEntryLabelTextSize(25f);
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(20f);
+                yAxis1.setTextSize(20f);
+                l.setTextSize(20f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(20f);
+                break;
+            case large:
+                dataSet.setValueTextSize(20f);
+                chart_pie.setEntryLabelTextSize(20f);
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(15f);
+                yAxis1.setTextSize(15f);
+                l.setTextSize(15f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(15f);
+                break;
+            case normal:
+                dataSet.setValueTextSize(12f);
+                xAxis.setTextSize(11f);
+                yAxis.setTextSize(12f);
+                yAxis1.setTextSize(12f);
+                l.setTextSize(12f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(12f);
+                break;
+        }
+        chart_pie.invalidate();
+        chart_bar.notifyDataSetChanged();
     }
 
 
@@ -630,20 +625,20 @@ public class SelectConsume extends Fragment {
         public void onClick(View v) {
             if (Statue == 0) {
                 day = day + 1;
-                end = new GregorianCalendar(year,month,day);
+                end = new GregorianCalendar(year, month, day);
             } else if (Statue == 1) {
                 day = day + 7;
-                period=7;
-                end = new GregorianCalendar(year,month,day);
-                dweek=end.get(Calendar.DAY_OF_WEEK);
+                period = 7;
+                end = new GregorianCalendar(year, month, day);
+                dweek = end.get(Calendar.DAY_OF_WEEK);
             } else if (Statue == 2) {
                 month = month + 1;
-                end = new GregorianCalendar(year,month,day);
-                period=end.getActualMaximum(Calendar.WEEK_OF_MONTH);
+                end = new GregorianCalendar(year, month, day);
+                period = end.getActualMaximum(Calendar.WEEK_OF_MONTH);
             } else {
                 year = year + 1;
-                end = new GregorianCalendar(year,month,day);
-                period=12;
+                end = new GregorianCalendar(year, month, day);
+                period = 12;
             }
             dataAnalyze();
         }
@@ -654,20 +649,20 @@ public class SelectConsume extends Fragment {
         public void onClick(View v) {
             if (Statue == 0) {
                 day = day - 1;
-                end = new GregorianCalendar(year,month,day);
+                end = new GregorianCalendar(year, month, day);
             } else if (Statue == 1) {
                 day = day - 7;
-                period=7;
-                end = new GregorianCalendar(year,month,day);
-                dweek=end.get(Calendar.DAY_OF_WEEK);
+                period = 7;
+                end = new GregorianCalendar(year, month, day);
+                dweek = end.get(Calendar.DAY_OF_WEEK);
             } else if (Statue == 2) {
                 month = month - 1;
-                end = new GregorianCalendar(year,month,day);
-                period=end.getActualMaximum(Calendar.WEEK_OF_MONTH);
+                end = new GregorianCalendar(year, month, day);
+                period = end.getActualMaximum(Calendar.WEEK_OF_MONTH);
             } else {
                 year = year - 1;
-                end = new GregorianCalendar(year,month,day);
-                period=12;
+                end = new GregorianCalendar(year, month, day);
+                period = 12;
             }
             dataAnalyze();
         }
@@ -677,30 +672,29 @@ public class SelectConsume extends Fragment {
     private class ChoicePeriodStatue implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Statue = position;
-                end = new GregorianCalendar(year,month,day);
-                month = end.get(Calendar.MONTH);
-                year = end.get(Calendar.YEAR);
-                dweek = end.get(Calendar.DAY_OF_WEEK);
-                day = end.get(Calendar.DAY_OF_MONTH);
-                Log.d(TAG,"day"+Common.sDay.format(new Date(end.getTimeInMillis()))+" : "+dweek);
-                if (position == 0) {
-                    period = 1;
-                } else if (position == 1) {
-                    if(week==1)
-                    {
-                        dweek=1;
-                    }
-                    period =7+extra;
-                    extra=0;
-                    week=0;
-                } else if (position == 2) {
-                    period = end.getActualMaximum(Calendar.WEEK_OF_MONTH);
-                } else {
-                    month=0;
-                    period =12;
+            Statue = position;
+            end = new GregorianCalendar(year, month, day);
+            month = end.get(Calendar.MONTH);
+            year = end.get(Calendar.YEAR);
+            dweek = end.get(Calendar.DAY_OF_WEEK);
+            day = end.get(Calendar.DAY_OF_MONTH);
+            Log.d(TAG, "day" + Common.sDay.format(new Date(end.getTimeInMillis())) + " : " + dweek);
+            if (position == 0) {
+                period = 1;
+            } else if (position == 1) {
+                if (week == 1) {
+                    dweek = 1;
                 }
-                dataAnalyze();
+                period = 7 + extra;
+                extra = 0;
+                week = 0;
+            } else if (position == 2) {
+                period = end.getActualMaximum(Calendar.WEEK_OF_MONTH);
+            } else {
+                month = 0;
+                period = 12;
+            }
+            dataAnalyze();
         }
 
         @Override
@@ -712,7 +706,7 @@ public class SelectConsume extends Fragment {
     private class ChoiceCarrier implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            CStatue=i;
+            CStatue = i;
             if (i == 0) {
                 ShowConsume = true;
                 ShowAllCarrier = true;
@@ -741,7 +735,7 @@ public class SelectConsume extends Fragment {
     private class charvalue implements OnChartValueSelectedListener {
         @Override
         public void onValueSelected(Entry e, Highlight h) {
-            if (e.getY() <=0) {
+            if (e.getY() <= 0) {
                 return;
             }
             if (Statue == 2) {
@@ -751,19 +745,19 @@ public class SelectConsume extends Fragment {
                     Calendar calendar = new GregorianCalendar(year, month, 1, 0, 0, 0);
                     dweek = calendar.get(Calendar.DAY_OF_WEEK);
                     day = 1;
-                    extra=-dweek+1;
+                    extra = -dweek + 1;
                 } else if (week == period) {
                     Calendar calendar = new GregorianCalendar(year, month, 1);
                     calendar.set(Calendar.WEEK_OF_MONTH, week);
                     calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                     day = calendar.get(Calendar.DAY_OF_MONTH);
-                    extra=calendar.getMaximum(Calendar.DAY_OF_MONTH)-day-7+1;
+                    extra = calendar.getMaximum(Calendar.DAY_OF_MONTH) - day - 7 + 1;
                 } else {
                     Calendar calendar = new GregorianCalendar(year, month, 1);
                     calendar.set(Calendar.WEEK_OF_MONTH, week);
                     calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                     day = calendar.get(Calendar.DAY_OF_MONTH);
-                    extra=0;
+                    extra = 0;
                 }
                 choicePeriod.setSelection(1);
             } else if (Statue == 3) {
@@ -780,11 +774,11 @@ public class SelectConsume extends Fragment {
                 bundle.putSerializable("month", month);
                 bundle.putSerializable("day", day);
                 bundle.putSerializable("index", (int) e.getX());
-                bundle.putSerializable("carrier",choiceD);
-                bundle.putSerializable("total",(int)e.getY());
+                bundle.putSerializable("carrier", choiceD);
+                bundle.putSerializable("total", (int) e.getY());
                 bundle.putSerializable("period", period);
-                bundle.putSerializable("dweek",dweek);
-                bundle.putSerializable("statue",Statue);
+                bundle.putSerializable("dweek", dweek);
+                bundle.putSerializable("statue", Statue);
                 fragment.setArguments(bundle);
                 switchFragment(fragment);
             }
@@ -819,10 +813,10 @@ public class SelectConsume extends Fragment {
             Fragment fragment;
             if (key.equals("其他")) {
                 fragment = new SelectOtherCircle();
-                ArrayList<String> s=new ArrayList<>();
+                ArrayList<String> s = new ArrayList<>();
                 s.addAll(OKey);
                 bundle.putStringArrayList("OKey", s);
-                bundle.putSerializable("total",(int)h.getY());
+                bundle.putSerializable("total", (int) h.getY());
             } else {
                 fragment = new SelectShowCircleDe();
             }
@@ -833,11 +827,11 @@ public class SelectConsume extends Fragment {
             bundle.putSerializable("month", month);
             bundle.putSerializable("day", day);
             bundle.putSerializable("index", list_Data.get((int) h.getX()).getKey());
-            bundle.putSerializable("carrier",choiceD);
+            bundle.putSerializable("carrier", choiceD);
             bundle.putSerializable("statue", Statue);
             bundle.putSerializable("period", period);
-            bundle.putSerializable("dweek",dweek);
-            bundle.putSerializable("position",0);
+            bundle.putSerializable("dweek", dweek);
+            bundle.putSerializable("position", 0);
             fragment.setArguments(bundle);
             switchFragment(fragment);
         }

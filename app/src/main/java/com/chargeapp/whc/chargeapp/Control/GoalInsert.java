@@ -340,6 +340,7 @@ public class GoalInsert extends Fragment {
             MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
             MainActivity.bundles.remove(MainActivity.bundles.size()-1);
             Common.showToast(context,"新增成功!");
+            Common.clossKeyword(context);
         }
     }
 

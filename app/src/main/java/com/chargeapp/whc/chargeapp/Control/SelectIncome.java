@@ -79,7 +79,6 @@ public class SelectIncome extends Fragment {
     public static Calendar end;
     public static int Statue;
     private Activity context;
-    private int pieChartwidth;
 
     @Override
     public void onAttach(Context context) {
@@ -325,7 +324,6 @@ public class SelectIncome extends Fragment {
         yAxis.setAxisMinimum(0);
         yAxis1.setAxisMinimum(0);
 
-
         chart_pie.setUsePercentValues(true);
         chart_pie.setDrawHoleEnabled(true);
         chart_pie.setHoleRadius(7);
@@ -335,34 +333,48 @@ public class SelectIncome extends Fragment {
         chart_pie.setDescription(Common.getDeescription());
         addData();
         chart_pie.getLegend().setEnabled(false);
-        chart_pie.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                chart_pie.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                pieChartwidth=chart_pie.getHeight();
-                if(pieChartwidth>500)
-                {
-                    PieDataSet dataSet = (PieDataSet) chart_pie.getData().getDataSet();
-                    dataSet.setValueTextSize(25f);
-                    dataSet.setSelectionShift(30f);
-                    chart_pie.setEntryLabelTextSize(25f);
-                    chart_pie.invalidate();
-                    XAxis xAxis=chart_bar.getXAxis();
-                    xAxis.setTextSize(20f);
-                    YAxis yAxis = chart_bar.getAxis(YAxis.AxisDependency.LEFT);
-                    YAxis yAxis1 = chart_bar.getAxis(YAxis.AxisDependency.RIGHT);
-                    yAxis.setTextSize(20f);
-                    yAxis1.setTextSize(20f);
-                    Legend l = chart_bar.getLegend();
-                    l.setTextSize(20f);
-                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                    l.setYEntrySpace(5f);
-                    l.setFormSize(20f);
-                    chart_bar.invalidate();
-                    chart_bar.notifyDataSetChanged();
-                }
-            }
-        });
+        PieDataSet dataSet = (PieDataSet) chart_pie.getData().getDataSet();
+        Legend l = chart_bar.getLegend();
+        switch (Common.screenSize){
+            case xLarge:
+                dataSet.setValueTextSize(25f);
+                chart_pie.setEntryLabelTextSize(25f);
+                chart_pie.invalidate();
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(20f);
+                yAxis1.setTextSize(20f);
+                l.setTextSize(20f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(20f);
+                break;
+            case large:
+                dataSet.setValueTextSize(20f);
+                chart_pie.setEntryLabelTextSize(20f);
+                chart_pie.invalidate();
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(15f);
+                yAxis1.setTextSize(15f);
+                l.setTextSize(15f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(15f);
+                break;
+            case normal:
+                dataSet.setValueTextSize(12f);
+                xAxis.setTextSize(11f);
+                yAxis.setTextSize(12f);
+                yAxis1.setTextSize(12f);
+                l.setTextSize(12f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(12f);
+                break;
+        }
+        chart_pie.invalidate();
+        chart_bar.notifyDataSetChanged();
+
+
     }
 
     private void addData() {
@@ -401,7 +413,7 @@ public class SelectIncome extends Fragment {
         }
 
         dataSet.setSliceSpace(0);
-        dataSet.setSelectionShift(20);
+        dataSet.setSelectionShift(30);
         dataSet.setValueLinePart1OffsetPercentage(90.f);
         dataSet.setValueLinePart1Length(1f);
         dataSet.setValueLinePart2Length(.2f);

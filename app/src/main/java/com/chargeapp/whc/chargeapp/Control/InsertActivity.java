@@ -50,6 +50,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final View view = inflater.inflate(R.layout.insert_main, container, false);
+        activity.setTitle("記一筆");
         mViewPager =  view.findViewById(R.id.insert_viewPager);
         exportMoney=view.findViewById(R.id.exportD);
         importMoney=view.findViewById(R.id.showD);

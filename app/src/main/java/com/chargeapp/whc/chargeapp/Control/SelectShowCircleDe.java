@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -91,6 +92,18 @@ public class SelectShowCircleDe extends Fragment {
     private boolean ShowZero;
     private List<PieEntry> yVals1;
     private int total;
+    private Activity activity;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            activity= (Activity) context;
+        }else {
+            activity=getActivity();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -99,8 +112,8 @@ public class SelectShowCircleDe extends Fragment {
         carrierVOS=carrierDB.getAll();
         findViewById(view);
         gson=new Gson();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
-        progressDialog=new ProgressDialog(getActivity());
+        ((AppCompatActivity)activity).getSupportActionBar().setDisplayShowCustomEnabled(false);
+        progressDialog=new ProgressDialog(activity);
         ShowConsume= (boolean) getArguments().getSerializable("ShowConsume");
         ShowAllCarrier= (boolean) getArguments().getSerializable("ShowAllCarrier");
         noShowCarrier= (boolean) getArguments().getSerializable("noShowCarrier");
@@ -142,7 +155,7 @@ public class SelectShowCircleDe extends Fragment {
 
     public void cancelshow(){
         progressDialog.cancel();
-        Common.showToast(getActivity(),"財政部網路忙線~");
+        Common.showToast(activity,"財政部網路忙線~");
     }
 
 
@@ -154,7 +167,7 @@ public class SelectShowCircleDe extends Fragment {
     }
 
     private void setDB() {
-        Common.setChargeDB(getActivity());
+        Common.setChargeDB(activity);
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -233,11 +246,10 @@ public class SelectShowCircleDe extends Fragment {
 
         // create pie data set
         dataSet.setSliceSpace(0);
-        dataSet.setSelectionShift(20);
+        dataSet.setSelectionShift(30);
         // instantiate pie data object now
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(12f);
         data.setValueTextColor(Color.BLACK);
         return data;
     }
@@ -336,7 +348,7 @@ public class SelectShowCircleDe extends Fragment {
         pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleRadius(7);
         pieChart.setTransparentCircleRadius(10);
-        pieChart.setRotationAngle(60);
+        pieChart.setRotationAngle(30);
         pieChart.setRotationEnabled(true);
         pieChart.setEntryLabelColor(Color.BLACK);
         pieChart.setDescription(Common.getDeescription());
@@ -344,24 +356,25 @@ public class SelectShowCircleDe extends Fragment {
         pieChart.invalidate();
         pieChart.setOnChartValueSelectedListener(new pieValue());
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
-        pieChart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                pieChart.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                int pieChartwidth = pieChart.getHeight();
-                if(pieChartwidth>500)
-                {
-                    PieDataSet dataSet = (PieDataSet) pieChart.getData().getDataSet();
-                    dataSet.setValueTextSize(25f);
-                    dataSet.setSelectionShift(30f);
-                    pieChart.setEntryLabelTextSize(25f);
-                    pieChart.invalidate();
-                }
-            }
-        });
+        PieDataSet dataSet = (PieDataSet) pieChart.getData().getDataSet();
+        switch (Common.screenSize){
+            case xLarge:
+                dataSet.setValueTextSize(25f);
+                pieChart.setEntryLabelTextSize(25f);
+                break;
+            case large:
+                dataSet.setValueTextSize(20f);
+                pieChart.setEntryLabelTextSize(20f);
+                break;
+            case normal:
+                dataSet.setValueTextSize(12f);
+                pieChart.setEntryLabelTextSize(12f);
+                break;
+        }
+        pieChart.invalidate();
+        pieChart.notifyDataSetChanged();
 
-
-        getActivity().setTitle(title);
+        activity.setTitle(title);
         detail.setText(mainTitle+" : 共"+Common.nf.format(total)+"元");
         if(listView.getAdapter()!=null)
         {
@@ -369,7 +382,7 @@ public class SelectShowCircleDe extends Fragment {
             adapter.setObjects(objects);
             adapter.notifyDataSetChanged();
         }else {
-            listView.setAdapter(new ListAdapter(getActivity(),objects));
+            listView.setAdapter(new ListAdapter(activity,objects));
         }
         listView.setSelection(position);
         progressDialog.cancel();
@@ -467,7 +480,7 @@ public class SelectShowCircleDe extends Fragment {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SelectShowCircleDe.this.getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SelectShowCircleDe.this.activity.getSystemService(Context.CONNECTIVITY_SERVICE);
                             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                             if(mNetworkInfo!=null)
                             {
@@ -476,7 +489,7 @@ public class SelectShowCircleDe extends Fragment {
                                 progressDialog.show();
                                 SelectShowCircleDe.this.position=position;
                             }else {
-                                Common.showToast(SelectShowCircleDe.this.getActivity(),"網路沒有開啟，無法下載!");
+                                Common.showToast(SelectShowCircleDe.this.activity,"網路沒有開啟，無法下載!");
                             }
 
                         }

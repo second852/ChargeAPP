@@ -242,28 +242,29 @@ public class HomePage extends Fragment {
         dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         dataSet.setSliceSpace(0);
         dataSet.setSelectionShift(20f);
-        pieChart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                pieChart.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                pieChartwidth=pieChart.getHeight();
-                if(pieChartwidth>500)
-                {
-                    dataSet.setValueTextSize(25f);
-                    pieChart.setEntryLabelTextSize(25f);
-                    pieChart.invalidate();
-                }
-            }
-        });
+        switch (Common.screenSize){
+            case xLarge:
+                dataSet.setValueTextSize(25f);
+                pieChart.setEntryLabelTextSize(25f);
+                break;
+            case large:
+                dataSet.setValueTextSize(18f);
+                pieChart.setEntryLabelTextSize(18f);
+                break;
+            case normal:
+                dataSet.setValueTextSize(11f);
+                pieChart.setEntryLabelTextSize(11f);
+                break;
+        }
 
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(11f);
         data.setValueTextColor(Color.BLACK);
         pieChart.setData(data);
-        pieChart.invalidate();
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
         pieChart.setOnChartValueSelectedListener(new pieValue());
+        pieChart.invalidate();
+        pieChart.notifyDataSetChanged();
     }
 
 

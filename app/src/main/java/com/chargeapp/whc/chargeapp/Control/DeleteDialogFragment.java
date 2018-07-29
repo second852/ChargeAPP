@@ -1,7 +1,9 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -49,6 +51,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     private BankTybeDB bankTybeDB;
     private CarrierDB carrierDB;
     private ElePeriodDB elePeriodDB;
+    private Activity activity;
 
     public Object getObject() {
         return object;
@@ -63,10 +66,22 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         this.fragement = fragement;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            activity= (Activity) context;
+        }else {
+            activity=getActivity();
+        }
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String message=null;
+        Common.setChargeDB(activity);
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());

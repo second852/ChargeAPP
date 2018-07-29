@@ -80,7 +80,7 @@ public class TypeDB {
     }
 
     public TypeVO findTypeName(String n) {
-        String sql = "SELECT * FROM Type where name = '"+n+"' order by id;";
+        String sql = "SELECT * FROM Type where TRIM (name) = '"+n+"' order by id;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         TypeVO typeVO=null;
@@ -93,6 +93,24 @@ public class TypeDB {
         }
         cursor.close();
         return typeVO;
+    }
+
+    public List<TypeVO> findLikeTypeName(String n) {
+        String sql = "SELECT * FROM Type where name like '%"+n+"%' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        TypeVO typeVO=null;
+        List<TypeVO> typeVOS=new ArrayList<>();
+        while (cursor.moveToNext()) {
+            typeVO=new TypeVO();
+            typeVO.setId(cursor.getInt(0));
+            typeVO.setGroupNumber(cursor.getString(1));
+            typeVO.setName(cursor.getString(2));
+            typeVO.setImage(cursor.getInt(3));
+            typeVOS.add(typeVO);
+        }
+        cursor.close();
+        return typeVOS;
     }
 
     public TypeVO findById(int id) {

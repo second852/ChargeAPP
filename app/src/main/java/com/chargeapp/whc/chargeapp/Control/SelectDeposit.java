@@ -91,11 +91,11 @@ public class SelectDeposit extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_deposit, container, false);
+        Common.setChargeDB(context);
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalVO = goalDB.getFindType("儲蓄");
         end = Calendar.getInstance();
         year = end.get(Calendar.YEAR);
-        Common.setChargeDB(context);
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -192,7 +192,7 @@ public class SelectDeposit extends Fragment {
         dataSet.setHighlightEnabled(false);
         dataSet.setDrawValues(false);
         LineData data = new LineData(dataSet);
-        final XAxis xAxis = chart_line.getXAxis();
+        XAxis xAxis = chart_line.getXAxis();
         xAxis.setGranularity(1f);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setValueFormatter(new IAxisValueFormatter() {
@@ -238,30 +238,40 @@ public class SelectDeposit extends Fragment {
 
             }
         }
+        YAxis yAxis = chart_line.getAxis(YAxis.AxisDependency.LEFT);
+        YAxis yAxis1 = chart_line.getAxis(YAxis.AxisDependency.RIGHT);
+        Legend l = chart_line.getLegend();
+        switch (Common.screenSize){
+            case xLarge:
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(20f);
+                yAxis1.setTextSize(20f);
+                l.setTextSize(20f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(20f);
+                break;
+            case large:
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(20f);
+                yAxis1.setTextSize(20f);
+                l.setTextSize(20f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(20f);
+                break;
+            case normal:
+                xAxis.setTextSize(11f);
+                yAxis.setTextSize(12f);
+                yAxis1.setTextSize(12f);
+                l.setTextSize(12f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(12f);
+                break;
+        }
         chart_line.invalidate();
-        chart_line.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                chart_line.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                int pieChartwidth = chart_line.getHeight();
-                if(pieChartwidth>500)
-                {
-                    XAxis xAxis=chart_line.getXAxis();
-                    xAxis.setTextSize(20f);
-                    YAxis yAxis = chart_line.getAxis(YAxis.AxisDependency.LEFT);
-                    YAxis yAxis1 = chart_line.getAxis(YAxis.AxisDependency.RIGHT);
-                    yAxis.setTextSize(20f);
-                    yAxis1.setTextSize(20f);
-                    Legend l = chart_line.getLegend();
-                    l.setTextSize(20f);
-                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                    l.setYEntrySpace(5f);
-                    l.setFormSize(20f);
-                    chart_line.invalidate();
-                    chart_line.notifyDataSetChanged();
-                }
-            }
-        });
+        chart_line.notifyDataSetChanged();
     }
 
     private List<String> getLabels() {

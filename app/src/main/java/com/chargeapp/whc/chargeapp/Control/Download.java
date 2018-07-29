@@ -20,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,6 +98,18 @@ public class Download extends AppCompatActivity {
         adView =findViewById(R.id.adView);
         Common.setAdView(adView,this);
         Common.lostCarrier=new ArrayList<>();
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        if(dpWidth>650)
+        {
+            Common.screenSize= Common.Screen.xLarge;
+        }else if(dpWidth>470)
+        {
+            Common.screenSize= Common.Screen.large;
+        }else{
+            Common.screenSize= Common.Screen.normal;
+        }
     }
 
     private void setJob()

@@ -237,6 +237,7 @@ public class PriceInvoice extends Fragment {
         showRemain=view.findViewById(R.id.showRemain);
         donateRL=view.findViewById(R.id.donateRL);
         showRemain.setText("(雲端發票專屬獎中獎清單\n請到財政部網站確認)");
+        Common.setChargeDB(context);
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         adView = view.findViewById(R.id.adView);
         Common.setAdView(adView,context);

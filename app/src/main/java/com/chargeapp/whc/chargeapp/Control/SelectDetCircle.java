@@ -8,12 +8,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
@@ -68,6 +72,7 @@ public class SelectDetCircle extends Fragment {
     private Activity context;
     private AdView adView;
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -82,7 +87,7 @@ public class SelectDetCircle extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.select_con_detail, container, false);
+        final View view = inflater.inflate(R.layout.select_con_detail, container, false);
         ((AppCompatActivity)context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         adView =view.findViewById(R.id.adView);
         Common.setAdView(adView,context);
@@ -205,7 +210,6 @@ public class SelectDetCircle extends Fragment {
         // instantiate pie data object now
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(14f);
         data.setValueTextColor(Color.BLACK);
         return data;
     }
@@ -230,7 +234,7 @@ public class SelectDetCircle extends Fragment {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                 itemView = layoutInflater.inflate(R.layout.select_con_detail_item, parent, false);
             }
-            PieChart pieChart = itemView.findViewById(R.id.pieChart);
+            final PieChart pieChart = itemView.findViewById(R.id.pieChart);
             TextView detail = itemView.findViewById(R.id.detail);
             String key = KeyList.get(position);
             pieChart.setData(addData(key, detail));
@@ -251,6 +255,24 @@ public class SelectDetCircle extends Fragment {
             pieChart.invalidate();
             pieChart.setEntryLabelColor(Color.BLACK);
             pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
+            PieDataSet dataSet= (PieDataSet) pieChart.getData().getDataSet();
+            switch (Common.screenSize){
+                case xLarge:
+                    dataSet.setValueTextSize(25f);
+                    pieChart.setEntryLabelTextSize(25f);
+                    break;
+                case large:
+                    dataSet.setValueTextSize(20f);
+                    pieChart.setEntryLabelTextSize(20f);
+                    break;
+                case normal:
+                    dataSet.setValueTextSize(12f);
+                    pieChart.setEntryLabelTextSize(12f);
+                    break;
+
+            }
+            pieChart.invalidate();
+            pieChart.notifyDataSetChanged();
             return itemView;
         }
 

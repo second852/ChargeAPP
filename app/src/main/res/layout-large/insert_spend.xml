@@ -24,26 +24,28 @@
             <RelativeLayout
                 android:id="@+id/qrcode"
                 android:layout_width="300dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="5dp"
                 android:background="#CCEEFF">
 
                 <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:id="@+id/qrCodeP"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center"
-                    android:layout_toLeftOf="@+id/qrText"
+                    android:layout_marginLeft="20dp"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/qrcode" />
 
                 <TextView
                     android:id="@+id/qrText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
+                    android:layout_toRightOf="@+id/qrCodeP"
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="20dp"
                     android:text="QRCode輸入"
                     android:textColor="#000000"
                     android:textSize="35sp" />

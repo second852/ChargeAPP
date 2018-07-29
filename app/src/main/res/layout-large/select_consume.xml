@@ -83,7 +83,8 @@
                 />
         </RelativeLayout>
         <TextView
-            android:layout_marginTop="10dp"
+
+            android:layout_marginTop="20dp"
             android:textColor="#000000"
             android:textSize="30sp"
             android:id="@+id/describe"

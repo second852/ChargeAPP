@@ -107,12 +107,27 @@ public class UpdateConsumeType extends Fragment {
 
     private void setTypeDetail() {
         typeDetailVO= (TypeDetailVO) getArguments().getSerializable("TypeDetailVO");
-        TypeVO typeVO = typeDB.findTypeName(typeDetailVO.getGroupNumber());
-        mainImage.setImageResource(Download.imageAll[typeVO.getImage()]);
-        mainName.setText(typeVO.getName().trim());
+        TypeVO typeVO = typeDB.findTypeName(typeDetailVO.getGroupNumber().trim());
+        mainName.setText(typeDetailVO.getGroupNumber().trim());
         mainName.setFocusable(false);
         mainName.setFocusableInTouchMode(false);
         mainName.setBackgroundColor(Color.parseColor("#DDDDDD"));
+        if(typeVO!=null)
+        {
+            mainImage.setImageResource(Download.imageAll[typeVO.getImage()]);
+        }else{
+            List<TypeVO> typeVOS = typeDB.findLikeTypeName(typeDetailVO.getGroupNumber().trim());
+            if(typeVOS.size()>0)
+            {
+
+            }else{
+                mainName.setText(typeDetailVO.getGroupNumber().trim());
+                mainName.setFocusable(true);
+                mainName.setFocusableInTouchMode(true);
+                mainName.setBackgroundColor(Color.parseColor("#FFEE99"));
+            }
+        }
+
         secondImage.setImageResource(Download.imageAll[typeDetailVO.getImage()]);
         secondName.setText(typeDetailVO.getName());
         secondKey.setText(typeDetailVO.getKeyword());
@@ -261,12 +276,7 @@ public class UpdateConsumeType extends Fragment {
 
     public void switchFramgent(Fragment fragment) {
         //關閉鍵盤
-        View v =UpdateConsumeType.this.context.getCurrentFocus();
-        if (v != null) {
-            InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-        }
-
+        Common.clossKeyword(context);
         MainActivity.bundles.remove(MainActivity.bundles.size()-1);
         MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
 

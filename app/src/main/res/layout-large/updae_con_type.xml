@@ -39,6 +39,7 @@
                     android:layout_marginTop="25dp"
                     />
                 <TextView
+                    android:id="@+id/mainT"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="設定圖片"
@@ -278,6 +279,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="5dp"
-        ads:adSize="BANNER"
+        ads:adSize="SMART_BANNER"
         ads:adUnitId="ca-app-pub-5169620543343332/5257007139" />
 </RelativeLayout>

@@ -251,7 +251,6 @@ public class SelectOtherCircle extends Fragment {
         dataSet.setValueTextColor(Color.BLACK);
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(14f);
         data.setValueTextColor(Color.BLACK);
         return data;
     }
@@ -295,21 +294,23 @@ public class SelectOtherCircle extends Fragment {
                 pieChart.setDescription(Common.getDeescription());
                 pieChart.invalidate();
                 pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
-                pieChart.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        pieChart.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        int pieChartwidth = pieChart.getHeight();
-                        if(pieChartwidth>500)
-                        {
-                            PieDataSet dataSet = (PieDataSet) pieChart.getData().getDataSet();
-                            dataSet.setValueTextSize(25f);
-                            dataSet.setSelectionShift(30f);
-                            pieChart.setEntryLabelTextSize(25f);
-                            pieChart.invalidate();
-                        }
-                    }
-                });
+                PieDataSet dataSet = (PieDataSet) pieChart.getData().getDataSet();
+                switch (Common.screenSize){
+                    case xLarge:
+                        dataSet.setValueTextSize(25f);
+                        pieChart.setEntryLabelTextSize(25f);
+                        break;
+                    case large:
+                        dataSet.setValueTextSize(20f);
+                        pieChart.setEntryLabelTextSize(20f);
+                        break;
+                    case normal:
+                        dataSet.setValueTextSize(12f);
+                        pieChart.setEntryLabelTextSize(12f);
+                        break;
+                }
+                pieChart.invalidate();
+                pieChart.notifyDataSetChanged();
             }
             return itemView;
         }

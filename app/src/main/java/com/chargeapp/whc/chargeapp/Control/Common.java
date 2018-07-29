@@ -1,19 +1,13 @@
 package com.chargeapp.whc.chargeapp.Control;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
@@ -27,13 +21,11 @@ import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
-import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.components.Description;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.google.gson.JsonObject;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -48,7 +40,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,8 +67,12 @@ public class Common {
     public static SimpleDateFormat sYear = new SimpleDateFormat("yyy 年 MM 月");
     public static NumberFormat nf = NumberFormat.getNumberInstance();
     public static List<CarrierVO> lostCarrier;
-
-
+    public static Screen screenSize;
+    public enum Screen {
+        xLarge,
+        large,
+        normal
+    }
 
     public static void setChargeDB(Context activity)
     {

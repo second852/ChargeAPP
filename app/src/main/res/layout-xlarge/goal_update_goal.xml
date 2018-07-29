@@ -98,7 +98,7 @@
                     android:layout_gravity="center_vertical"
                     android:background="#DDDDDD"
                     android:visibility="visible"
-                    android:textSize="20sp" />
+                    android:textSize="40sp" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -125,7 +125,7 @@
                     android:layout_toRightOf="@+id/dateT"
                     android:layout_marginLeft="50dp"
                     android:theme="@style/spinner_xlarge"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     android:gravity="center" />
                 <TextView
                     android:id="@+id/shift"
@@ -309,6 +309,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="5dp"
-        ads:adSize="LEADERBOARD"
+        ads:adSize="SMART_BANNER"
         ads:adUnitId="ca-app-pub-5169620543343332/5257007139" />
 </RelativeLayout>
