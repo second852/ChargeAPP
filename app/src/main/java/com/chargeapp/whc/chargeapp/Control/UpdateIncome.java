@@ -378,8 +378,8 @@ public class UpdateIncome extends Fragment {
 
     private void setBankVO() {
         g = new HashMap<>();
-        g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString()));
-        g.put("choicedate", isnull(choiceday.getSelectedItem()));
+        g.put("choicestatue", isnull(choiceStatue.getSelectedItem()).trim());
+        g.put("choicedate", isnull(choiceday.getSelectedItem()).trim());
         String fixdatedetail = gson.toJson(g);
         String[] dates = date.getText().toString().split("/");
         Calendar c = Calendar.getInstance();
@@ -388,7 +388,7 @@ public class UpdateIncome extends Fragment {
         day = Integer.valueOf(dates[2]);
         c.set(year, month, day, 12, 0, 0);
         Date d = new Date(c.getTimeInMillis());
-        bankVO.setMaintype(name.getText().toString());
+        bankVO.setMaintype(name.getText().toString().trim());
         try {
             bankVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
         }catch (NumberFormatException e)
@@ -398,7 +398,7 @@ public class UpdateIncome extends Fragment {
         bankVO.setDate(d);
         bankVO.setFixDate(String.valueOf(fixdate.isChecked()));
         bankVO.setFixDateDetail(fixdatedetail);
-        bankVO.setDetailname(detailname.getText().toString());
+        bankVO.setDetailname(detailname.getText().toString().trim());
     }
 
     private void setFirstGrid() {
