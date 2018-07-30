@@ -150,7 +150,7 @@ public class InsertIncomeType extends Fragment {
     private class insertType implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            String mainType = mainName.getText().toString();
+            String mainType = mainName.getText().toString().trim();
             if (mainType == null || mainType.isEmpty()) {
                 mainName.setError("項目種類不能空白");
                 return;

@@ -83,6 +83,8 @@ public class UpdateSpend extends Fragment {
     private TextView noWekT,notifyT;
     private Activity context;
     private String oldMainType;
+    private List<TypeVO> typeVOS;
+    private TypeVO typeVO;
 
     @Override
     public void onAttach(Context context) {
@@ -285,6 +287,7 @@ public class UpdateSpend extends Fragment {
         bundle.putSerializable("object", consumeVO);
         bundle.putSerializable("consumeVO",consumeVO);
         bundle.putSerializable("action", action);
+        bundle.putSerializable("typeVO",typeVO);
         if (action.equals("SelectDetList")) {
             bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
             bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
@@ -370,7 +373,7 @@ public class UpdateSpend extends Fragment {
     private void setFirstGrid() {
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
-        List<TypeVO> typeVOS = typeDB.getAll();
+        typeVOS = typeDB.getAll();
         for (TypeVO t : typeVOS) {
             item = new HashMap<String, Object>();
             item.put("image", Download.imageAll[t.getImage()]);
@@ -676,7 +679,7 @@ public class UpdateSpend extends Fragment {
 
     private void setConsume() {
         g = new HashMap<>();
-        g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString()));
+        g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString().trim()));
         g.put("choicedate", isnull(choiceday.getSelectedItem()));
         g.put("noweek", String.valueOf(noweek));
         String fixdatedetail = gson.toJson(g);
@@ -754,6 +757,10 @@ public class UpdateSpend extends Fragment {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             TextView textView = view.findViewById(R.id.text);
             String type = textView.getText().toString().trim();
+            if(i<typeVOS.size())
+            {
+                typeVO=typeVOS.get(i);
+            }
             if (type.equals("新增")) {
                 Common.showfirstgrid = true;
                 returnThisFramgent(new InsertConsumeType());
@@ -796,6 +803,7 @@ public class UpdateSpend extends Fragment {
             secondL.setVisibility(View.GONE);
         }
     }
+
 
     private class showSecondG implements View.OnClickListener {
         @Override

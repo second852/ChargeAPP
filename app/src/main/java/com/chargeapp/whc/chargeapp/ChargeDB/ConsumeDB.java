@@ -26,7 +26,7 @@ public class ConsumeDB {
     }
 
     public List<ConsumeVO> getAll() {
-        String sql = "SELECT * FROM Consumer order by id;";
+        String sql = "SELECT * FROM Consumer order by id desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();

@@ -363,13 +363,13 @@ public class GoalUpdate extends Fragment {
             if (dayStatue.equals("今日")) {
                 goalVO.setStartTime(new Date(System.currentTimeMillis()));
             }
-            String reMa = (remindD.getSelectedItem() == null) ? "" : remindD.getSelectedItem().toString();
+            String reMa = (remindD.getSelectedItem() == null) ? "" : remindD.getSelectedItem().toString().trim();
             goalVO.setName(goalName);
             goalVO.setMoney(Integer.valueOf(goalMoney));
             goalVO.setNoWeekend(noWeekend.isChecked());
             goalVO.setNotify(remind.isChecked());
             goalVO.setNotifyDate(reMa);
-            goalVO.setNotifyStatue(remindS.getSelectedItem().toString());
+            goalVO.setNotifyStatue(remindS.getSelectedItem().toString().trim());
             if(poistion==0&&goalVO.getType().trim().equals("儲蓄"))
             {
                 goalVO.setTimeStatue("今日");

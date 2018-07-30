@@ -100,7 +100,7 @@ public class GoalDB {
     }
 
     public GoalVO getFindType(String type) {
-        String sql = "SELECT * FROM goal where type like '%"+type+"%' and statue = 0 ;";
+        String sql = "SELECT * FROM goal where trim(type) = '"+type+"' and statue = 0 ;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         GoalVO goalVO=null;
@@ -124,7 +124,7 @@ public class GoalDB {
     }
 
     public GoalVO getFindType(String type,String name) {
-        String sql = "SELECT * FROM goal where type like '%"+type+"%' and name like '%"+name +"%' ;";
+        String sql = "SELECT * FROM goal where trim(type) = '"+type+"' and trim(name) = '"+name +"' ;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         GoalVO goalVO=null;

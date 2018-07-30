@@ -72,6 +72,8 @@ public class InsertSpend extends Fragment {
     private TextView noWekT, notifyT;
     private Activity context;
     private String oldMainType;
+    private TypeVO typeVO;
+    private List<TypeVO> typeVOS;
 
 
     @Override
@@ -260,7 +262,7 @@ public class InsertSpend extends Fragment {
         try {
             HashMap item;
             ArrayList items = new ArrayList<Map<String, Object>>();
-            List<TypeVO> typeVOS = typeDB.getAll();
+            typeVOS = typeDB.getAll();
             for (TypeVO t : typeVOS) {
                 item = new HashMap<String, Object>();
                 item.put("image", Download.imageAll[t.getImage()]);
@@ -585,6 +587,10 @@ public class InsertSpend extends Fragment {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             TextView textView = view.findViewById(R.id.text);
             String type = textView.getText().toString().trim();
+            if(i<typeVOS.size())
+            {
+                typeVO=typeVOS.get(i);
+            }
             if (type.equals("新增")) {
                 Common.showfirstgrid = true;
                 returnThisFramgent(new InsertConsumeType());
@@ -645,6 +651,7 @@ public class InsertSpend extends Fragment {
         setConsume();
         needSet = true;
         Bundle bundle = new Bundle();
+        bundle.putSerializable("typeVO",typeVO);
         bundle.putSerializable("object", consumeVO);
         bundle.putSerializable("action", "InsertSpend");
         bundle.putSerializable("needSet", true);
@@ -670,15 +677,15 @@ public class InsertSpend extends Fragment {
         Calendar c = Calendar.getInstance();
         c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
         Date d = new Date(c.getTimeInMillis());
-        consumeVO.setMaintype(name.getText().toString());
-        consumeVO.setSecondType(secondname.getText().toString());
+        consumeVO.setMaintype(name.getText().toString().trim());
+        consumeVO.setSecondType(secondname.getText().toString().trim());
         try {
             consumeVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
         } catch (NumberFormatException e) {
             consumeVO.setMoney(0);
         }
         consumeVO.setDate(d);
-        consumeVO.setNumber(number.getText().toString());
+        consumeVO.setNumber(number.getText().toString().trim());
         consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
         consumeVO.setFixDateDetail(fixdatedetail);
         consumeVO.setNotify(String.valueOf(notify.isChecked()));

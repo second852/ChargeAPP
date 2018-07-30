@@ -64,7 +64,11 @@ public class UpdateConsumeType extends Fragment {
     private String oldName;
     private Activity context;
     private AdView adView;
-    private TextView button;
+    private TextView button,gridT;
+    private List<TypeVO> typeVOS;
+    private boolean insertNewType,isTypeVO;
+    private TypeVO typeVO;
+
 
     @Override
     public void onAttach(Context context) {
@@ -90,41 +94,55 @@ public class UpdateConsumeType extends Fragment {
         progressDialog=new ProgressDialog(context);
         handler=new Handler();
         findViewById(view);
-        setGridPicture();
         setTypeDetail();
-        secondImage.setOnClickListener(new showImage());
-        choiceG.setOnItemClickListener(new choicePicture());
-        clear.setOnClickListener(new clearOnClick());
-        save.setOnClickListener(new insertType());
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                choiceL.setVisibility(View.GONE);
-            }
-        });
         return view;
     }
 
     private void setTypeDetail() {
         typeDetailVO= (TypeDetailVO) getArguments().getSerializable("TypeDetailVO");
-        TypeVO typeVO = typeDB.findTypeName(typeDetailVO.getGroupNumber().trim());
-        mainName.setText(typeDetailVO.getGroupNumber().trim());
-        mainName.setFocusable(false);
-        mainName.setFocusableInTouchMode(false);
-        mainName.setBackgroundColor(Color.parseColor("#DDDDDD"));
+        typeVO = typeDB.findTypeName(typeDetailVO.getGroupNumber().trim());
         if(typeVO!=null)
         {
+            mainName.setText(typeDetailVO.getGroupNumber().trim());
+            mainName.setFocusable(false);
+            mainName.setFocusableInTouchMode(false);
+            mainName.setBackgroundColor(Color.parseColor("#DDDDDD"));
             mainImage.setImageResource(Download.imageAll[typeVO.getImage()]);
+            button.setOnClickListener(new chioceGClose());
+            setGridPicture();
         }else{
-            List<TypeVO> typeVOS = typeDB.findLikeTypeName(typeDetailVO.getGroupNumber().trim());
+            typeVOS = typeDB.findLikeTypeName(typeDetailVO.getGroupNumber().trim());
             if(typeVOS.size()>0)
             {
-
+                gridT.setText("查無主項目類別\n以下可能是相關的類別\n請做確認!");
+                HashMap item;
+                ArrayList items = new ArrayList<Map<String, Object>>();
+                for (TypeVO t:typeVOS) {
+                    item = new HashMap<String, Object>();
+                    item.put("image",Download.imageAll[t.getImage()] );
+                    item.put("text",t.getName());
+                    items.add(item);
+                }
+                SimpleAdapter adapter = new SimpleAdapter(context,
+                        items, R.layout.main_item, new String[]{"image", "text"},
+                        new int[]{R.id.image, R.id.text});
+                choiceG.setAdapter(adapter);
+                choiceG.setNumColumns(4);
+                choiceL.setVisibility(View.VISIBLE);
+                choiceG.setOnItemClickListener(new choiceCurrentPicture());
+                button.setOnClickListener(new InsertNewType());
             }else{
+                insertNewType=true;
+                typeVO=new TypeVO();
+                setGridPicture();
+                button.setOnClickListener(new chioceGClose());
+                mainImage.setOnClickListener(new showMainImage());
+                mainImage.setImageResource(R.drawable.add);
                 mainName.setText(typeDetailVO.getGroupNumber().trim());
                 mainName.setFocusable(true);
                 mainName.setFocusableInTouchMode(true);
                 mainName.setBackgroundColor(Color.parseColor("#FFEE99"));
+                Common.showToast(context,"找不到主要類別，會新增此相關主要類別!");
             }
         }
 
@@ -135,6 +153,7 @@ public class UpdateConsumeType extends Fragment {
     }
 
     private void setGridPicture() {
+        gridT.setText("選擇圖片");
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
         for (int i = 0; i < Download.imageAll.length; i++) {
@@ -148,7 +167,17 @@ public class UpdateConsumeType extends Fragment {
                 new int[]{R.id.image, R.id.text});
         choiceG.setAdapter(adapter);
         choiceG.setNumColumns(4);
+        setOnClickListener();
     }
+
+    public void setOnClickListener()
+    {
+        secondImage.setOnClickListener(new showImage());
+        choiceG.setOnItemClickListener(new choicePicture());
+        clear.setOnClickListener(new clearOnClick());
+        save.setOnClickListener(new insertType());
+    }
+
 
     private void findViewById(View view) {
         typeDetailVO = new TypeDetailVO();
@@ -163,12 +192,24 @@ public class UpdateConsumeType extends Fragment {
         choiceG = view.findViewById(R.id.choiceG);
         adView = view.findViewById(R.id.adView);
         button=view.findViewById(R.id.button);
+        gridT=view.findViewById(R.id.gridT);
         Common.setAdView(adView,context);
     }
 
     private class showImage implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            isTypeVO=false;
+            choiceL.setVisibility(View.VISIBLE);
+            resultI = (ImageView) view;
+        }
+    }
+
+
+    private class showMainImage implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            isTypeVO=true;
             choiceL.setVisibility(View.VISIBLE);
             resultI = (ImageView) view;
         }
@@ -178,8 +219,13 @@ public class UpdateConsumeType extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             resultI.setImageResource(Download.imageAll[i]);
-            typeDetailVO.setImage(i);
             choiceL.setVisibility(View.GONE);
+            if(isTypeVO)
+            {
+                typeVO.setImage(i);
+            }else {
+                typeDetailVO.setImage(i);
+            }
         }
     }
 
@@ -198,10 +244,26 @@ public class UpdateConsumeType extends Fragment {
             String mainType = mainName.getText().toString();
             String secondTitle = secondName.getText().toString().trim();
             String keyWorld = secondKey.getText().toString().trim();
-            if (mainType == null || mainType.isEmpty()) {
-                mainName.setError("主項目不能空白");
-                return;
+
+            if(insertNewType)
+            {
+                if (mainType == null || mainType.isEmpty()) {
+                    mainName.setError("主項目不能空白");
+                    return;
+                }
+                if(mainType.indexOf(";")!=-1)
+                {
+                    mainName.setError("項目種類不能有特殊符號");
+                    return;
+                }
+                TypeVO oldTypeVO=typeDB.findTypeName(mainType);
+                if(oldTypeVO!=null)
+                {
+                    mainName.setError("主項目種類不能重複");
+                    return;
+                }
             }
+
             if (secondTitle == null || secondTitle.isEmpty()) {
                 secondName.setError("次項目不能空白");
                 return;
@@ -210,17 +272,13 @@ public class UpdateConsumeType extends Fragment {
                 secondKey.setError("關鍵字不能空白");
                 return;
             }
-            if(mainType.indexOf(";")!=-1)
-            {
-                mainName.setError("項目種類不能有特殊符號");
-                return;
-            }
+
             if (secondTitle.indexOf(";") !=-1) {
                 secondName.setError("次項目不能有特殊符號");
                 return;
             }
 
-            TypeDetailVO old=typeDetailDB.findByname(secondName.getText().toString().trim(),mainName.getText().toString().trim());
+            TypeDetailVO old=typeDetailDB.findByname(secondTitle,mainType);
             if((old!=null)&&(!secondTitle.trim().equals(oldName.trim())))
             {
                 secondName.setError("次項目不能重複");
@@ -258,6 +316,14 @@ public class UpdateConsumeType extends Fragment {
                 c.setSecondType(secondName.getText().toString().trim());
                 consumeDB.update(c);
             }
+
+            if(insertNewType)
+            {
+                typeVO.setName(mainName.getText().toString().trim());
+                typeVO.setGroupNumber(mainName.getText().toString().trim());
+                typeDB.insert(typeVO);
+            }
+
             typeDetailVO.setGroupNumber(mainName.getText().toString().trim());
             typeDetailVO.setName(secondName.getText().toString().trim());
             typeDetailVO.setKeyword(secondKey.getText().toString().trim());
@@ -286,5 +352,69 @@ public class UpdateConsumeType extends Fragment {
         }
         fragmentTransaction.replace(R.id.body, fragment);
         fragmentTransaction.commit();
+    }
+
+    private class chioceGClose implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            choiceL.setVisibility(View.GONE);
+        }
+    }
+
+    private class choiceCurrentPicture implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            insertNewType=false;
+            TypeVO typeVO=typeVOS.get(i);
+            List<TypeDetailVO> typeDetailVOS = typeDetailDB.findByGroupname(typeVO.getName());
+            for (TypeDetailVO t : typeDetailVOS) {
+                t.setGroupNumber(typeVO.getName().trim());
+                typeDetailDB.update(t);
+            }
+            List<ConsumeVO> consumeVOS = consumeDB.getMainTypePeriod(typeVO.getName());
+            for (ConsumeVO c : consumeVOS) {
+                c.setMaintype(typeVO.getName().trim());
+                consumeDB.update(c);
+            }
+            List<InvoiceVO> invoiceVOS = invoiceDB.getInvoiceMainType(typeVO.getName());
+            for (InvoiceVO invoiceVO : invoiceVOS) {
+                invoiceVO.setMaintype(typeVO.getName().trim());
+                invoiceDB.update(invoiceVO);
+            }
+
+            typeVO.setGroupNumber(typeVO.getGroupNumber().trim());
+            typeVO.setName(typeVO.getName().trim());
+            typeDB.update(typeVO);
+
+            typeDetailVO.setGroupNumber(typeVO.getName().trim());
+            typeDetailDB.update(typeDetailVO);
+
+            mainName.setText(typeVO.getGroupNumber().trim());
+            mainName.setFocusable(false);
+            mainName.setFocusableInTouchMode(false);
+            mainName.setBackgroundColor(Color.parseColor("#DDDDDD"));
+            mainImage.setImageResource(Download.imageAll[typeVO.getImage()]);
+            choiceL.setVisibility(View.GONE);
+            button.setOnClickListener(new chioceGClose());
+            setGridPicture();
+        }
+    }
+
+    private class InsertNewType implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            typeVO=new TypeVO();
+            insertNewType=true;
+            setGridPicture();
+            choiceL.setVisibility(View.GONE);
+            button.setOnClickListener(new chioceGClose());
+            mainImage.setOnClickListener(new showMainImage());
+            mainImage.setImageResource(R.drawable.add);
+            mainName.setText(typeDetailVO.getGroupNumber().trim());
+            mainName.setFocusable(true);
+            mainName.setFocusableInTouchMode(true);
+            mainName.setBackgroundColor(Color.parseColor("#FFEE99"));
+            Common.showToast(context,"找不到主要類別，會新增此相關主要類別!");
+        }
     }
 }

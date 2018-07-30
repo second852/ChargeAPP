@@ -426,7 +426,7 @@ public class InsertIncome extends Fragment {
         Calendar c = Calendar.getInstance();
         c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
         Date d = new Date(c.getTimeInMillis());
-        bankVO.setMaintype(name.getText().toString());
+        bankVO.setMaintype(name.getText().toString().trim());
         try {
             bankVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
         }catch (NumberFormatException e)
@@ -436,7 +436,7 @@ public class InsertIncome extends Fragment {
         bankVO.setDate(d);
         bankVO.setFixDate(String.valueOf(fixdate.isChecked()));
         bankVO.setFixDateDetail(fixdatedetail);
-        bankVO.setDetailname(detailname.getText().toString());
+        bankVO.setDetailname(detailname.getText().toString().trim());
         bankVO.setAuto(false);
         bankVO.setAutoId(-1);
         needSet=false;
@@ -461,13 +461,13 @@ public class InsertIncome extends Fragment {
             }
 
 
-            if(name.getText().toString().trim()==null||name.getText().toString().trim().length()==0)
+            if(name.getText()==null||name.getText().toString().trim().length()==0)
             {
                 name.setBackgroundColor(Color.parseColor("#ff471a"));
                 Common.showToast(context,"主項目不能空白");
                 return;
             }
-            if(money.getText().toString().trim()==null||money.getText().toString().trim().length()==0)
+            if(money.getText()==null||money.getText().toString().trim().length()==0)
             {
                 money.setError("金額不能空白");
                 return;
@@ -484,7 +484,7 @@ public class InsertIncome extends Fragment {
                 return;
             }
 
-            if(date.getText().toString().trim()==null||date.getText().toString().trim().length()==0)
+            if(date.getText()==null||date.getText().toString().trim().length()==0)
             {
                 date.setError(" ");
                 Common.showToast(context,"日期不能空白");

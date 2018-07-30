@@ -53,6 +53,8 @@ public class UpdateInvoice extends Fragment {
     private GridView firstG,secondG;
     private Activity context;
     private String oldMainType;
+    private List<TypeVO> typeVOS;
+    private TypeVO typeVO;
 
     @Override
     public void onAttach(Context context) {
@@ -108,7 +110,7 @@ public class UpdateInvoice extends Fragment {
     {
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
-        List<TypeVO> typeVOS=typeDB.getAll();
+        typeVOS=typeDB.getAll();
         for(TypeVO t:typeVOS)
         {
             item = new HashMap<String, Object>();
@@ -355,6 +357,7 @@ public class UpdateInvoice extends Fragment {
     private void returnThisFramgent(Fragment fragment,Bundle bundle)
     {
 
+        bundle.putSerializable("typeVO",typeVO);
         bundle.putSerializable("invoiceVO",invoiceVO);
         if(action.equals("SelectDetList"))
         {
@@ -505,10 +508,15 @@ public class UpdateInvoice extends Fragment {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             TextView textView=view.findViewById(R.id.text);
             String type=textView.getText().toString().trim();
+            if(i<typeVOS.size())
+            {
+               typeVO=typeVOS.get(i);
+            }
+
             if(type.equals("新增"))
             {
-                invoiceVO.setMaintype(name.getText().toString());
-                invoiceVO.setSecondtype(secondname.getText().toString());
+                invoiceVO.setMaintype(name.getText().toString().trim());
+                invoiceVO.setSecondtype(secondname.getText().toString().trim());
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("object",invoiceVO);
                 bundle.putSerializable("action",action);

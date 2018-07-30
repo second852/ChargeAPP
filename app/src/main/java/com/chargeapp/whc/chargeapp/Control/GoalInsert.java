@@ -314,14 +314,14 @@ public class GoalInsert extends Fragment {
                 goalVO.setEndTime(new Date(0));
             }
             goalVO.setStartTime(new Date(System.currentTimeMillis()));
-            String reMa=(remindD.getSelectedItem()==null)?"":remindD.getSelectedItem().toString();
+            String reMa=(remindD.getSelectedItem()==null)?"":remindD.getSelectedItem().toString().trim();
             goalVO.setName(goalName);
             goalVO.setMoney(Integer.valueOf(goalMoney));
             goalVO.setNoWeekend(noWeekend.isChecked());
             goalVO.setNotify(remind.isChecked());
             goalVO.setNotifyDate(reMa);
-            goalVO.setNotifyStatue(remindS.getSelectedItem().toString());
-            goalVO.setType(spinnerT.getSelectedItem().toString());
+            goalVO.setNotifyStatue(remindS.getSelectedItem().toString().trim());
+            goalVO.setType(spinnerT.getSelectedItem().toString().trim());
             goalVO.setTimeStatue(dayStatue);
             goalDB.insert(goalVO);
 
