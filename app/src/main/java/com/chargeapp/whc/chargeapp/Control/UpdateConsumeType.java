@@ -241,7 +241,7 @@ public class UpdateConsumeType extends Fragment {
     private class insertType implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            String mainType = mainName.getText().toString();
+            String mainType = mainName.getText().toString().trim();
             String secondTitle = secondName.getText().toString().trim();
             String keyWorld = secondKey.getText().toString().trim();
 

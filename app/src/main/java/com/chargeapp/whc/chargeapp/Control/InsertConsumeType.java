@@ -311,11 +311,17 @@ public class InsertConsumeType extends Fragment {
             typeDetailDB.insert(typeDetailVO);
             if (object instanceof InvoiceVO) {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("invoiceVO", (InvoiceVO) object);
+                InvoiceVO invoiceVO= (InvoiceVO) object;
+                invoiceVO.setMaintype(mainType);
+                invoiceVO.setSecondtype(secondTitle);
+                bundle.putSerializable("invoiceVO",invoiceVO);
                 returnThisFramgent(new UpdateInvoice(), bundle);
             } else {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("consumeVO", (ConsumeVO) object);
+                ConsumeVO consumeVO= (ConsumeVO) object;
+                consumeVO.setMaintype(mainType);
+                consumeVO.setSecondType(secondTitle);
+                bundle.putSerializable("consumeVO",consumeVO);
                 returnThisFramgent(new UpdateSpend(), bundle);
             }
             MainActivity.bundles.remove(MainActivity.bundles.size() - 1);

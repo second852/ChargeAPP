@@ -679,8 +679,8 @@ public class UpdateSpend extends Fragment {
 
     private void setConsume() {
         g = new HashMap<>();
-        g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString().trim()));
-        g.put("choicedate", isnull(choiceday.getSelectedItem()));
+        g.put("choicestatue", isnull(choiceStatue.getSelectedItem()).trim());
+        g.put("choicedate", isnull(choiceday.getSelectedItem()).trim());
         g.put("noweek", String.valueOf(noweek));
         String fixdatedetail = gson.toJson(g);
         String[] dates = date.getText().toString().split("/");
@@ -690,8 +690,8 @@ public class UpdateSpend extends Fragment {
         day=Integer.valueOf(dates[2]);
         c.set(year,month,day,12, 0, 0);
         Date d = new Date(c.getTimeInMillis());
-        consumeVO.setMaintype(name.getText().toString());
-        consumeVO.setSecondType(secondname.getText().toString());
+        consumeVO.setMaintype(name.getText().toString().trim());
+        consumeVO.setSecondType(secondname.getText().toString().trim());
         consumeVO.setDate(d);
         try {
             consumeVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
@@ -699,7 +699,7 @@ public class UpdateSpend extends Fragment {
         {
             consumeVO.setMoney(0);
         }
-        consumeVO.setNumber(number.getText().toString());
+        consumeVO.setNumber(number.getText().toString().trim());
         consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
         consumeVO.setFixDateDetail(fixdatedetail);
         consumeVO.setNotify(String.valueOf(notify.isChecked()));

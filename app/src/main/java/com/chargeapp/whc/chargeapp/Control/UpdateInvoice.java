@@ -343,11 +343,11 @@ public class UpdateInvoice extends Fragment {
             String[] dates = date.getText().toString().split("/");
             Calendar c = Calendar.getInstance();
             c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
-            invoiceVO.setMaintype(name.getText().toString());
-            invoiceVO.setSecondtype(secondname.getText().toString());
+            invoiceVO.setMaintype(name.getText().toString().trim());
+            invoiceVO.setSecondtype(secondname.getText().toString().trim());
             invoiceVO.setAmount(Integer.valueOf(money.getText().toString().trim()));
             invoiceVO.setTime(new Timestamp(c.getTimeInMillis()));
-            invoiceVO.setInvNum(number.getText().toString());
+            invoiceVO.setInvNum(number.getText().toString().trim());
             invoiceDB.update(invoiceVO);
             Common.showToast(context, "修改成功");
             goBackFramgent();
