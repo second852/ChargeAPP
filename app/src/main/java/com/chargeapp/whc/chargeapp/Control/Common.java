@@ -196,6 +196,10 @@ public class Common {
         return strings;
     }
 
+
+
+    public static String[] DateStatueSetSpinner={"每天","每周","每月","每年"};
+
     public static ArrayList<String> DateStatueSetSpinner()
     {
         ArrayList<String> strings=new ArrayList<>();

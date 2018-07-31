@@ -27,6 +27,12 @@ import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.AwesomeTextView;
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.BootstrapDropDown;
+import com.beardedhen.androidbootstrap.BootstrapEditText;
+import com.beardedhen.androidbootstrap.BootstrapLabel;
+import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
@@ -48,20 +54,22 @@ import java.util.Map;
 
 
 public class InsertSpend extends Fragment {
-    private EditText money, number;
+
+    private BootstrapEditText number,name,money,secondname,date;
     private CheckBox fixdate, notify, noWek;
-    private TextView secondname, name, detailname;
-    private TextView save, clear, date;
+    private BootstrapLabel detailname;
+    private BootstrapButton save,clear;
     private LinearLayout showdate;
     private DatePicker datePicker;
     private String choicedate;
-    private Spinner choiceStatue, choiceday;
+    private Spinner  choiceday;
+    private BootstrapDropDown choiceStatue;
     private Gson gson;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
     private boolean noweek = false;
     private ConsumeDB consumeDB;
-    private RelativeLayout qrcode;
+    private AwesomeTextView qrcode;
     private LinearLayout firstL, secondL;
     private GridView firstG, secondG;
     public static ConsumeVO consumeVO;
@@ -91,6 +99,7 @@ public class InsertSpend extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        TypefaceProvider.registerDefaultIconSets();
         View view = inflater.inflate(R.layout.insert_spend, container, false);
         Common.setChargeDB(context);
         findviewByid(view);
@@ -107,7 +116,7 @@ public class InsertSpend extends Fragment {
     private void setSpinner() {
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, Common.DateStatueSetSpinner());
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        choiceStatue.setAdapter(arrayAdapter);
+        choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
     }
 
     @Override
@@ -147,9 +156,9 @@ public class InsertSpend extends Fragment {
             String noweek = js.get("noweek").getAsString().trim();
             noWek.setChecked(Boolean.valueOf(noweek));
             if (choicestatue.trim().equals("每天")) {
-                choiceStatue.setSelection(0);
+                choiceStatue.setBottom(0);
             } else if (choicestatue.trim().equals("每周")) {
-                choiceStatue.setSelection(1);
+                choiceStatue.setBottom(1);
                 if (choicedate.equals("星期一")) {
                     updateChoice = 0;
                 } else if (choicedate.equals("星期二")) {
@@ -166,11 +175,11 @@ public class InsertSpend extends Fragment {
                     updateChoice = 6;
                 }
             } else if (choicestatue.trim().equals("每月")) {
-                choiceStatue.setSelection(2);
+                choiceStatue.setBottom(2);
                 choicedate = choicedate.substring(0, choicedate.indexOf("日"));
                 updateChoice = Integer.valueOf(choicedate) - 1;
             } else {
-                choiceStatue.setSelection(3);
+                choiceStatue.setBottom(3);
                 updateChoice = Integer.valueOf(choicedate.substring(0, choicedate.indexOf("月"))) - 1;
             }
         }
@@ -218,7 +227,8 @@ public class InsertSpend extends Fragment {
         date.setOnClickListener(new dateClickListener());
         showdate.setOnClickListener(new choicedateClick());
         fixdate.setOnCheckedChangeListener(new showfixdateClick());
-        choiceStatue.setOnItemSelectedListener(new choiceStateItem());
+//        choiceStatue.setOnDropDownItemClickListener();
+//        choiceStatue.setOnItemSelectedListener(new choiceStateItem());
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new savecomsumer());
         noWek.setOnCheckedChangeListener(new nowWekchange());
@@ -289,8 +299,12 @@ public class InsertSpend extends Fragment {
 
     public void findviewByid(View view) {
         secondname = view.findViewById(R.id.secondname);
+        secondname.setFocusable(false);
+        secondname.setFocusableInTouchMode(false);
         money = view.findViewById(R.id.money);
         date = view.findViewById(R.id.date);
+        date.setFocusable(false);
+        date.setFocusableInTouchMode(false);
         fixdate = view.findViewById(R.id.fixdate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
@@ -304,6 +318,8 @@ public class InsertSpend extends Fragment {
         noWek = view.findViewById(R.id.noWek);
         qrcode = view.findViewById(R.id.qrcode);
         name = view.findViewById(R.id.name);
+        name.setFocusable(false);
+        name.setFocusableInTouchMode(false);
         secondG = view.findViewById(R.id.secondG);
         secondL = view.findViewById(R.id.secondL);
         noWekT = view.findViewById(R.id.noWekT);
@@ -417,7 +433,7 @@ public class InsertSpend extends Fragment {
             money.setText("");
             fixdate.setChecked(false);
             number.setText("");
-            choiceStatue.setSelection(0);
+            choiceStatue.setBottom(1);
             choiceday.setSelection(0);
         }
     }
@@ -433,8 +449,7 @@ public class InsertSpend extends Fragment {
     private class savecomsumer implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            name.setBackgroundColor(Color.parseColor("#FFEE99"));
-            secondname.setBackgroundColor(Color.parseColor("#FFEE99"));
+
             //設定種類時 不能儲存
             if (firstL.getVisibility() == View.VISIBLE) {
                 return;
@@ -449,36 +464,36 @@ public class InsertSpend extends Fragment {
             }
 
             //必填資料
-            if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
-                name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(context, "主項目不能空白");
+            if (name.getText()== null || name.getText().toString().trim().length() == 0) {
+                name.setError("");
+                Common.showToast(context,"主項目不能空白");
                 return;
             }
 
             //必填資料
             if (name.getText().toString().trim().equals("0") || name.getText().toString().trim().equals("O")) {
-                name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(context, "主項目不能為其他");
+                name.setError("");
+                Common.showToast(context,"主項目不能為其他");
                 return;
             }
 
             if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
-                secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(context, "次項目不能空白");
+                secondname.setError("");
+                Common.showToast(context,"次項目不能空白");
                 return;
             }
 
             if (secondname.getText().toString().trim().equals("0") || secondname.getText().toString().trim().equals("O")) {
-                secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(context, "次項目不能為其他");
+                secondname.setError("");
+                Common.showToast(context,"次項目不能為其他");
                 return;
             }
 
             try {
                 if(!oldMainType.equals(name.getText().toString().trim()))
                 {
-                    secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                    Common.showToast(context, "次項目不屬於主項目種類");
+                    secondname.setError("");
+                    Common.showToast(context,"次項目不屬於主項目種類");
                     return;
                 }
             }catch (Exception e)
@@ -537,7 +552,7 @@ public class InsertSpend extends Fragment {
             money.setText("");
             fixdate.setChecked(false);
             number.setText("");
-            choiceStatue.setSelection(0);
+            choiceStatue.setBottom(0);
             choiceday.setSelection(0);
         }
     }
@@ -669,7 +684,7 @@ public class InsertSpend extends Fragment {
 
     private void setConsume() {
         Map<String, String> g = new HashMap<>();
-        g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString()));
+//        g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString()));
         g.put("choicedate", isnull(choiceday.getSelectedItem()));
         g.put("noweek", String.valueOf(noweek));
         String fixdatedetail = gson.toJson(g);

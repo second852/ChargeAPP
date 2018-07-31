@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -37,5 +37,11 @@
         <item name="android:colorForeground">#42221f1f</item>
     </style>
 
+    <style name="wrapping_fa_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:textSize" tools:ignore="SpUsage">20sp</item>
+    </style>
 
 </resources>
