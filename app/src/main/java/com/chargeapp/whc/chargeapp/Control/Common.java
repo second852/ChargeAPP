@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -73,6 +74,25 @@ public class Common {
         large,
         normal
     }
+
+    public static void setScreen(Screen screen,DisplayMetrics displayMetrics)
+    {
+        if(screen==null)
+        {
+            float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+            float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+            if(dpWidth>650)
+            {
+                Common.screenSize= Common.Screen.xLarge;
+            }else if(dpWidth>470)
+            {
+                Common.screenSize= Common.Screen.large;
+            }else{
+                Common.screenSize= Common.Screen.normal;
+            }
+        }
+    }
+
 
     public static void setChargeDB(Context activity)
     {

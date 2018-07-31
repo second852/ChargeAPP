@@ -152,6 +152,7 @@ public class SelectConsume extends Fragment {
         goalVO = goalDB.getFindType("支出");
         choiceCarrier.setSelection(CStatue);
         choicePeriod.setSelection(Statue);
+        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
         return view;
     }
 

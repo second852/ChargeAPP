@@ -110,6 +110,7 @@ public class SelectIncome extends Fragment {
         chart_pie.setOnChartValueSelectedListener(new pievalue());
         chart_bar.setOnChartValueSelectedListener(new charValue());
         choicePeriod.setSelection(Statue);
+        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
         return view;
     }
 

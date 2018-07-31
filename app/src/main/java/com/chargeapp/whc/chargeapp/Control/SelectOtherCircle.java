@@ -130,7 +130,7 @@ public class SelectOtherCircle extends Fragment {
             end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
             title = Common.sFour.format(new Date(start.getTimeInMillis()));
         }
-
+        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
         setLayout();
         return view;
     }
