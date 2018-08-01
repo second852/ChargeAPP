@@ -1,7 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +10,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +32,9 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapDropDown;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.beardedhen.androidbootstrap.BootstrapLabel;
+import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
+import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
@@ -52,18 +54,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_HEART;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_TWITTER;
+
 
 public class InsertSpend extends Fragment {
 
-    private BootstrapEditText number,name,money,secondname,date;
+    private BootstrapEditText number, name, money, secondname, date;
     private CheckBox fixdate, notify, noWek;
     private BootstrapLabel detailname;
-    private BootstrapButton save,clear;
+    private BootstrapButton save, clear;
     private LinearLayout showdate;
     private DatePicker datePicker;
     private String choicedate;
-    private Spinner  choiceday;
-    private BootstrapDropDown choiceStatue;
+    private BootstrapDropDown choiceStatue,choiceday;
     private Gson gson;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
@@ -82,16 +87,18 @@ public class InsertSpend extends Fragment {
     private String oldMainType;
     private TypeVO typeVO;
     private List<TypeVO> typeVOS;
+    private List<BootstrapText> BsTextDay,BsTextWeek,BsTextMonth,BsTextStatue;
+    private int statueNumber;
+    private String resultStatue,resultDay;
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof  Activity)
-        {
-            this.context= (Activity) context;
-        }else {
-            this.context=getActivity();
+        if (context instanceof Activity) {
+            this.context = (Activity) context;
+        } else {
+            this.context = getActivity();
         }
 
     }
@@ -114,8 +121,6 @@ public class InsertSpend extends Fragment {
     }
 
     private void setSpinner() {
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, Common.DateStatueSetSpinner());
-        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
     }
 
@@ -143,9 +148,8 @@ public class InsertSpend extends Fragment {
         number.setText(consumeVO.getNumber());
         money.setText(String.valueOf(consumeVO.getMoney()));
         date.setText(Common.sTwo.format(consumeVO.getDate()));
-        if(consumeVO.getFixDate()==null)
-        {
-           return;
+        if (consumeVO.getFixDate() == null) {
+            return;
         }
         if (consumeVO.getFixDate().equals("true")) {
             fixdate.setChecked(Boolean.valueOf(consumeVO.getFixDate()));
@@ -156,11 +160,21 @@ public class InsertSpend extends Fragment {
             String noweek = js.get("noweek").getAsString().trim();
             noWek.setChecked(Boolean.valueOf(noweek));
             if (choicestatue.trim().equals("每天")) {
-                choiceStatue.setBottom(0);
+                noWekT.setVisibility(View.VISIBLE);
+                noWek.setVisibility(View.VISIBLE);
+                choiceday.setVisibility(View.GONE);
+                resultStatue=BsTextStatue.get(0).toString();
+                resultDay="";
+                choiceStatue.setBootstrapText(BsTextStatue.get(0));
             } else if (choicestatue.trim().equals("每周")) {
-                choiceStatue.setBottom(1);
+                noWekT.setVisibility(View.GONE);
+                noWek.setVisibility(View.GONE);
+                choiceday.setVisibility(View.VISIBLE);
+                resultStatue=BsTextStatue.get(1).toString();
+                choiceStatue.setBootstrapText(BsTextStatue.get(1));
+                choiceday.setDropdownData(Common.WeekSetSpinnerBS);
                 if (choicedate.equals("星期一")) {
-                    updateChoice = 0;
+                    updateChoice =0;
                 } else if (choicedate.equals("星期二")) {
                     updateChoice = 1;
                 } else if (choicedate.equals("星期三")) {
@@ -174,13 +188,29 @@ public class InsertSpend extends Fragment {
                 } else {
                     updateChoice = 6;
                 }
+                choiceday.setBootstrapText(BsTextWeek.get(updateChoice));
+                resultDay=BsTextWeek.get(updateChoice).toString();
             } else if (choicestatue.trim().equals("每月")) {
-                choiceStatue.setBottom(2);
+                noWekT.setVisibility(View.GONE);
+                noWek.setVisibility(View.GONE);
+                choiceday.setVisibility(View.VISIBLE);
+                resultStatue=BsTextStatue.get(2).toString();
+                choiceStatue.setBootstrapText(BsTextStatue.get(2));
                 choicedate = choicedate.substring(0, choicedate.indexOf("日"));
                 updateChoice = Integer.valueOf(choicedate) - 1;
+                resultDay=BsTextDay.get(updateChoice).toString();
+                choiceday.setBootstrapText(BsTextDay.get(updateChoice));
+                choiceday.setDropdownData(Common.DateStatueSetSpinner);
             } else {
-                choiceStatue.setBottom(3);
+                noWekT.setVisibility(View.GONE);
+                noWek.setVisibility(View.GONE);
+                choiceday.setVisibility(View.VISIBLE);
+                resultStatue=BsTextStatue.get(3).toString();
+                choiceStatue.setBootstrapText(BsTextStatue.get(3));
                 updateChoice = Integer.valueOf(choicedate.substring(0, choicedate.indexOf("月"))) - 1;
+                resultDay=BsTextMonth.get(updateChoice).toString();
+                choiceday.setBootstrapText(BsTextMonth.get(updateChoice));
+                choiceday.setDropdownData(Common.MonthSetSpinnerBS());
             }
         }
         needSet = false;
@@ -190,6 +220,10 @@ public class InsertSpend extends Fragment {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            BsTextDay=Common.DateChoiceSetBsTest(context,Common.DaySetSpinnerBS());
+            BsTextWeek=Common.DateChoiceSetBsTest(context,Common.WeekSetSpinnerBS);
+            BsTextMonth=Common.DateChoiceSetBsTest(context,Common.MonthSetSpinnerBS());
+            BsTextStatue=Common.DateChoiceSetBsTest(context,Common.DateStatueSetSpinner);
             typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
             typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
             consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -227,7 +261,8 @@ public class InsertSpend extends Fragment {
         date.setOnClickListener(new dateClickListener());
         showdate.setOnClickListener(new choicedateClick());
         fixdate.setOnCheckedChangeListener(new showfixdateClick());
-//        choiceStatue.setOnDropDownItemClickListener();
+        choiceStatue.setOnDropDownItemClickListener(new choiceStateItemBS());
+        choiceday.setOnDropDownItemClickListener(new choicedayItemBS());
 //        choiceStatue.setOnItemSelectedListener(new choiceStateItem());
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new savecomsumer());
@@ -267,7 +302,6 @@ public class InsertSpend extends Fragment {
     }
 
 
-
     private void setFirstGrid() {
         try {
             HashMap item;
@@ -291,8 +325,7 @@ public class InsertSpend extends Fragment {
                     new int[]{R.id.image, R.id.text});
             firstG.setAdapter(adapter);
             firstG.setNumColumns(4);
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -311,7 +344,9 @@ public class InsertSpend extends Fragment {
         showdate = view.findViewById(R.id.showdate);
         datePicker = view.findViewById(R.id.datePicker);
         choiceStatue = view.findViewById(R.id.choiceStatue);
+        choiceStatue.setVisibility(View.GONE);
         choiceday = view.findViewById(R.id.choiceday);
+        choiceday.setVisibility(View.GONE);
         number = view.findViewById(R.id.number);
         detailname = view.findViewById(R.id.detailname);
         notify = view.findViewById(R.id.notify);
@@ -354,12 +389,16 @@ public class InsertSpend extends Fragment {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             if (b) {
+                choiceStatue.setBootstrapText(BsTextStatue.get(0));
+                resultStatue=BsTextStatue.get(0).toString();
                 notifyT.setVisibility(View.VISIBLE);
                 noWekT.setVisibility(View.VISIBLE);
                 notify.setVisibility(View.VISIBLE);
                 noWek.setVisibility(View.VISIBLE);
                 choiceStatue.setVisibility(View.VISIBLE);
             } else {
+                resultStatue="";
+                resultDay="";
                 notifyT.setVisibility(View.GONE);
                 noWekT.setVisibility(View.GONE);
                 notify.setVisibility(View.GONE);
@@ -371,46 +410,46 @@ public class InsertSpend extends Fragment {
         }
     }
 
-    private class choiceStateItem implements AdapterView.OnItemSelectedListener {
-        @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-            ArrayList<String> spinneritem = new ArrayList<>();
-            if (position == 0) {
-                choiceday.setVisibility(View.GONE);
-                noWek.setVisibility(View.VISIBLE);
-                choiceStatue.setVisibility(View.VISIBLE);
-                notifyT.setVisibility(View.VISIBLE);
-                noWekT.setVisibility(View.VISIBLE);
-                return;
-            }
-            if (position == 1) {
-                spinneritem = Common.WeekSetSpinner();
-            }
-            if (position == 2) {
-                spinneritem = Common.DaySetSpinner();
-            }
-            if (position == 3) {
-                spinneritem = Common.MonthSetSpinner();
-            }
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, spinneritem);
-            arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-            choiceday.setAdapter(arrayAdapter);
-            choiceday.setVisibility(View.VISIBLE);
-            notifyT.setVisibility(View.VISIBLE);
-            noWek.setVisibility(View.GONE);
-            noWekT.setVisibility(View.GONE);
-            noWek.setChecked(false);
-            if (first) {
-                choiceday.setSelection(updateChoice);
-                first = false;
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-
-        }
-    }
+//    private class choiceStateItem implements AdapterView.OnItemSelectedListener {
+//        @Override
+//        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+//            ArrayList<String> spinneritem = new ArrayList<>();
+//            if (position == 0) {
+//                choiceday.setVisibility(View.GONE);
+//                noWek.setVisibility(View.VISIBLE);
+//                choiceStatue.setVisibility(View.VISIBLE);
+//                notifyT.setVisibility(View.VISIBLE);
+//                noWekT.setVisibility(View.VISIBLE);
+//                return;
+//            }
+//            if (position == 1) {
+//                spinneritem = Common.WeekSetSpinner();
+//            }
+//            if (position == 2) {
+//                spinneritem = Common.DaySetSpinner();
+//            }
+//            if (position == 3) {
+//                spinneritem = Common.MonthSetSpinner();
+//            }
+//            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, spinneritem);
+//            arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+//            choiceday.setAdapter(arrayAdapter);
+//            choiceday.setVisibility(View.VISIBLE);
+//            notifyT.setVisibility(View.VISIBLE);
+//            noWek.setVisibility(View.GONE);
+//            noWekT.setVisibility(View.GONE);
+//            noWek.setChecked(false);
+//            if (first) {
+//                choiceday.setSelection(updateChoice);
+//                first = false;
+//            }
+//        }
+//
+//        @Override
+//        public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//        }
+//    }
 
 
     private class clearAllInput implements View.OnClickListener {
@@ -433,16 +472,19 @@ public class InsertSpend extends Fragment {
             money.setText("");
             fixdate.setChecked(false);
             number.setText("");
-            choiceStatue.setBottom(1);
-            choiceday.setSelection(0);
+            choiceStatue.setBootstrapText(BsTextStatue.get(0));
+            choiceday.setBootstrapText(BsTextDay.get(0));
+            resultDay="";
+            resultStatue="";
         }
     }
 
-    private String isnull(Object text) {
+    private String isnull(String text) {
         if (text == null || text.toString().length() <= 0) {
             return " ";
         }
-        return text.toString();
+        text=text.substring(0,text.lastIndexOf(" "));
+        return text;
     }
 
 
@@ -464,40 +506,38 @@ public class InsertSpend extends Fragment {
             }
 
             //必填資料
-            if (name.getText()== null || name.getText().toString().trim().length() == 0) {
+            if (name.getText() == null || name.getText().toString().trim().length() == 0) {
                 name.setError("");
-                Common.showToast(context,"主項目不能空白");
+                Common.showToast(context, "主項目不能空白");
                 return;
             }
 
             //必填資料
             if (name.getText().toString().trim().equals("0") || name.getText().toString().trim().equals("O")) {
                 name.setError("");
-                Common.showToast(context,"主項目不能為其他");
+                Common.showToast(context, "主項目不能為其他");
                 return;
             }
 
             if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
                 secondname.setError("");
-                Common.showToast(context,"次項目不能空白");
+                Common.showToast(context, "次項目不能空白");
                 return;
             }
 
             if (secondname.getText().toString().trim().equals("0") || secondname.getText().toString().trim().equals("O")) {
                 secondname.setError("");
-                Common.showToast(context,"次項目不能為其他");
+                Common.showToast(context, "次項目不能為其他");
                 return;
             }
 
             try {
-                if(!oldMainType.equals(name.getText().toString().trim()))
-                {
+                if (!oldMainType.equals(name.getText().toString().trim())) {
                     secondname.setError("");
-                    Common.showToast(context,"次項目不屬於主項目種類");
+                    Common.showToast(context, "次項目不屬於主項目種類");
                     return;
                 }
-            }catch (Exception e)
-            {
+            } catch (Exception e) {
 
             }
 
@@ -546,14 +586,14 @@ public class InsertSpend extends Fragment {
             setConsume();
             consumeDB.insert(consumeVO);
             Common.showToast(context, "新增成功");
-            consumeVO=new ConsumeVO();
+            consumeVO = new ConsumeVO();
             name.setText("");
             secondname.setText("");
             money.setText("");
             fixdate.setChecked(false);
             number.setText("");
-            choiceStatue.setBottom(0);
-            choiceday.setSelection(0);
+//            choiceStatue.setBottom(0);
+//            choiceday.setSelection(0);
         }
     }
 
@@ -602,9 +642,8 @@ public class InsertSpend extends Fragment {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             TextView textView = view.findViewById(R.id.text);
             String type = textView.getText().toString().trim();
-            if(i<typeVOS.size())
-            {
-                typeVO=typeVOS.get(i);
+            if (i < typeVOS.size()) {
+                typeVO = typeVOS.get(i);
             }
             if (type.equals("新增")) {
                 Common.showfirstgrid = true;
@@ -613,7 +652,7 @@ public class InsertSpend extends Fragment {
             }
             if (type.equals("取消")) {
                 firstL.setVisibility(View.GONE);
-                Common.showfirstgrid=false;
+                Common.showfirstgrid = false;
                 return;
             }
             name.setText(type);
@@ -645,7 +684,7 @@ public class InsertSpend extends Fragment {
                 secondL.setVisibility(View.GONE);
                 return;
             }
-            oldMainType=name.getText().toString().trim();
+            oldMainType = name.getText().toString().trim();
             secondname.setText(type);
             secondL.setVisibility(View.GONE);
             Common.showsecondgrid = false;
@@ -666,7 +705,7 @@ public class InsertSpend extends Fragment {
         setConsume();
         needSet = true;
         Bundle bundle = new Bundle();
-        bundle.putSerializable("typeVO",typeVO);
+        bundle.putSerializable("typeVO", typeVO);
         bundle.putSerializable("object", consumeVO);
         bundle.putSerializable("action", "InsertSpend");
         bundle.putSerializable("needSet", true);
@@ -684,8 +723,8 @@ public class InsertSpend extends Fragment {
 
     private void setConsume() {
         Map<String, String> g = new HashMap<>();
-//        g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString()));
-        g.put("choicedate", isnull(choiceday.getSelectedItem()));
+        g.put("choicestatue", isnull(resultStatue));
+        g.put("choicedate", isnull(resultDay));
         g.put("noweek", String.valueOf(noweek));
         String fixdatedetail = gson.toJson(g);
         String[] dates = date.getText().toString().split("/");
@@ -716,6 +755,69 @@ public class InsertSpend extends Fragment {
         public void onClick(View v) {
             Fragment fragment = new UpdateConsumeDetail();
             returnThisFramgent(fragment);
+        }
+    }
+
+    private class choiceStateItemBS implements BootstrapDropDown.OnDropDownItemClickListener {
+        @Override
+        public void onItemClick(ViewGroup parent, View v, int id) {
+            resultStatue=BsTextStatue.get(id).toString();
+            choiceStatue.setBootstrapText(BsTextStatue.get(id));
+            statueNumber=id;
+            if (id == 0) {
+                resultDay="";
+                choiceday.setVisibility(View.GONE);
+                noWek.setVisibility(View.VISIBLE);
+                choiceStatue.setVisibility(View.VISIBLE);
+                notifyT.setVisibility(View.VISIBLE);
+                noWekT.setVisibility(View.VISIBLE);
+                return;
+            }
+            if (id == 1) {
+                resultDay=BsTextWeek.get(0).toString();
+                choiceday.setBootstrapText(BsTextWeek.get(0));
+                choiceday.setDropdownData(Common.WeekSetSpinnerBS);
+                choiceday.setExpandDirection(ExpandDirection.DOWN);
+            }
+            if (id == 2) {
+                resultDay=BsTextDay.get(0).toString();
+                choiceday.setBootstrapText(BsTextDay.get(0));
+                choiceday.setDropdownData(Common.DaySetSpinnerBS());
+                choiceday.setExpandDirection(ExpandDirection.DOWN);
+            }
+            if (id == 3) {
+                resultDay=BsTextMonth.get(0).toString();
+                choiceday.setBootstrapText(BsTextMonth.get(0));
+                choiceday.setDropdownData(Common.MonthSetSpinnerBS());
+                choiceday.setExpandDirection(ExpandDirection.DOWN);
+            }
+
+            choiceday.setVisibility(View.VISIBLE);
+            notifyT.setVisibility(View.VISIBLE);
+            noWek.setVisibility(View.GONE);
+            noWekT.setVisibility(View.GONE);
+            noWek.setChecked(false);
+        }
+    }
+
+    private class choicedayItemBS implements BootstrapDropDown.OnDropDownItemClickListener {
+        @Override
+        public void onItemClick(ViewGroup parent, View v, int id) {
+            switch (statueNumber)
+            {
+                case 1:
+                    choiceday.setBootstrapText(BsTextWeek.get(id));
+                    resultDay=BsTextWeek.get(id).toString();
+                    break;
+                case 2:
+                    choiceday.setBootstrapText(BsTextDay.get(id));
+                    resultDay=BsTextDay.get(id).toString();
+                    break;
+                case 3:
+                    choiceday.setBootstrapText(BsTextMonth.get(id));
+                    resultDay=BsTextMonth.get(id).toString();
+                    break;
+            }
         }
     }
 }

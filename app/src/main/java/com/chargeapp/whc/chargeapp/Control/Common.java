@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.beardedhen.androidbootstrap.BootstrapText;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
@@ -46,6 +47,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
 
 /**
  * Created by Wang on 2017/11/19.
@@ -184,6 +186,9 @@ public class Common {
     }
 
 
+    public static String[] WeekSetSpinnerBS=
+            {"星期一","星期二","星期三","星期四","星期五","星期六","星期日"};
+
 
     public static ArrayList<String> WeekSetSpinner()
     {
@@ -198,11 +203,29 @@ public class Common {
         return strings;
     }
 
+    public static String[] DaySetSpinnerBS()
+    {
+        String[] strings=new String[31];
+        for (int i = 0; i < 31; i++) {
+            strings[i]=" "+ String.valueOf(i+1) +"日";
+        }
+        return strings;
+    }
+
     public static ArrayList<String> DaySetSpinner()
     {
         ArrayList<String> strings=new ArrayList<>();
         for (int i = 1; i <= 31; i++) {
             strings.add(" "+ String.valueOf(i) +"日");
+        }
+        return strings;
+    }
+
+    public static String[] MonthSetSpinnerBS()
+    {
+        String[] strings=new String[12];
+        for (int i = 0; i < 12; i++) {
+            strings[i]=" " + String.valueOf(i+1) + "月";
         }
         return strings;
     }
@@ -219,6 +242,21 @@ public class Common {
 
 
     public static String[] DateStatueSetSpinner={"每天","每周","每月","每年"};
+
+
+    public static List<BootstrapText> DateChoiceSetBsTest(Activity activity,String[] data)
+    {
+        List<BootstrapText> bootstrapTexts=new ArrayList<>();
+        for (String s:data)
+        {
+            BootstrapText text = new BootstrapText.Builder(activity)
+                    .addText(s+" ")
+                    .addFontAwesomeIcon(FA_CALCULATOR)
+                    .build();
+            bootstrapTexts.add(text);
+        }
+        return bootstrapTexts;
+    }
 
     public static ArrayList<String> DateStatueSetSpinner()
     {

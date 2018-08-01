@@ -254,8 +254,8 @@ public class HomePage extends Fragment {
                 pieChart.setEntryLabelTextSize(18f);
                 break;
             case normal:
-                dataSet.setValueTextSize(11f);
-                pieChart.setEntryLabelTextSize(11f);
+                dataSet.setValueTextSize(12f);
+                pieChart.setEntryLabelTextSize(12f);
                 break;
         }
 
