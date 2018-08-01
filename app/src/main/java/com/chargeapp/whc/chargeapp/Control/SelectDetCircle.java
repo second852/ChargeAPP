@@ -162,6 +162,7 @@ public class SelectDetCircle extends Fragment {
         List<String> stringList = new ArrayList<>(hashMap.keySet());
         size = stringList.size();
         listView.setAdapter(new ListAdapter(context, stringList));
+        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
         return view;
     }
 

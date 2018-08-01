@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -75,7 +76,7 @@ public class HomePage extends Fragment {
     private ArrayList<String> Okey;
     private Activity context;
     private DrawerLayout drawerLayout;
-    private int pieChartwidth;
+
 
     @Override
     public void onAttach(Context context) {
@@ -116,6 +117,7 @@ public class HomePage extends Fragment {
                 return true;
             }
         });
+        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
         return view;
     }
 

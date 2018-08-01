@@ -150,6 +150,7 @@ public class SelectShowCircleDe extends Fragment {
             title=title.substring(0,title.indexOf("年")+1);
         }
         setLayout();
+        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
         return view;
     }
 

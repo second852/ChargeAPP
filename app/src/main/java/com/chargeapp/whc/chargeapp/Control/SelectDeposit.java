@@ -103,6 +103,7 @@ public class SelectDeposit extends Fragment {
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
         choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
+        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
         return view;
     }
 
