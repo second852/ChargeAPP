@@ -80,7 +80,6 @@ public class InsertSpend extends Fragment {
     public static ConsumeVO consumeVO;
     public static boolean needSet;
     private int updateChoice;
-    private boolean first;
     private Handler handler, secondHander;
     private TextView noWekT, notifyT;
     private Activity context;
@@ -132,8 +131,6 @@ public class InsertSpend extends Fragment {
     }
 
     private void setUpdate() {
-        first = true;
-
         if (consumeVO.getMaintype().equals("O")) {
             name.setText("其他");
             secondname.setText("其他");
@@ -160,13 +157,16 @@ public class InsertSpend extends Fragment {
             String noweek = js.get("noweek").getAsString().trim();
             noWek.setChecked(Boolean.valueOf(noweek));
             if (choicestatue.trim().equals("每天")) {
+                statueNumber=0;
                 noWekT.setVisibility(View.VISIBLE);
                 noWek.setVisibility(View.VISIBLE);
                 choiceday.setVisibility(View.GONE);
                 resultStatue=BsTextStatue.get(0).toString();
                 resultDay="";
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
+                choiceday.setExpandDirection(ExpandDirection.DOWN);
             } else if (choicestatue.trim().equals("每周")) {
+                statueNumber=1;
                 noWekT.setVisibility(View.GONE);
                 noWek.setVisibility(View.GONE);
                 choiceday.setVisibility(View.VISIBLE);
@@ -190,7 +190,9 @@ public class InsertSpend extends Fragment {
                 }
                 choiceday.setBootstrapText(BsTextWeek.get(updateChoice));
                 resultDay=BsTextWeek.get(updateChoice).toString();
+                choiceday.setExpandDirection(ExpandDirection.DOWN);
             } else if (choicestatue.trim().equals("每月")) {
+                statueNumber=2;
                 noWekT.setVisibility(View.GONE);
                 noWek.setVisibility(View.GONE);
                 choiceday.setVisibility(View.VISIBLE);
@@ -200,8 +202,10 @@ public class InsertSpend extends Fragment {
                 updateChoice = Integer.valueOf(choicedate) - 1;
                 resultDay=BsTextDay.get(updateChoice).toString();
                 choiceday.setBootstrapText(BsTextDay.get(updateChoice));
-                choiceday.setDropdownData(Common.DateStatueSetSpinner);
+                choiceday.setDropdownData(Common.DaySetSpinnerBS());
+                choiceday.setExpandDirection(ExpandDirection.DOWN);
             } else {
+                statueNumber=3;
                 noWekT.setVisibility(View.GONE);
                 noWek.setVisibility(View.GONE);
                 choiceday.setVisibility(View.VISIBLE);
@@ -211,6 +215,7 @@ public class InsertSpend extends Fragment {
                 resultDay=BsTextMonth.get(updateChoice).toString();
                 choiceday.setBootstrapText(BsTextMonth.get(updateChoice));
                 choiceday.setDropdownData(Common.MonthSetSpinnerBS());
+                choiceday.setExpandDirection(ExpandDirection.DOWN);
             }
         }
         needSet = false;
@@ -474,6 +479,8 @@ public class InsertSpend extends Fragment {
             number.setText("");
             choiceStatue.setBootstrapText(BsTextStatue.get(0));
             choiceday.setBootstrapText(BsTextDay.get(0));
+            choiceStatue.setVisibility(View.GONE);
+            choiceday.setVisibility(View.GONE);
             resultDay="";
             resultStatue="";
         }
@@ -559,7 +566,7 @@ public class InsertSpend extends Fragment {
 
 
             if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
-                name.setError(" ");
+                date.setError(" ");
                 Common.showToast(context, "日期不能空白");
                 return;
             }
@@ -764,6 +771,7 @@ public class InsertSpend extends Fragment {
             resultStatue=BsTextStatue.get(id).toString();
             choiceStatue.setBootstrapText(BsTextStatue.get(id));
             statueNumber=id;
+            choiceday.setExpandDirection(ExpandDirection.DOWN);
             if (id == 0) {
                 resultDay="";
                 choiceday.setVisibility(View.GONE);
@@ -777,19 +785,16 @@ public class InsertSpend extends Fragment {
                 resultDay=BsTextWeek.get(0).toString();
                 choiceday.setBootstrapText(BsTextWeek.get(0));
                 choiceday.setDropdownData(Common.WeekSetSpinnerBS);
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
             }
             if (id == 2) {
                 resultDay=BsTextDay.get(0).toString();
                 choiceday.setBootstrapText(BsTextDay.get(0));
                 choiceday.setDropdownData(Common.DaySetSpinnerBS());
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
             }
             if (id == 3) {
                 resultDay=BsTextMonth.get(0).toString();
                 choiceday.setBootstrapText(BsTextMonth.get(0));
                 choiceday.setDropdownData(Common.MonthSetSpinnerBS());
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
             }
 
             choiceday.setVisibility(View.VISIBLE);

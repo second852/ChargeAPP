@@ -31,6 +31,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.BootstrapEditText;
+import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
@@ -50,9 +53,10 @@ import java.util.List;
  */
 
 public class EleSetCarrier extends Fragment {
-    private EditText cellphone,certcode;
+    private BootstrapEditText cellphone,certcode;
     private ListView listcarrier;
-    private TextView confirm,percentage,progressT;
+    private BootstrapButton confirm;
+    private TextView percentage,progressT;
     public GetSQLDate getIvnum;
     private List<CarrierVO> carrierlist;
     public CarrierDB carrierDB;
@@ -82,6 +86,7 @@ public class EleSetCarrier extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        TypefaceProvider.registerDefaultIconSets();
         view = inflater.inflate(R.layout.ele_setcarrier, container, false);
         adHadler=new Handler();
         adHadler.post(AdRunnable);
@@ -218,9 +223,9 @@ public class EleSetCarrier extends Fragment {
             }
             final CarrierVO carrierVO = CarNulList.get(position);
             TextView tvId = (TextView) itemView.findViewById(R.id.tvId);
-            TextView deletecarrier=itemView.findViewById(R.id.deletecarrier);
-            TextView widgetShow=itemView.findViewById(R.id.widgetShow);
-            TextView updateC=itemView.findViewById(R.id.updateC);
+            BootstrapButton deletecarrier=itemView.findViewById(R.id.deletecarrier);
+            BootstrapButton widgetShow=itemView.findViewById(R.id.widgetShow);
+            BootstrapButton updateC=itemView.findViewById(R.id.updateC);
             widgetShow.setVisibility(View.GONE);
             deletecarrier.setVisibility(View.VISIBLE);
             updateC.setVisibility(View.VISIBLE);

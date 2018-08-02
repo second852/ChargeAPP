@@ -190,18 +190,6 @@ public class Common {
             {"星期一","星期二","星期三","星期四","星期五","星期六","星期日"};
 
 
-    public static ArrayList<String> WeekSetSpinner()
-    {
-        ArrayList<String> strings=new ArrayList<>();
-        strings.add("星期一");
-        strings.add("星期二");
-        strings.add("星期三");
-        strings.add("星期四");
-        strings.add("星期五");
-        strings.add("星期六");
-        strings.add("星期日");
-        return strings;
-    }
 
     public static String[] DaySetSpinnerBS()
     {
@@ -212,14 +200,6 @@ public class Common {
         return strings;
     }
 
-    public static ArrayList<String> DaySetSpinner()
-    {
-        ArrayList<String> strings=new ArrayList<>();
-        for (int i = 1; i <= 31; i++) {
-            strings.add(" "+ String.valueOf(i) +"日");
-        }
-        return strings;
-    }
 
     public static String[] MonthSetSpinnerBS()
     {

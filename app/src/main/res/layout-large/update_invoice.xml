@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#f5f5f5"
     android:focusable="false"
     android:focusableInTouchMode="false"
@@ -28,23 +29,28 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginLeft="30dp"
                     android:text="發票號碼"
                     android:textColor="#000000"
                     android:layout_gravity="center_vertical"
-                    android:textSize="40sp" />
+                    android:textSize="35sp" />
 
-                <TextView
+                <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/number"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
                     android:layout_marginLeft="25dp"
                     android:layout_gravity="center_vertical"
-                    android:background="#DDDDDD"
+                    android:gravity="center_vertical"
+                    android:hint="HF12345678"
+                    app:bootstrapBrand="primary"
                     android:singleLine="true"
+                    android:inputType="text"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="35sp" />
+                    app:roundedCorners="true"
+                    app:bootstrapSize="xl"
+                    />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -55,24 +61,29 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="45dp"
+                    android:layout_marginLeft="50dp"
                     android:layout_gravity="center_vertical"
                     android:text="主項目"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="35sp" />
 
-                <TextView
+                <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/name"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="45dp"
-                    android:background="#FFEE99"
+                    android:layout_marginLeft="40dp"
+                    android:textSize="25sp"
+                    android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
-                    android:inputType="none"
+                    android:singleLine="true"
+                    android:inputType="text"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="35sp" />
+                    android:focusable="false"
+                    app:bootstrapBrand="primary"
+                    app:roundedCorners="true"
+                    app:bootstrapSize="xl"
+                    />
             </LinearLayout>
 
             <LinearLayout
@@ -85,23 +96,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="45dp"
+                    android:layout_marginLeft="50dp"
                     android:text="次項目"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="35sp" />
 
-                <TextView
+                <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/secondname"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="45dp"
-                    android:background="#FFEE99"
+                    android:layout_marginLeft="40dp"
                     android:gravity="center_vertical"
-                    android:inputType="none"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="35sp" />
+                    android:focusable="false"
+                    app:bootstrapBrand="primary"
+                    app:roundedCorners="true"
+                    app:bootstrapSize="xl" />
             </LinearLayout>
 
             <LinearLayout
@@ -117,21 +129,22 @@
                     android:text="金額"
                     android:layout_gravity="center_vertical"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="35sp" />
 
-                <TextView
+                <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/money"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
-                    android:layout_marginLeft="60dp"
-                    android:background="#DDDDDD"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="60dp"
                     android:gravity="center_vertical"
+                    android:inputType="number"
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="35sp"
-                    />
+                    app:bootstrapBrand="primary"
+                    app:roundedCorners="true"
+                    app:bootstrapSize="xl"  />
             </LinearLayout>
 
             <LinearLayout
@@ -146,19 +159,21 @@
                     android:layout_marginLeft="65dp"
                     android:text="日期"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="35sp" />
 
-                <TextView
+                <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/date"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
-                    android:layout_marginLeft="60dp"
-                    android:background="#DDDDDD"
-                    android:textColor="#000000"
-                    android:textColorHint="#AAAAAA"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="60dp"
                     android:gravity="center_vertical"
-                    android:textSize="35sp"
+                    android:inputType="date"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    app:bootstrapBrand="primary"
+                    app:roundedCorners="true"
+                    app:bootstrapSize="xl"
                     />
             </LinearLayout>
             <LinearLayout
@@ -174,17 +189,19 @@
                     android:text="明細"
                     android:layout_gravity="center"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
-                <TextView
+                    android:textSize="35sp" />
+                <com.beardedhen.androidbootstrap.BootstrapLabel
                     android:id="@+id/detailname"
                     android:layout_width="300dp"
-                    android:layout_height="45dp"
-                    android:layout_marginLeft="60dp"
-                    android:background="#DDDDDD"
-                    android:textColor="#000000"
-                    android:textSize="35sp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical" />
+                    android:layout_marginLeft="60dp"
+                    android:gravity="center"
+                    android:text="--點擊顯示/修改--"
+                    app:roundedCorners="true"
+                    app:bootstrapBrand="info"
+                    app:bootstrapHeading="h3"
+                    />
             </LinearLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -193,35 +210,47 @@
                 >
                 <TextView
                     android:id="@+id/standard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="60dp"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    />
-                <TextView
-                    android:id="@+id/save"
-                    android:layout_width="100dp"
-                    android:layout_height="60dp"
-                    android:layout_marginRight="40dp"
-                    android:layout_toLeftOf="@+id/standard"
-                    android:background="#33CCFF"
+                    android:background="#AAAAAA"
                     android:gravity="center"
-                    android:padding="5dp"
-                    android:text="儲存"
                     android:textColor="#000000"
-                    android:textSize="30sp" />
-                <TextView
+                    android:textSize="30sp"
+                    android:visibility="invisible" />
+
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/save"
+                    android:layout_marginRight="25dp"
+                    android:layout_toLeftOf="@+id/standard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="儲存"
+                    android:textSize="20sp"
+                    android:textColor="#000000"
+                    app:bootstrapBrand="success"
+                    app:bootstrapSize="xl"
+                    app:buttonMode="regular"
+                    app:showOutline="false"
+                    app:roundedCorners="true"
+                    />
+
+
+                <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/clear"
-                    android:layout_width="100dp"
-                    android:layout_height="60dp"
-                    android:layout_marginLeft="40dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
                     android:layout_toRightOf="@+id/standard"
-                    android:background="#FF8888"
-                    android:gravity="center"
-                    android:padding="5dp"
                     android:text="清除"
                     android:textColor="#000000"
-                    android:textSize="30sp" />
+                    app:bootstrapBrand="danger"
+                    app:bootstrapSize="xl"
+                    app:buttonMode="regular"
+                    app:showOutline="false"
+                    app:roundedCorners="true"
+                    />
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>

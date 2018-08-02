@@ -3,35 +3,31 @@ package com.chargeapp.whc.chargeapp.Control;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -42,28 +38,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.beardedhen.androidbootstrap.*;
+
 
 public class InsertIncome extends Fragment {
-    private EditText money,detailname;
+    private BootstrapEditText money,detailname,name,date;
     private CheckBox fixdate;
-    private TextView name,fixDateT;
-    private TextView save, clear,date;
+    private TextView fixDateT;
+    private BootstrapButton save, clear;
     private LinearLayout showdate,showfixdate;
     private DatePicker datePicker;
     private String choicedate;
-    private Spinner choiceStatue,choiceday;
+    private BootstrapDropDown choiceStatue,choiceday;
     private Gson gson;
     private BankTybeDB bankTybeDB;
     private BankDB bankDB;
     private LinearLayout firstL;
     private GridView firstG;
     private int updateChoice;
-    private boolean first;
     private Handler handler,secondHander;
     public static BankVO bankVO;
     public static boolean needSet;
     private Activity context;
     private AdView adView;
+    private String resultStatue,resultDay;
+    private List<BootstrapText> BsTextDay,BsTextWeek,BsTextMonth,BsTextStatue;
+    private int statueNumber;
 
     @Override
     public void onAttach(Context context) {
@@ -82,6 +82,7 @@ public class InsertIncome extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        TypefaceProvider.registerDefaultIconSets();
         View view = inflater.inflate(R.layout.insert_income, container, false);
         findviewByid(view);
         Common.setChargeDB(context);
@@ -89,7 +90,10 @@ public class InsertIncome extends Fragment {
         {
             bankVO=new BankVO();
         }
-        first=true;
+        BsTextDay=Common.DateChoiceSetBsTest(context,Common.DaySetSpinnerBS());
+        BsTextWeek=Common.DateChoiceSetBsTest(context,Common.WeekSetSpinnerBS);
+        BsTextMonth=Common.DateChoiceSetBsTest(context,Common.MonthSetSpinnerBS());
+        BsTextStatue=Common.DateChoiceSetBsTest(context,Common.DateStatueSetSpinner);
         handler=new Handler();
         secondHander=new Handler();
         handler.post(runnable);
@@ -105,9 +109,7 @@ public class InsertIncome extends Fragment {
     }
 
     private void setSpinner() {
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, Common.DateStatueSetSpinner());
-        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        choiceStatue.setAdapter(arrayAdapter);
+        choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
     }
 
     private Runnable runnable=new Runnable() {
@@ -142,7 +144,9 @@ public class InsertIncome extends Fragment {
         date.setOnClickListener(new dateClickListener());
         name.setOnClickListener(new showFirstG());
         showdate.setOnClickListener(new choicedateClick());
-        choiceStatue.setOnItemSelectedListener(new choiceStateItem());
+        choiceStatue.setOnDropDownItemClickListener(new choiceStateItemBS());
+        choiceday.setOnDropDownItemClickListener(new choicedayItemBS());
+//        choiceStatue.setOnItemSelectedListener(new choiceStateItem());
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new savecomsumer());
         fixdate.setOnCheckedChangeListener(new showfixdateClick());
@@ -224,7 +228,6 @@ public class InsertIncome extends Fragment {
         }
     }
     private void setIncome() {
-        first=true;
         name.setText(bankVO.getMaintype());
         money.setText(String.valueOf(bankVO.getMoney()));
         date.setText(Common.sTwo.format(bankVO.getDate()));
@@ -238,9 +241,18 @@ public class InsertIncome extends Fragment {
             String choicedate=js.get("choicedate").getAsString().trim();
             if(choicestatue.trim().equals("每天"))
             {
-                choiceStatue.setSelection(0);
+                statueNumber=0;
+                resultStatue=BsTextStatue.get(0).toString();
+                resultDay="";
+                choiceStatue.setBootstrapText(BsTextStatue.get(0));
+                choiceday.setVisibility(View.GONE);
+                choiceday.setExpandDirection(ExpandDirection.DOWN);
+                return;
             }else if(choicestatue.trim().equals("每周")){
-                choiceStatue.setSelection(1);
+                statueNumber=1;
+                resultStatue=BsTextStatue.get(1).toString();
+                choiceStatue.setBootstrapText(BsTextStatue.get(1));
+                choiceday.setDropdownData(Common.WeekSetSpinnerBS);
                 if(choicedate.equals("星期一"))
                 {
                     updateChoice=0;
@@ -262,22 +274,46 @@ public class InsertIncome extends Fragment {
                 }else{
                     updateChoice=6;
                 }
+                choiceday.setBootstrapText(BsTextWeek.get(updateChoice));
+                resultDay=BsTextWeek.get(updateChoice).toString();
+                choiceday.setExpandDirection(ExpandDirection.DOWN);
             }else if(choicestatue.trim().equals("每月")){
-                choiceStatue.setSelection(2);
+                statueNumber=2;
+                resultStatue=BsTextStatue.get(2).toString();
+                choiceStatue.setBootstrapText(BsTextStatue.get(2));
                 choicedate=choicedate.substring(0,choicedate.indexOf("日"));
                 updateChoice= Integer.valueOf(choicedate)-1;
+                resultDay=BsTextDay.get(updateChoice).toString();
+                choiceday.setBootstrapText(BsTextDay.get(updateChoice));
+                choiceday.setDropdownData(Common.DaySetSpinnerBS());
+                choiceday.setExpandDirection(ExpandDirection.DOWN);
             }else{
-                choiceStatue.setSelection(3);
+                statueNumber=3;
+                resultStatue=BsTextStatue.get(3).toString();
+                choiceStatue.setBootstrapText(BsTextStatue.get(3));
                 updateChoice=Integer.valueOf(choicedate.substring(0,choicedate.indexOf("月")))-1;
+                resultDay=BsTextMonth.get(updateChoice).toString();
+                choiceday.setBootstrapText(BsTextMonth.get(updateChoice));
+                choiceday.setDropdownData(Common.MonthSetSpinnerBS());
+                choiceday.setExpandDirection(ExpandDirection.DOWN);
             }
+            fixdate.setX(showfixdate.getWidth()/20);
+            fixDateT.setX(showfixdate.getWidth()/20+fixdate.getWidth());
+            choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/10);
+            choiceday.setX((showfixdate.getWidth()*2/3)+showfixdate.getWidth()/20);
         }
+
     }
 
 
     public void findviewByid(View view) {
         name = view.findViewById(R.id.name);
+        name.setFocusable(false);
+        name.setFocusableInTouchMode(false);
         money = view.findViewById(R.id.money);
         date = view.findViewById(R.id.date);
+        date.setFocusable(false);
+        date.setFocusableInTouchMode(false);
         fixdate = view.findViewById(R.id.fixdate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
@@ -285,7 +321,9 @@ public class InsertIncome extends Fragment {
         datePicker=view.findViewById(R.id.datePicker);
         showfixdate=view.findViewById(R.id.showfixdate);
         choiceStatue=view.findViewById(R.id.choiceStatue);
+        choiceStatue.setVisibility(View.GONE);
         choiceday=view.findViewById(R.id.choiceday);
+        choiceday.setVisibility(View.GONE);
         detailname=view.findViewById(R.id.detailname);
         fixDateT=view.findViewById(R.id.fixDateT);
         firstG = view.findViewById(R.id.firstG);
@@ -323,11 +361,15 @@ public class InsertIncome extends Fragment {
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             if(b)
             {
+                choiceStatue.setBootstrapText(BsTextStatue.get(0));
+                resultStatue=BsTextStatue.get(0).toString();
                 fixdate.setX(showfixdate.getWidth()/10);
                 fixDateT.setX(showfixdate.getWidth()/10+fixdate.getWidth());
                 choiceStatue.setX(showfixdate.getWidth()/2+showfixdate.getWidth()/10);
                 choiceStatue.setVisibility(View.VISIBLE);
             }else{
+                resultStatue="";
+                resultDay="";
                 choiceStatue.setVisibility(View.GONE);
                 choiceday.setVisibility(View.GONE);
                 fixdate.setX(showfixdate.getWidth()/3);
@@ -336,52 +378,52 @@ public class InsertIncome extends Fragment {
         }
     }
 
-    private class choiceStateItem implements AdapterView.OnItemSelectedListener {
-        @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-            ArrayList<String> spinneritem=new ArrayList<>();
-            if(position==0)
-            {
-                choiceday.setVisibility(View.GONE);
-                fixdate.setX(showfixdate.getWidth()/10);
-                fixDateT.setX(showfixdate.getWidth()/10+fixdate.getWidth());
-                choiceStatue.setX(showfixdate.getWidth()/2+showfixdate.getWidth()/10);
-                choiceStatue.setVisibility(View.VISIBLE);
-                return;
-            }
-            if(position==1)
-            {
-                spinneritem=Common.WeekSetSpinner();
-            }
-            if(position==2)
-            {
-                spinneritem=Common.DaySetSpinner();
-            }
-            if(position==3)
-            {
-                spinneritem=Common.MonthSetSpinner();
-            }
-            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(context,R.layout.spinneritem,spinneritem);
-            arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-            choiceday.setAdapter(arrayAdapter);
-            choiceday.setVisibility(View.VISIBLE);
-            fixdate.setX(showfixdate.getWidth()/20);
-            fixDateT.setX(showfixdate.getWidth()/20+fixdate.getWidth());
-            choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/10);
-            choiceday.setX((showfixdate.getWidth()*2/3)+showfixdate.getWidth()/20);
-            if (first) {
-                choiceday.setSelection(updateChoice);
-                first = false;
-            }
-        }
-
-
-
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-
-        }
-    }
+//    private class choiceStateItem implements AdapterView.OnItemSelectedListener {
+//        @Override
+//        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+//            ArrayList<String> spinneritem=new ArrayList<>();
+//            if(position==0)
+//            {
+//                choiceday.setVisibility(View.GONE);
+//                fixdate.setX(showfixdate.getWidth()/10);
+//                fixDateT.setX(showfixdate.getWidth()/10+fixdate.getWidth());
+//                choiceStatue.setX(showfixdate.getWidth()/2+showfixdate.getWidth()/10);
+//                choiceStatue.setVisibility(View.VISIBLE);
+//                return;
+//            }
+//            if(position==1)
+//            {
+//                spinneritem=Common.WeekSetSpinner();
+//            }
+//            if(position==2)
+//            {
+//                spinneritem=Common.DaySetSpinner();
+//            }
+//            if(position==3)
+//            {
+//                spinneritem=Common.MonthSetSpinner();
+//            }
+//            ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(context,R.layout.spinneritem,spinneritem);
+//            arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+//            choiceday.setAdapter(arrayAdapter);
+//            choiceday.setVisibility(View.VISIBLE);
+//            fixdate.setX(showfixdate.getWidth()/20);
+//            fixDateT.setX(showfixdate.getWidth()/20+fixdate.getWidth());
+//            choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/10);
+//            choiceday.setX((showfixdate.getWidth()*2/3)+showfixdate.getWidth()/20);
+//            if (first) {
+//                choiceday.setSelection(updateChoice);
+//                first = false;
+//            }
+//        }
+//
+//
+//
+//        @Override
+//        public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//        }
+//    }
 
 
     private class clearAllInput implements View.OnClickListener {
@@ -403,24 +445,27 @@ public class InsertIncome extends Fragment {
             money.setText("");
             fixdate.setChecked(false);
             detailname.setText("");
-            choiceStatue.setSelection(0);
-            choiceday.setSelection(0);
+            choiceStatue.setBootstrapText(BsTextStatue.get(0));
+            choiceday.setBootstrapText(BsTextDay.get(0));
+            resultDay="";
+            resultStatue="";
         }
     }
 
-    private String isnull(Object text)
+    private String isnull(String text)
     {
         if(text==null||text.toString().length()<=0)
         {
             return " ";
         }
+        text=text.substring(0,text.lastIndexOf(" "));
         return text.toString();
     }
 
     private void setBankVO() {
         Map<String, String> g = new HashMap<>();
-        g.put("choicestatue", isnull(choiceStatue.getSelectedItem().toString()));
-        g.put("choicedate", isnull(choiceday.getSelectedItem()));
+        g.put("choicestatue", isnull(resultStatue));
+        g.put("choicedate", isnull(resultDay));
         String fixdatedetail = gson.toJson(g);
         String[] dates = date.getText().toString().split("/");
         Calendar c = Calendar.getInstance();
@@ -446,9 +491,6 @@ public class InsertIncome extends Fragment {
     private class savecomsumer implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            //重置Error 顏色
-            name.setBackgroundColor(Color.parseColor("#FFEE99"));
-
             //設定種類時 不能儲存
             if(firstL.getVisibility()==View.VISIBLE)
             {
@@ -463,7 +505,7 @@ public class InsertIncome extends Fragment {
 
             if(name.getText()==null||name.getText().toString().trim().length()==0)
             {
-                name.setBackgroundColor(Color.parseColor("#ff471a"));
+                name.setError(" ");
                 Common.showToast(context,"主項目不能空白");
                 return;
             }
@@ -498,8 +540,71 @@ public class InsertIncome extends Fragment {
             money.setText("");
             fixdate.setChecked(false);
             detailname.setText("");
-            choiceStatue.setSelection(0);
-            choiceday.setSelection(0);
+//            choiceStatue.setSelection(0);
+//            choiceday.setSelection(0);
+        }
+    }
+
+    private class choiceStateItemBS implements BootstrapDropDown.OnDropDownItemClickListener {
+        @Override
+        public void onItemClick(ViewGroup parent, View v, int id) {
+            resultStatue=BsTextStatue.get(id).toString();
+            choiceStatue.setBootstrapText(BsTextStatue.get(id));
+            statueNumber=id;
+            choiceday.setExpandDirection(ExpandDirection.DOWN);
+            if(id==0)
+            {
+                resultDay="";
+                choiceday.setVisibility(View.GONE);
+                fixdate.setX(showfixdate.getWidth()/10);
+                fixDateT.setX(showfixdate.getWidth()/10+fixdate.getWidth());
+                choiceStatue.setX(showfixdate.getWidth()/2+showfixdate.getWidth()/10);
+                choiceStatue.setVisibility(View.VISIBLE);
+                return;
+            }
+            if(id==1)
+            {
+                resultDay=BsTextWeek.get(0).toString();
+                choiceday.setBootstrapText(BsTextWeek.get(0));
+                choiceday.setDropdownData(Common.WeekSetSpinnerBS);
+            }
+            if(id==2)
+            {
+                resultDay=BsTextDay.get(0).toString();
+                choiceday.setBootstrapText(BsTextDay.get(0));
+                choiceday.setDropdownData(Common.DaySetSpinnerBS());
+            }
+            if(id==3)
+            {
+                resultDay=BsTextMonth.get(0).toString();
+                choiceday.setBootstrapText(BsTextMonth.get(0));
+                choiceday.setDropdownData(Common.MonthSetSpinnerBS());
+            }
+            choiceday.setVisibility(View.VISIBLE);
+            fixdate.setX(showfixdate.getWidth()/20);
+            fixDateT.setX(showfixdate.getWidth()/20+fixdate.getWidth());
+            choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/10);
+            choiceday.setX((showfixdate.getWidth()*2/3)+showfixdate.getWidth()/20);
+        }
+    }
+    private class choicedayItemBS implements BootstrapDropDown.OnDropDownItemClickListener {
+        @Override
+        public void onItemClick(ViewGroup parent, View v, int id) {
+            switch (statueNumber)
+            {
+                case 1:
+                    choiceday.setBootstrapText(BsTextWeek.get(id));
+                    resultDay=BsTextWeek.get(id).toString();
+                    break;
+                case 2:
+                    choiceday.setBootstrapText(BsTextDay.get(id));
+                    resultDay=BsTextDay.get(id).toString();
+                    break;
+                case 3:
+                    choiceday.setBootstrapText(BsTextMonth.get(id));
+                    resultDay=BsTextMonth.get(id).toString();
+                    break;
+            }
         }
     }
 }

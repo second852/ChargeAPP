@@ -21,6 +21,10 @@ import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.BootstrapEditText;
+import com.beardedhen.androidbootstrap.BootstrapLabel;
+import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
@@ -41,8 +45,10 @@ import java.util.Map;
 
 
 public class UpdateInvoice extends Fragment {
-    private TextView secondname, name,money,number;
-    private TextView save, clear, date,detailname;
+
+    private BootstrapEditText number, name, money, secondname, date;
+    private BootstrapButton save, clear;
+    private BootstrapLabel detailname;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
     private InvoiceDB invoiceDB;
@@ -71,6 +77,7 @@ public class UpdateInvoice extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        TypefaceProvider.registerDefaultIconSets();
         View view = inflater.inflate(R.layout.update_invoice, container, false);
         findviewByid(view);
         setInvoice();
@@ -194,14 +201,28 @@ public class UpdateInvoice extends Fragment {
         Common.showToast(context, "財政部網路忙線~");
     }
 
+
     public void findviewByid(View view) {
         name = view.findViewById(R.id.name);
+        name.setFocusable(false);
+        name.setFocusableInTouchMode(false);
         secondname = view.findViewById(R.id.secondname);
+        secondname.setFocusable(false);
+        secondname.setFocusableInTouchMode(false);
         money = view.findViewById(R.id.money);
+        money.setFocusable(false);
+        money.setFocusableInTouchMode(false);
+        money.setBackgroundColor(Color.parseColor("#DDDDDD"));
         date = view.findViewById(R.id.date);
+        date.setFocusable(false);
+        date.setFocusableInTouchMode(false);
+        date.setBackgroundColor(Color.parseColor("#DDDDDD"));
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
         number = view.findViewById(R.id.number);
+        number.setFocusable(false);
+        number.setFocusableInTouchMode(false);
+        number.setBackgroundColor(Color.parseColor("#DDDDDD"));
         detailname = view.findViewById(R.id.detailname);
         firstG=view.findViewById(R.id.firstG);
         firstL=view.findViewById(R.id.firstL);

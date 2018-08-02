@@ -199,9 +199,9 @@ public class SelectListModelIM extends Fragment {
                     }
                 }catch (Exception e)
                 {
-                    decribe.setText(" ");
+                    stringBuffer.append(" ");
                 }
-                decribe.setText("\n");
+                stringBuffer.append("\n");
             }
 
             if (bankVO.getFixDate()!=null&&bankVO.getFixDate().equals("true")) {
@@ -218,9 +218,9 @@ public class SelectListModelIM extends Fragment {
                     }
                 }catch (Exception e)
                 {
-                    decribe.setText(" ");
+                    stringBuffer.append(" ");
                 }
-                decribe.setText("\n");
+                stringBuffer.append("\n");
             }
             stringBuffer.append(bankVO.getDetailname());
             if(stringBuffer.indexOf("\n")==-1)
