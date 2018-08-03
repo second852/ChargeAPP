@@ -32,6 +32,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
@@ -254,6 +255,15 @@ public class MainActivity extends AppCompatActivity {
             }
             ImageView indicator = view.findViewById(R.id.ele_indicator);
             RelativeLayout rea = view.findViewById(R.id.rea);
+
+            //not show bottom
+            BootstrapButton deletecarrier=view.findViewById(R.id.deletecarrier);
+            BootstrapButton widgetShow=view.findViewById(R.id.widgetShow);
+            BootstrapButton updateC=view.findViewById(R.id.updateC);
+            widgetShow.setVisibility(View.GONE);
+            deletecarrier.setVisibility(View.GONE);
+            updateC.setVisibility(View.GONE);
+
             if (oldMainView == view && MainActivity.this.position == i) {
                 rea.setBackgroundColor(Color.parseColor("#FFDD55"));
             } else {

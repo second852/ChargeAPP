@@ -18,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
@@ -168,9 +170,9 @@ public class SelectListPieIncome extends Fragment {
             final BankVO bankVO = bankVOS.get(position);
             TextView title = itemView.findViewById(R.id.listTitle);
             TextView decribe = itemView.findViewById(R.id.listDetail);
-            Button update = itemView.findViewById(R.id.updateD);
-            Button deleteI = itemView.findViewById(R.id.deleteI);
-            TextView fixT = itemView.findViewById(R.id.fixT);
+            BootstrapButton update = itemView.findViewById(R.id.updateD);
+            BootstrapButton deleteI = itemView.findViewById(R.id.deleteI);
+            BootstrapButton fixT = itemView.findViewById(R.id.fixT);
             LinearLayout fixL = itemView.findViewById(R.id.fixL);
             LinearLayout remindL = itemView.findViewById(R.id.remindL);
             LinearLayout typeL=itemView.findViewById(R.id.typeL);
@@ -194,8 +196,7 @@ public class SelectListPieIncome extends Fragment {
             stringBuffer = new StringBuffer();
             if (bankVO.isAuto()) {
                 fixT.setText("自動");
-                fixT.setTextColor(Color.parseColor("#7700BB"));
-                fixL.setBackgroundColor(Color.parseColor("#7700BB"));
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.INFO);
                 fixL.setVisibility(View.VISIBLE);
                 try {
                     JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);
@@ -215,8 +216,7 @@ public class SelectListPieIncome extends Fragment {
             if (bankVO.getFixDate()!=null&&bankVO.getFixDate().equals("true")) {
 
                 fixT.setText("固定");
-                fixT.setTextColor(Color.parseColor("#003C9D"));
-                fixL.setBackgroundColor(Color.parseColor("#003C9D"));
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
                 fixL.setVisibility(View.VISIBLE);
                 try {
                     JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);

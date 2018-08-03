@@ -226,7 +226,7 @@ public class EleSetCarrier extends Fragment {
             BootstrapButton deletecarrier=itemView.findViewById(R.id.deletecarrier);
             BootstrapButton widgetShow=itemView.findViewById(R.id.widgetShow);
             BootstrapButton updateC=itemView.findViewById(R.id.updateC);
-            widgetShow.setVisibility(View.GONE);
+            widgetShow.setVisibility(View.VISIBLE);
             deletecarrier.setVisibility(View.VISIBLE);
             updateC.setVisibility(View.VISIBLE);
             //顯示有問題帳號
@@ -247,7 +247,6 @@ public class EleSetCarrier extends Fragment {
             //小工具綁定工具列
             if(carrierlist.size()>1&&position!=EleSetCarrier.this.position)
             {
-                widgetShow.setVisibility(View.VISIBLE);
                 widgetShow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -255,6 +254,14 @@ public class EleSetCarrier extends Fragment {
                         setListAdapt();
                     }
                 });
+                widgetShow.setShowOutline(false);
+                widgetShow.setBadgeText("選取");
+                widgetShow.setEnabled(true);
+            }else {
+                widgetShow.setShowOutline(true);
+                widgetShow.setText("已選取");
+                widgetShow.setOnClickListener(null);
+                widgetShow.setEnabled(false);
             }
             String show=carrierVO.getCarNul();
             tvId.setText(show);

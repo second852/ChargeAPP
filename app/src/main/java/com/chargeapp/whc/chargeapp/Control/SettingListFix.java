@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
@@ -154,8 +155,8 @@ public class SettingListFix extends Fragment {
             TextView decribe=itemView.findViewById(R.id.listDetail);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
             LinearLayout fixL=itemView.findViewById(R.id.fixL);
-            Button update=itemView.findViewById(R.id.updateD);
-            Button deleteI=itemView.findViewById(R.id.deleteI);
+            BootstrapButton update=itemView.findViewById(R.id.updateD);
+            BootstrapButton deleteI=itemView.findViewById(R.id.deleteI);
             fixL.setVisibility(View.VISIBLE);
             deleteI.setVisibility(View.GONE);
             update.setText("檢視");

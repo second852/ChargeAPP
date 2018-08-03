@@ -23,6 +23,10 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.BootstrapDropDown;
+import com.beardedhen.androidbootstrap.BootstrapText;
+import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -42,13 +46,14 @@ public class EleAddBank extends Fragment {
     private WebView webView;
     protected ProgressBar myProgressBar;
     private TextView showError;
-    private TextView enter;
-    private Spinner carrier;
+    private BootstrapButton enter;
+    private BootstrapDropDown carrier;
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOS;
     private CarrierVO carrierVO;
     private Activity context;
     private DrawerLayout drawerLayout;
+    private List<BootstrapText> bootstrapTexts;
 
 
     @Override
@@ -65,6 +70,7 @@ public class EleAddBank extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        TypefaceProvider.registerDefaultIconSets();
         final View view = inflater.inflate(R.layout.ele_add_carrier, container, false);
         findViewById(view);
         setSpinner();
@@ -91,15 +97,16 @@ public class EleAddBank extends Fragment {
             showError.setText("請新增載具!");
             return;
         }
-        ArrayList<String> carrierNul=new ArrayList<>();
-        for (CarrierVO c:carrierVOS)
-        {
-            carrierNul.add(c.getCarNul());
+        String[] carrierNul =new String[carrierVOS.size()];
+        for (int i=0;i<carrierVOS.size();i++) {
+            carrierNul[i]=carrierVOS.get(i).getCarNul();
         }
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(context,R.layout.spinneritem,carrierNul);
-        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        carrier.setAdapter(arrayAdapter);
-        carrier.setOnItemSelectedListener(new choiceStateItem());
+        carrierVO=carrierVOS.get(0);
+        bootstrapTexts=Common.ChoiceCarrierSetBsTest(context,carrierNul);
+        carrier.setDropdownData(carrierNul);
+        carrier.setBootstrapText(bootstrapTexts.get(0));
+        carrier.setOnDropDownItemClickListener(new choiceStateItemBS());
+//        carrier.setOnItemSelectedListener(new choiceStateItem());
         enter.setOnClickListener(new CliientListener());
     }
 
@@ -229,6 +236,14 @@ public class EleAddBank extends Fragment {
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
 
+        }
+    }
+
+    private class choiceStateItemBS implements BootstrapDropDown.OnDropDownItemClickListener {
+        @Override
+        public void onItemClick(ViewGroup parent, View v, int id) {
+            carrierVO = carrierVOS.get(id);
+            carrier.setBootstrapText(bootstrapTexts.get(id));
         }
     }
 }

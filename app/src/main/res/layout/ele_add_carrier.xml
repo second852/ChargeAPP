@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:background="#f5f5f5"
     android:orientation="vertical">
@@ -13,33 +14,40 @@
             android:id="@+id/carrierT"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
             android:text="請選擇載具"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textColor="#000000"
-            android:layout_toLeftOf="@+id/carrier"
+            android:layout_marginLeft="10dp"
             />
-        <Spinner
-            android:layout_marginTop="15dp"
+        <com.beardedhen.androidbootstrap.BootstrapDropDown
             android:id="@+id/carrier"
-            android:theme="@style/spinner_normal"
-            android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@+id/carrierT"
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        </Spinner>
-        <TextView
-            android:id="@+id/enter"
-            android:layout_marginTop="15dp"
-            android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_toRightOf="@+id/carrier"
-            android:text="確定"
-            android:textSize="20sp"
-            android:textColor="#000000"
-            android:background="#33CCFF"
-            android:layout_marginLeft="25dp"
+            android:layout_marginLeft="15dp"
+            app:bootstrapBrand="regular"
+            app:showOutline="true"
+            app:bootstrapExpandDirection="down"
+            app:bootstrapSize="md"
+            app:bootstrapText="Small {fa_thumbs_o_up}"
+            app:dropdownResource="@array/fixDay"
+            app:roundedCorners="true"
             />
+
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/enter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/carrier"
+            android:gravity="center"
+            android:text="確定"
+            app:bootstrapBrand="success"
+            app:bootstrapSize="md"
+            app:buttonMode="regular"
+            app:roundedCorners="true" />
         <TextView
             android:id="@+id/carrierM"
             android:layout_marginTop="15dp"

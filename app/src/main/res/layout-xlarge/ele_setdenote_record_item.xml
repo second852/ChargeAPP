@@ -2,6 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -27,18 +28,19 @@
         android:layout_alignParentRight="true"
         android:background="#FF0000"
         >
-        <TextView
+        <com.beardedhen.androidbootstrap.BootstrapButton
             android:id="@+id/remainT"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="提醒"
-            android:textColor="#FF0000"
-            android:background="#DDDDDD"
             android:gravity="center"
             android:padding="2dp"
-            android:layout_margin="1dp"
             android:layout_gravity="center"
-            android:textSize="20sp"
+            app:roundedCorners="true"
+            app:bootstrapBrand="danger"
+            app:bootstrapSize="md"
+            app:buttonMode="regular"
+            app:showOutline="true"
             />
     </LinearLayout>
 
@@ -52,18 +54,19 @@
         android:background="#0000FF"
         android:visibility="gone"
         >
-        <TextView
+        <com.beardedhen.androidbootstrap.BootstrapButton
             android:id="@+id/fixT"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="固定"
-            android:textColor="#0000FF"
-            android:background="#DDDDDD"
             android:gravity="center"
             android:padding="2dp"
-            android:layout_margin="1dp"
             android:layout_gravity="center"
-            android:textSize="20sp"
+            app:roundedCorners="true"
+            app:bootstrapBrand="danger"
+            app:bootstrapSize="md"
+            app:buttonMode="regular"
+            app:showOutline="true"
             />
     </LinearLayout>
 

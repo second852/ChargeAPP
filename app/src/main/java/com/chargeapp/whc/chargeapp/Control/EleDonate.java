@@ -33,6 +33,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
@@ -67,7 +69,7 @@ public class EleDonate extends Fragment {
     public static int choiceca = 0;
     private ProgressDialog progressDialog;
     public static HashMap<String, InvoiceVO> donateMap;
-    private Button choiceall, save, cancel;
+    private BootstrapButton choiceall, save, cancel;
     private EditText inputH;
     private ImageView searchI;
     private ListView heartyList;
@@ -97,6 +99,7 @@ public class EleDonate extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        TypefaceProvider.registerDefaultIconSets();
         View view = inflater.inflate(R.layout.ele_setdenote, container, false);
         progressDialog = new ProgressDialog(context);
         Common.setChargeDB(context);
@@ -294,6 +297,16 @@ public class EleDonate extends Fragment {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                 itemView = layoutInflater.inflate(R.layout.ele_main_item, parent, false);
             }
+
+            //close BootstrapButton
+            BootstrapButton deletecarrier=itemView.findViewById(R.id.deletecarrier);
+            BootstrapButton widgetShow=itemView.findViewById(R.id.widgetShow);
+            BootstrapButton updateC=itemView.findViewById(R.id.updateC);
+            widgetShow.setVisibility(View.GONE);
+            deletecarrier.setVisibility(View.GONE);
+            updateC.setVisibility(View.GONE);
+
+
             final JsonObject team = teamlist.get(position);
             String teamName = "";
             try {

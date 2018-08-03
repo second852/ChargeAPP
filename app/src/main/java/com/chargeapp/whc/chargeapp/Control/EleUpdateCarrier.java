@@ -28,6 +28,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
@@ -45,9 +47,9 @@ import java.util.concurrent.ExecutionException;
  */
 
 public class EleUpdateCarrier extends Fragment {
-    private EditText cellphone,certcode;
+    private BootstrapEditText cellphone,certcode;
     private ListView listcarrier;
-    private TextView confirm;
+    private BootstrapButton confirm;
     public GetSQLDate getIvnum;
     public CarrierDB carrierDB;
     public TextView listtiitle;

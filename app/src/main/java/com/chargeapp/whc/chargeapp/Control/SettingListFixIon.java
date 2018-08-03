@@ -17,6 +17,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
@@ -134,30 +136,27 @@ public class SettingListFixIon extends Fragment {
             }
             TextView title = itemView.findViewById(R.id.listTitle);
             TextView decribe = itemView.findViewById(R.id.listDetail);
-            TextView fixT = itemView.findViewById(R.id.fixT);
-            TextView remainT = itemView.findViewById(R.id.remainT);
+            BootstrapButton fixT = itemView.findViewById(R.id.fixT);
+            BootstrapButton remainT = itemView.findViewById(R.id.remainT);
             LinearLayout remindL = itemView.findViewById(R.id.remindL);
             LinearLayout fixL = itemView.findViewById(R.id.fixL);
-            Button update = itemView.findViewById(R.id.updateD);
-            Button deleteI = itemView.findViewById(R.id.deleteI);
+            BootstrapButton update = itemView.findViewById(R.id.updateD);
+            BootstrapButton deleteI = itemView.findViewById(R.id.deleteI);
             update.setText("修改");
             StringBuffer stringBuffer = new StringBuffer();
             final BankVO bankVO = bankVOS.get(position);
             if (bankVO.isAuto()) {
                 fixL.setVisibility(View.VISIBLE);
                 fixT.setText("子體");
-                fixT.setTextColor(Color.parseColor("#7744FF"));
-                fixL.setBackgroundColor(Color.parseColor("#7744FF"));
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
                 remindL.setVisibility(View.VISIBLE);
                 remainT.setText("自動");
-                remainT.setTextColor(Color.parseColor("#7700BB"));
-                remindL.setBackgroundColor(Color.parseColor("#7700BB"));
+                remainT.setBootstrapBrand(DefaultBootstrapBrand.INFO);
             } else {
                 remindL.setVisibility(View.GONE);
                 fixL.setVisibility(View.VISIBLE);
-                fixL.setBackgroundColor(Color.parseColor("#0000FF"));
                 fixT.setText("本體");
-                fixT.setTextColor(Color.parseColor("#0000FF"));
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
             }
             //設定 title
             stringBuffer.append(Common.sTwo.format(bankVO.getDate()));

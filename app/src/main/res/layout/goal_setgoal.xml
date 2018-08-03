@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:background="#f5f5f5"
     >
@@ -27,17 +28,19 @@
                     android:textColor="#000000"
                     android:textSize="20dp" />
 
-                <EditText
+                <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/name"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="130dp"
-                    android:background="#FFEE99"
                     android:inputType="text"
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="20sp" />
+                    app:roundedCorners="true"
+                    app:bootstrapSize="md"
+                    app:bootstrapBrand="primary"
+                    />
             </RelativeLayout>
 
             <RelativeLayout
@@ -56,17 +59,19 @@
                     android:textColor="#000000"
                     android:textSize="20dp" />
 
-                <EditText
+                <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/money"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="130dp"
-                    android:background="#FFEE99"
                     android:inputType="number"
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="20sp" />
+                    app:roundedCorners="true"
+                    app:bootstrapSize="md"
+                    app:bootstrapBrand="primary"
+                    />
             </RelativeLayout>
 
             <RelativeLayout
@@ -84,13 +89,18 @@
                     android:textColor="#000000"
                     android:textSize="20dp" />
 
-                <Spinner
+                <com.beardedhen.androidbootstrap.BootstrapDropDown
                     android:id="@+id/spinnerT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="130dp"
-                    android:theme="@style/spinner_normal"
                     android:gravity="center"
+                    app:bootstrapSize="sm"
+                    app:bootstrapExpandDirection="down"
+                    app:bootstrapText="每天 {fa_calendar}"
+                    app:dropdownResource="@array/fixDay"
+                    app:roundedCorners="true"
+                    app:showOutline="true"
                     />
             </RelativeLayout>
 
@@ -110,14 +120,21 @@
                     android:textColor="#000000"
                     android:textSize="20dp" />
 
-                <Spinner
+                <com.beardedhen.androidbootstrap.BootstrapDropDown
                     android:id="@+id/choiceStatue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="130dp"
                     android:theme="@style/spinner_normal"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    app:bootstrapSize="sm"
+                    app:bootstrapExpandDirection="down"
+                    app:bootstrapText="每天 {fa_calendar}"
+                    app:dropdownResource="@array/fixDay"
+                    app:roundedCorners="true"
+                    app:showOutline="true"
+                    />
                 <TextView
                     android:id="@+id/shift"
                     android:layout_toRightOf="@+id/choiceStatue"
@@ -130,7 +147,7 @@
                     android:layout_gravity="center"
                     android:visibility="gone"
                     android:textSize="18sp" />
-                <TextView
+                <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/limitP"
                     android:layout_width="wrap_content"
                     android:layout_toRightOf="@+id/shift"
@@ -142,9 +159,12 @@
                     android:textColorHint="#aaaaaa"
                     android:gravity="center"
                     android:layout_gravity="center"
-                    android:background="#FFEE99"
                     android:visibility="gone"
-                    android:textSize="17sp" />
+                    android:textSize="17sp"
+                    app:roundedCorners="true"
+                    app:bootstrapSize="md"
+                    app:bootstrapBrand="primary"
+                    />
             </RelativeLayout>
 
 
@@ -181,22 +201,33 @@
                     android:layout_centerVertical="true"
                     />
 
-                <Spinner
+                <com.beardedhen.androidbootstrap.BootstrapDropDown
                     android:id="@+id/remindS"
                     android:visibility="gone"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
-                    android:theme="@style/spinner_normal"
                     android:gravity="center"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-                <Spinner
+                    android:layout_height="wrap_content"
+                    app:bootstrapExpandDirection="down"
+                    app:bootstrapSize="sm"
+                    app:bootstrapText="每天 {fa_calendar}"
+                    app:dropdownResource="@array/fixDay"
+                    app:roundedCorners="true"
+                    app:showOutline="true"
+                    />
+                <com.beardedhen.androidbootstrap.BootstrapDropDown
                     android:id="@+id/remindD"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:theme="@style/spinner_normal"
                     android:visibility="gone"
+                    app:bootstrapExpandDirection="down"
+                    app:bootstrapSize="sm"
+                    app:bootstrapText="每天 {fa_calendar}"
+                    app:dropdownResource="@array/fixDay"
+                    app:roundedCorners="true"
+                    app:showOutline="true"
                     />
                 <CheckBox
                     android:id="@+id/noWeekend"
@@ -233,31 +264,34 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true" />
 
-                <TextView
+                <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/save"
-                    android:layout_width="60dp"
-                    android:layout_height="40dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginRight="30dp"
                     android:layout_toLeftOf="@+id/standard"
-                    android:background="#33CCFF"
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="儲存"
                     android:textColor="#000000"
-                    android:textSize="20sp" />
+                    app:bootstrapBrand="info"
+                    app:bootstrapSize="md"
+                    app:roundedCorners="true"
+                    />
 
-                <TextView
+                <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/clear"
-                    android:layout_width="60dp"
-                    android:layout_height="40dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="30dp"
                     android:layout_toRightOf="@+id/standard"
-                    android:background="#FF8888"
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="清除"
-                    android:textColor="#000000"
-                    android:textSize="20sp" />
+                    app:roundedCorners="true"
+                    app:bootstrapSize="md"
+                    app:bootstrapBrand="danger"
+                    />
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>

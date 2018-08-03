@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f5f5f5"
     >
@@ -28,51 +30,55 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/modelR"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="30dp"
             >
-            <Button
+            <com.beardedhen.androidbootstrap.BootstrapButton
                 android:id="@+id/choiceall"
-                android:layout_width="70dp"
-                android:layout_height="45dp"
-                android:textColor="#000000"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="50dp"
-                android:text="全選"
-                android:textSize="30sp"
-                android:background="#66FF66"
+                android:layout_marginRight="70dp"
                 android:layout_toLeftOf="@+id/save"
+                app:roundedCorners="true"
+                app:bootstrapBrand="warning"
+                app:bootstrapText="全選 {fa_star_o}"
+                app:bootstrapSize="lg"
+                app:buttonMode="regular"
                 />
-            <Button
+            <com.beardedhen.androidbootstrap.BootstrapButton
                 android:id="@+id/save"
-                android:layout_width="70dp"
-                android:layout_height="45dp"
-                android:background="#33CCFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:text="確定"
-                android:textColor="#000000"
-                android:textSize="30sp"
+                app:roundedCorners="true"
+                app:bootstrapBrand="success"
+                app:bootstrapText="確定 {fa_share}"
+                app:bootstrapSize="lg"
+                app:buttonMode="regular"
                 />
-            <Button
+            <com.beardedhen.androidbootstrap.BootstrapButton
                 android:id="@+id/cancel"
-                android:layout_width="70dp"
-                android:layout_height="45dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/save"
                 android:layout_centerVertical="true"
-                android:background="#FF8888"
-                android:layout_marginLeft="50dp"
+                android:layout_marginLeft="60dp"
                 android:gravity="center"
                 android:text="取消"
-                android:textColor="#000000"
-                android:textSize="30sp"
+                app:roundedCorners="true"
+                app:bootstrapBrand="danger"
+                app:bootstrapText="取消 {fa_remove}"
+                app:bootstrapSize="lg"
+                app:buttonMode="regular"
                 />
         </RelativeLayout>
 
     <ListView
         android:id="@+id/recyclenul"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:layout_below="@+id/choice"
         android:layout_height="wrap_content">

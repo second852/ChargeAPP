@@ -20,6 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
@@ -242,20 +244,20 @@ public class HomePagetList extends Fragment {
             }
             TextView title=itemView.findViewById(R.id.listTitle);
             TextView decribe=itemView.findViewById(R.id.listDetail);
-            Button update=itemView.findViewById(R.id.updateD);
-            Button deleteI=itemView.findViewById(R.id.deleteI);
+            BootstrapButton update=itemView.findViewById(R.id.updateD);
+            BootstrapButton deleteI=itemView.findViewById(R.id.deleteI);
             LinearLayout fixL=itemView.findViewById(R.id.fixL);
-            TextView fixT=itemView.findViewById(R.id.fixT);
+            BootstrapButton fixT=itemView.findViewById(R.id.fixT);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
             LinearLayout typeL=itemView.findViewById(R.id.typeL);
-            TextView typeT=itemView.findViewById(R.id.typeT);
+            BootstrapButton typeT=itemView.findViewById(R.id.typeT);
             final Object o=objects.get(position);
             StringBuffer sbTitle=new StringBuffer();
             StringBuffer sbDecribe=new StringBuffer();
 
             //新增ele Type
             LinearLayout eleTypeL=itemView.findViewById(R.id.eleTypeL);
-            TextView eleTypeT=itemView.findViewById(R.id.eleTypeT);
+            BootstrapButton eleTypeT=itemView.findViewById(R.id.eleTypeT);
 
             if(o instanceof InvoiceVO)
             {
@@ -267,16 +269,14 @@ public class HomePagetList extends Fragment {
 
                 typeL.setVisibility(View.VISIBLE);
                 typeT.setText("雲端發票");
-                typeT.setTextColor(Color.parseColor("#008844"));
-                typeL.setBackgroundColor(Color.parseColor("#008844"));
+                typeT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                 sbTitle.append(Common.sDay.format(new Date(I.getTime().getTime())));
 
                 //設定電子發票種類
                 try {
                     eleTypeL.setVisibility(View.VISIBLE);
                     eleTypeT.setText(Common.CardType().get(I.getCardType().trim()));
-                    eleTypeT.setTextColor(Color.parseColor("#003377"));
-                    eleTypeL.setBackgroundColor(Color.parseColor("#003377"));
+                    eleTypeT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
                 }catch (Exception e)
                 {
                     eleTypeL.setVisibility(View.GONE);
@@ -369,12 +369,10 @@ public class HomePagetList extends Fragment {
                 if(c.getNumber()==null||c.getNumber().trim().length()<=0)
                 {
                     typeT.setText("無發票");
-                    typeT.setTextColor(Color.parseColor("#8B4513"));
-                    typeL.setBackgroundColor(Color.parseColor("#8B4513"));
+                    typeT.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
                 }else{
                     typeT.setText("紙本發票");
-                    typeT.setTextColor(Color.parseColor("#008888"));
-                    typeL.setBackgroundColor(Color.parseColor("#008888"));
+                    typeT.setBootstrapBrand(DefaultBootstrapBrand.WARNING);
                 }
 
 
@@ -398,8 +396,7 @@ public class HomePagetList extends Fragment {
                 fixL.setVisibility(View.GONE);
                 if (c.isAuto()) {
                     fixT.setText("自動");
-                    fixT.setTextColor(Color.parseColor("#7700BB"));
-                    fixL.setBackgroundColor(Color.parseColor("#7700BB"));
+                    fixT.setBootstrapBrand(DefaultBootstrapBrand.INFO);
                     fixL.setVisibility(View.VISIBLE);
                     try {
                         JsonObject js = gson.fromJson(c.getFixDateDetail(), JsonObject.class);
@@ -420,8 +417,7 @@ public class HomePagetList extends Fragment {
                 if (c.getFixDate()!=null&&c.getFixDate().equals("true")) {
 
                     fixT.setText("固定");
-                    fixT.setTextColor(Color.parseColor("#003C9D"));
-                    fixL.setBackgroundColor(Color.parseColor("#003C9D"));
+                    fixT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
                     fixL.setVisibility(View.VISIBLE);
                     try {
                         JsonObject js = gson.fromJson(c.getFixDateDetail(), JsonObject.class);

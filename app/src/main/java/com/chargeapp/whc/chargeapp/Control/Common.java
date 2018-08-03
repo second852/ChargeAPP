@@ -48,6 +48,7 @@ import java.util.regex.Pattern;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
 
 /**
  * Created by Wang on 2017/11/19.
@@ -232,6 +233,20 @@ public class Common {
             BootstrapText text = new BootstrapText.Builder(activity)
                     .addText(s+" ")
                     .addFontAwesomeIcon(FA_CALCULATOR)
+                    .build();
+            bootstrapTexts.add(text);
+        }
+        return bootstrapTexts;
+    }
+
+    public static List<BootstrapText> ChoiceCarrierSetBsTest(Activity activity,String[] data)
+    {
+        List<BootstrapText> bootstrapTexts=new ArrayList<>();
+        for (String s:data)
+        {
+            BootstrapText text = new BootstrapText.Builder(activity)
+                    .addText(s+" ")
+                    .addFontAwesomeIcon(FA_ID_CARD_O)
                     .build();
             bootstrapTexts.add(text);
         }

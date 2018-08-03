@@ -16,6 +16,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
@@ -59,6 +61,7 @@ public class EleDonateRecord extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        TypefaceProvider.registerDefaultIconSets();
         View view = inflater.inflate(R.layout.ele_setdenote_record, container, false);
         Common.setChargeDB(context);
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -162,7 +165,7 @@ public class EleDonateRecord extends Fragment {
             TextView Title=itemView.findViewById(R.id.listTitle);
             TextView describe=itemView.findViewById(R.id.listDetail);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
-            TextView remainT=itemView.findViewById(R.id.remainT);
+            BootstrapButton remainT=itemView.findViewById(R.id.remainT);
             InvoiceVO invoiceVO=invoiceVOS.get(position);
             String title=invoiceVO.getInvNum();
             title=title.substring(0,7);

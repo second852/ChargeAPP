@@ -2,6 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -43,20 +44,20 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:visibility="gone"
-            android:background="#FF0000"
             >
-            <TextView
+            <com.beardedhen.androidbootstrap.BootstrapButton
                 android:id="@+id/typeT"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="提醒"
-                android:textColor="#FF0000"
-                android:background="#DDDDDD"
+                android:text="發票種類"
                 android:gravity="center"
                 android:padding="2dp"
-                android:layout_margin="1dp"
                 android:layout_gravity="center"
-                android:textSize="20sp"
+                app:bootstrapBrand="success"
+                app:buttonMode="regular"
+                app:bootstrapSize="md"
+                app:roundedCorners="true"
+                app:showOutline="true"
                 />
         </LinearLayout>
         <LinearLayout
@@ -65,21 +66,22 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/typeL"
             android:layout_marginLeft="8dp"
-            android:background="#003C9D"
             android:visibility="gone"
             >
-            <TextView
+            <com.beardedhen.androidbootstrap.BootstrapButton
                 android:id="@+id/fixT"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="固定"
-                android:textColor="#003C9D"
-                android:background="#DDDDDD"
                 android:gravity="center"
                 android:padding="2dp"
                 android:layout_margin="1dp"
                 android:layout_gravity="center"
-                android:textSize="20sp"
+                app:bootstrapBrand="primary"
+                app:buttonMode="regular"
+                app:bootstrapSize="md"
+                app:roundedCorners="true"
+                app:showOutline="true"
                 />
         </LinearLayout>
 
@@ -89,21 +91,23 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/fixL"
             android:layout_marginLeft="8dp"
-            android:background="#003C9D"
             android:visibility="gone"
             >
-            <TextView
+            <com.beardedhen.androidbootstrap.BootstrapButton
                 android:id="@+id/eleTypeT"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="手機條碼"
-                android:textColor="#003C9D"
-                android:background="#DDDDDD"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="悠遊卡"
                 android:gravity="center"
                 android:padding="2dp"
                 android:layout_margin="1dp"
                 android:layout_gravity="center"
                 android:textSize="20sp"
+                app:bootstrapBrand="success"
+                app:buttonMode="regular"
+                app:bootstrapSize="md"
+                app:roundedCorners="true"
+                app:showOutline="true"
                 />
         </LinearLayout>
         <LinearLayout
@@ -112,21 +116,22 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/fixL"
             android:layout_marginLeft="8dp"
-            android:background="#FF0000"
             android:visibility="gone"
             >
-            <TextView
+            <com.beardedhen.androidbootstrap.BootstrapButton
                 android:id="@+id/remainT"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="提醒"
-                android:textColor="#FF0000"
-                android:background="#DDDDDD"
                 android:gravity="center"
                 android:padding="2dp"
                 android:layout_margin="1dp"
                 android:layout_gravity="center"
-                android:textSize="20sp"
+                app:bootstrapBrand="danger"
+                app:buttonMode="regular"
+                app:bootstrapSize="md"
+                app:roundedCorners="true"
+                app:showOutline="true"
                 />
         </LinearLayout>
     </RelativeLayout>
@@ -154,28 +159,36 @@
             />
     </RelativeLayout>
 
-    <Button
+    <com.beardedhen.androidbootstrap.BootstrapButton
         android:id="@+id/updateD"
-        android:layout_width="50dp"
-        android:layout_height="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:textSize="15dp"
         android:text="下載"
         android:layout_alignParentRight="true"
-        android:background="#33CCFF"
         android:layout_centerHorizontal="true"
+        app:bootstrapBrand="info"
+        app:buttonMode="regular"
+        app:bootstrapSize="md"
+        app:roundedCorners="true"
+        app:showOutline="false"
         />
-    <Button
+    <com.beardedhen.androidbootstrap.BootstrapButton
         android:id="@+id/deleteI"
-        android:layout_width="50dp"
-        android:layout_height="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/listTitle"
         android:layout_margin="8dp"
         android:textSize="15dp"
         android:text="刪除"
         android:layout_alignParentRight="true"
-        android:background="#FF8888"
         android:layout_centerHorizontal="true"
+        app:bootstrapBrand="danger"
+        app:buttonMode="regular"
+        app:bootstrapSize="md"
+        app:roundedCorners="true"
+        app:showOutline="false"
         />
 </RelativeLayout>
 </android.support.v7.widget.CardView>

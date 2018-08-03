@@ -20,6 +20,8 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
@@ -135,12 +137,12 @@ public class SettingListFixCon extends Fragment {
             }
             TextView title=itemView.findViewById(R.id.listTitle);
             TextView decribe=itemView.findViewById(R.id.listDetail);
-            TextView fixT=itemView.findViewById(R.id.fixT);
-            TextView remainT=itemView.findViewById(R.id.remainT);
+            BootstrapButton fixT=itemView.findViewById(R.id.fixT);
+            BootstrapButton remainT=itemView.findViewById(R.id.remainT);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
             final LinearLayout fixL=itemView.findViewById(R.id.fixL);
-            Button update=itemView.findViewById(R.id.updateD);
-            Button deleteI=itemView.findViewById(R.id.deleteI);
+            BootstrapButton update=itemView.findViewById(R.id.updateD);
+            BootstrapButton deleteI=itemView.findViewById(R.id.deleteI);
             update.setText("修改");
             StringBuffer stringBuffer = new StringBuffer();
             final ConsumeVO consumeVO=consumeVOS.get(position);
@@ -149,25 +151,20 @@ public class SettingListFixCon extends Fragment {
             {
                 fixL.setVisibility(View.VISIBLE);
                 fixT.setText("子體");
-                fixT.setTextColor(Color.parseColor("#7744FF"));
-                fixL.setBackgroundColor(Color.parseColor("#7744FF"));
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
                 remindL.setVisibility(View.VISIBLE);
                 remainT.setText("自動");
-                remainT.setTextColor(Color.parseColor("#7700BB"));
-                remindL.setBackgroundColor(Color.parseColor("#7700BB"));
+                remainT.setBootstrapBrand(DefaultBootstrapBrand.INFO);
             }else {
                 if(consumeVO.getNotify().equals("true"))
                 {
                     remainT.setText("提醒");
-                    remainT.setTextColor(Color.parseColor("#CC0000"));
-                    remindL.setBackgroundColor(Color.parseColor("#CC0000"));
                     remindL.setVisibility(View.VISIBLE);
                 }else {
                     remindL.setVisibility(View.GONE);
                 }
                 fixT.setText("本體");
-                fixT.setTextColor(Color.parseColor("#0000FF"));
-                fixL.setBackgroundColor(Color.parseColor("#0000FF"));
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
                 fixL.setVisibility(View.VISIBLE);
             }
             //設定 title

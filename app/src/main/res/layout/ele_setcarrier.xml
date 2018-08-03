@@ -82,6 +82,7 @@
         app:bootstrapBrand="success"
         app:buttonMode="regular"
         app:bootstrapSize="lg"
+        app:roundedCorners="true"
         />
 
     <TextView

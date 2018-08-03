@@ -25,6 +25,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
@@ -311,9 +313,9 @@ public class PriceInvoice extends Fragment {
             TextView Title=itemView.findViewById(R.id.listTitle);
             TextView describe=itemView.findViewById(R.id.listDetail);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
-            TextView remainT=itemView.findViewById(R.id.remainT);
+            BootstrapButton remainT=itemView.findViewById(R.id.remainT);
             LinearLayout fixL=itemView.findViewById(R.id.fixL);
-            TextView fixT=itemView.findViewById(R.id.fixT);
+            BootstrapButton fixT=itemView.findViewById(R.id.fixT);
             String title,day;
             Object o=objects.get(position);
             //區別電子發票
@@ -322,8 +324,7 @@ public class PriceInvoice extends Fragment {
                 //電子發票
                 InvoiceVO invoiceVO= (InvoiceVO) o;
                 remainT.setText("雲端發票");
-                remainT.setTextColor(Color.parseColor("#008844"));
-                remindL.setBackgroundColor(Color.parseColor("#008844"));
+                remainT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                 remindL.setVisibility(View.VISIBLE);
                 //標題
                 day=Common.sDay.format(new Date(invoiceVO.getTime().getTime()))+" ";
@@ -331,10 +332,8 @@ public class PriceInvoice extends Fragment {
                 Title.setText(title);
                 //中獎顯示
                 fixL.setVisibility(View.VISIBLE);
-                fixL.setBackgroundColor(Color.parseColor("#AA0000"));
-                fixT.setTextColor(Color.parseColor("#AA0000"));
                 fixT.setText(levelprice.get(invoiceVO.getIswin()));
-
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                 //detail
                 String firstH="發票號碼 : ";
                 String firstL="\n中獎號碼 : ";
@@ -364,8 +363,7 @@ public class PriceInvoice extends Fragment {
                 //紙本發票
                 ConsumeVO consumeVO= (ConsumeVO) o;
                 remainT.setText("紙本發票");
-                remainT.setTextColor(Color.parseColor("#0044BB"));
-                remindL.setBackgroundColor(Color.parseColor("#0044BB"));
+                remainT.setBootstrapBrand(DefaultBootstrapBrand.INFO);
                 remindL.setVisibility(View.VISIBLE);
                 //標題
                 day=Common.sDay.format(consumeVO.getDate())+" ";
@@ -373,8 +371,7 @@ public class PriceInvoice extends Fragment {
                 Title.setText(title);
                 //中獎顯示
                 fixL.setVisibility(View.VISIBLE);
-                fixL.setBackgroundColor(Color.parseColor("#AA0000"));
-                fixT.setTextColor(Color.parseColor("#AA0000"));
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                 fixT.setText(levelprice.get(consumeVO.getIsWin()));
 
                 //detail
