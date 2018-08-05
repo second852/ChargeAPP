@@ -25,6 +25,25 @@ public class ConsumeDB {
         this.db=db;
     }
 
+    public void colExist(String col)
+    {
+        String sql="SELECT '"+col+"' FROM Consumer";
+        Cursor cursor=null;
+        try {
+            cursor = db.rawQuery(sql, null);
+        }catch (Exception e)
+        {
+            String add="ALTER TABLE Consumer ADD '"+col+"' text;";
+            db.execSQL(add);
+        }finally {
+            if(cursor!=null)
+            {
+                cursor.close();
+            }
+        }
+    }
+
+
     public List<ConsumeVO> getAll() {
         String sql = "SELECT * FROM Consumer order by id desc;";
         String[] args = {};
@@ -47,6 +66,7 @@ public class ConsumeDB {
             consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
+            consumeVO.setRdNumber(cursor.getString(14));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -75,6 +95,7 @@ public class ConsumeDB {
             consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
+            consumeVO.setRdNumber(cursor.getString(14));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -102,6 +123,7 @@ public class ConsumeDB {
             consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
+            consumeVO.setRdNumber(cursor.getString(14));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -130,6 +152,7 @@ public class ConsumeDB {
             consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
+            consumeVO.setRdNumber(cursor.getString(14));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -158,6 +181,7 @@ public class ConsumeDB {
             consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
+            consumeVO.setRdNumber(cursor.getString(14));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -186,6 +210,7 @@ public class ConsumeDB {
             consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
+            consumeVO.setRdNumber(cursor.getString(14));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -215,6 +240,7 @@ public class ConsumeDB {
             consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
+            consumeVO.setRdNumber(cursor.getString(14));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -284,6 +310,7 @@ public class ConsumeDB {
             consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
+            consumeVO.setRdNumber(cursor.getString(14));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -335,6 +362,7 @@ public class ConsumeDB {
             consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
+            consumeVO.setRdNumber(cursor.getString(14));
         }
         cursor.close();
         return consumeVO;
@@ -363,6 +391,7 @@ public class ConsumeDB {
             consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
+            consumeVO.setRdNumber(cursor.getString(14));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -392,6 +421,7 @@ public class ConsumeDB {
             consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
+            consumeVO.setRdNumber(cursor.getString(14));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -419,6 +449,7 @@ public class ConsumeDB {
             consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
+            consumeVO.setRdNumber(cursor.getString(14));
         }
         cursor.close();
         return consumeVO;
@@ -448,6 +479,7 @@ public class ConsumeDB {
             c.setAuto(Boolean.valueOf(cursor.getString(11)));
             c.setAutoId(cursor.getInt(12));
             c.setIsWinNul(cursor.getString(13));
+            c.setRdNumber(cursor.getString(14));
         }
         cursor.close();
         return c;
@@ -468,6 +500,7 @@ public class ConsumeDB {
         values.put("auto",String.valueOf(consumeVO.isAuto()));
         values.put("autoId",consumeVO.getAutoId());
         values.put("isWinNul",consumeVO.getIsWinNul());
+        values.put("rdNumber",consumeVO.getRdNumber());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -487,6 +520,7 @@ public class ConsumeDB {
         values.put("auto",String.valueOf(consumeVO.isAuto()));
         values.put("autoId",consumeVO.getAutoId());
         values.put("isWinNul",consumeVO.getIsWinNul());
+        values.put("rdNumber",consumeVO.getRdNumber());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -506,6 +540,7 @@ public class ConsumeDB {
         values.put("auto",String.valueOf(consumeVO.isAuto()));
         values.put("autoId",consumeVO.getAutoId());
         values.put("isWinNul",consumeVO.getIsWinNul());
+        values.put("rdNumber",consumeVO.getRdNumber());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(consumeVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

@@ -81,7 +81,6 @@ public class UpdateIncome extends Fragment {
     private String resultStatue,resultDay;
     private List<BootstrapText> BsTextDay,BsTextWeek,BsTextMonth,BsTextStatue;
     private int statueNumber;
-    private float dpWidth;
 
     @Override
     public void onAttach(Context context) {
@@ -106,8 +105,6 @@ public class UpdateIncome extends Fragment {
         BsTextWeek=Common.DateChoiceSetBsTest(context,Common.WeekSetSpinnerBS);
         BsTextMonth=Common.DateChoiceSetBsTest(context,Common.MonthSetSpinnerBS());
         BsTextStatue=Common.DateChoiceSetBsTest(context,Common.DateStatueSetSpinner);
-        DisplayMetrics displayMetrics=getResources().getDisplayMetrics();
-        dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         setSpinner();
         ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         context.setTitle("修改資料");

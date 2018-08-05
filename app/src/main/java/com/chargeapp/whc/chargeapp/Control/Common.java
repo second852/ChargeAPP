@@ -103,6 +103,8 @@ public class Common {
         {
             MainActivity.chargeAPPDB=new ChargeAPPDB(activity);
         }
+         ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+         consumeDB.colExist("rdNumber");
     }
 
     public static void setAdView(final AdView adView, Context activity)
@@ -207,15 +209,6 @@ public class Common {
         String[] strings=new String[12];
         for (int i = 0; i < 12; i++) {
             strings[i]=" " + String.valueOf(i+1) + "月";
-        }
-        return strings;
-    }
-
-    public static ArrayList<String> MonthSetSpinner()
-    {
-        ArrayList<String> strings=new ArrayList<>();
-        for (int i = 1; i <= 12; i++) {
-            strings.add(" " + String.valueOf(i) + "月");
         }
         return strings;
     }

@@ -25,6 +25,15 @@ public class ConsumeVO implements Serializable{
     private int autoId;//11自動產生母ID(-1:無)
     private String isWin;//12是否中獎
     private String isWinNul;//13中獎號碼
+    private String rdNumber;//QrCode 隨機碼
+
+    public String getRdNumber() {
+        return rdNumber;
+    }
+
+    public void setRdNumber(String rdNumber) {
+        this.rdNumber = rdNumber;
+    }
 
     public String getIsWinNul() {
         return isWinNul;

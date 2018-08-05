@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -22,6 +23,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
@@ -619,12 +621,32 @@ public class InsertSpend extends Fragment {
     private class QrCodeClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            setConsume();
-            MultiTrackerActivity.refresh = true;
-            BarcodeGraphic.hashMap = new HashMap<>();
-            Intent intent = new Intent(InsertSpend.this.context, MultiTrackerActivity.class);
-            intent.putExtra("action", "setConsume");
-            startActivityForResult(intent, 6);
+            final PopupMenu popupMenu=new PopupMenu(context,v);
+            popupMenu.inflate(R.menu.menu);
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.camera:
+                            setConsume();
+                            MultiTrackerActivity.refresh = true;
+                            BarcodeGraphic.hashMap = new HashMap<>();
+                            Intent intent = new Intent(InsertSpend.this.context, MultiTrackerActivity.class);
+                            intent.putExtra("action", "setConsume");
+                            startActivityForResult(intent, 6);
+                        break;
+                        case R.id.searchInternet:
+                         Fragment fragment=new SearchByQrCode();
+                         returnThisFramgent(fragment);
+                            break;
+                         default:
+                            popupMenu.dismiss();
+                             break;
+                    }
+                    return true;
+                }
+            });
+            popupMenu.show();
         }
     }
 
@@ -716,6 +738,7 @@ public class InsertSpend extends Fragment {
         bundle.putSerializable("object", consumeVO);
         bundle.putSerializable("action", "InsertSpend");
         bundle.putSerializable("needSet", true);
+        bundle.putSerializable("consumeVO",consumeVO);
         fragment.setArguments(bundle);
         MainActivity.oldFramgent.add("InsertSpend");
         MainActivity.bundles.add(bundle);

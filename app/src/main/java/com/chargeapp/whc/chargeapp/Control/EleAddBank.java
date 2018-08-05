@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
+
 /**
  * Created by 1709008NB01 on 2018/1/5.
  */
@@ -92,6 +94,14 @@ public class EleAddBank extends Fragment {
         carrierVOS=carrierDB.getAll();
         if(carrierVOS==null||carrierVOS.size()<=0)
         {
+            String[] carrierNul =new String[1];
+            BootstrapText text = new BootstrapText.Builder(context)
+                    .addText("無載具 ")
+                    .addFontAwesomeIcon(FA_ID_CARD_O)
+                    .build();
+            carrier.setBootstrapText(text);
+            carrierNul[0]="無載具";
+            carrier.setDropdownData(carrierNul);
             webView.setVisibility(View.GONE);
             showError.setVisibility(View.VISIBLE);
             showError.setText("請新增載具!");

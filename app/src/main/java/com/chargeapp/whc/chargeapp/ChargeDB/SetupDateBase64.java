@@ -7,6 +7,8 @@ import android.util.Log;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.SearchByQrCode;
+import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
 
@@ -38,7 +40,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
     private SimpleDateFormat sd=new SimpleDateFormat("yyyy/MM/dd");
     private Object object;
     private InvoiceDB invoiceDB= new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-
+    private ConsumeVO consumeVO;
 
     public SetupDateBase64(Object object)
     {
@@ -78,7 +80,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                }
             }else if("getThisDetail".equals(action))
             {
-                jsonIn=getThisDate();
+                jsonIn=getThisDate1();
             }
         } catch (Exception e) {
             Log.e(TAG, e.toString());
@@ -86,6 +88,42 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
         }
         return jsonIn;
     }
+
+
+    private String getThisDate1() throws IOException {
+        String date=Common.sTwo.format(consumeVO.getDate());
+        String[] dateS=date.split("/");
+        int year=new Integer(dateS[0])-1911;
+        int day=new Integer(dateS[1]);
+        StringBuilder period=new StringBuilder();
+        period.append(year);
+        if(day%2!=0)
+        {
+            day=day+1;
+        }
+        if(day<10)
+        {
+            period.append("0");
+        }
+        period.append(day);
+        HashMap<String,String> data=new HashMap<>();
+        data.put("version","0.4");
+        data.put("type","Barcode");
+        data.put("invNum",consumeVO.getNumber());
+        data.put("action","qryInvDetail");
+        data.put("generation","V2");
+        data.put("invTerm",period.toString());
+        data.put("invDate",Common.sTwo.format(consumeVO.getDate()));
+        data.put("encrypt","");
+        data.put("sellerID","");
+        data.put("UUID","second");
+        data.put("randomNumber",consumeVO.getRdNumber());
+        data.put("appID",appId);
+        String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp?";
+        String j=getRemoteData(url,data);
+        return j;
+    }
+
 
     //QRCode 讀不到掃描
     private String getThisDate() throws IOException {
@@ -161,8 +199,11 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                 Common.showToast(eleDonate.getActivity(),"捐贈失敗");
                 eleDonate.setlayout();
             }
+        }else if(object instanceof SearchByQrCode)
+        {
+            SearchByQrCode searchByQrCode= (SearchByQrCode) object;
+            searchByQrCode.resultD(s);
         }
-
     }
 
 
@@ -271,5 +312,11 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
         return Base64.encodeToString(sha256_HMAC.doFinal(data.getBytes("UTF-8")),2);
     }
 
+    public ConsumeVO getConsumeVO() {
+        return consumeVO;
+    }
 
+    public void setConsumeVO(ConsumeVO consumeVO) {
+        this.consumeVO = consumeVO;
+    }
 }

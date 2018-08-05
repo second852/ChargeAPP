@@ -21,10 +21,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.beardedhen.androidbootstrap.BootstrapDropDown;
-import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -42,12 +38,11 @@ import java.util.List;
  */
 
 public class GoalInsert extends Fragment {
-    private BootstrapEditText name,money,limitP;
-    private BootstrapDropDown spinnerT,choiceStatue,remindS,remindD;
+    private EditText name,money;
+    private Spinner spinnerT,choiceStatue,remindS,remindD;
     private CheckBox remind,noWeekend;
     private LinearLayout showDate;
-    private BootstrapButton save,clear;
-    private TextView shift,noWeekendT,remindT;
+    private TextView limitP,save,clear,shift,noWeekendT,remindT;
     private DatePicker datePicker;
     private RelativeLayout remindL;
     private GoalDB goalDB;
@@ -79,7 +74,6 @@ public class GoalInsert extends Fragment {
         limitP.setOnClickListener(new showDate());
         showDate.setOnClickListener(new choicedateClick());
         remind.setOnCheckedChangeListener(new dateStatue());
-        remindS.setOnDropDownItemClickListener(new choiceDateStatueBS());
         remindS.setOnItemSelectedListener(new choiceDateStatue());
         clear.setOnClickListener(new clearOnClick());
         save.setOnClickListener(new saveOnClick());
@@ -396,13 +390,6 @@ public class GoalInsert extends Fragment {
 
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
-
-        }
-    }
-
-    private class choiceDateStatueBS implements BootstrapDropDown.OnDropDownItemClickListener {
-        @Override
-        public void onItemClick(ViewGroup parent, View v, int id) {
 
         }
     }

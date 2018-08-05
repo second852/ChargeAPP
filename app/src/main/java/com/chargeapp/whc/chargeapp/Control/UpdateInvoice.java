@@ -293,26 +293,24 @@ public class UpdateInvoice extends Fragment {
     private class saveInvoice implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            name.setBackgroundColor(Color.parseColor("#FFEE99"));
-            secondname.setBackgroundColor(Color.parseColor("#FFEE99"));
             if(firstL.getVisibility()==View.VISIBLE||secondL.getVisibility()==View.VISIBLE)
             {
                 return;
             }
-            if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
-                name.setBackgroundColor(Color.parseColor("#ff471a"));
+            if (name.getText()== null || name.getText().toString().trim().length() == 0) {
+                name.setError(" ");
                 Common.showToast(context, "主項目不能空白");
                 return;
             }
-            if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
-                secondname.setBackgroundColor(Color.parseColor("#ff471a"));
+            if (secondname.getText() == null || secondname.getText().toString().trim().length() == 0) {
+                secondname.setError(" ");
                 Common.showToast(context, "次項目不能空白");
                 return;
             }
             try {
                 if(!oldMainType.equals(name.getText().toString().trim()))
                 {
-                    secondname.setBackgroundColor(Color.parseColor("#ff471a"));
+                    secondname.setError(" ");
                     Common.showToast(context, "次項目不屬於主項目種類");
                     return;
                 }
