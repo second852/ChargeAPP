@@ -485,7 +485,13 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             } else if (a.equals("UpdateSpend")) {
-                setUpdateConsume();
+                if(resultCode==9)
+                {
+                    searchQRCode();
+                }else {
+                    setUpdateConsume();
+                }
+
             }
         }
     }

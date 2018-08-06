@@ -76,6 +76,7 @@ public class SearchByQrCode extends Fragment {
     private String action;
     private ImageView rdNumberP;
     private View view;
+    private Bundle bundle;
 
 
     @Override
@@ -98,11 +99,17 @@ public class SearchByQrCode extends Fragment {
         findviewByid(view);
         action = (String) getArguments().getSerializable("action");
         if (action.equals("InsertSpend")) {
+            InsertSpend.needSet=true;
             consumeVO = InsertSpend.consumeVO;
         } else if (action.equals("setConsume")) {
+            InsertSpend.needSet=true;
             consumeVO = InsertSpend.consumeVO;
             setQRcodCon();
-        } else {
+        } else if (action.equals("UpdateSpend")) {
+            bundle=getArguments().getBundle("bundle");
+            consumeVO= (ConsumeVO) bundle.getSerializable("consumeVO");
+            setQRcodCon();
+        }else {
             consumeVO = (ConsumeVO) getArguments().getSerializable("consumeVO");
         }
         setConsume();
@@ -136,12 +143,18 @@ public class SearchByQrCode extends Fragment {
                 }
             } else {
                 try {
-                    result = new String(s.getBytes("ISO-8859-1"), "Big5");
+                    int codeNumber=Common.identify(s.getBytes("ISO-8859-1"));
+                    switch (codeNumber){
+                        case 1:
+                            result= new String(s.getBytes("ISO-8859-1"), "Big5");
+                            break;
+                        case 2:
+                            result=s;
+                            break;
+                    }
                 } catch (Exception e1) {
                     result = "";
                 }
-
-
             }
             StringBuffer sb = new StringBuffer();
             if (result.trim().length() > 0) {
@@ -160,9 +173,11 @@ public class SearchByQrCode extends Fragment {
                 }
                 consumeVO.setDetailname(sb.toString());
             }
-
         }
     }
+
+
+
 
     private void setConsume() {
         number.setText(isNull(consumeVO.getNumber()));
@@ -297,7 +312,6 @@ public class SearchByQrCode extends Fragment {
     }
 
     public void resultD(String s) {
-        Log.d("XXXXXXxx", s);
         if (s.equals("500") || s.equals("502")) {
             Common.showToast(context, "網路忙線中，請稍後再試!");
             progressL.setVisibility(View.GONE);
@@ -325,34 +339,31 @@ public class SearchByQrCode extends Fragment {
         }.getType();
         String result = js.get("details").toString();
         List<JsonObject> b = gson.fromJson(result, cdType);
-        double price, unit, unitTotal, total = 0;
+        String price, unit, unitTotal;
+        double total = 0;
         StringBuilder sb = new StringBuilder();
         for (JsonObject jsonObject : b) {
-            try {
-                price = jsonObject.get("unitPrice").getAsDouble();
-            } catch (Exception e) {
-                price = 1;
-            }
-            try {
-                unit = jsonObject.get("quantity").getAsDouble();
-            } catch (Exception e) {
-                unit = 1;
-            }
 
-            try {
-                unitTotal = jsonObject.get("amount").getAsDouble();
-            } catch (Exception e) {
-                unitTotal = price * unit;
-            }
+            price = jsonObject.get("unitPrice").getAsString();
+            unit = jsonObject.get("quantity").getAsString();
+            unitTotal = jsonObject.get("amount").getAsString();
+
             try {
                 sb.append(jsonObject.get("description").getAsString());
             } catch (Exception e) {
                 sb.append(jsonObject.get("錯誤").getAsString());
             }
-            sb.append(":\n").append((int) price).append("X").append((int) unit).append("=").append((int) unitTotal + "\n");
-            total = unitTotal + total;
+            sb.append(":\n").append(price).append("X").append(unit).append("=").append(unitTotal + "\n");
+
+            try {
+                total = Double.valueOf(unitTotal) + total;
+            }catch (Exception e)
+            {
+
+            }
+
         }
-        consumeVO.setMoney((int) total);
+        consumeVO.setMoney(Common.DoubleToInt(total));
         consumeVO.setDetailname(sb.toString());
         consumeVO = getType(consumeVO);
         Common.showToast(context, "查詢成功!");
@@ -365,8 +376,14 @@ public class SearchByQrCode extends Fragment {
             Fragment fragment = new InsertActivity();
             fragment.setArguments(getArguments());
             switchFramgent(fragment);
-        }  else {
+        }  else if (action.equals("UpdateSpend")) {
             Fragment fragment = new UpdateSpend();
+            bundle.putSerializable("consumeVO",consumeVO);
+            fragment.setArguments(bundle);
+            switchFramgent(fragment);
+        }else{
+            Fragment fragment = new UpdateSpend();
+            getArguments().putSerializable("consumeVO",consumeVO);
             fragment.setArguments(getArguments());
             switchFramgent(fragment);
         }

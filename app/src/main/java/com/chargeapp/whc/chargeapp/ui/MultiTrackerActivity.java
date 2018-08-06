@@ -40,6 +40,7 @@ import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.UpdateSpend;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -77,6 +78,9 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     /**
      * Initializes the UI and creates the detector pipeline.
      */
+
+
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -97,8 +101,21 @@ public final class MultiTrackerActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     if(action.equals("setConsume"))
                     {
+                        MainActivity.oldFramgent.add("InsertSpend");
+                        Bundle bundle=new Bundle();
+                        bundle.putSerializable("action", "InsertSpend");
+                        bundle.putSerializable("needSet", true);
+                        MainActivity.bundles.add(bundle);
                         Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
                         intent.putExtra("action",MultiTrackerActivity.action);
+                        MultiTrackerActivity.this.setResult(9,intent);
+                        MultiTrackerActivity.this.finish();
+                    }else{
+                        Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
+                        intent.putExtra("action",MultiTrackerActivity.action);
+                        intent.putExtra("bundle",getIntent().getBundleExtra("bundle"));
+                        MainActivity.bundles.add(getIntent().getBundleExtra("bundle"));
+                        MainActivity.oldFramgent.add("UpdateSpend");
                         MultiTrackerActivity.this.setResult(9,intent);
                         MultiTrackerActivity.this.finish();
                     }
@@ -219,7 +236,19 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode==KeyEvent.KEYCODE_BACK)
         {
-            finish();
+            if(action.equals("setConsume"))
+            {
+                Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
+                intent.putExtra("action",MultiTrackerActivity.action);
+                MultiTrackerActivity.this.setResult(0,intent);
+                MultiTrackerActivity.this.finish();
+            }else{
+                Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
+                intent.putExtra("action",MultiTrackerActivity.action);
+                intent.putExtra("bundle",getIntent().getBundleExtra("bundle"));
+                MultiTrackerActivity.this.setResult(0,intent);
+                MultiTrackerActivity.this.finish();
+            }
             return true;
         }
         return super.onKeyDown(keyCode, event);

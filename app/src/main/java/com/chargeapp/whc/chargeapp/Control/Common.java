@@ -32,6 +32,10 @@ import com.google.android.gms.ads.MobileAds;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.sql.Date;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -76,6 +80,29 @@ public class Common {
         xLarge,
         large,
         normal
+    }
+
+    public static int identify(byte[] bytes) {
+        String[] charsetsToBeTested = {"UTF-8", "big5"};
+        boolean isRight;
+        int i=0;
+        for(String c:charsetsToBeTested)
+        {
+            try {
+                Charset charset=Charset.forName(c);
+                CharsetDecoder decoder = charset.newDecoder();
+                decoder.reset();
+                decoder.decode(ByteBuffer.wrap(bytes));
+                isRight=true;
+            } catch (CharacterCodingException e) {
+                isRight=false;
+            }
+            if(isRight)
+            {
+              i++;
+            }
+        }
+        return i;
     }
 
     public static void setScreen(Screen screen,DisplayMetrics displayMetrics)
