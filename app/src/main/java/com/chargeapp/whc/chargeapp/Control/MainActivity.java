@@ -477,11 +477,23 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment = new EleSetCarrier();
                 switchFragment(fragment);
             } else if (a.equals("setConsume")) {
-                setConsume();
+                if(resultCode==9)
+                {
+                    searchQRCode();
+                }else {
+                    setConsume();
+                }
+
             } else if (a.equals("UpdateSpend")) {
                 setUpdateConsume();
             }
         }
+    }
+
+    private void searchQRCode() {
+        Fragment fragment=new SearchByQrCode();
+        fragment.setArguments(intent.getExtras());
+        switchFragment(fragment);
     }
 
     private void setConsume() {
@@ -494,10 +506,12 @@ public class MainActivity extends AppCompatActivity {
             String EleNul = EleNulAll[0].substring(0, 10);
             String day = EleNulAll[0].substring(10, 17);
             String m = EleNulAll[0].substring(29, 37);
+            String rdNumber=EleNulAll[0].substring(17,21);
             Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
             InsertSpend.consumeVO.setMoney(Integer.parseInt(m, 16));
             InsertSpend.consumeVO.setNumber(EleNul);
             InsertSpend.consumeVO.setDate(new Date(calendar.getTimeInMillis()));
+            InsertSpend.consumeVO.setRdNumber(rdNumber);
             StringBuffer sb = new StringBuffer();
             if (EleNulAll[4].equals("2")) {
                 //Base64
@@ -647,11 +661,12 @@ public class MainActivity extends AppCompatActivity {
             String EleNul = EleNulAll[0].substring(0, 10);
             String day = EleNulAll[0].substring(10, 17);
             String m = EleNulAll[0].substring(29, 37);
-
+            String rdNumber=EleNulAll[0].substring(17,21);
             Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
             consumeVO.setMoney(Integer.parseInt(m, 16));
             consumeVO.setNumber(EleNul);
             consumeVO.setDate(new Date(calendar.getTimeInMillis()));
+            consumeVO.setRdNumber(rdNumber);
             StringBuffer sb = new StringBuffer();
             if (EleNulAll[4].equals("2")) {
                 //Base64

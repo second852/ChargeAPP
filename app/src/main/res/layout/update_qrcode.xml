@@ -45,7 +45,7 @@
                     android:layout_marginTop="10dp"
                     android:textSize="20sp"
                     app:bootstrapBrand="danger"
-                    app:bootstrapText=" 今天開立發票，請隔一天查詢 " />
+                    app:bootstrapText=" 今天開立發票，請隔兩天查詢 " />
                 <com.beardedhen.androidbootstrap.AwesomeTextView
                     android:id="@+id/flashR"
                     android:layout_toRightOf="@+id/flashT"
@@ -280,7 +280,7 @@
         android:id="@+id/progressL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/adView"
+        android:layout_above="@+id/adView"
         android:background="#ffffff"
         android:visibility="gone">
 

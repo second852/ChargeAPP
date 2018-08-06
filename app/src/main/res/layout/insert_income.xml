@@ -246,6 +246,7 @@
                     app:buttonMode="regular"
                     app:showOutline="false"
                     app:roundedCorners="true"
+                    app:bootstrapText="儲存 {fa_save}"
                     />
 
                 <com.beardedhen.androidbootstrap.BootstrapButton
@@ -261,6 +262,7 @@
                     app:buttonMode="regular"
                     app:showOutline="false"
                     app:roundedCorners="true"
+                    app:bootstrapText="清除 {fa_remove}"
                     />
             </RelativeLayout>
         </LinearLayout>

@@ -136,7 +136,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             }
             if (mBarcode.rawValue.indexOf("**") == 0) {
                 hashMap.put(2, barcode.rawValue.substring(2));
-                Log.d("XXXXXX2", barcode.rawValue.substring(2));
+                Log.d("XXXXXX2", barcode.rawValue);
             }
             if (hashMap.size() == 2) {
                 Intent intent = new Intent(context,MainActivity.class);

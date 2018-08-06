@@ -34,9 +34,12 @@ import android.text.Spannable;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -69,6 +72,8 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     public static boolean isold;
     public static int colorChange;
     public static String action;
+    public RelativeLayout buttonR;
+    public BootstrapButton search,back;
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -77,13 +82,30 @@ public final class MultiTrackerActivity extends AppCompatActivity {
         super.onCreate(icicle);
         setContentView(R.layout.main);
         answer=findViewById(R.id.answer);
-        mPreview = (CameraSourcePreview) findViewById(R.id.preview);
-        mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
+        back=findViewById(R.id.back);
+        mPreview = findViewById(R.id.preview);
+        mGraphicOverlay =findViewById(R.id.faceOverlay);
+        search=findViewById(R.id.search);
+        buttonR=findViewById(R.id.buttonR);
         if(refresh)
         {
+            buttonR.setVisibility(View.VISIBLE);
             answer.setVisibility(View.GONE);
             action=getIntent().getStringExtra("action");
+            search.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(action.equals("setConsume"))
+                    {
+                        Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
+                        intent.putExtra("action",MultiTrackerActivity.action);
+                        MultiTrackerActivity.this.setResult(9,intent);
+                        MultiTrackerActivity.this.finish();
+                    }
+                }
+            });
         }else {
+            buttonR.setVisibility(View.GONE);
             answer.setVisibility(View.VISIBLE);
         }
 
@@ -121,7 +143,7 @@ public final class MultiTrackerActivity extends AppCompatActivity {
             }
         };
 
-        Snackbar.make(mGraphicOverlay,"XXXXXXXXXX",
+        Snackbar.make(mGraphicOverlay,"開始掃描",
                 Snackbar.LENGTH_INDEFINITE)
                 .setAction("ok", listener)
                 .show();
@@ -275,8 +297,8 @@ public final class MultiTrackerActivity extends AppCompatActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Multitracker sample")
-                .setMessage("persion")
+        builder.setTitle("記帳小助手")
+                .setMessage("掃描QRCode")
                 .setPositiveButton("ok", listener)
                 .show();
     }

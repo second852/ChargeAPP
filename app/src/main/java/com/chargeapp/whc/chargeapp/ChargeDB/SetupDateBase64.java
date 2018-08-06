@@ -270,6 +270,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                 }
             } else {
                 Log.d(TAG, "response code: " + responseCode);
+                return String.valueOf(responseCode);
             }
             conn.disconnect();
             Log.d(TAG, "jsonIn: " + jsonIn);

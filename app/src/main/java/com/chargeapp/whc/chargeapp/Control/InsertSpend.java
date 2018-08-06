@@ -628,6 +628,11 @@ public class InsertSpend extends Fragment {
                 public boolean onMenuItemClick(MenuItem menuItem) {
                     switch (menuItem.getItemId()) {
                         case R.id.camera:
+                            MainActivity.oldFramgent.add("InsertSpend");
+                            Bundle bundle=new Bundle();
+                            bundle.putSerializable("action", "InsertSpend");
+                            bundle.putSerializable("needSet", true);
+                            MainActivity.bundles.add(bundle);
                             setConsume();
                             MultiTrackerActivity.refresh = true;
                             BarcodeGraphic.hashMap = new HashMap<>();
@@ -738,7 +743,6 @@ public class InsertSpend extends Fragment {
         bundle.putSerializable("object", consumeVO);
         bundle.putSerializable("action", "InsertSpend");
         bundle.putSerializable("needSet", true);
-        bundle.putSerializable("consumeVO",consumeVO);
         fragment.setArguments(bundle);
         MainActivity.oldFramgent.add("InsertSpend");
         MainActivity.bundles.add(bundle);
