@@ -95,6 +95,7 @@ public class SearchByQrCode extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         TypefaceProvider.registerDefaultIconSets();
         gson = new Gson();
+        context.setTitle("QRCode線上查詢");
         view = inflater.inflate(R.layout.update_qrcode, container, false);
         findviewByid(view);
         action = (String) getArguments().getSerializable("action");
@@ -173,6 +174,10 @@ public class SearchByQrCode extends Fragment {
                 }
                 consumeVO.setDetailname(sb.toString());
             }
+        }
+        if(consumeVO!=null)
+        {
+            MainActivity.bundles.getLast().putSerializable("consumeVO",consumeVO);
         }
     }
 

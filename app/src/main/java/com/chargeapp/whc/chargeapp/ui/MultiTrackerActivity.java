@@ -39,6 +39,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.TypefaceProvider;
+import com.chargeapp.whc.chargeapp.Control.InsertSpend;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.UpdateSpend;
 import com.chargeapp.whc.chargeapp.R;
@@ -74,7 +76,7 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     public static int colorChange;
     public static String action;
     public RelativeLayout buttonR;
-    public BootstrapButton search,back;
+    public BootstrapButton search,back,backP;
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -84,6 +86,7 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        TypefaceProvider.registerDefaultIconSets();
         setContentView(R.layout.main);
         answer=findViewById(R.id.answer);
         back=findViewById(R.id.back);
@@ -91,10 +94,12 @@ public final class MultiTrackerActivity extends AppCompatActivity {
         mGraphicOverlay =findViewById(R.id.faceOverlay);
         search=findViewById(R.id.search);
         buttonR=findViewById(R.id.buttonR);
+        backP=findViewById(R.id.backP);
         if(refresh)
         {
             buttonR.setVisibility(View.VISIBLE);
             answer.setVisibility(View.GONE);
+            backP.setVisibility(View.GONE);
             action=getIntent().getStringExtra("action");
             search.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -121,7 +126,45 @@ public final class MultiTrackerActivity extends AppCompatActivity {
                     }
                 }
             });
+            back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(action.equals("setConsume"))
+                    {
+                        InsertSpend.returnCM=true;
+                        Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
+                        intent.putExtra("action",MultiTrackerActivity.action);
+                        MultiTrackerActivity.this.setResult(0,intent);
+                        MultiTrackerActivity.this.finish();
+                    }else{
+                        Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
+                        intent.putExtra("action",MultiTrackerActivity.action);
+                        Bundle bundle=getIntent().getBundleExtra("bundle");
+                        bundle.putSerializable("returnCM",true);
+                        intent.putExtra("bundle",bundle);
+                        MultiTrackerActivity.this.setResult(0,intent);
+                        MultiTrackerActivity.this.finish();
+                    }
+                }
+            });
         }else {
+
+            try {
+                action=getIntent().getStringExtra("action");
+            }catch (Exception e)
+            {
+                action=" ";
+            }
+            backP.setVisibility(View.VISIBLE);
+            backP.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
+                    intent.putExtra("action",MultiTrackerActivity.action);
+                    MultiTrackerActivity.this.setResult(0,intent);
+                    MultiTrackerActivity.this.finish();
+                }
+            });
             buttonR.setVisibility(View.GONE);
             answer.setVisibility(View.VISIBLE);
         }
@@ -242,10 +285,16 @@ public final class MultiTrackerActivity extends AppCompatActivity {
                 intent.putExtra("action",MultiTrackerActivity.action);
                 MultiTrackerActivity.this.setResult(0,intent);
                 MultiTrackerActivity.this.finish();
-            }else{
+            }else if(action.equals("UpdateSpend")){
                 Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
                 intent.putExtra("action",MultiTrackerActivity.action);
                 intent.putExtra("bundle",getIntent().getBundleExtra("bundle"));
+                MultiTrackerActivity.this.setResult(0,intent);
+                MultiTrackerActivity.this.finish();
+            }else if(action.equals("PriceHand"))
+            {
+                Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
+                intent.putExtra("action",MultiTrackerActivity.action);
                 MultiTrackerActivity.this.setResult(0,intent);
                 MultiTrackerActivity.this.finish();
             }

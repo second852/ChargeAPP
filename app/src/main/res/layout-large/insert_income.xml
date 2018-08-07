@@ -34,12 +34,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="65dp"
+                    android:layout_marginLeft="80dp"
                     android:text="項目"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="30sp" />
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/name"
@@ -69,12 +69,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="65dp"
+                    android:layout_marginLeft="80dp"
                     android:text="金額"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="30sp" />
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/money"
@@ -101,12 +101,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="65dp"
+                    android:layout_marginLeft="80dp"
                     android:text="日期"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="30sp" />
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/date"
@@ -133,12 +133,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="65dp"
+                    android:layout_marginLeft="80dp"
                     android:text="明細"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="30sp" />
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/detailname"
                     android:layout_width="300dp"
@@ -347,7 +347,6 @@
     </LinearLayout>
     <com.google.android.gms.ads.AdView
         android:id="@+id/adView"
-        android:layout_marginBottom="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

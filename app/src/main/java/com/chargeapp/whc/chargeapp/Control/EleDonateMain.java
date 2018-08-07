@@ -48,6 +48,7 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context.setTitle(R.string.text_DonateMain);;
         final View view = inflater.inflate(R.layout.ele_setdenote_main, container, false);
         DonateViewPager = (ViewPager) view.findViewById(R.id.DonateViewPager);
         exportMoney=view.findViewById(R.id.exportD);

@@ -88,6 +88,7 @@ public class SecondReceiver extends BroadcastReceiver {
     private void setGoalNotification(Context context,Bundle bundle) {
         ChargeAPPDB chargeAPPDB=new ChargeAPPDB(context);
         ConsumeDB consumeDB=new ConsumeDB(chargeAPPDB.getReadableDatabase());
+        consumeDB.colExist("rdNumber");
         InvoiceDB invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
         BankDB bankDB=new BankDB(chargeAPPDB.getReadableDatabase());
         GoalDB goalDB=new GoalDB(chargeAPPDB.getReadableDatabase());

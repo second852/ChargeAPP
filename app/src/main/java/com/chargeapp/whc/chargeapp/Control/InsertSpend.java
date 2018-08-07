@@ -70,7 +70,7 @@ public class InsertSpend extends Fragment {
     private LinearLayout showdate;
     private DatePicker datePicker;
     private String choicedate;
-    private BootstrapDropDown choiceStatue,choiceday;
+    private BootstrapDropDown choiceStatue, choiceday;
     private Gson gson;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
@@ -88,9 +88,10 @@ public class InsertSpend extends Fragment {
     private String oldMainType;
     private TypeVO typeVO;
     private List<TypeVO> typeVOS;
-    private List<BootstrapText> BsTextDay,BsTextWeek,BsTextMonth,BsTextStatue;
+    private List<BootstrapText> BsTextDay, BsTextWeek, BsTextMonth, BsTextStatue;
     private int statueNumber;
-    private String resultStatue,resultDay;
+    private String resultStatue, resultDay;
+    public static boolean returnCM;
 
 
     @Override
@@ -109,6 +110,7 @@ public class InsertSpend extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         TypefaceProvider.registerDefaultIconSets();
         View view = inflater.inflate(R.layout.insert_spend, container, false);
+        showOnlyQRCodeToast();
         Common.setChargeDB(context);
         findviewByid(view);
         if (consumeVO == null) {
@@ -119,6 +121,17 @@ public class InsertSpend extends Fragment {
         secondHander = new Handler();
         secondHander.post(setOnClick);
         return view;
+    }
+
+    private void showOnlyQRCodeToast() {
+        if (returnCM) {
+            if (BarcodeGraphic.hashMap.get(1) != null) {
+               Common.showToast(context,"明細無法辨識，需要自行輸入!");
+            } else if (BarcodeGraphic.hashMap.get(2) != null) {
+                Common.showToast(context,"部分明細可辨識，其他項目需要自行輸入!");
+            }
+            returnCM=false;
+        }
     }
 
     private void setSpinner() {
@@ -159,24 +172,24 @@ public class InsertSpend extends Fragment {
             String noweek = js.get("noweek").getAsString().trim();
             noWek.setChecked(Boolean.valueOf(noweek));
             if (choicestatue.trim().equals("每天")) {
-                statueNumber=0;
+                statueNumber = 0;
                 noWekT.setVisibility(View.VISIBLE);
                 noWek.setVisibility(View.VISIBLE);
                 choiceday.setVisibility(View.GONE);
-                resultStatue=BsTextStatue.get(0).toString();
-                resultDay="";
+                resultStatue = BsTextStatue.get(0).toString();
+                resultDay = "";
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
                 choiceday.setExpandDirection(ExpandDirection.DOWN);
             } else if (choicestatue.trim().equals("每周")) {
-                statueNumber=1;
+                statueNumber = 1;
                 noWekT.setVisibility(View.GONE);
                 noWek.setVisibility(View.GONE);
                 choiceday.setVisibility(View.VISIBLE);
-                resultStatue=BsTextStatue.get(1).toString();
+                resultStatue = BsTextStatue.get(1).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(1));
                 choiceday.setDropdownData(Common.WeekSetSpinnerBS);
                 if (choicedate.equals("星期一")) {
-                    updateChoice =0;
+                    updateChoice = 0;
                 } else if (choicedate.equals("星期二")) {
                     updateChoice = 1;
                 } else if (choicedate.equals("星期三")) {
@@ -191,30 +204,30 @@ public class InsertSpend extends Fragment {
                     updateChoice = 6;
                 }
                 choiceday.setBootstrapText(BsTextWeek.get(updateChoice));
-                resultDay=BsTextWeek.get(updateChoice).toString();
+                resultDay = BsTextWeek.get(updateChoice).toString();
                 choiceday.setExpandDirection(ExpandDirection.DOWN);
             } else if (choicestatue.trim().equals("每月")) {
-                statueNumber=2;
+                statueNumber = 2;
                 noWekT.setVisibility(View.GONE);
                 noWek.setVisibility(View.GONE);
                 choiceday.setVisibility(View.VISIBLE);
-                resultStatue=BsTextStatue.get(2).toString();
+                resultStatue = BsTextStatue.get(2).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(2));
                 choicedate = choicedate.substring(0, choicedate.indexOf("日"));
                 updateChoice = Integer.valueOf(choicedate) - 1;
-                resultDay=BsTextDay.get(updateChoice).toString();
+                resultDay = BsTextDay.get(updateChoice).toString();
                 choiceday.setBootstrapText(BsTextDay.get(updateChoice));
                 choiceday.setDropdownData(Common.DaySetSpinnerBS());
                 choiceday.setExpandDirection(ExpandDirection.DOWN);
             } else {
-                statueNumber=3;
+                statueNumber = 3;
                 noWekT.setVisibility(View.GONE);
                 noWek.setVisibility(View.GONE);
                 choiceday.setVisibility(View.VISIBLE);
-                resultStatue=BsTextStatue.get(3).toString();
+                resultStatue = BsTextStatue.get(3).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(3));
                 updateChoice = Integer.valueOf(choicedate.substring(0, choicedate.indexOf("月"))) - 1;
-                resultDay=BsTextMonth.get(updateChoice).toString();
+                resultDay = BsTextMonth.get(updateChoice).toString();
                 choiceday.setBootstrapText(BsTextMonth.get(updateChoice));
                 choiceday.setDropdownData(Common.MonthSetSpinnerBS());
                 choiceday.setExpandDirection(ExpandDirection.DOWN);
@@ -227,10 +240,10 @@ public class InsertSpend extends Fragment {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            BsTextDay=Common.DateChoiceSetBsTest(context,Common.DaySetSpinnerBS());
-            BsTextWeek=Common.DateChoiceSetBsTest(context,Common.WeekSetSpinnerBS);
-            BsTextMonth=Common.DateChoiceSetBsTest(context,Common.MonthSetSpinnerBS());
-            BsTextStatue=Common.DateChoiceSetBsTest(context,Common.DateStatueSetSpinner);
+            BsTextDay = Common.DateChoiceSetBsTest(context, Common.DaySetSpinnerBS());
+            BsTextWeek = Common.DateChoiceSetBsTest(context, Common.WeekSetSpinnerBS);
+            BsTextMonth = Common.DateChoiceSetBsTest(context, Common.MonthSetSpinnerBS());
+            BsTextStatue = Common.DateChoiceSetBsTest(context, Common.DateStatueSetSpinner);
             typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
             typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
             consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -397,15 +410,15 @@ public class InsertSpend extends Fragment {
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             if (b) {
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
-                resultStatue=BsTextStatue.get(0).toString();
+                resultStatue = BsTextStatue.get(0).toString();
                 notifyT.setVisibility(View.VISIBLE);
                 noWekT.setVisibility(View.VISIBLE);
                 notify.setVisibility(View.VISIBLE);
                 noWek.setVisibility(View.VISIBLE);
                 choiceStatue.setVisibility(View.VISIBLE);
             } else {
-                resultStatue="";
-                resultDay="";
+                resultStatue = "";
+                resultDay = "";
                 notifyT.setVisibility(View.GONE);
                 noWekT.setVisibility(View.GONE);
                 notify.setVisibility(View.GONE);
@@ -483,8 +496,8 @@ public class InsertSpend extends Fragment {
             choiceday.setBootstrapText(BsTextDay.get(0));
             choiceStatue.setVisibility(View.GONE);
             choiceday.setVisibility(View.GONE);
-            resultDay="";
-            resultStatue="";
+            resultDay = "";
+            resultStatue = "";
         }
     }
 
@@ -492,7 +505,7 @@ public class InsertSpend extends Fragment {
         if (text == null || text.toString().length() <= 0) {
             return " ";
         }
-        text=text.substring(0,text.lastIndexOf(" "));
+        text = text.substring(0, text.lastIndexOf(" "));
         return text;
     }
 
@@ -621,7 +634,7 @@ public class InsertSpend extends Fragment {
     private class QrCodeClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            final PopupMenu popupMenu=new PopupMenu(context,v);
+            final PopupMenu popupMenu = new PopupMenu(context, v);
             popupMenu.inflate(R.menu.menu);
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
@@ -634,14 +647,14 @@ public class InsertSpend extends Fragment {
                             Intent intent = new Intent(InsertSpend.this.context, MultiTrackerActivity.class);
                             intent.putExtra("action", "setConsume");
                             startActivityForResult(intent, 6);
-                        break;
-                        case R.id.searchInternet:
-                         Fragment fragment=new SearchByQrCode();
-                         returnThisFramgent(fragment);
                             break;
-                         default:
+                        case R.id.searchInternet:
+                            Fragment fragment = new SearchByQrCode();
+                            returnThisFramgent(fragment);
+                            break;
+                        default:
                             popupMenu.dismiss();
-                             break;
+                            break;
                     }
                     return true;
                 }
@@ -790,12 +803,12 @@ public class InsertSpend extends Fragment {
     private class choiceStateItemBS implements BootstrapDropDown.OnDropDownItemClickListener {
         @Override
         public void onItemClick(ViewGroup parent, View v, int id) {
-            resultStatue=BsTextStatue.get(id).toString();
+            resultStatue = BsTextStatue.get(id).toString();
             choiceStatue.setBootstrapText(BsTextStatue.get(id));
-            statueNumber=id;
+            statueNumber = id;
             choiceday.setExpandDirection(ExpandDirection.DOWN);
             if (id == 0) {
-                resultDay="";
+                resultDay = "";
                 choiceday.setVisibility(View.GONE);
                 noWek.setVisibility(View.VISIBLE);
                 choiceStatue.setVisibility(View.VISIBLE);
@@ -804,17 +817,17 @@ public class InsertSpend extends Fragment {
                 return;
             }
             if (id == 1) {
-                resultDay=BsTextWeek.get(0).toString();
+                resultDay = BsTextWeek.get(0).toString();
                 choiceday.setBootstrapText(BsTextWeek.get(0));
                 choiceday.setDropdownData(Common.WeekSetSpinnerBS);
             }
             if (id == 2) {
-                resultDay=BsTextDay.get(0).toString();
+                resultDay = BsTextDay.get(0).toString();
                 choiceday.setBootstrapText(BsTextDay.get(0));
                 choiceday.setDropdownData(Common.DaySetSpinnerBS());
             }
             if (id == 3) {
-                resultDay=BsTextMonth.get(0).toString();
+                resultDay = BsTextMonth.get(0).toString();
                 choiceday.setBootstrapText(BsTextMonth.get(0));
                 choiceday.setDropdownData(Common.MonthSetSpinnerBS());
             }
@@ -830,19 +843,18 @@ public class InsertSpend extends Fragment {
     private class choicedayItemBS implements BootstrapDropDown.OnDropDownItemClickListener {
         @Override
         public void onItemClick(ViewGroup parent, View v, int id) {
-            switch (statueNumber)
-            {
+            switch (statueNumber) {
                 case 1:
                     choiceday.setBootstrapText(BsTextWeek.get(id));
-                    resultDay=BsTextWeek.get(id).toString();
+                    resultDay = BsTextWeek.get(id).toString();
                     break;
                 case 2:
                     choiceday.setBootstrapText(BsTextDay.get(id));
-                    resultDay=BsTextDay.get(id).toString();
+                    resultDay = BsTextDay.get(id).toString();
                     break;
                 case 3:
                     choiceday.setBootstrapText(BsTextMonth.get(id));
-                    resultDay=BsTextMonth.get(id).toString();
+                    resultDay = BsTextMonth.get(id).toString();
                     break;
             }
         }

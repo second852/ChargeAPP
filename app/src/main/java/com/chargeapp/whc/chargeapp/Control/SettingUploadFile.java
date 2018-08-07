@@ -166,6 +166,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context.setTitle("匯出檔案");
         View view = inflater.inflate(R.layout.setting_upload, container, false);
         Common.setChargeDB(context);
         cdType = new TypeToken<List<JsonObject>>() {}.getType();

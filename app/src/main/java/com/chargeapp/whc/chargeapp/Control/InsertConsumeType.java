@@ -77,6 +77,7 @@ public class InsertConsumeType extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context.setTitle("新增主/次項目類別");
         View view = inflater.inflate(R.layout.updae_con_type, container, false);
         ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         Common.setChargeDB(context);
@@ -91,7 +92,6 @@ public class InsertConsumeType extends Fragment {
             setType();
         } else {
             typeVO = new TypeVO();
-            context.setTitle("新增主/次項目類別");
             mainImage.setOnClickListener(new showImage());
             setGridPicture();
         }

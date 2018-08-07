@@ -28,7 +28,7 @@
                 android:layout_gravity="center_horizontal"
                 android:id="@+id/qrcode"
                 app:bootstrapBrand="info"
-                android:textSize="35sp"
+                android:textSize="30sp"
                 app:bootstrapText="{fa_qrcode}QRCode輸入"
                 />
 
@@ -42,17 +42,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginLeft="40dp"
                     android:gravity="center_vertical"
                     android:text="發票號碼"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="30sp" />
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/number"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="30dp"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:hint="HF12345678"
@@ -76,16 +76,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="45dp"
+                    android:layout_marginLeft="65dp"
                     android:gravity="center_vertical"
                     android:text="主項目"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="30sp" />
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/name"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
-                    android:layout_marginLeft="40dp"
+                    android:layout_marginLeft="35dp"
                     android:textSize="25sp"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
@@ -110,18 +110,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="45dp"
+                    android:layout_marginLeft="65dp"
                     android:gravity="center_vertical"
                     android:text="次項目"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="30sp" />
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/secondname"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="40dp"
+                    android:layout_marginLeft="35dp"
                     android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
@@ -141,18 +141,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="70dp"
+                    android:layout_marginLeft="80dp"
                     android:gravity="center_vertical"
                     android:text="金額"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="30sp" />
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/money"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="55dp"
+                    android:layout_marginLeft="50dp"
                     android:gravity="center_vertical"
                     android:inputType="number"
                     android:singleLine="true"
@@ -173,18 +173,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="70dp"
+                    android:layout_marginLeft="80dp"
                     android:gravity="center_vertical"
                     android:text="日期"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="30sp" />
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/date"
                     android:layout_width="300dp"
                     android:layout_height="45dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="55dp"
+                    android:layout_marginLeft="50dp"
                     android:gravity="center_vertical"
                     android:inputType="date"
                     android:singleLine="true"
@@ -204,10 +204,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="70dp"
+                    android:layout_marginLeft="80dp"
                     android:text="明細"
                     android:textColor="#000000"
-                    android:textSize="40sp" />
+                    android:textSize="30sp" />
                 <com.beardedhen.androidbootstrap.BootstrapLabel
                     android:id="@+id/detailname"
                     android:layout_width="300dp"
@@ -227,7 +227,7 @@
                 android:id="@+id/showfixdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
+                android:layout_marginTop="25dp">
 
                 <RelativeLayout
                     android:id="@+id/fixDateR"
@@ -348,7 +348,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="35dp">
 
                 <TextView
                     android:id="@+id/standard"

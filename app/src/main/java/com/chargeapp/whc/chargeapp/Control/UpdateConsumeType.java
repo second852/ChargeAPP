@@ -84,6 +84,7 @@ public class UpdateConsumeType extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context.setTitle("修改類別");
         View view = inflater.inflate(R.layout.updae_con_type, container, false);
         ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         Common.setChargeDB(context);

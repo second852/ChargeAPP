@@ -62,11 +62,10 @@ public class SettingListType extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context.setTitle("種類修改/刪除");
         View view = inflater.inflate(R.layout.setting_list, container, false);
         listView = view.findViewById(R.id.list);
         typeH = view.findViewById(R.id.typeH);
-
-
         adView = view.findViewById(R.id.adView);
         Common.setAdView(adView,context);
         Common.setChargeDB(context);

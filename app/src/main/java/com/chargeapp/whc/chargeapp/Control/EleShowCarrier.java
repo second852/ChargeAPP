@@ -64,6 +64,7 @@ public class EleShowCarrier extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context.setTitle(R.string.text_ShowCal);
         final View view = inflater.inflate(R.layout.ele_show_carrier, container, false);
         barcodeT = view.findViewById(R.id.barcodeT);
         barcode=view.findViewById(R.id.barcode);

@@ -9,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -29,6 +30,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
+import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
@@ -154,6 +156,7 @@ public class Download extends AppCompatActivity {
             tonNewActivity();
             Common.showToast(this, "網路沒有開啟，無法下載!");
         }
+        TypefaceProvider.registerDefaultIconSets();
     }
 
 

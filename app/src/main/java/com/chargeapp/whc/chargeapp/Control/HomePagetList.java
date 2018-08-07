@@ -88,6 +88,7 @@ public class HomePagetList extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context.setTitle("今日花費");
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
         setDB();
         findViewById(view);

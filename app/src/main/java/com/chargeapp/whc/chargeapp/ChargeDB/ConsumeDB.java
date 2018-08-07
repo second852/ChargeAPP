@@ -27,14 +27,24 @@ public class ConsumeDB {
 
     public void colExist(String col)
     {
-        String sql="SELECT '"+col+"' FROM Consumer";
+        String sql="SELECT "+col+" FROM Consumer";
         Cursor cursor=null;
         try {
             cursor = db.rawQuery(sql, null);
+            if (cursor==null||!cursor.moveToNext())
+            {
+                String add="ALTER TABLE Consumer ADD '"+col+"' text;";
+                db.execSQL(add);
+            }
         }catch (Exception e)
         {
-            String add="ALTER TABLE Consumer ADD '"+col+"' text;";
-            db.execSQL(add);
+            try {
+                String add="ALTER TABLE Consumer ADD '"+col+"' text;";
+                db.execSQL(add);
+            }catch (Exception e1)
+            {
+
+            }
         }finally {
             if(cursor!=null)
             {

@@ -138,6 +138,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context.setTitle("匯入檔案");
         View view = inflater.inflate(R.layout.setting_main, container, false);
         Common.setChargeDB(context);
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());

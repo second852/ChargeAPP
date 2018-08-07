@@ -72,6 +72,7 @@ public class EleAddCarrier extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context.setTitle(R.string.text_AddCarrier);
         TypefaceProvider.registerDefaultIconSets();
         final View view = inflater.inflate(R.layout.ele_add_carrier, container, false);
         findViewById(view);

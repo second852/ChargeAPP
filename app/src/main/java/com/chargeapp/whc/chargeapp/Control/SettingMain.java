@@ -82,6 +82,7 @@ public class SettingMain extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context.setTitle(R.string.text_Setting);
         final View view = inflater.inflate(R.layout.setting_main, container, false);
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         listView = view.findViewById(R.id.list);

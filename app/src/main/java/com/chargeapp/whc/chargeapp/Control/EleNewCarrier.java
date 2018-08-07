@@ -68,6 +68,7 @@ public class EleNewCarrier extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        activity.setTitle(R.string.text_NewCarrier);
         final View view = inflater.inflate(R.layout.ele_newcarrier, container, false);
         webView = view.findViewById(R.id.webView);
         myProgressBar = view.findViewById(R.id.myProgressBar);

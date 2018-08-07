@@ -64,13 +64,12 @@ public class JobSchedulerService extends JobService {
         if (todaySet) {
             return true;
         }
-
         id = 0;
         chargeAPPDB = new ChargeAPPDB(JobSchedulerService.this);
         consumeDB = new ConsumeDB(chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(chargeAPPDB.getReadableDatabase());
         goalDB = new GoalDB(chargeAPPDB.getReadableDatabase());
-
+        consumeDB.colExist("rdNumber");
         List<BankVO> bankVOS = bankDB.getFixDate();
         List<ConsumeVO> consumerVOS = consumeDB.getFixdate();
         int hour, min;

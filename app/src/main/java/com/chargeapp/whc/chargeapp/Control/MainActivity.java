@@ -304,7 +304,6 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new InsertActivity();
                         switchFragment(fragment);
                         listView.collapseGroup(i);
-                        setTitle(R.string.text_Com);
                     } else if (i == 1) {
                         setTitle(R.string.text_Ele);
                         if (doubleClick) {
@@ -318,18 +317,15 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new PriceActivity();
                         switchFragment(fragment);
                         PriceInvoice.first = true;
-                        setTitle(R.string.text_Price);
                         listView.collapseGroup(i);
                     } else if (i == 3) {
                         fragment = new SelectActivity();
                         switchFragment(fragment);
                         listView.collapseGroup(i);
-                        setTitle(R.string.text_DataPicture);
                     } else if (i == 4) {
                         fragment = new SelectListModelActivity();
                         switchFragment(fragment);
                         listView.collapseGroup(i);
-                        setTitle(R.string.text_DataList);
                     } else if (i == 5) {
                         fragment = new GoalListAll();
                         Bundle bundle = new Bundle();
@@ -337,14 +333,11 @@ public class MainActivity extends AppCompatActivity {
                         fragment.setArguments(bundle);
                         switchFragment(fragment);
                         listView.collapseGroup(i);
-                        setTitle(R.string.text_Goal);
                     } else if (i == 6) {
                         fragment = new SettingMain();
                         switchFragment(fragment);
-                        setTitle(R.string.text_Setting);
                         listView.collapseGroup(i);
                     } else if (i == 7) {
-                        setTitle(R.string.text_Home);
                         fragment = new HomePage();
                         switchFragment(fragment);
                         listView.collapseGroup(i);
@@ -400,18 +393,14 @@ public class MainActivity extends AppCompatActivity {
 
                     if (i1 == 0) {
                         fragment = new EleSetCarrier();
-                        setTitle(R.string.text_SetCarrier);
                         switchFragment(fragment);
                     } else if (i1 == 1) {
-                        setTitle(R.string.text_ShowCal);
                         fragment = new EleShowCarrier();
                         switchFragment(fragment);
                     } else if (i1 == 2) {
-                        setTitle(R.string.text_DonateMain);
                         fragment = new EleDonateMain();
                         switchFragment(fragment);
                     } else if (i1 == 3) {
-                        setTitle(R.string.text_AddCarrier);
                         fragment = new EleAddCarrier();
                         switchFragment(fragment);
                     } else if (i1 == 4) {
@@ -424,16 +413,13 @@ public class MainActivity extends AppCompatActivity {
                         intent.setData(Uri.parse("http://www.teach.ltu.edu.tw/public/News/11503/201412041535091.pdf"));
                         startActivity(intent);
                     } else if (i1 == 5) {
-                        setTitle(R.string.text_NewCarrier);
                         fragment = new EleNewCarrier();
                         switchFragment(fragment);
                         return;
                     } else if (i1 == 6) {
-                        setTitle(R.string.text_EleBank);
                         fragment = new EleAddBank();
                         switchFragment(fragment);
                     } else if (i1 == 7) {
-                        setTitle(R.string.text_HowGet);
                         fragment = new HowGetPrice();
                         switchFragment(fragment);
                     } else {
@@ -491,7 +477,9 @@ public class MainActivity extends AppCompatActivity {
                 }else {
                     setUpdateConsume();
                 }
-
+            }else if (a.equals("PriceHand")) {
+                Fragment fragment=new PriceActivity();
+                switchFragment(fragment);
             }
         }
     }
@@ -648,11 +636,73 @@ public class MainActivity extends AppCompatActivity {
                 InsertSpend.consumeVO.setMaintype("O");
                 InsertSpend.consumeVO.setSecondType("O");
             }
+        }else{
+            InsertSpend.consumeVO=setQRcodCon(InsertSpend.consumeVO);
         }
         InsertSpend.needSet = true;
         Fragment fragment = new InsertActivity();
         switchFragment(fragment);
     }
+
+    private ConsumeVO setQRcodCon(ConsumeVO consumeVO) {
+        if (BarcodeGraphic.hashMap.get(1) != null) {
+            String[] EleNulAll = BarcodeGraphic.hashMap.get(1).split(":");
+            String EleNul = EleNulAll[0].substring(0, 10);
+            String day = EleNulAll[0].substring(10, 17);
+            String m = EleNulAll[0].substring(29, 37);
+            String rdNumber = EleNulAll[0].substring(17, 21);
+            Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
+            consumeVO.setMoney(Integer.parseInt(m, 16));
+            consumeVO.setNumber(EleNul);
+            consumeVO.setDate(new Date(calendar.getTimeInMillis()));
+            consumeVO.setRdNumber(rdNumber);
+        }
+        if (BarcodeGraphic.hashMap.get(2) != null) {
+            String s = BarcodeGraphic.hashMap.get(2);
+            String result = "";
+            if (s.indexOf(":") == -1) {
+                try {
+                    byte[] bytes = Base64.decode(s, Base64.DEFAULT);
+                    result = new String(bytes, "UTF-8");
+                } catch (Exception e) {
+                    result = "";
+                }
+            } else {
+                try {
+                    int codeNumber=Common.identify(s.getBytes("ISO-8859-1"));
+                    switch (codeNumber){
+                        case 1:
+                            result= new String(s.getBytes("ISO-8859-1"), "Big5");
+                            break;
+                        case 2:
+                            result=s;
+                            break;
+                    }
+                } catch (Exception e1) {
+                    result = "";
+                }
+            }
+            StringBuffer sb = new StringBuffer();
+            if (result.trim().length() > 0) {
+                String[] ddd = result.trim().split(":");
+                ArrayList<String> answer = new ArrayList<>();
+                Double total, price, amount;
+                for (String string : ddd) {
+                    answer.add(string.replaceAll("\\s+", ""));
+                    if (answer.size() == 3) {
+                        price = Double.valueOf(Common.onlyNumber(answer.get(2)));
+                        amount = Double.valueOf(Common.onlyNumber(answer.get(1)));
+                        total = price * amount;
+                        sb.append(answer.get(0) + " :\n").append(answer.get(2) + " X ").append(answer.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
+                        answer.clear();
+                    }
+                }
+                consumeVO.setDetailname(sb.toString());
+            }
+        }
+        return consumeVO;
+    }
+
 
 
     private void setUpdateConsume() {
@@ -799,6 +849,8 @@ public class MainActivity extends AppCompatActivity {
                 consumeVO.setMaintype("O");
                 consumeVO.setSecondType("O");
             }
+        }else {
+            consumeVO=setQRcodCon(consumeVO);
         }
         bundle.putSerializable("consumeVO", consumeVO);
         Fragment fragment = new UpdateSpend();

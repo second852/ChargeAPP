@@ -346,7 +346,8 @@ public class PriceHand extends Fragment {
                     Common.showToast(context,"載入資料中");
                     MultiTrackerActivity.refresh = false;
                     Intent intent = new Intent(context, MultiTrackerActivity.class);
-                    startActivity(intent);
+                    intent.putExtra("action","PriceHand");
+                    startActivityForResult(intent,6);
                 }
             }
 

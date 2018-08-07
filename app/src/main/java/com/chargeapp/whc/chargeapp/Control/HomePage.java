@@ -92,6 +92,7 @@ public class HomePage extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context.setTitle(R.string.text_Home);
         final View view = inflater.inflate(R.layout.home_page, container, false);
         pieChart=view.findViewById(R.id.pieChart);
         pieChartT=view.findViewById(R.id.pieChartT);

@@ -33,10 +33,11 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
     private Button importMoney, showN, howtogetprice;
     public Button goneMoney;
     private LinearLayout text;
-    private int nowpoint = 0;
+    private static int nowPoint = 0;
     private Button exportMoney;
     private Activity context;
     private DrawerLayout drawerLayout;
+
 
     @Override
     public void onAttach(Context context) {
@@ -52,6 +53,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context.setTitle(R.string.text_Price);
         final View view = inflater.inflate(R.layout.price_main, container, false);
         priceViewPager = (ViewPager) view.findViewById(R.id.priceViewPager);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
@@ -72,17 +74,18 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
                 return true;
             }
         });
-        setloyout();
+        setLayout();
+        priceViewPager.setCurrentItem(nowPoint);
         return view;
     }
 
 
-    public void setloyout() {
+    public void setLayout() {
         ActionBar actionBar = ((AppCompatActivity) context).getSupportActionBar();
         actionBar.setDisplayShowCustomEnabled(true);
         View actionbarLayout = LayoutInflater.from(context).inflate(R.layout.actionbar_layout, null);
         actionBar.setCustomView(actionbarLayout);
-        setcurrentpage();
+        setCurrentPage();
         howtogetprice = actionbarLayout.findViewById(R.id.howtogetprice);
         howtogetprice.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +105,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
         });
     }
 
-    public void setcurrentpage() {
+    public void setCurrentPage() {
         int page = priceViewPager.getCurrentItem();
         if(page==0)
         {
@@ -122,7 +125,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
     }
 
 
-    public class MainPagerAdapter extends FragmentPagerAdapter {
+    public static class MainPagerAdapter extends FragmentPagerAdapter {
         private int NUM_ITEMS = 3;
 
         MainPagerAdapter(FragmentManager fm) {
@@ -150,21 +153,21 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
 
     @Override
     public void onPageSelected(int position) {
-        nowpoint = position;
+        nowPoint = position;
         if (position == 0) {
-            setcurrentpage();
+            setCurrentPage();
             goneMoney.setText("兌獎號碼");
             exportMoney.setText("中獎發票");
             importMoney.setText("兌獎");
             showN.setText("兌獎號碼");
         } else if (position == 1) {
-            setcurrentpage();
+            setCurrentPage();
             goneMoney.setText("中獎發票");
             exportMoney.setText("兌獎");
             importMoney.setText("兌獎號碼");
             showN.setText("中獎發票");
         } else {
-            setcurrentpage();
+            setCurrentPage();
             goneMoney.setText("兌獎");
             exportMoney.setText("兌獎號碼");
             importMoney.setText("中獎發票");
@@ -174,7 +177,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        if (nowpoint > position) {
+        if (nowPoint > position) {
             text.setX( (1 - positionOffset) * goneMoney.getWidth() * 2);
         } else {
             text.setX(-(positionOffset * goneMoney.getWidth() * 2));

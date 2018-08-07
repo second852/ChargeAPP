@@ -53,6 +53,7 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context.setTitle(R.string.text_DataPicture);
         final View view = inflater.inflate(R.layout.select_char_main, container, false);
         SViewPager = (ViewPager) view.findViewById(R.id.seleViewPager);
         exportMoney = view.findViewById(R.id.exportD);

@@ -86,6 +86,7 @@ public class EleSetCarrier extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context.setTitle(R.string.text_SetCarrier);
         TypefaceProvider.registerDefaultIconSets();
         view = inflater.inflate(R.layout.ele_setcarrier, container, false);
         adHadler=new Handler();

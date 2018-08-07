@@ -75,6 +75,7 @@ public class SettingListFix extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         gson=new Gson();
+        context.setTitle("設定定期項目");
         View view = inflater.inflate(R.layout.setting_list, container, false);
         Common.setChargeDB(context);
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());

@@ -2,6 +2,7 @@
 
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/topLayout"
     android:orientation="horizontal"
     android:layout_width="match_parent"
@@ -30,5 +31,85 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
   </com.chargeapp.whc.chargeapp.ui.CameraSourcePreview>
+
+  <RelativeLayout
+      android:layout_alignParentBottom="true"
+      android:background="#f5f5f5"
+      android:id="@+id/buttonR"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+    <com.beardedhen.androidbootstrap.AwesomeTextView
+        android:id="@+id/remainT"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:textSize="20sp"
+        app:bootstrapBrand="primary"
+        app:bootstrapText="無法辨識請發票，請用查詢!"
+        />
+    <TextView
+        android:id="@+id/standard"
+        android:layout_width="60dp"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="#AAAAAA"
+        android:gravity="center"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:visibility="invisible" />
+
+    <com.beardedhen.androidbootstrap.BootstrapButton
+        android:id="@+id/search"
+        android:layout_below="@+id/remainT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="25dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_toLeftOf="@+id/standard"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:bootstrapBrand="success"
+        app:bootstrapSize="lg"
+        app:bootstrapText="查詢 {fa_search}"
+        app:buttonMode="regular"
+        app:roundedCorners="true"
+        app:showOutline="false" />
+
+    <com.beardedhen.androidbootstrap.BootstrapButton
+        android:id="@+id/back"
+        android:layout_below="@+id/remainT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/standard"
+        android:textColor="#000000"
+        app:bootstrapBrand="danger"
+        app:bootstrapSize="lg"
+        app:bootstrapText="返回 {fa_reply_all}"
+        app:buttonMode="regular"
+        app:roundedCorners="true"
+        app:showOutline="false"
+        />
+  </RelativeLayout>
+
+  <com.beardedhen.androidbootstrap.BootstrapButton
+      android:id="@+id/backP"
+      android:layout_alignParentBottom="true"
+      android:layout_centerHorizontal="true"
+      android:layout_marginBottom="20dp"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:layout_marginTop="10dp"
+      app:bootstrapSize="xl"
+      app:bootstrapBrand="danger"
+      app:bootstrapText="返回 {fa_reply_all}"
+      />
 
 </RelativeLayout>
