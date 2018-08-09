@@ -82,6 +82,18 @@ public class Common {
         normal
     }
 
+    public static String doubleRemoveZero(double d)
+    {
+        int a= (int) d;
+        if(a==d)
+        {
+            return String.valueOf(a);
+        }else {
+            return String.valueOf(d);
+        }
+    }
+
+
     public static int identify(byte[] bytes) {
         String[] charsetsToBeTested = {"UTF-8", "big5"};
         boolean isRight;

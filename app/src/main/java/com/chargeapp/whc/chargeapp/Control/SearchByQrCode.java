@@ -344,21 +344,41 @@ public class SearchByQrCode extends Fragment {
         }.getType();
         String result = js.get("details").toString();
         List<JsonObject> b = gson.fromJson(result, cdType);
-        String price, unit, unitTotal;
+        double price, unit, unitTotal;
         double total = 0;
         StringBuilder sb = new StringBuilder();
         for (JsonObject jsonObject : b) {
 
-            price = jsonObject.get("unitPrice").getAsString();
-            unit = jsonObject.get("quantity").getAsString();
-            unitTotal = jsonObject.get("amount").getAsString();
+            try {
+                price = jsonObject.get("unitPrice").getAsDouble();
+            }catch (Exception e)
+            {
+                price=0;
+            }
+
+            try {
+                unit = jsonObject.get("quantity").getAsDouble();
+            }catch (Exception e)
+            {
+                unit=0;
+            }
+
+
+            try {
+                unitTotal = jsonObject.get("amount").getAsDouble();
+            }catch (Exception e)
+            {
+                unitTotal=0;
+            }
+
+
 
             try {
                 sb.append(jsonObject.get("description").getAsString());
             } catch (Exception e) {
                 sb.append(jsonObject.get("錯誤").getAsString());
             }
-            sb.append(":\n").append(price).append("X").append(unit).append("=").append(unitTotal + "\n");
+            sb.append(":\n").append(Common.doubleRemoveZero(price)).append("X").append(Common.doubleRemoveZero(unit)).append("=").append(Common.doubleRemoveZero(unitTotal) + "\n");
 
             try {
                 total = Double.valueOf(unitTotal) + total;
