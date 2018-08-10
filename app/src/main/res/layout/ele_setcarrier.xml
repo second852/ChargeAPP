@@ -77,12 +77,12 @@
         android:layout_marginTop="20dp"
         android:gravity="center"
         android:padding="1dp"
-        android:text="確認"
         android:textColor="#000000"
         app:bootstrapBrand="success"
         app:buttonMode="regular"
         app:bootstrapSize="lg"
         app:roundedCorners="true"
+        app:bootstrapText="儲存 {fa_save}"
         />
 
     <TextView

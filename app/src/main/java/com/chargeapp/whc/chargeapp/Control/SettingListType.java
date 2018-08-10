@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
@@ -138,8 +140,8 @@ public class SettingListType extends Fragment {
             }
             ImageView image = itemView.findViewById(R.id.image);
             TextView listTitle = itemView.findViewById(R.id.listTitle);
-            TextView saveT = itemView.findViewById(R.id.saveT);
-            TextView deleteT = itemView.findViewById(R.id.deleteT);
+            BootstrapButton saveT = itemView.findViewById(R.id.saveT);
+            BootstrapButton deleteT = itemView.findViewById(R.id.deleteT);
             final Object o = objects.get(position);
             deleteT.setOnClickListener(new View.OnClickListener() {
                 @Override

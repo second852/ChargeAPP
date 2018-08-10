@@ -84,6 +84,7 @@
         app:buttonMode="regular"
         app:bootstrapSize="xl"
         app:roundedCorners="true"
+        app:bootstrapText="儲存 {fa_save}"
         />
 
     <TextView

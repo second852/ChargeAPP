@@ -43,11 +43,12 @@
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@+id/carrier"
             android:gravity="center"
-            android:text="確定"
             app:bootstrapBrand="success"
             app:bootstrapSize="md"
             app:buttonMode="regular"
-            app:roundedCorners="true" />
+            app:roundedCorners="true"
+            app:bootstrapText="確定 {fa_upload}"
+            />
         <TextView
             android:id="@+id/carrierM"
             android:layout_marginTop="15dp"
