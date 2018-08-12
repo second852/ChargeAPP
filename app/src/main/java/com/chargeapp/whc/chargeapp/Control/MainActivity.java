@@ -495,62 +495,37 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         if (BarcodeGraphic.hashMap.size() == 2) {
-            String all = BarcodeGraphic.hashMap.get(1).trim() + BarcodeGraphic.hashMap.get(2).trim();
-            String[] EleNulAll = all.split(":");
-            String EleNul = EleNulAll[0].substring(0, 10);
-            String day = EleNulAll[0].substring(10, 17);
-            String m = EleNulAll[0].substring(29, 37);
-            String rdNumber=EleNulAll[0].substring(17,21);
+            String eleOne = BarcodeGraphic.hashMap.get(1).trim();
+            String eleTwo=BarcodeGraphic.hashMap.get(2).trim();
+            String[] eleOneS = eleOne.trim().split(":");
+            String EleNul = eleOneS[0].substring(0, 10);
+            String day = eleOneS [0].substring(10, 17);
+            String m = eleOneS[0].substring(29, 37);
+            String rdNumber=eleOneS[0].substring(17,21);
             Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
             InsertSpend.consumeVO.setMoney(Integer.parseInt(m, 16));
             InsertSpend.consumeVO.setNumber(EleNul);
             InsertSpend.consumeVO.setDate(new Date(calendar.getTimeInMillis()));
             InsertSpend.consumeVO.setRdNumber(rdNumber);
-            StringBuffer sb = new StringBuffer();
-            if (EleNulAll[4].equals("2")) {
+            StringBuilder sb = new StringBuilder();
+            if (eleOneS[4].equals("2")) {
                 //Base64
                 try {
-                    String base64 = EleNulAll[5];
-                    byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
-                    String debase64 = new String(bytes, "UTF-8");
-                    String[] ddd = debase64.trim().split(":");
-                    ArrayList<String> result = new ArrayList<>();
-                    Double total, price, amount;
-                    for (String s : ddd) {
-                        result.add(s.replaceAll("\\s+", ""));
-                        if (result.size() == 3) {
-                            price = Double.valueOf(Common.onlyNumber(result.get(2)));
-                            amount = Double.valueOf(Common.onlyNumber(result.get(1)));
-                            total = price * amount;
-                            sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
-                            result.clear();
-                        }
-                    }
+                    Common.QRCodeToString(Common.Base64Convnter(eleOneS[5]),sb);
+                    Common.QRCodeToString(Common.Base64Convnter(eleTwo),sb);
                 } catch (Exception e) {
-                    int i = 0;
-                    sb = new StringBuffer();
-                    for (String s : EleNulAll) {
-                        if (i >= 5) {
-                            sb.append(s.replaceAll("\\s+", ""));
-                            int j = (i - 5) % 3;
-                            if (j == 2) {
-                                sb.append("\n");
-                            } else {
-                                sb.append(":");
-                            }
-                        }
-                        i++;
-                    }
+                    sb=new StringBuilder();
+                    sb.append(eleOneS[eleOneS.length-1]);
+                    Common.QRCodeError(eleTwo,sb);
                 }
-            } else if (EleNulAll[4].equals("0")) {
+            } else if (eleOneS[4].equals("0")) {
                 try {
                     //Big5
                     int i = 0;
                     String name;
-                    sb = new StringBuffer();
                     double price, amount, total;
                     List<String> result = new ArrayList<>();
-                    for (String s : EleNulAll) {
+                    for (String s : eleOneS) {
                         if (i >= 5) {
                             //轉換失敗
                             try {
@@ -571,33 +546,21 @@ public class MainActivity extends AppCompatActivity {
                         i++;
                     }
                 } catch (Exception e) {
-                    int i = 0;
-                    sb = new StringBuffer();
-                    for (String s : EleNulAll) {
-                        if (i >= 5) {
-                            sb.append(s.replaceAll("\\s+", ""));
-                            int j = (i - 5) % 3;
-                            if (j == 2) {
-                                sb.append("\n");
-                            } else {
-                                sb.append(":");
-                            }
-                        }
-                        i++;
-                    }
+
+
                 }
             } else {
                 try {
                     //UTF-8
                     //數量為1
-                    if (EleNulAll[3].equals("1")) {
-                        sb.append(EleNulAll[5].replaceAll("\\s+", "") + " :\n" + InsertSpend.consumeVO.getMoney() + " X 1 = " + InsertSpend.consumeVO.getMoney() + "\n");
+                    if (eleOneS[3].equals("1")) {
+                        sb.append(eleOneS[5].replaceAll("\\s+", "") + " :\n" + InsertSpend.consumeVO.getMoney() + " X 1 = " + InsertSpend.consumeVO.getMoney() + "\n");
                     } else {
                         //全部數量
                         int i = 0;
                         Double total, price, amount;
                         ArrayList<String> result = new ArrayList<>();
-                        for (String s : EleNulAll) {
+                        for (String s : eleOneS) {
                             if (i >= 5) {
                                 result.add(s.replaceAll("\\s+", ""));
                                 if (result.size() == 3) {
@@ -612,20 +575,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 } catch (Exception e) {
-                    int i = 0;
-                    sb = new StringBuffer();
-                    for (String s : EleNulAll) {
-                        if (i >= 5) {
-                            sb.append(s.replaceAll("\\s+", ""));
-                            int j = (i - 5) % 3;
-                            if (j == 2) {
-                                sb.append("\n");
-                            } else {
-                                sb.append(":");
-                            }
-                        }
-                        i++;
-                    }
+
                 }
             }
             if (sb.toString().trim().length() > 0) {

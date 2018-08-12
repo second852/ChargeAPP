@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
@@ -226,6 +228,57 @@ public class Common {
                 .doubleValue();
         return (int)b;
     }
+
+
+    //Base64
+    @NonNull
+    public static String[] Base64Convnter(String base64) throws UnsupportedEncodingException {
+        byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
+        String debase64 = new String(bytes, "UTF-8");
+        return debase64.trim().split(":");
+    }
+
+    //Base64
+    public static StringBuilder QRCodeToString(String[] resultString,StringBuilder sb){
+        ArrayList<String> result = new ArrayList<>();
+        Double total, price, amount;
+        for (String s : resultString) {
+            result.add(s.replaceAll("\\s+", ""));
+            if (result.size() == 3) {
+                price = Double.valueOf(Common.onlyNumber(result.get(2)));
+                amount = Double.valueOf(Common.onlyNumber(result.get(1)));
+                total = price * amount;
+                sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
+                result.clear();
+            }
+        }
+        return sb;
+    }
+
+    //Base64
+    public static StringBuilder QRCodeError(String resultString,StringBuilder sb){
+        sb = new StringBuilder();
+        String[] resultS=resultString.trim().split(":");
+        try {
+            int i=0;
+            for (String s : resultS) {
+                    sb.append(s.replaceAll("\\s+", ""));
+                    int j =i % 3;
+                    if (j == 2) {
+                        sb.append("\n");
+                    } else {
+                        sb.append(":");
+                    }
+                i++;
+            }
+        }catch (Exception e)
+        {
+            sb = new StringBuilder();
+            sb.append("QRCode轉換失敗，請用\"QRCode下載功能\"");
+        }
+        return sb;
+    }
+
 
 
     public static String[] WeekSetSpinnerBS=
