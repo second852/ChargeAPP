@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 
 
-
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
@@ -257,9 +256,9 @@ public class MainActivity extends AppCompatActivity {
             RelativeLayout rea = view.findViewById(R.id.rea);
 
             //not show bottom
-            BootstrapButton deletecarrier=view.findViewById(R.id.deletecarrier);
-            BootstrapButton widgetShow=view.findViewById(R.id.widgetShow);
-            BootstrapButton updateC=view.findViewById(R.id.updateC);
+            BootstrapButton deletecarrier = view.findViewById(R.id.deletecarrier);
+            BootstrapButton widgetShow = view.findViewById(R.id.widgetShow);
+            BootstrapButton updateC = view.findViewById(R.id.updateC);
             widgetShow.setVisibility(View.GONE);
             deletecarrier.setVisibility(View.GONE);
             updateC.setVisibility(View.GONE);
@@ -463,29 +462,27 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment = new EleSetCarrier();
                 switchFragment(fragment);
             } else if (a.equals("setConsume")) {
-                if(resultCode==9)
-                {
+                if (resultCode == 9) {
                     searchQRCode();
-                }else {
+                } else {
                     setConsume();
                 }
 
             } else if (a.equals("UpdateSpend")) {
-                if(resultCode==9)
-                {
+                if (resultCode == 9) {
                     searchQRCode();
-                }else {
+                } else {
                     setUpdateConsume();
                 }
-            }else if (a.equals("PriceHand")) {
-                Fragment fragment=new PriceActivity();
+            } else if (a.equals("PriceHand")) {
+                Fragment fragment = new PriceActivity();
                 switchFragment(fragment);
             }
         }
     }
 
     private void searchQRCode() {
-        Fragment fragment=new SearchByQrCode();
+        Fragment fragment = new SearchByQrCode();
         fragment.setArguments(intent.getExtras());
         switchFragment(fragment);
     }
@@ -496,12 +493,12 @@ public class MainActivity extends AppCompatActivity {
         }
         if (BarcodeGraphic.hashMap.size() == 2) {
             String eleOne = BarcodeGraphic.hashMap.get(1).trim();
-            String eleTwo=BarcodeGraphic.hashMap.get(2).trim();
+            String eleTwo = BarcodeGraphic.hashMap.get(2).trim();
             String[] eleOneS = eleOne.trim().split(":");
             String EleNul = eleOneS[0].substring(0, 10);
-            String day = eleOneS [0].substring(10, 17);
+            String day = eleOneS[0].substring(10, 17);
             String m = eleOneS[0].substring(29, 37);
-            String rdNumber=eleOneS[0].substring(17,21);
+            String rdNumber = eleOneS[0].substring(17, 21);
             Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
             InsertSpend.consumeVO.setMoney(Integer.parseInt(m, 16));
             InsertSpend.consumeVO.setNumber(EleNul);
@@ -511,43 +508,28 @@ public class MainActivity extends AppCompatActivity {
             if (eleOneS[4].equals("2")) {
                 //Base64
                 try {
-                    Common.QRCodeToString(Common.Base64Convnter(eleOneS[5]),sb);
-                    Common.QRCodeToString(Common.Base64Convnter(eleTwo),sb);
+                    for(String s:Common.Base64Convert(eleOneS[5]))
+                    {
+                        Log.d("XXXXX",s );
+                    }
+                    Common.QRCodeToString(Common.Base64Convert(eleOneS[5]), sb);
+                    Log.d("XXXXX",sb.toString());
+                    Common.QRCodeToString(Common.Base64Convert(eleTwo), sb);
+                    Log.d("XXXXX",sb.toString());
                 } catch (Exception e) {
-                    sb=new StringBuilder();
-                    sb.append(eleOneS[eleOneS.length-1]);
-                    Common.QRCodeError(eleTwo,sb);
+                    sb = new StringBuilder();
+                    sb.append(eleOneS[eleOneS.length - 1]);
+                    Common.QRCodeError(eleTwo, sb);
                 }
             } else if (eleOneS[4].equals("0")) {
                 try {
-                    //Big5
-                    int i = 0;
-                    String name;
-                    double price, amount, total;
-                    List<String> result = new ArrayList<>();
-                    for (String s : eleOneS) {
-                        if (i >= 5) {
-                            //轉換失敗
-                            try {
-                                name = s.replaceAll("\\s+", "");
-                                name = new String(name.getBytes("ISO-8859-1"), "Big5");
-                            } catch (Exception e) {
-                                name = s;
-                            }
-                            result.add(name);
-                            if (result.size() == 3) {
-                                price = Double.valueOf(Common.onlyNumber(result.get(2)));
-                                amount = Double.valueOf(Common.onlyNumber(result.get(1)));
-                                total = price * amount;
-                                sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
-                                result.clear();
-                            }
-                        }
-                        i++;
-                    }
+                    Common.QRCodeToString(Common.Big5Convert(eleOneS[5]), sb);
+                    Log.d("XXX",sb.toString());
+                    Common.QRCodeToString(Common.Big5Convert(eleTwo), sb);
+                    Log.d("XXX",sb.toString());
                 } catch (Exception e) {
-
-
+                    sb = new StringBuilder();
+                    sb.append("QRCode轉換失敗，請用\"QRCode下載功能\"");
                 }
             } else {
                 try {
@@ -556,26 +538,13 @@ public class MainActivity extends AppCompatActivity {
                     if (eleOneS[3].equals("1")) {
                         sb.append(eleOneS[5].replaceAll("\\s+", "") + " :\n" + InsertSpend.consumeVO.getMoney() + " X 1 = " + InsertSpend.consumeVO.getMoney() + "\n");
                     } else {
-                        //全部數量
-                        int i = 0;
-                        Double total, price, amount;
-                        ArrayList<String> result = new ArrayList<>();
-                        for (String s : eleOneS) {
-                            if (i >= 5) {
-                                result.add(s.replaceAll("\\s+", ""));
-                                if (result.size() == 3) {
-                                    price = Double.valueOf(Common.onlyNumber(result.get(2)));
-                                    amount = Double.valueOf(Common.onlyNumber(result.get(1)));
-                                    total = price * amount;
-                                    sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
-                                    result.clear();
-                                }
-                            }
-                            i++;
-                        }
+                        //All
+                        Common.QRCodeToString(eleOneS[5].trim().split(":"), sb);
+                        Common.QRCodeToString(eleTwo.trim().split(":"), sb);
                     }
                 } catch (Exception e) {
-
+                    sb = new StringBuilder();
+                    sb.append("QRCode轉換失敗，請用\"QRCode下載功能\"");
                 }
             }
             if (sb.toString().trim().length() > 0) {
@@ -586,8 +555,8 @@ public class MainActivity extends AppCompatActivity {
                 InsertSpend.consumeVO.setMaintype("O");
                 InsertSpend.consumeVO.setSecondType("O");
             }
-        }else{
-            InsertSpend.consumeVO=setQRcodCon(InsertSpend.consumeVO);
+        } else {
+            InsertSpend.consumeVO = setQRcodCon(InsertSpend.consumeVO);
         }
         InsertSpend.needSet = true;
         Fragment fragment = new InsertActivity();
@@ -619,13 +588,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             } else {
                 try {
-                    int codeNumber=Common.identify(s.getBytes("ISO-8859-1"));
-                    switch (codeNumber){
+                    int codeNumber = Common.identify(s.getBytes("ISO-8859-1"));
+                    switch (codeNumber) {
                         case 1:
-                            result= new String(s.getBytes("ISO-8859-1"), "Big5");
+                            result = new String(s.getBytes("ISO-8859-1"), "Big5");
                             break;
                         case 2:
-                            result=s;
+                            result = s;
                             break;
                     }
                 } catch (Exception e1) {
@@ -654,7 +623,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     private void setUpdateConsume() {
         if (BarcodeGraphic.hashMap == null) {
             return;
@@ -667,7 +635,7 @@ public class MainActivity extends AppCompatActivity {
             String EleNul = EleNulAll[0].substring(0, 10);
             String day = EleNulAll[0].substring(10, 17);
             String m = EleNulAll[0].substring(29, 37);
-            String rdNumber=EleNulAll[0].substring(17,21);
+            String rdNumber = EleNulAll[0].substring(17, 21);
             Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
             consumeVO.setMoney(Integer.parseInt(m, 16));
             consumeVO.setNumber(EleNul);
@@ -799,8 +767,8 @@ public class MainActivity extends AppCompatActivity {
                 consumeVO.setMaintype("O");
                 consumeVO.setSecondType("O");
             }
-        }else {
-            consumeVO=setQRcodCon(consumeVO);
+        } else {
+            consumeVO = setQRcodCon(consumeVO);
         }
         bundle.putSerializable("consumeVO", consumeVO);
         Fragment fragment = new UpdateSpend();

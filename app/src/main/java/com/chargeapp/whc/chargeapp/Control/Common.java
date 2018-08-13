@@ -232,13 +232,20 @@ public class Common {
 
     //Base64
     @NonNull
-    public static String[] Base64Convnter(String base64) throws UnsupportedEncodingException {
+    public static String[] Base64Convert(String base64) throws UnsupportedEncodingException {
         byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
         String debase64 = new String(bytes, "UTF-8");
         return debase64.trim().split(":");
     }
 
-    //Base64
+    //Big5
+    @NonNull
+    public static String[] Big5Convert(String result) throws UnsupportedEncodingException {
+        String answer=new String(result.replaceAll("\\s+", "").getBytes("ISO-8859-1"), "Big5");
+        return answer.trim().split(":");
+    }
+
+    //QRCode-Convert
     public static StringBuilder QRCodeToString(String[] resultString,StringBuilder sb){
         ArrayList<String> result = new ArrayList<>();
         Double total, price, amount;
@@ -252,10 +259,11 @@ public class Common {
                 result.clear();
             }
         }
+        Log.d("XXX",sb.toString());
         return sb;
     }
 
-    //Base64
+    //QRCode Error
     public static StringBuilder QRCodeError(String resultString,StringBuilder sb){
         sb = new StringBuilder();
         String[] resultS=resultString.trim().split(":");
