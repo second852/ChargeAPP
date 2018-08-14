@@ -233,24 +233,29 @@ public class Common {
     //Base64
     @NonNull
     public static String[] Base64Convert(String base64) throws UnsupportedEncodingException {
-        byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
+        byte[] bytes = Base64.decode(base64.trim(), Base64.DEFAULT);
         String debase64 = new String(bytes, "UTF-8");
         return debase64.trim().split(":");
     }
 
     //Big5
     @NonNull
-    public static String[] Big5Convert(String result) throws UnsupportedEncodingException {
+    public static String Big5Convert(String result) throws UnsupportedEncodingException {
         String answer=new String(result.replaceAll("\\s+", "").getBytes("ISO-8859-1"), "Big5");
-        return answer.trim().split(":");
+        return answer;
     }
 
     //QRCode-Convert
-    public static StringBuilder QRCodeToString(String[] resultString,StringBuilder sb){
+    public static StringBuilder QRCodeToString(List<String> resultString,StringBuilder sb){
         ArrayList<String> result = new ArrayList<>();
         Double total, price, amount;
         for (String s : resultString) {
-            result.add(s.replaceAll("\\s+", ""));
+            String answer=s.replaceAll("\\s+", "");
+            if(answer.length()<=0)
+            {
+                continue;
+            }
+            result.add(answer);
             if (result.size() == 3) {
                 price = Double.valueOf(Common.onlyNumber(result.get(2)));
                 amount = Double.valueOf(Common.onlyNumber(result.get(1)));
@@ -259,7 +264,6 @@ public class Common {
                 result.clear();
             }
         }
-        Log.d("XXX",sb.toString());
         return sb;
     }
 
@@ -358,12 +362,19 @@ public class Common {
     //純數字
     public static String onlyNumber(String s){
         StringBuilder sb=new StringBuilder();
-        Pattern ptn=Pattern.compile("[0-9]|[.]");
+        Pattern ptn=Pattern.compile("[0-9]|[.]|[-]");
         Matcher mch=ptn.matcher(s);
         while(mch.find()) {
             sb.append(mch.group());
         }
-        return sb.toString();
+        double dValue=Double.valueOf(sb.toString());
+        int value=(int)dValue;
+        if(value==dValue)
+        {
+            return String.valueOf(value);
+        }else{
+            return sb.toString();
+        }
     }
 
 

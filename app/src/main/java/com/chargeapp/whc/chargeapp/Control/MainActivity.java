@@ -52,6 +52,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
@@ -505,31 +506,28 @@ public class MainActivity extends AppCompatActivity {
             InsertSpend.consumeVO.setDate(new Date(calendar.getTimeInMillis()));
             InsertSpend.consumeVO.setRdNumber(rdNumber);
             StringBuilder sb = new StringBuilder();
+            List<String> eleAll=new ArrayList<>();
             if (eleOneS[4].equals("2")) {
                 //Base64
                 try {
-                    for(String s:Common.Base64Convert(eleOneS[5]))
-                    {
-                        Log.d("XXXXX",s );
-                    }
-                    Common.QRCodeToString(Common.Base64Convert(eleOneS[5]), sb);
-                    Log.d("XXXXX",sb.toString());
-                    Common.QRCodeToString(Common.Base64Convert(eleTwo), sb);
-                    Log.d("XXXXX",sb.toString());
+                    eleAll.addAll(Arrays.asList(Common.Base64Convert(eleOneS[5])));
+                    eleAll.addAll(Arrays.asList(Common.Base64Convert(eleTwo)));
+                    Common.QRCodeToString(eleAll, sb);
                 } catch (Exception e) {
                     sb = new StringBuilder();
-                    sb.append(eleOneS[eleOneS.length - 1]);
-                    Common.QRCodeError(eleTwo, sb);
+                    sb.append("QRCode轉換失敗。\n請用\"QRCode下載功能\"。");
                 }
             } else if (eleOneS[4].equals("0")) {
+                //Big5
                 try {
-                    Common.QRCodeToString(Common.Big5Convert(eleOneS[5]), sb);
-                    Log.d("XXX",sb.toString());
-                    Common.QRCodeToString(Common.Big5Convert(eleTwo), sb);
-                    Log.d("XXX",sb.toString());
+                    eleAll.add(Common.Big5Convert(eleOneS[5]));
+                    eleAll.add(Common.Big5Convert(eleOneS[6]));
+                    eleAll.add(Common.Big5Convert(eleOneS[7]));
+                    eleAll.addAll(Arrays.asList(Common.Big5Convert(eleTwo).split(":")));
+                    Common.QRCodeToString(eleAll, sb);
                 } catch (Exception e) {
                     sb = new StringBuilder();
-                    sb.append("QRCode轉換失敗，請用\"QRCode下載功能\"");
+                    sb.append("QRCode轉換失敗。\n請用\"QRCode下載功能\"。");
                 }
             } else {
                 try {
@@ -538,13 +536,15 @@ public class MainActivity extends AppCompatActivity {
                     if (eleOneS[3].equals("1")) {
                         sb.append(eleOneS[5].replaceAll("\\s+", "") + " :\n" + InsertSpend.consumeVO.getMoney() + " X 1 = " + InsertSpend.consumeVO.getMoney() + "\n");
                     } else {
-                        //All
-                        Common.QRCodeToString(eleOneS[5].trim().split(":"), sb);
-                        Common.QRCodeToString(eleTwo.trim().split(":"), sb);
+                        eleAll.add((eleOneS[5]));
+                        eleAll.add((eleOneS[6]));
+                        eleAll.add((eleOneS[7]));
+                        eleAll.addAll(Arrays.asList(eleTwo.split(":")));
+                        Common.QRCodeToString(eleAll, sb);
                     }
                 } catch (Exception e) {
                     sb = new StringBuilder();
-                    sb.append("QRCode轉換失敗，請用\"QRCode下載功能\"");
+                    sb.append("QRCode轉換失敗。\n請用\"QRCode下載功能\"。");
                 }
             }
             if (sb.toString().trim().length() > 0) {
@@ -630,135 +630,60 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = intent.getBundleExtra("bundle");
         ConsumeVO consumeVO = (ConsumeVO) bundle.getSerializable("consumeVO");
         if (BarcodeGraphic.hashMap.size() == 2) {
-            String all = BarcodeGraphic.hashMap.get(1).trim() + BarcodeGraphic.hashMap.get(2).trim();
-            String[] EleNulAll = all.split(":");
-            String EleNul = EleNulAll[0].substring(0, 10);
-            String day = EleNulAll[0].substring(10, 17);
-            String m = EleNulAll[0].substring(29, 37);
-            String rdNumber = EleNulAll[0].substring(17, 21);
+            String eleOne = BarcodeGraphic.hashMap.get(1).trim();
+            String eleTwo = BarcodeGraphic.hashMap.get(2).trim();
+            String[] eleOneS = eleOne.trim().split(":");
+            String EleNul = eleOneS[0].substring(0, 10);
+            String day = eleOneS[0].substring(10, 17);
+            String m = eleOneS[0].substring(29, 37);
+            String rdNumber = eleOneS[0].substring(17, 21);
             Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
             consumeVO.setMoney(Integer.parseInt(m, 16));
             consumeVO.setNumber(EleNul);
             consumeVO.setDate(new Date(calendar.getTimeInMillis()));
             consumeVO.setRdNumber(rdNumber);
-            StringBuffer sb = new StringBuffer();
-            if (EleNulAll[4].equals("2")) {
+            StringBuilder sb = new StringBuilder();
+            List<String> eleAll=new ArrayList<>();
+            if (eleOneS[4].equals("2")) {
                 //Base64
                 try {
-                    String base64 = EleNulAll[5];
-                    byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
-                    String debase64 = new String(bytes, "UTF-8");
-                    String[] ddd = debase64.trim().split(":");
-                    ArrayList<String> result = new ArrayList<>();
-                    Double total, price, amount;
-                    for (String s : ddd) {
-                        result.add(s.replaceAll("\\s+", ""));
-                        if (result.size() == 3) {
-                            price = Double.valueOf(Common.onlyNumber(result.get(2)));
-                            amount = Double.valueOf(Common.onlyNumber(result.get(1)));
-                            total = price * amount;
-                            sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
-                            result.clear();
-                        }
-                    }
+                    eleAll.addAll(Arrays.asList(Common.Base64Convert(eleOneS[5])));
+                    eleAll.addAll(Arrays.asList(Common.Base64Convert(eleTwo)));
+                    Common.QRCodeToString(eleAll, sb);
                 } catch (Exception e) {
-                    int i = 0;
-                    sb = new StringBuffer();
-                    for (String s : EleNulAll) {
-                        if (i >= 5) {
-                            sb.append(s.replaceAll("\\s+", ""));
-                            int j = (i - 5) % 3;
-                            if (j == 2) {
-                                sb.append("\n");
-                            } else {
-                                sb.append(":");
-                            }
-
-                        }
-                        i++;
-                    }
+                    sb = new StringBuilder();
+                    sb.append("QRCode轉換失敗。\n請用\"QRCode下載功能\"。");
                 }
-            } else if (EleNulAll[4].equals("0")) {
+            } else if (eleOneS[4].equals("0")) {
+                //Big5
                 try {
-                    //Big5
-                    int i = 0;
-                    sb = new StringBuffer();
-                    String name;
-                    double price, amount, total;
-                    List<String> result = new ArrayList<>();
-                    for (String s : EleNulAll) {
-                        if (i >= 5) {
-                            //轉換失敗
-                            try {
-                                name = s.replaceAll("\\s+", "");
-                                name = new String(name.getBytes("ISO-8859-1"), "Big5");
-                            } catch (Exception e) {
-                                name = s;
-                            }
-                            result.add(name);
-                            if (result.size() == 3) {
-                                price = Double.valueOf(Common.onlyNumber(result.get(2)));
-                                amount = Double.valueOf(Common.onlyNumber(result.get(1)));
-                                total = price * amount;
-                                sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
-                                result.clear();
-                            }
-                        }
-                        i++;
-                    }
+                    eleAll.add(Common.Big5Convert(eleOneS[5]));
+                    eleAll.add(Common.Big5Convert(eleOneS[6]));
+                    eleAll.add(Common.Big5Convert(eleOneS[7]));
+                    eleAll.addAll(Arrays.asList(Common.Big5Convert(eleTwo).split(":")));
+                    Common.QRCodeToString(eleAll, sb);
                 } catch (Exception e) {
-                    int i = 0;
-                    sb = new StringBuffer();
-                    for (String s : EleNulAll) {
-                        if (i >= 5) {
-                            sb.append(s.replaceAll("\\s+", ""));
-                            int j = (i - 5) % 3;
-                            if (j == 2) {
-                                sb.append("\n");
-                            } else {
-                                sb.append(":");
-                            }
-                        }
-                        i++;
-                    }
+                    sb = new StringBuilder();
+                    sb.append("QRCode轉換失敗。\n請用\"QRCode下載功能\"。");
                 }
             } else {
                 try {
                     //UTF-8
-                    int i = 0;
-                    Double total, price, amount;
-                    ArrayList<String> result = new ArrayList<>();
-                    for (String s : EleNulAll) {
-                        if (i >= 5) {
-                            result.add(s.replaceAll("\\s+", ""));
-                            if (result.size() == 3) {
-                                price = Double.valueOf(Common.onlyNumber(result.get(2)));
-                                amount = Double.valueOf(Common.onlyNumber(result.get(1)));
-                                total = price * amount;
-                                sb.append(result.get(0) + " :\n").append(result.get(2) + " X ").append(result.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
-                                result.clear();
-                            }
-                        }
-                        i++;
+                    //數量為1
+                    if (eleOneS[3].equals("1")) {
+                        sb.append(eleOneS[5].replaceAll("\\s+", "") + " :\n" + InsertSpend.consumeVO.getMoney() + " X 1 = " + InsertSpend.consumeVO.getMoney() + "\n");
+                    } else {
+                        eleAll.add((eleOneS[5]));
+                        eleAll.add((eleOneS[6]));
+                        eleAll.add((eleOneS[7]));
+                        eleAll.addAll(Arrays.asList(eleTwo.split(":")));
+                        Common.QRCodeToString(eleAll, sb);
                     }
                 } catch (Exception e) {
-                    int i = 0;
-                    sb = new StringBuffer();
-                    for (String s : EleNulAll) {
-                        if (i >= 5) {
-                            sb.append(s.replaceAll("\\s+", ""));
-                            int j = (i - 5) % 3;
-                            if (j == 2) {
-                                sb.append("\n");
-                            } else {
-                                sb.append(":");
-                            }
-                        }
-                        i++;
-                    }
+                    sb = new StringBuilder();
+                    sb.append("QRCode轉換失敗。\n請用\"QRCode下載功能\"。");
                 }
             }
-
             if (sb.toString().trim().length() > 0) {
                 consumeVO.setDetailname(sb.toString());
                 consumeVO = getType(consumeVO);

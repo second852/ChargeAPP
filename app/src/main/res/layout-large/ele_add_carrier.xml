@@ -48,7 +48,9 @@
             app:bootstrapBrand="success"
             app:bootstrapSize="lg"
             app:buttonMode="regular"
-            app:roundedCorners="true" />
+            app:roundedCorners="true"
+            app:bootstrapText="確定 {fa_upload}"
+            />
         <TextView
             android:id="@+id/carrierM"
             android:layout_marginTop="15dp"
