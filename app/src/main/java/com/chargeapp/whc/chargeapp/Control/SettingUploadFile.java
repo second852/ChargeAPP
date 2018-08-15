@@ -806,6 +806,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(11).setCellValue(consumeVO.getAutoId());
                     rowContent.createCell(12).setCellValue(consumeVO.getIsWin());
                     rowContent.createCell(13).setCellValue(consumeVO.getIsWinNul());
+                    rowContent.createCell(14).setCellValue(consumeVO.getRdNumber());
                 }
 
                 //Invoice

@@ -80,7 +80,7 @@
         android:textColor="#000000"
         app:bootstrapBrand="success"
         app:buttonMode="regular"
-        app:bootstrapSize="lg"
+        app:bootstrapSize="md"
         app:roundedCorners="true"
         app:bootstrapText="儲存 {fa_save}"
         />

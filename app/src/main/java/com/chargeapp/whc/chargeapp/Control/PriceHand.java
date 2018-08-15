@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -396,14 +397,12 @@ public class PriceHand extends Fragment {
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView day;
-            CardView cardview;
+            Button cardview;
             View itemView;
 
 
             MyViewHolder(View itemView) {
                 super(itemView);
-                day = itemView.findViewById(R.id.QrCodeA);
                 cardview = itemView.findViewById(R.id.cardview);
                 this.itemView=itemView;
             }
@@ -424,7 +423,7 @@ public class PriceHand extends Fragment {
         @Override
         public void onBindViewHolder(PriceHand.InputAdapter.MyViewHolder viewHolder, int position) {
             final String number = numberList.get(position);
-            viewHolder.day.setText(number);
+            viewHolder.cardview.setText(number);
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

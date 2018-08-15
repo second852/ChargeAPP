@@ -41,7 +41,7 @@
             android:name=".Control.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"
-            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:configChanges="orientation|screenSize|keyboardHidden|fontScale"
             />
 
         <meta-data

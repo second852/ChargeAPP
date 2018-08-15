@@ -437,6 +437,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         consumeVO.setAutoId((int) row.getCell(11).getNumericCellValue());
                         consumeVO.setIsWin(row.getCell(12).getStringCellValue());
                         consumeVO.setIsWinNul(row.getCell(13).getStringCellValue());
+                        consumeVO.setRdNumber(row.getCell(14).getStringCellValue());
                         ConsumeVO oldConsume=consumeDB.findOldCon(consumeVO);
                         if(oldConsume==null)
                         {
