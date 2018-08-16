@@ -120,7 +120,7 @@ public class HowGetPrice extends Fragment {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                 itemView = layoutInflater.inflate(R.layout.ele_hand_item, parent, false);
             }
-            TextView qrcode = itemView.findViewById(R.id.QrCodeA);
+            Button qrcode = itemView.findViewById(R.id.cardview);
             final CardView cardView = itemView.findViewById(R.id.cardview);
             qrcode.setText(strings.get(position));
             cardView.setOnClickListener(new View.OnClickListener() {

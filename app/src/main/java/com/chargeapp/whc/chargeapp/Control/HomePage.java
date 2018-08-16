@@ -98,6 +98,7 @@ public class HomePage extends Fragment {
         pieChartT=view.findViewById(R.id.pieChartT);
         listView=view.findViewById(R.id.list);
         Common.setChargeDB(context);
+        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
         goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -118,7 +119,7 @@ public class HomePage extends Fragment {
                 return true;
             }
         });
-        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
+
         return view;
     }
 
@@ -247,16 +248,16 @@ public class HomePage extends Fragment {
         dataSet.setSelectionShift(20f);
         switch (Common.screenSize){
             case xLarge:
+                dataSet.setValueTextSize(30f);
+                pieChart.setEntryLabelTextSize(30f);
+                break;
+            case large:
                 dataSet.setValueTextSize(25f);
                 pieChart.setEntryLabelTextSize(25f);
                 break;
-            case large:
-                dataSet.setValueTextSize(18f);
-                pieChart.setEntryLabelTextSize(18f);
-                break;
             case normal:
-                dataSet.setValueTextSize(12f);
-                pieChart.setEntryLabelTextSize(12f);
+                dataSet.setValueTextSize(15f);
+                pieChart.setEntryLabelTextSize(15f);
                 break;
         }
 
