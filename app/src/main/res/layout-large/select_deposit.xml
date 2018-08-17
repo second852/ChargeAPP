@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f5f5f5"
-    android:orientation="vertical">
-
+    android:background="#f5f5f5">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
     <RelativeLayout
         android:id="@+id/PIdateL"
         android:layout_width="match_parent"
@@ -62,21 +66,11 @@
             android:gravity="center"
             android:theme="@style/spinner_large"/>
     </RelativeLayout>
-
-    <TextView
-        android:id="@+id/describeT"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:textColor="#000000"
-        android:textSize="25sp" />
-
     <TextView
         android:id="@+id/describeD"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="20dp"
         android:gravity="center"
         android:textColor="#000000"
         android:textSize="25sp" />
@@ -89,4 +83,41 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:background="#f5f5f5"/>
+
+    <TextView
+        android:id="@+id/describeC"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:textColor="#000000"
+        android:textSize="25sp" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart_consume"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#f5f5f5"/>
+    <TextView
+        android:id="@+id/describeI"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:textColor="#000000"
+        android:textSize="25sp" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart_income"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#f5f5f5"/>
 </LinearLayout>
+
+</ScrollView>

@@ -251,7 +251,7 @@ public class PriceHand extends Fragment {
             inputNul.setTextColor(Color.RED);
 
             //提示不顯示
-            awardRemain.setText(null);
+            awardRemain.setText("");
             return;
         }
         if (messageHMO.get(1) != null) {
@@ -278,7 +278,7 @@ public class PriceHand extends Fragment {
             inputNul.setTextColor(Color.parseColor("#00AA00"));
 
             //提示不顯示
-            awardRemain.setText(null);
+            awardRemain.setText("");
             return;
         }
 
@@ -502,59 +502,116 @@ public class PriceHand extends Fragment {
         public void onBindViewHolder(final PriceHand.InputAdapter.MyViewHolder viewHolder, int position) {
             final String number = numberList.get(position);
             viewHolder.cardview.setText(number);
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    SpannableString content;
-                    Drawable drawable = getResources().getDrawable(R.drawable.price_button);
-                    inputNul.setBackground(drawable);
-                    inputNul.setTextColor(Color.parseColor("#888888"));
-                    awardTitle.setText(null);
-                    priceTitle.setText(null);
-                    BootstrapText textRemain = new BootstrapText.Builder(context)
-                            .addText("請輸入末三碼 ")
-                            .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
-                            .build();
-                    awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
-                    if (number.equals("Del")) {
-                        if (message.length() > 2) {
-                            message = message.substring(0, message.length() - 1);
-                            content = new SpannableString(message);
-                            content.setSpan(new UnderlineSpan(), message.length() - 1, content.length(), 0);
-                            inputNul.setText(content);
-                            return;
-                        } else if (message.length() > 1) {
-                            message = message.substring(0, 1);
-                            content = new SpannableString(message);
-                            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-                            inputNul.setText(content);
-                            return;
-                        } else {
-                            message = "";
-                            awardRemain.setText(textRemain);
-                            inputNul.setText(message);
-                            return;
+            switch (position) {
+                case 9:
+                    viewHolder.cardview.setBackground(context.getDrawable(R.drawable.price_clear_before));
+                    viewHolder.cardview.setTextColor(Color.parseColor("#FF0000"));
+                    viewHolder.cardview.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent motionEvent) {
+                            if(motionEvent.getAction()==MotionEvent.ACTION_DOWN||motionEvent.getAction()==MotionEvent.ACTION_BUTTON_PRESS)
+                            {
+                                Drawable drawable = getResources().getDrawable(R.drawable.price_button);
+                                inputNul.setBackground(drawable);
+                                inputNul.setTextColor(Color.parseColor("#888888"));
+                                BootstrapText textRemain = new BootstrapText.Builder(context)
+                                        .addText("請輸入末三碼 ")
+                                        .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
+                                        .build();
+                                awardRemain.setText(textRemain);
+                                awardTitle.setText(null);
+                                priceTitle.setText(null);
+                                inputNul.setText(null);
+                                viewHolder.cardview.setBackground(context.getDrawable(R.drawable.price_clear_after));
+                                viewHolder.cardview.setTextColor(Color.WHITE);
+                            }else{
+                                viewHolder.cardview.setBackground(context.getDrawable(R.drawable.price_clear_before));
+                                viewHolder.cardview.setTextColor(Color.parseColor("#FF0000"));
+                            }
+                            return true;
                         }
-                    }
-                    if (number.equals("C")) {
-                        message = "";
-                        inputNul.setText(message);
-                        awardRemain.setText(textRemain);
-                        return;
-                    }
-                    message = message + number;
-                    if (message.length() == 3) {
-                        autoSetInWin(message);
-                    }
-                    if (message.length() > 3) {
-                        message = number;
-                        awardRemain.setText(textRemain);
-                    }
-                    content = new SpannableString(message);
-                    content.setSpan(new UnderlineSpan(), message.length() - 1, content.length(), 0);
-                    inputNul.setText(content);
-                }
-            });
+                    });
+                    break;
+                case 11:
+                    viewHolder.cardview.setBackground(context.getDrawable(R.drawable.price_delete_before));
+                    viewHolder.cardview.setTextColor(Color.parseColor("#009FCC"));
+                    viewHolder.cardview.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View view, MotionEvent motionEvent) {
+                            if(motionEvent.getAction()==MotionEvent.ACTION_DOWN||motionEvent.getAction()==MotionEvent.ACTION_BUTTON_PRESS)
+                            {
+                                //中獎資訊reset
+                                Drawable drawable = getResources().getDrawable(R.drawable.price_button);
+                                inputNul.setBackground(drawable);
+                                inputNul.setTextColor(Color.parseColor("#888888"));
+                                awardTitle.setText(null);
+                                priceTitle.setText(null);
+
+                                //兌獎提醒
+                                BootstrapText textRemain = new BootstrapText.Builder(context)
+                                        .addText("請輸入末三碼 ")
+                                        .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
+                                        .build();
+                                awardRemain.setText(textRemain);
+                                awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
+
+                                //顯示底線
+                                SpannableString content;
+                                if (message.length() > 2) {
+                                    message = message.substring(0, message.length() - 1);
+                                    content = new SpannableString(message);
+                                    content.setSpan(new UnderlineSpan(), message.length() - 1, content.length(), 0);
+                                    inputNul.setText(content);
+                                } else if (message.length() > 1) {
+                                    message = message.substring(0, 1);
+                                    content = new SpannableString(message);
+                                    content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+                                    inputNul.setText(content);
+                                } else {
+                                    message = "";
+                                    inputNul.setText(message);
+                                }
+                                viewHolder.cardview.setBackground(context.getDrawable(R.drawable.price_delete_after));
+                                viewHolder.cardview.setTextColor(Color.WHITE);
+                            }else{
+                                viewHolder.cardview.setBackground(context.getDrawable(R.drawable.price_delete_before));
+                                viewHolder.cardview.setTextColor(Color.parseColor("#009FCC"));
+                            }
+                            return true;
+                        }
+                    });
+                    break;
+                    default:
+                        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Drawable drawable = getResources().getDrawable(R.drawable.price_button);
+                                inputNul.setBackground(drawable);
+                                inputNul.setTextColor(Color.parseColor("#888888"));
+                                awardTitle.setText(null);
+                                priceTitle.setText(null);
+                                BootstrapText textRemain = new BootstrapText.Builder(context)
+                                        .addText("請輸入末三碼 ")
+                                        .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
+                                        .build();
+                                awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
+                                message = message + number;
+                                if (message.length() == 3) {
+                                    autoSetInWin(message);
+                                }
+                                if (message.length() > 3) {
+                                    message = number;
+                                    awardRemain.setText(textRemain);
+                                }
+                                //底線
+                                SpannableString content;
+                                content = new SpannableString(message);
+                                content.setSpan(new UnderlineSpan(), message.length() - 1, content.length(), 0);
+                                inputNul.setText(content);
+                            }
+                        });
+                        break;
+            }
         }
     }
 

@@ -58,24 +58,26 @@ import java.util.List;
 public class SelectDeposit extends Fragment {
 
 
-    private TextView PIdateTittle, describeT, describeD;
+    private TextView PIdateTittle, describeD,describeC,describeI;
     private ImageView PIdateCut, PIdateAdd;
     private String TAG = "SelectDeposit";
     private int month, year;
     private Calendar end;
     private Spinner choicePeriod;
-    private LineChart chart_line;
+    private LineChart chart_line,chart_consume,chart_income;
     private int Statue = 0, period, Alltotal, Allincome, Allconsume;
     private BankDB bankDB;
     private ConsumeDB consumeDB;
     private InvoiceDB invoiceDB;
-    private String Title, desTittleTop, desTittleDown;
+    private String Title;
     private RelativeLayout PIdateL;
     private GoalDB goalDB;
     private GoalVO goalVO;
     private int Max;
     private  String goalTimeStatue;
     private Activity context;
+    private String pictureT,pictureL,pictureCT,pictureCL,pictureIT,pictureIL;
+    private List<Entry> entries,entriesC,entriesI;
 
     @Override
     public void onAttach(Context context) {
@@ -151,45 +153,203 @@ public class SelectDeposit extends Fragment {
 
     private void dataAnalyze() {
         Calendar start, end;
-        List<Entry> entries = new ArrayList<Entry>();
+        entries = new ArrayList<Entry>();
+        entriesC = new ArrayList<Entry>();
+        entriesI = new ArrayList<Entry>();
         Allconsume = 0;
         Alltotal = 0;
         Allincome = 0;
+        List<Integer> allTotal;
         if (Statue == 0) {
             setGoalVO();
             for (int i = 0; i <= period; i++) {
                 start = new GregorianCalendar(year, month + i, 01, 0, 0, 0);
                 end = new GregorianCalendar(year, month + i, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
-                entries.add(new Entry(i, PerStatue(start, end)));
+                allTotal=PerStatue(start, end);
+                entries.add(new Entry(i, allTotal.get(2)));
+                entriesC.add(new Entry(i, allTotal.get(0)));
+                entriesI.add(new Entry(i, allTotal.get(1)));
                 Title = Common.sFour.format(new Date(start.getTimeInMillis()));
                 PIdateL.setVisibility(View.VISIBLE);
             }
+            pictureL=year +"年每月存款";
+            pictureT=year+"年累計存款 : " + Common.nf.format(Alltotal) + "元";
+            pictureCL=year +"年每月花費";
+            pictureCT=year+"年累計花費 : " + Common.nf.format(Allconsume) + "元";
+            pictureIL=year +"年每月收入";
+            pictureIT=year+"年累計收入 : " + Common.nf.format(Allincome) + "元";
         } else {
             setGoalVO();
             Max = Max * 12;
             for (int i = 0; i <= period; i++) {
                 start = new GregorianCalendar(year + i, 0, 01, 0, 0, 0);
                 end = new GregorianCalendar(year + i, 11, 31, 23, 59, 59);
-                entries.add(new Entry(i, PerStatue(start, end)));
+                allTotal=PerStatue(start, end);
+                entries.add(new Entry(i, allTotal.get(2)));
+                entriesC.add(new Entry(i, allTotal.get(0)));
+                entriesI.add(new Entry(i, allTotal.get(1)));
                 Log.d(TAG, i + " : " + Common.sFour.format(new Date(start.getTimeInMillis())));
                 PIdateL.setVisibility(View.GONE);
             }
+            pictureL="每年存款";
+            pictureT="歷年累計存款 : " + Common.nf.format(Alltotal) + "元";
+            pictureCL="每年花費";
+            pictureCT="歷年累計花費 : " + Common.nf.format(Allconsume) + "元";
+            pictureIL="每年收入";
+            pictureIT="歷年累計收入 : " + Common.nf.format(Allincome) + "元";
         }
-        NumberFormat nf = NumberFormat.getNumberInstance();
-        desTittleTop = "累計收入 : " + nf.format(Allincome)+ "元  累計花費 : " + nf.format(Allconsume) + "元";
-        desTittleDown = "累計存款 : " + nf.format(Alltotal) + "元";
-        SpannableString span = new SpannableString(desTittleTop);
-        span.setSpan(new ForegroundColorSpan(Color.MAGENTA), 0, desTittleTop.indexOf("元") + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        span.setSpan(new ForegroundColorSpan(Color.BLUE), desTittleTop.indexOf("元") + 1, desTittleTop.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        describeT.setText(span);
-        describeD.setText(desTittleDown);
-        describeD.setTextColor(Color.RED);
-        PIdateTittle.setText(Title);
-        LineDataSet dataSet = new LineDataSet(entries, "存款");
+        //累計存款
+        setDeposit();
+        setConsume();
+        setIncome();
+    }
+
+
+    private void setIncome() {
+        describeI.setText(pictureIT);
+        LineDataSet dataSet = new LineDataSet(entriesI, pictureIL);
         dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
         dataSet.setDrawFilled(true);
-        dataSet.setColor(Color.BLACK);
-        dataSet.setFillColor(Common.getColor(3)[0]);
+        dataSet.setColor(Color.parseColor("#007bff"));
+        dataSet.setFillColor(Color.parseColor("#007bff"));
+        dataSet.setHighlightEnabled(false);
+        dataSet.setDrawValues(false);
+        LineData data = new LineData(dataSet);
+        XAxis xAxis = chart_income.getXAxis();
+        xAxis.setGranularity(1f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                try {
+                    int index = (int) value;
+                    return getLabels().get(index);
+                } catch (Exception e) {
+                    return " ";
+                }
+            }
+        });
+        chart_income.setData(data);
+        chart_income.setDescription(Common.getDeescription());
+        chart_income.setTouchEnabled(false);
+        chart_income.setScaleEnabled(false);
+        YAxis yAxis = chart_income.getAxis(YAxis.AxisDependency.LEFT);
+        YAxis yAxis1 = chart_income.getAxis(YAxis.AxisDependency.RIGHT);
+        yAxis1.setDrawAxisLine(false);
+        yAxis1.setDrawLabels(false);
+        Legend l = chart_income.getLegend();
+        l.setFormSize(18f);
+        l.setTextColor(Color.parseColor("#007bff"));
+        switch (Common.screenSize){
+            case xLarge:
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(20f);
+                yAxis1.setTextSize(20f);
+                l.setTextSize(20f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(20f);
+                break;
+            case large:
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(20f);
+                yAxis1.setTextSize(20f);
+                l.setTextSize(20f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(20f);
+                break;
+            case normal:
+                xAxis.setTextSize(11f);
+                yAxis.setTextSize(12f);
+                yAxis1.setTextSize(12f);
+                l.setTextSize(12f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(12f);
+                break;
+        }
+        chart_income.invalidate();
+        chart_income.notifyDataSetChanged();
+    }
+    private void setConsume() {
+        describeC.setText(pictureCT);
+        LineDataSet dataSet = new LineDataSet(entriesC, pictureCL);
+        dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+        dataSet.setDrawFilled(true);
+        dataSet.setColor(Color.parseColor("#dc3545"));
+        dataSet.setFillColor(Color.parseColor("#dc3545"));
+        dataSet.setHighlightEnabled(false);
+        dataSet.setDrawValues(false);
+        LineData data = new LineData(dataSet);
+        XAxis xAxis = chart_consume.getXAxis();
+        xAxis.setGranularity(1f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                try {
+                    int index = (int) value;
+                    return getLabels().get(index);
+                } catch (Exception e) {
+                    return " ";
+                }
+            }
+        });
+        chart_consume.setData(data);
+        chart_consume.setDescription(Common.getDeescription());
+        chart_consume.setTouchEnabled(false);
+        chart_consume.setScaleEnabled(false);
+        YAxis yAxis = chart_consume.getAxis(YAxis.AxisDependency.LEFT);
+        YAxis yAxis1 = chart_consume.getAxis(YAxis.AxisDependency.RIGHT);
+        yAxis1.setDrawAxisLine(false);
+        yAxis1.setDrawLabels(false);
+        Legend l = chart_consume.getLegend();
+        l.setFormSize(18f);
+        l.setTextColor(Color.parseColor("#dc3545"));
+        switch (Common.screenSize){
+            case xLarge:
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(20f);
+                yAxis1.setTextSize(20f);
+                l.setTextSize(20f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(20f);
+                break;
+            case large:
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(20f);
+                yAxis1.setTextSize(20f);
+                l.setTextSize(20f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(20f);
+                break;
+            case normal:
+                xAxis.setTextSize(11f);
+                yAxis.setTextSize(12f);
+                yAxis1.setTextSize(12f);
+                l.setTextSize(12f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(12f);
+                break;
+        }
+        chart_consume.invalidate();
+        chart_consume.notifyDataSetChanged();
+    }
+
+
+    private void setDeposit() {
+        describeD.setText(pictureT);
+        describeD.setTextColor(Color.BLACK);
+        PIdateTittle.setText(Title);
+        LineDataSet dataSet = new LineDataSet(entries, pictureL);
+        dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+        dataSet.setDrawFilled(true);
+        dataSet.setColor(Color.parseColor("#28a745"));
+        dataSet.setFillColor(Color.parseColor("#28a745"));
         dataSet.setHighlightEnabled(false);
         dataSet.setDrawValues(false);
         LineData data = new LineData(dataSet);
@@ -209,6 +369,8 @@ public class SelectDeposit extends Fragment {
         });
         chart_line.setData(data);
         chart_line.setDescription(Common.getDeescription());
+        chart_line.setTouchEnabled(false);
+        chart_line.setScaleEnabled(false);
         if (goalVO != null) {
             LimitLine yLimitLine = new LimitLine(Max, "儲蓄目標");
             yLimitLine.setLineColor(Color.RED);
@@ -226,22 +388,24 @@ public class SelectDeposit extends Fragment {
                 if(Statue==0)
                 {
                     int month=endGoal.get(Calendar.MONTH);
-                    xLimitLine = new LimitLine(month, "儲蓄目標");
+                    xLimitLine = new LimitLine(month, "目標時間");
                     xLimitLine.setTextColor(Color.BLUE);
                     xAxis1.addLimitLine(xLimitLine);
                 }else{
                     int year=endGoal.get(Calendar.YEAR);
-                    xLimitLine = new LimitLine(year, "儲蓄目標");
+                    xLimitLine = new LimitLine(year, "目標時間");
                     xLimitLine.setTextColor(Color.BLUE);
                     xAxis1.addLimitLine(xLimitLine);
                 }
-
-
             }
         }
         YAxis yAxis = chart_line.getAxis(YAxis.AxisDependency.LEFT);
         YAxis yAxis1 = chart_line.getAxis(YAxis.AxisDependency.RIGHT);
+        yAxis1.setDrawAxisLine(false);
+        yAxis1.setDrawLabels(false);
         Legend l = chart_line.getLegend();
+        l.setFormSize(18f);
+        l.setTextColor(Color.parseColor("#28a745"));
         switch (Common.screenSize){
             case xLarge:
                 xAxis.setTextSize(20f);
@@ -289,16 +453,21 @@ public class SelectDeposit extends Fragment {
         return chartLabels;
     }
 
-    private float PerStatue(Calendar start, Calendar end) {
+    private List<Integer> PerStatue(Calendar start, Calendar end) {
         int income, comsume, total, invoice;
+        List<Integer> addList=new ArrayList<>();
         income = bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
         comsume = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
         invoice = invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
         total = income - comsume - invoice;
+        addList.add(invoice+comsume);
+        addList.add(income);
+        addList.add(total);
+
         Alltotal = Alltotal + total;
         Allincome = income + Allincome;
         Allconsume = Allconsume + invoice + comsume;
-        return total;
+        return addList;
     }
 
     private void findViewById(View view) {
@@ -307,9 +476,12 @@ public class SelectDeposit extends Fragment {
         PIdateAdd = view.findViewById(R.id.PIdateAdd);
         choicePeriod = view.findViewById(R.id.choicePeriod);
         chart_line = view.findViewById(R.id.chart_line);
-        describeT = view.findViewById(R.id.describeT);
         describeD = view.findViewById(R.id.describeD);
         PIdateL = view.findViewById(R.id.PIdateL);
+        describeC=view.findViewById(R.id.describeC);
+        describeI=view.findViewById(R.id.describeI);
+        chart_consume=view.findViewById(R.id.chart_consume);
+        chart_income=view.findViewById(R.id.chart_income);
         ArrayList<String> SpinnerItem1 = new ArrayList<>();
         SpinnerItem1.add(" 月 ");
         SpinnerItem1.add(" 年 ");
