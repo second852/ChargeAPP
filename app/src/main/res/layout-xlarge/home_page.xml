@@ -10,6 +10,7 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/pieChart"/>
     <TextView
+        android:layout_marginTop="20dp"
         android:id="@+id/pieChartT"
         android:textColor="#000000"
         android:gravity="center"
@@ -19,7 +20,7 @@
         android:layout_height="wrap_content" />
     <ListView
         android:id="@+id/list"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="50dp"
         android:layout_below="@+id/pieChartT"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

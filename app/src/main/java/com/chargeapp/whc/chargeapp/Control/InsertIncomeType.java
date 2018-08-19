@@ -22,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
@@ -45,7 +46,7 @@ import java.util.Map;
 public class InsertIncomeType extends Fragment {
     private ImageView mainImage, resultI;
     private EditText mainName;
-    private Button save, clear;
+    private BootstrapButton save, clear;
     private RelativeLayout choiceL;
     private GridView choiceG;
     private String action;

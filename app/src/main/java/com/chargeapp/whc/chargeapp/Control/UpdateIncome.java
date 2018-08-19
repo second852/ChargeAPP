@@ -62,7 +62,6 @@ public class UpdateIncome extends Fragment {
     private BootstrapDropDown choiceStatue,choiceday;
     private CheckBox fixdate;
     private TextView fixDateT;
-    private TextView datesave;
     private LinearLayout showdate, showfixdate;
     private DatePicker datePicker;
     private String choicedate;
@@ -74,7 +73,7 @@ public class UpdateIncome extends Fragment {
     private GridView firstG;
     private LinearLayout firstL;
     private BankTybeDB bankTybeDB;
-    private TextView standard;
+    private BootstrapButton standard;
     private int year, month, day;
     private Map<String, String> g;
     private Activity context;
@@ -126,9 +125,10 @@ public class UpdateIncome extends Fragment {
         save.setOnClickListener(new savecomsumer());
         fixdate.setOnCheckedChangeListener(new showfixdateClick());
         if (action.equals("SettingListFixIon") && (!bankVO.isAuto())) {
-            standard.setText("全部");
             standard.setVisibility(View.VISIBLE);
             standard.setOnClickListener(new saveAllConsume());
+        }else {
+            standard.setVisibility(View.INVISIBLE);
         }
         if(bankVO.isAuto())
         {
@@ -312,7 +312,6 @@ public class UpdateIncome extends Fragment {
         fixdate = view.findViewById(R.id.fixdate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
-        datesave = view.findViewById(R.id.datesave);
         showdate = view.findViewById(R.id.showdate);
         datePicker = view.findViewById(R.id.datePicker);
         showfixdate = view.findViewById(R.id.showfixdate);

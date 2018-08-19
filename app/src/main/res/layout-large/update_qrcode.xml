@@ -81,8 +81,9 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/number"
-                    android:layout_width="300dp"
-                    android:layout_height="45dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="40dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="30dp"
                     android:gravity="center_vertical"
@@ -113,8 +114,9 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/rdNumber"
-                    android:layout_width="300dp"
-                    android:layout_height="45dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="40dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="35dp"
                     android:gravity="center_vertical"
@@ -145,8 +147,9 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/date"
-                    android:layout_width="300dp"
-                    android:layout_height="45dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="40dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="50dp"
                     android:gravity="center_vertical"
@@ -163,7 +166,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="25dp"
                 android:orientation="horizontal">
 
                 <com.beardedhen.androidbootstrap.BootstrapLabel

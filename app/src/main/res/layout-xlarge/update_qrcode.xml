@@ -80,8 +80,9 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/number"
-                    android:layout_width="400dp"
-                    android:layout_height="60dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginRight="50dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="30dp"
                     android:gravity="center_vertical"
@@ -112,8 +113,9 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/rdNumber"
-                    android:layout_width="400dp"
-                    android:layout_height="60dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginRight="50dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="45dp"
                     android:gravity="center_vertical"
@@ -144,8 +146,9 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/date"
-                    android:layout_width="400dp"
-                    android:layout_height="60dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="50dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="60dp"
                     android:gravity="center_vertical"
@@ -205,7 +208,7 @@
                     android:id="@+id/search"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="50dp"
+                    android:layout_marginRight="70dp"
                     android:layout_toLeftOf="@+id/standard"
                     android:textColor="#000000"
                     android:textSize="50sp"
@@ -220,7 +223,7 @@
                     android:id="@+id/back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="50dp"
+                    android:layout_marginLeft="70dp"
                     android:layout_toRightOf="@+id/standard"
                     android:textColor="#000000"
                     app:bootstrapBrand="danger"

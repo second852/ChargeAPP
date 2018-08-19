@@ -66,7 +66,7 @@ public class InsertSpend extends Fragment {
     private BootstrapEditText number, name, money, secondname, date;
     private CheckBox fixdate, notify, noWek;
     private BootstrapLabel detailname;
-    private BootstrapButton save, clear;
+    private BootstrapButton save, clear,standard;
     private LinearLayout showdate;
     private DatePicker datePicker;
     private String choicedate;
@@ -373,6 +373,8 @@ public class InsertSpend extends Fragment {
         noWek = view.findViewById(R.id.noWek);
         qrcode = view.findViewById(R.id.qrcode);
         name = view.findViewById(R.id.name);
+        standard=view.findViewById(R.id.standard);
+        standard.setVisibility(View.INVISIBLE);
         name.setFocusable(false);
         name.setFocusableInTouchMode(false);
         secondG = view.findViewById(R.id.secondG);

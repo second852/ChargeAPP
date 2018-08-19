@@ -23,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -43,7 +44,7 @@ public class GoalUpdate extends Fragment {
     private Spinner choiceStatue, remindS, remindD;
     private CheckBox remind, noWeekend;
     private LinearLayout showDate;
-    private TextView limitP, save, clear, shift, noWeekendT, remindT, spinnerT;
+    private TextView limitP,shift, noWeekendT, remindT, spinnerT;
     private DatePicker datePicker;
     private GoalDB goalDB;
     private GoalVO goalVO;
@@ -53,6 +54,7 @@ public class GoalUpdate extends Fragment {
     private String startTitle;
     private int poistion;
     private Activity context;
+    private BootstrapButton save, clear;
 
     @Override
     public void onAttach(Context context) {

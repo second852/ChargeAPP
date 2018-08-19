@@ -21,6 +21,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
@@ -199,9 +201,9 @@ public class GoalListAll extends Fragment {
             TextView decribe = itemView.findViewById(R.id.listDetail);
             LinearLayout remindL = itemView.findViewById(R.id.remindL);
             LinearLayout fixL = itemView.findViewById(R.id.fixL);
-            TextView fixT = itemView.findViewById(R.id.fixT);
-            Button update = itemView.findViewById(R.id.updateD);
-            Button deleteI = itemView.findViewById(R.id.deleteI);
+            BootstrapButton fixT = itemView.findViewById(R.id.fixT);
+            BootstrapButton update = itemView.findViewById(R.id.updateD);
+            BootstrapButton deleteI = itemView.findViewById(R.id.deleteI);
             fixL.setVisibility(View.VISIBLE);
             title.setText(goalVO.getName());
             //設定敘述
@@ -236,17 +238,14 @@ public class GoalListAll extends Fragment {
             boolean updateGoal;
             if (goalVO.getStatue() == 1) {
                 fixT.setText("失敗");
-                fixT.setTextColor(Color.parseColor("#7700FF"));
-                fixL.setBackgroundColor(Color.parseColor("#7700FF"));
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
                 updateGoal=false;
             } else if (goalVO.getStatue() == 2) {
                 fixT.setText("達成");
-                fixT.setTextColor(Color.parseColor("#FF8800"));
-                fixL.setBackgroundColor(Color.parseColor("#FF8800"));
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                 updateGoal=false;
             } else {
-                fixT.setTextColor(Color.parseColor("#0000FF"));
-                fixL.setBackgroundColor(Color.parseColor("#0000FF"));
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
                 fixT.setText("進行中");
                 updateGoal=true;
             }

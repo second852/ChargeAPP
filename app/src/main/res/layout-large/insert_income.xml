@@ -43,9 +43,10 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/name"
-                    android:layout_width="300dp"
-                    android:layout_height="45dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
                     android:textSize="25sp"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
@@ -78,10 +79,11 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/money"
-                    android:layout_width="300dp"
-                    android:layout_height="45dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
                     android:gravity="center_vertical"
                     android:inputType="number"
                     android:singleLine="true"
@@ -110,10 +112,11 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/date"
-                    android:layout_width="300dp"
-                    android:layout_height="45dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
                     android:gravity="center_vertical"
                     android:inputType="date"
                     android:singleLine="true"
@@ -141,8 +144,9 @@
                     android:textSize="30sp" />
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/detailname"
-                    android:layout_width="300dp"
-                    android:layout_height="45dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="40dp"
                     android:layout_marginLeft="40dp"
                     android:textSize="25sp"
                     android:layout_gravity="center_vertical"
@@ -228,17 +232,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="55dp"
                 >
-                <TextView
+                <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/standard"
-                    android:layout_width="100dp"
-                    android:layout_height="60dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
-                    android:textColor="#000000"
-                    android:textSize="30sp"
                     android:gravity="center"
-                    android:background="#AAAAAA"
                     android:visibility="invisible"
+                    app:bootstrapSize="xl"
+                    app:buttonMode="regular"
+                    app:showOutline="false"
+                    app:roundedCorners="true"
+                    app:bootstrapText="儲存 {fa_save}"
                     />
                 <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/save"

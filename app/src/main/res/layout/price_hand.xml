@@ -73,8 +73,8 @@
         android:background="@drawable/price_button"
         android:gravity="center"
         android:hint="0"
-        android:textColor="#dddddd"
-        android:textColorHint="#dddddd"
+        android:textColor="#888888"
+        android:textColorHint="#888888"
         android:textSize="30sp" />
 
     <android.support.v7.widget.RecyclerView

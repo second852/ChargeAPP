@@ -25,7 +25,6 @@
         android:layout_marginRight="8dp"
         android:visibility="gone"
         android:layout_alignParentRight="true"
-        android:background="#FF0000"
         >
         <com.beardedhen.androidbootstrap.BootstrapButton
             android:id="@+id/remainT"
@@ -37,7 +36,7 @@
             android:layout_gravity="center"
             app:roundedCorners="true"
             app:bootstrapBrand="danger"
-            app:bootstrapSize="xl"
+            app:bootstrapSize="md"
             app:buttonMode="regular"
             app:showOutline="true"
             />
@@ -50,7 +49,6 @@
         android:layout_marginTop="8dp"
         android:layout_toLeftOf="@+id/remindL"
         android:layout_marginRight="5dp"
-        android:background="#0000FF"
         android:visibility="gone"
         >
         <com.beardedhen.androidbootstrap.BootstrapButton
@@ -63,7 +61,7 @@
             android:layout_gravity="center"
             app:roundedCorners="true"
             app:bootstrapBrand="danger"
-            app:bootstrapSize="xl"
+            app:bootstrapSize="md"
             app:buttonMode="regular"
             app:showOutline="true"
             />

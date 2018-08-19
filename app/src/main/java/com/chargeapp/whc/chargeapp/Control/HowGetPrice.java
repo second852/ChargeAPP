@@ -64,12 +64,11 @@ public class HowGetPrice extends Fragment {
         list = view.findViewById(R.id.list);
         adView = view.findViewById(R.id.adView);
         Common.setAdView(adView, context);
-
         List<String> title = new ArrayList<>();
         title.add("如何印無實體中獎發票");
         title.add("25處指定郵局兌領位置");
         title.add("雲端發票綁定銀行帳戶(本地)");
-        title.add("雲端發票綁定銀行帳戶(財政部網站)");
+        title.add("雲端發票綁定銀行帳戶\n(財政部網站)");
         list.setAdapter(new ListAdapter(context, title));
         drawerLayout = this.context.findViewById(R.id.drawer_layout);
         ViewTreeObserver vto = view.getViewTreeObserver();

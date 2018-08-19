@@ -298,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    adjustFontScale(getResources().getConfiguration());
                     Fragment fragment;
                     MainActivity.this.position = i;
                     oldFramgent.clear();
@@ -305,6 +306,7 @@ public class MainActivity extends AppCompatActivity {
                     setColor(v);
                     if (i == 0) {
                         Common.showfirstgrid = false;
+                        Common.showsecondgrid = false;
                         fragment = new InsertActivity();
                         switchFragment(fragment);
                         listView.collapseGroup(i);
@@ -388,7 +390,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Fragment fragment;
-
+                    adjustFontScale(getResources().getConfiguration());
                     if (oldSecondView != null && oldSecondView != view) {
                         oldSecondView.setBackgroundColor(Color.WHITE);
                     }
@@ -496,7 +498,11 @@ public class MainActivity extends AppCompatActivity {
         if (BarcodeGraphic.hashMap == null) {
             return;
         }
+        if (BarcodeGraphic.hashMap.size()<=0) {
+            return;
+        }
         if (BarcodeGraphic.hashMap.size() == 2) {
+            InsertSpend.needSet = true;
             String eleOne = BarcodeGraphic.hashMap.get(1).trim();
             String eleTwo = BarcodeGraphic.hashMap.get(2).trim();
             String[] eleOneS = eleOne.trim().split(":");
@@ -579,6 +585,8 @@ public class MainActivity extends AppCompatActivity {
             consumeVO.setNumber(EleNul);
             consumeVO.setDate(new Date(calendar.getTimeInMillis()));
             consumeVO.setRdNumber(rdNumber);
+            consumeVO.setMaintype("O");
+            consumeVO.setSecondType("O");
         }
         if (BarcodeGraphic.hashMap.get(2) != null) {
             String s = BarcodeGraphic.hashMap.get(2);
@@ -620,7 +628,15 @@ public class MainActivity extends AppCompatActivity {
                         answer.clear();
                     }
                 }
-                consumeVO.setDetailname(sb.toString());
+                if(sb.length()>0)
+                {
+                    consumeVO.setDetailname(sb.toString());
+                    consumeVO=getType(consumeVO);
+                }else {
+                    consumeVO.setDetailname(sb.toString());
+                    consumeVO.setMaintype("O");
+                    consumeVO.setSecondType("O");
+                }
             }
         }
         return consumeVO;
@@ -631,9 +647,13 @@ public class MainActivity extends AppCompatActivity {
         if (BarcodeGraphic.hashMap == null) {
             return;
         }
+        if (BarcodeGraphic.hashMap.size()<=0) {
+            return;
+        }
         Bundle bundle = intent.getBundleExtra("bundle");
         ConsumeVO consumeVO = (ConsumeVO) bundle.getSerializable("consumeVO");
         if (BarcodeGraphic.hashMap.size() == 2) {
+
             String eleOne = BarcodeGraphic.hashMap.get(1).trim();
             String eleTwo = BarcodeGraphic.hashMap.get(2).trim();
             String[] eleOneS = eleOne.trim().split(":");

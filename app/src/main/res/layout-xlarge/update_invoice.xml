@@ -24,7 +24,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -39,8 +39,9 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/number"
-                    android:layout_width="400dp"
-                    android:layout_height="70dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="50dp"
                     android:layout_marginLeft="30dp"
                     android:inputType="text"
                     android:singleLine="true"
@@ -56,7 +57,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -71,8 +72,9 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/name"
-                    android:layout_width="400dp"
-                    android:layout_height="70dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="50dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="50dp"
                     android:gravity="center_vertical"
@@ -84,7 +86,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -99,8 +101,9 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/secondname"
-                    android:layout_width="400dp"
-                    android:layout_height="70dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="50dp"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:layout_marginLeft="50dp"
@@ -113,7 +116,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -128,8 +131,9 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/money"
-                    android:layout_width="400dp"
-                    android:layout_height="70dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="50dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="70dp"
                     android:gravity="center_vertical"
@@ -143,7 +147,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -158,8 +162,9 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/date"
-                    android:layout_width="400dp"
-                    android:layout_height="70dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="50dp"
                     android:layout_marginLeft="70dp"
                     android:inputType="date"
                     android:singleLine="true"
@@ -174,7 +179,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal">
                 <TextView
                     android:id="@+id/detailT"
@@ -188,7 +193,8 @@
                     android:textSize="40sp" />
                 <com.beardedhen.androidbootstrap.BootstrapLabel
                     android:id="@+id/detailname"
-                    android:layout_width="400dp"
+                    android:layout_marginRight="50dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="70dp"
@@ -196,7 +202,7 @@
                     android:text="--點擊顯示--"
                     app:roundedCorners="true"
                     app:bootstrapBrand="info"
-                    app:bootstrapHeading="h1"
+                    app:bootstrapHeading="h2"
                     />
             </LinearLayout>
 

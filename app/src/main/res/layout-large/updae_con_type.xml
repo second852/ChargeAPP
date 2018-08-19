@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:background="#f5f5f5"
     >
@@ -70,10 +71,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
-                    android:background="#FFEE99"
+                    android:background="@drawable/input_modul"
                     android:gravity="center_vertical"
                     android:inputType="none"
-                    android:textColor="#000000"
+                    android:textColor="@color/input_color"
                     android:textColorHint="#AAAAAA"
                     />
             </LinearLayout>
@@ -138,10 +139,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
-                    android:background="#FFEE99"
+                    android:background="@drawable/input_modul"
                     android:gravity="center_vertical"
                     android:inputType="none"
-                    android:textColor="#000000"
+                    android:textColor="@color/input_color"
                     android:textColorHint="#AAAAAA"
                     />
                 <TextView
@@ -158,11 +159,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
-                    android:background="#FFEE99"
+                    android:background="@drawable/input_modul"
                     android:gravity="center_vertical"
                     android:inputType="text"
                     android:hint="車票 悠遊卡 門票 "
-                    android:textColor="#000000"
+                    android:textColor="@color/input_color"
                     android:textColorHint="#AAAAAA"
                     />
             </LinearLayout>
@@ -185,34 +186,44 @@
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
                 />
-            <Button
-                android:layout_marginTop="30dp"
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:layout_marginTop="35dp"
                 android:layout_below="@+id/otherTitle"
                 android:id="@+id/save"
-                android:layout_width="90dp"
-                android:layout_height="60dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginRight="50dp"
                 android:layout_toLeftOf="@+id/standard"
-                android:background="#33CCFF"
                 android:gravity="center"
                 android:padding="5dp"
                 android:text="儲存"
                 android:textColor="#000000"
-                android:textSize="35sp" />
-            <Button
-                android:layout_marginTop="30dp"
+                app:bootstrapBrand="success"
+                app:bootstrapSize="xl"
+                app:buttonMode="regular"
+                app:showOutline="false"
+                app:roundedCorners="true"
+                app:bootstrapText="儲存 {fa_save}"
+                />
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:layout_marginTop="35dp"
                 android:layout_below="@+id/otherTitle"
                 android:id="@+id/clear"
-                android:layout_width="90dp"
-                android:layout_height="60dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
                 android:layout_toRightOf="@+id/standard"
-                android:background="#FF8888"
                 android:gravity="center"
                 android:padding="5dp"
                 android:text="取消"
                 android:textColor="#000000"
-                android:textSize="35sp" />
+                app:bootstrapBrand="danger"
+                app:bootstrapSize="xl"
+                app:buttonMode="regular"
+                app:showOutline="false"
+                app:roundedCorners="true"
+                app:bootstrapText="清除 {fa_remove}"
+                />
         </RelativeLayout>
     </ScrollView>
     <RelativeLayout

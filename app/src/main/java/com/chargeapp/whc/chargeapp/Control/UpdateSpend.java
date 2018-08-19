@@ -69,7 +69,7 @@ import static android.app.Activity.RESULT_OK;
 public class UpdateSpend extends Fragment {
 
     private BootstrapEditText number, name, money, secondname, date;
-    private BootstrapButton save, clear;
+    private BootstrapButton save, clear,standard;
     private BootstrapLabel detailname;
     private BootstrapDropDown choiceStatue,choiceday;
     private CheckBox fixdate, notify, noWek;
@@ -89,7 +89,6 @@ public class UpdateSpend extends Fragment {
     private boolean first = true;
     private LinearLayout firstL, secondL;
     private GridView firstG, secondG;
-    private TextView standard;
     private int year,month,day;
     private  Map<String, String> g;
     private TextView noWekT,notifyT;
@@ -149,9 +148,10 @@ public class UpdateSpend extends Fragment {
         secondG.setOnItemClickListener(new secondGridOnClick());
         detailname.setOnClickListener(new showDetail());
         if (action.equals("SettingListFixCon") && (!consumeVO.isAuto())) {
-            standard.setText("全部");
             standard.setVisibility(View.VISIBLE);
             standard.setOnClickListener(new saveAllConsume());
+        }else{
+            standard.setVisibility(View.INVISIBLE);
         }
         showOnlyQRCodeToast();
         setUpdate();

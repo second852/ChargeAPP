@@ -519,9 +519,12 @@ public class PriceHand extends Fragment {
                                         .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
                                         .build();
                                 awardRemain.setText(textRemain);
+                                awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
+
                                 awardTitle.setText(null);
                                 priceTitle.setText(null);
                                 inputNul.setText(null);
+                                message="";
                                 viewHolder.cardview.setBackground(context.getDrawable(R.drawable.price_clear_after));
                                 viewHolder.cardview.setTextColor(Color.WHITE);
                             }else{

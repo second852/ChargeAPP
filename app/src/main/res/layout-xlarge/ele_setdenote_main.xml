@@ -26,7 +26,7 @@
                 android:layout_toRightOf="@+id/exportD"
                 android:background="#000000"
                 android:textColor="#ffffff"
-                android:textSize="50sp"
+                android:textSize="40sp"
                 android:text="紀錄" />
             <Button
                 android:id="@+id/exportD"
@@ -35,7 +35,7 @@
                 android:layout_alignParentLeft="true"
                 android:background="#f5f5f5"
                 android:textColor="#000000"
-                android:textSize="50sp"
+                android:textSize="40sp"
                 android:text="捐獻" />
             <Button
                 android:id="@+id/showD"
@@ -44,7 +44,7 @@
                 android:layout_toRightOf="@+id/exportD"
                 android:background="#000000"
                 android:textColor="#ffffff"
-                android:textSize="50sp"
+                android:textSize="40sp"
                 android:text="紀錄" />
         </LinearLayout>
     </HorizontalScrollView>

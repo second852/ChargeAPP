@@ -67,24 +67,24 @@
 
     <TextView
         android:id="@+id/inputNul"
-        android:layout_width="100dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_above="@+id/donateRL"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/price_button"
         android:gravity="center"
         android:hint="0"
-        android:textColor="#dddddd"
-        android:textColorHint="#dddddd"
-        android:textSize="30sp" />
+        android:textColor="#888888"
+        android:textColorHint="#888888"
+        android:textSize="40sp" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/donateRL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="200dp"/>
+        android:layout_marginBottom="90dp"/>
     <RelativeLayout
         android:id="@+id/showMi"
         android:layout_width="100dp"
@@ -142,7 +142,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/standard"
             android:layout_centerHorizontal="true"
-            android:textSize="25sp"
+            android:textSize="40sp"
             app:bootstrapBrand="danger" />
 
         <TextView
@@ -154,7 +154,7 @@
             android:gravity="center"
             android:text="請輸入後三碼"
             android:textColor="#000000"
-            android:textSize="25sp" />
+            android:textSize="40sp" />
 
         <Button
             android:id="@+id/standard"
@@ -170,7 +170,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:textSize="25sp"
+            android:textSize="40sp"
             app:bootstrapBrand="danger" />
     </RelativeLayout>
 </RelativeLayout>

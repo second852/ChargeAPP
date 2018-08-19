@@ -4,6 +4,7 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -11,11 +12,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -26,6 +29,8 @@ import android.widget.TextView;
 import com.chargeapp.whc.chargeapp.R;
 
 import java.util.HashMap;
+
+import static android.content.Context.WINDOW_SERVICE;
 
 
 /**
@@ -158,6 +163,23 @@ public class EleNewCarrier extends Fragment {
         {
             Common.showToast(activity,"資料有誤");
             Log.d("XXXXXXX",e.getMessage());
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        adjustFontScale(getResources().getConfiguration());
+    }
+
+    public void adjustFontScale(Configuration configuration) {
+        if (configuration.fontScale > 1) {
+            configuration.fontScale = (float) 1;
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+            WindowManager wm = (WindowManager) activity.getSystemService(WINDOW_SERVICE);
+            wm.getDefaultDisplay().getMetrics(metrics);
+            metrics.scaledDensity = configuration.fontScale * metrics.density;
+            activity.getBaseContext().getResources().updateConfiguration(configuration, metrics);
         }
     }
 }

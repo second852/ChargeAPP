@@ -437,7 +437,12 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         consumeVO.setAutoId((int) row.getCell(11).getNumericCellValue());
                         consumeVO.setIsWin(row.getCell(12).getStringCellValue());
                         consumeVO.setIsWinNul(row.getCell(13).getStringCellValue());
-                        consumeVO.setRdNumber(row.getCell(14).getStringCellValue());
+                        try {
+                            consumeVO.setRdNumber(row.getCell(14).getStringCellValue());
+                        }catch (Exception e)
+                        {
+                            consumeVO.setRdNumber(null);
+                        }
                         ConsumeVO oldConsume=consumeDB.findOldCon(consumeVO);
                         if(oldConsume==null)
                         {
@@ -534,6 +539,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
             inp.close();
         } catch (Exception e) {
             msg.what=1;
+            Log.d("xxxxxxxx", e.getMessage());
             e.printStackTrace();
         }finally {
             msg.sendToTarget();

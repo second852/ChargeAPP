@@ -45,7 +45,7 @@ public class InsertIncome extends Fragment {
     private BootstrapEditText money,detailname,name,date;
     private CheckBox fixdate;
     private TextView fixDateT;
-    private BootstrapButton save, clear;
+    private BootstrapButton save, clear,standard;
     private LinearLayout showdate,showfixdate;
     private DatePicker datePicker;
     private String choicedate;
@@ -330,6 +330,8 @@ public class InsertIncome extends Fragment {
         firstL = view.findViewById(R.id.firstL);
         adView = view.findViewById(R.id.adView);
         Common.setAdView(adView,context);
+        standard=view.findViewById(R.id.standard);
+        standard.setVisibility(View.INVISIBLE);
     }
 
 

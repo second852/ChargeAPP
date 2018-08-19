@@ -131,7 +131,10 @@ public final class MultiTrackerActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     if(action.equals("setConsume"))
                     {
-                        InsertSpend.returnCM=true;
+                        if(BarcodeGraphic.hashMap!=null&&BarcodeGraphic.hashMap.size()==1)
+                        {
+                            InsertSpend.returnCM=true;
+                        }
                         Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
                         intent.putExtra("action",MultiTrackerActivity.action);
                         MultiTrackerActivity.this.setResult(0,intent);
@@ -140,7 +143,10 @@ public final class MultiTrackerActivity extends AppCompatActivity {
                         Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
                         intent.putExtra("action",MultiTrackerActivity.action);
                         Bundle bundle=getIntent().getBundleExtra("bundle");
-                        bundle.putSerializable("returnCM",true);
+                        if(BarcodeGraphic.hashMap!=null&&BarcodeGraphic.hashMap.size()==1)
+                        {
+                            bundle.putSerializable("returnCM",true);
+                        }
                         intent.putExtra("bundle",bundle);
                         MultiTrackerActivity.this.setResult(0,intent);
                         MultiTrackerActivity.this.finish();

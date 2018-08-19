@@ -1,14 +1,23 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.widget.TextView;
@@ -27,7 +36,9 @@ import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by 1709008NB01 on 2018/1/29.
@@ -41,7 +52,7 @@ public class Download extends AppCompatActivity {
             R.drawable.worker, R.drawable.bus, R.drawable.breakfast, R.drawable.cellphone, R.drawable.clothe, R.drawable.dinner,
             R.drawable.drink, R.drawable.easycard, R.drawable.easygo, R.drawable.electricty, R.drawable.fruit,
             R.drawable.gasstation, R.drawable.highspeedtrain, R.drawable.hospital, R.drawable.image, R.drawable.internet,
-            R.drawable.jacket, R.drawable.price_button, R.drawable.university, R.drawable.trousers, R.drawable.treatment, R.drawable.training,
+            R.drawable.jacket, R.drawable.water, R.drawable.university, R.drawable.trousers, R.drawable.treatment, R.drawable.training,
             R.drawable.ticket, R.drawable.supplement, R.drawable.subway, R.drawable.rent, R.drawable.rentfilled, R.drawable.phonet,
             R.drawable.origin, R.drawable.movie, R.drawable.microphone, R.drawable.lunch, R.drawable.losemoney, R.drawable.lipgloss, R.drawable.train
             , R.drawable.salary, R.drawable.lotto, R.drawable.bouns, R.drawable.interest, R.drawable.fund, R.drawable.bank, R.drawable.health,
@@ -77,6 +88,13 @@ public class Download extends AppCompatActivity {
         }else{
             Common.screenSize= Common.Screen.normal;
         }
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        askPermissions();
     }
 
     private void setJob()
@@ -103,11 +121,57 @@ public class Download extends AppCompatActivity {
         tm.schedule(builder.build());
     }
 
+    public  void askPermissions() {
+        //因為是群組授權，所以請求ACCESS_COARSE_LOCATION就等同於請求ACCESS_FINE_LOCATION，因為同屬於LOCATION群組
+        String[] permissions={Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
+        Set<String> permissionsRequest = new HashSet<>();
+        for (String permission : permissions) {
+            int result = ContextCompat.checkSelfPermission(Download.this, permission);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                permissionsRequest.add(permission);
+            }
+        }
+
+        if (!permissionsRequest.isEmpty()) {
+            ActivityCompat.requestPermissions(this,
+                    permissionsRequest.toArray(new String[permissionsRequest.size()]),
+                    87);
+        }else{
+            permisionOk();
+        }
+    }
+
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        //setDB
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 87: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    permisionOk();
+                } else {
+
+                    PermissionFragment permissionFragment = new PermissionFragment();
+                    permissionFragment.setObject(Download.this);
+                    permissionFragment.show(getSupportFragmentManager(), "show");
+
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+    }
+
+
+
+    private void permisionOk()
+    {
+        TypefaceProvider.registerDefaultIconSets();
         Common.setChargeDB(Download.this);
         (getSupportActionBar()).hide();
         ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -121,9 +185,7 @@ public class Download extends AppCompatActivity {
             tonNewActivity();
             Common.showToast(this, "網路沒有開啟，無法下載!");
         }
-        TypefaceProvider.registerDefaultIconSets();
     }
-
 
 
 

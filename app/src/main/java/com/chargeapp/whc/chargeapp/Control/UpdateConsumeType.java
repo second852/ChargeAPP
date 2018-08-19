@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
@@ -51,7 +52,7 @@ import java.util.Map;
 public class UpdateConsumeType extends Fragment {
     private ImageView mainImage, secondImage, resultI;
     private EditText mainName, secondName, secondKey;
-    private Button save, clear;
+    private BootstrapButton save, clear;
     private RelativeLayout choiceL;
     private GridView choiceG;
     private TypeDetailVO typeDetailVO;

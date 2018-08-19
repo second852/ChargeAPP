@@ -17,10 +17,11 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/text"
+            android:layout_marginLeft="-85dp"
             >
             <Button
                 android:id="@+id/goneD"
-                android:layout_width="wrap_content"
+                android:layout_width="85dp"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/exportD"
                 android:background="#000000"
@@ -31,7 +32,7 @@
                 />
             <Button
                 android:id="@+id/exportD"
-                android:layout_width="wrap_content"
+                android:layout_width="85dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:background="#f5f5f5"
@@ -40,7 +41,7 @@
                 android:text="中獎發票" />
             <Button
                 android:id="@+id/showD"
-                android:layout_width="wrap_content"
+                android:layout_width="85dp"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/exportD"
                 android:background="#000000"
@@ -49,7 +50,7 @@
                 android:text="兌獎" />
             <Button
                 android:id="@+id/showN"
-                android:layout_width="wrap_content"
+                android:layout_width="85dp"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/exportD"
                 android:background="#000000"

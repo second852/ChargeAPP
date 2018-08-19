@@ -1,6 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.job.JobParameters;
@@ -8,8 +9,10 @@ import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 
@@ -65,6 +68,16 @@ public class JobSchedulerService extends JobService {
             return true;
         }
         id = 0;
+        int result = ContextCompat.checkSelfPermission(JobSchedulerService.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if(result != PackageManager.PERMISSION_GRANTED)
+        {
+            return true;
+        }
+        result = ContextCompat.checkSelfPermission(JobSchedulerService.this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if(result != PackageManager.PERMISSION_GRANTED)
+        {
+            return true;
+        }
         chargeAPPDB = new ChargeAPPDB(JobSchedulerService.this);
         consumeDB = new ConsumeDB(chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(chargeAPPDB.getReadableDatabase());

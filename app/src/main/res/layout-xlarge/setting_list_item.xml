@@ -49,7 +49,7 @@
             android:textColor="#000000"
             android:textSize="30sp"
             app:bootstrapBrand="info"
-            app:bootstrapSize="xl"
+            app:bootstrapSize="lg"
             app:buttonMode="regular"
             app:roundedCorners="true"
             app:bootstrapText="修改 {fa_arrow_circle_up}"
@@ -59,7 +59,7 @@
             android:id="@+id/deleteT"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="50dp"
+            android:layout_marginRight="30dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -68,11 +68,9 @@
             android:textColor="#000000"
             android:textSize="30sp"
             app:bootstrapBrand="danger"
-            app:bootstrapSize="xl"
+            app:bootstrapSize="lg"
             app:buttonMode="regular"
             app:roundedCorners="true"
-            app:bootstrapText="修改 {fa_remove}"
-
-            />
+            app:bootstrapText="修改 {fa_remove}" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>
