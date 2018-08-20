@@ -4,6 +4,7 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -127,6 +129,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
             showN.setOnClickListener(new ChangePage(page - 1));
         }
     }
+
 
 
     public static class MainPagerAdapter extends FragmentPagerAdapter {

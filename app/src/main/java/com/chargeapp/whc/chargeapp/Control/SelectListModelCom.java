@@ -90,6 +90,13 @@ public class SelectListModelCom extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         TypefaceProvider.registerDefaultIconSets();
         View view = inflater.inflate(R.layout.select_con_list, container, false);
+        if(year==0)
+        {
+            Calendar calendar=Calendar.getInstance();
+            SelectListModelCom.year = calendar.get(Calendar.YEAR);
+            SelectListModelCom.month = calendar.get(Calendar.MONTH);
+        }
+
         Common.setChargeDB(context);
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());

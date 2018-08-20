@@ -94,7 +94,7 @@ public class SelectIncome extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_income, container, false);
-        if(end==null)
+        if(end==null||year==0)
         {
             end=Calendar.getInstance();
         }

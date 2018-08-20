@@ -218,20 +218,7 @@ public class Download extends AppCompatActivity {
     public void tonNewActivity() {
         //setJob
         setJob();
-        SelectIncome.end = Calendar.getInstance();
-        SelectIncome.Statue = 0;
-        Calendar calendar = Calendar.getInstance();
-        SelectListModelCom.year = calendar.get(Calendar.YEAR);
-        SelectListModelCom.month = calendar.get(Calendar.MONTH);
-        SelectListModelCom.p = 0;
-        SelectListModelIM.year = calendar.get(Calendar.YEAR);
-        SelectListModelIM.month = calendar.get(Calendar.MONTH);
-        SelectListModelIM.p = 0;
-        SelectConsume.Statue = 1;
-        SelectConsume.end = Calendar.getInstance();
-        SelectConsume.CStatue = 0;
-        SettingListFix.spinnerC = 0;
-        SettingListFix.p = 0;
+        //set origin
         setdate();
         firstH = new Handler();
         firstH.postDelayed(runToNeW, 500);

@@ -163,14 +163,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        int rc = ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (rc != PackageManager.PERMISSION_GRANTED) {
-            Common.askPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,context);
-        }
-    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

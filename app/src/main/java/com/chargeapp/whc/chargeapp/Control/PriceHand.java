@@ -2,15 +2,20 @@ package com.chargeapp.whc.chargeapp.Control;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -40,6 +45,7 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.beardedhen.androidbootstrap.BootstrapText;
+import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
@@ -93,6 +99,7 @@ public class PriceHand extends Fragment {
     private RelativeLayout PIdateL;
     private Activity context;
     private AwesomeTextView awardTitle, awardRemain;
+    private int position;
 
     @Override
     public void onAttach(Context context) {
@@ -139,6 +146,8 @@ public class PriceHand extends Fragment {
         return view;
     }
 
+
+
     private List<String> getInputN() {
         levelPrice = new HashMap<>();
         List<String> number = new ArrayList<>();
@@ -167,6 +176,62 @@ public class PriceHand extends Fragment {
         levelPrice.put("10", "09-10月");
         levelPrice.put("12", "11-12月");
         return number;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        int result = ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO);
+        if (result != PackageManager.PERMISSION_GRANTED) {
+            Common.showToast(context,"沒有麥克風權限，無法使聲音兌獎!");
+            choiceModel.setSelection(0);
+        }else {
+            choiceModel.setSelection(1);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // permission was granted, yay! Do the
+            // contacts-related task you need to do.
+            startListening();
+        } else {
+            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                   if(ActivityCompat.shouldShowRequestPermissionRationale(context,Manifest.permission.RECORD_AUDIO))
+                   {
+                       Common.askPermissions(Manifest.permission.RECORD_AUDIO, context,0);
+                   }else {
+                       Intent intent = new Intent();
+                       intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                       Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+                       intent.setData(uri);
+                       context.startActivityForResult(intent,12);
+                   }
+                }
+            };
+            DialogInterface.OnClickListener nolistener = new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    choiceModel.setSelection(0);
+                }
+            };
+            String remain;
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),Manifest.permission.RECORD_AUDIO)) {
+                remain="沒有麥克風權限!\n請按\"YES\"並允許此權限。\n不使用此功能請按\"NO\"。";
+            } else {
+                remain="沒有麥克風權限!\n如果要使用此功能按\"YES\"。\n並到權限，打開麥克風權限!\n不使用此功能請按\"NO\"。";
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("無法使用聲音兌獎!")
+                    .setMessage(remain)
+                    .setPositiveButton("YES", listener)
+                    .setNegativeButton("NO", nolistener)
+                    .setIcon(R.drawable.warning)
+                    .show();
+        }
     }
 
     private void autoSetInWin(String gnul) {
@@ -388,17 +453,26 @@ public class PriceHand extends Fragment {
         choiceModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                position=i;
                 if (i == 0) {
                     donateRL.setVisibility(View.VISIBLE);
                     showMi.setVisibility(View.GONE);
+
                     awardTitle.setText(null);
                     priceTitle.setText(null);
+
                     BootstrapText text = new BootstrapText.Builder(context)
                             .addText("請輸入末三碼 ")
                             .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
                             .build();
                     awardRemain.setText(text);
                     awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
+
+                    Drawable drawable = getResources().getDrawable(R.drawable.price_button);
+                    inputNul.setBackground(drawable);
+                    inputNul.setTextColor(Color.parseColor("#888888"));
+                    inputNul.setText(null);
+
                     if (speech != null) {
                         speech.stopListening();
                         speech.cancel();
@@ -413,13 +487,22 @@ public class PriceHand extends Fragment {
                             .build();
                     awardRemain.setText(text);
                     awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
+
                     showMi.setVisibility(View.VISIBLE);
                     donateRL.setVisibility(View.INVISIBLE);
+
+                    Drawable drawable = getResources().getDrawable(R.drawable.price_button);
+                    inputNul.setBackground(drawable);
+                    inputNul.setTextColor(Color.parseColor("#888888"));
+                    inputNul.setText(null);
+
+
                     int rc = ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO);
                     if (rc != PackageManager.PERMISSION_GRANTED) {
-                        Common.askPermissions(Manifest.permission.RECORD_AUDIO, context);
+                        Common.askPermissions(Manifest.permission.RECORD_AUDIO, context,0);
+                    }else {
+                        startListening();
                     }
-                    startListening();
 
                 } else if (i == 2) {
                     Common.showToast(context, "載入資料中");
@@ -438,6 +521,7 @@ public class PriceHand extends Fragment {
     }
 
 
+
     private class addMonth implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -447,7 +531,34 @@ public class PriceHand extends Fragment {
                 year++;
             }
             setMonText("add");
-            inputNul.setText("");
+            Drawable drawable = getResources().getDrawable(R.drawable.price_button);
+            inputNul.setBackground(drawable);
+            inputNul.setTextColor(Color.parseColor("#888888"));
+            awardTitle.setText(null);
+            priceTitle.setText(null);
+            inputNul.setText(null);
+            message="";
+            //設定提醒
+            awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
+            BootstrapText text;
+            switch (position)
+            {
+                case 0:
+                   text = new BootstrapText.Builder(context)
+                            .addText("請輸入末三碼 ")
+                            .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
+                            .build();
+                    awardRemain.setText(text);
+                    break;
+                case 1:
+                   text = new BootstrapText.Builder(context)
+                            .addText("請念末三碼 ")
+                            .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
+                            .build();
+                    awardRemain.setText(text);
+                    break;
+            }
+
         }
     }
 
@@ -460,7 +571,34 @@ public class PriceHand extends Fragment {
                 year--;
             }
             setMonText("cut");
-            inputNul.setText("");
+
+            Drawable drawable = getResources().getDrawable(R.drawable.price_button);
+            inputNul.setBackground(drawable);
+            inputNul.setTextColor(Color.parseColor("#888888"));
+            awardTitle.setText(null);
+            priceTitle.setText(null);
+            inputNul.setText(null);
+            message="";
+            //設定提醒
+            awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
+            BootstrapText text;
+            switch (position)
+            {
+                case 0:
+                    text = new BootstrapText.Builder(context)
+                            .addText("請輸入末三碼 ")
+                            .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
+                            .build();
+                    awardRemain.setText(text);
+                    break;
+                case 1:
+                    text = new BootstrapText.Builder(context)
+                            .addText("請念末三碼 ")
+                            .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
+                            .build();
+                    awardRemain.setText(text);
+                    break;
+            }
         }
     }
 

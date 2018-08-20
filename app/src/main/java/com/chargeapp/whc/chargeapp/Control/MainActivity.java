@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -34,6 +35,7 @@ import android.widget.TextView;
 
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
@@ -63,12 +65,15 @@ public class MainActivity extends AppCompatActivity {
     private boolean doubleClick = false;
     public static LinkedList<String> oldFramgent;
     public static LinkedList<Bundle> bundles;
-    public Intent intent;
+
+    //維持現在Framgent
+    public  boolean mFramgent;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TypefaceProvider.registerDefaultIconSets();
         setContentView(R.layout.activity_main);
         adjustFontScale(getResources().getConfiguration());
     }
@@ -131,6 +136,23 @@ public class MainActivity extends AppCompatActivity {
         return eleMainItemVOList;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+       switch (requestCode)
+       {
+           case 0:
+               List<Fragment> fragments=getSupportFragmentManager().getFragments();
+               for(Fragment f:fragments)
+               {
+                   if(f instanceof PriceHand)
+                   {
+                       f.onRequestPermissionsResult(requestCode,permissions,grantResults);
+                       break;
+                   }
+               }
+               break;
+       }
+    }
 
     private void switchFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -152,18 +174,16 @@ public class MainActivity extends AppCompatActivity {
         setUpActionBar();
         initDrawer();
         Common.setChargeDB(this);
-        if (intent == null) {
+        if (!mFramgent) {
             Fragment fragment = new HomePage();
             switchFragment(fragment);
-        } else {
-            intent = null;
         }
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        if (intent == null) {
+        if (!mFramgent) {
             Intent intent = new Intent(this, Download.class);
             startActivity(intent);
             finish();
@@ -453,8 +473,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        intent = data;
         String a;
+        mFramgent=true;
         try {
             a = data.getStringExtra("action");
         } catch (NullPointerException e) {
@@ -462,24 +482,35 @@ public class MainActivity extends AppCompatActivity {
         }
         if (a == null) {
             List<Fragment> fragments = getSupportFragmentManager().getFragments();
-            Fragment fragment = fragments.get(fragments.size() - 1);
-            fragment.onActivityResult(requestCode, resultCode, data);
+            switch (requestCode){
+                case 12:
+                    for(int i=fragments.size()-1;i>0;i--)
+                    {
+                        if(fragments.get(i) instanceof PriceHand)
+                        {
+                            fragments.get(i).onActivityResult(requestCode,resultCode,data);
+                            break;
+                        }
+                    }
+                    break;
+            }
+
         } else {
             if (a.equals("setCarrier")) {
                 Fragment fragment = new EleSetCarrier();
                 switchFragment(fragment);
             } else if (a.equals("setConsume")) {
                 if (resultCode == 9) {
-                    searchQRCode();
+                    searchQRCode(data);
                 } else {
                     setConsume();
                 }
 
             } else if (a.equals("UpdateSpend")) {
                 if (resultCode == 9) {
-                    searchQRCode();
+                    searchQRCode(data);
                 } else {
-                    setUpdateConsume();
+                    setUpdateConsume(data);
                 }
             } else if (a.equals("PriceHand")) {
                 Fragment fragment = new PriceActivity();
@@ -488,7 +519,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void searchQRCode() {
+    private void searchQRCode(Intent intent) {
         Fragment fragment = new SearchByQrCode();
         fragment.setArguments(intent.getExtras());
         switchFragment(fragment);
@@ -643,7 +674,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void setUpdateConsume() {
+    private void setUpdateConsume(Intent intent) {
         if (BarcodeGraphic.hashMap == null) {
             return;
         }

@@ -414,7 +414,7 @@ public class Common {
     }
 
 
-    public static void askPermissions(String s,Activity context) {
+    public static void askPermissions(String s,Activity context,int requestCode) {
         //因為是群組授權，所以請求ACCESS_COARSE_LOCATION就等同於請求ACCESS_FINE_LOCATION，因為同屬於LOCATION群組
 
         String[] permissions={s};
@@ -429,7 +429,7 @@ public class Common {
         if (!permissionsRequest.isEmpty()) {
             ActivityCompat.requestPermissions(context,
                     permissionsRequest.toArray(new String[permissionsRequest.size()]),
-                    0);
+                    requestCode);
         }
     }
 

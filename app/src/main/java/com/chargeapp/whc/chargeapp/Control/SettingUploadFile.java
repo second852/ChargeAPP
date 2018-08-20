@@ -201,14 +201,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         return view;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        int rc = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (rc != PackageManager.PERMISSION_GRANTED) {
-            Common.askPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,context);
-        }
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

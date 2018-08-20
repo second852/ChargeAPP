@@ -66,6 +66,13 @@ public class SelectListModelIM extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_list, container, false);
+
+        if(year==0)
+        {
+            Calendar calendar=Calendar.getInstance();
+            SelectListModelIM.year = calendar.get(Calendar.YEAR);
+            SelectListModelIM.month = calendar.get(Calendar.MONTH);
+        }
         gson = new Gson();
         findViewById(view);
         Common.setChargeDB(context);
