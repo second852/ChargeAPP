@@ -57,6 +57,7 @@ public class GraphicTracker<T> extends Tracker<T> {
      */
     @Override
     public void onMissing(Detector.Detections<T> detectionResults) {
+
         mOverlay.remove(mGraphic);
     }
 

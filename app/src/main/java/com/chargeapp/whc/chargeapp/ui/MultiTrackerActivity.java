@@ -53,6 +53,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.MultiDetector;
 import com.google.android.gms.vision.MultiProcessor;
+import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.android.gms.vision.face.FaceDetector;
 
@@ -227,11 +228,12 @@ public final class MultiTrackerActivity extends AppCompatActivity {
         // is set to receive the barcode detection results, track the barcodes, and maintain
         // graphics for each barcode on screen.  The factory is used by the multi-processor to
         // create a separate tracker instance for each barcode.
-        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();
+        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context)
+                .setBarcodeFormats(Barcode.QR_CODE).
+                build();
         BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay,this);
         barcodeDetector.setProcessor(
                 new MultiProcessor.Builder<>(barcodeFactory).build());
-
         // A multi-detector groups the two detectors together as one detector.  All images received
         // by this detector from the camera will be sent to each of the underlying detectors, which
         // will each do face and barcode detection, respectively.  The detection results from each
@@ -258,7 +260,7 @@ public final class MultiTrackerActivity extends AppCompatActivity {
             boolean hasLowStorage = registerReceiver(null, lowstorageFilter) != null;
 
             if (hasLowStorage) {
-                Toast.makeText(this,"XXXXXX", Toast.LENGTH_LONG).show();
+                Toast.makeText(this,"手機儲存空間不夠!", Toast.LENGTH_LONG).show();
             }
         }
 

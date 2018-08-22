@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.AwesomeTextView;
+import com.beardedhen.androidbootstrap.BootstrapText;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
@@ -77,6 +79,8 @@ import java.util.Set;
 
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_BULLSEYE;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_STAR_O;
 import static com.chargeapp.whc.chargeapp.Control.Common.nf;
 
 
@@ -117,6 +121,7 @@ public class SelectConsume extends Fragment {
     public static Calendar end;
     public static int CStatue;
     private Activity context;
+    private AwesomeTextView goalConsume;
 
 
 
@@ -157,18 +162,18 @@ public class SelectConsume extends Fragment {
         return view;
     }
 
-    private void setGoalVO(Calendar month) {
+    private void setGoalVO() {
+        Max=0;
         if (goalVO != null) {
             String goalTimeStatue = goalVO.getTimeStatue().trim();
-            if (goalTimeStatue.equals("每天")) {
+            if (goalTimeStatue.equals("每天")&&Statue==0) {
                 Max = goalVO.getMoney();
-            } else if (goalTimeStatue.equals("每周")) {
-                Max = goalVO.getMoney() / 7;
-            } else if (goalTimeStatue.equals("每月")) {
-                int day = month.getActualMaximum(Calendar.DAY_OF_MONTH);
-                Max = goalVO.getMoney() / day;
-            } else if (goalTimeStatue.equals("每年")) {
-                Max = goalVO.getMoney() / 365;
+            }else if (goalTimeStatue.equals("每天")&&Statue==1) {
+                Max = goalVO.getMoney();
+            } else if (goalTimeStatue.equals("每周")&&Statue==2) {
+                Max = goalVO.getMoney();
+            } else if (goalTimeStatue.equals("每月")&&Statue==3) {
+                Max = goalVO.getMoney() ;
             }
         }
     }
@@ -192,6 +197,7 @@ public class SelectConsume extends Fragment {
         choiceCarrier = view.findViewById(R.id.choiceCarrier);
         chart_pie = view.findViewById(R.id.chart_pie);
         describe = view.findViewById(R.id.describe);
+        goalConsume=view.findViewById(R.id.goalConsume);
         ArrayList<String> SpinnerItem1 = new ArrayList<>();
         SpinnerItem1.add("  日  ");
         SpinnerItem1.add("  周  ");
@@ -361,10 +367,9 @@ public class SelectConsume extends Fragment {
             end = new GregorianCalendar(year, month, day, 23, 59, 59);
             BarEntry barEntry = new BarEntry(0, Periodfloat(start, end));
             chartData.add(barEntry);
-            setGoalVO(start);
+            setGoalVO();
         } else if (Statue == 1) {
-            start = new GregorianCalendar(year, month, day - dweek + 1, 0, 0, 0);
-            setGoalVO(start);
+            setGoalVO();
             for (int i = 0; i < period; i++) {
                 start = new GregorianCalendar(year, month, day - dweek + 1 + i, 0, 0, 0);
                 end = new GregorianCalendar(year, month, day - dweek + 1 + i, 23, 59, 59);
@@ -375,8 +380,7 @@ public class SelectConsume extends Fragment {
         } else if (Statue == 2) {
             Calendar calendar = new GregorianCalendar(year, month, 1, 0, 0, 0);
             start = new GregorianCalendar(year, month, 1, 0, 0, 0);
-            setGoalVO(start);
-            Max = Max * 7;
+            setGoalVO();
             calendar.set(Calendar.WEEK_OF_MONTH, 1);
             calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
             end = new GregorianCalendar(year, month, calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
@@ -403,9 +407,7 @@ public class SelectConsume extends Fragment {
             chartData.add(barEntry);
             Log.d(TAG, "week " + String.valueOf(period - 1) + ":" + Common.sDay.format(new Date(start.getTimeInMillis())) + "~" + Common.sDay.format(new Date(end.getTimeInMillis())));
         } else {
-            start = new GregorianCalendar(year, month, 1, 0, 0, 0);
-            setGoalVO(start);
-            Max = Max * 365 / 12;
+            setGoalVO();
             for (int i = 0; i < period; i++) {
                 start = new GregorianCalendar(year, month + i, 1, 0, 0, 0);
                 end = new GregorianCalendar(year, month + i, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
@@ -524,12 +526,19 @@ public class SelectConsume extends Fragment {
         chart_bar.setDoubleTapToZoomEnabled(false);
         chart_bar.setDescription(description);
         chart_bar.setHighlightFullBarEnabled(false);
-        if (goalVO != null) {
+        if (goalVO != null&&Max!=0) {
+            BootstrapText bootstrapText=new BootstrapText.Builder(context)
+                    .addFontAwesomeIcon(FA_BULLSEYE)
+                    .addText(" 目標 :"+ goalVO.getName()+goalVO.getTimeStatue()+goalVO.getMoney())
+                    .build();
+            goalConsume.setBootstrapText(bootstrapText);
             yAxis.removeAllLimitLines();
             LimitLine yLimitLine = new LimitLine(Max, "支出目標");
             yLimitLine.setLineColor(Color.parseColor("#191970"));
             yLimitLine.setTextColor(Color.parseColor("#191970"));
             yAxis.addLimitLine(yLimitLine);
+        }else{
+            goalConsume.setBootstrapText(null);
         }
         chart_bar.invalidate();
         chart_pie.setEntryLabelColor(Color.BLACK);
