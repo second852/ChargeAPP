@@ -23,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
+import com.beardedhen.androidbootstrap.BootstrapDropDown;
 import com.beardedhen.androidbootstrap.BootstrapText;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
@@ -80,6 +81,7 @@ import java.util.Set;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_BULLSEYE;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_FLAG;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_STAR_O;
 import static com.chargeapp.whc.chargeapp.Control.Common.nf;
 
@@ -102,7 +104,7 @@ public class SelectConsume extends Fragment {
     private BarChart chart_bar;
     private List<Map.Entry<String, Integer>> list_Data;
     private int month, year, day, dweek, extra;
-    private Spinner choicePeriod, choiceCarrier;
+    private BootstrapDropDown choiceCarrier,choicePeriod;
     private PieChart chart_pie;
     private int total, period;
     private String DesTittle;
@@ -122,6 +124,7 @@ public class SelectConsume extends Fragment {
     public static int CStatue;
     private Activity context;
     private AwesomeTextView goalConsume;
+    private  List<BootstrapText> carrierTexts;
 
 
 
@@ -151,13 +154,15 @@ public class SelectConsume extends Fragment {
         findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
-        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
-        choiceCarrier.setOnItemSelectedListener(new ChoiceCarrier());
+//        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
+//        choiceCarrier.setOnItemSelectedListener(new ChoiceCarrier());
         chart_bar.setOnChartValueSelectedListener(new charvalue());
         chart_pie.setOnChartValueSelectedListener(new pievalue());
         goalVO = goalDB.getFindType("支出");
-        choiceCarrier.setSelection(CStatue);
-        choicePeriod.setSelection(Statue);
+//        choiceCarrier.setSelection(CStatue);
+        choiceCarrier.setBottom(CStatue);
+        choicePeriod.setBottom(Statue);
+//        choicePeriod.setSelection(Statue);
         Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
         return view;
     }
@@ -205,19 +210,29 @@ public class SelectConsume extends Fragment {
         SpinnerItem1.add("  年  ");
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem1);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        ArrayList<String> SpinnerItem2 = new ArrayList<>();
-        choicePeriod.setAdapter(arrayAdapter);
+//        choicePeriod.setAdapter(arrayAdapter);
         carrierVOS = carrierDB.getAll();
         if (carrierVOS == null || carrierVOS.size() <= 0) {
             ShowAllCarrier = false;
         }
-        SpinnerItem2.add(" 全部 ");
-        SpinnerItem2.add(" 本地 ");
+
+        //設定下拉選單
+
+        List<String> carrierS=new ArrayList<>();
+        carrierS.add("全部");
+        carrierS.add("本地");
+        carrierTexts=new ArrayList<>();
+        carrierTexts.add(Common.setCarrierSetBsTest(context,"全部"));
+        carrierTexts.add(Common.setCarrierSetBsTest(context,"本地"));
         for (CarrierVO c : carrierVOS) {
-            SpinnerItem2.add(" " + c.getCarNul() + " ");
+            carrierTexts.add(Common.setCarrierSetBsTest(context,c.getCarNul()));
+            carrierS.add(c.getCarNul());
         }
-        arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem2);
-        choiceCarrier.setAdapter(arrayAdapter);
+        choiceCarrier.setDropdownData(carrierS.toArray(new String[0]));
+        choiceCarrier.setBootstrapText(carrierTexts.get(0));
+        choiceCarrier.setShowOutline(false);
+        choiceCarrier.setOnDropDownItemClickListener(new choiceCarrierOnClick());
+//        choiceCarrier.setAdapter(arrayAdapter);
     }
 
 
@@ -528,17 +543,18 @@ public class SelectConsume extends Fragment {
         chart_bar.setHighlightFullBarEnabled(false);
         if (goalVO != null&&Max!=0) {
             BootstrapText bootstrapText=new BootstrapText.Builder(context)
-                    .addFontAwesomeIcon(FA_BULLSEYE)
-                    .addText(" 目標 :"+ goalVO.getName()+goalVO.getTimeStatue()+goalVO.getMoney())
+                    .addFontAwesomeIcon(FA_FLAG)
+                    .addText(" 目標 : "+ goalVO.getName()+goalVO.getTimeStatue()+goalVO.getType()+goalVO.getMoney()+"元")
                     .build();
             goalConsume.setBootstrapText(bootstrapText);
             yAxis.removeAllLimitLines();
             LimitLine yLimitLine = new LimitLine(Max, "支出目標");
-            yLimitLine.setLineColor(Color.parseColor("#191970"));
-            yLimitLine.setTextColor(Color.parseColor("#191970"));
+            yLimitLine.setLineColor(Color.parseColor("#007bff"));
+            yLimitLine.setTextColor(Color.parseColor("#007bff"));
             yAxis.addLimitLine(yLimitLine);
         }else{
-            goalConsume.setBootstrapText(null);
+            goalConsume.setText("");
+            yAxis.removeAllLimitLines();
         }
         chart_bar.invalidate();
         chart_pie.setEntryLabelColor(Color.BLACK);
@@ -770,11 +786,11 @@ public class SelectConsume extends Fragment {
                     day = calendar.get(Calendar.DAY_OF_MONTH);
                     extra = 0;
                 }
-                choicePeriod.setSelection(1);
+//                choicePeriod.setSelection(1);
             } else if (Statue == 3) {
                 Statue = 2;
                 month = (int) e.getX();
-                choicePeriod.setSelection(2);
+//                choicePeriod.setSelection(2);
             } else {
                 Fragment fragment = new SelectDetCircle();
                 Bundle bundle = new Bundle();
@@ -850,6 +866,32 @@ public class SelectConsume extends Fragment {
         @Override
         public void onNothingSelected() {
 
+        }
+    }
+
+    private class choiceCarrierOnClick implements BootstrapDropDown.OnDropDownItemClickListener {
+        @Override
+        public void onItemClick(ViewGroup parent, View v, int i) {
+            choiceCarrier.setBootstrapText(carrierTexts.get(i));
+            choiceCarrier.setShowOutline(false);
+            CStatue = i;
+            if (i == 0) {
+                ShowConsume = true;
+                ShowAllCarrier = true;
+                noShowCarrier = false;
+                dataAnalyze();
+            } else if (i == 1) {
+                ShowConsume = true;
+                ShowAllCarrier = false;
+                noShowCarrier = true;
+                dataAnalyze();
+            } else {
+                choiceD = i - 2;
+                ShowConsume = false;
+                ShowAllCarrier = false;
+                noShowCarrier = false;
+                dataAnalyze();
+            }
         }
     }
 }

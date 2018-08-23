@@ -44,7 +44,12 @@ import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
+import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     public static LinkedList<Bundle> bundles;
 
     //維持現在Framgent
-    public  boolean mFramgent;
+    public boolean mFramgent;
 
 
     @Override
@@ -138,20 +143,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-       switch (requestCode)
-       {
-           case 0:
-               List<Fragment> fragments=getSupportFragmentManager().getFragments();
-               for(Fragment f:fragments)
-               {
-                   if(f instanceof PriceHand)
-                   {
-                       f.onRequestPermissionsResult(requestCode,permissions,grantResults);
-                       break;
-                   }
-               }
-               break;
-       }
+        switch (requestCode) {
+            case 0:
+                List<Fragment> fragments = getSupportFragmentManager().getFragments();
+                for (Fragment f : fragments) {
+                    if (f instanceof PriceHand) {
+                        f.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                        break;
+                    }
+                }
+                break;
+        }
     }
 
     private void switchFragment(Fragment fragment) {
@@ -474,7 +476,7 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String a;
-        mFramgent=true;
+        mFramgent = true;
         try {
             a = data.getStringExtra("action");
         } catch (NullPointerException e) {
@@ -482,13 +484,27 @@ public class MainActivity extends AppCompatActivity {
         }
         if (a == null) {
             List<Fragment> fragments = getSupportFragmentManager().getFragments();
-            switch (requestCode){
+            switch (requestCode) {
                 case 12:
-                    for(int i=fragments.size()-1;i>0;i--)
-                    {
-                        if(fragments.get(i) instanceof PriceHand)
-                        {
-                            fragments.get(i).onActivityResult(requestCode,resultCode,data);
+                    for (int i = fragments.size() - 1; i >=0; i--) {
+                        if (fragments.get(i) instanceof PriceHand) {
+                            fragments.get(i).onActivityResult(requestCode, resultCode, data);
+                            break;
+                        }
+                    }
+                    break;
+                case 5:
+                    for (int i = fragments.size() - 1; i >= 0; i--) {
+                        if (fragments.get(i) instanceof SettingDownloadFile) {
+                            fragments.get(i).onActivityResult(requestCode, resultCode, data);
+                            break;
+                        }
+                    }
+                    break;
+                case 3:
+                    for (int i = fragments.size() - 1; i >=0; i--) {
+                        if (fragments.get(i) instanceof SettingUploadFile) {
+                            fragments.get(i).onActivityResult(requestCode, resultCode, data);
                             break;
                         }
                     }
@@ -529,9 +545,32 @@ public class MainActivity extends AppCompatActivity {
         if (BarcodeGraphic.hashMap == null) {
             return;
         }
-        if (BarcodeGraphic.hashMap.size()<=0) {
+        if (BarcodeGraphic.hashMap.size() <= 0) {
             return;
         }
+        if(BarcodeGraphic.result!=null)
+        {
+            InsertSpend.consumeVO=QRCodeNetResult(BarcodeGraphic.result,InsertSpend.consumeVO);
+            if(InsertSpend.consumeVO.getDetailname()!=null)
+            {
+                InsertSpend.needSet = true;
+                String eleOne = BarcodeGraphic.hashMap.get(1).trim();
+                String[] eleOneS = eleOne.trim().split(":");
+                String EleNul = eleOneS[0].substring(0, 10);
+                String day = eleOneS[0].substring(10, 17);
+                String m = eleOneS[0].substring(29, 37);
+                String rdNumber = eleOneS[0].substring(17, 21);
+                Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
+                InsertSpend.consumeVO.setMoney(Integer.parseInt(m, 16));
+                InsertSpend.consumeVO.setNumber(EleNul);
+                InsertSpend.consumeVO.setDate(new Date(calendar.getTimeInMillis()));
+                InsertSpend.consumeVO.setRdNumber(rdNumber);
+                Fragment fragment = new InsertActivity();
+                switchFragment(fragment);
+                return;
+            }
+        }
+
         if (BarcodeGraphic.hashMap.size() == 2) {
             InsertSpend.needSet = true;
             String eleOne = BarcodeGraphic.hashMap.get(1).trim();
@@ -547,7 +586,7 @@ public class MainActivity extends AppCompatActivity {
             InsertSpend.consumeVO.setDate(new Date(calendar.getTimeInMillis()));
             InsertSpend.consumeVO.setRdNumber(rdNumber);
             StringBuilder sb = new StringBuilder();
-            List<String> eleAll=new ArrayList<>();
+            List<String> eleAll = new ArrayList<>();
             if (eleOneS[4].equals("2")) {
                 //Base64
                 try {
@@ -659,11 +698,10 @@ public class MainActivity extends AppCompatActivity {
                         answer.clear();
                     }
                 }
-                if(sb.length()>0)
-                {
+                if (sb.length() > 0) {
                     consumeVO.setDetailname(sb.toString());
-                    consumeVO=getType(consumeVO);
-                }else {
+                    consumeVO = getType(consumeVO);
+                } else {
                     consumeVO.setDetailname(sb.toString());
                     consumeVO.setMaintype("O");
                     consumeVO.setSecondType("O");
@@ -678,13 +716,36 @@ public class MainActivity extends AppCompatActivity {
         if (BarcodeGraphic.hashMap == null) {
             return;
         }
-        if (BarcodeGraphic.hashMap.size()<=0) {
+        if (BarcodeGraphic.hashMap.size() <= 0) {
             return;
         }
         Bundle bundle = intent.getBundleExtra("bundle");
         ConsumeVO consumeVO = (ConsumeVO) bundle.getSerializable("consumeVO");
-        if (BarcodeGraphic.hashMap.size() == 2) {
+        if(BarcodeGraphic.result!=null)
+        {
+            consumeVO=QRCodeNetResult(BarcodeGraphic.result,consumeVO);
+            if(consumeVO.getDetailname()!=null)
+            {
+                String eleOne = BarcodeGraphic.hashMap.get(1).trim();
+                String[] eleOneS = eleOne.trim().split(":");
+                String EleNul = eleOneS[0].substring(0, 10);
+                String day = eleOneS[0].substring(10, 17);
+                String m = eleOneS[0].substring(29, 37);
+                String rdNumber = eleOneS[0].substring(17, 21);
+                Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
+                consumeVO.setMoney(Integer.parseInt(m, 16));
+                consumeVO.setNumber(EleNul);
+                consumeVO.setDate(new Date(calendar.getTimeInMillis()));
+                consumeVO.setRdNumber(rdNumber);
+                bundle.putSerializable("consumeVO", consumeVO);
+                Fragment fragment = new UpdateSpend();
+                fragment.setArguments(bundle);
+                switchFragment(fragment);
+                return;
+            }
+        }
 
+        if (BarcodeGraphic.hashMap.size() == 2) {
             String eleOne = BarcodeGraphic.hashMap.get(1).trim();
             String eleTwo = BarcodeGraphic.hashMap.get(2).trim();
             String[] eleOneS = eleOne.trim().split(":");
@@ -698,7 +759,7 @@ public class MainActivity extends AppCompatActivity {
             consumeVO.setDate(new Date(calendar.getTimeInMillis()));
             consumeVO.setRdNumber(rdNumber);
             StringBuilder sb = new StringBuilder();
-            List<String> eleAll=new ArrayList<>();
+            List<String> eleAll = new ArrayList<>();
             if (eleOneS[4].equals("2")) {
                 //Base64
                 try {
@@ -788,6 +849,64 @@ public class MainActivity extends AppCompatActivity {
         consumeVO.setMaintype(main);
         consumeVO.setSecondType(second);
         return consumeVO;
+    }
+
+
+    public ConsumeVO QRCodeNetResult(String s,ConsumeVO consumeVO)
+    {
+        Gson gson=new Gson();
+        JsonObject js = gson.fromJson(s, JsonObject.class);
+        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
+        String result = js.get("details").toString();
+        List<JsonObject> b = gson.fromJson(result, cdType);
+        double price, unit, unitTotal;
+        double total = 0;
+        StringBuilder sb = new StringBuilder();
+        for (JsonObject jsonObject : b) {
+
+            try {
+                price = jsonObject.get("unitPrice").getAsDouble();
+            }catch (Exception e)
+            {
+                price=0;
+            }
+
+            try {
+                unit = jsonObject.get("quantity").getAsDouble();
+            }catch (Exception e)
+            {
+                unit=0;
+            }
+
+
+            try {
+                unitTotal = jsonObject.get("amount").getAsDouble();
+            }catch (Exception e)
+            {
+                unitTotal=0;
+            }
+
+
+
+            try {
+                sb.append(jsonObject.get("description").getAsString());
+            } catch (Exception e) {
+                sb.append(jsonObject.get("錯誤").getAsString());
+            }
+            sb.append(":\n").append(Common.doubleRemoveZero(price)).append("X").append(Common.doubleRemoveZero(unit)).append("=").append(Common.doubleRemoveZero(unitTotal) + "\n");
+
+            try {
+                total = Double.valueOf(unitTotal) + total;
+            }catch (Exception e)
+            {
+
+            }
+
+        }
+        consumeVO.setMoney(Common.DoubleToInt(total));
+        consumeVO.setDetailname(sb.toString());
+        consumeVO = getType(consumeVO);
+        return  consumeVO;
     }
 
     @Override

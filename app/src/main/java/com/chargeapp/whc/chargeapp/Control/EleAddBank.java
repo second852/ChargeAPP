@@ -109,11 +109,12 @@ public class EleAddBank extends Fragment {
             return;
         }
         String[] carrierNul =new String[carrierVOS.size()];
+        bootstrapTexts=new ArrayList<>();
         for (int i=0;i<carrierVOS.size();i++) {
             carrierNul[i]=carrierVOS.get(i).getCarNul();
+            bootstrapTexts.add(Common.setCarrierSetBsTest(context,carrierVOS.get(i).getCarNul()));
         }
         carrierVO=carrierVOS.get(0);
-        bootstrapTexts=Common.ChoiceCarrierSetBsTest(context,carrierNul);
         carrier.setDropdownData(carrierNul);
         carrier.setBootstrapText(bootstrapTexts.get(0));
         carrier.setOnDropDownItemClickListener(new choiceStateItemBS());

@@ -21,20 +21,33 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.View;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
+import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
+import com.chargeapp.whc.chargeapp.Control.Common;
+import com.chargeapp.whc.chargeapp.Control.InsertSpend;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
+import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Graphic instance for rendering barcode position, size, and ID within an associated graphic
@@ -60,6 +73,8 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
     private HashMap<String, String> levelprice;
     private String EleNul;
     private int max;
+    public static String result;
+
 
 
 
@@ -67,8 +82,8 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
     BarcodeGraphic(GraphicOverlay overlay, Activity context) {
         super(overlay);
         hashMap = new HashMap<>();
+        result=null;
         this.context = context;
-
         priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         String sMax=priceDB.findMaxPeriod();
         if(sMax!=null)
@@ -132,22 +147,18 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         if (MultiTrackerActivity.refresh) {
             if (mBarcode.rawValue.indexOf(":") != -1 && (!(mBarcode.rawValue.indexOf("**") == 0))) {
                 hashMap.put(1, barcode.rawValue);
+                try {
+                    result=new SetupDateBase64(this).execute("getNetDetail").get();
+                } catch (Exception e) {
+                    result=null;
+                }
                 Log.d("XXXXXX1", barcode.rawValue);
             }
             if (mBarcode.rawValue.indexOf("**") == 0) {
                 hashMap.put(2, barcode.rawValue.substring(2));
                 Log.d("XXXXXX2", barcode.rawValue);
             }
-            if (hashMap.size() == 2) {
-                Intent intent = new Intent(context,MainActivity.class);
-                if(MultiTrackerActivity.action.equals("UpdateSpend"))
-                {
-                    intent.putExtra("bundle",context.getIntent().getBundleExtra("bundle"));
-                }
-                intent.putExtra("action",MultiTrackerActivity.action);
-                context.setResult(10,intent);
-                context.finish();
-            }
+            QrCodeResultFinish();
         } else {
             if (mBarcode.rawValue.indexOf(":") != -1 && (!(mBarcode.rawValue.indexOf("**") == 0))) {
                 EleNul = mBarcode.rawValue.substring(0, 10);
@@ -346,4 +357,161 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         }
         return period;
     }
+
+    public void QrCodeResultFinish()
+    {
+        analyzeResult();
+        if (hashMap.size() == 2||result!=null) {
+            Intent intent = new Intent(context,MainActivity.class);
+            if(MultiTrackerActivity.action.equals("UpdateSpend"))
+            {
+                Bundle bundle=context.getIntent().getBundleExtra("bundle");
+                intent.putExtra("bundle",bundle);
+            }
+            intent.putExtra("action",MultiTrackerActivity.action);
+            context.setResult(10,intent);
+            context.finish();
+        }
+
+    }
+
+    public void analyzeResult()
+    {
+        if(result==null)
+        {
+            return;
+        }
+        if (result.equals("500") || result.equals("502")) {
+            result=null;
+            return;
+        }
+        if (result.indexOf("該筆發票並無開立") != -1) {
+            result=null;
+            return;
+        }
+        if (result.indexOf("200") == -1) {
+            result=null;
+            return;
+        }
+        if (result.indexOf("detail") == -1) {
+            result=null;
+            return;
+        }
+    }
+
+
+//    public void QRCodeNetResult(String s)
+//    {
+//        Gson gson=new Gson();
+//        if (s.equals("500") || s.equals("502")) {
+//            MultiTrackerActivity.consumeVO.setDetailname(null);
+//            QrCodeResultFinish();
+//            return;
+//        }
+//        if (s.indexOf("該筆發票並無開立") != -1) {
+//            MultiTrackerActivity.consumeVO.setDetailname(null);
+//            QrCodeResultFinish();
+//            return;
+//        }
+//        if (s.indexOf("200") == -1) {
+//            MultiTrackerActivity.consumeVO.setDetailname(null);
+//            QrCodeResultFinish();
+//            return;
+//        }
+//        if (s.indexOf("detail") == -1) {
+//            MultiTrackerActivity.consumeVO.setDetailname(null);
+//            QrCodeResultFinish();
+//            return;
+//        }
+//
+//        JsonObject js = gson.fromJson(s, JsonObject.class);
+//        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
+//        String result = js.get("details").toString();
+//        List<JsonObject> b = gson.fromJson(result, cdType);
+//        double price, unit, unitTotal;
+//        double total = 0;
+//        StringBuilder sb = new StringBuilder();
+//        for (JsonObject jsonObject : b) {
+//
+//            try {
+//                price = jsonObject.get("unitPrice").getAsDouble();
+//            }catch (Exception e)
+//            {
+//                price=0;
+//            }
+//
+//            try {
+//                unit = jsonObject.get("quantity").getAsDouble();
+//            }catch (Exception e)
+//            {
+//                unit=0;
+//            }
+//
+//
+//            try {
+//                unitTotal = jsonObject.get("amount").getAsDouble();
+//            }catch (Exception e)
+//            {
+//                unitTotal=0;
+//            }
+//
+//
+//
+//            try {
+//                sb.append(jsonObject.get("description").getAsString());
+//            } catch (Exception e) {
+//                sb.append(jsonObject.get("錯誤").getAsString());
+//            }
+//            sb.append(":\n").append(Common.doubleRemoveZero(price)).append("X").append(Common.doubleRemoveZero(unit)).append("=").append(Common.doubleRemoveZero(unitTotal) + "\n");
+//
+//            try {
+//                total = Double.valueOf(unitTotal) + total;
+//            }catch (Exception e)
+//            {
+//
+//            }
+//
+//        }
+//        MultiTrackerActivity.consumeVO.setMoney(Common.DoubleToInt(total));
+//        MultiTrackerActivity.consumeVO.setDetailname(sb.toString());
+//        MultiTrackerActivity.consumeVO = getType(MultiTrackerActivity.consumeVO);
+//        QrCodeResultFinish();
+//    }
+
+
+    private ConsumeVO getType(ConsumeVO consumeVO) {
+        Common.setChargeDB(context);
+        TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
+        String main = "O", second = "O";
+        int x = 0, total = 0;
+        for (TypeDetailVO t : typeDetailVOS) {
+            x = 0;
+            String[] key = t.getKeyword().split(" ");
+            for (int i = 0; i < key.length; i++) {
+                if (consumeVO.getDetailname().indexOf(key[i].trim()) != -1) {
+                    x = x + key[i].length();
+                }
+            }
+            if (x > total) {
+                total = x;
+                main = t.getGroupNumber();
+                second = t.getName();
+            }
+        }
+        if (second.indexOf("餐") != -1) {
+            int hour = Integer.valueOf(Common.sHour.format(consumeVO.getDate()));
+            if (hour > 0 && hour < 11) {
+                second = "早餐";
+            } else if (hour >= 11 && hour < 18) {
+                second = "午餐";
+            } else {
+                second = "晚餐";
+            }
+        }
+        consumeVO.setMaintype(main);
+        consumeVO.setSecondType(second);
+        return consumeVO;
+    }
+
 }

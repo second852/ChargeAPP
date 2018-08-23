@@ -336,19 +336,17 @@ public class Common {
         return bootstrapTexts;
     }
 
-    public static List<BootstrapText> ChoiceCarrierSetBsTest(Activity activity,String[] data)
+
+    public static BootstrapText setCarrierSetBsTest(Activity activity,String data)
     {
-        List<BootstrapText> bootstrapTexts=new ArrayList<>();
-        for (String s:data)
-        {
             BootstrapText text = new BootstrapText.Builder(activity)
-                    .addText(s+" ")
+                    .addText(data+"  ")
                     .addFontAwesomeIcon(FA_ID_CARD_O)
                     .build();
-            bootstrapTexts.add(text);
-        }
-        return bootstrapTexts;
+        return text;
     }
+
+
 
     public static ArrayList<String> DateStatueSetSpinner()
     {

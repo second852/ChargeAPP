@@ -47,42 +47,44 @@
             android:layout_width="match_parent"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginLeft="50dp"
-            android:background="#aaaaaa"
             android:layout_centerHorizontal="true"
-            android:layout_height="40dp"
+            android:layout_marginRight="35dp"
+            android:layout_marginLeft="35dp"
+            android:layout_height="wrap_content"
             >
-            <Spinner
+            <com.beardedhen.androidbootstrap.BootstrapDropDown
                 android:gravity="center"
                 android:id="@+id/choiceCarrier"
-                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:theme="@style/spinner_normal"
-                android:backgroundTint="#000000"
                 android:layout_margin="2dp"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-            </Spinner>
-            <Spinner
+                android:layout_height="wrap_content"
+                app:bootstrapBrand="regular"
+                app:bootstrapSize="md"
+                app:bootstrapText="全部 {fa_calendar_check_o}"
+                app:dropdownResource="@array/fixDay"
+                app:roundedCorners="true"
+                app:showOutline="false"
+                >
+            </com.beardedhen.androidbootstrap.BootstrapDropDown>
+            <com.beardedhen.androidbootstrap.BootstrapDropDown
                 android:gravity="center"
                 android:id="@+id/choicePeriod"
                 android:theme="@style/spinner_normal"
-                android:backgroundTint="#000000"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_margin="2dp"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-            </Spinner>
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:background="#f5f5f5"
-                android:layout_toRightOf="@+id/choiceCarrier"
-                android:layout_toLeftOf="@+id/choicePeriod"
-                />
+                android:layout_height="wrap_content"
+                app:bootstrapBrand="regular"
+                app:bootstrapSize="md"
+                app:bootstrapText="全部 {fa_calendar_check_o}"
+                app:dropdownResource="@array/fixDay"
+                app:roundedCorners="true"
+                app:showOutline="false"
+                >
+            </com.beardedhen.androidbootstrap.BootstrapDropDown>
+
         </RelativeLayout>
         <TextView
             android:layout_marginTop="20dp"
@@ -107,7 +109,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:bootstrapBrand="danger"
+            app:bootstrapBrand="primary"
             android:textSize="20sp"
             />
         <com.github.mikephil.charting.charts.BarChart

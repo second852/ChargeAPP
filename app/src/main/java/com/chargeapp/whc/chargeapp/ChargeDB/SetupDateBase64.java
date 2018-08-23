@@ -11,6 +11,7 @@ import com.chargeapp.whc.chargeapp.Control.SearchByQrCode;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
+import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -80,7 +81,10 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                }
             }else if("getThisDetail".equals(action))
             {
-                jsonIn=getThisDate1();
+                jsonIn=getNeTDatei1();
+            }else if("getNetDetail".equals(action))
+            {
+                jsonIn=getThisData();
             }
         } catch (Exception e) {
             Log.e(TAG, e.toString());
@@ -90,7 +94,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
     }
 
 
-    private String getThisDate1() throws IOException {
+    private String getNeTDatei1() throws IOException {
         String date=Common.sTwo.format(consumeVO.getDate());
         String[] dateS=date.split("/");
         int year=new Integer(dateS[0])-1911;
@@ -126,7 +130,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
 
 
     //QRCode 讀不到掃描
-    private String getThisDate() throws IOException {
+    private String getThisData() throws IOException {
         HashMap<String,String> data=new HashMap<>();
         String imformation= BarcodeGraphic.hashMap.get(1);
         String period=imformation.substring(10, 17);
@@ -204,6 +208,11 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
             SearchByQrCode searchByQrCode= (SearchByQrCode) object;
             searchByQrCode.resultD(s);
         }
+//        else if(object instanceof BarcodeGraphic)
+//        {
+//            BarcodeGraphic barcodeGraphic= (BarcodeGraphic) object;
+//            barcodeGraphic.QRCodeNetResult(s);
+//        }
     }
 
 
