@@ -104,7 +104,7 @@ public class SelectConsume extends Fragment {
     private BarChart chart_bar;
     private List<Map.Entry<String, Integer>> list_Data;
     private int month, year, day, dweek, extra;
-    private BootstrapDropDown choiceCarrier,choicePeriod;
+    private BootstrapDropDown choiceCarrier, choicePeriod;
     private PieChart chart_pie;
     private int total, period;
     private String DesTittle;
@@ -124,8 +124,8 @@ public class SelectConsume extends Fragment {
     public static int CStatue;
     private Activity context;
     private AwesomeTextView goalConsume;
-    private  List<BootstrapText> carrierTexts;
-
+    private List<BootstrapText> carrierTexts;
+    private List<BootstrapText> periodTexts;
 
 
     @Override
@@ -142,7 +142,7 @@ public class SelectConsume extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_consume, container, false);
-        if (end == null||year==0) {
+        if (end == null || year == 0) {
             end = Calendar.getInstance();
             SelectConsume.Statue = 1;
         }
@@ -154,31 +154,31 @@ public class SelectConsume extends Fragment {
         findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
-//        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
-//        choiceCarrier.setOnItemSelectedListener(new ChoiceCarrier());
+
         chart_bar.setOnChartValueSelectedListener(new charvalue());
         chart_pie.setOnChartValueSelectedListener(new pievalue());
         goalVO = goalDB.getFindType("支出");
-//        choiceCarrier.setSelection(CStatue);
-        choiceCarrier.setBottom(CStatue);
-        choicePeriod.setBottom(Statue);
-//        choicePeriod.setSelection(Statue);
-        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
+
+        //        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
+//        choiceCarrier.setOnItemSelectedListener(new ChoiceCarrier());
+        //        choiceCarrier.setSelection(CStatue);
+        //        choicePeriod.setSelection(Statue);
+        Common.setScreen(Common.screenSize, getResources().getDisplayMetrics());
         return view;
     }
 
     private void setGoalVO() {
-        Max=0;
+        Max = 0;
         if (goalVO != null) {
             String goalTimeStatue = goalVO.getTimeStatue().trim();
-            if (goalTimeStatue.equals("每天")&&Statue==0) {
+            if (goalTimeStatue.equals("每天") && Statue == 0) {
                 Max = goalVO.getMoney();
-            }else if (goalTimeStatue.equals("每天")&&Statue==1) {
+            } else if (goalTimeStatue.equals("每天") && Statue == 1) {
                 Max = goalVO.getMoney();
-            } else if (goalTimeStatue.equals("每周")&&Statue==2) {
+            } else if (goalTimeStatue.equals("每周") && Statue == 2) {
                 Max = goalVO.getMoney();
-            } else if (goalTimeStatue.equals("每月")&&Statue==3) {
-                Max = goalVO.getMoney() ;
+            } else if (goalTimeStatue.equals("每月") && Statue == 3) {
+                Max = goalVO.getMoney();
             }
         }
     }
@@ -202,14 +202,24 @@ public class SelectConsume extends Fragment {
         choiceCarrier = view.findViewById(R.id.choiceCarrier);
         chart_pie = view.findViewById(R.id.chart_pie);
         describe = view.findViewById(R.id.describe);
-        goalConsume=view.findViewById(R.id.goalConsume);
+        goalConsume = view.findViewById(R.id.goalConsume);
+
         ArrayList<String> SpinnerItem1 = new ArrayList<>();
         SpinnerItem1.add("  日  ");
         SpinnerItem1.add("  周  ");
         SpinnerItem1.add("  月  ");
         SpinnerItem1.add("  年  ");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem1);
-        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+
+        periodTexts = new ArrayList<>();
+        for (String s : SpinnerItem1) {
+            periodTexts.add(Common.setCarrierSetBsTest(context, s));
+        }
+        choicePeriod.setDropdownData(SpinnerItem1.toArray(new String[0]));
+        choicePeriod.setOnDropDownItemClickListener(new choicePeriodD());
+        choicePeriod.setBootstrapText(periodTexts.get(CStatue));
+        choicePeriod.setShowOutline(false);
+//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem1);
+//        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
 //        choicePeriod.setAdapter(arrayAdapter);
         carrierVOS = carrierDB.getAll();
         if (carrierVOS == null || carrierVOS.size() <= 0) {
@@ -218,20 +228,21 @@ public class SelectConsume extends Fragment {
 
         //設定下拉選單
 
-        List<String> carrierS=new ArrayList<>();
+        List<String> carrierS = new ArrayList<>();
         carrierS.add("全部");
         carrierS.add("本地");
-        carrierTexts=new ArrayList<>();
-        carrierTexts.add(Common.setCarrierSetBsTest(context,"全部"));
-        carrierTexts.add(Common.setCarrierSetBsTest(context,"本地"));
+        carrierTexts = new ArrayList<>();
+        carrierTexts.add(Common.setCarrierSetBsTest(context, "全部"));
+        carrierTexts.add(Common.setCarrierSetBsTest(context, "本地"));
         for (CarrierVO c : carrierVOS) {
-            carrierTexts.add(Common.setCarrierSetBsTest(context,c.getCarNul()));
+            carrierTexts.add(Common.setCarrierSetBsTest(context, c.getCarNul()));
             carrierS.add(c.getCarNul());
         }
         choiceCarrier.setDropdownData(carrierS.toArray(new String[0]));
-        choiceCarrier.setBootstrapText(carrierTexts.get(0));
+        choiceCarrier.setBootstrapText(carrierTexts.get(Statue));
         choiceCarrier.setShowOutline(false);
         choiceCarrier.setOnDropDownItemClickListener(new choiceCarrierOnClick());
+        dataAnalyze();
 //        choiceCarrier.setAdapter(arrayAdapter);
     }
 
@@ -541,10 +552,10 @@ public class SelectConsume extends Fragment {
         chart_bar.setDoubleTapToZoomEnabled(false);
         chart_bar.setDescription(description);
         chart_bar.setHighlightFullBarEnabled(false);
-        if (goalVO != null&&Max!=0) {
-            BootstrapText bootstrapText=new BootstrapText.Builder(context)
+        if (goalVO != null && Max != 0) {
+            BootstrapText bootstrapText = new BootstrapText.Builder(context)
                     .addFontAwesomeIcon(FA_FLAG)
-                    .addText(" 目標 : "+ goalVO.getName()+goalVO.getTimeStatue()+goalVO.getType()+goalVO.getMoney()+"元")
+                    .addText(" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元")
                     .build();
             goalConsume.setBootstrapText(bootstrapText);
             yAxis.removeAllLimitLines();
@@ -552,7 +563,7 @@ public class SelectConsume extends Fragment {
             yLimitLine.setLineColor(Color.parseColor("#007bff"));
             yLimitLine.setTextColor(Color.parseColor("#007bff"));
             yAxis.addLimitLine(yLimitLine);
-        }else{
+        } else {
             goalConsume.setText("");
             yAxis.removeAllLimitLines();
         }
@@ -608,7 +619,7 @@ public class SelectConsume extends Fragment {
         YAxis yAxis = chart_bar.getAxis(YAxis.AxisDependency.LEFT);
         YAxis yAxis1 = chart_bar.getAxis(YAxis.AxisDependency.RIGHT);
         Legend l = chart_bar.getLegend();
-        switch (Common.screenSize){
+        switch (Common.screenSize) {
             case xLarge:
                 dataSet.setValueTextSize(25f);
                 chart_pie.setEntryLabelTextSize(25f);
@@ -786,11 +797,11 @@ public class SelectConsume extends Fragment {
                     day = calendar.get(Calendar.DAY_OF_MONTH);
                     extra = 0;
                 }
-//                choicePeriod.setSelection(1);
+                choicePeriod.setBottom(1);
             } else if (Statue == 3) {
                 Statue = 2;
                 month = (int) e.getX();
-//                choicePeriod.setSelection(2);
+                choicePeriod.setBottom(2);
             } else {
                 Fragment fragment = new SelectDetCircle();
                 Bundle bundle = new Bundle();
@@ -892,6 +903,35 @@ public class SelectConsume extends Fragment {
                 noShowCarrier = false;
                 dataAnalyze();
             }
+        }
+    }
+
+    private class choicePeriodD implements BootstrapDropDown.OnDropDownItemClickListener {
+        @Override
+        public void onItemClick(ViewGroup parent, View v, int position) {
+            Statue = position;
+            end = new GregorianCalendar(year, month, day);
+            month = end.get(Calendar.MONTH);
+            year = end.get(Calendar.YEAR);
+            dweek = end.get(Calendar.DAY_OF_WEEK);
+            day = end.get(Calendar.DAY_OF_MONTH);
+            Log.d(TAG, "day" + Common.sDay.format(new Date(end.getTimeInMillis())) + " : " + dweek);
+            if (position == 0) {
+                period = 1;
+            } else if (position == 1) {
+                if (week == 1) {
+                    dweek = 1;
+                }
+                period = 7 + extra;
+                extra = 0;
+                week = 0;
+            } else if (position == 2) {
+                period = end.getActualMaximum(Calendar.WEEK_OF_MONTH);
+            } else {
+                month = 0;
+                period = 12;
+            }
+            dataAnalyze();
         }
     }
 }
