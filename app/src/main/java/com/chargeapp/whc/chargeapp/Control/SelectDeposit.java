@@ -22,6 +22,10 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.AwesomeTextView;
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.BootstrapDropDown;
+import com.beardedhen.androidbootstrap.BootstrapText;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
@@ -50,6 +54,10 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_FLAG;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_THUMBS_O_UP;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_THUMBS_UP;
+
 
 /**
  * Created by 1709008NB01 on 2017/12/7.
@@ -63,7 +71,7 @@ public class SelectDeposit extends Fragment {
     private String TAG = "SelectDeposit";
     private int month, year;
     private Calendar end;
-    private Spinner choicePeriod;
+    private BootstrapDropDown choicePeriod;
     private LineChart chart_line,chart_consume,chart_income;
     private int Statue = 0, period, Alltotal, Allincome, Allconsume;
     private BankDB bankDB;
@@ -78,6 +86,8 @@ public class SelectDeposit extends Fragment {
     private Activity context;
     private String pictureT,pictureL,pictureCT,pictureCL,pictureIT,pictureIL;
     private List<Entry> entries,entriesC,entriesI;
+    private List<BootstrapText> periodDepoist;
+    private AwesomeTextView goalDeposit;
 
     @Override
     public void onAttach(Context context) {
@@ -92,30 +102,47 @@ public class SelectDeposit extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.select_deposit, container, false);
-        Common.setChargeDB(context);
+        final View view = inflater.inflate(R.layout.select_deposit, container, false);
+        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
+
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalVO = goalDB.getFindType("儲蓄");
+        //setTime
         end = Calendar.getInstance();
         year = end.get(Calendar.YEAR);
+        period=11;
+        month=0;
+
+        //DB
+        Common.setChargeDB(context);
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
-        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
-        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
+//        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                choicePeriod.setBootstrapText(periodDepoist.get(Statue));
+                choicePeriod.setShowOutline(false);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         return view;
     }
 
     private void setGoalVO() {
+        Max=0;
         if (goalVO != null) {
             goalTimeStatue = goalVO.getTimeStatue().trim();
-            if (goalTimeStatue.equals("每月")) {
+            if (goalTimeStatue.equals("每月")&&Statue==0) {
                 Max = goalVO.getMoney();
-            } else if (goalTimeStatue.equals("每年")) {
-                Max = goalVO.getMoney() / 12;
+            } else if (goalTimeStatue.equals("每年")&&Statue==1) {
+                Max = goalVO.getMoney();
             } else if (goalTimeStatue.equals("今日")) {
                 if (System.currentTimeMillis() > goalVO.getEndTime().getTime()) {
                     Max = 0;
@@ -129,17 +156,21 @@ public class SelectDeposit extends Fragment {
                         goalVO.setStatue(1);
                     }
                     goalDB.update(goalVO);
-                } else {
-                    Calendar start = new GregorianCalendar();
-                    start.setTime(goalVO.getStartTime());
-                    Calendar end = new GregorianCalendar();
-                    end.setTime(goalVO.getEndTime());
-                    int divid = (end.get(Calendar.MONTH) - start.get(Calendar.MONTH));
-                    if (divid == 0) {
-                        divid = 1;
-                    }
-                    Max = goalVO.getMoney() / divid;
+                    goalVO=null;
                 }
+//                else {
+//                    Calendar start = new GregorianCalendar();
+//                    start.setTime(goalVO.getStartTime());
+//                    Calendar end = new GregorianCalendar();
+//                    end.setTime(goalVO.getEndTime());
+//                    divideY=(end.get(Calendar.YEAR) - start.get(Calendar.YEAR));
+//                    int divideM= (end.get(Calendar.MONTH) - start.get(Calendar.MONTH));
+//                    int divideT=divideY*12+divideM;
+//                    if (divideT == 0) {
+//                        divideT = 1;
+//                    }
+//                    Max = goalVO.getMoney() / divideT;
+//                }
             }
         }
     }
@@ -372,33 +403,85 @@ public class SelectDeposit extends Fragment {
         chart_line.setTouchEnabled(false);
         chart_line.setScaleEnabled(false);
         if (goalVO != null) {
-            LimitLine yLimitLine = new LimitLine(Max, "儲蓄目標");
-            yLimitLine.setLineColor(Color.RED);
-            yLimitLine.setTextColor(Color.RED);
             YAxis yAxis = chart_line.getAxisLeft();
             yAxis.removeAllLimitLines();
-            yAxis.addLimitLine(yLimitLine);
+
+            if(Max!=0)
+            {
+                LimitLine yLimitLine = new LimitLine(Max, "儲蓄目標");
+                yLimitLine.setLineColor(Color.parseColor("#007bff"));
+                yLimitLine.setTextColor(Color.parseColor("#007bff"));
+                yAxis.addLimitLine(yLimitLine);
+
+                BootstrapText bootstrapText = new BootstrapText.Builder(context)
+                        .addFontAwesomeIcon(FA_FLAG)
+                        .addText(" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元")
+                        .build();
+
+                goalDeposit.setBootstrapText(bootstrapText);
+            }else {
+                goalDeposit.setText(null);
+            }
+
             if(goalTimeStatue.trim().equals("今日"))
             {
+
                 LimitLine xLimitLine;
                 Calendar endGoal =new GregorianCalendar();
                 endGoal.setTime(goalVO.getEndTime());
+                Calendar nowCalendar=Calendar.getInstance();
+                int divideY=endGoal.get(Calendar.YEAR)-nowCalendar.get(Calendar.YEAR);
                 XAxis xAxis1=chart_line.getXAxis();
                 xAxis.removeAllLimitLines();
-                if(Statue==0)
+
+                long differentT=endGoal.getTimeInMillis()-nowCalendar.getTimeInMillis();
+
+                int differentDay= (int) (differentT/(1000*60*60*24))+1;
+
+                int differentMoney=goalVO.getMoney()-Alltotal;
+
+                StringBuilder sb=new StringBuilder();
+
+                sb.append("倒數"+differentDay+"天  ");
+
+                BootstrapText bootstrapText;
+                if(differentMoney<=0)
+                {
+                    sb.append("完成目標 ");
+                    bootstrapText = new BootstrapText.Builder(context)
+                            .addFontAwesomeIcon(FA_FLAG)
+                            .addText(" 目標 : " + goalVO.getName()  + goalVO.getType() + goalVO.getMoney() + "元\n"+sb.toString()).addFontAwesomeIcon(FA_THUMBS_O_UP)
+                            .build();
+                }else {
+                    sb.append("還差"+differentMoney+"元 加油!");
+                    bootstrapText = new BootstrapText.Builder(context)
+                            .addFontAwesomeIcon(FA_FLAG)
+                            .addText(" 目標 : " + goalVO.getName()  + goalVO.getType() + goalVO.getMoney() + "元\n"+sb.toString())
+                            .build();
+                }
+
+
+
+                goalDeposit.setBootstrapText(bootstrapText);
+
+                if(Statue==0&&divideY==0)
                 {
                     int month=endGoal.get(Calendar.MONTH);
                     xLimitLine = new LimitLine(month, "目標時間");
-                    xLimitLine.setTextColor(Color.BLUE);
+                    xLimitLine.setTextColor(Color.RED);
                     xAxis1.addLimitLine(xLimitLine);
                 }else{
-                    int year=endGoal.get(Calendar.YEAR);
-                    xLimitLine = new LimitLine(year, "目標時間");
-                    xLimitLine.setTextColor(Color.BLUE);
-                    xAxis1.addLimitLine(xLimitLine);
-                }
+                    if(divideY>=0)
+                    {
+                        int year=endGoal.get(Calendar.YEAR);
+                        xLimitLine = new LimitLine(year, "目標時間");
+                        xLimitLine.setTextColor(Color.RED);
+                        xAxis1.addLimitLine(xLimitLine);
+                    }
+                 }
             }
         }
+
         YAxis yAxis = chart_line.getAxis(YAxis.AxisDependency.LEFT);
         YAxis yAxis1 = chart_line.getAxis(YAxis.AxisDependency.RIGHT);
         yAxis1.setDrawAxisLine(false);
@@ -482,12 +565,22 @@ public class SelectDeposit extends Fragment {
         describeI=view.findViewById(R.id.describeI);
         chart_consume=view.findViewById(R.id.chart_consume);
         chart_income=view.findViewById(R.id.chart_income);
-        ArrayList<String> SpinnerItem1 = new ArrayList<>();
-        SpinnerItem1.add(" 月 ");
-        SpinnerItem1.add(" 年 ");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem1);
-        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        choicePeriod.setAdapter(arrayAdapter);
+        goalDeposit=view.findViewById(R.id.goalDeposit);
+
+        String[] SpinnerItem1 = new String[2];
+        SpinnerItem1[0]=" 月 ";
+        SpinnerItem1[1]=" 年 ";
+        periodDepoist=new ArrayList<>();
+        periodDepoist.add(Common.setPeriodSelectCBsTest(context,SpinnerItem1[0]));
+        periodDepoist.add(Common.setPeriodSelectCBsTest(context,SpinnerItem1[1]));
+        choicePeriod.setDropdownData(SpinnerItem1);
+        choicePeriod.setOnDropDownItemClickListener(new PeriodChoice());
+        dataAnalyze();
+
+
+//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem1);
+//        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+//        choicePeriod.setAdapter(arrayAdapter);
     }
 
 
@@ -560,4 +653,44 @@ public class SelectDeposit extends Fragment {
         }
     }
 
+    private class PeriodChoice implements BootstrapDropDown.OnDropDownItemClickListener {
+        @Override
+        public void onItemClick(ViewGroup parent, View v, int position) {
+            Statue = position;
+            choicePeriod.setBootstrapText(periodDepoist.get(position));
+            choicePeriod.setShowOutline(false);
+            if (position == 0) {
+                period = 11;
+                month = 0;
+            } else {
+                ArrayList<Long> minTime = new ArrayList<>();
+                minTime.add(bankDB.getMinTime());
+                minTime.add(consumeDB.getMinTime());
+                minTime.add(invoiceDB.getMinTime());
+                Collections.sort(minTime, new Comparator<Long>() {
+                    @Override
+                    public int compare(Long aLong, Long t1) {
+                        if (aLong > t1) {
+                            return 1;
+                        } else if (aLong == t1) {
+                            return 0;
+                        } else {
+                            return -1;
+                        }
+                    }
+                });
+                Calendar start = Calendar.getInstance();
+                Calendar end = Calendar.getInstance();
+                start.setTime(new Date(minTime.get(0)));
+                year = start.get(Calendar.YEAR);
+                period = end.get(Calendar.YEAR) - year;
+                if(period>10)
+                {
+                    period=10;
+                    year=end.get(Calendar.YEAR)-10;
+                }
+            }
+            dataAnalyze();
+        }
+    }
 }

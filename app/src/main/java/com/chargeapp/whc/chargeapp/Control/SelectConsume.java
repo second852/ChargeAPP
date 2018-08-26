@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.solver.Goal;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -128,6 +129,7 @@ public class SelectConsume extends Fragment {
     private List<BootstrapText> periodTexts;
 
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -141,15 +143,50 @@ public class SelectConsume extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.select_consume, container, false);
-        if (end == null || year == 0) {
+        Common.setScreen(Common.screenSize, getResources().getDisplayMetrics());
+        final View view = inflater.inflate(R.layout.select_consume, container, false);
+        if (end == null ) {
             end = Calendar.getInstance();
             SelectConsume.Statue = 1;
         }
         month = end.get(Calendar.MONTH);
         year = end.get(Calendar.YEAR);
-        dweek = end.get(Calendar.DAY_OF_WEEK);
         day = end.get(Calendar.DAY_OF_MONTH);
+
+        //設定dweek period
+        switch (Statue)
+        {
+            case 1:
+                period=7;
+                dweek = end.get(Calendar.DAY_OF_WEEK);
+                break;
+            case 3:
+                period=7;
+                month=0;
+                break;
+        }
+
+        //載具
+        switch (CStatue)
+        {
+            case 0:
+                ShowConsume = true;
+                ShowAllCarrier = true;
+                noShowCarrier = false;
+                break;
+            case 1:
+                ShowConsume = true;
+                ShowAllCarrier = false;
+                noShowCarrier = true;
+                break;
+            case 2:
+                choiceD = CStatue - 2;
+                ShowConsume = false;
+                ShowAllCarrier = false;
+                noShowCarrier = false;
+                break;
+        }
+
         setDB();
         findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());
@@ -159,16 +196,31 @@ public class SelectConsume extends Fragment {
         chart_pie.setOnChartValueSelectedListener(new pievalue());
         goalVO = goalDB.getFindType("支出");
 
+        dataAnalyze();
         //        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
 //        choiceCarrier.setOnItemSelectedListener(new ChoiceCarrier());
         //        choiceCarrier.setSelection(CStatue);
         //        choicePeriod.setSelection(Statue);
-        Common.setScreen(Common.screenSize, getResources().getDisplayMetrics());
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                choiceCarrier.setBootstrapText(carrierTexts.get(CStatue));
+                choiceCarrier.setShowOutline(false);
+                choicePeriod.setBootstrapText(periodTexts.get(Statue));
+                choicePeriod.setShowOutline(false);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         return view;
     }
 
+
     private void setGoalVO() {
         Max = 0;
+        choicePeriod.setBootstrapText(periodTexts.get(Statue));
+        choicePeriod.setShowOutline(false);
         if (goalVO != null) {
             String goalTimeStatue = goalVO.getTimeStatue().trim();
             if (goalTimeStatue.equals("每天") && Statue == 0) {
@@ -203,7 +255,6 @@ public class SelectConsume extends Fragment {
         chart_pie = view.findViewById(R.id.chart_pie);
         describe = view.findViewById(R.id.describe);
         goalConsume = view.findViewById(R.id.goalConsume);
-
         ArrayList<String> SpinnerItem1 = new ArrayList<>();
         SpinnerItem1.add("  日  ");
         SpinnerItem1.add("  周  ");
@@ -212,12 +263,11 @@ public class SelectConsume extends Fragment {
 
         periodTexts = new ArrayList<>();
         for (String s : SpinnerItem1) {
-            periodTexts.add(Common.setCarrierSetBsTest(context, s));
+            periodTexts.add(Common.setPeriodSelectCBsTest(context, s));
         }
         choicePeriod.setDropdownData(SpinnerItem1.toArray(new String[0]));
         choicePeriod.setOnDropDownItemClickListener(new choicePeriodD());
-        choicePeriod.setBootstrapText(periodTexts.get(CStatue));
-        choicePeriod.setShowOutline(false);
+
 //        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem1);
 //        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
 //        choicePeriod.setAdapter(arrayAdapter);
@@ -239,10 +289,7 @@ public class SelectConsume extends Fragment {
             carrierS.add(c.getCarNul());
         }
         choiceCarrier.setDropdownData(carrierS.toArray(new String[0]));
-        choiceCarrier.setBootstrapText(carrierTexts.get(Statue));
-        choiceCarrier.setShowOutline(false);
         choiceCarrier.setOnDropDownItemClickListener(new choiceCarrierOnClick());
-        dataAnalyze();
 //        choiceCarrier.setAdapter(arrayAdapter);
     }
 
@@ -300,6 +347,14 @@ public class SelectConsume extends Fragment {
             if (ShowAllCarrier) {
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
             } else {
+                if(CStatue>=carrierVOS.size())
+                {
+                    CStatue=carrierVOS.size()-1;
+                }
+                if(CStatue<0)
+                {
+                    CStatue=0;
+                }
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrierVOS.get(choiceD).getCarNul());
             }
             for (InvoiceVO I : invoiceVOS) {
@@ -406,6 +461,7 @@ public class SelectConsume extends Fragment {
         } else if (Statue == 2) {
             Calendar calendar = new GregorianCalendar(year, month, 1, 0, 0, 0);
             start = new GregorianCalendar(year, month, 1, 0, 0, 0);
+            period = calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
             setGoalVO();
             calendar.set(Calendar.WEEK_OF_MONTH, 1);
             calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
@@ -450,6 +506,14 @@ public class SelectConsume extends Fragment {
         float[] f = new float[list_Data.size()];
         ChartEntry other = new ChartEntry("其他", 0);
         if (!noShowCarrier && carrierVOS.size() > 0) {
+            if(CStatue>=carrierVOS.size())
+            {
+                CStatue=carrierVOS.size()-1;
+            }
+            if(CStatue<0)
+            {
+                CStatue=0;
+            }
             String carrier = carrierVOS.get(choiceD).getCarNul();
             List<InvoiceVO> periodInvoice;
             if (ShowAllCarrier) {
@@ -512,8 +576,9 @@ public class SelectConsume extends Fragment {
 
 
     public void dataAnalyze() {
-        chart_bar.clear();
+//        chart_bar.clear();
         findMaxFive();
+
         Description description = new Description();
         description.setText(" ");
         if (list_Data.size() <= 0) {
@@ -568,6 +633,9 @@ public class SelectConsume extends Fragment {
             yAxis.removeAllLimitLines();
         }
         chart_bar.invalidate();
+        chart_bar.notifyDataSetChanged();
+
+
         chart_pie.setEntryLabelColor(Color.BLACK);
         chart_pie.setUsePercentValues(true);
         chart_pie.setDrawHoleEnabled(true);
@@ -781,27 +849,30 @@ public class SelectConsume extends Fragment {
                 Statue = 1;
                 if (week == 1) {
                     Calendar calendar = new GregorianCalendar(year, month, 1, 0, 0, 0);
-                    dweek = calendar.get(Calendar.DAY_OF_WEEK);
+                    dweek=1;
                     day = 1;
-                    extra = -dweek + 1;
+                    period=7-calendar.get(Calendar.DAY_OF_WEEK)+1;
                 } else if (week == period) {
                     Calendar calendar = new GregorianCalendar(year, month, 1);
                     calendar.set(Calendar.WEEK_OF_MONTH, week);
                     calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                     day = calendar.get(Calendar.DAY_OF_MONTH);
-                    extra = calendar.getMaximum(Calendar.DAY_OF_MONTH) - day - 7 + 1;
+                    period = calendar.getMaximum(Calendar.DAY_OF_MONTH) - day+1;
+                    dweek=1;
                 } else {
+                    period=7;
                     Calendar calendar = new GregorianCalendar(year, month, 1);
                     calendar.set(Calendar.WEEK_OF_MONTH, week);
                     calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                     day = calendar.get(Calendar.DAY_OF_MONTH);
+                    dweek=1;
                     extra = 0;
                 }
-                choicePeriod.setBottom(1);
+                dataAnalyze();
             } else if (Statue == 3) {
                 Statue = 2;
                 month = (int) e.getX();
-                choicePeriod.setBottom(2);
+                dataAnalyze();
             } else {
                 Fragment fragment = new SelectDetCircle();
                 Bundle bundle = new Bundle();

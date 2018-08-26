@@ -19,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapDropDown;
+import com.beardedhen.androidbootstrap.BootstrapText;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
@@ -66,7 +68,7 @@ public class SelectIncome extends Fragment {
     private String TAG = "SelectIncome";
     private BarChart chart_bar;
     private int month, year,day;
-    private Spinner choicePeriod;
+    private BootstrapDropDown choicePeriod;
     private PieChart chart_pie;
     private int total, period;
     private String DesTittle;
@@ -79,6 +81,7 @@ public class SelectIncome extends Fragment {
     public static Calendar end;
     public static int Statue;
     private Activity context;
+    private List<BootstrapText> periodIncome;
 
     @Override
     public void onAttach(Context context) {
@@ -93,8 +96,9 @@ public class SelectIncome extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.select_income, container, false);
-        if(end==null||year==0)
+        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
+        final View view = inflater.inflate(R.layout.select_income, container, false);
+        if(end==null)
         {
             end=Calendar.getInstance();
         }
@@ -106,11 +110,33 @@ public class SelectIncome extends Fragment {
         findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
-        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
         chart_pie.setOnChartValueSelectedListener(new pievalue());
         chart_bar.setOnChartValueSelectedListener(new charValue());
-        choicePeriod.setSelection(Statue);
-        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
+        choicePeriod.setOnDropDownItemClickListener(new choicePeriodI());
+        //        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
+//        choicePeriod.setSelection(Statue);
+
+        switch (Statue)
+        {
+            case 0:
+                period = end.getActualMaximum(Calendar.DAY_OF_MONTH);
+                break;
+            case 1:
+                month=0;
+                period=12;
+                break;
+        }
+        dataAnalyze();
+        ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                choicePeriod.setBootstrapText(periodIncome.get(Statue));
+                choicePeriod.setShowOutline(false);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                return true;
+            }
+        });
         return view;
     }
 
@@ -126,9 +152,22 @@ public class SelectIncome extends Fragment {
         ArrayList<String> SpinnerItem1 = new ArrayList<>();
         SpinnerItem1.add(" 月 ");
         SpinnerItem1.add(" 年 ");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem1);
-        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        choicePeriod.setAdapter(arrayAdapter);
+        periodIncome=new ArrayList<>();
+        String[] periodArray=new String[SpinnerItem1.size()];
+        for(int i=0;i<SpinnerItem1.size();i++)
+        {
+            periodIncome.add(Common.setPeriodSelectCBsTest(context,SpinnerItem1.get(i)));
+            periodArray[i]=SpinnerItem1.get(i);
+        }
+        choicePeriod.setDropdownData(periodArray);
+        choicePeriod.setBootstrapText(periodIncome.get(Statue));
+        choicePeriod.setShowOutline(false);
+
+
+        dataAnalyze();
+//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem1);
+//        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+//        choicePeriod.setAdapter(arrayAdapter);
     }
 
 
@@ -547,6 +586,25 @@ public class SelectIncome extends Fragment {
 
         @Override
         public void onNothingSelected() {
+
+        }
+    }
+
+    private class choicePeriodI implements BootstrapDropDown.OnDropDownItemClickListener {
+        @Override
+        public void onItemClick(ViewGroup parent, View v, int position) {
+            Statue = position;
+            month = end.get(Calendar.MONTH);
+            year = end.get(Calendar.YEAR);
+            if (position == 0) {
+                period = end.getActualMaximum(Calendar.DAY_OF_MONTH);
+                dataAnalyze();
+            } else {
+                period = 12;
+                month = 0;
+                Log.d(TAG, "month" + month);
+                dataAnalyze();
+            }
 
         }
     }

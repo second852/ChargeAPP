@@ -551,7 +551,7 @@ public class MainActivity extends AppCompatActivity {
         if(BarcodeGraphic.result!=null)
         {
             InsertSpend.consumeVO=QRCodeNetResult(BarcodeGraphic.result,InsertSpend.consumeVO);
-            if(InsertSpend.consumeVO.getDetailname()!=null)
+            if(InsertSpend.consumeVO.getDetailname()!=null&&BarcodeGraphic.hashMap.get(1)!=null)
             {
                 InsertSpend.needSet = true;
                 String eleOne = BarcodeGraphic.hashMap.get(1).trim();

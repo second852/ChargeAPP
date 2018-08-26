@@ -54,6 +54,9 @@ import java.util.regex.Pattern;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_CHECK_O;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_MINUS_O;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
 
 /**
@@ -343,6 +346,15 @@ public class Common {
                     .addText(data+"  ")
                     .addFontAwesomeIcon(FA_ID_CARD_O)
                     .build();
+        return text;
+    }
+
+    public static BootstrapText setPeriodSelectCBsTest(Activity activity,String data)
+    {
+        BootstrapText text = new BootstrapText.Builder(activity)
+                .addText(data+"  ")
+                .addFontAwesomeIcon(FA_CALENDAR_CHECK_O)
+                .build();
         return text;
     }
 
