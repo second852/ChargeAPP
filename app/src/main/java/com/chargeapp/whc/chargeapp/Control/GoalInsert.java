@@ -316,7 +316,11 @@ public class GoalInsert extends Fragment {
             }else{
                 goalVO.setEndTime(new Date(0));
             }
-            goalVO.setStartTime(new Date(System.currentTimeMillis()));
+            //hour second set zero
+            Calendar calendar=Calendar.getInstance();
+            calendar.set(Calendar.HOUR,0);
+            calendar.set(Calendar.SECOND,0);
+            goalVO.setStartTime(new Date(calendar.getTimeInMillis()));
             String reMa=(remindD.getSelectedItem()==null)?"":remindD.getSelectedItem().toString().trim();
             goalVO.setName(goalName);
             goalVO.setMoney(Integer.valueOf(goalMoney));
