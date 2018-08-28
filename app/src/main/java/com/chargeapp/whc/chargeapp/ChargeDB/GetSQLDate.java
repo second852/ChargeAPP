@@ -680,8 +680,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         HttpURLConnection conn = null;
         try {
             conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setReadTimeout(5000);
-            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(2000);
+            conn.setConnectTimeout(2000);
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);

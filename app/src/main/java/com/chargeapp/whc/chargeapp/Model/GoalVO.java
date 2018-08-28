@@ -20,7 +20,7 @@ public class GoalVO implements Serializable{
     private String notifyStatue; //8目標通知時間狀態
     private String notifyDate;   //9目標通知日期
     private boolean noWeekend;   //10目標假日是否通知
-    private int statue; //11目標狀態 0:init 1:fail 2:complete
+    private int statue; //11 目標狀態 0:init 1:fail 2:complete
 
     public int getStatue() {
         return statue;

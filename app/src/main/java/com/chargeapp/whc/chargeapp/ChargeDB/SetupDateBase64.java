@@ -258,8 +258,8 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
         StringBuilder jsonIn = new StringBuilder();
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setReadTimeout(5000);
-            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(1000);
+            conn.setConnectTimeout(1000);
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);

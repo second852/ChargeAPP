@@ -91,7 +91,7 @@ public class InsertSpend extends Fragment {
     private List<BootstrapText> BsTextDay, BsTextWeek, BsTextMonth, BsTextStatue;
     private int statueNumber;
     private String resultStatue, resultDay;
-    public static boolean returnCM;
+
 
 
     @Override
@@ -110,7 +110,7 @@ public class InsertSpend extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         TypefaceProvider.registerDefaultIconSets();
         View view = inflater.inflate(R.layout.insert_spend, container, false);
-        showOnlyQRCodeToast();
+//        showOnlyQRCodeToast();
         Common.setChargeDB(context);
         findviewByid(view);
         if (consumeVO == null) {
@@ -123,16 +123,16 @@ public class InsertSpend extends Fragment {
         return view;
     }
 
-    private void showOnlyQRCodeToast() {
-        if (returnCM) {
-            if (BarcodeGraphic.hashMap.get(1) != null) {
-               Common.showToast(context,"明細無法辨識，需要自行輸入!");
-            } else if (BarcodeGraphic.hashMap.get(2) != null) {
-                Common.showToast(context,"部分明細可辨識，其他項目需要自行輸入!");
-            }
-            returnCM=false;
-        }
-    }
+//    private void showOnlyQRCodeToast() {
+//        if (returnCM) {
+//            if (BarcodeGraphic.hashMap.get(1) != null) {
+//               Common.showToast(context,"明細無法辨識，需要自行輸入!");
+//            } else if (BarcodeGraphic.hashMap.get(2) != null) {
+//                Common.showToast(context,"部分明細可辨識，其他項目需要自行輸入!");
+//            }
+//            returnCM=false;
+//        }
+//    }
 
     private void setSpinner() {
         choiceStatue.setDropdownData(Common.DateStatueSetSpinner);

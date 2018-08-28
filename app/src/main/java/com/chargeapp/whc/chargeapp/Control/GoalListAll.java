@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
@@ -40,6 +41,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_STAR;
 
 
 /**
@@ -78,7 +81,7 @@ public class GoalListAll extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        firstShow=true;
+        firstShow = true;
         context.setTitle(R.string.text_Goal);
         final View view = inflater.inflate(R.layout.goal_list, container, false);
         adView = view.findViewById(R.id.adView);
@@ -119,7 +122,6 @@ public class GoalListAll extends Fragment {
         } else {
             message.setVisibility(View.GONE);
         }
-
 
 
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
@@ -175,14 +177,14 @@ public class GoalListAll extends Fragment {
             BootstrapButton update = itemView.findViewById(R.id.updateD);
             BootstrapButton deleteI = itemView.findViewById(R.id.deleteI);
 
-            AwesomeTextView resultG=itemView.findViewById(R.id.resultG);
-            AwesomeTextView notifyG=itemView.findViewById(R.id.notifyG);
+            AwesomeTextView resultG = itemView.findViewById(R.id.resultG);
+            AwesomeTextView notifyG = itemView.findViewById(R.id.notifyG);
 
             fixL.setVisibility(View.VISIBLE);
             title.setText(goalVO.getName());
 
             //設定敘述和檢驗目標
-            int serial = 1,totalI=0,totalC=0,totalB=0,amount=0;
+            int serial = 1, totalI = 0, totalC = 0, totalB = 0, amount = 0;
             StringBuffer sb = new StringBuffer();
             StringBuffer sbResult = new StringBuffer();
             String timeDec = goalVO.getTimeStatue().trim();
@@ -192,137 +194,151 @@ public class GoalListAll extends Fragment {
                 sb.append("  " + serial + ".起日 : " + Common.sTwo.format(goalVO.getStartTime()).trim() +
                         "\n     迄日 : " + Common.sTwo.format(goalVO.getEndTime()).trim() + "\n");
                 serial++;
-                sb.append("  " + serial + "." + goalVO.getType().trim() + " : " + goalVO.getMoney() + " 元\n");
+                sb.append("  " + serial + "." + goalVO.getType().trim() + " : " + goalVO.getMoney() + " 元");
                 serial++;
+
                 //描述成果
                 totalI = invoiceDB.getTotalBytime(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
                 totalC = consumeDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
                 totalB = bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
                 amount = totalB - totalC - totalI;
-                Calendar today=Calendar.getInstance();
-                Calendar endDay=new GregorianCalendar();
+                Calendar today = Calendar.getInstance();
+                Calendar endDay = new GregorianCalendar();
                 endDay.setTime(goalVO.getEndTime());
 
                 if (amount > Integer.valueOf(goalVO.getMoney())) {
-                    //設定為完成
-                    goalVO.setStatue(2);
+
+
                     //彈跳視窗 顯示可以
-                    if(firstShow)
-                    {
+                    if (firstShow&&goalVO.getStatue()==0) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         builder.setTitle("任務完成")
-                                .setMessage("恭喜完成"+" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元")
-                                .setPositiveButton("OK",  new DialogInterface.OnClickListener() {
+                                .setMessage("恭喜完成" + " 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.dismiss();
                                     }
-                                } )
+                                })
                                 .setIcon(R.drawable.ic_thumb_up)
                                 .show();
-                        firstShow=false;
+                        firstShow = false;
+                        //設定為完成
+                        goalVO.setStatue(2);
+                        goalVO.setNotify(false);
+                        goalDB.update(goalVO);
                     }
 
-                    sbResult.append("  " + serial + ".成功: 儲蓄 "+amount+" 元\n");
+                    sbResult.append("  " + serial + ".成功 : 儲蓄 " + amount + " 元");
+                    resultG.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                     serial++;
                 } else {
-                    if (today.get(Calendar.YEAR)>=endDay.get(Calendar.YEAR)||today.get(Calendar.MONTH)>=endDay.get(Calendar.MONTH)||today.get(Calendar.DAY_OF_MONTH)>=endDay.get(Calendar.DAY_OF_MONTH)) {
-
-                        //設定狀態未完成
-                        goalVO.setStatue(1);
+                    if (today.get(Calendar.YEAR) >= endDay.get(Calendar.YEAR) && today.get(Calendar.MONTH) >= endDay.get(Calendar.MONTH) && today.get(Calendar.DAY_OF_MONTH) >= endDay.get(Calendar.DAY_OF_MONTH)) {
 
                         //彈跳視窗 提醒未完成
-                        if(firstShow)
-                        {
+                        if (firstShow&&goalVO.getStatue()==0) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setTitle("任務未完成!")
-                                    .setMessage("未完成"+" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元!")
-                                    .setPositiveButton("OK",  new DialogInterface.OnClickListener() {
+                                    .setMessage("未完成" + " 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元!")
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.dismiss();
                                         }
-                                    } )
+                                    })
                                     .setIcon(R.drawable.warning)
                                     .show();
-                            firstShow=false;
+                            firstShow = false;
+                            //設定狀態未完成
+                            goalVO.setStatue(1);
+                            goalVO.setNotify(false);
+                            goalDB.update(goalVO);
                         }
-
-
-                        sb.append("  " + serial + ".:"+(goalVO.getMoney()-amount)+" 元\n");
+                        sbResult.append("  " + serial + ".失敗 : 儲蓄" + amount + " 元\n     還缺 : "+(goalVO.getMoney()-amount)+" 元");
+                        resultG.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         serial++;
+                    }else{
+                        sbResult.append("  " + serial + ".目前 : 儲蓄" + amount + " 元\n     還缺 : "+(goalVO.getMoney()-amount)+" 元");
+                        int dayR= (int) ((goalVO.getEndTime().getTime()-today.getTimeInMillis())/(1000*60*60*24));
+                        sbResult.append("\n     倒數 : "+dayR+" 天");
+                        resultG.setBootstrapBrand(null);
+                        resultG.setTextColor(Color.BLACK);
                     }
                 }
-                goalDB.update(goalVO);
+                if (goalVO.getStatue() == 0) {
+                    goalSaveComplete++;
+                }
             } else {
+
+
                 sb.append("  " + serial + ".時間 : ");
-                sb.append( timeDec + goalVO.getType().trim() + " " + goalVO.getMoney() + " 元\n");
+                sb.append(timeDec + goalVO.getType().trim() + " " + goalVO.getMoney() + " 元");
                 serial++;
 
-                Calendar start=null,end=null;
-                if(goalVO.getType().trim().equals("支出"))
-                {
+                Calendar start = null, end = null;
+                if (goalVO.getType().trim().equals("支出")) {
                     goalConsumeComplete = false;
-                    Calendar cal=Calendar.getInstance();
-                    switch (timeDec){
-                       case "每天":
-                           sb.append("  "+serial+" .日花費 :");
-                           start=new GregorianCalendar(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH),0,0,0);
-                           end=new GregorianCalendar(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH),23,59,59);
-                           break;
+                    Calendar cal = Calendar.getInstance();
+                    switch (timeDec) {
+                        case "每天":
+                            sbResult.append("今日花費");
+                            start = new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+                            end = new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+                            break;
                         case "每周":
-                            sb.append(" "+serial+" . 目前本周花費 :");
-                            int sunday=cal.get(Calendar.DAY_OF_WEEK);
-                            start=new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), (cal.get(Calendar.DAY_OF_MONTH)-sunday+1),0,0,0);
-                            end=new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), (cal.get(Calendar.DAY_OF_MONTH)-sunday+8),23,59,59);
+                            sbResult.append("本周花費");
+                            int sunday = cal.get(Calendar.DAY_OF_WEEK);
+                            start = new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), (cal.get(Calendar.DAY_OF_MONTH) - sunday + 1), 0, 0, 0);
+                            end = new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), (cal.get(Calendar.DAY_OF_MONTH) - sunday + 8), 23, 59, 59);
                             break;
                         case "每月":
-                            sb.append(" "+serial+" . 目前本月花費 :");
-                            start=new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), 1,0,0,0);
-                            end=new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
+                            sbResult.append("本月花費");
+                            start = new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), 1, 0, 0, 0);
+                            end = new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
                             break;
                         case "每年":
-                            sb.append(" "+serial+" . 目前今年花費 :");
-                            start=new GregorianCalendar(cal.get(Calendar.YEAR), 0, 1,0,0,0);
-                            end=new GregorianCalendar(cal.get(Calendar.YEAR), 11, 31,23,59,59);
+                            sbResult.append("今年花費");
+                            start = new GregorianCalendar(cal.get(Calendar.YEAR), 0, 1, 0, 0, 0);
+                            end = new GregorianCalendar(cal.get(Calendar.YEAR), 11, 31, 23, 59, 59);
                             break;
                     }
-                    if(start!=null&&end!=null)
-                    {
+                    if (start != null && end != null) {
                         totalI = invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
                         totalC = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                        sb.append(" "+(totalI+totalC)+" 元");
-                        if(goalVO.getMoney()>(totalI+totalC))
-                        {
-                            sb.append(" 成功 !");
-                        }else{
-                            sb.append(" 失敗 !");
+                        sbResult.append(" " + (totalI + totalC) + " 元");
+                        if (goalVO.getMoney() > (totalI + totalC)) {
+                            sbResult.insert(0, "  " + serial + ".成功 : ");
+                            resultG.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
+                        } else {
+                            sbResult.insert(0, "  " + serial + ".失敗 : ");
+                            resultG.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         }
                     }
 
-                }else {
-                    Calendar cal=Calendar.getInstance();
-                    switch (timeDec){
+                } else {
+                    Calendar cal = Calendar.getInstance();
+                    switch (timeDec) {
                         case "每月":
-                            sb.append(" "+serial+" . 目前本月儲蓄 :");
-                            start=new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), 1,0,0,0);
-                            end=new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59);
+                            sbResult.append("本月儲蓄");
+                            start = new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), 1, 0, 0, 0);
+                            end = new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
                             break;
                         case "每年":
-                            sb.append(" "+serial+" . 目前今年儲蓄 :");
-                            start=new GregorianCalendar(cal.get(Calendar.YEAR), 0, 1,0,0,0);
-                            end=new GregorianCalendar(cal.get(Calendar.YEAR), 11, 31,23,59,59);
+                            sbResult.append("今年儲蓄");
+                            start = new GregorianCalendar(cal.get(Calendar.YEAR), 0, 1, 0, 0, 0);
+                            end = new GregorianCalendar(cal.get(Calendar.YEAR), 11, 31, 23, 59, 59);
                             break;
                     }
-                    if(start!=null&&end!=null)
-                    {
+                    if (start != null && end != null) {
                         totalI = invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
                         totalC = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                        totalB= bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                        sb.append(" "+(totalB-totalI-totalC)+" 元");
-                        if(goalVO.getMoney()<(totalB-totalI-totalC))
-                        {
-                            sb.append(" 成功 !");
-                        }else{
-                            sb.append(" 失敗 !");
+                        totalB = bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+                        sbResult.append(" " + (totalB - totalI - totalC) + " 元");
+                        if (goalVO.getMoney() < (totalB - totalI - totalC)) {
+                            sbResult.insert(0, "  " + serial + ".成功 : ");
+                            resultG.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
+                        } else {
+                            sbResult.insert(0, "  " + serial + ".未完成 : ");
+                            resultG.setBootstrapBrand(null);
+                            resultG.setTextColor(Color.BLACK);
                         }
                     }
                     if (goalVO.getStatue() == 0) {
@@ -331,16 +347,36 @@ public class GoalListAll extends Fragment {
                 }
             }
 
+            //result
+            if(sbResult.length()>0)
+            {
+                resultG.setBootstrapText(new BootstrapText.Builder(context)
+                        .addText(sbResult.toString())
+                        .build());
+            }else{
+                resultG.setText(null);
+            }
 
+
+            //notify
+            StringBuilder nbNotify = new StringBuilder();
             if (goalVO.isNotify()) {
                 serial++;
-                sb.append("\n  " + serial + ".提醒 : " + goalVO.getNotifyStatue().trim()).append(" " + goalVO.getNotifyDate());
+                nbNotify.append("  " + serial + ".提醒 : " + goalVO.getNotifyStatue().trim()).append(" " + goalVO.getNotifyDate());
                 if (goalVO.isNoWeekend() && goalVO.getNotifyStatue().trim().equals("每天")) {
-                    sb.append("假日除外");
+                    nbNotify.append("假日除外");
                 }
                 remindL.setVisibility(View.VISIBLE);
             } else {
                 remindL.setVisibility(View.GONE);
+            }
+            if (nbNotify.length() > 0) {
+                notifyG.setBootstrapText(new BootstrapText.Builder(context)
+                        .addText(nbNotify.toString())
+                        .build());
+                notifyG.setTextColor(Color.BLACK);
+            } else {
+                notifyG.setText(null);
             }
 
 
@@ -390,17 +426,19 @@ public class GoalListAll extends Fragment {
                 }
             });
 
-            if (goalConsumeComplete) {
-                addGoal.setVisibility(View.VISIBLE);
-                addGoal.setOnClickListener(new addNewGoalClick());
-            } else if (goalSaveComplete == 0) {
-                addGoal.setVisibility(View.VISIBLE);
-                addGoal.setOnClickListener(new addNewGoalClick());
-            } else {
-                addGoal.setVisibility(View.GONE);
-                addGoal.setOnClickListener(null);
+            if(position==(goalVOS.size()-1))
+            {
+                if (goalConsumeComplete) {
+                    addGoal.setVisibility(View.VISIBLE);
+                    addGoal.setOnClickListener(new addNewGoalClick());
+                } else if (goalSaveComplete == 0) {
+                    addGoal.setVisibility(View.VISIBLE);
+                    addGoal.setOnClickListener(new addNewGoalClick());
+                } else {
+                    addGoal.setVisibility(View.GONE);
+                    addGoal.setOnClickListener(null);
+                }
             }
-
             return itemView;
         }
 

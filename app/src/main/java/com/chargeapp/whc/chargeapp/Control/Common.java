@@ -58,6 +58,7 @@ import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_CHECK
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_MINUS_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_MONEY;
 
 /**
  * Created by Wang on 2017/11/19.
@@ -244,7 +245,20 @@ public class Common {
     //Big5
     @NonNull
     public static String Big5Convert(String result) throws UnsupportedEncodingException {
-        String answer=new String(result.replaceAll("\\s+", "").getBytes("ISO-8859-1"), "Big5");
+        String answer;
+        try {
+            int codeNumber = Common.identify(result.getBytes("ISO-8859-1"));
+            switch (codeNumber) {
+                case 1:
+                    answer =new String(result.replaceAll("\\s+", "").getBytes("ISO-8859-1"), "Big5");
+                    break;
+                default:
+                    answer = result;
+                    break;
+            }
+        } catch (Exception e1) {
+            answer = result;
+        }
         return answer;
     }
 
@@ -357,7 +371,6 @@ public class Common {
                 .build();
         return text;
     }
-
 
 
     public static ArrayList<String> DateStatueSetSpinner()

@@ -99,7 +99,7 @@ public class UpdateSpend extends Fragment {
     private List<BootstrapText> BsTextDay,BsTextWeek,BsTextMonth,BsTextStatue;
     private int statueNumber;
     private String resultStatue,resultDay;
-    private boolean returnCM;
+//    private boolean returnCM;
 
     @Override
     public void onAttach(Context context) {
@@ -153,25 +153,25 @@ public class UpdateSpend extends Fragment {
         }else{
             standard.setVisibility(View.INVISIBLE);
         }
-        showOnlyQRCodeToast();
+//        showOnlyQRCodeToast();
         setUpdate();
         return view;
     }
 
-    private void showOnlyQRCodeToast() {
-        try {
-            returnCM = (boolean) getArguments().getSerializable("returnCM");
-        } catch (Exception e) {
-            returnCM = false;
-        }
-        if (returnCM) {
-            if (BarcodeGraphic.hashMap.get(1) != null) {
-                Common.showToast(context,"明細無法辨識，需要自行輸入!");
-            } else if (BarcodeGraphic.hashMap.get(2) != null) {
-                Common.showToast(context,"部分明細可辨識，其他項目需要自行輸入!");
-            }
-        }
-    }
+//    private void showOnlyQRCodeToast() {
+//        try {
+//            returnCM = (boolean) getArguments().getSerializable("returnCM");
+//        } catch (Exception e) {
+//            returnCM = false;
+//        }
+//        if (returnCM) {
+//            if (BarcodeGraphic.hashMap.get(1) != null) {
+//                Common.showToast(context,"明細無法辨識，需要自行輸入!");
+//            } else if (BarcodeGraphic.hashMap.get(2) != null) {
+//                Common.showToast(context,"部分明細可辨識，其他項目需要自行輸入!");
+//            }
+//        }
+//    }
 
     private void setSpinner() {
         choiceStatue.setDropdownData(Common.DateStatueSetSpinner);

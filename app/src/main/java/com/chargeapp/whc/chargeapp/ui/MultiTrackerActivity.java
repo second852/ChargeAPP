@@ -63,6 +63,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -142,10 +143,10 @@ public final class MultiTrackerActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     if(action.equals("setConsume"))
                     {
-                        if(BarcodeGraphic.hashMap!=null&&BarcodeGraphic.hashMap.size()==1)
-                        {
-                            InsertSpend.returnCM=true;
-                        }
+//                        if(BarcodeGraphic.hashMap!=null&&BarcodeGraphic.hashMap.size()==1)
+//                        {
+//                            InsertSpend.returnCM=true;
+//                        }
                         Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
                         intent.putExtra("action",MultiTrackerActivity.action);
                         MultiTrackerActivity.this.setResult(0,intent);
@@ -154,10 +155,10 @@ public final class MultiTrackerActivity extends AppCompatActivity {
                         Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
                         intent.putExtra("action",MultiTrackerActivity.action);
                         Bundle bundle=getIntent().getBundleExtra("bundle");
-                        if(BarcodeGraphic.hashMap!=null&&BarcodeGraphic.hashMap.size()==1)
-                        {
-                            bundle.putSerializable("returnCM",true);
-                        }
+//                        if(BarcodeGraphic.hashMap!=null&&BarcodeGraphic.hashMap.size()==1)
+//                        {
+//                            bundle.putSerializable("returnCM",true);
+//                        }
                         intent.putExtra("bundle",bundle);
                         MultiTrackerActivity.this.setResult(0,intent);
                         MultiTrackerActivity.this.finish();
@@ -225,7 +226,7 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     private void createCameraSource() {
 
         Context context = getApplicationContext();
-
+        BarcodeGraphic.hashMap=new HashMap<>();
         // A face detector is created to track faces.  An associated multi-processor instance
         // is set to receive the face detection results, track the faces, and maintain graphics for
         // each face on screen.  The factory is used by the multi-processor to create a separate

@@ -87,13 +87,14 @@
         android:gravity="left"
         android:padding="2dp"
         />
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#AAAAAA"
         android:layout_margin="8dp"
         android:layout_below="@+id/listTitle"
         android:layout_toLeftOf="@+id/deleteI"
+        android:orientation="vertical"
         >
         <TextView
             android:layout_width="match_parent"
@@ -105,7 +106,21 @@
             android:layout_alignParentLeft="true"
             android:textSize="20sp"
             />
-    </RelativeLayout>
+        <com.beardedhen.androidbootstrap.AwesomeTextView
+            android:id="@+id/resultG"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:gravity="left"
+            />
+        <com.beardedhen.androidbootstrap.AwesomeTextView
+            android:id="@+id/notifyG"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:gravity="left"
+            />
+    </LinearLayout>
 
     <com.beardedhen.androidbootstrap.BootstrapButton
         android:id="@+id/updateD"

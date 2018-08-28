@@ -77,6 +77,7 @@ public class SearchByQrCode extends Fragment {
     private ImageView rdNumberP;
     private View view;
     private Bundle bundle;
+    private String scan;
 
 
     @Override
@@ -97,8 +98,17 @@ public class SearchByQrCode extends Fragment {
         gson = new Gson();
         context.setTitle("QRCode線上查詢");
         view = inflater.inflate(R.layout.update_qrcode, container, false);
+
+
         findviewByid(view);
         action = (String) getArguments().getSerializable("action");
+
+        try {
+            scan=(String) getArguments().getSerializable("scan");
+        }catch (Exception e)
+        {
+            scan=null;
+        }
         if (action.equals("InsertSpend")) {
             InsertSpend.needSet=true;
             consumeVO = InsertSpend.consumeVO;
@@ -120,7 +130,7 @@ public class SearchByQrCode extends Fragment {
     }
 
     private void setQRcodCon() {
-        if (BarcodeGraphic.hashMap.get(1) != null) {
+        if (BarcodeGraphic.hashMap.get(1) != null&&scan!=null) {
             String[] EleNulAll = BarcodeGraphic.hashMap.get(1).split(":");
             String EleNul = EleNulAll[0].substring(0, 10);
             String day = EleNulAll[0].substring(10, 17);
@@ -132,49 +142,49 @@ public class SearchByQrCode extends Fragment {
             consumeVO.setDate(new Date(calendar.getTimeInMillis()));
             consumeVO.setRdNumber(rdNumber);
         }
-        if (BarcodeGraphic.hashMap.get(2) != null) {
-            String s = BarcodeGraphic.hashMap.get(2);
-            String result = "";
-            if (s.indexOf(":") == -1) {
-                try {
-                    byte[] bytes = Base64.decode(s, Base64.DEFAULT);
-                    result = new String(bytes, "UTF-8");
-                } catch (Exception e) {
-                    result = "";
-                }
-            } else {
-                try {
-                    int codeNumber=Common.identify(s.getBytes("ISO-8859-1"));
-                    switch (codeNumber){
-                        case 1:
-                            result= new String(s.getBytes("ISO-8859-1"), "Big5");
-                            break;
-                        case 2:
-                            result=s;
-                            break;
-                    }
-                } catch (Exception e1) {
-                    result = "";
-                }
-            }
-            StringBuffer sb = new StringBuffer();
-            if (result.trim().length() > 0) {
-                String[] ddd = result.trim().split(":");
-                ArrayList<String> answer = new ArrayList<>();
-                Double total, price, amount;
-                for (String string : ddd) {
-                    answer.add(string.replaceAll("\\s+", ""));
-                    if (answer.size() == 3) {
-                        price = Double.valueOf(Common.onlyNumber(answer.get(2)));
-                        amount = Double.valueOf(Common.onlyNumber(answer.get(1)));
-                        total = price * amount;
-                        sb.append(answer.get(0) + " :\n").append(answer.get(2) + " X ").append(answer.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
-                        answer.clear();
-                    }
-                }
-                consumeVO.setDetailname(sb.toString());
-            }
-        }
+//        if (BarcodeGraphic.hashMap.get(2) != null) {
+//            String s = BarcodeGraphic.hashMap.get(2);
+//            String result = "";
+//            if (s.indexOf(":") == -1) {
+//                try {
+//                    byte[] bytes = Base64.decode(s, Base64.DEFAULT);
+//                    result = new String(bytes, "UTF-8");
+//                } catch (Exception e) {
+//                    result = "";
+//                }
+//            } else {
+//                try {
+//                    int codeNumber=Common.identify(s.getBytes("ISO-8859-1"));
+//                    switch (codeNumber){
+//                        case 1:
+//                            result= new String(s.getBytes("ISO-8859-1"), "Big5");
+//                            break;
+//                        case 2:
+//                            result=s;
+//                            break;
+//                    }
+//                } catch (Exception e1) {
+//                    result = "";
+//                }
+//            }
+//            StringBuffer sb = new StringBuffer();
+//            if (result.trim().length() > 0) {
+//                String[] ddd = result.trim().split(":");
+//                ArrayList<String> answer = new ArrayList<>();
+//                Double total, price, amount;
+//                for (String string : ddd) {
+//                    answer.add(string.replaceAll("\\s+", ""));
+//                    if (answer.size() == 3) {
+//                        price = Double.valueOf(Common.onlyNumber(answer.get(2)));
+//                        amount = Double.valueOf(Common.onlyNumber(answer.get(1)));
+//                        total = price * amount;
+//                        sb.append(answer.get(0) + " :\n").append(answer.get(2) + " X ").append(answer.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
+//                        answer.clear();
+//                    }
+//                }
+//                consumeVO.setDetailname(sb.toString());
+//            }
+//        }
         if(consumeVO!=null)
         {
             MainActivity.bundles.getLast().putSerializable("consumeVO",consumeVO);

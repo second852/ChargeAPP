@@ -16,11 +16,14 @@
 package com.chargeapp.whc.chargeapp.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -148,7 +151,13 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             if (mBarcode.rawValue.indexOf(":") != -1 && (!(mBarcode.rawValue.indexOf("**") == 0))) {
                 hashMap.put(1, barcode.rawValue);
                 try {
-                    result=new SetupDateBase64(this).execute("getNetDetail").get();
+                    ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+                    if (mNetworkInfo != null) {
+                        result=new SetupDateBase64(this).execute("getNetDetail").get();
+                    }else {
+                        result=null;
+                    }
                 } catch (Exception e) {
                     result=null;
                 }

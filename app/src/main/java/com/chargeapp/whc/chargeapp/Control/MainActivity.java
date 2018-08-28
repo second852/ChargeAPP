@@ -517,6 +517,7 @@ public class MainActivity extends AppCompatActivity {
                 switchFragment(fragment);
             } else if (a.equals("setConsume")) {
                 if (resultCode == 9) {
+                    data.putExtra("scan","true");
                     searchQRCode(data);
                 } else {
                     setConsume();
@@ -524,6 +525,7 @@ public class MainActivity extends AppCompatActivity {
 
             } else if (a.equals("UpdateSpend")) {
                 if (resultCode == 9) {
+                    data.putExtra("scan","true");
                     searchQRCode(data);
                 } else {
                     setUpdateConsume(data);
@@ -553,6 +555,7 @@ public class MainActivity extends AppCompatActivity {
             InsertSpend.consumeVO=QRCodeNetResult(BarcodeGraphic.result,InsertSpend.consumeVO);
             if(InsertSpend.consumeVO.getDetailname()!=null&&BarcodeGraphic.hashMap.get(1)!=null)
             {
+
                 InsertSpend.needSet = true;
                 String eleOne = BarcodeGraphic.hashMap.get(1).trim();
                 String[] eleOneS = eleOne.trim().split(":");
@@ -638,76 +641,82 @@ public class MainActivity extends AppCompatActivity {
         } else {
             InsertSpend.consumeVO = setQRcodCon(InsertSpend.consumeVO);
         }
-        InsertSpend.needSet = true;
         Fragment fragment = new InsertActivity();
         switchFragment(fragment);
     }
 
     private ConsumeVO setQRcodCon(ConsumeVO consumeVO) {
         if (BarcodeGraphic.hashMap.get(1) != null) {
-            String[] EleNulAll = BarcodeGraphic.hashMap.get(1).split(":");
-            String EleNul = EleNulAll[0].substring(0, 10);
-            String day = EleNulAll[0].substring(10, 17);
-            String m = EleNulAll[0].substring(29, 37);
-            String rdNumber = EleNulAll[0].substring(17, 21);
-            Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
-            consumeVO.setMoney(Integer.parseInt(m, 16));
-            consumeVO.setNumber(EleNul);
-            consumeVO.setDate(new Date(calendar.getTimeInMillis()));
-            consumeVO.setRdNumber(rdNumber);
-            consumeVO.setMaintype("O");
-            consumeVO.setSecondType("O");
-        }
-        if (BarcodeGraphic.hashMap.get(2) != null) {
-            String s = BarcodeGraphic.hashMap.get(2);
-            String result = "";
-            if (s.indexOf(":") == -1) {
-                try {
-                    byte[] bytes = Base64.decode(s, Base64.DEFAULT);
-                    result = new String(bytes, "UTF-8");
-                } catch (Exception e) {
-                    result = "";
-                }
-            } else {
-                try {
-                    int codeNumber = Common.identify(s.getBytes("ISO-8859-1"));
-                    switch (codeNumber) {
-                        case 1:
-                            result = new String(s.getBytes("ISO-8859-1"), "Big5");
-                            break;
-                        case 2:
-                            result = s;
-                            break;
-                    }
-                } catch (Exception e1) {
-                    result = "";
-                }
+            try {
+                InsertSpend.needSet = true;
+                String[] EleNulAll = BarcodeGraphic.hashMap.get(1).split(":");
+                String EleNul = EleNulAll[0].substring(0, 10);
+                String day = EleNulAll[0].substring(10, 17);
+                String m = EleNulAll[0].substring(29, 37);
+                String rdNumber = EleNulAll[0].substring(17, 21);
+                Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
+                consumeVO.setMoney(Integer.parseInt(m, 16));
+                consumeVO.setNumber(EleNul);
+                consumeVO.setDate(new Date(calendar.getTimeInMillis()));
+                consumeVO.setRdNumber(rdNumber);
+                consumeVO.setMaintype("O");
+                consumeVO.setSecondType("O");
+            }catch (Exception e)
+            {
+                InsertSpend.needSet = false;
             }
-            StringBuffer sb = new StringBuffer();
-            if (result.trim().length() > 0) {
-                String[] ddd = result.trim().split(":");
-                ArrayList<String> answer = new ArrayList<>();
-                Double total, price, amount;
-                for (String string : ddd) {
-                    answer.add(string.replaceAll("\\s+", ""));
-                    if (answer.size() == 3) {
-                        price = Double.valueOf(Common.onlyNumber(answer.get(2)));
-                        amount = Double.valueOf(Common.onlyNumber(answer.get(1)));
-                        total = price * amount;
-                        sb.append(answer.get(0) + " :\n").append(answer.get(2) + " X ").append(answer.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
-                        answer.clear();
-                    }
-                }
-                if (sb.length() > 0) {
-                    consumeVO.setDetailname(sb.toString());
-                    consumeVO = getType(consumeVO);
-                } else {
-                    consumeVO.setDetailname(sb.toString());
-                    consumeVO.setMaintype("O");
-                    consumeVO.setSecondType("O");
-                }
-            }
+
         }
+//        if (BarcodeGraphic.hashMap.get(2) != null) {
+//            String s = BarcodeGraphic.hashMap.get(2);
+//            String result = "";
+//            if (s.indexOf(":") == -1) {
+//                try {
+//                    byte[] bytes = Base64.decode(s, Base64.DEFAULT);
+//                    result = new String(bytes, "UTF-8");
+//                } catch (Exception e) {
+//                    result = "";
+//                }
+//            } else {
+//                try {
+//                    int codeNumber = Common.identify(s.getBytes("ISO-8859-1"));
+//                    switch (codeNumber) {
+//                        case 1:
+//                            result = new String(s.getBytes("ISO-8859-1"), "Big5");
+//                            break;
+//                        case 2:
+//                            result = s;
+//                            break;
+//                    }
+//                } catch (Exception e1) {
+//                    result = "";
+//                }
+//            }
+//            StringBuffer sb = new StringBuffer();
+//            if (result.trim().length() > 0) {
+//                String[] ddd = result.trim().split(":");
+//                ArrayList<String> answer = new ArrayList<>();
+//                Double total, price, amount;
+//                for (String string : ddd) {
+//                    answer.add(string.replaceAll("\\s+", ""));
+//                    if (answer.size() == 3) {
+//                        price = Double.valueOf(Common.onlyNumber(answer.get(2)));
+//                        amount = Double.valueOf(Common.onlyNumber(answer.get(1)));
+//                        total = price * amount;
+//                        sb.append(answer.get(0) + " :\n").append(answer.get(2) + " X ").append(answer.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
+//                        answer.clear();
+//                    }
+//                }
+//                if (sb.length() > 0) {
+//                    consumeVO.setDetailname(sb.toString());
+//                    consumeVO = getType(consumeVO);
+//                } else {
+//                    consumeVO.setDetailname(sb.toString());
+//                    consumeVO.setMaintype("O");
+//                    consumeVO.setSecondType("O");
+//                }
+//            }
+//        }
         return consumeVO;
     }
 
