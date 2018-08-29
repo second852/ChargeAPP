@@ -1,5 +1,7 @@
 package com.chargeapp.whc.chargeapp.Model;
 
+import java.util.Objects;
+
 /**
  * Created by Wang on 2018/3/25.
  */
@@ -17,6 +19,11 @@ public class ElePeriod {
         this.month = month;
         this.carNul = carNul;
         this.download = download;
+    }
+
+    public ElePeriod(int year, int month) {
+        this.year = year;
+        this.month = month;
     }
 
     public ElePeriod() {}
@@ -59,5 +66,21 @@ public class ElePeriod {
 
     public void setDownload(boolean download) {
         this.download = download;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ElePeriod elePeriod = (ElePeriod) o;
+        return year == elePeriod.year &&
+                month == elePeriod.month;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(year, month);
     }
 }

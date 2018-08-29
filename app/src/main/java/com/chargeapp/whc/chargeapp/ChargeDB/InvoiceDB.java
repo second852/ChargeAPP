@@ -62,7 +62,7 @@ public class InvoiceDB {
 
     public List<InvoiceVO> getCarrierDoAll(String carrrier) {
         long showtime=getStartTime();
-        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and invDonatable = 'true' and donateMark = 'true'  and time >='"+showtime+"' order by time desc;";
+        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and invDonatable = 'true' and donateMark = '0'  and time >='"+showtime+"' order by time desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
@@ -94,6 +94,41 @@ public class InvoiceDB {
         cursor.close();
         return invoiceVOSList;
     }
+
+    public List<InvoiceVO> getErrorDonateMark(String carrrier) {
+        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"'and donateMark = 'true' or donateMark = 'false' order by time ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<InvoiceVO> invoiceVOSList = new ArrayList<>();
+        InvoiceVO invoiceVO;
+        while (cursor.moveToNext()) {
+            invoiceVO=new InvoiceVO();
+            invoiceVO.setId(cursor.getInt(0));
+            invoiceVO.setInvNum(cursor.getString(1));
+            invoiceVO.setCardType(cursor.getString(2));
+            invoiceVO.setCardNo(cursor.getString(3));
+            invoiceVO.setCardEncrypt(cursor.getString(4));
+            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
+            invoiceVO.setAmount(cursor.getInt(6));
+            invoiceVO.setDetail(cursor.getString(7));
+            invoiceVO.setSellerName(cursor.getString(8));
+            invoiceVO.setInvDonatable(cursor.getString(9));
+            invoiceVO.setDonateMark(cursor.getString(10));
+            invoiceVO.setCarrier(cursor.getString(11));
+            invoiceVO.setMaintype(cursor.getString(12));
+            invoiceVO.setSecondtype(cursor.getString(13));
+            invoiceVO.setHeartyteam(cursor.getString(14));
+            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
+            invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVOSList.add(invoiceVO);
+        }
+        cursor.close();
+        return invoiceVOSList;
+    }
+
 
     public List<InvoiceVO> getNoDetailAll() {
         String sql = "SELECT * FROM INVOICE  where detail = '0' order by time desc;";
@@ -169,7 +204,7 @@ public class InvoiceDB {
 
 
     public List<InvoiceVO> getWinIn(long startTime,long endTime) {
-        String sql = "SELECT * FROM INVOICE  where iswin != 'N' and heartyteam is null and time >= '"+startTime+"' and time <'"+endTime+"' order by time desc;";
+        String sql = "SELECT * FROM INVOICE  where iswin != 'N' and donateMark = '0' and time >= '"+startTime+"' and time <'"+endTime+"' order by time desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
@@ -239,7 +274,7 @@ public class InvoiceDB {
     public long getMinTimeDonate(String carrrier)
     {
         long minTime=0;
-        String sql = "SELECT min(time) FROM INVOICE  where carrier = '"+carrrier+"' and donateMark = 'true' ;";
+        String sql = "SELECT min(time) FROM INVOICE  where carrier = '"+carrrier+"' and donateMark = '1' ;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         if(cursor.moveToNext())
@@ -304,11 +339,8 @@ public class InvoiceDB {
 
 
     public List<InvoiceVO> getisDonated(String carrrier) {
-        long showtime=getMinTimeDonate(carrrier);
-        if(showtime==0) {
-            showtime=getStartTime();
-        }
-        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and donateMark='false' and invDonatable = 'false' and time >='"+showtime+"'order by donateTime desc;";
+
+        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and donateMark='1' and invDonatable = 'false' order by donateTime desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
@@ -627,6 +659,39 @@ public class InvoiceDB {
         return invoiceVO;
     }
 
+    public InvoiceVO findOldByNulAmount(String nul,int amount) {
+        String sql = "SELECT * FROM INVOICE  where "+
+                "invNum = '"+nul+"' and amount = '"+amount+"';";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        InvoiceVO invoiceVO=null;
+        if (cursor.moveToNext()) {
+            invoiceVO=new InvoiceVO();
+            invoiceVO.setId(cursor.getInt(0));
+            invoiceVO.setInvNum(cursor.getString(1));
+            invoiceVO.setCardType(cursor.getString(2));
+            invoiceVO.setCardNo(cursor.getString(3));
+            invoiceVO.setCardEncrypt(cursor.getString(4));
+            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
+            invoiceVO.setAmount(cursor.getInt(6));
+            invoiceVO.setDetail(cursor.getString(7));
+            invoiceVO.setSellerName(cursor.getString(8));
+            invoiceVO.setInvDonatable(cursor.getString(9));
+            invoiceVO.setDonateMark(cursor.getString(10));
+            invoiceVO.setCarrier(cursor.getString(11));
+            invoiceVO.setMaintype(cursor.getString(12));
+            invoiceVO.setSecondtype(cursor.getString(13));
+            invoiceVO.setHeartyteam(cursor.getString(14));
+            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
+            invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
+        }
+        cursor.close();
+        return invoiceVO;
+    }
+
 
     public List<ChartEntry> getInvoiceBytimeMaxType(Timestamp start, Timestamp end) {
         String sql = "SELECT SUM(amount), maintype FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' group by maintype;";
@@ -805,7 +870,7 @@ public class InvoiceDB {
         values.put("detail",invoiceVO.getDetail());
         values.put("sellerName",invoiceVO.getSellerName());
         values.put("invDonatable",invoiceVO.getInvDonatable());
-        values.put("donateMark",invoiceVO.getInvDonatable());
+        values.put("donateMark",invoiceVO.getDonateMark());
         values.put("carrier",invoiceVO.getCarrier());
         values.put("maintype",invoiceVO.getMaintype());
         values.put("secondtype",invoiceVO.getSecondtype());
@@ -833,7 +898,7 @@ public class InvoiceDB {
         values.put("detail",invoiceVO.getDetail());
         values.put("sellerName",invoiceVO.getSellerName());
         values.put("invDonatable",invoiceVO.getInvDonatable());
-        values.put("donateMark",invoiceVO.getInvDonatable());
+        values.put("donateMark",invoiceVO.getDonateMark());
         values.put("carrier",invoiceVO.getCarrier());
         values.put("maintype",invoiceVO.getMaintype());
         values.put("secondtype",invoiceVO.getSecondtype());
@@ -857,7 +922,7 @@ public class InvoiceDB {
         values.put("detail",invoiceVO.getDetail());
         values.put("sellerName",invoiceVO.getSellerName());
         values.put("invDonatable",invoiceVO.getInvDonatable());
-        values.put("donateMark",invoiceVO.getInvDonatable());
+        values.put("donateMark",invoiceVO.getDonateMark());
         values.put("carrier",invoiceVO.getCarrier());
         values.put("maintype",invoiceVO.getMaintype());
         values.put("secondtype",invoiceVO.getSecondtype());

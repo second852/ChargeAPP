@@ -44,6 +44,7 @@ import android.widget.TextView;
 
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
+import com.beardedhen.androidbootstrap.BootstrapDropDown;
 import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
@@ -93,13 +94,14 @@ public class PriceHand extends Fragment {
     private List<PriceVO> priceVOS;
     private HashMap<String, String> levelPrice;
     private RelativeLayout showMi, modelR;
-    private Spinner choiceModel;
+    private BootstrapDropDown choiceModel;
     private SpeechRecognizer speech = null;
     private Intent recognizerIntent;
     private RelativeLayout PIdateL;
     private Activity context;
     private AwesomeTextView awardTitle, awardRemain;
     private int position;
+    private List<BootstrapText> bootstrapTexts;
 
     @Override
     public void onAttach(Context context) {
@@ -140,7 +142,9 @@ public class PriceHand extends Fragment {
         showMi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                choiceModel.setSelection(0);
+                choiceModel.setBootstrapText(bootstrapTexts.get(0));
+                choiceModel.setShowOutline(false);
+                setOneActon();
             }
         });
         return view;
@@ -181,12 +185,19 @@ public class PriceHand extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 6){
+            return;
+        }
         int result = ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO);
         if (result != PackageManager.PERMISSION_GRANTED) {
             Common.showToast(context,"沒有麥克風權限，無法使聲音兌獎!");
-            choiceModel.setSelection(0);
+            choiceModel.setBootstrapText(bootstrapTexts.get(0));
+            choiceModel.setShowOutline(false);
+            setOneActon();
         }else {
-            choiceModel.setSelection(1);
+            choiceModel.setBootstrapText(bootstrapTexts.get(1));
+            choiceModel.setShowOutline(false);
+            setTwoActon();
         }
     }
 
@@ -214,7 +225,9 @@ public class PriceHand extends Fragment {
             };
             DialogInterface.OnClickListener nolistener = new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    choiceModel.setSelection(0);
+                    choiceModel.setBootstrapText(bootstrapTexts.get(0));
+                    choiceModel.setShowOutline(false);
+                    setOneActon();
                 }
             };
             String remain;
@@ -443,83 +456,182 @@ public class PriceHand extends Fragment {
         awardRemain = view.findViewById(R.id.awardRemain);
         modelR = view.findViewById(R.id.modelR);
         awardTitle = view.findViewById(R.id.awardTitle);
-        ArrayList<String> SpinnerItem = new ArrayList<>();
-        SpinnerItem.add("鍵盤");
-        SpinnerItem.add("聲音");
-        SpinnerItem.add("QRCode掃描");
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem);
-        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-        choiceModel.setAdapter(arrayAdapter);
-        choiceModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        String[] SpinnerItem = new String[3];
+        SpinnerItem[0]="鍵盤";
+        SpinnerItem[1]="聲音";
+        SpinnerItem[2]="QRCode掃描";
+
+        bootstrapTexts=new ArrayList<>();
+        for(int i=0;i<SpinnerItem.length;i++)
+        {
+            bootstrapTexts.add(Common.setPriceHandSetBsTest(context, SpinnerItem[i]));
+        }
+
+        choiceModel.setDropdownData(SpinnerItem);
+        choiceModel.setBootstrapText(bootstrapTexts.get(0));
+        choiceModel.setShowOutline(false);
+        setOneActon();
+        choiceModel.setOnDropDownItemClickListener(new BootstrapDropDown.OnDropDownItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(ViewGroup parent, View v, int i) {
                 position=i;
+                choiceModel.setBootstrapText(bootstrapTexts.get(i));
+                choiceModel.setShowOutline(false);
                 if (i == 0) {
-                    donateRL.setVisibility(View.VISIBLE);
-                    showMi.setVisibility(View.GONE);
 
-                    awardTitle.setText(null);
-                    priceTitle.setText(null);
+                    setOneActon();
 
-                    BootstrapText text = new BootstrapText.Builder(context)
-                            .addText("請輸入末三碼 ")
-                            .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
-                            .build();
-                    awardRemain.setText(text);
-                    awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
-
-                    Drawable drawable = getResources().getDrawable(R.drawable.price_button);
-                    inputNul.setBackground(drawable);
-                    inputNul.setTextColor(Color.parseColor("#888888"));
-                    inputNul.setText(null);
-
-                    if (speech != null) {
-                        speech.stopListening();
-                        speech.cancel();
-                        speech.destroy();
-                    }
                 } else if (i == 1) {
-                    awardTitle.setText(null);
-                    priceTitle.setText(null);
-                    BootstrapText text = new BootstrapText.Builder(context)
-                            .addText("請念末三碼 ")
-                            .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
-                            .build();
-                    awardRemain.setText(text);
-                    awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
 
-                    showMi.setVisibility(View.VISIBLE);
-                    donateRL.setVisibility(View.INVISIBLE);
+                    setTwoActon();
 
-                    Drawable drawable = getResources().getDrawable(R.drawable.price_button);
-                    inputNul.setBackground(drawable);
-                    inputNul.setTextColor(Color.parseColor("#888888"));
-                    inputNul.setText(null);
-
-
-                    int rc = ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO);
-                    if (rc != PackageManager.PERMISSION_GRANTED) {
-                        Common.askPermissions(Manifest.permission.RECORD_AUDIO, context,0);
-                    }else {
-                        startListening();
-                    }
 
                 } else if (i == 2) {
-                    Common.showToast(context, "載入資料中");
-                    MultiTrackerActivity.refresh = false;
-                    Intent intent = new Intent(context, MultiTrackerActivity.class);
-                    intent.putExtra("action", "PriceHand");
-                    startActivityForResult(intent, 6);
+
+                    setThreeAction();
+
                 }
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
         });
+//        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem);
+//        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
+//        choiceModel.setAdapter(arrayAdapter);
+//        choiceModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                position=i;
+//                if (i == 0) {
+//                    donateRL.setVisibility(View.VISIBLE);
+//                    showMi.setVisibility(View.GONE);
+//
+//                    awardTitle.setText(null);
+//                    priceTitle.setText(null);
+//
+//                    BootstrapText text = new BootstrapText.Builder(context)
+//                            .addText("請輸入末三碼 ")
+//                            .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
+//                            .build();
+//                    awardRemain.setText(text);
+//                    awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
+//
+//                    Drawable drawable = getResources().getDrawable(R.drawable.price_button);
+//                    inputNul.setBackground(drawable);
+//                    inputNul.setTextColor(Color.parseColor("#888888"));
+//                    inputNul.setText(null);
+//
+//                    if (speech != null) {
+//                        speech.stopListening();
+//                        speech.cancel();
+//                        speech.destroy();
+//                    }
+//                } else if (i == 1) {
+//                    awardTitle.setText(null);
+//                    priceTitle.setText(null);
+//                    BootstrapText text = new BootstrapText.Builder(context)
+//                            .addText("請念末三碼 ")
+//                            .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
+//                            .build();
+//                    awardRemain.setText(text);
+//                    awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
+//
+//                    showMi.setVisibility(View.VISIBLE);
+//                    donateRL.setVisibility(View.INVISIBLE);
+//
+//                    Drawable drawable = getResources().getDrawable(R.drawable.price_button);
+//                    inputNul.setBackground(drawable);
+//                    inputNul.setTextColor(Color.parseColor("#888888"));
+//                    inputNul.setText(null);
+//
+//
+//                    int rc = ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO);
+//                    if (rc != PackageManager.PERMISSION_GRANTED) {
+//                        Common.askPermissions(Manifest.permission.RECORD_AUDIO, context,0);
+//                    }else {
+//                        startListening();
+//                    }
+//
+//                } else if (i == 2) {
+//                    Common.showToast(context, "載入資料中");
+//                    MultiTrackerActivity.refresh = false;
+//                    Intent intent = new Intent(context, MultiTrackerActivity.class);
+//                    intent.putExtra("action", "PriceHand");
+//                    startActivityForResult(intent, 6);
+//                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
     }
 
+    private void setThreeAction() {
+
+        if (speech != null) {
+            speech.stopListening();
+            speech.cancel();
+            speech.destroy();
+        }
+
+        Common.showToast(context, "載入資料中");
+        MultiTrackerActivity.refresh = false;
+        Intent intent = new Intent(context, MultiTrackerActivity.class);
+        intent.putExtra("action", "PriceHand");
+        startActivityForResult(intent, 6);
+    }
+
+    private void setTwoActon() {
+        awardTitle.setText(null);
+        priceTitle.setText(null);
+        BootstrapText text = new BootstrapText.Builder(context)
+                .addText("請念末三碼 ")
+                .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
+                .build();
+        awardRemain.setText(text);
+        awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
+
+        showMi.setVisibility(View.VISIBLE);
+        donateRL.setVisibility(View.INVISIBLE);
+
+        Drawable drawable = getResources().getDrawable(R.drawable.price_button);
+        inputNul.setBackground(drawable);
+        inputNul.setTextColor(Color.parseColor("#888888"));
+        inputNul.setText(null);
+
+        int rc = ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO);
+        if (rc != PackageManager.PERMISSION_GRANTED) {
+            Common.askPermissions(Manifest.permission.RECORD_AUDIO, context,0);
+        }else {
+            startListening();
+        }
+    }
+
+    private void setOneActon() {
+        donateRL.setVisibility(View.VISIBLE);
+        showMi.setVisibility(View.GONE);
+
+        awardTitle.setText(null);
+        priceTitle.setText(null);
+
+        BootstrapText text = new BootstrapText.Builder(context)
+                .addText("請輸入末三碼 ")
+                .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
+                .build();
+        awardRemain.setText(text);
+        awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
+
+        Drawable drawable = getResources().getDrawable(R.drawable.price_button);
+        inputNul.setBackground(drawable);
+        inputNul.setTextColor(Color.parseColor("#888888"));
+        inputNul.setText(null);
+
+        if (speech != null) {
+            speech.stopListening();
+            speech.cancel();
+            speech.destroy();
+        }
+    }
 
 
     private class addMonth implements View.OnClickListener {

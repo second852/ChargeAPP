@@ -71,7 +71,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                    jsonIn=getRemoteData(url,data);
                    if(jsonIn.indexOf("200")!=-1)
                    {
-                       invoiceVO.setDonateMark(String.valueOf(false));
+                       invoiceVO.setDonateMark(String.valueOf(1));
                        invoiceVO.setInvDonatable(String.valueOf(false));
                        invoiceVO.setHeartyteam(EleDonate.teamTitle);
                        invoiceVO.setDonateTime(new Timestamp(System.currentTimeMillis()));

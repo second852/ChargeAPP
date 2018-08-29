@@ -53,8 +53,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private final static String TAG = "GetSQLDate";
@@ -164,7 +166,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 jsonIn = searchHeartyTeam(keyworld);
                 return jsonIn;
             } else if (action.equals("reDownload")) {
-                jsonIn = getUpdateInvoiceDetail(invoiceVO);
+                jsonIn = getInvoiceDetail(invoiceVO);
             }else if (action.equals("checkCarrier")) {
                 user = params[1].toString();
                 password = params[2].toString();
@@ -178,6 +180,41 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             jsonIn = "error";
         }
         return jsonIn;
+    }
+
+    private void updateErrorDonateMarK(Set<ElePeriod> elePeriods,CarrierVO carrierVO) {
+        String jsonIn;
+        for(ElePeriod elePeriod:elePeriods)
+        {
+           try {
+               jsonIn=findMonthHead(elePeriod.getYear(),elePeriod.getMonth(),carrierVO.getCarNul(),carrierVO.getPassword());
+               JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
+               String code = js.get("code").getAsString().trim();
+               if(code.equals("200"))
+               {
+                   Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
+                   String s = js.get("details").toString();
+                   if(s!=null&&s.length()>0)
+                   {
+                       List<JsonObject> jsonObjects = gson.fromJson(s, cdType);
+                       String inNul,donateMark;
+                       int amount;
+                       for(JsonObject jsonObject:jsonObjects)
+                       {
+                            donateMark=jsonObject.get("donateMark").getAsString();
+                            inNul=jsonObject.get("invNum").getAsString();
+                            amount=jsonObject.get("amount").getAsInt();
+                            InvoiceVO invoiceVO=invoiceDB.findOldByNulAmount(inNul,amount);
+                            invoiceVO.setDonateMark(donateMark);
+                            invoiceDB.update(invoiceVO);
+                       }
+                   }
+               }
+           }catch (Exception e)
+           {
+
+           }
+        }
     }
 
     private String updateInvoice() throws IOException {
@@ -205,7 +242,36 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 Common.lostCarrier.add(carrierVO);
                 continue;
             }
-            //找載具最新的月
+
+            //更新errorDonateMark
+            List<InvoiceVO> invoiceVOS=invoiceDB.getErrorDonateMark(carrierVO.getCarNul());
+            if(invoiceVOS.size()>0)
+            {
+                //大於6個月發票 DonateMark=1
+                Calendar nowCal=Calendar.getInstance();
+                nowCal.add(Calendar.MONTH,-6);
+                nowCal.set(Calendar.DAY_OF_WEEK,1);
+                nowCal.set(Calendar.SECOND,0);
+                nowCal.set(Calendar.HOUR_OF_DAY,0);
+                nowCal.set(Calendar.MINUTE,0);
+
+                Set<ElePeriod> elePeriods=new HashSet<>();
+                Calendar period=new GregorianCalendar();
+                for (InvoiceVO invoiceVO:invoiceVOS)
+                {
+                    if(invoiceVO.getTime().getTime()<nowCal.getTimeInMillis())
+                    {
+                        invoiceVO.setDonateMark("99");
+                        invoiceDB.update(invoiceVO);
+                    }else {
+                        period.setTime(new Date(invoiceVO.getTime().getTime()));
+                        elePeriods.add(new ElePeriod(period.get(Calendar.YEAR),period.get(Calendar.MONTH)));
+                    }
+                }
+                updateErrorDonateMarK(elePeriods,carrierVO);
+            }
+
+            //更新載具-找載具最新的月
             Calendar differCal = new GregorianCalendar();
             long maxTime = invoiceDB.findIVByMaxDate(carrierVO.getCarNul());
             long differTime = System.currentTimeMillis() - maxTime;

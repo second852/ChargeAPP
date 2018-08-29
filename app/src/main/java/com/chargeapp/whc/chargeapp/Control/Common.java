@@ -363,6 +363,15 @@ public class Common {
         return text;
     }
 
+    public static BootstrapText setPriceHandSetBsTest(Activity activity,String data)
+    {
+        BootstrapText text = new BootstrapText.Builder(activity)
+                .addText(data+"  ")
+                .addFontAwesomeIcon(FA_CALCULATOR)
+                .build();
+        return text;
+    }
+
     public static BootstrapText setPeriodSelectCBsTest(Activity activity,String data)
     {
         BootstrapText text = new BootstrapText.Builder(activity)

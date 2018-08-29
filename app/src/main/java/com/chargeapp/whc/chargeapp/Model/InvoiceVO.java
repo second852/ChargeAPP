@@ -18,7 +18,7 @@ public class InvoiceVO implements Serializable{
     private int amount;//6電子發票金額
     private String detail;//7電子發票細節
     private String invDonatable;//8電子發票是否捐贈
-    private String donateMark;//9電子發票是否可以捐贈
+    private String donateMark;//9 電子發票是否可以捐贈(0:未 1:有 99:由於前一版 error 前6個月為99)
     private String carrier;//10電子發票手機載具
     private String maintype;//11電子發票消費主種類
     private String secondtype;//12電子發票消費次種類
