@@ -66,13 +66,13 @@ import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_THUMBS_UP;
 public class SelectDeposit extends Fragment {
 
 
-    private TextView PIdateTittle, describeD,describeC,describeI;
+    private TextView PIdateTittle, describeD, describeC, describeI;
     private ImageView PIdateCut, PIdateAdd;
     private String TAG = "SelectDeposit";
     private int month, year;
     private Calendar end;
     private BootstrapDropDown choicePeriod;
-    private LineChart chart_line,chart_consume,chart_income;
+    private LineChart chart_line, chart_consume, chart_income;
     private int Statue = 0, period, Alltotal, Allincome, Allconsume;
     private BankDB bankDB;
     private ConsumeDB consumeDB;
@@ -81,37 +81,34 @@ public class SelectDeposit extends Fragment {
     private RelativeLayout PIdateL;
     private GoalDB goalDB;
     private GoalVO goalVO;
-    private int Max;
-    private  String goalTimeStatue;
     private Activity context;
-    private String pictureT,pictureL,pictureCT,pictureCL,pictureIT,pictureIL;
-    private List<Entry> entries,entriesC,entriesI;
+    private String pictureT, pictureL, pictureCT, pictureCL, pictureIT, pictureIL;
+    private List<Entry> entries, entriesC, entriesI;
     private List<BootstrapText> periodDepoist;
     private AwesomeTextView goalDeposit;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof Activity)
-        {
-            this.context=(Activity) context;
-        }else{
-            this.context=getActivity();
+        if (context instanceof Activity) {
+            this.context = (Activity) context;
+        } else {
+            this.context = getActivity();
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.select_deposit, container, false);
-        Common.setScreen(Common.screenSize,getResources().getDisplayMetrics());
+        Common.setScreen(Common.screenSize, getResources().getDisplayMetrics());
 
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalVO = goalDB.getFindType("儲蓄");
         //setTime
         end = Calendar.getInstance();
         year = end.get(Calendar.YEAR);
-        period=11;
-        month=0;
+        period = 11;
+        month = 0;
 
         //DB
         Common.setChargeDB(context);
@@ -135,45 +132,6 @@ public class SelectDeposit extends Fragment {
         return view;
     }
 
-    private void setGoalVO() {
-        Max=0;
-        if (goalVO != null) {
-            goalTimeStatue = goalVO.getTimeStatue().trim();
-            if (goalTimeStatue.equals("每月")&&Statue==0) {
-                Max = goalVO.getMoney();
-            } else if (goalTimeStatue.equals("每年")&&Statue==1) {
-                Max = goalVO.getMoney();
-            } else if (goalTimeStatue.equals("今日")) {
-                if (System.currentTimeMillis() > goalVO.getEndTime().getTime()) {
-                    Max = 0;
-                    int Itotal = invoiceDB.getTotalBytime(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
-                    int Btotal = bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
-                    int Ctotal = consumeDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
-                    int Alltotal = Btotal - Ctotal - Itotal;
-                    if (Alltotal > goalVO.getMoney()) {
-                        goalVO.setStatue(2);
-                    } else {
-                        goalVO.setStatue(1);
-                    }
-                    goalDB.update(goalVO);
-                    goalVO=null;
-                }
-//                else {
-//                    Calendar start = new GregorianCalendar();
-//                    start.setTime(goalVO.getStartTime());
-//                    Calendar end = new GregorianCalendar();
-//                    end.setTime(goalVO.getEndTime());
-//                    divideY=(end.get(Calendar.YEAR) - start.get(Calendar.YEAR));
-//                    int divideM= (end.get(Calendar.MONTH) - start.get(Calendar.MONTH));
-//                    int divideT=divideY*12+divideM;
-//                    if (divideT == 0) {
-//                        divideT = 1;
-//                    }
-//                    Max = goalVO.getMoney() / divideT;
-//                }
-            }
-        }
-    }
 
     @Override
     public void onStart() {
@@ -192,42 +150,39 @@ public class SelectDeposit extends Fragment {
         Allincome = 0;
         List<Integer> allTotal;
         if (Statue == 0) {
-            setGoalVO();
             for (int i = 0; i <= period; i++) {
                 start = new GregorianCalendar(year, month + i, 01, 0, 0, 0);
                 end = new GregorianCalendar(year, month + i, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
-                allTotal=PerStatue(start, end);
+                allTotal = PerStatue(start, end);
                 entries.add(new Entry(i, allTotal.get(2)));
                 entriesC.add(new Entry(i, allTotal.get(0)));
                 entriesI.add(new Entry(i, allTotal.get(1)));
                 Title = Common.sFour.format(new Date(start.getTimeInMillis()));
                 PIdateL.setVisibility(View.VISIBLE);
             }
-            pictureL=year +"年每月存款";
-            pictureT=year+"年累計存款 : " + Common.nf.format(Alltotal) + "元";
-            pictureCL=year +"年每月花費";
-            pictureCT=year+"年累計花費 : " + Common.nf.format(Allconsume) + "元";
-            pictureIL=year +"年每月收入";
-            pictureIT=year+"年累計收入 : " + Common.nf.format(Allincome) + "元";
+            pictureL = year + "年每月存款";
+            pictureT = year + "年累計存款 : " + Common.nf.format(Alltotal) + "元";
+            pictureCL = year + "年每月花費";
+            pictureCT = year + "年累計花費 : " + Common.nf.format(Allconsume) + "元";
+            pictureIL = year + "年每月收入";
+            pictureIT = year + "年累計收入 : " + Common.nf.format(Allincome) + "元";
         } else {
-            setGoalVO();
-            Max = Max * 12;
             for (int i = 0; i <= period; i++) {
                 start = new GregorianCalendar(year + i, 0, 01, 0, 0, 0);
                 end = new GregorianCalendar(year + i, 11, 31, 23, 59, 59);
-                allTotal=PerStatue(start, end);
+                allTotal = PerStatue(start, end);
                 entries.add(new Entry(i, allTotal.get(2)));
                 entriesC.add(new Entry(i, allTotal.get(0)));
                 entriesI.add(new Entry(i, allTotal.get(1)));
                 Log.d(TAG, i + " : " + Common.sFour.format(new Date(start.getTimeInMillis())));
                 PIdateL.setVisibility(View.GONE);
             }
-            pictureL="每年存款";
-            pictureT="歷年累計存款 : " + Common.nf.format(Alltotal) + "元";
-            pictureCL="每年花費";
-            pictureCT="歷年累計花費 : " + Common.nf.format(Allconsume) + "元";
-            pictureIL="每年收入";
-            pictureIT="歷年累計收入 : " + Common.nf.format(Allincome) + "元";
+            pictureL = "每年存款";
+            pictureT = "歷年累計存款 : " + Common.nf.format(Alltotal) + "元";
+            pictureCL = "每年花費";
+            pictureCT = "歷年累計花費 : " + Common.nf.format(Allconsume) + "元";
+            pictureIL = "每年收入";
+            pictureIT = "歷年累計收入 : " + Common.nf.format(Allincome) + "元";
         }
         //累計存款
         setDeposit();
@@ -271,7 +226,7 @@ public class SelectDeposit extends Fragment {
         Legend l = chart_income.getLegend();
         l.setFormSize(18f);
         l.setTextColor(Color.parseColor("#007bff"));
-        switch (Common.screenSize){
+        switch (Common.screenSize) {
             case xLarge:
                 xAxis.setTextSize(20f);
                 yAxis.setTextSize(20f);
@@ -303,6 +258,7 @@ public class SelectDeposit extends Fragment {
         chart_income.invalidate();
         chart_income.notifyDataSetChanged();
     }
+
     private void setConsume() {
         describeC.setText(pictureCT);
         LineDataSet dataSet = new LineDataSet(entriesC, pictureCL);
@@ -338,7 +294,7 @@ public class SelectDeposit extends Fragment {
         Legend l = chart_consume.getLegend();
         l.setFormSize(18f);
         l.setTextColor(Color.parseColor("#dc3545"));
-        switch (Common.screenSize){
+        switch (Common.screenSize) {
             case xLarge:
                 xAxis.setTextSize(20f);
                 yAxis.setTextSize(20f);
@@ -402,85 +358,123 @@ public class SelectDeposit extends Fragment {
         chart_line.setDescription(Common.getDeescription());
         chart_line.setTouchEnabled(false);
         chart_line.setScaleEnabled(false);
+
+
         if (goalVO != null) {
             YAxis yAxis = chart_line.getAxisLeft();
             yAxis.removeAllLimitLines();
 
-            if(Max!=0)
-            {
-                LimitLine yLimitLine = new LimitLine(Max, "儲蓄目標");
+            if (Statue == 0 && goalVO.getTimeStatue().trim().equals("每月")) {
+                LimitLine yLimitLine = new LimitLine(goalVO.getMoney(), "儲蓄目標");
                 yLimitLine.setLineColor(Color.parseColor("#007bff"));
                 yLimitLine.setTextColor(Color.parseColor("#007bff"));
                 yAxis.addLimitLine(yLimitLine);
-
                 BootstrapText bootstrapText = new BootstrapText.Builder(context)
                         .addFontAwesomeIcon(FA_FLAG)
                         .addText(" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元")
                         .build();
 
                 goalDeposit.setBootstrapText(bootstrapText);
-            }else {
+            } else if (Statue == 1 && goalVO.getTimeStatue().trim().equals("每年")) {
+                LimitLine yLimitLine = new LimitLine(goalVO.getMoney(), "儲蓄目標");
+                yLimitLine.setLineColor(Color.parseColor("#007bff"));
+                yLimitLine.setTextColor(Color.parseColor("#007bff"));
+                yAxis.addLimitLine(yLimitLine);
+                BootstrapText bootstrapText = new BootstrapText.Builder(context)
+                        .addFontAwesomeIcon(FA_FLAG)
+                        .addText(" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元")
+                        .build();
+                goalDeposit.setBootstrapText(bootstrapText);
+            } else {
                 goalDeposit.setText(null);
             }
 
-            if(goalTimeStatue.trim().equals("今日"))
-            {
+            if (goalVO.getTimeStatue().trim().equals("今日") && goalVO.getEndTime().getTime() > System.currentTimeMillis()) {
+
+                //描素目標狀態
+                StringBuilder sb = new StringBuilder();
+
+                int Itotal = invoiceDB.getTotalBytime(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
+                int Btotal = bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
+                int Ctotal = consumeDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
+                int Alltotal = Btotal - Ctotal - Itotal;
+                int differentMoney = goalVO.getMoney() - Alltotal;
 
                 LimitLine xLimitLine;
-                Calendar endGoal =new GregorianCalendar();
+                Calendar endGoal = new GregorianCalendar();
                 endGoal.setTime(goalVO.getEndTime());
-                Calendar nowCalendar=Calendar.getInstance();
-                int divideY=endGoal.get(Calendar.YEAR)-nowCalendar.get(Calendar.YEAR);
-                XAxis xAxis1=chart_line.getXAxis();
+                Calendar startGoal = new GregorianCalendar();
+                startGoal.setTime(goalVO.getStartTime());
+                Calendar nowCalendar = Calendar.getInstance();
+                int divideEndY = endGoal.get(Calendar.YEAR) - nowCalendar.get(Calendar.YEAR);
+                int divideStartY = startGoal.get(Calendar.YEAR) - nowCalendar.get(Calendar.YEAR);
+                XAxis xAxis1 = chart_line.getXAxis();
                 xAxis.removeAllLimitLines();
 
-                long differentT=endGoal.getTimeInMillis()-nowCalendar.getTimeInMillis();
+                //倒數日期
+                long differentT = endGoal.getTimeInMillis() - nowCalendar.getTimeInMillis();
+                int differentDay = (int) (differentT / (1000 * 60 * 60 * 24));
+                sb.append("倒數" + differentDay + "天  ");
 
-                int differentDay= (int) (differentT/(1000*60*60*24))+1;
-
-                int differentMoney=goalVO.getMoney()-Alltotal;
-
-                StringBuilder sb=new StringBuilder();
-
-                sb.append("倒數"+differentDay+"天  ");
 
                 BootstrapText bootstrapText;
-                if(differentMoney<=0)
-                {
+                if (differentMoney <= 0) {
                     sb.append("完成目標 ");
                     bootstrapText = new BootstrapText.Builder(context)
                             .addFontAwesomeIcon(FA_FLAG)
-                            .addText(" 目標 : " + goalVO.getName()  + goalVO.getType() + goalVO.getMoney() + "元\n"+sb.toString()).addFontAwesomeIcon(FA_THUMBS_O_UP)
+                            .addText(" 目標 : " + goalVO.getName() + goalVO.getType() + goalVO.getMoney() + "元\n" + sb.toString()).addFontAwesomeIcon(FA_THUMBS_O_UP)
                             .build();
-                }else {
-                    sb.append("還差"+differentMoney+"元 加油!");
+                } else {
+
+                    sb.append("還差" + differentMoney + "元 加油!");
                     bootstrapText = new BootstrapText.Builder(context)
                             .addFontAwesomeIcon(FA_FLAG)
-                            .addText(" 目標 : " + goalVO.getName()  + goalVO.getType() + goalVO.getMoney() + "元\n"+sb.toString())
+                            .addText(" 目標 : " + goalVO.getName() + goalVO.getType() + goalVO.getMoney() + "元\n" + sb.toString())
                             .build();
                 }
-
-
-
                 goalDeposit.setBootstrapText(bootstrapText);
 
-                if(Statue==0&&divideY==0)
-                {
-                    int month=endGoal.get(Calendar.MONTH);
-                    xLimitLine = new LimitLine(month, "目標時間");
+
+                xAxis1.removeAllLimitLines();
+                //月-終止時間
+                if (Statue == 0 && divideEndY == 0) {
+                    float month = endGoal.get(Calendar.MONTH);
+                    float day =  (float)endGoal.get(Calendar.DAY_OF_MONTH) / endGoal.getActualMaximum(Calendar.DAY_OF_MONTH);
+                    xLimitLine = new LimitLine(month + day, "目標終止時間");
                     xLimitLine.setTextColor(Color.RED);
                     xAxis1.addLimitLine(xLimitLine);
-                }else{
-                    if(divideY>=0)
-                    {
-                        int year=endGoal.get(Calendar.YEAR);
-                        xLimitLine = new LimitLine(year, "目標時間");
-                        xLimitLine.setTextColor(Color.RED);
-                        xAxis1.addLimitLine(xLimitLine);
-                    }
-                 }
+                }
+
+                //月-起始時間
+                if (Statue == 0 && divideStartY == 0) {
+                    //起始時間
+                    float month = startGoal.get(Calendar.MONTH);
+                    float day = (float) startGoal.get(Calendar.DAY_OF_MONTH) / startGoal.getActualMaximum(Calendar.DAY_OF_MONTH);
+                    xLimitLine = new LimitLine(month + day, "目標起始時間");
+                    xLimitLine.setTextColor(Color.RED);
+                    xAxis1.addLimitLine(xLimitLine);
+                }
+                //年-起始時間
+                if (Statue == 1) {
+                    //起始時間
+                    float month = (float) startGoal.get(Calendar.MONTH) / 12;
+                    float year=startGoal.get(Calendar.YEAR)-this.year;
+                    float total=month+year;
+                    xLimitLine = new LimitLine( total, "目標起始時間");
+                    xLimitLine.setTextColor(Color.RED);
+                    xAxis1.addLimitLine(xLimitLine);
+
+                    //終止時間
+                    month = Float.valueOf(endGoal.get(Calendar.MONTH) / 12);
+                    year=endGoal.get(Calendar.YEAR)-this.year;
+                    total=month+year;
+                    xLimitLine = new LimitLine(total, "目標終止時間");
+                    xLimitLine.setTextColor(Color.RED);
+                    xAxis1.addLimitLine(xLimitLine);
+                }
             }
         }
+
 
         YAxis yAxis = chart_line.getAxis(YAxis.AxisDependency.LEFT);
         YAxis yAxis1 = chart_line.getAxis(YAxis.AxisDependency.RIGHT);
@@ -489,7 +483,7 @@ public class SelectDeposit extends Fragment {
         Legend l = chart_line.getLegend();
         l.setFormSize(18f);
         l.setTextColor(Color.parseColor("#28a745"));
-        switch (Common.screenSize){
+        switch (Common.screenSize) {
             case xLarge:
                 xAxis.setTextSize(20f);
                 yAxis.setTextSize(20f);
@@ -538,12 +532,12 @@ public class SelectDeposit extends Fragment {
 
     private List<Integer> PerStatue(Calendar start, Calendar end) {
         int income, comsume, total, invoice;
-        List<Integer> addList=new ArrayList<>();
+        List<Integer> addList = new ArrayList<>();
         income = bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
         comsume = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
         invoice = invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
         total = income - comsume - invoice;
-        addList.add(invoice+comsume);
+        addList.add(invoice + comsume);
         addList.add(income);
         addList.add(total);
 
@@ -561,18 +555,18 @@ public class SelectDeposit extends Fragment {
         chart_line = view.findViewById(R.id.chart_line);
         describeD = view.findViewById(R.id.describeD);
         PIdateL = view.findViewById(R.id.PIdateL);
-        describeC=view.findViewById(R.id.describeC);
-        describeI=view.findViewById(R.id.describeI);
-        chart_consume=view.findViewById(R.id.chart_consume);
-        chart_income=view.findViewById(R.id.chart_income);
-        goalDeposit=view.findViewById(R.id.goalDeposit);
+        describeC = view.findViewById(R.id.describeC);
+        describeI = view.findViewById(R.id.describeI);
+        chart_consume = view.findViewById(R.id.chart_consume);
+        chart_income = view.findViewById(R.id.chart_income);
+        goalDeposit = view.findViewById(R.id.goalDeposit);
 
         String[] SpinnerItem1 = new String[2];
-        SpinnerItem1[0]=" 月 ";
-        SpinnerItem1[1]=" 年 ";
-        periodDepoist=new ArrayList<>();
-        periodDepoist.add(Common.setPeriodSelectCBsTest(context,SpinnerItem1[0]));
-        periodDepoist.add(Common.setPeriodSelectCBsTest(context,SpinnerItem1[1]));
+        SpinnerItem1[0] = " 月 ";
+        SpinnerItem1[1] = " 年 ";
+        periodDepoist = new ArrayList<>();
+        periodDepoist.add(Common.setPeriodSelectCBsTest(context, SpinnerItem1[0]));
+        periodDepoist.add(Common.setPeriodSelectCBsTest(context, SpinnerItem1[1]));
         choicePeriod.setDropdownData(SpinnerItem1);
         choicePeriod.setOnDropDownItemClickListener(new PeriodChoice());
         dataAnalyze();
@@ -638,10 +632,9 @@ public class SelectDeposit extends Fragment {
                 start.setTime(new Date(minTime.get(0)));
                 year = start.get(Calendar.YEAR);
                 period = end.get(Calendar.YEAR) - year;
-                if(period>10)
-                {
-                    period=10;
-                    year=end.get(Calendar.YEAR)-10;
+                if (period > 10) {
+                    period = 10;
+                    year = end.get(Calendar.YEAR) - 10;
                 }
             }
             dataAnalyze();
@@ -684,10 +677,9 @@ public class SelectDeposit extends Fragment {
                 start.setTime(new Date(minTime.get(0)));
                 year = start.get(Calendar.YEAR);
                 period = end.get(Calendar.YEAR) - year;
-                if(period>10)
-                {
-                    period=10;
-                    year=end.get(Calendar.YEAR)-10;
+                if (period > 10) {
+                    period = 10;
+                    year = end.get(Calendar.YEAR) - 10;
                 }
             }
             dataAnalyze();

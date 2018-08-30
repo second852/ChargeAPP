@@ -125,7 +125,7 @@ public class SearchByQrCode extends Fragment {
         }
         setConsume();
         setSetOnClickView();
-        view.setOnClickListener(new choicedateClick());
+        view.setOnClickListener(new closeImage());
         return view;
     }
 

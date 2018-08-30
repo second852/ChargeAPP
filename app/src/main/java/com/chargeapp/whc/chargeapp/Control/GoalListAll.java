@@ -119,6 +119,8 @@ public class GoalListAll extends Fragment {
         if (goalVOS.size() <= 0) {
             message.setText("無目標紀錄!\n 請按右下角圖片新增!");
             message.setVisibility(View.VISIBLE);
+            addGoal.setVisibility(View.VISIBLE);
+            addGoal.setOnClickListener(new addNewGoalClick());
         } else {
             message.setVisibility(View.GONE);
         }
