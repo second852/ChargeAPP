@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -57,7 +58,7 @@ public class GoalListAll extends Fragment {
     private ConsumeDB consumeDB;
     private InvoiceDB invoiceDB;
     private BankDB bankDB;
-    private ImageView addGoal;
+    private FloatingActionButton addGoal;
     private int goalSaveComplete;
     private boolean goalConsumeComplete;
     private TextView message;
