@@ -71,7 +71,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
     private String EleNul;
     private int max;
     public static String result;
-    private String periodNul;
+
 
 
 
@@ -191,10 +191,8 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             }
             if (stringOne!=null) {
                 EleNul = mBarcode.rawValue.substring(0, 10);
-                periodNul=mBarcode.rawValue.substring(10, 17);
                 if(MultiTrackerActivity.oldElu==null||(!MultiTrackerActivity.oldElu.equals(EleNul)))
                 {
-                    MultiTrackerActivity.oldPeriod=periodNul;
                     MultiTrackerActivity.oldElu=EleNul;
                     MultiTrackerActivity.isold=false;
                     MultiTrackerActivity.colorChange++;
