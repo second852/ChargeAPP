@@ -31,26 +31,20 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.View;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
-import com.chargeapp.whc.chargeapp.Control.InsertSpend;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.google.android.gms.vision.barcode.Barcode;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+
 
 /**
  * Graphic instance for rendering barcode position, size, and ID within an associated graphic
@@ -77,6 +71,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
     private String EleNul;
     private int max;
     public static String result;
+    private String periodNul;
 
 
 
@@ -148,7 +143,19 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             return;
         }
         if (MultiTrackerActivity.refresh) {
-            if (mBarcode.rawValue.indexOf(":") != -1 && (!(mBarcode.rawValue.indexOf("**") == 0))) {
+            String stringOne;
+            try {
+                stringOne=barcode.rawValue;
+                String nul=stringOne.substring(0,10);
+                new Integer(nul.substring(2));
+                new Integer(stringOne.substring(10, 17));
+                stringOne.substring(45,53);
+                stringOne.substring(17,21);
+            }catch (Exception e)
+            {
+                stringOne=null;
+            }
+            if (stringOne!=null) {
                 hashMap.put(1, barcode.rawValue);
                 try {
                     ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -169,10 +176,25 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             }
             QrCodeResultFinish();
         } else {
-            if (mBarcode.rawValue.indexOf(":") != -1 && (!(mBarcode.rawValue.indexOf("**") == 0))) {
+
+            String stringOne;
+            try {
+                stringOne=barcode.rawValue;
+                String nul=stringOne.substring(0,10);
+                new Integer(nul.substring(2));
+                new Integer(stringOne.substring(10, 17));
+                stringOne.substring(45,53);
+                stringOne.substring(17,21);
+            }catch (Exception e)
+            {
+                stringOne=null;
+            }
+            if (stringOne!=null) {
                 EleNul = mBarcode.rawValue.substring(0, 10);
+                periodNul=mBarcode.rawValue.substring(10, 17);
                 if(MultiTrackerActivity.oldElu==null||(!MultiTrackerActivity.oldElu.equals(EleNul)))
                 {
+                    MultiTrackerActivity.oldPeriod=periodNul;
                     MultiTrackerActivity.oldElu=EleNul;
                     MultiTrackerActivity.isold=false;
                     MultiTrackerActivity.colorChange++;
@@ -306,31 +328,41 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             MultiTrackerActivity.answer.setText("請對準左邊QRCode~");
             return;
         }
-        if(MultiTrackerActivity.result.equals("over"))
-        {
-            MultiTrackerActivity.answer.setText(MultiTrackerActivity.p+"尚未開獎");
-            return;
-        }
-        if(MultiTrackerActivity.result.equals("no"))
-        {
-            MultiTrackerActivity.answer.setText(MultiTrackerActivity.p+"已過兌獎期限");
-            return;
-        }
+
         if (!MultiTrackerActivity.isold) {
+            int textColor;
+            switch (MultiTrackerActivity.colorChange%2)
+            {
+                case 0:
+                    textColor=Color.BLUE;
+                    break;
+                default:
+                    textColor=Color.parseColor("#00AA55");
+                    break;
+            }
+            if(MultiTrackerActivity.result.equals("over"))
+            {
+                String total=MultiTrackerActivity.p+"尚未開獎\n 發票號碼 : "+MultiTrackerActivity.oldElu;
+                Spannable content = new SpannableString(total);
+                content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":")+1, total.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                MultiTrackerActivity.answer.setText(content);
+                return;
+            }
+            if(MultiTrackerActivity.result.equals("no"))
+            {
+                String total=MultiTrackerActivity.p+"已過兌獎期限\n 發票號碼 : " + MultiTrackerActivity.oldElu;
+                Spannable content = new SpannableString(total);
+                content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":")+1, total.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                MultiTrackerActivity.answer.setText(content);
+                MultiTrackerActivity.answer.setText(content);
+                return;
+            }
             if (MultiTrackerActivity.result.equals("N")) {
                 String total=MultiTrackerActivity.p+"\n發票號碼:"+MultiTrackerActivity.oldElu+"\n"+"沒有中獎!再接再厲!";
-                if((MultiTrackerActivity.colorChange%2)==0)
-                {
-                    Spannable content = new SpannableString(total);
-                    content.setSpan(new ForegroundColorSpan(Color.BLUE), 0,total.indexOf("發") , Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    content.setSpan(new ForegroundColorSpan(Color.BLUE), total.indexOf(":")+1, total.indexOf("沒"), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    MultiTrackerActivity.answer.setText(content);
-                }else{
-                    Spannable content = new SpannableString(total);
-                    content.setSpan(new ForegroundColorSpan(Color.parseColor("#00AA55")), 0,total.indexOf("發") , Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    content.setSpan(new ForegroundColorSpan(Color.parseColor("#00AA55")), total.indexOf(":")+1, total.indexOf("沒"), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    MultiTrackerActivity.answer.setText(content);
-                }
+                Spannable content = new SpannableString(total);
+                content.setSpan(new ForegroundColorSpan(textColor), 0,total.indexOf("發") , Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":")+1, total.indexOf("沒"), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                MultiTrackerActivity.answer.setText(content);
             } else {
                 if(priceVO!=null)
                 {

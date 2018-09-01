@@ -83,12 +83,13 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     public static TextView answer;
     public static String result;
     //避免重複兌獎
-    public static String oldElu,p;
+    public static String oldElu,p,oldPeriod;
     public static boolean isold;
     public static int colorChange;
     public static String action;
     public RelativeLayout buttonR;
     public BootstrapButton search,back,backP;
+    public static RelativeLayout topLayout;
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -107,6 +108,7 @@ public final class MultiTrackerActivity extends AppCompatActivity {
         search=findViewById(R.id.search);
         buttonR=findViewById(R.id.buttonR);
         backP=findViewById(R.id.backP);
+        topLayout=findViewById(R.id.topLayout);
         if(refresh)
         {
             buttonR.setVisibility(View.VISIBLE);
