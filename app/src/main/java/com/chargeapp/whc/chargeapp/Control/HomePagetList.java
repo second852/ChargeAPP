@@ -271,7 +271,7 @@ public class HomePagetList extends Fragment {
                 typeL.setVisibility(View.VISIBLE);
                 typeT.setText("雲端發票");
                 typeT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
-                sbTitle.append(Common.sDay.format(new Date(I.getTime().getTime())));
+
 
                 //設定電子發票種類
                 try {
