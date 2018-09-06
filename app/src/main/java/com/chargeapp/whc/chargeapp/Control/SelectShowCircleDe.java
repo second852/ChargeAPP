@@ -356,7 +356,6 @@ public class SelectShowCircleDe extends Fragment {
         pieChart.setEntryLabelColor(Color.BLACK);
         pieChart.setDescription(Common.getDeescription());
         pieChart.getLegend().setEnabled(false);
-        pieChart.invalidate();
         pieChart.setOnChartValueSelectedListener(new pieValue());
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
         PieDataSet dataSet = (PieDataSet) pieChart.getData().getDataSet();
@@ -374,8 +373,9 @@ public class SelectShowCircleDe extends Fragment {
                 pieChart.setEntryLabelTextSize(12f);
                 break;
         }
-        pieChart.invalidate();
+
         pieChart.notifyDataSetChanged();
+        pieChart.invalidate();
 
         activity.setTitle(title);
         detail.setText(mainTitle+" : 共"+Common.nf.format(total)+"元");

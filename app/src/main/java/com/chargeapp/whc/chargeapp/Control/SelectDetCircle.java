@@ -249,11 +249,11 @@ public class SelectDetCircle extends Fragment {
             pieChart.setTransparentCircleRadius(10);
 
             // enable rotation of the chart by touch
-            pieChart.setRotationAngle(60);
-            pieChart.setRotationEnabled(true);
             Legend l = pieChart.getLegend();
             l.setEnabled(false);
-            pieChart.invalidate();
+
+            pieChart.setRotationAngle(60);
+            pieChart.setRotationEnabled(true);
             pieChart.setEntryLabelColor(Color.BLACK);
             pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
             PieDataSet dataSet= (PieDataSet) pieChart.getData().getDataSet();
@@ -272,8 +272,9 @@ public class SelectDetCircle extends Fragment {
                     break;
 
             }
-            pieChart.invalidate();
+
             pieChart.notifyDataSetChanged();
+            pieChart.invalidate();
             return itemView;
         }
 

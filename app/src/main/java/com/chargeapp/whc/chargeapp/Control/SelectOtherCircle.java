@@ -292,7 +292,6 @@ public class SelectOtherCircle extends Fragment {
                 pieChart.setEntryLabelColor(Color.BLACK);
                 pieChart.getLegend().setEnabled(false);
                 pieChart.setDescription(Common.getDeescription());
-                pieChart.invalidate();
                 pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
                 PieDataSet dataSet = (PieDataSet) pieChart.getData().getDataSet();
                 switch (Common.screenSize){
@@ -309,8 +308,8 @@ public class SelectOtherCircle extends Fragment {
                         pieChart.setEntryLabelTextSize(12f);
                         break;
                 }
-                pieChart.invalidate();
                 pieChart.notifyDataSetChanged();
+                pieChart.invalidate();
             }
             return itemView;
         }

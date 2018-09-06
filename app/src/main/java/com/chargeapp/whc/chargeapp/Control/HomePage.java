@@ -196,6 +196,10 @@ public class HomePage extends Fragment {
         pieChart.setDescription(Common.getDeescription());
         // customize legends
         pieChart.getLegend().setEnabled(false);
+
+
+        pieChart.notifyDataSetChanged();
+        pieChart.invalidate();
     }
 
     private void addData(HashMap<String, Integer> consumeVOS) {
@@ -267,8 +271,7 @@ public class HomePage extends Fragment {
         pieChart.setData(data);
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
         pieChart.setOnChartValueSelectedListener(new pieValue());
-        pieChart.invalidate();
-        pieChart.notifyDataSetChanged();
+
     }
 
 

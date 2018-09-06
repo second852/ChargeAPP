@@ -83,6 +83,7 @@ public class SelectIncome extends Fragment {
     private Activity context;
     private List<BootstrapText> periodIncome;
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -102,6 +103,7 @@ public class SelectIncome extends Fragment {
         {
             end=Calendar.getInstance();
         }
+
         month = end.get(Calendar.MONTH);
         year = end.get(Calendar.YEAR);
         day=end.get(Calendar.DAY_OF_MONTH);
@@ -177,9 +179,8 @@ public class SelectIncome extends Fragment {
         dataSetA.setStackLabels(getStackLabels());
         dataSetA.setDrawValues(false);
         dataSetA.setHighLightAlpha(20);
-        List<IBarDataSet> dataSets = new ArrayList<>();
-        dataSets.add(dataSetA);
-        return new BarData(dataSets);
+        BarData barDataSet=new BarData(dataSetA);
+        return barDataSet;
     }
 
 
@@ -332,7 +333,6 @@ public class SelectIncome extends Fragment {
         chart_bar.setDragEnabled(true);
         chart_bar.setScaleEnabled(true);
         chart_bar.setEnabled(true);
-        chart_bar.invalidate();
         chart_bar.setDrawBarShadow(false);
         chart_bar.setDoubleTapToZoomEnabled(false);
         chart_bar.setDescription(Common.getDeescription());
@@ -359,11 +359,14 @@ public class SelectIncome extends Fragment {
             }
         });
         xAxis.setLabelCount(period);
-        chart_bar.setData(getBarData());
         yAxis.setMinWidth(0);
         yAxis.setAxisMinimum(0);
         yAxis1.setAxisMinimum(0);
+        chart_bar.setData(getBarData());
 
+
+
+        //chart_pie set
         chart_pie.setUsePercentValues(true);
         chart_pie.setDrawHoleEnabled(true);
         chart_pie.setHoleRadius(7);
@@ -371,53 +374,55 @@ public class SelectIncome extends Fragment {
         chart_pie.setRotationAngle(30);
         chart_pie.setRotationEnabled(true);
         chart_pie.setDescription(Common.getDeescription());
-        addData();
+        addChartPieData();
         chart_pie.getLegend().setEnabled(false);
-        PieDataSet dataSet = (PieDataSet) chart_pie.getData().getDataSet();
         Legend l = chart_bar.getLegend();
-        switch (Common.screenSize){
-            case xLarge:
-                dataSet.setValueTextSize(25f);
-                chart_pie.setEntryLabelTextSize(25f);
-                chart_pie.invalidate();
-                xAxis.setTextSize(20f);
-                yAxis.setTextSize(20f);
-                yAxis1.setTextSize(20f);
-                l.setTextSize(20f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(20f);
-                break;
-            case large:
-                dataSet.setValueTextSize(20f);
-                chart_pie.setEntryLabelTextSize(20f);
-                chart_pie.invalidate();
-                xAxis.setTextSize(20f);
-                yAxis.setTextSize(15f);
-                yAxis1.setTextSize(15f);
-                l.setTextSize(15f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(15f);
-                break;
-            case normal:
-                dataSet.setValueTextSize(12f);
-                xAxis.setTextSize(11f);
-                yAxis.setTextSize(12f);
-                yAxis1.setTextSize(12f);
-                l.setTextSize(12f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(12f);
-                break;
-        }
-        chart_pie.invalidate();
+
+
+            PieDataSet dataSet = (PieDataSet) chart_pie.getData().getDataSet();
+            switch (Common.screenSize){
+                case xLarge:
+                    dataSet.setValueTextSize(25f);
+                    chart_pie.setEntryLabelTextSize(25f);
+                    xAxis.setTextSize(20f);
+                    yAxis.setTextSize(20f);
+                    yAxis1.setTextSize(20f);
+                    l.setTextSize(20f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(20f);
+                    break;
+                case large:
+                    dataSet.setValueTextSize(20f);
+                    chart_pie.setEntryLabelTextSize(20f);
+                    xAxis.setTextSize(20f);
+                    yAxis.setTextSize(15f);
+                    yAxis1.setTextSize(15f);
+                    l.setTextSize(15f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(15f);
+                    break;
+                case normal:
+                    dataSet.setValueTextSize(12f);
+                    xAxis.setTextSize(11f);
+                    yAxis.setTextSize(12f);
+                    yAxis1.setTextSize(12f);
+                    l.setTextSize(12f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(12f);
+                    break;
+            }
+
         chart_bar.notifyDataSetChanged();
+        chart_bar.invalidate();
 
-
+        chart_pie.notifyDataSetChanged();
+        chart_pie.invalidate();
     }
 
-    private void addData() {
+    private void addChartPieData() {
         type = new ArrayList<>();
         describe.setText(DesTittle + Common.nf.format(total) + "元");
         ArrayList<PieEntry> pieEntries = new ArrayList<PieEntry>();
@@ -464,10 +469,11 @@ public class SelectIncome extends Fragment {
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(11f);
         data.setValueTextColor(Color.BLACK);
+
+
         chart_pie.setEntryLabelColor(Color.BLACK);
         chart_pie.setData(data);
         chart_pie.highlightValues(null);
-        chart_pie.invalidate();
         chart_pie.setBackgroundColor(Color.parseColor("#f5f5f5"));
     }
 

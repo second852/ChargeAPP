@@ -87,6 +87,7 @@ public class SelectDeposit extends Fragment {
     private List<BootstrapText> periodDepoist;
     private AwesomeTextView goalDeposit;
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -101,6 +102,7 @@ public class SelectDeposit extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.select_deposit, container, false);
         Common.setScreen(Common.screenSize, getResources().getDisplayMetrics());
+
 
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalVO = goalDB.getFindType("儲蓄");
@@ -192,6 +194,7 @@ public class SelectDeposit extends Fragment {
 
 
     private void setIncome() {
+
         describeI.setText(pictureIT);
         LineDataSet dataSet = new LineDataSet(entriesI, pictureIL);
         dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -226,37 +229,38 @@ public class SelectDeposit extends Fragment {
         Legend l = chart_income.getLegend();
         l.setFormSize(18f);
         l.setTextColor(Color.parseColor("#007bff"));
-        switch (Common.screenSize) {
-            case xLarge:
-                xAxis.setTextSize(20f);
-                yAxis.setTextSize(20f);
-                yAxis1.setTextSize(20f);
-                l.setTextSize(20f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(20f);
-                break;
-            case large:
-                xAxis.setTextSize(20f);
-                yAxis.setTextSize(20f);
-                yAxis1.setTextSize(20f);
-                l.setTextSize(20f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(20f);
-                break;
-            case normal:
-                xAxis.setTextSize(11f);
-                yAxis.setTextSize(12f);
-                yAxis1.setTextSize(12f);
-                l.setTextSize(12f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(12f);
-                break;
-        }
-        chart_income.invalidate();
+
+            switch (Common.screenSize) {
+                case xLarge:
+                    xAxis.setTextSize(20f);
+                    yAxis.setTextSize(20f);
+                    yAxis1.setTextSize(20f);
+                    l.setTextSize(20f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(20f);
+                    break;
+                case large:
+                    xAxis.setTextSize(20f);
+                    yAxis.setTextSize(20f);
+                    yAxis1.setTextSize(20f);
+                    l.setTextSize(20f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(20f);
+                    break;
+                case normal:
+                    xAxis.setTextSize(11f);
+                    yAxis.setTextSize(12f);
+                    yAxis1.setTextSize(12f);
+                    l.setTextSize(12f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(12f);
+                    break;
+            }
         chart_income.notifyDataSetChanged();
+        chart_income.invalidate();
     }
 
     private void setConsume() {
@@ -294,37 +298,40 @@ public class SelectDeposit extends Fragment {
         Legend l = chart_consume.getLegend();
         l.setFormSize(18f);
         l.setTextColor(Color.parseColor("#dc3545"));
-        switch (Common.screenSize) {
-            case xLarge:
-                xAxis.setTextSize(20f);
-                yAxis.setTextSize(20f);
-                yAxis1.setTextSize(20f);
-                l.setTextSize(20f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(20f);
-                break;
-            case large:
-                xAxis.setTextSize(20f);
-                yAxis.setTextSize(20f);
-                yAxis1.setTextSize(20f);
-                l.setTextSize(20f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(20f);
-                break;
-            case normal:
-                xAxis.setTextSize(11f);
-                yAxis.setTextSize(12f);
-                yAxis1.setTextSize(12f);
-                l.setTextSize(12f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(12f);
-                break;
-        }
-        chart_consume.invalidate();
+
+
+            switch (Common.screenSize) {
+                case xLarge:
+                    xAxis.setTextSize(20f);
+                    yAxis.setTextSize(20f);
+                    yAxis1.setTextSize(20f);
+                    l.setTextSize(20f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(20f);
+                    break;
+                case large:
+                    xAxis.setTextSize(20f);
+                    yAxis.setTextSize(20f);
+                    yAxis1.setTextSize(20f);
+                    l.setTextSize(20f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(20f);
+                    break;
+                case normal:
+                    xAxis.setTextSize(11f);
+                    yAxis.setTextSize(12f);
+                    yAxis1.setTextSize(12f);
+                    l.setTextSize(12f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(12f);
+                    break;
+            }
+
         chart_consume.notifyDataSetChanged();
+        chart_consume.invalidate();
     }
 
 
@@ -483,37 +490,40 @@ public class SelectDeposit extends Fragment {
         Legend l = chart_line.getLegend();
         l.setFormSize(18f);
         l.setTextColor(Color.parseColor("#28a745"));
-        switch (Common.screenSize) {
-            case xLarge:
-                xAxis.setTextSize(20f);
-                yAxis.setTextSize(20f);
-                yAxis1.setTextSize(20f);
-                l.setTextSize(20f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(20f);
-                break;
-            case large:
-                xAxis.setTextSize(20f);
-                yAxis.setTextSize(20f);
-                yAxis1.setTextSize(20f);
-                l.setTextSize(20f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(20f);
-                break;
-            case normal:
-                xAxis.setTextSize(11f);
-                yAxis.setTextSize(12f);
-                yAxis1.setTextSize(12f);
-                l.setTextSize(12f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(12f);
-                break;
-        }
-        chart_line.invalidate();
+
+
+            switch (Common.screenSize) {
+                case xLarge:
+                    xAxis.setTextSize(20f);
+                    yAxis.setTextSize(20f);
+                    yAxis1.setTextSize(20f);
+                    l.setTextSize(20f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(20f);
+                    break;
+                case large:
+                    xAxis.setTextSize(20f);
+                    yAxis.setTextSize(20f);
+                    yAxis1.setTextSize(20f);
+                    l.setTextSize(20f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(20f);
+                    break;
+                case normal:
+                    xAxis.setTextSize(11f);
+                    yAxis.setTextSize(12f);
+                    yAxis1.setTextSize(12f);
+                    l.setTextSize(12f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(12f);
+                    break;
+            }
+
         chart_line.notifyDataSetChanged();
+        chart_line.invalidate();
     }
 
     private List<String> getLabels() {

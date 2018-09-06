@@ -149,22 +149,36 @@ public class SelectConsume extends Fragment {
             end = Calendar.getInstance();
             SelectConsume.Statue = 1;
         }
+
+
         month = end.get(Calendar.MONTH);
         year = end.get(Calendar.YEAR);
         day = end.get(Calendar.DAY_OF_MONTH);
-
+        dweek = end.get(Calendar.DAY_OF_WEEK);
         //設定dweek period
         switch (Statue)
         {
+            case 0:
+                period = 1;
+                break;
             case 1:
-                period=7;
-                dweek = end.get(Calendar.DAY_OF_WEEK);
+                if (week == 1) {
+                    dweek = 1;
+                }
+                period = 7 + extra;
+                extra = 0;
+                week = 0;
+                break;
+            case 2:
+                period = end.getActualMaximum(Calendar.WEEK_OF_MONTH);
                 break;
             case 3:
-                period=7;
+                period=12;
                 month=0;
                 break;
         }
+
+
 
         //載具
         switch (CStatue)
@@ -302,6 +316,7 @@ public class SelectConsume extends Fragment {
         dataSetA.setDrawValues(false);
         BarData barData = new BarData(dataSetA);
         barData.setBarWidth(0.9f);
+        barData.notifyDataChanged();
         return barData;
     }
 
@@ -576,11 +591,8 @@ public class SelectConsume extends Fragment {
 
 
     public void dataAnalyze() {
-//        chart_bar.clear();
+        chart_bar.clear();
         findMaxFive();
-
-        Description description = new Description();
-        description.setText(" ");
         if (list_Data.size() <= 0) {
             return;
         }
@@ -615,7 +627,7 @@ public class SelectConsume extends Fragment {
         chart_bar.setFitBars(true);
         chart_bar.setDrawBarShadow(false);
         chart_bar.setDoubleTapToZoomEnabled(false);
-        chart_bar.setDescription(description);
+        chart_bar.setDescription(Common.description);
         chart_bar.setHighlightFullBarEnabled(false);
         if (goalVO != null && Max != 0) {
             BootstrapText bootstrapText = new BootstrapText.Builder(context)
@@ -632,10 +644,9 @@ public class SelectConsume extends Fragment {
             goalConsume.setText("");
             yAxis.removeAllLimitLines();
         }
-        chart_bar.invalidate();
-        chart_bar.notifyDataSetChanged();
 
 
+        //chart_pie
         chart_pie.setEntryLabelColor(Color.BLACK);
         chart_pie.setUsePercentValues(true);
         chart_pie.setDrawHoleEnabled(true);
@@ -643,14 +654,14 @@ public class SelectConsume extends Fragment {
         chart_pie.setTransparentCircleRadius(10);
         chart_pie.setRotationAngle(30);
         chart_pie.setRotationEnabled(false);
-        chart_pie.setDescription(description);
-        addData();
+        chart_pie.setDescription(Common.description);
+        addChartPieData();
         // customize legends
         Legend l = chart_pie.getLegend();
         l.setEnabled(false);
     }
 
-    private void addData() {
+    private void addChartPieData() {
         describe.setText(DesTittle + nf.format(total) + "元");
         final ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
         ShowZero = true;
@@ -679,6 +690,7 @@ public class SelectConsume extends Fragment {
         dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         dataSet.setSliceSpace(0);
         dataSet.setSelectionShift(30f);
+        dataSet.notifyDataSetChanged();
         PieData data = new PieData(dataSet);
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextColor(Color.BLACK);
@@ -687,42 +699,50 @@ public class SelectConsume extends Fragment {
         YAxis yAxis = chart_bar.getAxis(YAxis.AxisDependency.LEFT);
         YAxis yAxis1 = chart_bar.getAxis(YAxis.AxisDependency.RIGHT);
         Legend l = chart_bar.getLegend();
-        switch (Common.screenSize) {
-            case xLarge:
-                dataSet.setValueTextSize(25f);
-                chart_pie.setEntryLabelTextSize(25f);
-                xAxis.setTextSize(20f);
-                yAxis.setTextSize(20f);
-                yAxis1.setTextSize(20f);
-                l.setTextSize(20f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(20f);
-                break;
-            case large:
-                dataSet.setValueTextSize(20f);
-                chart_pie.setEntryLabelTextSize(20f);
-                xAxis.setTextSize(20f);
-                yAxis.setTextSize(15f);
-                yAxis1.setTextSize(15f);
-                l.setTextSize(15f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(15f);
-                break;
-            case normal:
-                dataSet.setValueTextSize(12f);
-                xAxis.setTextSize(11f);
-                yAxis.setTextSize(12f);
-                yAxis1.setTextSize(12f);
-                l.setTextSize(12f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(12f);
-                break;
-        }
-        chart_pie.invalidate();
+
+
+            switch (Common.screenSize) {
+                case xLarge:
+                    dataSet.setValueTextSize(25f);
+                    chart_pie.setEntryLabelTextSize(25f);
+                    xAxis.setTextSize(20f);
+                    yAxis.setTextSize(20f);
+                    yAxis1.setTextSize(20f);
+                    l.setTextSize(20f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(20f);
+                    break;
+                case large:
+                    dataSet.setValueTextSize(20f);
+                    chart_pie.setEntryLabelTextSize(20f);
+                    xAxis.setTextSize(20f);
+                    yAxis.setTextSize(15f);
+                    yAxis1.setTextSize(15f);
+                    l.setTextSize(15f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(15f);
+                    break;
+                case normal:
+                    dataSet.setValueTextSize(12f);
+                    xAxis.setTextSize(11f);
+                    yAxis.setTextSize(12f);
+                    yAxis1.setTextSize(12f);
+                    l.setTextSize(12f);
+                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                    l.setYEntrySpace(5f);
+                    l.setFormSize(12f);
+                    break;
+            }
+
+
         chart_bar.notifyDataSetChanged();
+        chart_bar.invalidate();
+
+
+        chart_pie.notifyDataSetChanged();
+        chart_pie.invalidate();
     }
 
 
