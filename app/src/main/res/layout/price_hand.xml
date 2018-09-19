@@ -46,7 +46,7 @@
     <RelativeLayout
         android:id="@+id/modelR"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/PIdateL"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp">
@@ -54,7 +54,7 @@
         <com.beardedhen.androidbootstrap.BootstrapDropDown
             android:id="@+id/choiceModel"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_margin="2dp"

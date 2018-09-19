@@ -49,7 +49,7 @@
             android:layout_marginRight="50dp"
             android:layout_marginLeft="50dp"
             android:layout_centerHorizontal="true"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             >
             <com.beardedhen.androidbootstrap.BootstrapDropDown
                 android:gravity="center"

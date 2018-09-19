@@ -186,6 +186,9 @@ public class PriceHand extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 6){
+            choiceModel.setBootstrapText(bootstrapTexts.get(0));
+            choiceModel.setShowOutline(false);
+            setOneActon();
             return;
         }
         int result = ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO);
