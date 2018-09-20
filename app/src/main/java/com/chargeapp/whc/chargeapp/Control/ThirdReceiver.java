@@ -38,6 +38,12 @@ public class ThirdReceiver extends BroadcastReceiver {
     private SimpleDateFormat sf;
     private int id;
     private String title;
+    private  ChargeAPPDB chargeAPPDB;
+    private  ConsumeDB consumeDB;
+    private InvoiceDB invoiceDB;
+    private BankDB bankDB;
+    private GoalDB goalDB;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -48,16 +54,30 @@ public class ThirdReceiver extends BroadcastReceiver {
         boolean goalNotify= (boolean) bundle.getSerializable("goalNotify");
         boolean nulPriceNotify= (boolean) bundle.getSerializable("nulPriceNotify");
 
-        ChargeAPPDB chargeAPPDB=new ChargeAPPDB(context);
+        chargeAPPDB=new ChargeAPPDB(context);
+        consumeDB=new ConsumeDB(chargeAPPDB.getReadableDatabase());
+        consumeDB.colExist("rdNumber");
+        invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
+        bankDB=new BankDB(chargeAPPDB.getReadableDatabase());
+        goalDB=new GoalDB(chargeAPPDB.getReadableDatabase());
+
+        //notify message
+        String message;
+
         if(consumeNotify)
         {
-            ConsumeDB consumeDB=new ConsumeDB(chargeAPPDB.getReadableDatabase());
+
             List<ConsumeVO> consumeVOS=consumeDB.getNotify();
             title=" "+sf.format(new Date(System.currentTimeMillis()))+"今天繳費提醒";
-            showNotification(title,message,context,id);
+            for (ConsumeVO consumeVO:consumeVOS)
+            {
+                message = " 繳納" + consumeVO.getSecondType() + "費用:" + consumeVO.getMoney();
+                showNotification(title,message,context,id);
+            }
+            id++;
         }
 
-        if(action.equals("notifyNul"))
+        if(nulPriceNotify)
         {
             title=" 統一發票";
             Calendar calendar=Calendar.getInstance();
@@ -85,22 +105,22 @@ public class ThirdReceiver extends BroadcastReceiver {
                 message=" 民國"+year+"年9-10月開獎";
             }
             showNotification(title,message,context,id);
+            id++;
         }
-        if(action.equals("goalC"))
+        if(goalNotify)
         {
-            setGoalNotification(context,bundle);
+            List<GoalVO> goalVOS=goalDB.getNotify();
+            for (GoalVO goalVO:goalVOS)
+            {
+                setGoalNotification(goalVO,context);
+                id++;
+            }
         }
     }
 
-    private void setGoalNotification(Context context,Bundle bundle) {
-        ChargeAPPDB chargeAPPDB=new ChargeAPPDB(context);
-        ConsumeDB consumeDB=new ConsumeDB(chargeAPPDB.getReadableDatabase());
-        consumeDB.colExist("rdNumber");
-        InvoiceDB invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
-        BankDB bankDB=new BankDB(chargeAPPDB.getReadableDatabase());
-        GoalDB goalDB=new GoalDB(chargeAPPDB.getReadableDatabase());
-        int goalId= (int) bundle.getSerializable("goal");
-        GoalVO goalVO=goalDB.getFindid(goalId);
+    private void setGoalNotification(GoalVO goalVO,Context context) {
+
+
         String timeStatue=goalVO.getTimeStatue().trim();
         int consumeCount=0;
         String title="",message="";
@@ -203,6 +223,7 @@ public class ThirdReceiver extends BroadcastReceiver {
         }
     }
 
+    //set Channel
     public final String PRIMARY_CHANNEL = "記帳小助手";
     NotificationManager manager;
     @RequiresApi(api = Build.VERSION_CODES.O)
