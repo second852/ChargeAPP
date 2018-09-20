@@ -19,6 +19,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
 
@@ -27,6 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -35,19 +37,22 @@ public class ThirdReceiver extends BroadcastReceiver {
     private  NotificationManager notificationManager;
     private SimpleDateFormat sf;
     private int id;
+    private String title;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         sf=new SimpleDateFormat("yyyy-MM-dd");
-        notificationManager =
-                (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         Bundle bundle=intent.getExtras();
-        String action= (String) bundle.get("action");
-        String message,title;
-        id= (int) bundle.getSerializable("id");
-        if(action.equals("notifyC"))
+        boolean consumeNotify= (boolean) bundle.getSerializable("consumeNotify");
+        boolean goalNotify= (boolean) bundle.getSerializable("goalNotify");
+        boolean nulPriceNotify= (boolean) bundle.getSerializable("nulPriceNotify");
+
+        ChargeAPPDB chargeAPPDB=new ChargeAPPDB(context);
+        if(consumeNotify)
         {
-            message= (String) bundle.getSerializable("comsumer");
+            ConsumeDB consumeDB=new ConsumeDB(chargeAPPDB.getReadableDatabase());
+            List<ConsumeVO> consumeVOS=consumeDB.getNotify();
             title=" "+sf.format(new Date(System.currentTimeMillis()))+"今天繳費提醒";
             showNotification(title,message,context,id);
         }

@@ -32,6 +32,8 @@ import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 
+import com.beardedhen.androidbootstrap.BootstrapText;
+import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
@@ -44,6 +46,10 @@ import com.google.android.gms.vision.barcode.Barcode;
 
 import java.util.HashMap;
 import java.util.List;
+
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_EXCLAMATION;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_FLAG;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_STAR;
 
 
 /**
@@ -68,7 +74,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
     private PriceVO priceVO;
     private HashMap<String, Integer> levellength;
     private HashMap<String, String> levelprice;
-    private String EleNul;
+    private String EleNul,periodNow;
     private int max;
     public static String result;
 
@@ -120,14 +126,14 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
 
     private static HashMap<String, String> getHashLP() {
         HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("super", "\n特別獎1000萬元");
-        hashMap.put("spc", "\n特獎200萬元");
-        hashMap.put("first", "\n頭獎20萬元");
-        hashMap.put("second", "\n二獎4萬元");
-        hashMap.put("third", "\n三獎1萬元");
-        hashMap.put("fourth", "\n四獎4千元");
-        hashMap.put("fifth", "\n五獎1千元");
-        hashMap.put("sixth", "\n六獎200元");
+        hashMap.put("super", "特別獎1000萬元");
+        hashMap.put("spc", "特獎200萬元");
+        hashMap.put("first", "頭獎20萬元");
+        hashMap.put("second", "二獎4萬元");
+        hashMap.put("third", "三獎1萬元");
+        hashMap.put("fourth", "四獎4000元");
+        hashMap.put("fifth", "五獎1000千元");
+        hashMap.put("sixth", "六獎200元");
         return hashMap;
     }
 
@@ -191,8 +197,10 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             }
             if (stringOne!=null) {
                 EleNul = mBarcode.rawValue.substring(0, 10);
-                if(MultiTrackerActivity.oldElu==null||(!MultiTrackerActivity.oldElu.equals(EleNul)))
+                periodNow= mBarcode.rawValue.substring(10, 17);
+                if(MultiTrackerActivity.oldElu==null||(!MultiTrackerActivity.oldElu.equals(EleNul))||MultiTrackerActivity.oldPeriod==null||(!MultiTrackerActivity.oldPeriod.equals(periodNow)))
                 {
+                    MultiTrackerActivity.oldPeriod=periodNow;
                     MultiTrackerActivity.oldElu=EleNul;
                     MultiTrackerActivity.isold=false;
                     MultiTrackerActivity.colorChange++;
@@ -344,6 +352,8 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 Spannable content = new SpannableString(total);
                 content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":")+1, total.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 MultiTrackerActivity.answer.setText(content);
+
+                MultiTrackerActivity.awardTitle.setText(null);
                 return;
             }
             if(MultiTrackerActivity.result.equals("no"))
@@ -353,24 +363,44 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":")+1, total.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 MultiTrackerActivity.answer.setText(content);
                 MultiTrackerActivity.answer.setText(content);
+
+                MultiTrackerActivity.awardTitle.setText(null);
                 return;
             }
             if (MultiTrackerActivity.result.equals("N")) {
-                String total=MultiTrackerActivity.p+"\n發票號碼:"+MultiTrackerActivity.oldElu+"\n"+"沒有中獎!再接再厲!";
+                String total=MultiTrackerActivity.p+"\n發票號碼:"+MultiTrackerActivity.oldElu;
                 Spannable content = new SpannableString(total);
                 content.setSpan(new ForegroundColorSpan(textColor), 0,total.indexOf("發") , Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":")+1, total.indexOf("沒"), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":")+1, total.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 MultiTrackerActivity.answer.setText(content);
+
+                BootstrapText text = new BootstrapText.Builder(context)
+                        .addText(" " + "沒有中獎" + " ")
+                        .addFontAwesomeIcon(FA_EXCLAMATION)
+                        .addText(" " + "再接再厲" + " ")
+                        .addFontAwesomeIcon(FA_FLAG)
+                        .build();
+                MultiTrackerActivity.awardTitle.setText(text);
+                MultiTrackerActivity.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.INFO);
+
             } else {
                 if(priceVO!=null)
                 {
                     String peroid = getPeriod(priceVO.getInvoYm());
                     StringBuffer sb=new StringBuffer();
-                    sb.append(peroid).append(levelprice.get("win")).append(levelprice.get(MultiTrackerActivity.result)).append("\n中獎號碼").append(MultiTrackerActivity.oldElu);
+                    sb.append(peroid).append(levelprice.get("win")).append("\n中獎號碼").append(MultiTrackerActivity.oldElu);
                     Spannable content = new SpannableString(sb.toString());
                     content.setSpan(new ForegroundColorSpan(Color.RED), peroid.length()+levelprice.get("win").length()-levellength.get(MultiTrackerActivity.result),peroid.length()+levelprice.get("win").length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     content.setSpan(new ForegroundColorSpan(Color.MAGENTA), sb.length()-(levellength.get(MultiTrackerActivity.result)), sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     MultiTrackerActivity.answer.setText(content);
+
+                    BootstrapText text = new BootstrapText.Builder(context)
+                            .addFontAwesomeIcon(FA_STAR)
+                            .addText(" " + levelprice.get(MultiTrackerActivity.result) + " ")
+                            .addFontAwesomeIcon(FA_STAR)
+                            .build();
+                    MultiTrackerActivity.awardTitle.setText(text);
+                    MultiTrackerActivity.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                 }
             }
         }

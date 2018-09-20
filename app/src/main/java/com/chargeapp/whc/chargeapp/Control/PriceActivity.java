@@ -163,22 +163,22 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
         nowPoint = position;
         if (position == 0) {
             setCurrentPage();
-            goneMoney.setText("兌獎號碼");
+            goneMoney.setText("對獎號碼");
             exportMoney.setText("中獎發票");
-            importMoney.setText("兌獎");
-            showN.setText("兌獎號碼");
+            importMoney.setText("對獎");
+            showN.setText("對獎號碼");
         } else if (position == 1) {
             setCurrentPage();
             goneMoney.setText("中獎發票");
-            exportMoney.setText("兌獎");
-            importMoney.setText("兌獎號碼");
+            exportMoney.setText("對獎");
+            importMoney.setText("對獎號碼");
             showN.setText("中獎發票");
         } else {
             setCurrentPage();
-            goneMoney.setText("兌獎");
-            exportMoney.setText("兌獎號碼");
+            goneMoney.setText("對獎");
+            exportMoney.setText("對獎號碼");
             importMoney.setText("中獎發票");
-            showN.setText("兌獎");
+            showN.setText("對獎");
         }
     }
 

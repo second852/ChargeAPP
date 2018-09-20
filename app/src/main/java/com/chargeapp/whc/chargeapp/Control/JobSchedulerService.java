@@ -47,13 +47,17 @@ public class JobSchedulerService extends JobService {
     private Gson gson;
     private SimpleDateFormat sf;
     private Calendar setNewTime;
-    private int id;
     private GoalDB goalDB;
+
 
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.d("service","service start");
+        boolean consumeNotify=false;
+        boolean goalNotify=false;
+        boolean nulPriceNotify;
+
 
         gson = new Gson();
         Calendar calendar = Calendar.getInstance();
@@ -67,7 +71,6 @@ public class JobSchedulerService extends JobService {
         if (todaySet) {
             return true;
         }
-        id = 0;
         int result = ContextCompat.checkSelfPermission(JobSchedulerService.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if(result != PackageManager.PERMISSION_GRANTED)
         {
@@ -139,7 +142,7 @@ public class JobSchedulerService extends JobService {
                         consumeDB.insert(consumeVO);
                     }
                     if (notify && setNotify) {
-                        NotifyUse(consumeVO, this, setNewTime.getTimeInMillis());
+                        consumeNotify=true;
                     }
                 } else if ("每周".equals(action)) {
                     String fixdetail = jsonObject.get("choicedate").getAsString().trim();
@@ -160,7 +163,7 @@ public class JobSchedulerService extends JobService {
                             consumeDB.insert(consumeVO);
                         }
                         if (notify && setNotify) {
-                            NotifyUse(consumeVO, this, setNewTime.getTimeInMillis());
+                            consumeNotify=true;
                         }
                     }
                 } else if ("每月".equals(action)) {
@@ -184,7 +187,7 @@ public class JobSchedulerService extends JobService {
                         }
 
                         if (notify && setNotify) {
-                            NotifyUse(consumeVO, this, setNewTime.getTimeInMillis());
+                            consumeNotify=true;
                         }
                     }
                     if (Maxday < Integer.valueOf(fixdate) && day == Maxday) {
@@ -204,7 +207,7 @@ public class JobSchedulerService extends JobService {
                         }
 
                         if (notify && setNotify) {
-                            NotifyUse(consumeVO, this, setNewTime.getTimeInMillis());
+                            consumeNotify=true;
                         }
                     }
                 }else{
@@ -228,11 +231,10 @@ public class JobSchedulerService extends JobService {
                             consumeDB.insert(consumeVO);
                         }
                         if (notify && setNotify) {
-                            NotifyUse(consumeVO, this, setNewTime.getTimeInMillis());
+                            consumeNotify=true;
                         }
                     }
                 }
-                id++;
             }
         }
 
@@ -342,14 +344,14 @@ public class JobSchedulerService extends JobService {
                     }
                 }
                 if (setNotify) {
-                    NotifyUse(this, goalVO);
+                   goalNotify=true;
                 }
             } else if (statue.equals("每周")) {
                 HashMap<String, Integer> change = getStringtoInt();
                 String dateStatue = goalVO.getNotifyDate().trim();
                 if (dweek == change.get(dateStatue)) {
                     if (setNotify) {
-                        NotifyUse(this, goalVO);
+                        goalNotify=true;
                     }
                 }
             } else if (statue.equals("每月")) {
@@ -359,12 +361,12 @@ public class JobSchedulerService extends JobService {
                 Log.d("service",dateStatue+" : "+day);
                 if (dateStatue.equals(String.valueOf(day))) {
                     if (setNotify) {
-                        NotifyUse(this, goalVO);
+                        goalNotify=true;
                     }
                 }
                 if (day == max && Integer.valueOf(dateStatue) > day) {
                     if (setNotify) {
-                        NotifyUse(this, goalVO);
+                        goalNotify=true;
                     }
                 }
             } else {
@@ -373,14 +375,14 @@ public class JobSchedulerService extends JobService {
                 int d = Integer.valueOf(fixdate) - 1;
                 if (month == d && day == 1) {
                     if (setNotify) {
-                        NotifyUse(this, goalVO);
+                        goalNotify=true;
                     }
                 }
             }
-            id++;
         }
+        nulPriceNotify=notifyLottery();
 
-        notifyLottery(this);
+        NotifyUse(this,setNewTime.getTimeInMillis(),consumeNotify,goalNotify,nulPriceNotify);
         //今天設定過 存檔
         sharedPreferences.edit().putBoolean(sf.format(new Date(calendar.getTimeInMillis())), true).apply();
         return true;
@@ -392,38 +394,25 @@ public class JobSchedulerService extends JobService {
     }
 
 
-    public void notifyLottery(Context context) {
+    //判斷今天有沒有開獎
+    public boolean notifyLottery() {
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int month = calendar.get(Calendar.MONTH) + 1;
         if (month == 1 || month == 3 || month == 5 || month == 7 || month == 9 || month == 11) {
             if (day == 25) {
-                AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("action", "notifyNul");
-                bundle.putSerializable("id", id);
-                Intent alarmIntent;
-                //版本判斷
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Log.d("service","ThirdReceiver");
-                    alarmIntent = new Intent(this, ThirdReceiver.class);
-                }else{
-                    alarmIntent = new Intent(this, SecondReceiver.class);
-                }
-                alarmIntent.putExtras(bundle);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
-                manager.set(AlarmManager.RTC_WAKEUP, setNewTime.getTimeInMillis(), pendingIntent);
+                return true;
             }
         }
+        return false;
     }
 
-    public void NotifyUse(ConsumeVO consumeVO, Context context, long settime) {
-        String message = " 繳納" + consumeVO.getSecondType() + "費用:" + consumeVO.getMoney();
+    public void NotifyUse(Context context,long settime,boolean consumeNotify, boolean goalNotify,boolean nulPriceNotify) {
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Bundle bundle = new Bundle();
-        bundle.putSerializable("action", "notifyC");
-        bundle.putSerializable("comsumer", message);
-        bundle.putSerializable("id", id);
+        bundle.putSerializable("consumeNotify", consumeNotify);
+        bundle.putSerializable("goalNotify", goalNotify);
+        bundle.putSerializable("nulPriceNotify", nulPriceNotify);
         Intent alarmIntent;
         //版本判斷
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -433,30 +422,10 @@ public class JobSchedulerService extends JobService {
             alarmIntent = new Intent(this, SecondReceiver.class);
         }
         alarmIntent.putExtras(bundle);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, id);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
         manager.set(AlarmManager.RTC_WAKEUP, settime, pendingIntent);
-        Log.d("service time",String.valueOf(settime)+" id"+id);
+        Log.d("service time",String.valueOf(settime));
     }
-
-    public void NotifyUse(Context context, GoalVO goalVO) {
-        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("action", "goalC");
-        bundle.putSerializable("id", id);
-        bundle.putSerializable("goal", goalVO.getId());
-        Intent alarmIntent;
-        //版本判斷
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            alarmIntent = new Intent(this, ThirdReceiver.class);
-        }else{
-            alarmIntent = new Intent(this, SecondReceiver.class);
-        }
-        alarmIntent.putExtras(bundle);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, id);
-        manager.set(AlarmManager.RTC_WAKEUP, setNewTime.getTimeInMillis(), pendingIntent);
-        Log.d("service time G",String.valueOf(setNewTime.getTimeInMillis())+" id"+id);
-    }
-
 
     public HashMap<String, Integer> getStringtoInt() {
         HashMap<String, Integer> hashMap = new HashMap<>();

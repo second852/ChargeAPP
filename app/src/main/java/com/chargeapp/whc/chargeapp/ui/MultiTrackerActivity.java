@@ -41,6 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.Control.Common;
@@ -89,6 +90,7 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     public static String action;
     public RelativeLayout buttonR;
     public BootstrapButton search,back,backP;
+    public static AwesomeTextView awardTitle;
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -102,11 +104,14 @@ public final class MultiTrackerActivity extends AppCompatActivity {
         setContentView(R.layout.main);
         answer=findViewById(R.id.answer);
         back=findViewById(R.id.back);
+        awardTitle=findViewById(R.id.awardTitle);
         mPreview = findViewById(R.id.preview);
         mGraphicOverlay =findViewById(R.id.faceOverlay);
         search=findViewById(R.id.search);
         buttonR=findViewById(R.id.buttonR);
         backP=findViewById(R.id.backP);
+        oldPeriod=null;
+        oldElu=null;
         if(refresh)
         {
             buttonR.setVisibility(View.VISIBLE);
