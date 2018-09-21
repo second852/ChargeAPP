@@ -176,6 +176,35 @@ public class MainActivity extends AppCompatActivity {
         setUpActionBar();
         initDrawer();
         Common.setChargeDB(this);
+
+        //設定NotifyCation 傳進去參數
+        String action;
+        try {
+            action = getIntent().getAction();
+        }catch (Exception e)
+        {
+            action =null;
+        }
+        if(action!=null)
+        {
+            Log.d("XxX",action);
+            if(action.equals("showFix"))
+            {
+                Fragment fragment = new SettingListFix();
+                switchFragment(fragment);
+                return;
+            }else if(action.equals("nulPriceNotify"))
+            {
+                Fragment fragment = new PriceActivity();
+                switchFragment(fragment);
+                return;
+            }else if(action.equals("goal"))
+            {
+                Fragment fragment = new GoalListAll();
+                switchFragment(fragment);
+                return;
+            }
+        }
         if (!mFramgent) {
             Fragment fragment = new HomePage();
             switchFragment(fragment);
@@ -475,6 +504,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("XXXXXXX","onActivityResult");
         String a;
         mFramgent = true;
         try {

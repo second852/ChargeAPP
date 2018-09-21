@@ -106,21 +106,24 @@ public class Download extends AppCompatActivity {
     {
         JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         //判斷是否建立過
-        boolean hasBeenScheduled=false;
-        for (JobInfo jobInfo : tm.getAllPendingJobs()) {
-            if (jobInfo.getId() == 0) {
-                hasBeenScheduled = true;
-                break;
-            }
-        }
-        if(hasBeenScheduled)
-        {
-            return;
-        }
+//        boolean hasBeenScheduled=false;
+//        for (JobInfo jobInfo : tm.getAllPendingJobs()) {
+//            if (jobInfo.getId() == 0) {
+//                hasBeenScheduled = true;
+//                break;
+//            }
+//        }
+//        if(hasBeenScheduled)
+//        {
+//            return;
+//        }
+        tm.cancelAll();
         ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);
         JobInfo.Builder builder = new JobInfo.Builder(0, mServiceComponent);
-        builder.setPeriodic(1000*30);
-        builder.setPersisted(true);
+//        builder.setPeriodic(1000*30);
+//        builder.setPersisted(true);
+        builder.setMinimumLatency(1);
+        builder.setOverrideDeadline(2);
         builder.setRequiresCharging(false);
         builder.setRequiresDeviceIdle(false);
         tm.schedule(builder.build());
@@ -198,11 +201,22 @@ public class Download extends AppCompatActivity {
         @Override
         public void run() {
             (new Common()).AutoSetPrice();
-            String a = getIntent().getStringExtra("action");
+
+            String a;
+            try {
+                a = getIntent().getStringExtra("action");
+            }catch (Exception e)
+            {
+                a =null;
+            }
             Intent intent = new Intent();
             if (a != null) {
                 intent.putExtra("action", a);
             }
+            if (getIntent().getAction() != null) {
+                intent.setAction(getIntent().getAction());
+            }
+
             startActivity(intent.setClass(Download.this, MainActivity.class));
             finish();
         }
