@@ -181,25 +181,19 @@ public class MainActivity extends AppCompatActivity {
         String action;
         try {
             action = getIntent().getAction();
-        }catch (Exception e)
-        {
-            action =null;
+        } catch (Exception e) {
+            action = null;
         }
-        if(action!=null)
-        {
-            Log.d("XxX",action);
-            if(action.equals("showFix"))
-            {
+        if (action != null) {
+            if (action.equals("showFix")) {
                 Fragment fragment = new SettingListFix();
                 switchFragment(fragment);
                 return;
-            }else if(action.equals("nulPriceNotify"))
-            {
+            } else if (action.equals("nulPriceNotify")) {
                 Fragment fragment = new PriceActivity();
                 switchFragment(fragment);
                 return;
-            }else if(action.equals("goal"))
-            {
+            } else if (action.equals("goal")) {
                 Fragment fragment = new GoalListAll();
                 switchFragment(fragment);
                 return;
@@ -504,7 +498,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("XXXXXXX","onActivityResult");
+        Log.d("XXXXXXX", "onActivityResult");
         String a;
         mFramgent = true;
         try {
@@ -604,23 +598,23 @@ public class MainActivity extends AppCompatActivity {
 
         if (BarcodeGraphic.hashMap.size() == 2) {
 
-
             StringBuilder sb = new StringBuilder();
+            InsertSpend.needSet = true;
+            String eleOne = BarcodeGraphic.hashMap.get(1).trim();
+            String eleTwo = BarcodeGraphic.hashMap.get(2).trim();
+            String[] eleOneS = eleOne.trim().split(":");
+            String EleNul = eleOneS[0].substring(0, 10);
+            String day = eleOneS[0].substring(10, 17);
+            String m = eleOneS[0].substring(29, 37);
+            String rdNumber = eleOneS[0].substring(17, 21);
+            Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
+            InsertSpend.consumeVO.setMoney(Integer.parseInt(m, 16));
+            InsertSpend.consumeVO.setNumber(EleNul);
+            InsertSpend.consumeVO.setDate(new Date(calendar.getTimeInMillis()));
+            InsertSpend.consumeVO.setRdNumber(rdNumber);
+            List<String> eleAll = new ArrayList<>();
             try {
-                InsertSpend.needSet = true;
-                String eleOne = BarcodeGraphic.hashMap.get(1).trim();
-                String eleTwo = BarcodeGraphic.hashMap.get(2).trim();
-                String[] eleOneS = eleOne.trim().split(":");
-                String EleNul = eleOneS[0].substring(0, 10);
-                String day = eleOneS[0].substring(10, 17);
-                String m = eleOneS[0].substring(29, 37);
-                String rdNumber = eleOneS[0].substring(17, 21);
-                Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
-                InsertSpend.consumeVO.setMoney(Integer.parseInt(m, 16));
-                InsertSpend.consumeVO.setNumber(EleNul);
-                InsertSpend.consumeVO.setDate(new Date(calendar.getTimeInMillis()));
-                InsertSpend.consumeVO.setRdNumber(rdNumber);
-                List<String> eleAll = new ArrayList<>();
+
                 if (eleOneS[4].equals("2")) {
                     //Base64
                     eleAll.addAll(Arrays.asList(Common.Base64Convert(eleOneS[5])));
@@ -782,20 +776,20 @@ public class MainActivity extends AppCompatActivity {
         if (BarcodeGraphic.hashMap.size() == 2) {
 
             StringBuilder sb = new StringBuilder();
+            String eleOne = BarcodeGraphic.hashMap.get(1).trim();
+            String eleTwo = BarcodeGraphic.hashMap.get(2).trim();
+            String[] eleOneS = eleOne.trim().split(":");
+            String EleNul = eleOneS[0].substring(0, 10);
+            String day = eleOneS[0].substring(10, 17);
+            String m = eleOneS[0].substring(29, 37);
+            String rdNumber = eleOneS[0].substring(17, 21);
+            Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
+            consumeVO.setMoney(Integer.parseInt(m, 16));
+            consumeVO.setNumber(EleNul);
+            consumeVO.setDate(new Date(calendar.getTimeInMillis()));
+            consumeVO.setRdNumber(rdNumber);
+            List<String> eleAll = new ArrayList<>();
             try {
-                String eleOne = BarcodeGraphic.hashMap.get(1).trim();
-                String eleTwo = BarcodeGraphic.hashMap.get(2).trim();
-                String[] eleOneS = eleOne.trim().split(":");
-                String EleNul = eleOneS[0].substring(0, 10);
-                String day = eleOneS[0].substring(10, 17);
-                String m = eleOneS[0].substring(29, 37);
-                String rdNumber = eleOneS[0].substring(17, 21);
-                Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
-                consumeVO.setMoney(Integer.parseInt(m, 16));
-                consumeVO.setNumber(EleNul);
-                consumeVO.setDate(new Date(calendar.getTimeInMillis()));
-                consumeVO.setRdNumber(rdNumber);
-                List<String> eleAll = new ArrayList<>();
                 if (eleOneS[4].equals("2")) {
                     //Base64
                     eleAll.addAll(Arrays.asList(Common.Base64Convert(eleOneS[5])));
@@ -839,7 +833,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 sb = new StringBuilder();
                 sb.append("QRCode轉換失敗。\n請用\"QRCode下載功能\"。");
-                Common.showToast(this,"QRCode轉換失敗。\n請用\"QRCode下載功能\"。");
+                Common.showToast(this, "QRCode轉換失敗。\n請用\"QRCode下載功能\"。");
             }
 
         } else {
@@ -889,7 +883,8 @@ public class MainActivity extends AppCompatActivity {
     public ConsumeVO QRCodeNetResult(String s, ConsumeVO consumeVO) {
         Gson gson = new Gson();
         JsonObject js = gson.fromJson(s, JsonObject.class);
-        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
+        Type cdType = new TypeToken<List<JsonObject>>() {
+        }.getType();
         String result = js.get("details").toString();
         List<JsonObject> b = gson.fromJson(result, cdType);
         double price, unit, unitTotal;

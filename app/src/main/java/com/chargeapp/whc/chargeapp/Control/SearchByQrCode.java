@@ -98,7 +98,7 @@ public class SearchByQrCode extends Fragment {
         gson = new Gson();
         context.setTitle("QRCode線上查詢");
         view = inflater.inflate(R.layout.update_qrcode, container, false);
-
+        Common.setChargeDB(context);
 
         findviewByid(view);
         action = (String) getArguments().getSerializable("action");
@@ -452,7 +452,7 @@ public class SearchByQrCode extends Fragment {
     }
 
     private ConsumeVO getType(ConsumeVO consumeVO) {
-        Common.setChargeDB(context);
+
         TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
         String main = "O", second = "O";

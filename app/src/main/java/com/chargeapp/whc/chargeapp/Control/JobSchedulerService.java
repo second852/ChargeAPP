@@ -68,9 +68,9 @@ public class JobSchedulerService extends JobService {
 
         //確認今天是否重設過
         boolean todaySet = sharedPreferences.getBoolean(sf.format(new Date(calendar.getTimeInMillis())), false);
-//        if (todaySet) {
-//            return true;
-//        }
+        if (todaySet) {
+            return true;
+        }
         int result = ContextCompat.checkSelfPermission(JobSchedulerService.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if(result != PackageManager.PERMISSION_GRANTED)
         {
@@ -109,10 +109,10 @@ public class JobSchedulerService extends JobService {
         if (consumerVOS.size() > 0 && consumerVOS != null) {
             for (ConsumeVO consumeVO : consumerVOS) {
                 //避免紀錄當天重複
-//                if(sf.format(consumeVO.getDate()).equals(sf.format(new Date(setNewTime.getTimeInMillis()))))
-//                {
-//                    continue;
-//                }
+                if(sf.format(consumeVO.getDate()).equals(sf.format(new Date(setNewTime.getTimeInMillis()))))
+                {
+                    continue;
+                }
 
                 String detail = consumeVO.getFixDateDetail();
                 jsonObject = gson.fromJson(detail, JsonObject.class);
@@ -381,7 +381,6 @@ public class JobSchedulerService extends JobService {
             }
         }
         nulPriceNotify=notifyLottery();
-        setNewTime=Calendar.getInstance();
         NotifyUse(this,setNewTime.getTimeInMillis(),consumeNotify,goalNotify,nulPriceNotify);
         //今天設定過 存檔
         sharedPreferences.edit().putBoolean(sf.format(new Date(calendar.getTimeInMillis())), true).apply();

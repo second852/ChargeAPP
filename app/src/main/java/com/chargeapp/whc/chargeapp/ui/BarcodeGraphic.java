@@ -85,9 +85,10 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
 
     BarcodeGraphic(GraphicOverlay overlay, Activity context) {
         super(overlay);
-        hashMap = new HashMap<>();
         result=null;
+        hashMap = new HashMap<>();
         this.context = context;
+        Common.setChargeDB(context);
         priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         String sMax=priceDB.findMaxPeriod();
         if(sMax!=null)

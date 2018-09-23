@@ -77,7 +77,7 @@ public class SecondReceiver extends BroadcastReceiver {
         day = date.get(Calendar.DAY_OF_MONTH);
         dweek = date.get(Calendar.DAY_OF_WEEK);
 
-        Log.d("service", String.valueOf(consumeNotify));
+
         //notify message
         String message,title;
         Intent activeI;
@@ -183,7 +183,6 @@ public class SecondReceiver extends BroadcastReceiver {
             List<GoalVO> goalVOS=goalDB.getNotify();
             for (GoalVO goalVO:goalVOS)
             {
-                Log.d("ThirdReceiver",goalVO.getName());
                 setGoalNotification(goalVO,context);
                 id++;
             }

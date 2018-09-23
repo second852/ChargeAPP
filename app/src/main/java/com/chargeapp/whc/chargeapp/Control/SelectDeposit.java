@@ -102,7 +102,8 @@ public class SelectDeposit extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.select_deposit, container, false);
         Common.setScreen(Common.screenSize, getResources().getDisplayMetrics());
-
+        //DB
+        Common.setChargeDB(context);
 
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalVO = goalDB.getFindType("儲蓄");
@@ -112,8 +113,7 @@ public class SelectDeposit extends Fragment {
         period = 11;
         month = 0;
 
-        //DB
-        Common.setChargeDB(context);
+
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());

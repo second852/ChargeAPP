@@ -237,7 +237,7 @@
                     app:buttonMode="regular"
                     app:showOutline="false"
                     app:roundedCorners="true"
-                    app:bootstrapText="儲存 {fa_save}"
+                    app:bootstrapText="全部 {fa_save}"
                     />
                 <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/save"
