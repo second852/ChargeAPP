@@ -193,7 +193,7 @@ public class PriceHand extends Fragment {
         }
         int result = ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO);
         if (result != PackageManager.PERMISSION_GRANTED) {
-            Common.showToast(context,"沒有麥克風權限，無法使聲音兌獎!");
+            Common.showToast(context,"沒有麥克風權限，無法使聲音對獎!");
             choiceModel.setBootstrapText(bootstrapTexts.get(0));
             choiceModel.setShowOutline(false);
             setOneActon();
@@ -241,7 +241,7 @@ public class PriceHand extends Fragment {
             }
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("無法使用聲音兌獎!")
+            builder.setTitle("無法使用聲音對獎!")
                     .setMessage(remain)
                     .setPositiveButton("YES", listener)
                     .setNegativeButton("NO", nolistener)
@@ -262,47 +262,47 @@ public class PriceHand extends Fragment {
             if (priceVO != null) {
                 if (nul.equals(priceVO.getSuperPrizeNo().substring(5))) {
                     messageO = "特別獎";
-                    messageT = "兌獎號碼 : " + priceVO.getSuperPrizeNo();
+                    messageT = "對獎號碼 : " + priceVO.getSuperPrizeNo();
                 }
                 if (nul.equals(priceVO.getSpcPrizeNo().substring(5))) {
                     messageO = "特獎";
-                    messageT = "兌獎號碼 : " + priceVO.getSpcPrizeNo();
+                    messageT = "對獎號碼 : " + priceVO.getSpcPrizeNo();
                 }
                 if (nul.equals(priceVO.getFirstPrizeNo1().substring(5))) {
                     messageO = "頭獎";
-                    messageT = "兌獎號碼 : " + priceVO.getFirstPrizeNo1();
+                    messageT = "對獎號碼 : " + priceVO.getFirstPrizeNo1();
                 }
                 if (nul.equals(priceVO.getFirstPrizeNo2().substring(5))) {
                     messageO = "頭獎";
-                    messageT = "兌獎號碼 : " + priceVO.getFirstPrizeNo2();
+                    messageT = "對獎號碼 : " + priceVO.getFirstPrizeNo2();
                 }
                 if (nul.equals(priceVO.getFirstPrizeNo3().substring(5))) {
                     messageO = "頭獎";
-                    messageT = "兌獎號碼 : " + priceVO.getFirstPrizeNo3();
+                    messageT = "對獎號碼 : " + priceVO.getFirstPrizeNo3();
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo1())) {
                     messageO = "六獎";
-                    messageT = "兌獎號碼 : " + priceVO.getSixthPrizeNo1();
+                    messageT = "對獎號碼 : " + priceVO.getSixthPrizeNo1();
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo2())) {
                     messageO = "六獎";
-                    messageT = "兌獎號碼 : " + priceVO.getSixthPrizeNo2();
+                    messageT = "對獎號碼 : " + priceVO.getSixthPrizeNo2();
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo3())) {
                     messageO = "六獎";
-                    messageT = "兌獎號碼 : " + priceVO.getSixthPrizeNo3();
+                    messageT = "對獎號碼 : " + priceVO.getSixthPrizeNo3();
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo4())) {
                     messageO = "六獎";
-                    messageT = "兌獎號碼 : " + priceVO.getSixthPrizeNo4();
+                    messageT = "對獎號碼 : " + priceVO.getSixthPrizeNo4();
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo5())) {
                     messageO = "六獎";
-                    messageT = "兌獎號碼 : " + priceVO.getSixthPrizeNo5();
+                    messageT = "對獎號碼 : " + priceVO.getSixthPrizeNo5();
                 }
                 if (nul.equals(priceVO.getSixthPrizeNo6())) {
                     messageO = "六獎";
-                    messageT = "兌獎號碼 : " + priceVO.getSixthPrizeNo6();
+                    messageT = "對獎號碼 : " + priceVO.getSixthPrizeNo6();
                 }
             }
             messageHMO.put(i, messageO);
@@ -803,7 +803,7 @@ public class PriceHand extends Fragment {
                                 awardTitle.setText(null);
                                 priceTitle.setText(null);
 
-                                //兌獎提醒
+                                //對獎提醒
                                 BootstrapText textRemain = new BootstrapText.Builder(context)
                                         .addText("請輸入末三碼 ")
                                         .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)

@@ -27,7 +27,7 @@
                 android:background="#000000"
                 android:textColor="#ffffff"
                 android:textSize="25sp"
-                android:text="兌獎號碼"
+                android:text="對獎號碼"
                 android:visibility="visible"
                 />
             <Button
@@ -47,7 +47,7 @@
                 android:background="#000000"
                 android:textColor="#ffffff"
                 android:textSize="25sp"
-                android:text="兌獎" />
+                android:text="對獎" />
             <Button
                 android:id="@+id/showN"
                 android:layout_width="140dp"
@@ -56,7 +56,7 @@
                 android:background="#000000"
                 android:textColor="#ffffff"
                 android:textSize="25sp"
-                android:text="兌獎號碼" />
+                android:text="對獎號碼" />
         </LinearLayout>
     </HorizontalScrollView>
     <android.support.v4.view.ViewPager

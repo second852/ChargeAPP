@@ -83,7 +83,7 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     private GraphicOverlay mGraphicOverlay;
     public static TextView answer;
     public static String result;
-    //避免重複兌獎
+    //避免重複對獎
     public static String oldElu,p,oldPeriod;
     public static boolean isold;
     public static int colorChange;

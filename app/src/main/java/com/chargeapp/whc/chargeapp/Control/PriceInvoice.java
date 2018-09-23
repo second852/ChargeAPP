@@ -118,7 +118,7 @@ public class PriceInvoice extends Fragment {
         this.year= Integer.valueOf(period.substring(0, period.length() - 2));
         if(first)
         {
-            progressDialog.setTitle("自動兌獎中…");
+            progressDialog.setTitle("自動對獎中…");
             progressDialog.show();
             handler.post(runnable);
             first=false;

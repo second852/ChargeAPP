@@ -562,7 +562,7 @@ public class Common {
         return hashMap;
     }
 
-    //自動兌獎
+    //自動對獎
     private String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
     public void AutoSetPrice() {
         PriceDB priceDB=new  PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());

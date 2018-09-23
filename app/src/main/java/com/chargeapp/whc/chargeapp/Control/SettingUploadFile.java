@@ -467,7 +467,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         try {
                             if(invoiceVO.getIswin().equals("0"))
                             {
-                                bw.append("尚未兌獎");
+                                bw.append("尚未對獎");
                             }else if(invoiceVO.getIswin().equals("N")){
                                 bw.append("無中獎");
                             }else {
@@ -475,7 +475,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                             }
                         }catch (Exception e)
                         {
-                            bw.append("尚未兌獎");
+                            bw.append("尚未對獎");
                         }
                         bw.append("雲端發票" + " ");
                         bw.newLine();
@@ -492,7 +492,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         try {
                             if(consumeVO.getIsWin().equals("0"))
                             {
-                                bw.append("尚未兌獎");
+                                bw.append("尚未對獎");
                             }else if(consumeVO.getIsWin().equals("N")){
                                 bw.append("無中獎");
                             }else {
@@ -500,7 +500,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                             }
                         }catch (Exception e)
                         {
-                            bw.append("尚未兌獎");
+                            bw.append("尚未對獎");
                         }
                         if(consumeVO.getNumber()==null||consumeVO.getNumber().trim().length()>0)
                         {
@@ -623,7 +623,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         try {
                             if(invoiceVO.getIswin().equals("0"))
                             {
-                                rowContent.createCell(5).setCellValue("尚未兌獎");
+                                rowContent.createCell(5).setCellValue("尚未對獎");
                             }else if(invoiceVO.getIswin().equals("N")){
                                 rowContent.createCell(5).setCellValue("無中獎");
                             }else {
@@ -631,7 +631,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                             }
                         }catch (Exception e)
                         {
-                            rowContent.createCell(5).setCellValue("尚未兌獎");
+                            rowContent.createCell(5).setCellValue("尚未對獎");
                         }
                         rowContent.createCell(6).setCellValue("雲端發票");
                         //電子發票細節
@@ -665,7 +665,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         try {
                             if(consumeVO.getIsWin().equals("0"))
                             {
-                                rowContent.createCell(5).setCellValue("尚未兌獎");
+                                rowContent.createCell(5).setCellValue("尚未對獎");
                             }else if(consumeVO.getIsWin().equals("N")){
                                 rowContent.createCell(5).setCellValue("無中獎");
                             }else {
@@ -673,7 +673,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                             }
                         }catch (Exception e)
                         {
-                            rowContent.createCell(5).setCellValue("尚未兌獎");
+                            rowContent.createCell(5).setCellValue("尚未對獎");
                         }
                         if(consumeVO.getNumber()==null||consumeVO.getNumber().length()>0)
                         {
