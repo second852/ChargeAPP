@@ -82,7 +82,7 @@ public class InsertSpend extends Fragment {
     public static ConsumeVO consumeVO;
     public static boolean needSet;
     private int updateChoice;
-
+    private Handler handler, secondHander;
     private TextView noWekT, notifyT;
     private Activity context;
     private String oldMainType;
@@ -112,17 +112,14 @@ public class InsertSpend extends Fragment {
         View view = inflater.inflate(R.layout.insert_spend, container, false);
 //        showOnlyQRCodeToast();
         Common.setChargeDB(context);
-        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findviewByid(view);
         if (consumeVO == null) {
             consumeVO = new ConsumeVO();
         }
-
-        new Thread(runnable).start();
-        new Thread(setOnClick).start();
-
+        handler = new Handler();
+        handler.post(runnable);
+        secondHander = new Handler();
+        secondHander.post(setOnClick);
         return view;
     }
 
@@ -141,7 +138,12 @@ public class InsertSpend extends Fragment {
         choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
     }
 
-
+    @Override
+    public void onPause() {
+        super.onPause();
+        handler.removeCallbacks(runnable);
+        secondHander.removeCallbacks(setOnClick);
+    }
 
     private void setUpdate() {
         if (consumeVO.getMaintype().equals("O")) {
@@ -242,7 +244,9 @@ public class InsertSpend extends Fragment {
             BsTextWeek = Common.DateChoiceSetBsTest(context, Common.WeekSetSpinnerBS);
             BsTextMonth = Common.DateChoiceSetBsTest(context, Common.MonthSetSpinnerBS());
             BsTextStatue = Common.DateChoiceSetBsTest(context, Common.DateStatueSetSpinner);
-
+            typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
             setFirstGrid();
             firstG.setOnItemClickListener(new firstGridOnClick());
             if (Common.showfirstgrid) {

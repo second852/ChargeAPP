@@ -56,7 +56,7 @@ public class InsertIncome extends Fragment {
     private LinearLayout firstL;
     private GridView firstG;
     private int updateChoice;
-
+    private Handler handler,secondHander;
     public static BankVO bankVO;
     public static boolean needSet;
     private Activity context;
@@ -94,13 +94,19 @@ public class InsertIncome extends Fragment {
         BsTextWeek=Common.DateChoiceSetBsTest(context,Common.WeekSetSpinnerBS);
         BsTextMonth=Common.DateChoiceSetBsTest(context,Common.MonthSetSpinnerBS());
         BsTextStatue=Common.DateChoiceSetBsTest(context,Common.DateStatueSetSpinner);
-
-        new Thread(runnable).start();
-        new Thread(setOnClick).start();
+        handler=new Handler();
+        secondHander=new Handler();
+        handler.post(runnable);
+        secondHander.post(setOnClick);
         return view;
     }
 
-
+    @Override
+    public void onPause() {
+        super.onPause();
+        handler.removeCallbacks(runnable);
+        secondHander.removeCallbacks(setOnClick);
+    }
 
     private void setSpinner() {
         choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
