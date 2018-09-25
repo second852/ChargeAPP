@@ -304,14 +304,15 @@ public class GoalInsert extends Fragment {
                     return;
                 }
                 String[] dates = day.split("/");
-                Calendar c = new GregorianCalendar(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
+                Calendar c = new GregorianCalendar(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 0, 0, 0);
                 Date d = new Date(c.getTimeInMillis());
-                if(d.getTime()<System.currentTimeMillis())
+                if(c.getTimeInMillis()<System.currentTimeMillis())
                 {
                     limitP.setError(" ");
                     Common.showToast(context,"不能過去時間");
                     return;
                 }
+
                 goalVO.setEndTime(d);
             }else{
                 goalVO.setEndTime(new Date(0));

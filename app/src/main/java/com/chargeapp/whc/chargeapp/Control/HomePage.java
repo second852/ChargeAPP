@@ -22,6 +22,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
@@ -314,7 +316,7 @@ public class HomePage extends Fragment {
             ImageView imageView=itemView.findViewById(R.id.ivImage);
             TextView title=itemView.findViewById(R.id.goal);
             TextView describe=itemView.findViewById(R.id.describe);
-            TextView resultT=itemView.findViewById(R.id.resultT);
+            BootstrapButton resultT=itemView.findViewById(R.id.resultT);
             LinearLayout resultL=itemView.findViewById(R.id.resultL);
             if(o instanceof GoalVO)
             {
@@ -336,22 +338,23 @@ public class HomePage extends Fragment {
                       {
                           int dweek=HomePage.this.start.get(Calendar.DAY_OF_WEEK);
                           start=new GregorianCalendar(year,month,day-dweek+1,0,0,0);
-                          end=new GregorianCalendar(year,month,day,23,59,59);
+                          end=new GregorianCalendar(year,month,day-dweek+7,23,59,59);
                           consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
                                   invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                           describeContent.append("花費 : 本周支出"+nf.format(consumeCount)+"元");
+
                       }else if(timeStatue.equals("每月"))
                       {
+                          int max=HomePage.this.start.getActualMaximum(Calendar.DAY_OF_MONTH);
                           start=new GregorianCalendar(year,month,1,0,0,0);
-                          end=new GregorianCalendar(year,month,day,23,59,59);
+                          end=new GregorianCalendar(year,month,max,23,59,59);
                           consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
                                   invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                           describeContent.append("花費 : 本月支出"+nf.format(consumeCount)+"元");
                       }else if(timeStatue.equals("每年"))
                       {
-                          int max=HomePage.this.start.getActualMaximum(Calendar.DAY_OF_MONTH);
-                          start=new GregorianCalendar(year,month,1,0,0,0);
-                          end=new GregorianCalendar(year,month,max,23,59,59);
+                          start=new GregorianCalendar(year,0,1,0,0,0);
+                          end=new GregorianCalendar(year,11,31,23,59,59);
                           consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
                                   invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                           describeContent.append("花費 : 本年支出"+nf.format(consumeCount)+"元");
@@ -364,13 +367,12 @@ public class HomePage extends Fragment {
                       if(Integer.valueOf(goalVO.getMoney())>consumeCount)
                       {
                           resultT.setText("達成");
-                          resultT.setTextColor(Color.parseColor("#2E8B57"));
-                          resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
+                          resultT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
+
 
                       }else{
                           resultT.setText("失敗");
-                          resultT.setTextColor(Color.parseColor("#DC143C"));
-                          resultL.setBackgroundColor(Color.parseColor("#DC143C"));
+                          resultT.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                       }
                       describe.setText(describeContent.toString());
                 }else {
@@ -391,36 +393,50 @@ public class HomePage extends Fragment {
                                 goalVO.setNotify(false);
                                 describeContent.append(Common.sTwo.format(goalVO.getEndTime())+"前\n已儲蓄"+nf.format(saveMoney)+"元");
                                 resultT.setText("達成");
-                                resultT.setTextColor(Color.parseColor("#2E8B57"));
-                                resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
+                                resultT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                             }else{
                                 goalVO.setStatue(2);
                                 goalVO.setNotify(false);
                                 describeContent.append(Common.sTwo.format(goalVO.getEndTime())+"前\n已儲蓄"+nf.format(saveMoney)+"元");
                                 resultT.setText("失敗");
-                                resultT.setTextColor(Color.parseColor("#DC143C"));
-                                resultL.setBackgroundColor(Color.parseColor("#DC143C"));
+                                resultT.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                             }
+                            Log.d("goal","homepage"+goalVO.getStatue());
                             goalDB.update(goalVO);
                         }else{
                             title.setText("目標 : "+goalVO.getName()+"\n"+Common.sTwo.format(goalVO.getEndTime())+"前 儲蓄"+nf.format(goalVO.getMoney())+"元");
-                            double day=((goalVO.getEndTime().getTime()-System.currentTimeMillis())/(1000*60*60*24));
+                            double remainday=Double.valueOf(goalVO.getEndTime().getTime()-System.currentTimeMillis())/(1000*60*60*24);
+                            if(remainday<1)
+                            {
+                                double remainhour=remainday*24;
+                                if(remainhour<1)
+                                {
+                                    double remainMin=remainhour*60;
+                                    describeContent.append(" 倒數"+(int)remainMin+"分鐘");
+
+                                }else{
+                                    describeContent.append(" 倒數"+(int)remainhour+"小時");
+                                }
+
+                            }else {
+                                describeContent.append(" 倒數"+(int)remainday+"天");
+                            }
+
                             if(Integer.valueOf(goalVO.getMoney())<saveMoney)
                             {
                                 goalVO.setStatue(1);
-                                describeContent.append("倒數"+(int)day+"天\n目前已儲蓄"+nf.format(saveMoney)+"元");
+                                describeContent.append("\n 目前已儲蓄"+saveMoney+"元 達成");
+                                goalDB.update(goalVO);
                                 resultT.setText("達成");
-                                resultT.setTextColor(Color.parseColor("#FF8800"));
-                                resultL.setBackgroundColor(Color.parseColor("#FF8800"));
+                                resultT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                             }else{
-                                goalVO.setStatue(2);
-                                describeContent.append("倒數"+(int)day+"天\n目前已儲蓄"+nf.format(saveMoney)+"元");
-                                resultT.setText("持續中");
-                                resultT.setTextColor(Color.parseColor("#0000FF"));
-                                resultL.setBackgroundColor(Color.parseColor("#0000FF"));
+                                describeContent.append("\n 目前已儲蓄"+saveMoney+"元");
+                                resultT.setText("進行中");
+                                resultT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
                             }
                         }
                         describe.setText(describeContent.toString());
+
                     }else if(timeStatue.equals("每月"))
                     {
                         int max=HomePage.this.start.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -434,12 +450,10 @@ public class HomePage extends Fragment {
                         if(Integer.valueOf(goalVO.getMoney())<savemoney)
                         {
                             resultT.setText("達成");
-                            resultT.setTextColor(Color.parseColor("#2E8B57"));
-                            resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
+                            resultT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                         }else{
                             resultT.setText("失敗");
-                            resultT.setTextColor(Color.parseColor("#DC143C"));
-                            resultL.setBackgroundColor(Color.parseColor("#DC143C"));
+                            resultT.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         }
                     }else if(timeStatue.equals("每年"))
                     {
@@ -453,12 +467,11 @@ public class HomePage extends Fragment {
                         if(Integer.valueOf(goalVO.getMoney())<savemoney)
                         {
                             resultT.setText("達成");
-                            resultT.setTextColor(Color.parseColor("#2E8B57"));
-                            resultL.setBackgroundColor(Color.parseColor("#2E8B57"));
+                            resultT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                         }else{
                             resultT.setText("失敗");
                             resultT.setTextColor(Color.parseColor("#DC143C"));
-                            resultL.setBackgroundColor(Color.parseColor("#DC143C"));
+                            resultT.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         }
                     }
 
@@ -481,7 +494,7 @@ public class HomePage extends Fragment {
                     Calendar calendar=Calendar.getInstance();
                     int dweek=calendar.get(Calendar.DAY_OF_WEEK);
                     start=new GregorianCalendar(year,month,day-dweek+1,0,0,0);
-                    end=new GregorianCalendar(year,month,day,23,59,59);
+                    end=new GregorianCalendar(year,month,day-dweek+7,23,59,59);
                     consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
                             invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
                     title.setText("本周支出 : "+nf.format(consumeCount)+"元");

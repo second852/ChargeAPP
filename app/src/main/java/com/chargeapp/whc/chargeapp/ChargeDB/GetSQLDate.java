@@ -581,7 +581,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 }
                 Log.d("XXXXXXx", todayMonth + ":" + todayYear);
                 //到最大個月為止
-                if (todayMonth == lastMonth && lastYear == todayYear) {
+                if (todayMonth <= lastMonth && lastYear <= todayYear) {
                     break;
                 }
             }
@@ -1089,6 +1089,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             s = "下載失敗";
         }
 
+        if(progressT==null||percentage==null)
+        {
+            return;
+        }
         if (action.equals("download")) {
             if (downloadS.equals("price")) {
                 totalS = (year - 1911) + "年" + priceMonth.get(month) + s;

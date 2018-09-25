@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -52,12 +53,8 @@ public class SecondReceiver extends BroadcastReceiver {
         Log.d("service","onReceive");
         sf=new SimpleDateFormat("yyyy-MM-dd");
 
-
-        Bundle bundle=intent.getExtras();
-        boolean consumeNotify= (boolean) bundle.getSerializable("consumeNotify");
-        boolean goalNotify= (boolean) bundle.getSerializable("goalNotify");
-        boolean nulPriceNotify= (boolean) bundle.getSerializable("nulPriceNotify");
-
+        SharedPreferences sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
+        boolean setNotify = sharedPreferences.getBoolean("notify", true);
 
         notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 
@@ -81,10 +78,10 @@ public class SecondReceiver extends BroadcastReceiver {
         //notify message
         String message,title;
         Intent activeI;
-        if(consumeNotify)
+        if(setNotify)
         {
             Log.d("service", "consumeNotify");
-            activeI=new Intent(context,Download.class);
+            activeI=new Intent(context,MainActivity.class);
             activeI.setAction("showFix");
 
             List<ConsumeVO> consumeVOS=consumeDB.getNotify();
@@ -92,7 +89,6 @@ public class SecondReceiver extends BroadcastReceiver {
 
             for (ConsumeVO consumeVO:consumeVOS)
             {
-
                 detail = consumeVO.getFixDateDetail();
                 jsonObject = gson.fromJson(detail, JsonObject.class);
                 String action = jsonObject.get("choicestatue").getAsString().trim();
@@ -141,50 +137,86 @@ public class SecondReceiver extends BroadcastReceiver {
                 showNotification(title,message,context,id,activeI);
                 id++;
             }
-        }
 
-        if(nulPriceNotify)
-        {
-
-            activeI=new Intent(context,Download.class);
-            activeI.setAction("nulPriceNotify");
-
-
-            title=" 統一發票";
-            Calendar calendar=Calendar.getInstance();
-            int month=calendar.get(Calendar.MONTH)+1;
+            Calendar calendar = Calendar.getInstance();
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            int month = calendar.get(Calendar.MONTH) + 1;
             int year=calendar.get(Calendar.YEAR)-1911;
-            if(month==1)
-            {
-                message=" 民國"+(year-1)+"年11-12月開獎";
+            if (month == 1 || month == 3 || month == 5 || month == 7 || month == 9 || month == 11) {
+                if (day == 25) {
+                    //統一發票 通知
+                    activeI=new Intent(context,MainActivity.class);
+                    activeI.setAction("nulPriceNotify");
+                    title=" 統一發票";
+                    if(month==1)
+                    {
+                        message=" 民國"+(year-1)+"年11-12月開獎";
+                    }
+                    else if(month==3)
+                    {
+                        message=" 民國"+year+"年1-2月開獎";
+                    } else if(month==5)
+                    {
+                        message=" 民國"+year+"年3-4月開獎";
+                    } else if(month==7)
+                    {
+                        message=" 民國"+year+"年5-6月開獎";
+                    } else if(month==9)
+                    {
+                        message=" 民國"+year+"年7-8月開獎";
+                    } else
+                    {
+                        message=" 民國"+year+"年9-10月開獎";
+                    }
+                    showNotification(title,message,context,id,activeI);
+                    id++;
+                }
             }
-            else if(month==3)
-            {
-                message=" 民國"+year+"年1-2月開獎";
-            } else if(month==5)
-            {
-                message=" 民國"+year+"年3-4月開獎";
-            } else if(month==7)
-            {
-                message=" 民國"+year+"年5-6月開獎";
-            } else if(month==9)
-            {
-                message=" 民國"+year+"年7-8月開獎";
-            } else
-            {
-                message=" 民國"+year+"年9-10月開獎";
-            }
-            showNotification(title,message,context,id,activeI);
-            id++;
-        }
 
-        if(goalNotify)
-        {
+
             List<GoalVO> goalVOS=goalDB.getNotify();
+            Log.d("service", String.valueOf(goalVOS.size()));
+            //set Goal
             for (GoalVO goalVO:goalVOS)
             {
-                setGoalNotification(goalVO,context);
-                id++;
+                String statue = goalVO.getNotifyStatue().trim();
+                if (statue.equals("每天")) {
+                    if (goalVO.isNoWeekend()) {
+                        if (dweek == 1 || dweek == 7) {
+                            continue;
+                        }
+                    }
+                    setGoalNotification(goalVO,context);
+                    id++;
+                } else if (statue.equals("每周")) {
+                    HashMap<String, Integer> change = getStringtoInt();
+                    String dateStatue = goalVO.getNotifyDate().trim();
+                    if (dweek == change.get(dateStatue)) {
+                        setGoalNotification(goalVO,context);
+                        id++;
+                    }
+                } else if (statue.equals("每月")) {
+                    int max = date.getActualMaximum(Calendar.DAY_OF_MONTH);
+                    String dateStatue = goalVO.getNotifyDate().trim();
+                    dateStatue = dateStatue.substring(0, dateStatue.indexOf("日"));
+                    Log.d("service",dateStatue+" : "+day);
+                    if (dateStatue.equals(String.valueOf(day))) {
+                        setGoalNotification(goalVO,context);
+                        id++;
+                    }
+                    if (day == max && Integer.valueOf(dateStatue) > day) {
+                        setGoalNotification(goalVO,context);
+                        id++;
+                    }
+                } else {
+                    String fixdate = goalVO.getNotifyDate().trim();
+                    fixdate = fixdate.substring(0, fixdate.indexOf("月"));
+                    int d = Integer.valueOf(fixdate) - 1;
+                    if (month == d && day == 1) {
+                        setGoalNotification(goalVO,context);
+                        id++;
+                    }
+                }
             }
         }
     }
@@ -258,14 +290,31 @@ public class SecondReceiver extends BroadcastReceiver {
                     goalDB.update(goalVO);
                 }else{
                     title=" 目標 :"+goalVO.getName()+" "+Common.sTwo.format(goalVO.getEndTime())+"前儲蓄"+goalVO.getMoney()+"元";
-                    double remainday=((goalVO.getEndTime().getTime()-System.currentTimeMillis())/(1000*60*60*24));
+                    double remainday=Double.valueOf(goalVO.getEndTime().getTime()-System.currentTimeMillis())/(1000*60*60*24);
+                    if(remainday<1)
+                    {
+                        double remainhour=remainday*24;
+                        if(remainhour<1)
+                        {
+                            double remainMin=remainhour*60;
+                            message=" 倒數"+(int)remainMin+"分鐘";
+
+                        }else{
+                            message=" 倒數"+(int)remainhour+"小時";
+                        }
+
+                    }else {
+                        message=" 倒數"+(int)remainday+"天";
+                    }
+
+
                     if(Integer.valueOf(goalVO.getMoney())<saveMoney)
                     {
                         goalVO.setStatue(1);
-                        message=" 倒數"+(int)remainday+"天 目前已儲蓄"+saveMoney+"元 達成";
+                        message=message+" 目前已儲蓄"+saveMoney+"元 達成";
                         goalDB.update(goalVO);
                     }else{
-                        message=" 倒數"+(int)remainday+"天 目前已儲蓄"+saveMoney+"元";
+                        message=message+" 目前已儲蓄"+saveMoney+"元";
                     }
                 }
             }else if(timeStatue.equals("每月"))
@@ -291,7 +340,7 @@ public class SecondReceiver extends BroadcastReceiver {
         }
         if(title.trim().length()>0)
         {
-            Intent activeI =new Intent(context,Download.class);
+            Intent activeI =new Intent(context,MainActivity.class);
             activeI.setAction("goal");
             showNotification(title,message,context,this.id,activeI);
         }

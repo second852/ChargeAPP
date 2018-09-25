@@ -54,17 +54,14 @@ public class JobSchedulerService extends JobService {
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.d("service","service start");
-        boolean consumeNotify=false;
-        boolean goalNotify=false;
-        boolean nulPriceNotify;
 
 
         gson = new Gson();
         Calendar calendar = Calendar.getInstance();
         sf = new SimpleDateFormat("yyyy-MM-dd");
         SharedPreferences sharedPreferences = getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
-        boolean setNotify = sharedPreferences.getBoolean("notify", true);
         String setTime = sharedPreferences.getString("userTime", "6:00 p.m.").trim();
+
 
         //確認今天是否重設過
         boolean todaySet = sharedPreferences.getBoolean(sf.format(new Date(calendar.getTimeInMillis())), false);
@@ -117,7 +114,7 @@ public class JobSchedulerService extends JobService {
                 String detail = consumeVO.getFixDateDetail();
                 jsonObject = gson.fromJson(detail, JsonObject.class);
                 String action = jsonObject.get("choicestatue").getAsString().trim();
-                boolean notify = Boolean.valueOf(consumeVO.getNotify());
+
                 if ("每天".equals(action)) {
                     Log.d("service", "consumeVO");
                     boolean noWeekend = jsonObject.get("noweek").getAsBoolean();
@@ -141,9 +138,7 @@ public class JobSchedulerService extends JobService {
                         consumeVO.setDate(new Date(setNewTime.getTimeInMillis()));
                         consumeDB.insert(consumeVO);
                     }
-                    if (notify && setNotify) {
-                        consumeNotify=true;
-                    }
+
                 } else if ("每周".equals(action)) {
                     String fixdetail = jsonObject.get("choicedate").getAsString().trim();
                     HashMap<String, Integer> change = getStringtoInt();
@@ -162,9 +157,7 @@ public class JobSchedulerService extends JobService {
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumeDB.insert(consumeVO);
                         }
-                        if (notify && setNotify) {
-                            consumeNotify=true;
-                        }
+
                     }
                 } else if ("每月".equals(action)) {
                     int Maxday = date.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -186,9 +179,7 @@ public class JobSchedulerService extends JobService {
                             consumeDB.insert(consumeVO);
                         }
 
-                        if (notify && setNotify) {
-                            consumeNotify=true;
-                        }
+
                     }
                     if (Maxday < Integer.valueOf(fixdate) && day == Maxday) {
                         Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
@@ -206,9 +197,7 @@ public class JobSchedulerService extends JobService {
                             consumeDB.insert(consumeVO);
                         }
 
-                        if (notify && setNotify) {
-                            consumeNotify=true;
-                        }
+
                     }
                 }else{
                     //每年
@@ -230,9 +219,7 @@ public class JobSchedulerService extends JobService {
                             consumeVO.setDate(new Date((date.getTimeInMillis())));
                             consumeDB.insert(consumeVO);
                         }
-                        if (notify && setNotify) {
-                            consumeNotify=true;
-                        }
+
                     }
                 }
             }
@@ -331,57 +318,10 @@ public class JobSchedulerService extends JobService {
             }
         }
 
+        //測試使用現在時間
+//        setNewTime=Calendar.getInstance();
 
-
-        List<GoalVO> goalVOS = goalDB.getNotify();
-        for (GoalVO goalVO : goalVOS) {
-            Log.d("service", "goalVO");
-            String statue = goalVO.getNotifyStatue().trim();
-            if (statue.equals("每天")) {
-                if (goalVO.isNoWeekend()) {
-                    if (dweek == 1 || dweek == 7) {
-                        continue;
-                    }
-                }
-                if (setNotify) {
-                   goalNotify=true;
-                }
-            } else if (statue.equals("每周")) {
-                HashMap<String, Integer> change = getStringtoInt();
-                String dateStatue = goalVO.getNotifyDate().trim();
-                if (dweek == change.get(dateStatue)) {
-                    if (setNotify) {
-                        goalNotify=true;
-                    }
-                }
-            } else if (statue.equals("每月")) {
-                int max = date.getActualMaximum(Calendar.DAY_OF_MONTH);
-                String dateStatue = goalVO.getNotifyDate().trim();
-                dateStatue = dateStatue.substring(0, dateStatue.indexOf("日"));
-                Log.d("service",dateStatue+" : "+day);
-                if (dateStatue.equals(String.valueOf(day))) {
-                    if (setNotify) {
-                        goalNotify=true;
-                    }
-                }
-                if (day == max && Integer.valueOf(dateStatue) > day) {
-                    if (setNotify) {
-                        goalNotify=true;
-                    }
-                }
-            } else {
-                String fixdate = goalVO.getNotifyDate().trim();
-                fixdate = fixdate.substring(0, fixdate.indexOf("月"));
-                int d = Integer.valueOf(fixdate) - 1;
-                if (month == d && day == 1) {
-                    if (setNotify) {
-                        goalNotify=true;
-                    }
-                }
-            }
-        }
-        nulPriceNotify=notifyLottery();
-        NotifyUse(this,setNewTime.getTimeInMillis(),consumeNotify,goalNotify,nulPriceNotify);
+        NotifyUse(this,setNewTime.getTimeInMillis());
         //今天設定過 存檔
         sharedPreferences.edit().putBoolean(sf.format(new Date(calendar.getTimeInMillis())), true).apply();
         return true;
@@ -406,12 +346,8 @@ public class JobSchedulerService extends JobService {
         return false;
     }
 
-    public void NotifyUse(Context context,long settime,boolean consumeNotify, boolean goalNotify,boolean nulPriceNotify) {
+    public void NotifyUse(Context context,long settime) {
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("consumeNotify", consumeNotify);
-        bundle.putSerializable("goalNotify", goalNotify);
-        bundle.putSerializable("nulPriceNotify", nulPriceNotify);
         Intent alarmIntent;
         //版本判斷
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -421,7 +357,6 @@ public class JobSchedulerService extends JobService {
             Log.d("service","SecondReceiver");
             alarmIntent = new Intent(this, SecondReceiver.class);
         }
-        alarmIntent.putExtras(bundle);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
         manager.set(AlarmManager.RTC_WAKEUP, settime, pendingIntent);
         Log.d("service time",String.valueOf(settime));

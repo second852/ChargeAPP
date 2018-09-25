@@ -13,7 +13,6 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:indeterminateDrawable="@drawable/ring_rotate"
-        android:indeterminateDuration="1500"
         android:indeterminateOnly="true" />
     <TextView
         android:id="@+id/percentage"

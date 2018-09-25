@@ -1,6 +1,9 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
@@ -203,18 +206,45 @@ public class MainActivity extends AppCompatActivity {
             Fragment fragment = new HomePage();
             switchFragment(fragment);
         }
+        setJob();
     }
 
+
+    private void setJob() {
+        JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        //判斷是否建立過
+//        tm.cancelAll();
+       if(tm.getAllPendingJobs().size()==2)
+       {
+           return;
+       }
+
+        ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);
+        JobInfo.Builder builder = new JobInfo.Builder(0, mServiceComponent);
+//       tm.cancelAll();
+        builder.setPeriodic(1000*30);
+        builder.setPersisted(true);
+//        builder.setMinimumLatency(1);
+//        builder.setOverrideDeadline(2);
+        builder.setRequiresCharging(false);
+        builder.setRequiresDeviceIdle(false);
+        tm.schedule(builder.build());
+
+        ComponentName DowloadComponet = new ComponentName(this, DowloadNewDataJob.class);
+        JobInfo.Builder DownloadBuilder = new JobInfo.Builder(1, DowloadComponet);
+        DownloadBuilder.setPersisted(true);
+        DownloadBuilder.setPeriodic(1000*60*60);
+//        DownloadBuilder.setMinimumLatency(1);
+//        DownloadBuilder.setOverrideDeadline(2);
+        DownloadBuilder.setRequiresCharging(false);
+        DownloadBuilder.setRequiresDeviceIdle(false);
+        tm.schedule(DownloadBuilder.build());
+    }
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        if (!mFramgent) {
-            Intent intent = new Intent(this, Download.class);
-            startActivity(intent);
-            finish();
-        }
+    protected void onPause() {
+        super.onPause();
+        mFramgent=true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

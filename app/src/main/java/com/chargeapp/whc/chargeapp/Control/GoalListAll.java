@@ -39,6 +39,7 @@ import com.google.android.gms.ads.AdView;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -192,6 +193,8 @@ public class GoalListAll extends Fragment {
             StringBuffer sbResult = new StringBuffer();
             String timeDec = goalVO.getTimeStatue().trim();
 
+            Log.d("goal",goalVO.getStatue()+" : "+goalVO.getType());
+
             if (timeDec.equals("今日")) {
                 //描述目標
                 sb.append("  " + serial + ".起日 : " + Common.sTwo.format(goalVO.getStartTime()).trim() +
@@ -226,7 +229,7 @@ public class GoalListAll extends Fragment {
                                 .show();
                         firstShow = false;
                         //設定為完成
-                        goalVO.setStatue(2);
+                        goalVO.setStatue(1);
                         goalVO.setNotify(false);
                         goalDB.update(goalVO);
                     }
@@ -235,9 +238,9 @@ public class GoalListAll extends Fragment {
                     resultG.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                     serial++;
                 } else {
-                    if (today.get(Calendar.YEAR) >= endDay.get(Calendar.YEAR) && today.get(Calendar.MONTH) >= endDay.get(Calendar.MONTH) && today.get(Calendar.DAY_OF_MONTH) >= endDay.get(Calendar.DAY_OF_MONTH)) {
+                    if (goalVO.getEndTime().getTime()<System.currentTimeMillis()) {
 
-                        //彈跳視窗 提醒未完成
+                        //彈跳視窗 提醒時間過 任務未完成
                         if (firstShow&&goalVO.getStatue()==0) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setTitle("任務未完成!")
@@ -251,7 +254,7 @@ public class GoalListAll extends Fragment {
                                     .show();
                             firstShow = false;
                             //設定狀態未完成
-                            goalVO.setStatue(1);
+                            goalVO.setStatue(2);
                             goalVO.setNotify(false);
                             goalDB.update(goalVO);
                         }
@@ -260,8 +263,27 @@ public class GoalListAll extends Fragment {
                         serial++;
                     }else{
                         sbResult.append("  " + serial + ".目前 : 儲蓄" + amount + " 元\n     還缺 : "+(goalVO.getMoney()-amount)+" 元");
-                        int dayR= (int) ((goalVO.getEndTime().getTime()-today.getTimeInMillis())/(1000*60*60*24));
-                        sbResult.append("\n     倒數 : "+dayR+" 天");
+                        double remainday=Double.valueOf(goalVO.getEndTime().getTime()-System.currentTimeMillis())/(1000*60*60*24);
+
+                        if(remainday>0)
+                        {
+                            if(remainday<1)
+                            {
+                                Log.d("goal", String.valueOf(remainday));
+                                double remainhour=remainday*24;
+                                if(remainhour<1)
+                                {
+                                    double remainMin=remainhour*60;
+                                    sbResult.append("\n     倒數"+(int)remainMin+"分鐘");
+
+                                }else{
+                                    sbResult.append("\n     倒數"+(int)remainhour+"小時");
+                                }
+
+                            }else {
+                                sbResult.append("\n     倒數"+(int)remainday+"天");
+                            }
+                        }
                         resultG.setBootstrapBrand(null);
                         resultG.setTextColor(Color.BLACK);
                     }
@@ -290,7 +312,8 @@ public class GoalListAll extends Fragment {
                             sbResult.append("本周花費");
                             int sunday = cal.get(Calendar.DAY_OF_WEEK);
                             start = new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), (cal.get(Calendar.DAY_OF_MONTH) - sunday + 1), 0, 0, 0);
-                            end = new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), (cal.get(Calendar.DAY_OF_MONTH) - sunday + 8), 23, 59, 59);
+                            end = new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), (cal.get(Calendar.DAY_OF_MONTH) - sunday + 7), 23, 59, 59);
+                            Log.d("goalXXXXXXx",Common.sTwo.format(new Date(start.getTimeInMillis()))+" : "+Common.sTwo.format(new Date(end.getTimeInMillis())));
                             break;
                         case "每月":
                             sbResult.append("本月花費");
@@ -388,12 +411,12 @@ public class GoalListAll extends Fragment {
 
             boolean updateGoal;
             if (goalVO.getStatue() == 1) {
-                fixT.setText("失敗");
-                fixT.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
-                updateGoal = false;
-            } else if (goalVO.getStatue() == 2) {
                 fixT.setText("達成");
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
+                updateGoal = false;
+            } else if (goalVO.getStatue() == 2) {
+                fixT.setText("失敗");
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                 updateGoal = false;
             } else {
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
