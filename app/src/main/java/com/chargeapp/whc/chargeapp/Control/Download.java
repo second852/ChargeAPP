@@ -7,7 +7,6 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -62,51 +61,38 @@ public class Download extends AppCompatActivity {
             R.drawable.ticket, R.drawable.supplement, R.drawable.subway, R.drawable.rent, R.drawable.rentfilled, R.drawable.phonet,
             R.drawable.origin, R.drawable.movie, R.drawable.microphone, R.drawable.lunch, R.drawable.losemoney, R.drawable.lipgloss, R.drawable.train
             , R.drawable.salary, R.drawable.lotto, R.drawable.bouns, R.drawable.interest, R.drawable.fund, R.drawable.bank, R.drawable.health,
-            R.drawable.shose, R.drawable.book, R.drawable.setting, R.drawable.search, R.drawable.export, R.drawable.add
+            R.drawable.shose, R.drawable.book, R.drawable.setting, R.drawable.search, R.drawable.export,R.drawable.add
     };
 
     private String food = "堡 三明治 優酪乳 肉 飯 雙手卷 腿 麵 麵包 熱狗 雞 手卷 肉 粉 蔬菜 牛 豬 起司 花生 豆 蛋 魚 菜 瓜 黑胡椒 土司 泡芙 排";
     private String drink = "咖啡 茶 豆漿 拿鐵 乳 飲 ml 罐 酒 杯 水 奶 冰 珍珠";
+    private Handler firstH;
     private GetSQLDate getSQLDate;
     private TextView percentage, progressT;
     private AdView adView;
-    private Handler handler;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.download_main);
-        Common.setAdView(adView, Download.this);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                progressT = findViewById(R.id.progressT);
-                percentage = findViewById(R.id.percentage);
-                adView = findViewById(R.id.adView);
-                Common.lostCarrier = new ArrayList<>();
-                askPermissions();
-            }
-        }).start();
+        progressT = findViewById(R.id.progressT);
+        percentage = findViewById(R.id.percentage);
+        adView =findViewById(R.id.adView);
+        Common.setAdView(adView,this);
+    }
 
-//        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-//        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
-//        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-//        if (dpWidth > 650) {
-//            Common.screenSize = Common.Screen.xLarge;
-//        } else if (dpWidth > 470) {
-//            Common.screenSize = Common.Screen.large;
-//        } else {
-//            Common.screenSize = Common.Screen.normal;
-//        }
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        askPermissions();
     }
 
 
 
-    public void askPermissions() {
+    public  void askPermissions() {
         //因為是群組授權，所以請求ACCESS_COARSE_LOCATION就等同於請求ACCESS_FINE_LOCATION，因為同屬於LOCATION群組
-        String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        String[] permissions={Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
         Set<String> permissionsRequest = new HashSet<>();
         for (String permission : permissions) {
             int result = ContextCompat.checkSelfPermission(Download.this, permission);
@@ -119,7 +105,7 @@ public class Download extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     permissionsRequest.toArray(new String[permissionsRequest.size()]),
                     87);
-        } else {
+        }else{
             permisionOk();
         }
     }
@@ -151,23 +137,19 @@ public class Download extends AppCompatActivity {
     }
 
 
-    private void permisionOk() {
+
+    private void permisionOk()
+    {
         TypefaceProvider.registerDefaultIconSets();
         Common.setChargeDB(Download.this);
+        (getSupportActionBar()).hide();
         ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
         if (mNetworkInfo != null) {
-            SharedPreferences sharedPreferences = getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
-            boolean firstDownload = sharedPreferences.getBoolean("firstDownload", true);
-            if (firstDownload) {
-                getSQLDate = new GetSQLDate(this);
-                getSQLDate.setPercentage(percentage);
-                getSQLDate.setProgressT(progressT);
-                getSQLDate.execute("download");
-                sharedPreferences.edit().putBoolean("firstDownload", false).apply();
-            }else{
-                tonNewActivity();
-            }
+            getSQLDate = new GetSQLDate(this);
+            getSQLDate.setPercentage(percentage);
+            getSQLDate.setProgressT(progressT);
+            getSQLDate.execute("download");
         } else {
             tonNewActivity();
             Common.showToast(this, "網路沒有開啟，無法下載!");
@@ -175,14 +157,18 @@ public class Download extends AppCompatActivity {
     }
 
 
+
     private Runnable runToNeW = new Runnable() {
         @Override
         public void run() {
+            (new Common()).AutoSetPrice();
+
             String a;
             try {
                 a = getIntent().getStringExtra("action");
-            } catch (Exception e) {
-                a = null;
+            }catch (Exception e)
+            {
+                a =null;
             }
             Intent intent = new Intent();
             if (a != null) {
@@ -201,36 +187,19 @@ public class Download extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (firstH != null) {
+            firstH.removeCallbacks(runToNeW);
+        }
         if (getSQLDate != null) {
             getSQLDate.cancel(true);
         }
     }
 
     public void tonNewActivity() {
-        //setJob
-//        setJob();
         //set origin
         setdate();
-        String a;
-        try {
-            a = getIntent().getStringExtra("action");
-        } catch (Exception e) {
-            a = null;
-        }
-        Intent intent = new Intent();
-        if (a != null) {
-            intent.putExtra("action", a);
-        }
-        if (getIntent().getAction() != null) {
-            intent.setAction(getIntent().getAction());
-        }
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        startActivity(intent.setClass(Download.this, MainActivity.class));
-        finish();
+        firstH = new Handler();
+        firstH.postDelayed(runToNeW, 500);
     }
 
 

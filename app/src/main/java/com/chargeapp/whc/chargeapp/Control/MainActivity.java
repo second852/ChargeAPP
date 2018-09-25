@@ -87,14 +87,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void adjustFontScale(Configuration configuration) {
-        if (configuration.fontScale > 1) {
             configuration.fontScale = (float) 1;
             DisplayMetrics metrics = getResources().getDisplayMetrics();
             WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
             wm.getDefaultDisplay().getMetrics(metrics);
             metrics.scaledDensity = configuration.fontScale * metrics.density;
             getBaseContext().getResources().updateConfiguration(configuration, metrics);
-        }
+
     }
 
     @Override

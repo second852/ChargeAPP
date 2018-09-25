@@ -1,6 +1,7 @@
 package com.chargeapp.whc.chargeapp.ChargeDB;
 
 
+import android.app.job.JobService;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.EleUpdateCarrier;
 import com.chargeapp.whc.chargeapp.Control.HomePagetList;
+import com.chargeapp.whc.chargeapp.Control.JobSchedulerService;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectDetList;
 import com.chargeapp.whc.chargeapp.Control.SelectListModelCom;
@@ -80,6 +82,11 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     public GetSQLDate(Object object) {
         total = 0;
         this.object = object;
+        if(object instanceof JobService)
+        {
+            JobService jobService= (JobService) object;
+            Common.setChargeDB(jobService);
+        }
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
