@@ -15,12 +15,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 
@@ -49,7 +54,7 @@ import java.util.Set;
  * Created by 1709008NB01 on 2018/1/29.
  */
 
-public class Download extends AppCompatActivity {
+public class Download extends Fragment {
 
     public static int[] imageAll = {
             R.drawable.food, R.drawable.phone, R.drawable.clothes, R.drawable.traffic, R.drawable.teach, R.drawable.happy,
@@ -70,80 +75,38 @@ public class Download extends AppCompatActivity {
     private GetSQLDate getSQLDate;
     private TextView percentage, progressT;
     private AdView adView;
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.download_main);
-        progressT = findViewById(R.id.progressT);
-        percentage = findViewById(R.id.percentage);
-        adView =findViewById(R.id.adView);
-        Common.setAdView(adView,this);
-    }
+    public Activity activity;
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        askPermissions();
-    }
-
-
-
-    public  void askPermissions() {
-        //因為是群組授權，所以請求ACCESS_COARSE_LOCATION就等同於請求ACCESS_FINE_LOCATION，因為同屬於LOCATION群組
-        String[] permissions={Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
-        Set<String> permissionsRequest = new HashSet<>();
-        for (String permission : permissions) {
-            int result = ContextCompat.checkSelfPermission(Download.this, permission);
-            if (result != PackageManager.PERMISSION_GRANTED) {
-                permissionsRequest.add(permission);
-            }
-        }
-
-        if (!permissionsRequest.isEmpty()) {
-            ActivityCompat.requestPermissions(this,
-                    permissionsRequest.toArray(new String[permissionsRequest.size()]),
-                    87);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            activity= (Activity) context;
         }else{
-            permisionOk();
+            activity=getActivity();
         }
     }
-
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 87: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    permisionOk();
-                } else {
-
-                    PermissionFragment permissionFragment = new PermissionFragment();
-                    permissionFragment.setObject(Download.this);
-                    permissionFragment.show(getSupportFragmentManager(), "show");
-
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
-        }
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        final View view = inflater.inflate(R.layout.download_main, container, false);
+        progressT = view.findViewById(R.id.progressT);
+        percentage = view.findViewById(R.id.percentage);
+        adView =view.findViewById(R.id.adView);
+        Common.setAdView(adView,activity);
+        originDownload();
+        return view;
     }
 
 
-
-    private void permisionOk()
+    private void originDownload()
     {
-        TypefaceProvider.registerDefaultIconSets();
-        Common.setChargeDB(Download.this);
-        (getSupportActionBar()).hide();
-        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        Common.setChargeDB(activity);
+        setData();
+
+
+        ConnectivityManager mConnectivityManager = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
         if (mNetworkInfo != null) {
             getSQLDate = new GetSQLDate(this);
@@ -152,58 +115,20 @@ public class Download extends AppCompatActivity {
             getSQLDate.execute("download");
         } else {
             tonNewActivity();
-            Common.showToast(this, "網路沒有開啟，無法下載!");
-        }
-    }
-
-
-
-    private Runnable runToNeW = new Runnable() {
-        @Override
-        public void run() {
-            (new Common()).AutoSetPrice();
-
-            String a;
-            try {
-                a = getIntent().getStringExtra("action");
-            }catch (Exception e)
-            {
-                a =null;
-            }
-            Intent intent = new Intent();
-            if (a != null) {
-                intent.putExtra("action", a);
-            }
-            if (getIntent().getAction() != null) {
-                intent.setAction(getIntent().getAction());
-            }
-
-            startActivity(intent.setClass(Download.this, MainActivity.class));
-            finish();
-        }
-    };
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (firstH != null) {
-            firstH.removeCallbacks(runToNeW);
-        }
-        if (getSQLDate != null) {
-            getSQLDate.cancel(true);
+            Common.showToast(activity, "網路沒有開啟，無法下載!");
         }
     }
 
     public void tonNewActivity() {
         //set origin
-        setdate();
-        firstH = new Handler();
-        firstH.postDelayed(runToNeW, 500);
+        (new Common()).AutoSetPrice();
+        Intent intent=new Intent();
+        startActivity(intent.setClass(activity, MainActivity.class));
+        activity.finish();
     }
 
 
-    public void setdate() {
+    public void setData() {
         TypeDB typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<TypeVO> typeVOS = typeDB.getAll();

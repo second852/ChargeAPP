@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/DRshow"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
 
 
@@ -57,7 +57,6 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:layout_margin="2dp"
             android:gravity="center"
             app:bootstrapBrand="regular"
             app:bootstrapSize="md"
@@ -87,6 +86,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20dp"/>
+
+
 
     <RelativeLayout
         android:id="@+id/showMi"
@@ -156,7 +157,6 @@
             android:text="請輸入後三碼"
             android:textColor="#000000"
             android:textSize="25sp" />
-
         <Button
             android:id="@+id/standard"
             android:layout_width="1dp"

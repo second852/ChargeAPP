@@ -84,20 +84,20 @@ public class PermissionFragment extends DialogFragment implements  DialogInterfa
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
-                Download download= (Download) object;
+                Welcome welcome= (Welcome) object;
                 if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)||ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    download.askPermissions();
+                    welcome.askPermissions();
                 } else {
                     Intent intent = new Intent();
                     intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                     Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
                     intent.setData(uri);
                     this.startActivity(intent);
-                    download.finish();
+                    welcome.finish();
                 }
                 break;
             default:
-                Download d= (Download) object;
+                Welcome d= (Welcome) object;
                 d.finish();
                 break;
         }

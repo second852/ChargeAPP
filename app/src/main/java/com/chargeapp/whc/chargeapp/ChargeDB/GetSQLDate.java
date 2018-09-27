@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 
 import com.chargeapp.whc.chargeapp.Control.Common;
+import com.chargeapp.whc.chargeapp.Control.DowloadNewDataJob;
 import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
@@ -773,6 +774,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     jsonIn.append(line);
                 }
                 Log.d(TAG, "jsonin " + jsonIn);
+            }else{
+                jsonIn = new StringBuilder();
+                jsonIn.append("timeout");
             }
         } catch (SocketTimeoutException e) {
             jsonIn = new StringBuilder();
@@ -782,7 +786,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             jsonIn = new StringBuilder();
             jsonIn.append("error");
         } finally {
-            conn.disconnect();
+
+            if(conn!=null)
+            {
+                conn.disconnect();
+            }
+
         }
         return jsonIn.toString();
     }
@@ -847,7 +856,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                             sb.append(c.getCarNul()+" ");
                         }
                         sb.append("驗證碼錯誤，請到雲端發票 : \n\"綁定/取消載具修改\"");
-                        Common.showToast(download,sb.toString());
+                        Common.showToast(download.activity,sb.toString());
                     }
                 }
                 download.tonNewActivity();
@@ -896,6 +905,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             }else if (object instanceof EleUpdateCarrier) {
                 EleUpdateCarrier eleUpdateCarrier = (EleUpdateCarrier) object;
                 eleUpdateCarrier.check(s);
+            }else if (object instanceof DowloadNewDataJob) {
+                new Common().AutoSetPrice();
             }
         } catch (Exception e) {
            Log.d(TAG,"onPostExecute"+e.getMessage());
@@ -1083,6 +1094,14 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
+
+
+        //避免job null
+        if(progressT==null||percentage==null)
+        {
+            return;
+        }
+
         int statue = values[0].intValue();
         int month = values[1].intValue();
         int percent = values[2].intValue();
@@ -1096,10 +1115,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             s = "下載失敗";
         }
 
-        if(progressT==null||percentage==null)
-        {
-            return;
-        }
+
         if (action.equals("download")) {
             if (downloadS.equals("price")) {
                 totalS = (year - 1911) + "年" + priceMonth.get(month) + s;

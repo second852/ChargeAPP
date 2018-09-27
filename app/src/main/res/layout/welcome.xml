@@ -6,6 +6,7 @@
     >
 
     <com.beardedhen.androidbootstrap.BootstrapThumbnail
+        android:id="@+id/imageWelcome"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_width="250dp"
@@ -14,5 +15,11 @@
         app:bootstrapBrand="primary"
         app:hasBorder="true"
         />
+
+    <FrameLayout
+        android:id="@+id/welcomeFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
 
 </RelativeLayout>

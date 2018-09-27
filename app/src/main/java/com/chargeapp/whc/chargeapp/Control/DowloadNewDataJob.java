@@ -13,14 +13,13 @@ import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 public class DowloadNewDataJob extends JobService {
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
-        Log.d("DownloadService","start");
+        Log.d("DowloadNewDataJob","start");
         ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
         Common.setChargeDB(this);
         if (mNetworkInfo != null) {
-                new GetSQLDate(this).execute("download");
+                new GetSQLDate(DowloadNewDataJob.this).execute("download");
             }
-        new Common().AutoSetPrice();
         return true;
     }
 

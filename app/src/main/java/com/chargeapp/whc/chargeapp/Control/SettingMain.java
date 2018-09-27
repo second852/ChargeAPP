@@ -9,6 +9,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,10 +20,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.AppCompatImageView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -53,6 +57,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static android.content.Context.WINDOW_SERVICE;
 
 
 /**
@@ -78,6 +83,7 @@ public class SettingMain extends Fragment {
             this.context=getActivity();
         }
     }
+
 
 
     @Override
@@ -119,7 +125,7 @@ public class SettingMain extends Fragment {
     {
         context.deleteDatabase("ChargeAPP");
         MainActivity.chargeAPPDB=new ChargeAPPDB(context);
-        new Download().setdate();
+        new Download().setData();
     }
 
     private class ListAdapter extends BaseAdapter {

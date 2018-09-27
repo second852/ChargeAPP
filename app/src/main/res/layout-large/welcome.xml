@@ -14,5 +14,11 @@
         app:bootstrapBrand="primary"
         app:hasBorder="true"
         />
+    <FrameLayout
+        android:id="@+id/welcomeFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+
 
 </RelativeLayout>

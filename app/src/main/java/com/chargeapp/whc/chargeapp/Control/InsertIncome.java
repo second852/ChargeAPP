@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -56,7 +57,6 @@ public class InsertIncome extends Fragment {
     private LinearLayout firstL;
     private GridView firstG;
     private int updateChoice;
-    private Handler handler,secondHander;
     public static BankVO bankVO;
     public static boolean needSet;
     private Activity context;
@@ -64,6 +64,7 @@ public class InsertIncome extends Fragment {
     private String resultStatue,resultDay;
     private List<BootstrapText> BsTextDay,BsTextWeek,BsTextMonth,BsTextStatue;
     private int statueNumber;
+    private View view;
 
     @Override
     public void onAttach(Context context) {
@@ -82,60 +83,63 @@ public class InsertIncome extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        TypefaceProvider.registerDefaultIconSets();
-        View view = inflater.inflate(R.layout.insert_income, container, false);
-        findviewByid(view);
+        view = inflater.inflate(R.layout.insert_income, container, false);
         Common.setChargeDB(context);
         if(bankVO==null)
         {
             bankVO=new BankVO();
         }
-        BsTextDay=Common.DateChoiceSetBsTest(context,Common.DaySetSpinnerBS());
-        BsTextWeek=Common.DateChoiceSetBsTest(context,Common.WeekSetSpinnerBS);
-        BsTextMonth=Common.DateChoiceSetBsTest(context,Common.MonthSetSpinnerBS());
-        BsTextStatue=Common.DateChoiceSetBsTest(context,Common.DateStatueSetSpinner);
-        handler=new Handler();
-        secondHander=new Handler();
-        handler.post(runnable);
-        secondHander.post(setOnClick);
+        new Thread(runnable).start();
+        new Thread(setOnClick).start();
         return view;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        handler.removeCallbacks(runnable);
-        secondHander.removeCallbacks(setOnClick);
-    }
 
-    private void setSpinner() {
-        choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
-    }
+
+    private Handler handlerPicture=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what)
+            {
+                case 0:
+                    setFirstGridApapt((ArrayList<Map<String, Object>>) msg.obj);
+                    if (Common.showfirstgrid) {
+                        firstL.setVisibility(View.VISIBLE);
+                        Common.showfirstgrid = false;
+                    }
+                    break;
+                case 1:
+                    date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
+                    choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
+                    if(needSet)
+                    {
+                        setIncome();
+                    }
+                    break;
+            }
+        }
+    };
+
 
     private Runnable runnable=new Runnable() {
         @Override
         public void run() {
-            bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
             setFirstGrid();
-            if (Common.showfirstgrid) {
-                firstL.setVisibility(View.VISIBLE);
-                Common.showfirstgrid = false;
-            }
         }
     };
 
     private Runnable setOnClick=new Runnable() {
         @Override
         public void run() {
+            BsTextDay=Common.DateChoiceSetBsTest(context,Common.DaySetSpinnerBS());
+            BsTextWeek=Common.DateChoiceSetBsTest(context,Common.WeekSetSpinnerBS);
+            BsTextMonth=Common.DateChoiceSetBsTest(context,Common.MonthSetSpinnerBS());
+            BsTextStatue=Common.DateChoiceSetBsTest(context,Common.DateStatueSetSpinner);
             gson=new Gson();
             bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
-            setSpinner();
+            findviewByid();
             setSetOnClickView();
-            if(needSet)
-            {
-                setIncome();
-            }
+            handlerPicture.sendEmptyMessage(1);
         }
     };
 
@@ -150,14 +154,16 @@ public class InsertIncome extends Fragment {
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new savecomsumer());
         fixdate.setOnCheckedChangeListener(new showfixdateClick());
-        firstG.setOnItemClickListener(new firstGridOnClick());
     }
 
 
 
     private void setFirstGrid() {
+        firstG = view.findViewById(R.id.firstG);
+        firstG.setOnItemClickListener(new firstGridOnClick());
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
+        bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<BankTypeVO> bankTypeVOS=bankTybeDB.getAll();
         for (BankTypeVO t : bankTypeVOS) {
             item = new HashMap<String, Object>();
@@ -173,12 +179,23 @@ public class InsertIncome extends Fragment {
         item.put("image", R.drawable.cancel);
         item.put("text", "取消");
         items.add(item);
+        Message message=new Message();
+        message.what=0;
+        message.obj=items;
+        handlerPicture.sendMessage(message);
+    }
+
+    private void setFirstGridApapt(ArrayList<Map<String, Object>> items)
+    {
         SimpleAdapter adapter = new SimpleAdapter(context,
                 items, R.layout.main_item, new String[]{"image", "text"},
                 new int[]{R.id.image, R.id.text});
         firstG.setAdapter(adapter);
         firstG.setNumColumns(4);
     }
+
+
+
 
     private class firstGridOnClick implements AdapterView.OnItemClickListener {
         @Override
@@ -228,7 +245,10 @@ public class InsertIncome extends Fragment {
         }
     }
     private void setIncome() {
-        name.setText(bankVO.getMaintype());
+        if(name!=null)
+        {
+            name.setText(bankVO.getMaintype());
+        }
         money.setText(String.valueOf(bankVO.getMoney()));
         date.setText(Common.sTwo.format(bankVO.getDate()));
         detailname.setText(bankVO.getDetailname());
@@ -306,7 +326,7 @@ public class InsertIncome extends Fragment {
     }
 
 
-    public void findviewByid(View view) {
+    public void findviewByid() {
         name = view.findViewById(R.id.name);
         name.setFocusable(false);
         name.setFocusableInTouchMode(false);
@@ -326,7 +346,6 @@ public class InsertIncome extends Fragment {
         choiceday.setVisibility(View.GONE);
         detailname=view.findViewById(R.id.detailname);
         fixDateT=view.findViewById(R.id.fixDateT);
-        firstG = view.findViewById(R.id.firstG);
         firstL = view.findViewById(R.id.firstL);
         adView = view.findViewById(R.id.adView);
         Common.setAdView(adView,context);

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -82,7 +83,6 @@ public class InsertSpend extends Fragment {
     public static ConsumeVO consumeVO;
     public static boolean needSet;
     private int updateChoice;
-    private Handler handler, secondHander;
     private TextView noWekT, notifyT;
     private Activity context;
     private String oldMainType;
@@ -91,6 +91,7 @@ public class InsertSpend extends Fragment {
     private List<BootstrapText> BsTextDay, BsTextWeek, BsTextMonth, BsTextStatue;
     private int statueNumber;
     private String resultStatue, resultDay;
+    private View view;
 
 
 
@@ -102,60 +103,34 @@ public class InsertSpend extends Fragment {
         } else {
             this.context = getActivity();
         }
-
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        TypefaceProvider.registerDefaultIconSets();
-        View view = inflater.inflate(R.layout.insert_spend, container, false);
-//        showOnlyQRCodeToast();
+        view = inflater.inflate(R.layout.insert_spend, container, false);
         Common.setChargeDB(context);
-        findviewByid(view);
         if (consumeVO == null) {
             consumeVO = new ConsumeVO();
         }
-        handler = new Handler();
-        handler.post(runnable);
-        secondHander = new Handler();
-        secondHander.post(setOnClick);
+        new Thread(runnable).start();
+        new Thread(setOnClick).start();
         return view;
     }
 
-//    private void showOnlyQRCodeToast() {
-//        if (returnCM) {
-//            if (BarcodeGraphic.hashMap.get(1) != null) {
-//               Common.showToast(context,"明細無法辨識，需要自行輸入!");
-//            } else if (BarcodeGraphic.hashMap.get(2) != null) {
-//                Common.showToast(context,"部分明細可辨識，其他項目需要自行輸入!");
-//            }
-//            returnCM=false;
-//        }
-//    }
 
-    private void setSpinner() {
-        choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        handler.removeCallbacks(runnable);
-        secondHander.removeCallbacks(setOnClick);
-    }
 
     private void setUpdate() {
-        if (consumeVO.getMaintype().equals("O")) {
-            name.setText("其他");
-            secondname.setText("其他");
-        } else if (consumeVO.getSecondType().equals("0")) {
-            name.setText("未知");
-            secondname.setText("未知");
-        } else {
-            name.setText(consumeVO.getMaintype());
-            secondname.setText(consumeVO.getSecondType());
-        }
+//        if (consumeVO.getMaintype().equals("O")) {
+//            name.setText("其他");
+//            secondname.setText("其他");
+//        } else if (consumeVO.getSecondType().equals("0")) {
+//            name.setText("未知");
+//            secondname.setText("未知");
+//        } else {
+//            name.setText(consumeVO.getMaintype());
+//            secondname.setText(consumeVO.getSecondType());
+//        }
 
         number.setText(consumeVO.getNumber());
         money.setText(String.valueOf(consumeVO.getMoney()));
@@ -236,44 +211,58 @@ public class InsertSpend extends Fragment {
         needSet = false;
     }
 
+    private Handler handlerPicture=new Handler()
+    {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    setFirstGridAdapter((ArrayList<Map<String, Object>>) msg.obj);
+                    if (Common.showfirstgrid) {
+                        firstL.setVisibility(View.VISIBLE);
+                        Common.showfirstgrid = false;
+                    }
+                    break;
+                case 1:
+                    setSecondGridAdapt((ArrayList<Map<String, Object>>) msg.obj);
+                    choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
+                    date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
+                    if (needSet) {
+                        setUpdate();
+                        secondname.setOnClickListener(new showSecondG());
+                    }
+                    if (Common.showsecondgrid) {
+                        secondL.setVisibility(View.VISIBLE);
+                        Common.showsecondgrid = false;
+                    }
+                    break;
+            }
+        }
+    };
+
 
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            BsTextDay = Common.DateChoiceSetBsTest(context, Common.DaySetSpinnerBS());
-            BsTextWeek = Common.DateChoiceSetBsTest(context, Common.WeekSetSpinnerBS);
-            BsTextMonth = Common.DateChoiceSetBsTest(context, Common.MonthSetSpinnerBS());
-            BsTextStatue = Common.DateChoiceSetBsTest(context, Common.DateStatueSetSpinner);
             typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
             consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            setFirstGrid();
+            firstG = view.findViewById(R.id.firstG);
             firstG.setOnItemClickListener(new firstGridOnClick());
-            if (Common.showfirstgrid) {
-                firstL.setVisibility(View.VISIBLE);
-                Common.showfirstgrid = false;
-            }
-
+            setFirstGrid();
         }
     };
 
     private Runnable setOnClick = new Runnable() {
         @Override
         public void run() {
+            BsTextDay = Common.DateChoiceSetBsTest(context, Common.DaySetSpinnerBS());
+            BsTextWeek = Common.DateChoiceSetBsTest(context, Common.WeekSetSpinnerBS);
+            BsTextMonth = Common.DateChoiceSetBsTest(context, Common.MonthSetSpinnerBS());
+            BsTextStatue = Common.DateChoiceSetBsTest(context, Common.DateStatueSetSpinner);
+            findviewByid();
             gson = new Gson();
-            setSpinner();
             setSetOnClickView();
-            date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
-            if (needSet) {
-                setUpdate();
-                secondname.setOnClickListener(new showSecondG());
-            }
             setSecondGrid();
-            secondG.setOnItemClickListener(new secondGridOnClick());
-            if (Common.showsecondgrid) {
-                secondL.setVisibility(View.VISIBLE);
-                Common.showsecondgrid = false;
-            }
         }
     };
 
@@ -290,11 +279,13 @@ public class InsertSpend extends Fragment {
         qrcode.setOnClickListener(new QrCodeClick());
         name.setOnClickListener(new showFirstG());
         detailname.setOnClickListener(new DetailEdit());
+        secondG.setOnItemClickListener(new secondGridOnClick());
     }
 
     private void setSecondGrid() {
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<TypeDetailVO> typeDetailVOS = typeDetailDB.findByGroupname(name.getText().toString().trim());
         for (TypeDetailVO t : typeDetailVOS) {
             item = new HashMap<String, Object>();
@@ -314,6 +305,14 @@ public class InsertSpend extends Fragment {
         item.put("image", R.drawable.cancel);
         item.put("text", "取消");
         items.add(item);
+        Message message=new Message();
+        message.obj=items;
+        message.what=1;
+        handlerPicture.sendMessage(message);
+    }
+
+    private void setSecondGridAdapt(ArrayList<Map<String, Object>> items)
+    {
         SimpleAdapter adapter = new SimpleAdapter(context,
                 items, R.layout.main_item, new String[]{"image", "text"},
                 new int[]{R.id.image, R.id.text});
@@ -341,16 +340,26 @@ public class InsertSpend extends Fragment {
             item.put("image", R.drawable.cancel);
             item.put("text", "取消");
             items.add(item);
-            SimpleAdapter adapter = new SimpleAdapter(context, items, R.layout.main_item, new String[]{"image", "text"},
-                    new int[]{R.id.image, R.id.text});
-            firstG.setAdapter(adapter);
-            firstG.setNumColumns(4);
+            Message message=new Message();
+            message.obj=items;
+            message.what=0;
+            handlerPicture.sendMessage(message);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void findviewByid(View view) {
+    private void setFirstGridAdapter(ArrayList<Map<String, Object>> items)
+    {
+        SimpleAdapter adapter = new SimpleAdapter(context, items, R.layout.main_item, new String[]{"image", "text"},
+                new int[]{R.id.image, R.id.text});
+        firstG.setAdapter(adapter);
+        firstG.setNumColumns(4);
+    }
+
+
+
+    public void findviewByid() {
         secondname = view.findViewById(R.id.secondname);
         secondname.setFocusable(false);
         secondname.setFocusableInTouchMode(false);
@@ -381,7 +390,6 @@ public class InsertSpend extends Fragment {
         secondL = view.findViewById(R.id.secondL);
         noWekT = view.findViewById(R.id.noWekT);
         notifyT = view.findViewById(R.id.notifyT);
-        firstG = view.findViewById(R.id.firstG);
         firstL = view.findViewById(R.id.firstL);
     }
 

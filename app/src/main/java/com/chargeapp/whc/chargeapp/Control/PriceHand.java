@@ -20,7 +20,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
@@ -28,54 +27,42 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.beardedhen.androidbootstrap.BootstrapDropDown;
 import com.beardedhen.androidbootstrap.BootstrapText;
-import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import java.util.GregorianCalendar;
+
 import java.util.HashMap;
 import java.util.List;
 
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_BAN;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_BUG;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CC_JCB;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_COLUMNS;
+
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_EXCLAMATION;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_EXCLAMATION_CIRCLE;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_FLAG;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_HEADPHONES;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_HEART;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_HEARTBEAT;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_QUESTION;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_STAR;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_STAR_O;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_TWITTER;
+
 
 /**
  * Created by 1709008NB01 on 2017/12/22.
@@ -89,7 +76,7 @@ public class PriceHand extends Fragment {
     private PriceDB priceDB;
     private Calendar now;
     private int month, year;
-    private PriceVO priceVO, oldPriceVO;
+    private PriceVO priceVO, oldPriceVO,grandPriceVO;
     private String message = "";
     private List<PriceVO> priceVOS;
     private HashMap<String, String> levelPrice;
@@ -102,6 +89,7 @@ public class PriceHand extends Fragment {
     private AwesomeTextView awardTitle, awardRemain;
     private int position;
     private List<BootstrapText> bootstrapTexts;
+    private float remainTextSize,mutilTextSize;
 
     @Override
     public void onAttach(Context context) {
@@ -110,6 +98,18 @@ public class PriceHand extends Fragment {
             this.context = (Activity) context;
         } else {
             this.context = getActivity();
+        }
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+        if (dpWidth > 650) {
+            remainTextSize=40f;
+            mutilTextSize=35f;
+        } else if (dpWidth > 470) {
+            remainTextSize=30f;
+            mutilTextSize=25f;
+        } else {
+            remainTextSize=25f;
+            mutilTextSize=18f;
         }
     }
 
@@ -254,7 +254,7 @@ public class PriceHand extends Fragment {
         String messageO, messageT;
         HashMap<Integer, String> messageHMO = new HashMap<>();
         HashMap<Integer, String> messageHMT = new HashMap<>();
-        int i = 0;
+        int i = 0,periodWin=0;
         for (PriceVO priceVO : priceVOS) {
             String nul = gnul;
             messageO = null;
@@ -307,10 +307,66 @@ public class PriceHand extends Fragment {
             }
             messageHMO.put(i, messageO);
             messageHMT.put(i, messageT);
+            if(messageT!=null)
+            {
+                periodWin++;
+            }
+
             i++;
         }
         String year, month;
         int redF;
+        //兩期以上號碼都中 處理
+        if (periodWin>=2) {
+            awardTitle.setText(null);
+            StringBuilder sb = new StringBuilder();
+            for (int key : messageHMT.keySet()) {
+                //null filter
+                if (messageHMT.get(key) == null) {
+                    continue;
+                }
+                switch (key) {
+                    case 0:
+                        month = priceVO.getInvoYm().substring(priceVO.getInvoYm().length() - 2);
+                        year = priceVO.getInvoYm().substring(0, priceVO.getInvoYm().length() - 2);
+                        sb.append(year + "年" + levelPrice.get(month));
+                        break;
+                    case 1:
+                        month = oldPriceVO.getInvoYm().substring(oldPriceVO.getInvoYm().length() - 2);
+                        year = priceVO.getInvoYm().substring(0, oldPriceVO.getInvoYm().length() - 2);
+                        sb.append(year + "年" + levelPrice.get(month));
+                        break;
+                    case 2:
+                        month = grandPriceVO.getInvoYm().substring(grandPriceVO.getInvoYm().length() - 2);
+                        year = grandPriceVO.getInvoYm().substring(0, grandPriceVO.getInvoYm().length() - 2);
+                        sb.append(year + "年" + levelPrice.get(month));
+                        break;
+                }
+                sb.append(" " + messageHMT.get(key) + "\n");
+            }
+            priceTitle.setText("");
+            //換顯示寬框
+            Drawable drawable = getResources().getDrawable(R.drawable.price_result);
+            inputNul.setBackground(drawable);
+            inputNul.setTextColor(Color.RED);
+
+            //提示
+            Spannable content = new SpannableString(sb.toString());
+            String[] prices=sb.toString().split(gnul);
+            int totalBlack=0;
+            for (int j=0;j<prices.length-2;j++)
+            {
+                totalBlack=totalBlack+prices[j].length()+3*j;
+                content.setSpan(new ForegroundColorSpan(Color.RED), totalBlack,  totalBlack+3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+            int totalLength=sb.toString().length()-1;
+            content.setSpan(new ForegroundColorSpan(Color.RED), totalLength-3,  totalLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            awardRemain.setTextSize(mutilTextSize);
+            awardRemain.setText(content);
+            return;
+        }
+
+
         if (messageHMO.get(0) != null) {
             //獎項
             BootstrapText text = new BootstrapText.Builder(context)
@@ -363,6 +419,35 @@ public class PriceHand extends Fragment {
             return;
         }
 
+        //上上期
+        if (messageHMO.get(2) != null) {
+            //獎項
+            String old;
+            month = grandPriceVO.getInvoYm().substring(grandPriceVO.getInvoYm().length() - 2);
+            old = levelPrice.get(month) + messageHMO.get(2);
+            BootstrapText text = new BootstrapText.Builder(context)
+                    .addFontAwesomeIcon(FA_STAR_O)
+                    .addText(" " + old + " ")
+                    .addFontAwesomeIcon(FA_STAR_O)
+                    .build();
+            awardTitle.setText(text);
+            awardTitle.setBootstrapBrand(DefaultBootstrapBrand.WARNING);
+            //號碼
+            redF = messageHMT.get(2).length();
+            Spannable content = new SpannableString(messageHMT.get(2));
+            content.setSpan(new ForegroundColorSpan(Color.parseColor("#ffc107")), redF - 3, redF, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            priceTitle.setText(content);
+
+            //換顯示寬框
+            Drawable drawable = getResources().getDrawable(R.drawable.price_grand);
+            inputNul.setBackground(drawable);
+            inputNul.setTextColor(Color.parseColor("#ffc107"));
+
+            //提示不顯示
+            awardRemain.setText("");
+            return;
+        }
+
         if (messageHMO.get(0) == null) {
             BootstrapText text = new BootstrapText.Builder(context)
                     .addText(" " + "沒有中獎" + " ")
@@ -372,6 +457,7 @@ public class PriceHand extends Fragment {
                     .build();
             awardRemain.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
             awardRemain.setText(text);
+            awardRemain.setTextSize(remainTextSize);
             awardTitle.setText(null);
             priceTitle.setText(null);
         }
@@ -379,37 +465,49 @@ public class PriceHand extends Fragment {
 
 
     private void setMonText(String action) {
-        String showtime, searchtime, searcholdtime;
+        String showtime, searchTime, searchOldTime,searchGrandTime;
         if (month == 2) {
             showtime = year + "年1-2月";
-            searchtime = year + "02";
-            searcholdtime = (year - 1) + "12";
+            searchTime = year + "02";
+            searchOldTime = (year - 1) + "12";
+            searchGrandTime = (year - 1) + "10";
         } else if (month == 4) {
             showtime = year + "年3-4月";
-            searchtime = year + "04";
-            searcholdtime = year + "02";
+            searchTime = year + "04";
+            searchOldTime = year + "02";
+            searchGrandTime = (year - 1) + "12";
         } else if (month == 6) {
             showtime = year + "年5-6月";
-            searchtime = year + "06";
-            searcholdtime = year + "04";
+            searchTime = year + "06";
+            searchOldTime = year + "04";
+            searchGrandTime = year + "02";
         } else if (month == 8) {
             showtime = year + "年7-8月";
-            searchtime = year + "08";
-            searcholdtime = year + "06";
+            searchTime = year + "08";
+            searchOldTime = year + "06";
+            searchGrandTime = year + "04";
         } else if (month == 10) {
             showtime = year + "年9-10月";
-            searchtime = year + "10";
-            searcholdtime = year + "08";
+            searchTime = year + "10";
+            searchOldTime = year + "08";
+            searchGrandTime = year + "06";
         } else {
             showtime = year + "年11-12月";
-            searchtime = year + "12";
-            searcholdtime = year + "10";
+            searchTime = year + "12";
+            searchOldTime = year + "10";
+            searchGrandTime = year + "08";
         }
-        priceVO = priceDB.getPeriodAll(searchtime);
-        oldPriceVO = priceDB.getPeriodAll(searcholdtime);
+
+        priceVO = priceDB.getPeriodAll(searchTime);
+        oldPriceVO = priceDB.getPeriodAll(searchOldTime);
+        grandPriceVO = priceDB.getPeriodAll(searchGrandTime);
+
+
         priceVOS = new ArrayList<>();
         priceVOS.add(priceVO);
         priceVOS.add(oldPriceVO);
+        priceVOS.add(grandPriceVO);
+
         if (priceVO == null && action.equals("add")) {
             month = month - 2;
             if (month == 0) {
@@ -426,6 +524,7 @@ public class PriceHand extends Fragment {
                 month = 2;
                 year = year + 1;
             }
+            setMonText("cut");
             Common.showToast(context, "沒有資料");
             return;
         }
@@ -592,6 +691,7 @@ public class PriceHand extends Fragment {
                 .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
                 .build();
         awardRemain.setText(text);
+        awardRemain.setTextSize(remainTextSize);
         awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
 
         showMi.setVisibility(View.VISIBLE);
@@ -622,6 +722,7 @@ public class PriceHand extends Fragment {
                 .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
                 .build();
         awardRemain.setText(text);
+        awardRemain.setTextSize(remainTextSize);
         awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
 
         Drawable drawable = getResources().getDrawable(R.drawable.price_button);
@@ -664,6 +765,7 @@ public class PriceHand extends Fragment {
                             .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
                             .build();
                     awardRemain.setText(text);
+                    awardRemain.setTextSize(remainTextSize);
                     break;
                 case 1:
                    text = new BootstrapText.Builder(context)
@@ -671,6 +773,7 @@ public class PriceHand extends Fragment {
                             .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
                             .build();
                     awardRemain.setText(text);
+                    awardRemain.setTextSize(remainTextSize);
                     break;
             }
 
@@ -705,6 +808,7 @@ public class PriceHand extends Fragment {
                             .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
                             .build();
                     awardRemain.setText(text);
+                    awardRemain.setTextSize(remainTextSize);
                     break;
                 case 1:
                     text = new BootstrapText.Builder(context)
@@ -712,6 +816,7 @@ public class PriceHand extends Fragment {
                             .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
                             .build();
                     awardRemain.setText(text);
+                    awardRemain.setTextSize(remainTextSize);
                     break;
             }
         }
@@ -772,6 +877,7 @@ public class PriceHand extends Fragment {
                                         .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
                                         .build();
                                 awardRemain.setText(textRemain);
+                                awardRemain.setTextSize(remainTextSize);
                                 awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
 
                                 awardTitle.setText(null);
@@ -809,6 +915,7 @@ public class PriceHand extends Fragment {
                                         .addFontAwesomeIcon(FA_EXCLAMATION_CIRCLE)
                                         .build();
                                 awardRemain.setText(textRemain);
+                                awardRemain.setTextSize(remainTextSize);
                                 awardRemain.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
 
                                 //顯示底線
@@ -858,6 +965,7 @@ public class PriceHand extends Fragment {
                                 if (message.length() > 3) {
                                     message = number;
                                     awardRemain.setText(textRemain);
+                                    awardRemain.setTextSize(remainTextSize);
                                 }
                                 //底線
                                 SpannableString content;

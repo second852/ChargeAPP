@@ -44,12 +44,6 @@
             android:configChanges="orientation|screenSize|keyboardHidden|fontScale"
             />
 
-        <activity
-            android:name=".Control.Download"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"
-            android:configChanges="orientation|screenSize|keyboardHidden|fontScale"
-            />
 
         <meta-data
             android:name="com.google.android.gms.version"

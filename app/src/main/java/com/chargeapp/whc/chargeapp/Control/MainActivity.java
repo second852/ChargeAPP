@@ -9,6 +9,7 @@ import android.content.Intent;
 
 
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -83,18 +84,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         TypefaceProvider.registerDefaultIconSets();
         setContentView(R.layout.activity_main);
-        adjustFontScale(getResources().getConfiguration());
-    }
-
-    public void adjustFontScale(Configuration configuration) {
-            configuration.fontScale = (float) 1;
-            DisplayMetrics metrics = getResources().getDisplayMetrics();
-            WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-            wm.getDefaultDisplay().getMetrics(metrics);
-            metrics.scaledDensity = configuration.fontScale * metrics.density;
-            getBaseContext().getResources().updateConfiguration(configuration, metrics);
 
     }
+
+
+
+    @Override
+    public Resources getResources() {
+        Resources res = super.getResources();
+        Configuration config = new Configuration();
+        config.setToDefaults();
+        res.updateConfiguration(config, res.getDisplayMetrics());
+        return res;
+    }
+
+//    public void adjustFontScale(Configuration configuration) {
+//            configuration.fontScale = (float) 1;
+//            DisplayMetrics metrics = getResources().getDisplayMetrics();
+//            WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+//            wm.getDefaultDisplay().getMetrics(metrics);
+//            metrics.scaledDensity = configuration.fontScale * metrics.density;
+//            getBaseContext().getResources().updateConfiguration(configuration, metrics);
+//    }
 
     @Override
     public void onPostCreate(Bundle savedInstanceState) {
@@ -205,40 +216,10 @@ public class MainActivity extends AppCompatActivity {
             Fragment fragment = new HomePage();
             switchFragment(fragment);
         }
-        setJob();
     }
 
 
-    private void setJob() {
-        JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        //判斷是否建立過
-//        tm.cancelAll();
-       if(tm.getAllPendingJobs().size()==2)
-       {
-           return;
-       }
 
-        ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(0, mServiceComponent);
-//       tm.cancelAll();
-        builder.setPeriodic(1000*30);
-        builder.setPersisted(true);
-//        builder.setMinimumLatency(1);
-//        builder.setOverrideDeadline(2);
-        builder.setRequiresCharging(false);
-        builder.setRequiresDeviceIdle(false);
-        tm.schedule(builder.build());
-
-        ComponentName DowloadComponet = new ComponentName(this, DowloadNewDataJob.class);
-        JobInfo.Builder DownloadBuilder = new JobInfo.Builder(1, DowloadComponet);
-        DownloadBuilder.setPersisted(true);
-        DownloadBuilder.setPeriodic(1000*60*60);
-//        DownloadBuilder.setMinimumLatency(1);
-//        DownloadBuilder.setOverrideDeadline(2);
-        DownloadBuilder.setRequiresCharging(false);
-        DownloadBuilder.setRequiresDeviceIdle(false);
-        tm.schedule(DownloadBuilder.build());
-    }
     @Override
     protected void onPause() {
         super.onPause();
@@ -372,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    adjustFontScale(getResources().getConfiguration());
+//                    adjustFontScale(getResources().getConfiguration());
                     Fragment fragment;
                     MainActivity.this.position = i;
                     oldFramgent.clear();
@@ -464,7 +445,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Fragment fragment;
-                    adjustFontScale(getResources().getConfiguration());
+
                     if (oldSecondView != null && oldSecondView != view) {
                         oldSecondView.setBackgroundColor(Color.WHITE);
                     }
@@ -527,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("XXXXXXX", "onActivityResult");
+        Log.d("onActivityResult", "requestCode"+requestCode);
         String a;
         mFramgent = true;
         try {
@@ -547,6 +528,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 case 5:
+                    for (int i = fragments.size() - 1; i >= 0; i--) {
+                        if (fragments.get(i) instanceof SettingDownloadFile) {
+                            fragments.get(i).onActivityResult(requestCode, resultCode, data);
+                            break;
+                        }
+                    }
+                    break;
+                case 4:
                     for (int i = fragments.size() - 1; i >= 0; i--) {
                         if (fragments.get(i) instanceof SettingDownloadFile) {
                             fragments.get(i).onActivityResult(requestCode, resultCode, data);
