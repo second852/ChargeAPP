@@ -121,16 +121,16 @@ public class InsertSpend extends Fragment {
 
 
     private void setUpdate() {
-//        if (consumeVO.getMaintype().equals("O")) {
-//            name.setText("其他");
-//            secondname.setText("其他");
-//        } else if (consumeVO.getSecondType().equals("0")) {
-//            name.setText("未知");
-//            secondname.setText("未知");
-//        } else {
-//            name.setText(consumeVO.getMaintype());
-//            secondname.setText(consumeVO.getSecondType());
-//        }
+        if (consumeVO.getMaintype().equals("O")) {
+            name.setText("其他");
+            secondname.setText("其他");
+        } else if (consumeVO.getSecondType().equals("0")) {
+            name.setText("未知");
+            secondname.setText("未知");
+        } else {
+            name.setText(consumeVO.getMaintype());
+            secondname.setText(consumeVO.getSecondType());
+        }
 
         number.setText(consumeVO.getNumber());
         money.setText(String.valueOf(consumeVO.getMoney()));
@@ -235,6 +235,15 @@ public class InsertSpend extends Fragment {
                         secondL.setVisibility(View.VISIBLE);
                         Common.showsecondgrid = false;
                     }
+                    standard.setVisibility(View.INVISIBLE);
+                    secondname.setFocusable(false);
+                    secondname.setFocusableInTouchMode(false);
+                    date.setFocusable(false);
+                    date.setFocusableInTouchMode(false);
+                    name.setFocusable(false);
+                    name.setFocusableInTouchMode(false);
+                    choiceStatue.setVisibility(View.GONE);
+                    choiceday.setVisibility(View.GONE);
                     break;
             }
         }
@@ -361,21 +370,15 @@ public class InsertSpend extends Fragment {
 
     public void findviewByid() {
         secondname = view.findViewById(R.id.secondname);
-        secondname.setFocusable(false);
-        secondname.setFocusableInTouchMode(false);
         money = view.findViewById(R.id.money);
         date = view.findViewById(R.id.date);
-        date.setFocusable(false);
-        date.setFocusableInTouchMode(false);
         fixdate = view.findViewById(R.id.fixdate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
         showdate = view.findViewById(R.id.showdate);
         datePicker = view.findViewById(R.id.datePicker);
         choiceStatue = view.findViewById(R.id.choiceStatue);
-        choiceStatue.setVisibility(View.GONE);
         choiceday = view.findViewById(R.id.choiceday);
-        choiceday.setVisibility(View.GONE);
         number = view.findViewById(R.id.number);
         detailname = view.findViewById(R.id.detailname);
         notify = view.findViewById(R.id.notify);
@@ -383,9 +386,6 @@ public class InsertSpend extends Fragment {
         qrcode = view.findViewById(R.id.qrcode);
         name = view.findViewById(R.id.name);
         standard=view.findViewById(R.id.standard);
-        standard.setVisibility(View.INVISIBLE);
-        name.setFocusable(false);
-        name.setFocusableInTouchMode(false);
         secondG = view.findViewById(R.id.secondG);
         secondL = view.findViewById(R.id.secondL);
         noWekT = view.findViewById(R.id.noWekT);

@@ -41,6 +41,7 @@
             android:name=".Control.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan"
+            android:hardwareAccelerated="true"
             android:configChanges="orientation|screenSize|keyboardHidden|fontScale"
             />
 

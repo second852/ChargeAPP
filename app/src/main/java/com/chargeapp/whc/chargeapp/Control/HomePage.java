@@ -99,7 +99,7 @@ public class HomePage extends Fragment {
         pieChartT = view.findViewById(R.id.pieChartT);
         listView = view.findViewById(R.id.list);
         Common.setChargeDB(context);
-        Common.setScreen(Common.screenSize, getResources().getDisplayMetrics());
+        Common.setScreen(Common.screenSize, context);
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());

@@ -123,10 +123,11 @@ public class Common {
         return i;
     }
 
-    public static void setScreen(Screen screen,DisplayMetrics displayMetrics)
+    public static void setScreen(Screen screen,Activity activity)
     {
         if(screen==null)
         {
+            DisplayMetrics displayMetrics=activity.getResources().getDisplayMetrics();
             float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
             float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
             if(dpWidth>650)

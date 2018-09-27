@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -44,6 +45,8 @@ public class Welcome extends AppCompatActivity {
     private BootstrapThumbnail imageWelcome;
 
 
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +63,7 @@ public class Welcome extends AppCompatActivity {
             mHandler.sendEmptyMessageDelayed(0, 500);
         }
     };
+
 
 
     private void setJob() {
@@ -110,7 +114,6 @@ public class Welcome extends AppCompatActivity {
                 Common.screenSize = Common.Screen.normal;
             }
             Common.lostCarrier = new ArrayList<>();
-
             askPermissions();
 
 

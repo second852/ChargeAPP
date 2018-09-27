@@ -359,7 +359,8 @@ public class JobSchedulerService extends JobService {
         }
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
         manager.set(AlarmManager.RTC_WAKEUP, settime, pendingIntent);
-        Log.d("service time",String.valueOf(settime));
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:mm:ss");
+        Log.d("service time",simpleDateFormat.format(new java.util.Date(settime)));
     }
 
     public HashMap<String, Integer> getStringtoInt() {

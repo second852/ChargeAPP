@@ -111,10 +111,18 @@ public class InsertIncome extends Fragment {
                 case 1:
                     date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
                     choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
+                    standard.setVisibility(View.INVISIBLE);
                     if(needSet)
                     {
                         setIncome();
                     }
+                    name.setFocusable(false);
+                    name.setFocusableInTouchMode(false);
+                    date.setFocusable(false);
+                    date.setFocusableInTouchMode(false);
+                    choiceStatue.setVisibility(View.GONE);
+                    choiceday.setVisibility(View.GONE);
+                    Common.setAdView(adView,context);
                     break;
             }
         }
@@ -328,12 +336,8 @@ public class InsertIncome extends Fragment {
 
     public void findviewByid() {
         name = view.findViewById(R.id.name);
-        name.setFocusable(false);
-        name.setFocusableInTouchMode(false);
         money = view.findViewById(R.id.money);
         date = view.findViewById(R.id.date);
-        date.setFocusable(false);
-        date.setFocusableInTouchMode(false);
         fixdate = view.findViewById(R.id.fixdate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
@@ -341,16 +345,12 @@ public class InsertIncome extends Fragment {
         datePicker=view.findViewById(R.id.datePicker);
         showfixdate=view.findViewById(R.id.showfixdate);
         choiceStatue=view.findViewById(R.id.choiceStatue);
-        choiceStatue.setVisibility(View.GONE);
         choiceday=view.findViewById(R.id.choiceday);
-        choiceday.setVisibility(View.GONE);
         detailname=view.findViewById(R.id.detailname);
         fixDateT=view.findViewById(R.id.fixDateT);
         firstL = view.findViewById(R.id.firstL);
         adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
         standard=view.findViewById(R.id.standard);
-        standard.setVisibility(View.INVISIBLE);
     }
 
 

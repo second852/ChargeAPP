@@ -143,7 +143,7 @@ public class SelectConsume extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Common.setScreen(Common.screenSize, getResources().getDisplayMetrics());
+        Common.setScreen(Common.screenSize, context);
         final View view = inflater.inflate(R.layout.select_consume, container, false);
         if (end == null ) {
             end = Calendar.getInstance();

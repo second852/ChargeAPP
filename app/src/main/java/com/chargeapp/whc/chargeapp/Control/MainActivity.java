@@ -12,6 +12,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -74,9 +76,12 @@ public class MainActivity extends AppCompatActivity {
     private boolean doubleClick = false;
     public static LinkedList<String> oldFramgent;
     public static LinkedList<Bundle> bundles;
+    private Fragment fragment;
 
     //維持現在Framgent
     public boolean mFramgent;
+    public View nowView;
+
 
 
     @Override
@@ -84,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         TypefaceProvider.registerDefaultIconSets();
         setContentView(R.layout.activity_main);
-
     }
 
 
@@ -92,9 +96,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public Resources getResources() {
         Resources res = super.getResources();
-        Configuration config = new Configuration();
-        config.setToDefaults();
-        res.updateConfiguration(config, res.getDisplayMetrics());
+        if(res.getConfiguration().fontScale>1)
+        {
+            Configuration config = new Configuration();
+            config.setToDefaults();
+            res.updateConfiguration(config, res.getDisplayMetrics());
+        }
         return res;
     }
 
@@ -121,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         listView = findViewById(R.id.list_menu);
         List<EleMainItemVO> itemVOS = getNewItem();
-        final List<EleMainItemVO> itemSon = getElemainItemList();
+        List<EleMainItemVO> itemSon = getElemainItemList();
         listView.setAdapter(new ExpandableAdapter(this, itemVOS, itemSon));
     }
 
@@ -169,14 +176,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void switchFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        for (Fragment f : getSupportFragmentManager().getFragments()) {
-            fragmentTransaction.remove(f);
-        }
-        fragmentTransaction.replace(R.id.body, fragment);
-        fragmentTransaction.commit();
+    private void switchFragment() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                for (Fragment f : getSupportFragmentManager().getFragments()) {
+                    fragmentTransaction.remove(f);
+                }
+                fragmentTransaction.replace(R.id.body, fragment);
+//                try {
+//                    Thread.sleep(100);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+                fragmentTransaction.commit();
+                handler.sendEmptyMessage(1);
+            }
+        }).start();
     }
+
 
 
     @Override
@@ -199,22 +218,22 @@ public class MainActivity extends AppCompatActivity {
         }
         if (action != null) {
             if (action.equals("showFix")) {
-                Fragment fragment = new SettingListFix();
-                switchFragment(fragment);
+                fragment = new SettingListFix();
+                switchFragment();
                 return;
             } else if (action.equals("nulPriceNotify")) {
-                Fragment fragment = new PriceActivity();
-                switchFragment(fragment);
+                fragment = new PriceActivity();
+                switchFragment();
                 return;
             } else if (action.equals("goal")) {
-                Fragment fragment = new GoalListAll();
-                switchFragment(fragment);
+                fragment = new GoalListAll();
+                switchFragment();
                 return;
             }
         }
         if (!mFramgent) {
-            Fragment fragment = new HomePage();
-            switchFragment(fragment);
+            fragment = new HomePage();
+            switchFragment();
         }
     }
 
@@ -258,6 +277,20 @@ public class MainActivity extends AppCompatActivity {
         }
         oldMainView = v;
     }
+
+    private Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+                drawerLayout.closeDrawer(GravityCompat.START);
+                if(nowView!=null)
+                {
+                    setColor(nowView);
+                }
+
+        }
+    };
+
 
 
     private class ExpandableAdapter extends BaseExpandableListAdapter {
@@ -353,19 +386,60 @@ public class MainActivity extends AppCompatActivity {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    adjustFontScale(getResources().getConfiguration());
-                    Fragment fragment;
                     MainActivity.this.position = i;
-                    oldFramgent.clear();
-                    bundles.clear();
-                    setColor(v);
-                    if (i == 0) {
-                        Common.showfirstgrid = false;
-                        Common.showsecondgrid = false;
-                        fragment = new InsertActivity();
-                        switchFragment(fragment);
-                        listView.collapseGroup(i);
-                    } else if (i == 1) {
+                    nowView=v;
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            oldFramgent.clear();
+                            bundles.clear();
+                            if (i == 0) {
+                                Common.showfirstgrid = false;
+                                Common.showsecondgrid = false;
+                                fragment = new InsertActivity();
+                                switchFragment();
+                            } else if (i == 1) {
+                                  return;
+                            } else if (i == 2) {
+                                fragment = new PriceActivity();
+                                switchFragment();
+                                PriceInvoice.first = true;
+                            } else if (i == 3) {
+                                fragment = new SelectActivity();
+                                switchFragment();
+                            } else if (i == 4) {
+                                fragment = new SelectListModelActivity();
+                                switchFragment();
+                            } else if (i == 5) {
+                                fragment = new GoalListAll();
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("position", 0);
+                                fragment.setArguments(bundle);
+                                switchFragment();
+                            } else if (i == 6) {
+                                fragment = new SettingMain();
+                                switchFragment();
+                            } else if (i == 7) {
+                                fragment = new HomePage();
+                                switchFragment();
+                            } else {
+                                Intent intent = new Intent();
+                                intent.setAction(Intent.ACTION_VIEW);
+                                intent.setData(Uri.parse("https://www.youtube.com/playlist?list=PLrGq9ODiZ15rdXvKV_5FEIrdaP5ix0c55"));
+                                startActivity(intent);
+                            }
+                            //重置InsertConsume
+                            if (MainActivity.this.position != 0) {
+                                InsertSpend.consumeVO = new ConsumeVO();
+                                InsertSpend.needSet = false;
+                                InsertIncome.needSet = false;
+                                InsertIncome.bankVO = new BankVO();
+                            }
+                        }}).start();
+
+                    if(i==1)
+                    {
+                        setColor(v);
                         setTitle(R.string.text_Ele);
                         if (doubleClick) {
                             listView.collapseGroup(1);
@@ -374,47 +448,6 @@ public class MainActivity extends AppCompatActivity {
                             listView.expandGroup(1);
                             doubleClick = true;
                         }
-                    } else if (i == 2) {
-                        fragment = new PriceActivity();
-                        switchFragment(fragment);
-                        PriceInvoice.first = true;
-                        listView.collapseGroup(i);
-                    } else if (i == 3) {
-                        fragment = new SelectActivity();
-                        switchFragment(fragment);
-                        listView.collapseGroup(i);
-                    } else if (i == 4) {
-                        fragment = new SelectListModelActivity();
-                        switchFragment(fragment);
-                        listView.collapseGroup(i);
-                    } else if (i == 5) {
-                        fragment = new GoalListAll();
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("position", 0);
-                        fragment.setArguments(bundle);
-                        switchFragment(fragment);
-                        listView.collapseGroup(i);
-                    } else if (i == 6) {
-                        fragment = new SettingMain();
-                        switchFragment(fragment);
-                        listView.collapseGroup(i);
-                    } else if (i == 7) {
-                        fragment = new HomePage();
-                        switchFragment(fragment);
-                        listView.collapseGroup(i);
-                    } else {
-                        drawerLayout.closeDrawer(GravityCompat.START);
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("https://www.youtube.com/playlist?list=PLrGq9ODiZ15rdXvKV_5FEIrdaP5ix0c55"));
-                        startActivity(intent);
-                    }
-                    //重置InsertConsume
-                    if (MainActivity.this.position != 0) {
-                        InsertSpend.consumeVO = new ConsumeVO();
-                        InsertSpend.needSet = false;
-                        InsertIncome.needSet = false;
-                        InsertIncome.bankVO = new BankVO();
                     }
                 }
             });
@@ -444,8 +477,6 @@ public class MainActivity extends AppCompatActivity {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Fragment fragment;
-
                     if (oldSecondView != null && oldSecondView != view) {
                         oldSecondView.setBackgroundColor(Color.WHITE);
                     }
@@ -454,16 +485,16 @@ public class MainActivity extends AppCompatActivity {
 
                     if (i1 == 0) {
                         fragment = new EleSetCarrier();
-                        switchFragment(fragment);
+                        switchFragment();
                     } else if (i1 == 1) {
                         fragment = new EleShowCarrier();
-                        switchFragment(fragment);
+                        switchFragment();
                     } else if (i1 == 2) {
                         fragment = new EleDonateMain();
-                        switchFragment(fragment);
+                        switchFragment();
                     } else if (i1 == 3) {
                         fragment = new EleAddCarrier();
-                        switchFragment(fragment);
+                        switchFragment();
                     } else if (i1 == 4) {
                         //close drawer
                         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -475,14 +506,14 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                     } else if (i1 == 5) {
                         fragment = new EleNewCarrier();
-                        switchFragment(fragment);
+                        switchFragment();
                         return;
                     } else if (i1 == 6) {
                         fragment = new EleAddBank();
-                        switchFragment(fragment);
+                        switchFragment();
                     } else if (i1 == 7) {
                         fragment = new HowGetPrice();
-                        switchFragment(fragment);
+                        switchFragment();
                     } else {
                         //close drawer
                         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -555,8 +586,8 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
             if (a.equals("setCarrier")) {
-                Fragment fragment = new EleSetCarrier();
-                switchFragment(fragment);
+                fragment = new EleSetCarrier();
+                switchFragment();
             } else if (a.equals("setConsume")) {
                 if (resultCode == 9) {
                     data.putExtra("scan", "true");
@@ -573,16 +604,16 @@ public class MainActivity extends AppCompatActivity {
                     setUpdateConsume(data);
                 }
             } else if (a.equals("PriceHand")) {
-                Fragment fragment = new PriceActivity();
-                switchFragment(fragment);
+                fragment = new PriceActivity();
+                switchFragment();
             }
         }
     }
 
     private void searchQRCode(Intent intent) {
-        Fragment fragment = new SearchByQrCode();
+        fragment = new SearchByQrCode();
         fragment.setArguments(intent.getExtras());
-        switchFragment(fragment);
+        switchFragment();
     }
 
     private void setConsume() {
@@ -608,8 +639,8 @@ public class MainActivity extends AppCompatActivity {
                 InsertSpend.consumeVO.setNumber(EleNul);
                 InsertSpend.consumeVO.setDate(new Date(calendar.getTimeInMillis()));
                 InsertSpend.consumeVO.setRdNumber(rdNumber);
-                Fragment fragment = new InsertActivity();
-                switchFragment(fragment);
+                fragment = new InsertActivity();
+                switchFragment();
                 return;
             }
         }
@@ -681,8 +712,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             InsertSpend.consumeVO = setQRcodCon(InsertSpend.consumeVO);
         }
-        Fragment fragment = new InsertActivity();
-        switchFragment(fragment);
+        fragment = new InsertActivity();
+        switchFragment();
     }
 
     private ConsumeVO setQRcodCon(ConsumeVO consumeVO) {
@@ -784,9 +815,9 @@ public class MainActivity extends AppCompatActivity {
                 consumeVO.setDate(new Date(calendar.getTimeInMillis()));
                 consumeVO.setRdNumber(rdNumber);
                 bundle.putSerializable("consumeVO", consumeVO);
-                Fragment fragment = new UpdateSpend();
+                fragment = new UpdateSpend();
                 fragment.setArguments(bundle);
-                switchFragment(fragment);
+                switchFragment();
                 return;
             }
         }
@@ -858,9 +889,9 @@ public class MainActivity extends AppCompatActivity {
             consumeVO = setQRcodCon(consumeVO);
         }
         bundle.putSerializable("consumeVO", consumeVO);
-        Fragment fragment = new UpdateSpend();
+        fragment = new UpdateSpend();
         fragment.setArguments(bundle);
-        switchFragment(fragment);
+        switchFragment();
     }
 
     private ConsumeVO getType(ConsumeVO consumeVO) {
@@ -962,7 +993,6 @@ public class MainActivity extends AppCompatActivity {
                 String action = oldFramgent.getLast();
                 Bundle bundle = bundles.getLast();
                 Log.d("MainActivity", action);
-                Fragment fragment = null;
                 if (action.equals("SelectActivity")) {
                     fragment = new SelectActivity();
                     fragment.setArguments(bundle);
@@ -1045,7 +1075,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 oldFramgent.remove(oldFramgent.size() - 1);
                 bundles.remove(bundles.size() - 1);
-                switchFragment(fragment);
+                switchFragment();
                 return true;
             }
         }
