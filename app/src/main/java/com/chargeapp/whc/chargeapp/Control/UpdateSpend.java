@@ -101,6 +101,7 @@ public class UpdateSpend extends Fragment {
     private List<BootstrapText> BsTextDay,BsTextWeek,BsTextMonth,BsTextStatue;
     private int statueNumber;
     private String resultStatue,resultDay;
+    private RelativeLayout notifyRel;
 //    private boolean returnCM;
 
     @Override
@@ -448,6 +449,7 @@ public class UpdateSpend extends Fragment {
         noWekT=view.findViewById(R.id.noWekT);
         notifyT=view.findViewById(R.id.notifyT);
         fixDateT=view.findViewById(R.id.fixDateT);
+        notifyRel=view.findViewById(R.id.notifyRel);
     }
 
     private void setFirstGrid() {
@@ -546,6 +548,7 @@ public class UpdateSpend extends Fragment {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             if (b) {
+                notifyRel.setVisibility(View.VISIBLE);
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
                 resultStatue=BsTextStatue.get(0).toString();
                 notifyT.setVisibility(View.VISIBLE);
