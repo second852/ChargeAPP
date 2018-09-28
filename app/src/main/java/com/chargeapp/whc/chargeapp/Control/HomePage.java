@@ -77,7 +77,7 @@ public class HomePage extends Fragment {
     private ArrayList<PieEntry> yVals1;
     private ArrayList<String> Okey;
     private Activity context;
-    private DrawerLayout drawerLayout;
+
 
 
     @Override
@@ -104,17 +104,6 @@ public class HomePage extends Fragment {
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        drawerLayout = context.findViewById(R.id.drawer_layout);
-        ViewTreeObserver vto = view.getViewTreeObserver();
-        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                drawerLayout.closeDrawer(GravityCompat.START);
-                view.getViewTreeObserver().removeOnPreDrawListener(this);
-                return true;
-            }
-        });
-
         return view;
     }
 

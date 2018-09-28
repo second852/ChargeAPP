@@ -3,7 +3,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
     >
     <HorizontalScrollView
         android:id="@+id/choiceitem"
@@ -11,13 +10,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="#000000"
+        android:layout_marginLeft="-85dp"
         >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/text"
-            android:layout_marginLeft="-85dp"
             >
             <Button
                 android:id="@+id/goneD"

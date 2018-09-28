@@ -31,14 +31,13 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
     private ViewPager SViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private Button exportMoney, importMoney, goneMoney, getMoney;
-    private HorizontalScrollView choiceitem;
     private LinearLayout text;
     private int nowpoint = 0;
     private float movefirst;
     public TextView mainTitle;
     public static int position;
     private Activity context;
-    private DrawerLayout drawerLayout;
+
 
     @Override
     public void onAttach(Context context) {
@@ -58,7 +57,6 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
         SViewPager = (ViewPager) view.findViewById(R.id.seleViewPager);
         exportMoney = view.findViewById(R.id.exportD);
         importMoney = view.findViewById(R.id.showD);
-        choiceitem = view.findViewById(R.id.choiceitem);
         goneMoney = view.findViewById(R.id.goneD);
         getMoney = view.findViewById(R.id.getMoney);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
@@ -69,16 +67,6 @@ public class SelectActivity extends Fragment implements ViewPager.OnPageChangeLi
         text = view.findViewById(R.id.text);
         movefirst = -importMoney.getWidth();
         context.setTitle(R.string.text_DataPicture);
-        drawerLayout = context.findViewById(R.id.drawer_layout);
-        ViewTreeObserver vto = view.getViewTreeObserver();
-        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                drawerLayout.closeDrawer(GravityCompat.START);
-                view.getViewTreeObserver().removeOnPreDrawListener(this);
-                return true;
-            }
-        });
         return view;
     }
 

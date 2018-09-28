@@ -36,7 +36,7 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
     public static int page;
     private AdView adView;
     private Activity context;
-    private DrawerLayout drawerLayout;
+
 
     @Override
     public void onAttach(Context context) {
@@ -66,16 +66,6 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
         setcurrentpage();
         text = view.findViewById(R.id.text);
         movefirst = -importMoney.getWidth();
-        drawerLayout = context.findViewById(R.id.drawer_layout);
-        ViewTreeObserver vto = view.getViewTreeObserver();
-        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                drawerLayout.closeDrawer(GravityCompat.START);
-                view.getViewTreeObserver().removeOnPreDrawListener(this);
-                return true;
-            }
-        });
         return view;
     }
 

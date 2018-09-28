@@ -29,8 +29,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".Control.Welcome"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait">
+            android:hardwareAccelerated="true"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

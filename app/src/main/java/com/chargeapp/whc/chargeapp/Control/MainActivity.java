@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean doubleClick = false;
     public static LinkedList<String> oldFramgent;
     public static LinkedList<Bundle> bundles;
-    private Fragment fragment;
+    public Fragment fragment;
 
     //維持現在Framgent
     public boolean mFramgent;
@@ -177,23 +177,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void switchFragment() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                for (Fragment f : getSupportFragmentManager().getFragments()) {
-                    fragmentTransaction.remove(f);
-                }
-                fragmentTransaction.replace(R.id.body, fragment);
-//                try {
-//                    Thread.sleep(100);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-                fragmentTransaction.commit();
-                handler.sendEmptyMessage(1);
-            }
-        }).start();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        for (Fragment f : getSupportFragmentManager().getFragments()) {
+            fragmentTransaction.remove(f);
+        }
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
     }
 
 
@@ -282,12 +271,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-                drawerLayout.closeDrawer(GravityCompat.START);
                 if(nowView!=null)
                 {
                     setColor(nowView);
                 }
-
         }
     };
 
@@ -385,21 +372,28 @@ public class MainActivity extends AppCompatActivity {
             tvId.setText(mystring);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    MainActivity.this.position = i;
-                    nowView=v;
+                public void onClick(final View v) {
+
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             oldFramgent.clear();
                             bundles.clear();
+                            MainActivity.this.position = i;
+                            nowView=v;
+                            handler.sendEmptyMessage(0);
+                        }}).start();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
                             if (i == 0) {
                                 Common.showfirstgrid = false;
                                 Common.showsecondgrid = false;
                                 fragment = new InsertActivity();
                                 switchFragment();
                             } else if (i == 1) {
-                                  return;
+                                return;
                             } else if (i == 2) {
                                 fragment = new PriceActivity();
                                 switchFragment();
@@ -435,11 +429,12 @@ public class MainActivity extends AppCompatActivity {
                                 InsertIncome.needSet = false;
                                 InsertIncome.bankVO = new BankVO();
                             }
-                        }}).start();
+
+                        }
+                    }).start();
 
                     if(i==1)
                     {
-                        setColor(v);
                         setTitle(R.string.text_Ele);
                         if (doubleClick) {
                             listView.collapseGroup(1);
@@ -448,6 +443,8 @@ public class MainActivity extends AppCompatActivity {
                             listView.expandGroup(1);
                             doubleClick = true;
                         }
+                    }else {
+                        drawerLayout.closeDrawer(GravityCompat.START);
                     }
                 }
             });

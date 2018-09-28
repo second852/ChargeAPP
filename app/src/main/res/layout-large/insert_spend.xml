@@ -260,6 +260,8 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/notifyRel"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/fixDateR"
@@ -365,13 +367,11 @@
                     app:buttonMode="regular"
                     app:showOutline="false"
                     app:roundedCorners="true"
-                    app:bootstrapText="全部 {fa_save}"
                     />
 
                 <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/save"
-                    android:layout_marginRight="25dp"
-                    android:layout_toLeftOf="@+id/standard"
+                    android:layout_marginLeft="30dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="儲存"
@@ -390,8 +390,8 @@
                     android:id="@+id/clear"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:layout_toRightOf="@+id/standard"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="30dp"
                     android:text="清除"
                     android:textColor="#000000"
                     app:bootstrapBrand="danger"

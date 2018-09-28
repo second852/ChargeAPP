@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -59,6 +60,8 @@ import java.util.Map;
 
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_HEART;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_SAVE;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_TWITTER;
 
 
@@ -67,7 +70,7 @@ public class InsertSpend extends Fragment {
     private BootstrapEditText number, name, money, secondname, date;
     private CheckBox fixdate, notify, noWek;
     private BootstrapLabel detailname;
-    private BootstrapButton save, clear,standard;
+    private BootstrapButton save, clear;
     private LinearLayout showdate;
     private DatePicker datePicker;
     private String choicedate;
@@ -92,6 +95,7 @@ public class InsertSpend extends Fragment {
     private int statueNumber;
     private String resultStatue, resultDay;
     private View view;
+    private RelativeLayout notifyRel;
 
 
 
@@ -152,9 +156,10 @@ public class InsertSpend extends Fragment {
                 noWek.setVisibility(View.VISIBLE);
                 choiceday.setVisibility(View.GONE);
                 resultStatue = BsTextStatue.get(0).toString();
-                resultDay = "";
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
+                choiceStatue.setVisibility(View.VISIBLE);
                 choiceday.setExpandDirection(ExpandDirection.DOWN);
+                resultDay = "";
             } else if (choicestatue.trim().equals("每周")) {
                 statueNumber = 1;
                 noWekT.setVisibility(View.GONE);
@@ -163,6 +168,7 @@ public class InsertSpend extends Fragment {
                 resultStatue = BsTextStatue.get(1).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(1));
                 choiceday.setDropdownData(Common.WeekSetSpinnerBS);
+                choiceStatue.setVisibility(View.VISIBLE);
                 if (choicedate.equals("星期一")) {
                     updateChoice = 0;
                 } else if (choicedate.equals("星期二")) {
@@ -188,6 +194,7 @@ public class InsertSpend extends Fragment {
                 choiceday.setVisibility(View.VISIBLE);
                 resultStatue = BsTextStatue.get(2).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(2));
+                choiceStatue.setVisibility(View.VISIBLE);
                 choicedate = choicedate.substring(0, choicedate.indexOf("日"));
                 updateChoice = Integer.valueOf(choicedate) - 1;
                 resultDay = BsTextDay.get(updateChoice).toString();
@@ -201,6 +208,7 @@ public class InsertSpend extends Fragment {
                 choiceday.setVisibility(View.VISIBLE);
                 resultStatue = BsTextStatue.get(3).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(3));
+                choiceStatue.setVisibility(View.VISIBLE);
                 updateChoice = Integer.valueOf(choicedate.substring(0, choicedate.indexOf("月"))) - 1;
                 resultDay = BsTextMonth.get(updateChoice).toString();
                 choiceday.setBootstrapText(BsTextMonth.get(updateChoice));
@@ -211,7 +219,7 @@ public class InsertSpend extends Fragment {
         needSet = false;
     }
 
-    private Handler handlerPicture=new Handler()
+    private Handler handlerPicture=new Handler(Looper.getMainLooper())
     {
         @Override
         public void handleMessage(Message msg) {
@@ -224,6 +232,15 @@ public class InsertSpend extends Fragment {
                     }
                     break;
                 case 1:
+                    secondname.setFocusable(false);
+                    secondname.setFocusableInTouchMode(false);
+                    date.setFocusable(false);
+                    date.setFocusableInTouchMode(false);
+                    name.setFocusable(false);
+                    name.setFocusableInTouchMode(false);
+                    choiceStatue.setVisibility(View.GONE);
+                    choiceday.setVisibility(View.GONE);
+
                     setSecondGridAdapt((ArrayList<Map<String, Object>>) msg.obj);
                     choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
                     date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
@@ -235,15 +252,6 @@ public class InsertSpend extends Fragment {
                         secondL.setVisibility(View.VISIBLE);
                         Common.showsecondgrid = false;
                     }
-                    standard.setVisibility(View.INVISIBLE);
-                    secondname.setFocusable(false);
-                    secondname.setFocusableInTouchMode(false);
-                    date.setFocusable(false);
-                    date.setFocusableInTouchMode(false);
-                    name.setFocusable(false);
-                    name.setFocusableInTouchMode(false);
-                    choiceStatue.setVisibility(View.GONE);
-                    choiceday.setVisibility(View.GONE);
                     break;
             }
         }
@@ -385,12 +393,12 @@ public class InsertSpend extends Fragment {
         noWek = view.findViewById(R.id.noWek);
         qrcode = view.findViewById(R.id.qrcode);
         name = view.findViewById(R.id.name);
-        standard=view.findViewById(R.id.standard);
         secondG = view.findViewById(R.id.secondG);
         secondL = view.findViewById(R.id.secondL);
         noWekT = view.findViewById(R.id.noWekT);
         notifyT = view.findViewById(R.id.notifyT);
         firstL = view.findViewById(R.id.firstL);
+        notifyRel=view.findViewById(R.id.notifyRel);
     }
 
 
@@ -419,6 +427,7 @@ public class InsertSpend extends Fragment {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             if (b) {
+                notifyRel.setVisibility(View.VISIBLE);
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
                 resultStatue = BsTextStatue.get(0).toString();
                 notifyT.setVisibility(View.VISIBLE);

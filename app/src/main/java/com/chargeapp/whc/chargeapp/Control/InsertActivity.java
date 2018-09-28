@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -32,7 +35,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     private int nowpoint=0;
     private static int position;
     private Activity activity;
-    private DrawerLayout drawerLayout;
+    private View view;
 
     @Override
     public void onAttach(Context context) {
@@ -43,38 +46,45 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         }else {
             activity=getActivity();
         }
-
     }
+
+    private  Handler handlerP=new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what)
+            {
+                case 2:
+                    setCurrentPage();
+                    break;
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final View view = inflater.inflate(R.layout.insert_main, container, false);
-        activity.setTitle(R.string.text_Com);
-        mViewPager =  view.findViewById(R.id.insert_viewPager);
-        exportMoney=view.findViewById(R.id.exportD);
-        importMoney=view.findViewById(R.id.showD);
-        goneMoney=view.findViewById(R.id.goneD);
-        mViewPager.setAdapter(new MainPagerAdapter(getFragmentManager()));
-        mViewPager.addOnPageChangeListener(this);
-        mViewPager.setCurrentItem(position);
-        setcurrentpage();
-        text=view.findViewById(R.id.text);
-        drawerLayout = activity.findViewById(R.id.drawer_layout);
-        ViewTreeObserver vto = view.getViewTreeObserver();
-        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        view = inflater.inflate(R.layout.insert_main, container, false);
+        new Thread(new Runnable() {
             @Override
-            public boolean onPreDraw() {
-                drawerLayout.closeDrawer(GravityCompat.START);
-                view.getViewTreeObserver().removeOnPreDrawListener(this);
-                return true;
+            public void run() {
+                exportMoney=view.findViewById(R.id.exportD);
+                importMoney=view.findViewById(R.id.showD);
+                goneMoney=view.findViewById(R.id.goneD);
+                handlerP.sendEmptyMessage(2);
             }
-        });
+        }).start();
+        text=view.findViewById(R.id.text);
+        mViewPager =  view.findViewById(R.id.insert_viewPager);
+        mViewPager.setAdapter(new MainPagerAdapter(getFragmentManager()));
+        mViewPager.addOnPageChangeListener(InsertActivity.this);
+        mViewPager.setCurrentItem(position);
+        activity.setTitle(R.string.text_Com);
         return  view;
     }
 
 
-    public void setcurrentpage()
+    public  void setCurrentPage()
     {
         int page=mViewPager.getCurrentItem();
         if(page==0)
@@ -120,13 +130,13 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         InsertActivity.this.position=position;
         if(position==0)
         {
-            setcurrentpage();
+            setCurrentPage();
             goneMoney.setText("收入");
             exportMoney.setText("支出");
             importMoney.setText("收入");
         }else
         {
-            setcurrentpage();
+            setCurrentPage();
             goneMoney.setText("支出");
             exportMoney.setText("收入");
             importMoney.setText("支出");

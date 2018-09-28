@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -60,10 +61,9 @@ public class Welcome extends AppCompatActivity {
             TypefaceProvider.registerDefaultIconSets();
             imageWelcome=findViewById(R.id.imageWelcome);
             setJob();
-            mHandler.sendEmptyMessageDelayed(0, 500);
+            mHandler.sendEmptyMessageDelayed(1, 500);
         }
     };
-
 
 
     private void setJob() {
@@ -101,24 +101,25 @@ public class Welcome extends AppCompatActivity {
     private Handler mHandler = new Handler() {
         public void handleMessage(android.os.Message msg) {
 
-
-            //初始化
-            DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-            float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
-            float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-            if (dpWidth > 650) {
-                Common.screenSize = Common.Screen.xLarge;
-            } else if (dpWidth > 470) {
-                Common.screenSize = Common.Screen.large;
-            } else {
-                Common.screenSize = Common.Screen.normal;
+            switch (msg.what)
+            {
+                case 1:
+                    //初始化
+                    DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+                    float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+                    float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+                    if (dpWidth > 650) {
+                        Common.screenSize = Common.Screen.xLarge;
+                    } else if (dpWidth > 470) {
+                        Common.screenSize = Common.Screen.large;
+                    } else {
+                        Common.screenSize = Common.Screen.normal;
+                    }
+                    Common.lostCarrier = new ArrayList<>();
+                    askPermissions();
+                    break;
             }
-            Common.lostCarrier = new ArrayList<>();
-            askPermissions();
-
-
         }
-
     };
 
 
@@ -155,6 +156,8 @@ public class Welcome extends AppCompatActivity {
         }else {
             Intent intent = new Intent();
             //將原本Activity的換成MainActivity
+            MainActivity mainActivity=new MainActivity();
+            mainActivity.fragment=new InsertActivity();
             intent.setClass(Welcome.this, MainActivity.class);
             startActivity(intent);
             finish();

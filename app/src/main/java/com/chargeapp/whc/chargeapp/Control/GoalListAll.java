@@ -66,7 +66,6 @@ public class GoalListAll extends Fragment {
     private int p;
     private Activity context;
     private AdView adView;
-    private DrawerLayout drawerLayout;
     private boolean firstShow;
 
 
@@ -98,16 +97,6 @@ public class GoalListAll extends Fragment {
         } catch (Exception e) {
             p = 0;
         }
-        drawerLayout = context.findViewById(R.id.drawer_layout);
-        ViewTreeObserver vto = view.getViewTreeObserver();
-        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                drawerLayout.closeDrawer(GravityCompat.START);
-                view.getViewTreeObserver().removeOnPreDrawListener(this);
-                return true;
-            }
-        });
         findViewById(view);
         setLayout();
         return view;

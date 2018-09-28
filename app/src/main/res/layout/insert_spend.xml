@@ -262,6 +262,8 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/notifyRel"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/fixDateR"
@@ -361,18 +363,18 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:gravity="center"
-                    android:visibility="invisible"
+                    android:visibility="gone"
                     app:bootstrapBrand="regular"
                     app:bootstrapSize="lg"
                     app:buttonMode="regular"
                     app:showOutline="false"
                     app:roundedCorners="true"
-                    app:bootstrapText="全部 {fa_save}"
                     />
 
                 <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/save"
-                    android:layout_marginRight="25dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="10dp"
                     android:layout_toLeftOf="@+id/standard"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -390,7 +392,9 @@
                     android:id="@+id/clear"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginLeft="10dp"
                     android:layout_toRightOf="@+id/standard"
                     android:text="清除"
                     android:textColor="#000000"

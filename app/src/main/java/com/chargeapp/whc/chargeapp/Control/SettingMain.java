@@ -71,7 +71,6 @@ public class SettingMain extends Fragment {
     private SharedPreferences sharedPreferences;
     private Activity context;
     private AdView adView;
-    private DrawerLayout drawerLayout;
 
     @Override
     public void onAttach(Context context) {
@@ -96,16 +95,6 @@ public class SettingMain extends Fragment {
         Common.setAdView(adView,context);
         List<EleMainItemVO> itemSon = getNewItem();
         listView.setAdapter(new ListAdapter(context, itemSon));
-        drawerLayout = context.findViewById(R.id.drawer_layout);
-        ViewTreeObserver vto = view.getViewTreeObserver();
-        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                drawerLayout.closeDrawer(GravityCompat.START);
-                view.getViewTreeObserver().removeOnPreDrawListener(this);
-                return true;
-            }
-        });
         return view;
     }
 

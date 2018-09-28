@@ -64,6 +64,8 @@ import java.util.Map;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_SAVE;
 
 
 public class UpdateSpend extends Fragment {
@@ -148,6 +150,11 @@ public class UpdateSpend extends Fragment {
         secondG.setOnItemClickListener(new secondGridOnClick());
         detailname.setOnClickListener(new showDetail());
         if (action.equals("SettingListFixCon") && (!consumeVO.isAuto())) {
+            BootstrapText text = new BootstrapText.Builder(context)
+                    .addText("全部"+"  ")
+                    .addFontAwesomeIcon(FA_SAVE)
+                    .build();
+            standard.setText(text);
             standard.setVisibility(View.VISIBLE);
             standard.setOnClickListener(new saveAllConsume());
         }else{

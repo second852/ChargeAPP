@@ -38,9 +38,6 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
     private static int nowPoint = 0;
     private Button exportMoney;
     private Activity context;
-    private DrawerLayout drawerLayout;
-    private HorizontalScrollView choiceitem;
-
 
     @Override
     public void onAttach(Context context) {
@@ -67,19 +64,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
         goneMoney = view.findViewById(R.id.goneD);
         showN = view.findViewById(R.id.showN);
         text = view.findViewById(R.id.text);
-        choiceitem=view.findViewById(R.id.choiceitem);
-        drawerLayout = context.findViewById(R.id.drawer_layout);
         goneD=view.findViewById(R.id.goneD);
-        ViewTreeObserver vto = view.getViewTreeObserver();
-        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                drawerLayout.closeDrawer(GravityCompat.START);
-                view.getViewTreeObserver().removeOnPreDrawListener(this);
-                choiceitem.setX(-goneD.getWidth());
-                return true;
-            }
-        });
         setLayout();
         priceViewPager.setCurrentItem(nowPoint);
         return view;
