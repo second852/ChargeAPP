@@ -110,13 +110,6 @@ public class InsertIncome extends Fragment {
                     }
                     break;
                 case 1:
-                    date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
-                    choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
-                    standard.setVisibility(View.INVISIBLE);
-                    if(needSet)
-                    {
-                        setIncome();
-                    }
                     name.setFocusable(false);
                     name.setFocusableInTouchMode(false);
                     date.setFocusable(false);
@@ -124,6 +117,13 @@ public class InsertIncome extends Fragment {
                     choiceStatue.setVisibility(View.GONE);
                     choiceday.setVisibility(View.GONE);
                     Common.setAdView(adView,context);
+                    date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
+                    choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
+                    standard.setVisibility(View.INVISIBLE);
+                    if(needSet)
+                    {
+                        setIncome();
+                    }
                     break;
             }
         }
@@ -274,6 +274,7 @@ public class InsertIncome extends Fragment {
                 resultStatue=BsTextStatue.get(0).toString();
                 resultDay="";
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
+                choiceStatue.setVisibility(View.VISIBLE);
                 choiceday.setVisibility(View.GONE);
                 choiceday.setExpandDirection(ExpandDirection.DOWN);
                 return;
@@ -281,6 +282,7 @@ public class InsertIncome extends Fragment {
                 statueNumber=1;
                 resultStatue=BsTextStatue.get(1).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(1));
+                choiceStatue.setVisibility(View.VISIBLE);
                 choiceday.setDropdownData(Common.WeekSetSpinnerBS);
                 if(choicedate.equals("星期一"))
                 {
@@ -310,6 +312,7 @@ public class InsertIncome extends Fragment {
                 statueNumber=2;
                 resultStatue=BsTextStatue.get(2).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(2));
+                choiceStatue.setVisibility(View.VISIBLE);
                 choicedate=choicedate.substring(0,choicedate.indexOf("日"));
                 updateChoice= Integer.valueOf(choicedate)-1;
                 resultDay=BsTextDay.get(updateChoice).toString();
@@ -320,6 +323,7 @@ public class InsertIncome extends Fragment {
                 statueNumber=3;
                 resultStatue=BsTextStatue.get(3).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(3));
+                choiceStatue.setVisibility(View.VISIBLE);
                 updateChoice=Integer.valueOf(choicedate.substring(0,choicedate.indexOf("月")))-1;
                 resultDay=BsTextMonth.get(updateChoice).toString();
                 choiceday.setBootstrapText(BsTextMonth.get(updateChoice));
