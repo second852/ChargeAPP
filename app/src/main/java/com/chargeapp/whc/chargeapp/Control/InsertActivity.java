@@ -55,6 +55,9 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
             switch (msg.what)
             {
                 case 2:
+                    mViewPager.setAdapter(new MainPagerAdapter(getFragmentManager()));
+                    mViewPager.addOnPageChangeListener(InsertActivity.this);
+                    mViewPager.setCurrentItem(position);
                     setCurrentPage();
                     break;
             }
@@ -68,6 +71,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         new Thread(new Runnable() {
             @Override
             public void run() {
+                mViewPager = view.findViewById(R.id.insert_viewPager);
                 exportMoney=view.findViewById(R.id.exportD);
                 importMoney=view.findViewById(R.id.showD);
                 goneMoney=view.findViewById(R.id.goneD);
@@ -75,10 +79,6 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
             }
         }).start();
         text=view.findViewById(R.id.text);
-        mViewPager =  view.findViewById(R.id.insert_viewPager);
-        mViewPager.setAdapter(new MainPagerAdapter(getFragmentManager()));
-        mViewPager.addOnPageChangeListener(InsertActivity.this);
-        mViewPager.setCurrentItem(position);
         activity.setTitle(R.string.text_Com);
         return  view;
     }

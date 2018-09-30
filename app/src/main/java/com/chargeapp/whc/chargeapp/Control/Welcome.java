@@ -14,6 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,6 +32,7 @@ import com.beardedhen.androidbootstrap.BootstrapThumbnail;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
+import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
@@ -61,7 +63,7 @@ public class Welcome extends AppCompatActivity {
             TypefaceProvider.registerDefaultIconSets();
             imageWelcome=findViewById(R.id.imageWelcome);
             setJob();
-            mHandler.sendEmptyMessageDelayed(1, 500);
+            mHandler.sendEmptyMessageDelayed(1, 300);
         }
     };
 
@@ -98,7 +100,7 @@ public class Welcome extends AppCompatActivity {
     }
 
 
-    private Handler mHandler = new Handler() {
+    private Handler mHandler = new Handler(Looper.myLooper()) {
         public void handleMessage(android.os.Message msg) {
 
             switch (msg.what)
@@ -147,11 +149,12 @@ public class Welcome extends AppCompatActivity {
         MainActivity.chargeAPPDB = new ChargeAPPDB(Welcome.this);
         TypeDB typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<TypeVO> typeVOS = typeDB.getAll();
-        if (typeVOS.size() <= 0) {
+        PriceDB priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        if (typeVOS.size() <= 0||priceDB.getAll().size()<=0) {
             Fragment fragment=new Download();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.welcomeFrame, fragment);
-            fragmentTransaction.commit();
+            fragmentTransaction.commitAllowingStateLoss();
             imageWelcome.setVisibility(View.GONE);
         }else {
             Intent intent = new Intent();

@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -539,7 +540,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         }
     }
 
-    Handler handler=new Handler(){
+    Handler handler=new Handler(Looper.myLooper()){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){

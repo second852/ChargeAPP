@@ -13,6 +13,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -267,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         oldMainView = v;
     }
 
-    private Handler handler=new Handler(){
+    private Handler handler=new Handler(Looper.myLooper()){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);

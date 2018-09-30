@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -96,7 +97,7 @@ public class UpdateIncomeType extends Fragment {
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         progressDialog = new ProgressDialog(context);
-        handler = new Handler();
+        handler = new Handler(Looper.myLooper());
         findViewById(view);
         setGridPicture();
         context.setTitle("修改類別");

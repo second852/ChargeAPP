@@ -98,7 +98,6 @@ public class InsertSpend extends Fragment {
     private RelativeLayout notifyRel;
 
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

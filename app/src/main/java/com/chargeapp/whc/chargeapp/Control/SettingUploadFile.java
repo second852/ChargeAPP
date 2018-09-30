@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -123,7 +124,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private AdView adView;
     private boolean firstEnter;
 
-    Handler handler=new Handler(){
+    Handler handler=new Handler(Looper.myLooper()){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what)
