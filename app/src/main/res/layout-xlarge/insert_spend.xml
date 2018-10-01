@@ -306,7 +306,7 @@
                         android:layout_centerVertical="true"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="40dp"
-                        app:bootstrapExpandDirection="down"
+                        app:bootstrapExpandDirection="up"
                         app:bootstrapSize="xl"
                         app:bootstrapText="每天 {fa_calendar}"
                         app:dropdownResource="@array/fixDay"

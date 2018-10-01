@@ -28,7 +28,7 @@
             android:layout_marginLeft="15dp"
             app:bootstrapBrand="regular"
             app:showOutline="true"
-            app:bootstrapExpandDirection="down"
+            app:bootstrapExpandDirection="up"
             app:bootstrapSize="md"
             app:bootstrapText="Small {fa_thumbs_o_up}"
             app:dropdownResource="@array/fixDay"

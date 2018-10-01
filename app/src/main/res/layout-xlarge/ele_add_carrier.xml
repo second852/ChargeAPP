@@ -28,7 +28,7 @@
             android:layout_centerHorizontal="true"
             app:bootstrapBrand="regular"
             app:showOutline="true"
-            app:bootstrapExpandDirection="down"
+            app:bootstrapExpandDirection="up"
             app:bootstrapSize="xl"
             app:bootstrapText="Small {fa_thumbs_o_up}"
             app:dropdownResource="@array/fixDay"

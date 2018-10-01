@@ -139,6 +139,8 @@ public class InsertSpend extends Fragment {
         money.setText(String.valueOf(consumeVO.getMoney()));
         date.setText(Common.sTwo.format(consumeVO.getDate()));
         if (consumeVO.getFixDate() == null) {
+            setSecondGrid();
+            needSet = false;
             return;
         }
         if (consumeVO.getFixDate().equals("true")) {
@@ -157,7 +159,7 @@ public class InsertSpend extends Fragment {
                 resultStatue = BsTextStatue.get(0).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
                 choiceStatue.setVisibility(View.VISIBLE);
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
+                choiceday.setExpandDirection(ExpandDirection.UP);
                 resultDay = "";
             } else if (choicestatue.trim().equals("每周")) {
                 statueNumber = 1;
@@ -185,7 +187,7 @@ public class InsertSpend extends Fragment {
                 }
                 choiceday.setBootstrapText(BsTextWeek.get(updateChoice));
                 resultDay = BsTextWeek.get(updateChoice).toString();
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
+                choiceday.setExpandDirection(ExpandDirection.UP);
             } else if (choicestatue.trim().equals("每月")) {
                 statueNumber = 2;
                 noWekT.setVisibility(View.GONE);
@@ -199,7 +201,7 @@ public class InsertSpend extends Fragment {
                 resultDay = BsTextDay.get(updateChoice).toString();
                 choiceday.setBootstrapText(BsTextDay.get(updateChoice));
                 choiceday.setDropdownData(Common.DaySetSpinnerBS());
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
+                choiceday.setExpandDirection(ExpandDirection.UP);
             } else {
                 statueNumber = 3;
                 noWekT.setVisibility(View.GONE);
@@ -212,9 +214,10 @@ public class InsertSpend extends Fragment {
                 resultDay = BsTextMonth.get(updateChoice).toString();
                 choiceday.setBootstrapText(BsTextMonth.get(updateChoice));
                 choiceday.setDropdownData(Common.MonthSetSpinnerBS());
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
+                choiceday.setExpandDirection(ExpandDirection.UP);
             }
         }
+        setSecondGrid();
         needSet = false;
     }
 
@@ -239,19 +242,29 @@ public class InsertSpend extends Fragment {
                     name.setFocusableInTouchMode(false);
                     choiceStatue.setVisibility(View.GONE);
                     choiceday.setVisibility(View.GONE);
-
                     setSecondGridAdapt((ArrayList<Map<String, Object>>) msg.obj);
                     choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
                     date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
-                    if (needSet) {
-                        setUpdate();
-                        setSecondGrid();
-                        secondname.setOnClickListener(new showSecondG());
-                    }
                     if (Common.showsecondgrid) {
                         secondL.setVisibility(View.VISIBLE);
                         Common.showsecondgrid = false;
                     }
+                    break;
+                case 2:
+                    secondname.setFocusable(false);
+                    secondname.setFocusableInTouchMode(false);
+                    date.setFocusable(false);
+                    date.setFocusableInTouchMode(false);
+                    name.setFocusable(false);
+                    name.setFocusableInTouchMode(false);
+                    choiceStatue.setVisibility(View.GONE);
+                    choiceday.setVisibility(View.GONE);
+                    setUpdate();
+                    break;
+                case 3:
+                    setSecondGridAdapt((ArrayList<Map<String, Object>>) msg.obj);
+                    choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
+                    secondname.setOnClickListener(new showSecondG());
                     break;
             }
         }
@@ -279,7 +292,13 @@ public class InsertSpend extends Fragment {
             findviewByid();
             gson = new Gson();
             setSetOnClickView();
-            setSecondGrid();
+            if(needSet)
+            {
+               handlerPicture.sendEmptyMessage(2);
+            }else{
+                setSecondGrid();
+            }
+
         }
     };
 
@@ -324,7 +343,12 @@ public class InsertSpend extends Fragment {
         items.add(item);
         Message message=new Message();
         message.obj=items;
-        message.what=1;
+        if(needSet)
+        {
+            message.what=3;
+        }else{
+            message.what=1;
+        }
         handlerPicture.sendMessage(message);
     }
 
@@ -825,7 +849,7 @@ public class InsertSpend extends Fragment {
             resultStatue = BsTextStatue.get(id).toString();
             choiceStatue.setBootstrapText(BsTextStatue.get(id));
             statueNumber = id;
-            choiceday.setExpandDirection(ExpandDirection.DOWN);
+            choiceday.setExpandDirection(ExpandDirection.UP);
             if (id == 0) {
                 resultDay = "";
                 choiceday.setVisibility(View.GONE);

@@ -210,7 +210,7 @@
                         android:layout_height="wrap_content"
                         app:bootstrapBrand="regular"
                         android:layout_centerVertical="true"
-                        app:bootstrapExpandDirection="down"
+                        app:bootstrapExpandDirection="up"
                         app:bootstrapSize="sm"
                         app:bootstrapText="每天 {fa_calendar}"
                         app:dropdownResource="@array/fixDay"

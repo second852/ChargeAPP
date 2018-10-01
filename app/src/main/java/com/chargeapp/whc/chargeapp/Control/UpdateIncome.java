@@ -227,7 +227,7 @@ public class UpdateIncome extends Fragment {
                 resultDay="";
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
                 choiceday.setVisibility(View.GONE);
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
+                choiceday.setExpandDirection(ExpandDirection.UP);
             }else if(choicestatue.trim().equals("每周")){
                 statueNumber=1;
                 resultStatue=BsTextStatue.get(1).toString();
@@ -256,7 +256,7 @@ public class UpdateIncome extends Fragment {
                 }
                 choiceday.setBootstrapText(BsTextWeek.get(updateChoice));
                 resultDay=BsTextWeek.get(updateChoice).toString();
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
+                choiceday.setExpandDirection(ExpandDirection.UP);
             }else if(choicestatue.trim().equals("每月")){
                 statueNumber=2;
                 resultStatue=BsTextStatue.get(2).toString();
@@ -266,7 +266,7 @@ public class UpdateIncome extends Fragment {
                 resultDay=BsTextDay.get(updateChoice).toString();
                 choiceday.setBootstrapText(BsTextDay.get(updateChoice));
                 choiceday.setDropdownData(Common.DaySetSpinnerBS());
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
+                choiceday.setExpandDirection(ExpandDirection.UP);
             }else{
                 statueNumber=3;
                 resultStatue=BsTextStatue.get(3).toString();
@@ -275,7 +275,7 @@ public class UpdateIncome extends Fragment {
                 resultDay=BsTextMonth.get(updateChoice).toString();
                 choiceday.setBootstrapText(BsTextMonth.get(updateChoice));
                 choiceday.setDropdownData(Common.MonthSetSpinnerBS());
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
+                choiceday.setExpandDirection(ExpandDirection.UP);
             }
             final ViewTreeObserver vto = showfixdate.getViewTreeObserver();
             vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -700,7 +700,7 @@ public class UpdateIncome extends Fragment {
             resultStatue=BsTextStatue.get(id).toString();
             choiceStatue.setBootstrapText(BsTextStatue.get(id));
             statueNumber=id;
-            choiceday.setExpandDirection(ExpandDirection.DOWN);
+            choiceday.setExpandDirection(ExpandDirection.UP);
             if(id==0)
             {
                 resultDay="";

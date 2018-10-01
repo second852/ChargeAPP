@@ -276,7 +276,7 @@ public class InsertIncome extends Fragment {
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
                 choiceStatue.setVisibility(View.VISIBLE);
                 choiceday.setVisibility(View.GONE);
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
+                choiceday.setExpandDirection(ExpandDirection.UP);
                 return;
             }else if(choicestatue.trim().equals("每周")){
                 statueNumber=1;
@@ -307,7 +307,7 @@ public class InsertIncome extends Fragment {
                 }
                 choiceday.setBootstrapText(BsTextWeek.get(updateChoice));
                 resultDay=BsTextWeek.get(updateChoice).toString();
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
+                choiceday.setExpandDirection(ExpandDirection.UP);
             }else if(choicestatue.trim().equals("每月")){
                 statueNumber=2;
                 resultStatue=BsTextStatue.get(2).toString();
@@ -318,7 +318,7 @@ public class InsertIncome extends Fragment {
                 resultDay=BsTextDay.get(updateChoice).toString();
                 choiceday.setBootstrapText(BsTextDay.get(updateChoice));
                 choiceday.setDropdownData(Common.DaySetSpinnerBS());
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
+                choiceday.setExpandDirection(ExpandDirection.UP);
             }else{
                 statueNumber=3;
                 resultStatue=BsTextStatue.get(3).toString();
@@ -328,7 +328,7 @@ public class InsertIncome extends Fragment {
                 resultDay=BsTextMonth.get(updateChoice).toString();
                 choiceday.setBootstrapText(BsTextMonth.get(updateChoice));
                 choiceday.setDropdownData(Common.MonthSetSpinnerBS());
-                choiceday.setExpandDirection(ExpandDirection.DOWN);
+                choiceday.setExpandDirection(ExpandDirection.UP);
             }
             fixdate.setX(showfixdate.getWidth()/20);
             fixDateT.setX(showfixdate.getWidth()/20+fixdate.getWidth());
@@ -577,7 +577,7 @@ public class InsertIncome extends Fragment {
             resultStatue=BsTextStatue.get(id).toString();
             choiceStatue.setBootstrapText(BsTextStatue.get(id));
             statueNumber=id;
-            choiceday.setExpandDirection(ExpandDirection.DOWN);
+            choiceday.setExpandDirection(ExpandDirection.UP);
             if(id==0)
             {
                 resultDay="";

@@ -70,7 +70,7 @@
             app:bootstrapSize="md"
             app:buttonMode="regular"
             app:roundedCorners="true"
-            app:bootstrapText="修改 {fa_remove}"
+            app:bootstrapText="刪除 {fa_remove}"
             />
     </RelativeLayout>
 </android.support.v7.widget.CardView>
