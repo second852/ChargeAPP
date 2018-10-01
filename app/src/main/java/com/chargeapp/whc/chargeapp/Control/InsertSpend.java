@@ -245,6 +245,7 @@ public class InsertSpend extends Fragment {
                     date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
                     if (needSet) {
                         setUpdate();
+                        setSecondGrid();
                         secondname.setOnClickListener(new showSecondG());
                     }
                     if (Common.showsecondgrid) {

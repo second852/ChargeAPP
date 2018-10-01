@@ -100,7 +100,7 @@ public class Welcome extends AppCompatActivity {
     }
 
 
-    private Handler mHandler = new Handler(Looper.myLooper()) {
+    private Handler mHandler = new Handler(Looper.getMainLooper()) {
         public void handleMessage(android.os.Message msg) {
 
             switch (msg.what)

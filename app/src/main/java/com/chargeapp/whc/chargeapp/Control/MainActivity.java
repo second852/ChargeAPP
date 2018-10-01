@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         oldMainView = v;
     }
 
-    private Handler handler=new Handler(Looper.myLooper()){
+    private Handler handler=new Handler(Looper.getMainLooper()){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);

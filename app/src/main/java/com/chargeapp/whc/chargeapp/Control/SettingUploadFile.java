@@ -124,7 +124,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private AdView adView;
     private boolean firstEnter;
 
-    Handler handler=new Handler(Looper.myLooper()){
+    Handler handler=new Handler(Looper.getMainLooper()){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what)

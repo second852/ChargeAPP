@@ -97,7 +97,7 @@ public class UpdateIncomeType extends Fragment {
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         progressDialog = new ProgressDialog(context);
-        handler = new Handler(Looper.myLooper());
+        handler = new Handler(Looper.getMainLooper());
         findViewById(view);
         setGridPicture();
         context.setTitle("修改類別");

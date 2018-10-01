@@ -540,7 +540,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         }
     }
 
-    Handler handler=new Handler(Looper.myLooper()){
+    Handler handler=new Handler(Looper.getMainLooper()){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
