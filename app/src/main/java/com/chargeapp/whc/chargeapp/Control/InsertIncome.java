@@ -67,6 +67,11 @@ public class InsertIncome extends Fragment {
     private int statueNumber;
     private View view;
 
+
+    public static InsertIncome instance()
+    {
+        return new InsertIncome();
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

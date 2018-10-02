@@ -1,9 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
+
 import android.content.Context;
 import android.content.Intent;
 
@@ -17,6 +15,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -24,20 +23,18 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 
@@ -51,7 +48,6 @@ import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
-import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -83,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean mFramgent;
     public View nowView;
 
+    public static long fm;
 
 
     @Override
@@ -93,27 +90,89 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public Resources getResources() {
         Resources res = super.getResources();
-        if(res.getConfiguration().fontScale>1)
-        {
+        if (res.getConfiguration().fontScale > 1) {
+
             Configuration config = new Configuration();
             config.setToDefaults();
             res.updateConfiguration(config, res.getDisplayMetrics());
+
         }
         return res;
     }
 
-//    public void adjustFontScale(Configuration configuration) {
-//            configuration.fontScale = (float) 1;
-//            DisplayMetrics metrics = getResources().getDisplayMetrics();
-//            WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
-//            wm.getDefaultDisplay().getMetrics(metrics);
-//            metrics.scaledDensity = configuration.fontScale * metrics.density;
-//            getBaseContext().getResources().updateConfiguration(configuration, metrics);
-//    }
+
+    public static Fragment[] fragments={new HomePage(),new InsertActivity(),new PriceActivity(),new SelectActivity(),new SelectListModelActivity()};
+    public static String[] fragmentTags={"HomePage","InserActivity","PriceActivity"," SelectActivity()","SelectListModelActivity"};
+    private void initFragment() {
+        FragmentManager fManager = getSupportFragmentManager();
+        FragmentTransaction fTransaction = fManager.beginTransaction();
+        for (int i = 0; i < fragments.length; i++) {
+            fTransaction.add(R.id.body, fragments[i], fragmentTags[i]);
+        }
+        fTransaction.commit();
+        fManager.executePendingTransactions();
+    }
+
+    private void initHideFragment() {
+        FragmentManager fManager = getSupportFragmentManager();
+        FragmentTransaction fTransaction = fManager.beginTransaction();
+        for (int i = 0; i < fragments.length; i++) {
+            fTransaction.hide(fManager.findFragmentByTag(fragmentTags[i]));
+        }
+        fTransaction.commit();
+        fManager.executePendingTransactions();
+    }
+
+    private void showFragment1(String fragmentTag,Fragment fragment) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        List<Fragment> fragments=fm.getFragments();
+        for(Fragment f:fragments)
+        {
+           if(f.isVisible())
+           {
+               transaction.hide(f);
+           }
+        }
+        Fragment nowFragment=fm.findFragmentByTag(fragmentTag);
+        if(nowFragment==null)
+        {
+            transaction.add(R.id.body,fragment,fragmentTag);
+            transaction.show(fragment);
+        }else {
+            switch (fragmentTag)
+            {
+                case "InserActivity":
+                    transaction.show(new InsertActivity());
+                    break;
+                case "PriceActivity":
+                    transaction.show(new PriceActivity());
+                    break;
+            }
+        }
+        transaction.commit();
+    }
+
+    private void showFragment2(int fragmentIndex) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        if(fm.findFragmentByTag(fragmentTags[fragmentIndex])==null)
+        {
+            transaction.add(R.id.body,fragments[fragmentIndex], fragmentTags[fragmentIndex]);
+        }
+        for (int i = 0; i < fragments.length; i++) {
+            if (i == fragmentIndex) {
+                transaction.show(fragments[i]);
+            } else {
+                transaction.hide(fragments[i]);
+            }
+        }
+        transaction.commit();
+    }
+
 
     @Override
     public void onPostCreate(Bundle savedInstanceState) {
@@ -187,10 +246,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onStart() {
         super.onStart();
+
+        initFragment();
+        initHideFragment();
+
         if (oldFramgent == null) {
             oldFramgent = new LinkedList<>();
             bundles = new LinkedList<>();
@@ -221,18 +283,18 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
+
+
         if (!mFramgent) {
-            fragment = new HomePage();
-            switchFragment();
+            showFragment2(0);
         }
     }
-
 
 
     @Override
     protected void onPause() {
         super.onPause();
-        mFramgent=true;
+        mFramgent = true;
     }
 
     @Override
@@ -268,17 +330,15 @@ public class MainActivity extends AppCompatActivity {
         oldMainView = v;
     }
 
-    private Handler handler=new Handler(Looper.getMainLooper()){
+    private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-                if(nowView!=null)
-                {
-                    setColor(nowView);
-                }
+            if (nowView != null) {
+                setColor(nowView);
+            }
         }
     };
-
 
 
     private class ExpandableAdapter extends BaseExpandableListAdapter {
@@ -381,30 +441,28 @@ public class MainActivity extends AppCompatActivity {
                             oldFramgent.clear();
                             bundles.clear();
                             MainActivity.this.position = i;
-                            nowView=v;
+                            nowView = v;
                             handler.sendEmptyMessage(0);
-                        }}).start();
+                        }
+                    }).start();
 
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             if (i == 0) {
+                                fm = System.currentTimeMillis();
                                 Common.showfirstgrid = false;
                                 Common.showsecondgrid = false;
-                                fragment = new InsertActivity();
-                                switchFragment();
+                                showFragment2(1);
                             } else if (i == 1) {
                                 return;
                             } else if (i == 2) {
-                                fragment = new PriceActivity();
-                                switchFragment();
                                 PriceInvoice.first = true;
+                                showFragment2(2);
                             } else if (i == 3) {
-                                fragment = new SelectActivity();
-                                switchFragment();
+                                showFragment2(3);
                             } else if (i == 4) {
-                                fragment = new SelectListModelActivity();
-                                switchFragment();
+                                showFragment2(4);
                             } else if (i == 5) {
                                 fragment = new GoalListAll();
                                 Bundle bundle = new Bundle();
@@ -415,8 +473,7 @@ public class MainActivity extends AppCompatActivity {
                                 fragment = new SettingMain();
                                 switchFragment();
                             } else if (i == 7) {
-                                fragment = new HomePage();
-                                switchFragment();
+                                showFragment2(0);
                             } else {
                                 Intent intent = new Intent();
                                 intent.setAction(Intent.ACTION_VIEW);
@@ -434,8 +491,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }).start();
 
-                    if(i==1)
-                    {
+                    if (i == 1) {
                         setTitle(R.string.text_Ele);
                         if (doubleClick) {
                             listView.collapseGroup(1);
@@ -444,7 +500,7 @@ public class MainActivity extends AppCompatActivity {
                             listView.expandGroup(1);
                             doubleClick = true;
                         }
-                    }else {
+                    } else {
                         drawerLayout.closeDrawer(GravityCompat.START);
                     }
                 }
@@ -537,7 +593,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("onActivityResult", "requestCode"+requestCode);
+        Log.d("onActivityResult", "requestCode" + requestCode);
         String a;
         mFramgent = true;
         try {

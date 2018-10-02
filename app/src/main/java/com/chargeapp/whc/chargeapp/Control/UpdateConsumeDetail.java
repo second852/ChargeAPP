@@ -159,11 +159,9 @@ public class UpdateConsumeDetail extends Fragment {
 
     private void switchFragment(Fragment fragment) {
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        for (Fragment f : getFragmentManager().getFragments()) {
-            fragmentTransaction.remove(f);
-        }
-        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.remove(new UpdateConsumeDetail());
+        fragmentTransaction.show(new InsertActivity());
         fragmentTransaction.commit();
+        getFragmentManager().executePendingTransactions();
     }
-
 }

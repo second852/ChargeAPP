@@ -98,6 +98,18 @@ public class InsertSpend extends Fragment {
     private RelativeLayout notifyRel;
 
 
+    public static InsertSpend instance()
+    {
+        return new InsertSpend();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("XXXXXXX", String.valueOf(System.currentTimeMillis()- MainActivity.fm));
+    }
+
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -798,10 +810,8 @@ public class InsertSpend extends Fragment {
         MainActivity.oldFramgent.add("InsertSpend");
         MainActivity.bundles.add(bundle);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        for (Fragment fragment1 : getFragmentManager().getFragments()) {
-            fragmentTransaction.remove(fragment1);
-        }
-        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.attach(fragment);
+        fragmentTransaction.hide(new InsertActivity());
         fragmentTransaction.commit();
     }
 

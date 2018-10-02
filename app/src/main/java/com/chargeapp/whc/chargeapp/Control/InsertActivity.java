@@ -114,11 +114,9 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         @Override
         public Fragment getItem(int position) {
             if (position == 0) {
-                Fragment fragment=new InsertSpend();
-                return fragment;
+                return InsertSpend.instance();
             } else  {
-                Fragment fragment=new InsertIncome();
-                return fragment;
+                return InsertIncome.instance();
             }
         }
     }

@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -10,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -53,6 +55,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
+import static android.content.Context.WINDOW_SERVICE;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_CHECK_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_MINUS_O;
@@ -66,8 +69,8 @@ import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_MONEY;
 
 public class Common {
 
-    public static int length=0;
-    public static Description description=new Description();
+    public static int length = 0;
+    public static Description description = new Description();
     public static boolean showfirstgrid = false;
     public static boolean showsecondgrid = false;
 
@@ -82,19 +85,18 @@ public class Common {
     public static NumberFormat nf = NumberFormat.getNumberInstance();
     public static List<CarrierVO> lostCarrier;
     public static Screen screenSize;
+
     public enum Screen {
         xLarge,
         large,
         normal
     }
 
-    public static String doubleRemoveZero(double d)
-    {
-        int a= (int) d;
-        if(a==d)
-        {
+    public static String doubleRemoveZero(double d) {
+        int a = (int) d;
+        if (a == d) {
             return String.valueOf(a);
-        }else {
+        } else {
             return String.valueOf(d);
         }
     }
@@ -103,58 +105,49 @@ public class Common {
     public static int identify(byte[] bytes) {
         String[] charsetsToBeTested = {"UTF-8", "big5"};
         boolean isRight;
-        int i=0;
-        for(String c:charsetsToBeTested)
-        {
+        int i = 0;
+        for (String c : charsetsToBeTested) {
             try {
-                Charset charset=Charset.forName(c);
+                Charset charset = Charset.forName(c);
                 CharsetDecoder decoder = charset.newDecoder();
                 decoder.reset();
                 decoder.decode(ByteBuffer.wrap(bytes));
-                isRight=true;
+                isRight = true;
             } catch (CharacterCodingException e) {
-                isRight=false;
+                isRight = false;
             }
-            if(isRight)
-            {
-              i++;
+            if (isRight) {
+                i++;
             }
         }
         return i;
     }
 
-    public static void setScreen(Screen screen,Activity activity)
-    {
-        if(screen==null)
-        {
-            DisplayMetrics displayMetrics=activity.getResources().getDisplayMetrics();
+    public static void setScreen(Screen screen, Activity activity) {
+        if (screen == null) {
+            DisplayMetrics displayMetrics = activity.getResources().getDisplayMetrics();
             float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
             float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-            if(dpWidth>650)
-            {
-                Common.screenSize= Common.Screen.xLarge;
-            }else if(dpWidth>470)
-            {
-                Common.screenSize= Common.Screen.large;
-            }else{
-                Common.screenSize= Common.Screen.normal;
+            if (dpWidth > 650) {
+                Common.screenSize = Common.Screen.xLarge;
+            } else if (dpWidth > 470) {
+                Common.screenSize = Common.Screen.large;
+            } else {
+                Common.screenSize = Common.Screen.normal;
             }
         }
     }
 
 
-    public static void setChargeDB(Context activity)
-    {
-        if(MainActivity.chargeAPPDB==null)
-        {
-            MainActivity.chargeAPPDB=new ChargeAPPDB(activity);
+    public static void setChargeDB(Context activity) {
+        if (MainActivity.chargeAPPDB == null) {
+            MainActivity.chargeAPPDB = new ChargeAPPDB(activity);
         }
-         ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-         consumeDB.colExist("rdNumber");
+        ConsumeDB consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB.colExist("rdNumber");
     }
 
-    public static void setAdView(final AdView adView, Context activity)
-    {
+    public static void setAdView(final AdView adView, Context activity) {
         try {
             MobileAds.initialize(activity, "ca-app-pub-5169620543343332~2865524734");
             AdRequest adRequest = new AdRequest.Builder().build();
@@ -166,12 +159,10 @@ public class Common {
                     adView.loadAd(adRequest);
                 }
             });
-        }catch (Exception e)
-        {
-            Log.d("adError",e.toString());
+        } catch (Exception e) {
+            Log.d("adError", e.toString());
         }
     }
-
 
 
     public static int[] colorlist = {
@@ -182,56 +173,47 @@ public class Common {
             Color.parseColor("#D28EFF"),
             Color.parseColor("#00DDDD")};
 
-    public static int[] getColor(int size)
-    {
-        int[] cc=new int[size];
-        length=colorlist.length;
-        for(int i=0;i<size;i++)
-        {
-            if(i>=length)
-            {
-                String c="#";
-               for(int j=0;j<6;j++)
-               {
-                   int idex= (int) (Math.random()*16);
-                   c=c+colorRadom().get(idex);
-               }
-               cc[i]=Color.parseColor(c);
-            }else{
-                cc[i]=colorlist[i];
+    public static int[] getColor(int size) {
+        int[] cc = new int[size];
+        length = colorlist.length;
+        for (int i = 0; i < size; i++) {
+            if (i >= length) {
+                String c = "#";
+                for (int j = 0; j < 6; j++) {
+                    int idex = (int) (Math.random() * 16);
+                    c = c + colorRadom().get(idex);
+                }
+                cc[i] = Color.parseColor(c);
+            } else {
+                cc[i] = colorlist[i];
             }
         }
         return cc;
     }
 
-    public static List<String> colorRadom()
-    {
-        List<String> color=new ArrayList<>();
-        for(int i=0;i<=9;i++)
-        {
+    public static List<String> colorRadom() {
+        List<String> color = new ArrayList<>();
+        for (int i = 0; i <= 9; i++) {
             color.add(String.valueOf(i));
         }
-        for(int i=65;i<=70;i++)
-        {
-            color.add(String.valueOf((char)i));
+        for (int i = 65; i <= 70; i++) {
+            color.add(String.valueOf((char) i));
         }
         return color;
     }
 
 
-    public static Description getDeescription()
-    {
+    public static Description getDeescription() {
         description.setText(" ");
         return description;
     }
 
     //四捨五入
-    public static int DoubleToInt(double a)
-    {
+    public static int DoubleToInt(double a) {
         double b = new BigDecimal(a)
                 .setScale(0, BigDecimal.ROUND_HALF_UP)
                 .doubleValue();
-        return (int)b;
+        return (int) b;
     }
 
 
@@ -251,7 +233,7 @@ public class Common {
             int codeNumber = Common.identify(result.getBytes("ISO-8859-1"));
             switch (codeNumber) {
                 case 1:
-                    answer =new String(result.replaceAll("\\s+", "").getBytes("ISO-8859-1"), "Big5");
+                    answer = new String(result.replaceAll("\\s+", "").getBytes("ISO-8859-1"), "Big5");
                     break;
                 default:
                     answer = result;
@@ -264,13 +246,12 @@ public class Common {
     }
 
     //QRCode-Convert
-    public static StringBuilder QRCodeToString(List<String> resultString,StringBuilder sb){
+    public static StringBuilder QRCodeToString(List<String> resultString, StringBuilder sb) {
         ArrayList<String> result = new ArrayList<>();
         Double total, price, amount;
         for (String s : resultString) {
-            String answer=s.replaceAll("\\s+", "");
-            if(answer.length()<=0)
-            {
+            String answer = s.replaceAll("\\s+", "");
+            if (answer.length() <= 0) {
                 continue;
             }
             result.add(answer);
@@ -286,23 +267,22 @@ public class Common {
     }
 
     //QRCode Error
-    public static StringBuilder QRCodeError(String resultString,StringBuilder sb){
+    public static StringBuilder QRCodeError(String resultString, StringBuilder sb) {
         sb = new StringBuilder();
-        String[] resultS=resultString.trim().split(":");
+        String[] resultS = resultString.trim().split(":");
         try {
-            int i=0;
+            int i = 0;
             for (String s : resultS) {
-                    sb.append(s.replaceAll("\\s+", ""));
-                    int j =i % 3;
-                    if (j == 2) {
-                        sb.append("\n");
-                    } else {
-                        sb.append(":");
-                    }
+                sb.append(s.replaceAll("\\s+", ""));
+                int j = i % 3;
+                if (j == 2) {
+                    sb.append("\n");
+                } else {
+                    sb.append(":");
+                }
                 i++;
             }
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             sb = new StringBuilder();
             sb.append("QRCode轉換失敗，請用\"QRCode下載功能\"");
         }
@@ -310,43 +290,36 @@ public class Common {
     }
 
 
-
-    public static String[] WeekSetSpinnerBS=
-            {"星期一","星期二","星期三","星期四","星期五","星期六","星期日"};
-
+    public static String[] WeekSetSpinnerBS =
+            {"星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"};
 
 
-    public static String[] DaySetSpinnerBS()
-    {
-        String[] strings=new String[31];
+    public static String[] DaySetSpinnerBS() {
+        String[] strings = new String[31];
         for (int i = 0; i < 31; i++) {
-            strings[i]=" "+ String.valueOf(i+1) +"日";
+            strings[i] = " " + String.valueOf(i + 1) + "日";
         }
         return strings;
     }
 
 
-    public static String[] MonthSetSpinnerBS()
-    {
-        String[] strings=new String[12];
+    public static String[] MonthSetSpinnerBS() {
+        String[] strings = new String[12];
         for (int i = 0; i < 12; i++) {
-            strings[i]=" " + String.valueOf(i+1) + "月";
+            strings[i] = " " + String.valueOf(i + 1) + "月";
         }
         return strings;
     }
 
 
+    public static String[] DateStatueSetSpinner = {"每天", "每周", "每月", "每年"};
 
-    public static String[] DateStatueSetSpinner={"每天","每周","每月","每年"};
 
-
-    public static List<BootstrapText> DateChoiceSetBsTest(Activity activity,String[] data)
-    {
-        List<BootstrapText> bootstrapTexts=new ArrayList<>();
-        for (String s:data)
-        {
+    public static List<BootstrapText> DateChoiceSetBsTest(Activity activity, String[] data) {
+        List<BootstrapText> bootstrapTexts = new ArrayList<>();
+        for (String s : data) {
             BootstrapText text = new BootstrapText.Builder(activity)
-                    .addText(s+" ")
+                    .addText(s + " ")
                     .addFontAwesomeIcon(FA_CALCULATOR)
                     .build();
             bootstrapTexts.add(text);
@@ -355,82 +328,85 @@ public class Common {
     }
 
 
-    public static BootstrapText setCarrierSetBsTest(Activity activity,String data)
-    {
-            BootstrapText text = new BootstrapText.Builder(activity)
-                    .addText(data+"  ")
-                    .addFontAwesomeIcon(FA_ID_CARD_O)
-                    .build();
+    public static void adjustFontScale(Configuration configuration, Activity activity) {
+        if (configuration.fontScale > 1) {
+            configuration.fontScale = (float) 1;
+            DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
+            WindowManager wm = (WindowManager) activity.getSystemService(WINDOW_SERVICE);
+            wm.getDefaultDisplay().getMetrics(metrics);
+            metrics.scaledDensity = configuration.fontScale * metrics.density;
+            activity.getBaseContext().getResources().updateConfiguration(configuration, metrics);
+        }
+    }
+
+    public static BootstrapText setCarrierSetBsTest(Activity activity, String data) {
+        BootstrapText text = new BootstrapText.Builder(activity)
+                .addText(data + "  ")
+                .addFontAwesomeIcon(FA_ID_CARD_O)
+                .build();
         return text;
     }
 
-    public static BootstrapText setPriceHandSetBsTest(Activity activity,String data)
-    {
+    public static BootstrapText setPriceHandSetBsTest(Activity activity, String data) {
         BootstrapText text = new BootstrapText.Builder(activity)
-                .addText(data+"  ")
+                .addText(data + "  ")
                 .addFontAwesomeIcon(FA_CALCULATOR)
                 .build();
         return text;
     }
 
-    public static BootstrapText setPeriodSelectCBsTest(Activity activity,String data)
-    {
+    public static BootstrapText setPeriodSelectCBsTest(Activity activity, String data) {
         BootstrapText text = new BootstrapText.Builder(activity)
-                .addText(data+"  ")
+                .addText(data + "  ")
                 .addFontAwesomeIcon(FA_CALENDAR_CHECK_O)
                 .build();
         return text;
     }
 
 
-    public static ArrayList<String> DateStatueSetSpinner()
-    {
-        ArrayList<String> strings=new ArrayList<>();
+    public static ArrayList<String> DateStatueSetSpinner() {
+        ArrayList<String> strings = new ArrayList<>();
         strings.add("每天");
         strings.add("每周");
         strings.add("每月");
         strings.add("每年");
         return strings;
     }
+
     //純數字
-    public static String onlyNumber(String s){
-        StringBuilder sb=new StringBuilder();
-        Pattern ptn=Pattern.compile("[0-9]|[.]|[-]");
-        Matcher mch=ptn.matcher(s);
-        while(mch.find()) {
+    public static String onlyNumber(String s) {
+        StringBuilder sb = new StringBuilder();
+        Pattern ptn = Pattern.compile("[0-9]|[.]|[-]");
+        Matcher mch = ptn.matcher(s);
+        while (mch.find()) {
             sb.append(mch.group());
         }
-        double dValue=Double.valueOf(sb.toString());
-        int value=(int)dValue;
-        if(value==dValue)
-        {
+        double dValue = Double.valueOf(sb.toString());
+        int value = (int) dValue;
+        if (value == dValue) {
             return String.valueOf(value);
-        }else{
+        } else {
             return sb.toString();
         }
     }
 
 
-
-
     public static void showToast(Context context, String message) {
         try {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
     }
+
     //收鍵盤
-    public static void  clossKeyword(Activity context)
-    {
-        InputMethodManager imm = (InputMethodManager)context
-        .getSystemService(INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(context.getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+    public static void clossKeyword(Activity context) {
+        InputMethodManager imm = (InputMethodManager) context
+                .getSystemService(INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(context.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
-    public static String Utf8forURL(HashMap<String, String> params) throws UnsupportedEncodingException
-    {
+    public static String Utf8forURL(HashMap<String, String> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;
         for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -447,10 +423,10 @@ public class Common {
     }
 
 
-    public static void askPermissions(String s,Activity context,int requestCode) {
+    public static void askPermissions(String s, Activity context, int requestCode) {
         //因為是群組授權，所以請求ACCESS_COARSE_LOCATION就等同於請求ACCESS_FINE_LOCATION，因為同屬於LOCATION群組
 
-        String[] permissions={s};
+        String[] permissions = {s};
         Set<String> permissionsRequest = new HashSet<>();
         for (String permission : permissions) {
             int result = ContextCompat.checkSelfPermission(context, permission);
@@ -467,106 +443,104 @@ public class Common {
     }
 
     //電子發票 Card類別
-    public static HashMap<String,String> CardType() {
-        HashMap<String,String> hashMap=new HashMap<>();
-        hashMap.put("3J0002","手機條碼");
-        hashMap.put("1K0001","悠遊卡");
-        hashMap.put("1H0001","一卡通");
-        hashMap.put("2G0001","愛金卡");
-        hashMap.put("EG0002","家樂福");
+    public static HashMap<String, String> CardType() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("3J0002", "手機條碼");
+        hashMap.put("1K0001", "悠遊卡");
+        hashMap.put("1H0001", "一卡通");
+        hashMap.put("2G0001", "愛金卡");
+        hashMap.put("EG0002", "家樂福");
         return hashMap;
     }
 
 
-
     //price month
-    public static HashMap<Integer,String> getPriceMonth() {
-        HashMap<Integer,String> hashMap=new HashMap<>();
-        hashMap.put(2,"01-02月\n");
-        hashMap.put(4,"03-04月\n");
-        hashMap.put(6,"05-06月\n");
-        hashMap.put(8,"07-08月\n");
-        hashMap.put(10,"09-10月\n");
-        hashMap.put(12,"11-12月\n");
+    public static HashMap<Integer, String> getPriceMonth() {
+        HashMap<Integer, String> hashMap = new HashMap<>();
+        hashMap.put(2, "01-02月\n");
+        hashMap.put(4, "03-04月\n");
+        hashMap.put(6, "05-06月\n");
+        hashMap.put(8, "07-08月\n");
+        hashMap.put(10, "09-10月\n");
+        hashMap.put(12, "11-12月\n");
         return hashMap;
     }
 
     //price set
-    public static HashMap<String,Integer> getlevellength() {
-        HashMap<String,Integer> hashMap=new HashMap<>();
-        hashMap.put("super",2);
-        hashMap.put("spc",2);
-        hashMap.put("first",2);
-        hashMap.put("second",3);
-        hashMap.put("third",4);
-        hashMap.put("fourth",5);
-        hashMap.put("fifth",6);
-        hashMap.put("sixth",7);
+    public static HashMap<String, Integer> getlevellength() {
+        HashMap<String, Integer> hashMap = new HashMap<>();
+        hashMap.put("super", 2);
+        hashMap.put("spc", 2);
+        hashMap.put("first", 2);
+        hashMap.put("second", 3);
+        hashMap.put("third", 4);
+        hashMap.put("fourth", 5);
+        hashMap.put("fifth", 6);
+        hashMap.put("sixth", 7);
         return hashMap;
     }
 
-    public static HashMap<String,String> getPriceName() {
-        HashMap<String,String> hashMap=new HashMap<>();
-        hashMap.put("super","特別獎");
-        hashMap.put("spc","特獎");
-        hashMap.put("first","頭獎");
-        hashMap.put("second","二獎");
-        hashMap.put("third","三獎");
-        hashMap.put("fourth","四獎");
-        hashMap.put("fifth","五獎");
-        hashMap.put("sixth","六獎");
+    public static HashMap<String, String> getPriceName() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("super", "特別獎");
+        hashMap.put("spc", "特獎");
+        hashMap.put("first", "頭獎");
+        hashMap.put("second", "二獎");
+        hashMap.put("third", "三獎");
+        hashMap.put("fourth", "四獎");
+        hashMap.put("fifth", "五獎");
+        hashMap.put("sixth", "六獎");
         return hashMap;
     }
 
-    public static HashMap<String,String> getOtherType() {
-        HashMap<String,String> hashMap=new HashMap<>();
-        hashMap.put("O","其他");
-        hashMap.put("0","未知");
+    public static HashMap<String, String> getOtherType() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("O", "其他");
+        hashMap.put("0", "未知");
         return hashMap;
     }
 
-    public static String getType(String s)
-    {
-        String a=getOtherType().get(s);
-        if(a==null)
-        {
-          return s;
-        }else{
+    public static String getType(String s) {
+        String a = getOtherType().get(s);
+        if (a == null) {
+            return s;
+        } else {
             return a;
         }
     }
 
 
-    public static HashMap<String,String> getPrice() {
-        HashMap<String,String> hashMap=new HashMap<>();
-        hashMap.put("super","1000萬元");
-        hashMap.put("spc","200萬元");
-        hashMap.put("first","20萬元");
-        hashMap.put("second","4萬元");
-        hashMap.put("third","1萬元");
-        hashMap.put("fourth","4千元");
-        hashMap.put("fifth","1千元");
-        hashMap.put("sixth","200元");
+    public static HashMap<String, String> getPrice() {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("super", "1000萬元");
+        hashMap.put("spc", "200萬元");
+        hashMap.put("first", "20萬元");
+        hashMap.put("second", "4萬元");
+        hashMap.put("third", "1萬元");
+        hashMap.put("fourth", "4千元");
+        hashMap.put("fifth", "1千元");
+        hashMap.put("sixth", "200元");
         return hashMap;
     }
 
-    public static HashMap<String,Integer> getIntPrice() {
-        HashMap<String,Integer> hashMap=new HashMap<>();
-        hashMap.put("super",10000000);
-        hashMap.put("spc",2000000);
-        hashMap.put("first",200000);
-        hashMap.put("second",40000);
-        hashMap.put("third",10000);
-        hashMap.put("fourth",4000);
-        hashMap.put("fifth",1000);
-        hashMap.put("sixth",200);
+    public static HashMap<String, Integer> getIntPrice() {
+        HashMap<String, Integer> hashMap = new HashMap<>();
+        hashMap.put("super", 10000000);
+        hashMap.put("spc", 2000000);
+        hashMap.put("first", 200000);
+        hashMap.put("second", 40000);
+        hashMap.put("third", 10000);
+        hashMap.put("fourth", 4000);
+        hashMap.put("fifth", 1000);
+        hashMap.put("sixth", 200);
         return hashMap;
     }
 
     //自動對獎
     private String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
+
     public void AutoSetPrice() {
-        PriceDB priceDB=new  PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<PriceVO> priceVOS = priceDB.getAll();
         int month;
         int year;
@@ -575,17 +549,17 @@ public class Common {
             String invoYM = priceVO.getInvoYm();
             month = Integer.valueOf(invoYM.substring(invoYM.length() - 2));
             year = Integer.valueOf(invoYM.substring(0, invoYM.length() - 2)) + 1911;
-            startTime = (new GregorianCalendar(year, month - 2, 1,0,0,0)).getTimeInMillis();
-            Calendar endC=new GregorianCalendar(year, month-1, 1);
-            endTime = (new GregorianCalendar(year, month-1, endC.getActualMaximum(Calendar.DAY_OF_MONTH),23,59,59)).getTimeInMillis();
+            startTime = (new GregorianCalendar(year, month - 2, 1, 0, 0, 0)).getTimeInMillis();
+            Calendar endC = new GregorianCalendar(year, month - 1, 1);
+            endTime = (new GregorianCalendar(year, month - 1, endC.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59)).getTimeInMillis();
             autoSetCRWin(startTime, endTime, priceVO);
             autoSetInWin(startTime, endTime, priceVO);
         }
     }
 
     private void autoSetCRWin(long startTime, long endTime, PriceVO priceVO) {
-        ConsumeDB consumeDB =new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        BankDB bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        ConsumeDB consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        BankDB bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<ConsumeVO> consumeVOS = consumeDB.getNoWinAll(startTime, endTime);
         for (ConsumeVO consumeVO : consumeVOS) {
             String nul = consumeVO.getNumber().trim();
@@ -596,16 +570,15 @@ public class Common {
                 List<String> result = anwswer(nul, priceVO);
                 consumeVO.setIsWin(result.get(0));
                 consumeVO.setIsWinNul(result.get(1));
-                if(!consumeVO.getIsWin().trim().equals("N"))
-                {
-                    BankVO bankVO=new BankVO();
+                if (!consumeVO.getIsWin().trim().equals("N")) {
+                    BankVO bankVO = new BankVO();
                     bankVO.setMoney(getIntPrice().get(consumeVO.getIsWin()));
                     bankVO.setDate(new Date(System.currentTimeMillis()));
                     bankVO.setMaintype("中獎");
                     bankVO.setFixDate("false");
-                    int month= Integer.parseInt(priceVO.getInvoYm().substring(3));
-                    String detail=priceVO.getInvoYm().substring(0,3)+"年"+getPriceMonth().get(month)
-                            +getPriceName().get(consumeVO.getIsWin())+" : "+getPrice().get(consumeVO.getIsWin());
+                    int month = Integer.parseInt(priceVO.getInvoYm().substring(3));
+                    String detail = priceVO.getInvoYm().substring(0, 3) + "年" + getPriceMonth().get(month)
+                            + getPriceName().get(consumeVO.getIsWin()) + " : " + getPrice().get(consumeVO.getIsWin());
                     bankVO.setDetailname(detail);
                     bankDB.insert(bankVO);
                 }
@@ -616,9 +589,9 @@ public class Common {
     }
 
     private void autoSetInWin(long startTime, long endTime, PriceVO priceVO) {
-        CarrierDB carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        BankDB bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        CarrierDB carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        InvoiceDB invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        BankDB bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         List<CarrierVO> carrierVOS = carrierDB.getAll();
         for (CarrierVO c : carrierVOS) {
             List<InvoiceVO> invoiceVOS = invoiceDB.getNotSetWin(c.getCarNul(), startTime, endTime);
@@ -626,23 +599,21 @@ public class Common {
                 String nul = i.getInvNum().trim();
                 i.setIswin("N");
                 i.setIsWinNul("N");
-                if (nul != null && nul.trim().length() == 10)
-                {
-                    nul=nul.substring(2);
+                if (nul != null && nul.trim().length() == 10) {
+                    nul = nul.substring(2);
                     List<String> inWin = anwswer(nul, priceVO);
                     i.setIswin(inWin.get(0));
                     i.setIsWinNul(inWin.get(1));
                     invoiceDB.update(i);
-                    if(!i.getIswin().trim().equals("N"))
-                    {
-                        BankVO bankVO=new BankVO();
+                    if (!i.getIswin().trim().equals("N")) {
+                        BankVO bankVO = new BankVO();
                         bankVO.setFixDate("false");
                         bankVO.setMoney(getIntPrice().get(i.getIswin()));
                         bankVO.setDate(new Date(System.currentTimeMillis()));
                         bankVO.setMaintype("中獎");
-                        int month= Integer.parseInt(priceVO.getInvoYm().substring(3));
-                        String detail=priceVO.getInvoYm().substring(0,3)+"年"+getPriceMonth().get(month)
-                                +getPriceName().get(i.getIswin())+" : "+getPrice().get(i.getIswin());
+                        int month = Integer.parseInt(priceVO.getInvoYm().substring(3));
+                        String detail = priceVO.getInvoYm().substring(0, 3) + "年" + getPriceMonth().get(month)
+                                + getPriceName().get(i.getIswin()) + " : " + getPrice().get(i.getIswin());
                         bankVO.setDetailname(detail);
                         bankDB.insert(bankVO);
                     }
@@ -664,7 +635,7 @@ public class Common {
     private List<String> anwswer(String nul, PriceVO priceVO) {
         String threenul = nul.substring(5);
         String s;
-        List<String> stringList=new ArrayList<>();
+        List<String> stringList = new ArrayList<>();
         if (nul.equals(priceVO.getSuperPrizeNo())) {
             stringList.add("super");
             stringList.add(priceVO.getSuperPrizeNo());
