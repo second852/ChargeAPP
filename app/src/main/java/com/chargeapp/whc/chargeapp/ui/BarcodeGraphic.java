@@ -175,11 +175,9 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 } catch (Exception e) {
                     result=null;
                 }
-                Log.d("XXXXXX1", barcode.rawValue);
             }
             if (mBarcode.rawValue.indexOf("**") == 0) {
                 hashMap.put(2, barcode.rawValue.substring(2));
-                Log.d("XXXXXX2", barcode.rawValue);
             }
             QrCodeResultFinish();
         } else {
@@ -342,9 +340,11 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             {
                 case 0:
                     textColor=Color.BLUE;
+                    MultiTrackerActivity.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.INFO);
                     break;
                 default:
                     textColor=Color.parseColor("#00AA55");
+                    MultiTrackerActivity.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.WARNING);
                     break;
             }
             if(MultiTrackerActivity.result.equals("over"))
@@ -353,7 +353,6 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 Spannable content = new SpannableString(total);
                 content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":")+1, total.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 MultiTrackerActivity.answer.setText(content);
-
                 MultiTrackerActivity.awardTitle.setText(null);
                 return;
             }
@@ -364,7 +363,6 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":")+1, total.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 MultiTrackerActivity.answer.setText(content);
                 MultiTrackerActivity.answer.setText(content);
-
                 MultiTrackerActivity.awardTitle.setText(null);
                 return;
             }
@@ -382,7 +380,6 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                         .addFontAwesomeIcon(FA_FLAG)
                         .build();
                 MultiTrackerActivity.awardTitle.setText(text);
-                MultiTrackerActivity.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.INFO);
 
             } else {
                 if(priceVO!=null)

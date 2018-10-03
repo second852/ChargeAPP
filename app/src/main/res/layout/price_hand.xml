@@ -134,8 +134,8 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/inputNul"
         android:layout_below="@+id/modelR"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
         android:orientation="vertical">
 
         <com.beardedhen.androidbootstrap.AwesomeTextView

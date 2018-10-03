@@ -48,8 +48,6 @@ public class Welcome extends AppCompatActivity {
     private BootstrapThumbnail imageWelcome;
 
 
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +78,7 @@ public class Welcome extends AppCompatActivity {
         ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);
         JobInfo.Builder builder = new JobInfo.Builder(0, mServiceComponent);
 //       tm.cancelAll();
-        builder.setPeriodic(1000*30);
+        builder.setPeriodic(1000*60*60);
         builder.setPersisted(true);
 //        builder.setMinimumLatency(1);
 //        builder.setOverrideDeadline(2);
@@ -165,6 +163,12 @@ public class Welcome extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
+        super.onSaveInstanceState(outState);
     }
 
     @Override

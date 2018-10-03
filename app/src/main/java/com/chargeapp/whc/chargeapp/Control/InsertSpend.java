@@ -810,8 +810,10 @@ public class InsertSpend extends Fragment {
         MainActivity.oldFramgent.add("InsertSpend");
         MainActivity.bundles.add(bundle);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.attach(fragment);
-        fragmentTransaction.hide(new InsertActivity());
+        for (Fragment fragment1 : getFragmentManager().getFragments()) {
+            fragmentTransaction.remove(fragment1);
+        }
+        fragmentTransaction.replace(R.id.body, fragment);
         fragmentTransaction.commit();
     }
 

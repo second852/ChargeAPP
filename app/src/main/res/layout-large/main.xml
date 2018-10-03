@@ -10,6 +10,7 @@
     android:background="#ffffff"
     android:keepScreenOn="true">
   <TextView
+      android:layout_marginTop="30dp"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:id="@+id/answer"
@@ -108,16 +109,15 @@
 
   <com.beardedhen.androidbootstrap.BootstrapButton
       android:id="@+id/backP"
-      android:layout_alignParentBottom="true"
-      android:layout_centerHorizontal="true"
-      android:layout_marginBottom="20dp"
+      android:layout_alignParentRight="true"
+      android:layout_margin="30dp"
+      android:layout_below="@id/awardTitle"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_gravity="center_horizontal"
-      android:layout_marginTop="10dp"
       app:bootstrapSize="xl"
-      app:bootstrapBrand="danger"
-      app:bootstrapText="返回 {fa_reply_all}"
+      app:bootstrapBrand="warning"
+      app:bootstrapText="{fa_reply_all}"
       />
 
 </RelativeLayout>

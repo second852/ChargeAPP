@@ -74,10 +74,8 @@ public class MainActivity extends AppCompatActivity {
     public static LinkedList<String> oldFramgent;
     public static LinkedList<Bundle> bundles;
     public Fragment fragment;
-
-    //維持現在Framgent
-    public boolean mFramgent;
     public View nowView;
+    public boolean firstShowF,firstShowInsertActivity;
 
     public static long fm;
 
@@ -87,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         TypefaceProvider.registerDefaultIconSets();
         setContentView(R.layout.activity_main);
+        firstShowF=true;
+        firstShowInsertActivity=true;
     }
 
 
@@ -104,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static Fragment[] fragments={new HomePage(),new InsertActivity(),new PriceActivity(),new SelectActivity(),new SelectListModelActivity()};
-    public static String[] fragmentTags={"HomePage","InserActivity","PriceActivity"," SelectActivity()","SelectListModelActivity"};
+    public Fragment[] fragments={new InsertActivity(),new HomePage()};
+    public String[] fragmentTags={"InserActivity","HomePage"};
     private void initFragment() {
         FragmentManager fManager = getSupportFragmentManager();
         FragmentTransaction fTransaction = fManager.beginTransaction();
@@ -113,7 +113,12 @@ public class MainActivity extends AppCompatActivity {
             fTransaction.add(R.id.body, fragments[i], fragmentTags[i]);
         }
         fTransaction.commit();
-        fManager.executePendingTransactions();
+        try {
+            fManager.executePendingTransactions();
+        }catch (Exception e)
+        {
+
+        }
     }
 
     private void initHideFragment() {
@@ -123,46 +128,18 @@ public class MainActivity extends AppCompatActivity {
             fTransaction.hide(fManager.findFragmentByTag(fragmentTags[i]));
         }
         fTransaction.commit();
-        fManager.executePendingTransactions();
+        try {
+            fManager.executePendingTransactions();
+        }catch (Exception e)
+        {
+
+        }
     }
 
-    private void showFragment1(String fragmentTag,Fragment fragment) {
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction transaction = fm.beginTransaction();
-        List<Fragment> fragments=fm.getFragments();
-        for(Fragment f:fragments)
-        {
-           if(f.isVisible())
-           {
-               transaction.hide(f);
-           }
-        }
-        Fragment nowFragment=fm.findFragmentByTag(fragmentTag);
-        if(nowFragment==null)
-        {
-            transaction.add(R.id.body,fragment,fragmentTag);
-            transaction.show(fragment);
-        }else {
-            switch (fragmentTag)
-            {
-                case "InserActivity":
-                    transaction.show(new InsertActivity());
-                    break;
-                case "PriceActivity":
-                    transaction.show(new PriceActivity());
-                    break;
-            }
-        }
-        transaction.commit();
-    }
 
-    private void showFragment2(int fragmentIndex) {
+    private void showFragment(int fragmentIndex) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        if(fm.findFragmentByTag(fragmentTags[fragmentIndex])==null)
-        {
-            transaction.add(R.id.body,fragments[fragmentIndex], fragmentTags[fragmentIndex]);
-        }
         for (int i = 0; i < fragments.length; i++) {
             if (i == fragmentIndex) {
                 transaction.show(fragments[i]);
@@ -249,10 +226,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        initFragment();
-        initHideFragment();
-
         if (oldFramgent == null) {
             oldFramgent = new LinkedList<>();
             bundles = new LinkedList<>();
@@ -283,19 +256,16 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
-
-
-        if (!mFramgent) {
-            showFragment2(0);
+        if (firstShowF) {
+            initFragment();
+            initHideFragment();
+            showFragment(1);
+            firstShowF=false;
         }
     }
 
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mFramgent = true;
-    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -453,16 +423,28 @@ public class MainActivity extends AppCompatActivity {
                                 fm = System.currentTimeMillis();
                                 Common.showfirstgrid = false;
                                 Common.showsecondgrid = false;
-                                showFragment2(1);
+
+                                if(firstShowInsertActivity)
+                                {
+                                    showFragment(0);
+                                    firstShowInsertActivity=false;
+                                }else {
+                                    fragment=new InsertActivity();
+                                    switchFragment();
+                                }
+
                             } else if (i == 1) {
                                 return;
                             } else if (i == 2) {
                                 PriceInvoice.first = true;
-                                showFragment2(2);
+                                fragment=new PriceActivity();
+                                switchFragment();
                             } else if (i == 3) {
-                                showFragment2(3);
+                                fragment=new SelectActivity();
+                                switchFragment();
                             } else if (i == 4) {
-                                showFragment2(4);
+                                fragment=new SelectListModelActivity();
+                                switchFragment();
                             } else if (i == 5) {
                                 fragment = new GoalListAll();
                                 Bundle bundle = new Bundle();
@@ -473,7 +455,8 @@ public class MainActivity extends AppCompatActivity {
                                 fragment = new SettingMain();
                                 switchFragment();
                             } else if (i == 7) {
-                                showFragment2(0);
+                                fragment=new HomePage();
+                                switchFragment();
                             } else {
                                 Intent intent = new Intent();
                                 intent.setAction(Intent.ACTION_VIEW);
@@ -595,7 +578,6 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult", "requestCode" + requestCode);
         String a;
-        mFramgent = true;
         try {
             a = data.getStringExtra("action");
         } catch (NullPointerException e) {
