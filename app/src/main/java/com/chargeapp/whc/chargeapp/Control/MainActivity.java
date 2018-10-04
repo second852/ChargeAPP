@@ -104,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public Fragment[] fragments={new InsertActivity(),new HomePage()};
-    public String[] fragmentTags={"InserActivity","HomePage"};
+    public Fragment[] fragments={new HomePage(),new InsertActivity(),new PriceActivity(),new SelectActivity(),new SelectListModelActivity(),new GoalListAll(),new SettingMain()};
+    public String[] fragmentTags={"HomePage","InserActivity","PriceActivity","SelectActivity","SelectListModelActivity","GoalListAll","SettingMain"};
     private void initFragment() {
         FragmentManager fManager = getSupportFragmentManager();
         FragmentTransaction fTransaction = fManager.beginTransaction();
@@ -137,7 +137,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void showFragment(int fragmentIndex) {
+
+    private void showFragment1(int fragmentIndex) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         for (int i = 0; i < fragments.length; i++) {
@@ -145,6 +146,19 @@ public class MainActivity extends AppCompatActivity {
                 transaction.show(fragments[i]);
             } else {
                 transaction.hide(fragments[i]);
+            }
+        }
+        transaction.commit();
+    }
+
+    private void showFragment2(int fragmentIndex) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        for (int i = 0; i < fragments.length; i++) {
+            if (i == fragmentIndex) {
+                transaction.show(fragments[i]);
+            } else {
+                transaction.remove(fragments[i]);
             }
         }
         transaction.commit();
@@ -259,8 +273,10 @@ public class MainActivity extends AppCompatActivity {
         if (firstShowF) {
             initFragment();
             initHideFragment();
-            showFragment(1);
+            showFragment1(0);
             firstShowF=false;
+            getSupportActionBar().setDisplayShowCustomEnabled(false);
+            setTitle(R.string.text_Home);
         }
     }
 
@@ -426,7 +442,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if(firstShowInsertActivity)
                                 {
-                                    showFragment(0);
+                                    showFragment2(1);
                                     firstShowInsertActivity=false;
                                 }else {
                                     fragment=new InsertActivity();
@@ -434,29 +450,70 @@ public class MainActivity extends AppCompatActivity {
                                 }
 
                             } else if (i == 1) {
+                                firstShowInsertActivity=false;
                                 return;
                             } else if (i == 2) {
                                 PriceInvoice.first = true;
-                                fragment=new PriceActivity();
-                                switchFragment();
+                                if(firstShowInsertActivity)
+                                {
+                                   showFragment2(2);
+                                    firstShowInsertActivity=false;
+                                }else{
+                                    fragment=new PriceActivity();
+                                    switchFragment();
+                                }
+
                             } else if (i == 3) {
-                                fragment=new SelectActivity();
-                                switchFragment();
+
+                                if(firstShowInsertActivity)
+                                {
+                                    showFragment2(3);
+                                    firstShowInsertActivity=false;
+                                }else {
+                                    fragment=new SelectActivity();
+                                    switchFragment();
+                                }
                             } else if (i == 4) {
-                                fragment=new SelectListModelActivity();
-                                switchFragment();
+
+                                if(firstShowInsertActivity)
+                                {
+                                    showFragment2(4);
+                                    firstShowInsertActivity=false;
+                                }else {
+
+                                    fragment=new SelectListModelActivity();
+                                    switchFragment();
+                                }
                             } else if (i == 5) {
-                                fragment = new GoalListAll();
-                                Bundle bundle = new Bundle();
-                                bundle.putSerializable("position", 0);
-                                fragment.setArguments(bundle);
-                                switchFragment();
+
+                                if(firstShowInsertActivity)
+                                {
+                                    showFragment2(5);
+                                    firstShowInsertActivity=false;
+                                }else {
+
+                                    fragment = new GoalListAll();
+                                    switchFragment();
+                                }
                             } else if (i == 6) {
-                                fragment = new SettingMain();
-                                switchFragment();
+
+                                if(firstShowInsertActivity)
+                                {
+                                    showFragment2(6);
+                                    firstShowInsertActivity=false;
+                                }else {
+                                    fragment = new SettingMain();
+                                    switchFragment();
+                                }
                             } else if (i == 7) {
-                                fragment=new HomePage();
-                                switchFragment();
+                                if(firstShowInsertActivity)
+                                {
+                                    showFragment2(0);
+                                    firstShowInsertActivity=false;
+                                }else {
+                                    fragment=new HomePage();
+                                    switchFragment();
+                                }
                             } else {
                                 Intent intent = new Intent();
                                 intent.setAction(Intent.ACTION_VIEW);

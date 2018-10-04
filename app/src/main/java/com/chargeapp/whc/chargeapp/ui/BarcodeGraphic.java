@@ -16,6 +16,7 @@
 package com.chargeapp.whc.chargeapp.ui;
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -26,6 +27,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -399,6 +401,8 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                             .build();
                     MultiTrackerActivity.awardTitle.setText(text);
                     MultiTrackerActivity.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
+                    Vibrator myVibrator = (Vibrator) this.context.getSystemService(Service.VIBRATOR_SERVICE);
+                    myVibrator.vibrate(500);
                 }
             }
         }

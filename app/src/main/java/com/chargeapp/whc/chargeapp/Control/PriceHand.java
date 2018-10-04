@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -366,12 +368,15 @@ public class PriceHand extends Fragment {
             return;
         }
 
-
+        StringBuilder answerText;
         if (messageHMO.get(0) != null) {
             //獎項
+            answerText=new StringBuilder();
+            month = priceVO.getInvoYm().substring(priceVO.getInvoYm().length() - 2);
+            answerText.append(levelPrice.get(month)).append(messageHMO.get(0));
             BootstrapText text = new BootstrapText.Builder(context)
                     .addFontAwesomeIcon(FA_STAR)
-                    .addText(" " + messageHMO.get(0) + " ")
+                    .addText(" " + answerText.toString() + " ")
                     .addFontAwesomeIcon(FA_STAR)
                     .build();
             awardTitle.setText(text);
@@ -389,16 +394,18 @@ public class PriceHand extends Fragment {
 
             //提示不顯示
             awardRemain.setText("");
+            Vibrator myVibrator = (Vibrator) this.context.getSystemService(Service.VIBRATOR_SERVICE);
+            myVibrator.vibrate(500);
             return;
         }
         if (messageHMO.get(1) != null) {
             //獎項
-            String old;
+            answerText=new StringBuilder();
             month = oldPriceVO.getInvoYm().substring(oldPriceVO.getInvoYm().length() - 2);
-            old = levelPrice.get(month) + messageHMO.get(1);
+            answerText.append(levelPrice.get(month)).append( messageHMO.get(1));
             BootstrapText text = new BootstrapText.Builder(context)
                     .addFontAwesomeIcon(FA_STAR_O)
-                    .addText(" " + old + " ")
+                    .addText(" " + answerText.toString() + " ")
                     .addFontAwesomeIcon(FA_STAR_O)
                     .build();
             awardTitle.setText(text);
@@ -416,18 +423,20 @@ public class PriceHand extends Fragment {
 
             //提示不顯示
             awardRemain.setText("");
+            Vibrator myVibrator = (Vibrator) this.context.getSystemService(Service.VIBRATOR_SERVICE);
+            myVibrator.vibrate(500);
             return;
         }
 
         //上上期
         if (messageHMO.get(2) != null) {
             //獎項
-            String old;
+            answerText=new StringBuilder();
             month = grandPriceVO.getInvoYm().substring(grandPriceVO.getInvoYm().length() - 2);
-            old = levelPrice.get(month) + messageHMO.get(2);
+            answerText.append(levelPrice.get(month)).append( messageHMO.get(2));
             BootstrapText text = new BootstrapText.Builder(context)
                     .addFontAwesomeIcon(FA_STAR_O)
-                    .addText(" " + old + " ")
+                    .addText(" " + answerText.toString() + " ")
                     .addFontAwesomeIcon(FA_STAR_O)
                     .build();
             awardTitle.setText(text);
@@ -445,6 +454,8 @@ public class PriceHand extends Fragment {
 
             //提示不顯示
             awardRemain.setText("");
+            Vibrator myVibrator = (Vibrator) this.context.getSystemService(Service.VIBRATOR_SERVICE);
+            myVibrator.vibrate(500);
             return;
         }
 
