@@ -75,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
     public static LinkedList<Bundle> bundles;
     public Fragment fragment;
     public View nowView;
-    public boolean firstShowF,firstShowInsertActivity;
-
+    public boolean firstShowF;
+    public static boolean firstShowInsertActivity;
     public static long fm;
 
 

@@ -517,6 +517,7 @@ public class HomePage extends Fragment {
                 fragmentTransaction.commit();
                 return;
             } else {
+                MainActivity.firstShowInsertActivity=false;
                 String key = yVals1.get((int) h.getX()).getLabel();
                 Bundle bundle = new Bundle();
                 Fragment fragment = new HomePagetList();
