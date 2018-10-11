@@ -246,21 +246,7 @@ public class InsertSpend extends Fragment {
                     }
                     break;
                 case 1:
-                    secondname.setFocusable(false);
-                    secondname.setFocusableInTouchMode(false);
-                    date.setFocusable(false);
-                    date.setFocusableInTouchMode(false);
-                    name.setFocusable(false);
-                    name.setFocusableInTouchMode(false);
-                    choiceStatue.setVisibility(View.GONE);
-                    choiceday.setVisibility(View.GONE);
                     setSecondGridAdapt((ArrayList<Map<String, Object>>) msg.obj);
-                    choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
-                    date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
-                    if (Common.showsecondgrid) {
-                        secondL.setVisibility(View.VISIBLE);
-                        Common.showsecondgrid = false;
-                    }
                     break;
                 case 2:
                     secondname.setFocusable(false);
@@ -272,11 +258,22 @@ public class InsertSpend extends Fragment {
                     choiceStatue.setVisibility(View.GONE);
                     choiceday.setVisibility(View.GONE);
                     setUpdate();
+                    secondname.setOnClickListener(new showSecondG());
+                    if (Common.showsecondgrid) {
+                        secondL.setVisibility(View.VISIBLE);
+                        Common.showsecondgrid = false;
+                    }
                     break;
                 case 3:
-                    setSecondGridAdapt((ArrayList<Map<String, Object>>) msg.obj);
-                    choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
-                    secondname.setOnClickListener(new showSecondG());
+                    secondname.setFocusable(false);
+                    secondname.setFocusableInTouchMode(false);
+                    date.setFocusable(false);
+                    date.setFocusableInTouchMode(false);
+                    name.setFocusable(false);
+                    name.setFocusableInTouchMode(false);
+                    choiceStatue.setVisibility(View.GONE);
+                    choiceday.setVisibility(View.GONE);
+                    date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
                     break;
             }
         }
@@ -308,9 +305,8 @@ public class InsertSpend extends Fragment {
             {
                handlerPicture.sendEmptyMessage(2);
             }else{
-                setSecondGrid();
+                handlerPicture.sendEmptyMessage(3);
             }
-
         }
     };
 
@@ -355,12 +351,7 @@ public class InsertSpend extends Fragment {
         items.add(item);
         Message message=new Message();
         message.obj=items;
-        if(needSet)
-        {
-            message.what=3;
-        }else{
-            message.what=1;
-        }
+        message.what=1;
         handlerPicture.sendMessage(message);
     }
 
