@@ -67,7 +67,6 @@ public class HowGetPrice extends Fragment {
         List<String> title = new ArrayList<>();
         title.add("如何印無實體中獎發票");
         title.add("25處指定郵局兌領位置");
-        title.add("雲端發票綁定銀行帳戶(本地)");
         title.add("雲端發票綁定銀行帳戶\n(財政部網站)");
         list.setAdapter(new ListAdapter(context, title));
         drawerLayout = this.context.findViewById(R.id.drawer_layout);
@@ -134,17 +133,7 @@ public class HowGetPrice extends Fragment {
                         intent.setAction(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse("https://www.post.gov.tw/post/internet/B_saving/index.jsp?ID=30306#localpost"));
                         startActivity(intent);
-                    } else if (position == 2) {
-                        HowGetPrice.this.context.setTitle(R.string.text_EleBank);
-                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                        for (Fragment f : getFragmentManager().getFragments()) {
-                            fragmentTransaction.remove(f);
-                        }
-                        Fragment fragment = new EleAddBank();
-                        fragmentTransaction.replace(R.id.body, fragment);
-                        fragmentTransaction.commit();
-
-                    } else if (position == 3) {
+                    }  else if (position == 2) {
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse("https://www.einvoice.nat.gov.tw/APMEMBERVAN/GeneralCarrier/generalCarrier!login"));

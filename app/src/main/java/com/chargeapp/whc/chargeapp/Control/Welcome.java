@@ -160,6 +160,7 @@ public class Welcome extends AppCompatActivity {
             MainActivity mainActivity=new MainActivity();
             mainActivity.fragment=new InsertActivity();
             intent.setClass(Welcome.this, MainActivity.class);
+            intent.setAction(getIntent().getAction());
             startActivity(intent);
             finish();
         }

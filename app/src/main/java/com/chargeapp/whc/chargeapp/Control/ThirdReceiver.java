@@ -78,7 +78,7 @@ public class ThirdReceiver extends BroadcastReceiver {
         Intent activeI;
 
         if (setNotify) {
-            activeI = new Intent(context, MainActivity.class);
+            activeI = new Intent(context, Welcome.class);
             activeI.setAction("showFix");
 
             List<ConsumeVO> consumeVOS = consumeDB.getNotify();
@@ -141,7 +141,7 @@ public class ThirdReceiver extends BroadcastReceiver {
             if (month == 1 || month == 3 || month == 5 || month == 7 || month == 9 || month == 11) {
                 if (day == 25) {
                     //統一發票 通知
-                    activeI=new Intent(context,MainActivity.class);
+                    activeI=new Intent(context,Welcome.class);
                     activeI.setAction("nulPriceNotify");
                     title=" 統一發票";
                     if(month==1)
@@ -323,7 +323,7 @@ public class ThirdReceiver extends BroadcastReceiver {
             }
         }
         if (title.trim().length() > 0) {
-            Intent activeI = new Intent(context, MainActivity.class);
+            Intent activeI = new Intent(context, Welcome.class);
             activeI.setAction("goal");
             showNotification(title, message, context, this.id, activeI);
         }

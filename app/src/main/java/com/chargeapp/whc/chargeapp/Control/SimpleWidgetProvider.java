@@ -50,7 +50,7 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
                 int widgetId = appWidgetIds[i];
                 RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
                         R.layout.simple_widget);
-                Intent intent = new Intent(context, Download.class);
+                Intent intent = new Intent(context, Welcome.class);
                 if(springItem.size()>0)
                 {
                     remoteViews.setBitmap(R.id.imageView, "setImageBitmap",encodeAsBitmap(springItem.get(b), BarcodeFormat.CODE_39, 600, 100));
@@ -60,7 +60,6 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
                     remoteViews.setTextViewText(R.id.text,"無載具，請點擊新增載具");
                     remoteViews.setViewVisibility(R.id.imageView, View.GONE);
                 }
-                intent.putExtra("action","setCarrier");
                 intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
                 intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,

@@ -1,7 +1,7 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
-
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 
@@ -85,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         TypefaceProvider.registerDefaultIconSets();
         setContentView(R.layout.activity_main);
-        firstShowF=true;
-        firstShowInsertActivity=true;
+        firstShowF = true;
+        firstShowInsertActivity = true;
     }
 
 
@@ -104,8 +104,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public Fragment[] fragments={new HomePage(),new InsertActivity(),new PriceActivity(),new SelectActivity(),new SelectListModelActivity(),new GoalListAll(),new SettingMain()};
-    public String[] fragmentTags={"HomePage","InserActivity","PriceActivity","SelectActivity","SelectListModelActivity","GoalListAll","SettingMain"};
+    public Fragment[] fragments = {new HomePage(), new HomePage(), new InsertActivity(), new PriceActivity(), new SelectActivity(), new SelectListModelActivity(), new GoalListAll(), new SettingMain()};
+    public String[] fragmentTags = {"firstFragment", "HomePage", "InserActivity", "PriceActivity", "SelectActivity", "SelectListModelActivity", "GoalListAll", "SettingMain"};
+
     private void initFragment() {
         FragmentManager fManager = getSupportFragmentManager();
         FragmentTransaction fTransaction = fManager.beginTransaction();
@@ -115,8 +116,7 @@ public class MainActivity extends AppCompatActivity {
         fTransaction.commit();
         try {
             fManager.executePendingTransactions();
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
     }
@@ -130,12 +130,10 @@ public class MainActivity extends AppCompatActivity {
         fTransaction.commit();
         try {
             fManager.executePendingTransactions();
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
     }
-
 
 
     private void showFragment1(int fragmentIndex) {
@@ -232,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         for (Fragment f : getSupportFragmentManager().getFragments()) {
             fragmentTransaction.remove(f);
         }
-        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.add(R.id.body, fragment);
         fragmentTransaction.commit();
     }
 
@@ -247,7 +245,6 @@ public class MainActivity extends AppCompatActivity {
         setUpActionBar();
         initDrawer();
         Common.setChargeDB(this);
-
         //設定NotifyCation 傳進去參數
         String action;
         try {
@@ -256,31 +253,40 @@ public class MainActivity extends AppCompatActivity {
             action = null;
         }
         if (action != null) {
+            String title="";
             if (action.equals("showFix")) {
-                fragment = new SettingListFix();
-                switchFragment();
-                return;
+                title = "設定定期項目";
+                fragments[0] = new SettingListFix();
+                fragmentTags[0] = "SettingListFix";
             } else if (action.equals("nulPriceNotify")) {
-                fragment = new PriceActivity();
-                switchFragment();
-                return;
+                title = getResources().getString(R.string.text_Price);
+                fragments[0] = new PriceActivity();
+                fragmentTags[0] = "PriceActivity";
             } else if (action.equals("goal")) {
-                fragment = new GoalListAll();
-                switchFragment();
-                return;
+                title = getResources().getString(R.string.text_Goal);
+                fragments[0] = new GoalListAll();
+            } else if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
+                title = getResources().getString(R.string.text_SetCarrier);
+                fragments[0] = new EleSetCarrier();
             }
+            initFragment();
+            initHideFragment();
+            showFragment1(0);
+            firstShowF = false;
+            getSupportActionBar().setDisplayShowCustomEnabled(false);
+            setTitle(title);
+            getIntent().setAction(null);
+            return;
         }
         if (firstShowF) {
             initFragment();
             initHideFragment();
             showFragment1(0);
-            firstShowF=false;
+            firstShowF = false;
             getSupportActionBar().setDisplayShowCustomEnabled(false);
             setTitle(R.string.text_Home);
         }
     }
-
-
 
 
     @Override
@@ -440,78 +446,71 @@ public class MainActivity extends AppCompatActivity {
                                 Common.showfirstgrid = false;
                                 Common.showsecondgrid = false;
 
-                                if(firstShowInsertActivity)
-                                {
-                                    showFragment2(1);
-                                    firstShowInsertActivity=false;
-                                }else {
-                                    fragment=new InsertActivity();
+                                if (firstShowInsertActivity) {
+                                    showFragment2(2);
+                                    firstShowInsertActivity = false;
+                                } else {
+                                    fragment = new InsertActivity();
                                     switchFragment();
                                 }
 
                             } else if (i == 1) {
-                                firstShowInsertActivity=false;
+                                firstShowInsertActivity = false;
                                 return;
                             } else if (i == 2) {
                                 PriceInvoice.first = true;
-                                if(firstShowInsertActivity)
-                                {
-                                   showFragment2(2);
-                                    firstShowInsertActivity=false;
-                                }else{
-                                    fragment=new PriceActivity();
+                                if (firstShowInsertActivity) {
+                                    showFragment2(3);
+                                    firstShowInsertActivity = false;
+                                } else {
+                                    fragment = new PriceActivity();
                                     switchFragment();
                                 }
 
                             } else if (i == 3) {
 
-                                if(firstShowInsertActivity)
-                                {
-                                    showFragment2(3);
-                                    firstShowInsertActivity=false;
-                                }else {
-                                    fragment=new SelectActivity();
+                                if (firstShowInsertActivity) {
+                                    showFragment2(4);
+                                    firstShowInsertActivity = false;
+                                } else {
+                                    fragment = new SelectActivity();
                                     switchFragment();
                                 }
                             } else if (i == 4) {
 
-                                if(firstShowInsertActivity)
-                                {
-                                    showFragment2(4);
-                                    firstShowInsertActivity=false;
-                                }else {
+                                if (firstShowInsertActivity) {
+                                    showFragment2(5);
+                                    firstShowInsertActivity = false;
+                                } else {
 
-                                    fragment=new SelectListModelActivity();
+                                    fragment = new SelectListModelActivity();
                                     switchFragment();
                                 }
                             } else if (i == 5) {
 
-                                if(firstShowInsertActivity)
-                                {
-                                    showFragment2(5);
-                                    firstShowInsertActivity=false;
-                                }else {
+                                if (firstShowInsertActivity) {
+                                    showFragment2(6);
+                                    firstShowInsertActivity = false;
+                                } else {
 
                                     fragment = new GoalListAll();
                                     switchFragment();
                                 }
                             } else if (i == 6) {
 
-                                if(firstShowInsertActivity)
-                                {
-                                    showFragment2(6);
-                                    firstShowInsertActivity=false;
-                                }else {
+                                if (firstShowInsertActivity) {
+                                    showFragment2(7);
+                                    firstShowInsertActivity = false;
+                                } else {
                                     fragment = new SettingMain();
                                     switchFragment();
                                 }
                             } else if (i == 7) {
-                                if(firstShowInsertActivity)
-                                {
-                                    showFragment2(0);
-                                    firstShowInsertActivity=false;
-                                }else {
-                                    fragment=new HomePage();
+                                if (firstShowInsertActivity) {
+                                    showFragment2(1);
+                                    firstShowInsertActivity = false;
+                                } else {
+                                    fragment = new HomePage();
                                     switchFragment();
                                 }
                             } else {
