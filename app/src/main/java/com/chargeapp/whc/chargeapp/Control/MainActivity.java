@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
     public View nowView;
     public boolean firstShowF;
     public static boolean firstShowInsertActivity;
-    public static long fm;
 
 
     @Override
@@ -442,10 +441,13 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             if (i == 0) {
-                                fm = System.currentTimeMillis();
+
                                 Common.showfirstgrid = false;
                                 Common.showsecondgrid = false;
-
+                                InsertSpend.consumeVO = new ConsumeVO();
+                                InsertSpend.needSet = false;
+                                InsertIncome.needSet = false;
+                                InsertIncome.bankVO = new BankVO();
                                 if (firstShowInsertActivity) {
                                     showFragment2(2);
                                     firstShowInsertActivity = false;
@@ -519,13 +521,7 @@ public class MainActivity extends AppCompatActivity {
                                 intent.setData(Uri.parse("https://www.youtube.com/playlist?list=PLrGq9ODiZ15rdXvKV_5FEIrdaP5ix0c55"));
                                 startActivity(intent);
                             }
-                            //重置InsertConsume
-                            if (MainActivity.this.position != 0) {
-                                InsertSpend.consumeVO = new ConsumeVO();
-                                InsertSpend.needSet = false;
-                                InsertIncome.needSet = false;
-                                InsertIncome.bankVO = new BankVO();
-                            }
+
 
                         }
                     }).start();

@@ -97,18 +97,10 @@ public class InsertSpend extends Fragment {
     private View view;
     private RelativeLayout notifyRel;
 
-
     public static InsertSpend instance()
     {
         return new InsertSpend();
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d("XXXXXXX", String.valueOf(System.currentTimeMillis()- MainActivity.fm));
-    }
-
 
     @Override
     public void onAttach(Context context) {
@@ -538,6 +530,7 @@ public class InsertSpend extends Fragment {
             money.setText("");
             fixdate.setChecked(false);
             number.setText("");
+            consumeVO=new ConsumeVO();
             choiceStatue.setBootstrapText(BsTextStatue.get(0));
             choiceday.setBootstrapText(BsTextDay.get(0));
             choiceStatue.setVisibility(View.GONE);
