@@ -67,6 +67,11 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
             "CREATE TABLE ElePeriod ( id INTEGER PRIMARY KEY AUTOINCREMENT, CARNUL TEXT," +
                     "year INTEGER,month INTEGER, download TEXT) ;";
 
+
+    public static final String TABLE_Currency =
+            "CREATE TABLE Currency ( id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT NOT NULL," +
+                    "money INTEGER) ;";
+
     public ChargeAPPDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }

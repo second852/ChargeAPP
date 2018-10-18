@@ -41,7 +41,7 @@ import java.util.List;
 public class JobSchedulerService extends JobService {
 
 
-    private ChargeAPPDB chargeAPPDB;
+
     private ConsumeDB consumeDB;
     private BankDB bankDB;
     private Gson gson;
@@ -78,11 +78,11 @@ public class JobSchedulerService extends JobService {
         {
             return true;
         }
-        chargeAPPDB = new ChargeAPPDB(JobSchedulerService.this);
-        consumeDB = new ConsumeDB(chargeAPPDB.getReadableDatabase());
-        bankDB = new BankDB(chargeAPPDB.getReadableDatabase());
-        goalDB = new GoalDB(chargeAPPDB.getReadableDatabase());
-        consumeDB.colExist("rdNumber");
+        Common.setChargeDB(this);
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
+
         List<BankVO> bankVOS = bankDB.getFixDate();
         List<ConsumeVO> consumerVOS = consumeDB.getFixdate();
         int hour, min;

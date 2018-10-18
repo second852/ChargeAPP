@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/search_QRcode"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f5f5f5"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/choiceitem"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="美金 US$ 1 = NT$ "
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                    android:id="@+id/USD"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:hint="30"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#AAAAAA"
+                    android:textSize="20sp"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapSize="lg"
+                    app:roundedCorners="true"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="日圓  ¥ 1 = NT$ "
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                    android:id="@+id/JPY"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:hint="30"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#AAAAAA"
+                    android:textSize="20sp"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapSize="lg"
+                    app:roundedCorners="true"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="澳幣  ¥ 1 = NT$ "
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                    android:id="@+id/AUD"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:hint="30"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#AAAAAA"
+                    android:textSize="20sp"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapSize="lg"
+                    app:roundedCorners="true"
+                    />
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="歐元 € 1 = NT$ "
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                    android:id="@+id/EUR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:hint="30"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#AAAAAA"
+                    android:textSize="20sp"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapSize="lg"
+                    app:roundedCorners="true"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="英鎊 £ 1 = NT$ "
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                    android:id="@+id/GBP"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:hint="30"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#AAAAAA"
+                    android:textSize="20sp"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapSize="lg"
+                    app:roundedCorners="true"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="人民幣  CNY¥ 1 = NT$ "
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                    android:id="@+id/CNY"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center_vertical"
+                    android:hint="30"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#AAAAAA"
+                    android:textSize="20sp"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapSize="lg"
+                    app:roundedCorners="true"
+                    />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/showfixdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp">
+
+                <TextView
+                    android:id="@+id/standard"
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:background="#AAAAAA"
+                    android:gravity="center"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    android:visibility="invisible" />
+
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="25dp"
+                    android:layout_toLeftOf="@+id/standard"
+                    android:textColor="#000000"
+                    android:textSize="20sp"
+                    app:bootstrapBrand="success"
+                    app:bootstrapSize="lg"
+                    app:bootstrapText="查詢 {fa_search}"
+                    app:buttonMode="regular"
+                    app:roundedCorners="true"
+                    app:showOutline="false" />
+
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_toRightOf="@+id/standard"
+                    android:textColor="#000000"
+                    app:bootstrapBrand="danger"
+                    app:bootstrapSize="lg"
+                    app:bootstrapText="返回 {fa_reply_all}"
+                    app:buttonMode="regular"
+                    app:roundedCorners="true"
+                    app:showOutline="false" />
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/showdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="#ffffff"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <DatePicker
+            android:id="@+id/datePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner"
+            android:spinnersShown="true"
+            android:theme="@style/spinner_normal" />
+
+        <TextView
+            android:id="@+id/datesave"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="1dp"
+            android:background="#BDBDBD"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="確認"
+            android:textColor="#000000"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/rdNumberP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/rdnumberp"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/progressL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/adView"
+        android:background="#ffffff"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:indeterminateBehavior="repeat"
+            android:indeterminateDrawable="@drawable/ring_rotate"
+            android:indeterminateDuration="1500"
+            android:indeterminateOnly="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/progress"
+            android:layout_centerHorizontal="true"
+            android:text="執行中…"
+            android:textColor="#000000"
+            android:textSize="25dp" />
+    </RelativeLayout>
+
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="ca-app-pub-5169620543343332/5257007139" />
+</RelativeLayout>

@@ -51,4 +51,5 @@ dependencies {
     compile 'com.android.support:design:26.1.0'
     implementation files('libs/poi-3.17.jar')
     implementation 'com.beardedhen:androidbootstrap:2.3.2'
+    implementation 'org.jsoup:jsoup:1.11.3'
 }

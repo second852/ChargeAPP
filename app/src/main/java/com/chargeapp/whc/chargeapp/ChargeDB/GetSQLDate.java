@@ -1,6 +1,7 @@
 package com.chargeapp.whc.chargeapp.ChargeDB;
 
 
+import android.app.Activity;
 import android.app.job.JobService;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -88,10 +89,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             JobService jobService= (JobService) object;
             Common.setChargeDB(jobService);
         }
+//        Common.setChargeDB((Activity)object);
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         elePeriodDB = new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
+//        invoiceDB.deleteBytime(Timestamp.valueOf("2018-09-01 00:00:00"));
     }
 
     public GetSQLDate(Object object, InvoiceVO invoiceVO) {
@@ -589,7 +592,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 }
                 Log.d("XXXXXXx", todayMonth + ":" + todayYear);
                 //到最大個月為止
-                if (todayMonth <= lastMonth && lastYear <= todayYear) {
+                if (todayMonth <= lastMonth && todayYear<=lastYear) {
                     break;
                 }
             }

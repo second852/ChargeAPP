@@ -26,36 +26,6 @@ public class ConsumeDB {
         this.db = db;
     }
 
-    public void colExist(String col) {
-        Cursor cursor=null;
-        try {
-            String sql = "SELECT sql FROM sqlite_master where name = 'Consumer' ;";
-            cursor = db.rawQuery(sql, null);
-            if (cursor.moveToNext()) {
-                String result = cursor.getString(0);
-                if (result.indexOf(col) == -1) {
-                    String add = "ALTER TABLE Consumer ADD '" + col + "' text;";
-                    db.execSQL(add);
-                }
-            } else {
-                String add = "ALTER TABLE Consumer ADD '" + col + "' text;";
-                db.execSQL(add);
-            }
-        } catch (Exception e) {
-            try {
-                String add = "ALTER TABLE Consumer ADD '" + col + "' text;";
-                db.execSQL(add);
-            } catch (Exception e1) {
-
-            }
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
-
-
     public List<ConsumeVO> getAll() {
         String sql = "SELECT * FROM Consumer order by id desc;";
         String[] args = {};

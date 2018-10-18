@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -102,6 +104,20 @@ public class Common {
     }
 
 
+    public static String setInvoiceTittle(InvoiceVO invoiceVO)
+    {
+        StringBuilder sbTitle=new StringBuilder();
+        sbTitle.append(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())));
+        sbTitle.append(" " +invoiceVO.getMaintype()+" ");
+        //設定幣別 null 新台幣
+        sbTitle.append(Common.getCurrency(invoiceVO.getCurrency()));
+        sbTitle.append(" "+invoiceVO.getAmount());
+        return  sbTitle.toString();
+    }
+
+
+
+
     public static int identify(byte[] bytes) {
         String[] charsetsToBeTested = {"UTF-8", "big5"};
         boolean isRight;
@@ -139,13 +155,108 @@ public class Common {
     }
 
 
+    public static HashMap<String,String> Currency()
+    {
+        HashMap<String,String> Currency=new HashMap<String,String>();
+        Currency.put("TWD","NT$");//新台幣
+        Currency.put("USD","US$");//美元
+        Currency.put("JPY","¥");//日圓
+        Currency.put("EUR","€");//歐元
+        Currency.put("AUD","AUD$");//澳幣
+        Currency.put("GBP","£");//英鎊
+        Currency.put("KRW","₩");//韓元
+        Currency.put("THB","฿");//泰銖
+        Currency.put("SGD","S$");//新加坡元
+        Currency.put("CNY","CNY¥");//人民幣
+        return  Currency;
+    }
+
+    public static String getCurrency(String dollor)
+    {
+        String currency= Currency().get(dollor);
+        if(currency==null)
+        {
+            return "NT$";
+        }
+        return currency;
+    }
+
+
+
+
     public static void setChargeDB(Context activity) {
         if (MainActivity.chargeAPPDB == null) {
             MainActivity.chargeAPPDB = new ChargeAPPDB(activity);
         }
-        ConsumeDB consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB.colExist("rdNumber");
+        colExist("Consumer","rdNumber");
+        colExist("INVOICE","currency");
+        tableExist("Currency",ChargeAPPDB.TABLE_Currency);
     }
+
+
+    //新增table
+    public static void tableExist(String table,String sql) {
+        Cursor cursor=null;
+        SQLiteDatabase db=MainActivity.chargeAPPDB.getReadableDatabase();
+        //如果有就return
+        try {
+            String searchSql = "SELECT sql FROM sqlite_master where name = '"+table+"' ;";
+            cursor = db.rawQuery(searchSql, null);
+            if (cursor.moveToNext()) {
+                cursor.close();
+                return;
+            }
+        }catch (Exception e)
+        {
+
+        }
+
+        //新增table
+        try {
+            db.execSQL(sql);
+        } catch (Exception e) {
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+
+    //新增欄位
+    public static void colExist(String table,String col) {
+        Cursor cursor=null;
+        SQLiteDatabase db=MainActivity.chargeAPPDB.getReadableDatabase();
+        //如果有就return
+        try {
+            String sql = "SELECT sql FROM sqlite_master where name = '"+table+"' ;";
+            cursor = db.rawQuery(sql, null);
+            if (cursor.moveToNext()) {
+                String result = cursor.getString(0);
+                if (result.indexOf(col) != -1) {
+                    cursor.close();
+                    return;
+                }
+            }
+        }catch (Exception e)
+        {
+
+        }
+
+        //新增欄位
+        try {
+            String add = "ALTER TABLE '"+table+"' ADD '" + col + "' text;";
+            db.execSQL(add);
+        } catch (Exception e) {
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
 
     public static void setAdView(final AdView adView, Context activity) {
         try {

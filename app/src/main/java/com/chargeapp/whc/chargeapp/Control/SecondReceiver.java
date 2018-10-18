@@ -38,7 +38,6 @@ public class SecondReceiver extends BroadcastReceiver {
     private  NotificationManager notificationManager;
     private SimpleDateFormat sf;
     private int id=0;
-    private  ChargeAPPDB chargeAPPDB;
     private  ConsumeDB consumeDB;
     private InvoiceDB invoiceDB;
     private BankDB bankDB;
@@ -59,12 +58,11 @@ public class SecondReceiver extends BroadcastReceiver {
         notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 
 
-        chargeAPPDB=new ChargeAPPDB(context);
-        consumeDB=new ConsumeDB(chargeAPPDB.getReadableDatabase());
-        consumeDB.colExist("rdNumber");
-        invoiceDB=new InvoiceDB(chargeAPPDB.getReadableDatabase());
-        bankDB=new BankDB(chargeAPPDB.getReadableDatabase());
-        goalDB=new GoalDB(chargeAPPDB.getReadableDatabase());
+        Common.setChargeDB(context);
+        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
 
         //Detail
         gson=new Gson();

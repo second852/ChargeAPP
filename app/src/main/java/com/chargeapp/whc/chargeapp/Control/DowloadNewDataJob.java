@@ -14,17 +14,13 @@ public class DowloadNewDataJob extends JobService {
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.d("DowloadNewDataJob","start");
-        ConnectivityManager mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
         Common.setChargeDB(this);
-        if (mNetworkInfo != null) {
-                new GetSQLDate(DowloadNewDataJob.this).execute("download");
-            }
+        new GetSQLDate(DowloadNewDataJob.this).execute("download");
         return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
-        return false;
+        return true;
     }
 }

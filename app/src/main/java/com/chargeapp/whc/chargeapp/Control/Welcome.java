@@ -38,6 +38,12 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -52,8 +58,34 @@ public class Welcome extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
-        new Thread(runnable).start();
+//        new GetSQLDate(this).execute("download");
+
+//        new Thread(runnable).start();
+        new Thread(downloadCurrency).start();
     }
+
+    private Runnable downloadCurrency=new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Document doc = Jsoup.connect("https://rate.bot.com.tw/xrt?Lang=zh-TW").get();
+                Elements newsHeadlines=doc.getElementsByAttributeValue("data-table","本行現金賣出");
+                for(Element e:newsHeadlines)
+                {
+//                    for(Element ww:e.getElementsByClass("hidden-phone print_show"))
+                    Log.d("XXXXXXX", e.ownText());
+                    Log.d("XXXXXXX1", e.data());
+                    Log.d("XXXXXXX2", e.html());
+                    Log.d("XXXXXXX3", e.toString());
+                    Log.d("XXXXXXX4", e.wholeText());
+                }
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     private Runnable runnable=new Runnable() {
         @Override
@@ -70,6 +102,7 @@ public class Welcome extends AppCompatActivity {
         JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         //判斷是否建立過
 //     tm.cancelAll(); no need,becauseCompiler will remove all job
+
         if(tm.getAllPendingJobs().size()==2)
         {
             return;
@@ -77,7 +110,7 @@ public class Welcome extends AppCompatActivity {
 
         ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);
         JobInfo.Builder builder = new JobInfo.Builder(0, mServiceComponent);
-//       tm.cancelAll();
+//        tm.cancelAll();
         builder.setPeriodic(1000*60*60);
         builder.setPersisted(true);
 //        builder.setMinimumLatency(1);

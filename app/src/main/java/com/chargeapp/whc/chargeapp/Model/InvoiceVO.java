@@ -29,6 +29,15 @@ public class InvoiceVO implements Serializable{
     private String sellerAddress;//17電子發票
     private String iswin; //18電子發票中獎資訊
     private String isWinNul; //19電子發票中獎號碼
+    private String currency;// 20幣別
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
     public String getIsWinNul() {
         return isWinNul;

@@ -393,7 +393,10 @@ public class EleDonate extends Fragment {
             Button updateD=itemView.findViewById(R.id.updateD);
             CheckBox donateC=itemView.findViewById(R.id.donateC);
             final InvoiceVO invoiceVO = invoiceVOS.get(position);
-            Title.setText(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())) + " " +invoiceVO.getMaintype()+" 共"+invoiceVO.getAmount()+"元");
+
+            //設定顯示標題
+            Title.setText(Common.setInvoiceTittle(invoiceVO));
+
             //設定describe
             StringBuffer sbDecribe=new StringBuffer();
             sbDecribe.append("統一編號:\n"+invoiceVO.getInvNum()+"\n\n");
