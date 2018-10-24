@@ -1,20 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:background="#f5f5f5"
     android:orientation="vertical"
     >
-    <TextView
-        android:layout_marginTop="10dp"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/resultL"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:id="@+id/detail"
-        android:layout_gravity="center"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        />
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        >
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/setCurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:buttonMode="regular"
+            app:bootstrapBrand="warning"
+            app:bootstrapSize="md"
+            app:roundedCorners="true"
+            />
+        <com.beardedhen.androidbootstrap.AwesomeTextView
+            android:id="@+id/otherMessage"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            app:bootstrapBrand="regular"
+            />
+    </LinearLayout>
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/chart_pie"
         android:layout_marginTop="10dp"

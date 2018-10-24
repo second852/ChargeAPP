@@ -53,7 +53,6 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context.setTitle(R.string.text_Price);
         final View view = inflater.inflate(R.layout.price_main, container, false);
         priceViewPager = (ViewPager) view.findViewById(R.id.priceViewPager);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());

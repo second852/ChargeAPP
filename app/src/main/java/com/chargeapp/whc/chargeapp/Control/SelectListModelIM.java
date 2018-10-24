@@ -186,14 +186,10 @@ public class SelectListModelIM extends Fragment {
 
 
             //設定 title
-            StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append(Common.sDay.format(bankVO.getDate()));
-            stringBuffer.append(" " + bankVO.getMaintype());
-            stringBuffer.append(" 共" + Common.nf.format(bankVO.getMoney()) + "元");
-            title.setText(stringBuffer.toString());
+            title.setText(Common.setBankTittlesDay(bankVO));
 
             //設定 describe
-            stringBuffer = new StringBuffer();
+            StringBuffer stringBuffer = new StringBuffer();
             if (bankVO.isAuto()) {
                 fixT.setText("自動");
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.INFO);

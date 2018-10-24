@@ -159,10 +159,7 @@ public class SettingListFixIon extends Fragment {
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
             }
             //設定 title
-            stringBuffer.append(Common.sTwo.format(bankVO.getDate()));
-            stringBuffer.append(" " + bankVO.getMaintype());
-            stringBuffer.append(" 共" + bankVO.getMoney() + "元");
-            title.setText(stringBuffer.toString());
+            title.setText(Common.setBankTittlesTwo(bankVO));
 
 
             //設定 describe

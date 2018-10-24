@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
             action = null;
         }
         if (action != null) {
-            String title="";
+            String title="首頁";
             if (action.equals("showFix")) {
                 title = "設定定期項目";
                 fragments[0] = new SettingListFix();
@@ -328,6 +328,14 @@ public class MainActivity extends AppCompatActivity {
             if (nowView != null) {
                 setColor(nowView);
             }
+        }
+    };
+
+    private Handler setTittle = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            MainActivity.this.setTitle((String)msg.obj);
         }
     };
 
@@ -456,6 +464,10 @@ public class MainActivity extends AppCompatActivity {
                                     switchFragment();
                                 }
 
+                                Message message=new Message();
+                                message.obj= getResources().getString(R.string.text_Com);
+                                setTittle.sendMessage(message);
+
                             } else if (i == 1) {
                                 firstShowInsertActivity = false;
                                 return;
@@ -469,25 +481,40 @@ public class MainActivity extends AppCompatActivity {
                                     switchFragment();
                                 }
 
+                                Message message=new Message();
+                                message.obj= getResources().getString(R.string.text_Price);
+                                setTittle.sendMessage(message);
+
                             } else if (i == 3) {
 
                                 if (firstShowInsertActivity) {
                                     showFragment2(4);
                                     firstShowInsertActivity = false;
+
                                 } else {
                                     fragment = new SelectActivity();
                                     switchFragment();
                                 }
+
+                                Message message=new Message();
+                                message.obj= getResources().getString(R.string.text_DataPicture);
+                                setTittle.sendMessage(message);
+
                             } else if (i == 4) {
 
                                 if (firstShowInsertActivity) {
                                     showFragment2(5);
                                     firstShowInsertActivity = false;
+
                                 } else {
 
                                     fragment = new SelectListModelActivity();
                                     switchFragment();
                                 }
+
+                                Message message=new Message();
+                                message.obj= getResources().getString(R.string.text_DataList);
+                                setTittle.sendMessage(message);
                             } else if (i == 5) {
 
                                 if (firstShowInsertActivity) {
@@ -498,15 +525,24 @@ public class MainActivity extends AppCompatActivity {
                                     fragment = new GoalListAll();
                                     switchFragment();
                                 }
+                                Message message=new Message();
+                                message.obj= getResources().getString(R.string.text_Goal);
+                                setTittle.sendMessage(message);
+
                             } else if (i == 6) {
 
                                 if (firstShowInsertActivity) {
                                     showFragment2(7);
                                     firstShowInsertActivity = false;
+
                                 } else {
                                     fragment = new SettingMain();
                                     switchFragment();
                                 }
+
+                                Message message=new Message();
+                                message.obj= getResources().getString(R.string.text_Setting);
+                                setTittle.sendMessage(message);
                             } else if (i == 7) {
                                 if (firstShowInsertActivity) {
                                     showFragment2(1);
@@ -515,6 +551,10 @@ public class MainActivity extends AppCompatActivity {
                                     fragment = new HomePage();
                                     switchFragment();
                                 }
+
+                                Message message=new Message();
+                                message.obj= getResources().getString(R.string.text_Home);
+                                setTittle.sendMessage(message);
                             } else {
                                 Intent intent = new Intent();
                                 intent.setAction(Intent.ACTION_VIEW);

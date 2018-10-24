@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -31,10 +32,12 @@ import android.view.WindowManager;
 import com.beardedhen.androidbootstrap.BootstrapThumbnail;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
+import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 
@@ -44,7 +47,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -59,28 +65,78 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
 //        new GetSQLDate(this).execute("download");
-
-//        new Thread(runnable).start();
+        new Thread(runnable).start();
+        new Thread(modifyMoneyFromIntegerToString).start();
         new Thread(downloadCurrency).start();
     }
 
+    //將conume and invoice to String
+    private Runnable modifyMoneyFromIntegerToString=new Runnable() {
+        @Override
+        public void run() {
+
+        }
+    };
+
+
+    //下載現在匯率資料
     private Runnable downloadCurrency=new Runnable() {
         @Override
         public void run() {
             try {
-                Document doc = Jsoup.connect("https://rate.bot.com.tw/xrt?Lang=zh-TW").get();
-                Elements newsHeadlines=doc.getElementsByAttributeValue("data-table","本行現金賣出");
-                for(Element e:newsHeadlines)
+
+
+                Common.setChargeDB(Welcome.this);
+                CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+
+//                if it  has downloaded today,not run;
+                Calendar nowTime=Calendar.getInstance();
+                Calendar startTime=new GregorianCalendar(nowTime.get(Calendar.YEAR),nowTime.get(Calendar.MONTH),nowTime.get(Calendar.DAY_OF_MONTH),0,0,0);
+                Calendar endTime=new GregorianCalendar(nowTime.get(Calendar.YEAR),nowTime.get(Calendar.MONTH),nowTime.get(Calendar.DAY_OF_MONTH),23,59,59);
+                if(currencyDB.getAllBytime(startTime.getTimeInMillis(),endTime.getTimeInMillis()).size()>0)
                 {
-//                    for(Element ww:e.getElementsByClass("hidden-phone print_show"))
-                    Log.d("XXXXXXX", e.ownText());
-                    Log.d("XXXXXXX1", e.data());
-                    Log.d("XXXXXXX2", e.html());
-                    Log.d("XXXXXXX3", e.toString());
-                    Log.d("XXXXXXX4", e.wholeText());
+                    return;
                 }
 
 
+                //Download now currency
+                Document doc = Jsoup.connect("https://rate.bot.com.tw/xrt?Lang=zh-TW").get();
+                Elements newsHeadlines=doc.getElementsByAttributeValue("data-table","本行現金賣出");
+                int i=0;
+                CurrencyVO currencyVO=null;
+                for(Element e:newsHeadlines)
+                {
+                    switch(i)
+                    {
+                        case 0:
+                            currencyVO=new CurrencyVO("USD",e.text(),new Date(System.currentTimeMillis()));
+                            break;
+                        case 4:
+                            currencyVO=new CurrencyVO("GBP",e.text(),new Date(System.currentTimeMillis()));
+                            break;
+                        case 6:
+                            currencyVO=new CurrencyVO("AUD",e.text(),new Date(System.currentTimeMillis()));
+                            break;
+                        case 8:
+                            currencyVO=new CurrencyVO("USD",e.text(),new Date(System.currentTimeMillis()));
+                            break;
+                        case 14:
+                            currencyVO=new CurrencyVO("JPY",e.text(),new Date(System.currentTimeMillis()));
+                            break;
+                        case 28:
+                            currencyVO=new CurrencyVO("EUR",e.text(),new Date(System.currentTimeMillis()));
+                            break;
+                        case 36:
+                            currencyVO=new CurrencyVO("CNY",e.text(),new Date(System.currentTimeMillis()));
+                            break;
+                    }
+                    if(currencyVO!=null)
+                    {
+                        currencyDB.insert(currencyVO);
+                        currencyVO=null;
+                    }
+                    i++;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

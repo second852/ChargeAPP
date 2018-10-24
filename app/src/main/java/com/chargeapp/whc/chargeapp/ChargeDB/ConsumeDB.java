@@ -49,6 +49,7 @@ public class ConsumeDB {
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -78,6 +79,7 @@ public class ConsumeDB {
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -107,6 +109,7 @@ public class ConsumeDB {
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -136,6 +139,7 @@ public class ConsumeDB {
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -165,6 +169,7 @@ public class ConsumeDB {
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -194,6 +199,7 @@ public class ConsumeDB {
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -224,6 +230,7 @@ public class ConsumeDB {
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -251,7 +258,7 @@ public class ConsumeDB {
         ChartEntry chartEntry;
         while (cursor.moveToNext()) {
             chartEntry = new ChartEntry();
-            chartEntry.setValue(cursor.getInt(0));
+            chartEntry.setValue(cursor.getDouble(0));
             chartEntry.setKey(cursor.getString(1));
             chartEntries.add(chartEntry);
         }
@@ -294,6 +301,7 @@ public class ConsumeDB {
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -345,6 +353,7 @@ public class ConsumeDB {
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
         }
         cursor.close();
         return consumeVO;
@@ -374,6 +383,7 @@ public class ConsumeDB {
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -403,6 +413,7 @@ public class ConsumeDB {
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -433,6 +444,7 @@ public class ConsumeDB {
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -461,6 +473,7 @@ public class ConsumeDB {
             consumeVO.setAutoId(cursor.getInt(12));
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
         }
         cursor.close();
         return consumeVO;
@@ -491,6 +504,7 @@ public class ConsumeDB {
             c.setAutoId(cursor.getInt(12));
             c.setIsWinNul(cursor.getString(13));
             c.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
         }
         cursor.close();
         return c;
@@ -512,6 +526,7 @@ public class ConsumeDB {
         values.put("autoId", consumeVO.getAutoId());
         values.put("isWinNul", consumeVO.getIsWinNul());
         values.put("rdNumber", consumeVO.getRdNumber());
+        values.put("currency", consumeVO.getCurrency());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -532,6 +547,7 @@ public class ConsumeDB {
         values.put("autoId", consumeVO.getAutoId());
         values.put("isWinNul", consumeVO.getIsWinNul());
         values.put("rdNumber", consumeVO.getRdNumber());
+        values.put("currency", consumeVO.getCurrency());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -552,6 +568,7 @@ public class ConsumeDB {
         values.put("autoId", consumeVO.getAutoId());
         values.put("isWinNul", consumeVO.getIsWinNul());
         values.put("rdNumber", consumeVO.getRdNumber());
+        values.put("currency", consumeVO.getCurrency());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(consumeVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

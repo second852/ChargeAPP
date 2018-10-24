@@ -92,7 +92,6 @@ public class HomePage extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        context.setTitle(R.string.text_Home);
         final View view = inflater.inflate(R.layout.home_page, container, false);
         pieChart = view.findViewById(R.id.pieChart);
         pieChartT = view.findViewById(R.id.pieChartT);
@@ -146,8 +145,8 @@ public class HomePage extends Fragment {
 
     private void setPieChart() {
         HashMap<String, Integer> consumeVOS = consumeDB.getTimePeriodHashMap(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-        HashMap<String, Integer> invoiceVOS = invoiceDB.getInvoiceBytimeHashMap(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-
+//        HashMap<String, Integer> invoiceVOS = invoiceDB.getInvoiceBytimeHashMap(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+        HashMap<String, Integer> invoiceVOS=new HashMap<>();
         if (invoiceVOS.size() > consumeVOS.size()) {
             for (String s : consumeVOS.keySet()) {
                 if (invoiceVOS.get(s) == null) {
@@ -191,7 +190,7 @@ public class HomePage extends Fragment {
         ShowZero = true;
         int total = consumeVOS.get("total");
         consumeVOS.remove("total");
-        ChartEntry chartEntry = new ChartEntry("其他", 0);
+        ChartEntry chartEntry = new ChartEntry("其他", 0.00);
         int i = 0;
         for (String key : consumeVOS.keySet()) {
             double part = 0.0;
@@ -208,7 +207,7 @@ public class HomePage extends Fragment {
             }
         }
         if (chartEntry.getValue() > 0) {
-            yVals1.add(new PieEntry(chartEntry.getValue(), chartEntry.getKey()));
+            yVals1.add(new PieEntry(chartEntry.getValue().floatValue(), chartEntry.getKey()));
         }
         // create pie data set
         final PieDataSet dataSet = new PieDataSet(yVals1, "種類");
@@ -458,9 +457,9 @@ public class HomePage extends Fragment {
                             invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
                     title.setText("本周支出 : " + nf.format(consumeCount) + "元");
                     List<ChartEntry> consumeVOS = consumeDB.getTimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                    List<ChartEntry> invoiceVOS = invoiceDB.getInvoiceBytimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                    chartEntries.addAll(consumeVOS);
-                    chartEntries.addAll(invoiceVOS);
+//                    List<ChartEntry> invoiceVOS = invoiceDB.getInvoiceBytimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+//                    chartEntries.addAll(consumeVOS);
+//                    chartEntries.addAll(invoiceVOS);
                 } else {
                     //顯示本月花費
                     imageView.setImageResource(R.drawable.lotto);
@@ -471,9 +470,9 @@ public class HomePage extends Fragment {
                             invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
                     title.setText("本月支出 : " + nf.format(consumeCount) + "元");
                     List<ChartEntry> consumeVOS = consumeDB.getTimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                    List<ChartEntry> invoiceVOS = invoiceDB.getInvoiceBytimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                    chartEntries.addAll(consumeVOS);
-                    chartEntries.addAll(invoiceVOS);
+//                    List<ChartEntry> invoiceVOS = invoiceDB.getInvoiceBytimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+//                    chartEntries.addAll(consumeVOS);
+//                    chartEntries.addAll(invoiceVOS);
                 }
 
                 if (chartEntries.size() > 0) {
@@ -481,16 +480,16 @@ public class HomePage extends Fragment {
                     Collections.sort(chartEntries, new Comparator<ChartEntry>() {
                         @Override
                         public int compare(ChartEntry o1, ChartEntry o2) {
-                            return o2.getValue() - o1.getValue();
+                            return (int)(o2.getValue() - o1.getValue());
                         }
                     });
 
                     for (ChartEntry chartEntry : chartEntries) {
                         if (hashMap.get(chartEntry.getKey()) == null) {
-                            hashMap.put(chartEntry.getKey(), chartEntry.getValue());
+                            hashMap.put(chartEntry.getKey(), chartEntry.getValue().intValue());
                             strings.add(chartEntry.getKey());
                         } else {
-                            hashMap.put(chartEntry.getKey(), hashMap.get(chartEntry.getKey()) + chartEntry.getValue());
+                            hashMap.put(chartEntry.getKey(), (int)(hashMap.get(chartEntry.getKey()) + chartEntry.getValue()));
                         }
                     }
                     describe.setText("最多花費 : " + (strings.get(0).equals("O") ? "其他" : strings.get(0)) + " " + nf.format(hashMap.get(strings.get(0))) + "元");

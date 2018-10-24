@@ -13,8 +13,11 @@ import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapText;
@@ -22,11 +25,13 @@ import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.github.mikephil.charting.components.Description;
@@ -84,6 +89,10 @@ public class Common {
     public static SimpleDateFormat sDay = new SimpleDateFormat("MM/dd");
     public static SimpleDateFormat sHour = new SimpleDateFormat("hh");
     public static SimpleDateFormat sYear = new SimpleDateFormat("yyy 年 MM 月");
+
+    public static String keyboardArray[]={"倒退","7","8","9","+","歸零","4","5","6","-","返回","1","2","3","x"," ",".","0","=","/"};
+
+
     public static NumberFormat nf = NumberFormat.getNumberInstance();
     public static List<CarrierVO> lostCarrier;
     public static Screen screenSize;
@@ -99,19 +108,105 @@ public class Common {
         if (a == d) {
             return String.valueOf(a);
         } else {
-            return String.valueOf(d);
+            return String.valueOf(Common.nf.format(d));
         }
     }
 
 
-    public static String setInvoiceTittle(InvoiceVO invoiceVO)
+    public static String setMainInvoiceTittle(InvoiceVO invoiceVO)
     {
         StringBuilder sbTitle=new StringBuilder();
-        sbTitle.append(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())));
-        sbTitle.append(" " +invoiceVO.getMaintype()+" ");
+        sbTitle.append(Common.sDay.format(new Date(invoiceVO.getTime().getTime())));
+        //無法分類顯示其他
+        if(invoiceVO.getMaintype().trim().equals("0"))
+        {
+            sbTitle.append("未知");
+        }else if(invoiceVO.getMaintype().trim().equals("O"))
+        {
+            sbTitle.append("其他");
+        }else{
+            sbTitle.append(" " +invoiceVO.getMaintype()+" ");
+        }
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(invoiceVO.getCurrency()));
         sbTitle.append(" "+invoiceVO.getAmount());
+        return  sbTitle.toString();
+    }
+
+
+    public static String setSecInvoiceTittle(InvoiceVO invoiceVO)
+    {
+        StringBuilder sbTitle=new StringBuilder();
+        sbTitle.append(Common.sDay.format(new Date(invoiceVO.getTime().getTime())));
+        //無法分類顯示其他
+        if(invoiceVO.getSecondtype().trim().equals("0"))
+        {
+            sbTitle.append("未知");
+        }else if(invoiceVO.getSecondtype().trim().equals("O"))
+        {
+            sbTitle.append("其他");
+        }else{
+            sbTitle.append(" " +invoiceVO.getSecondtype()+" ");
+        }
+        //設定幣別 null 新台幣
+        sbTitle.append(Common.getCurrency(invoiceVO.getSecondtype()));
+        sbTitle.append(" "+invoiceVO.getAmount());
+        return  sbTitle.toString();
+    }
+
+
+    public static String setMainConsumerTittle(ConsumeVO consumeVO)
+    {
+        StringBuilder sbTitle=new StringBuilder();
+        sbTitle.append(Common.sDay.format(consumeVO.getDate()));
+        sbTitle.append(" " +consumeVO.getMaintype()+" ");
+        //設定幣別 null 新台幣
+        sbTitle.append(Common.getCurrency(consumeVO.getCurrency()));
+        sbTitle.append(" "+consumeVO.getMoney());
+        return  sbTitle.toString();
+    }
+
+    public static String setSecConsumerTittlesTwo(ConsumeVO consumeVO)
+    {
+        StringBuilder sbTitle=new StringBuilder();
+        sbTitle.append(Common.sTwo.format(consumeVO.getDate()));
+        sbTitle.append(" " +consumeVO.getSecondType()+" ");
+        //設定幣別 null 新台幣
+        sbTitle.append(Common.getCurrency(consumeVO.getCurrency()));
+        sbTitle.append(" "+consumeVO.getMoney());
+        return  sbTitle.toString();
+    }
+
+    public static String setSecConsumerTittlesDay(ConsumeVO consumeVO)
+    {
+        StringBuilder sbTitle=new StringBuilder();
+        sbTitle.append(Common.sDay.format(consumeVO.getDate()));
+        sbTitle.append(" " +consumeVO.getSecondType()+" ");
+        //設定幣別 null 新台幣
+        sbTitle.append(Common.getCurrency(consumeVO.getCurrency()));
+        sbTitle.append(" "+consumeVO.getMoney());
+        return  sbTitle.toString();
+    }
+
+    public static String setBankTittlesDay(BankVO bankVO)
+    {
+        StringBuilder sbTitle=new StringBuilder();
+        sbTitle.append(Common.sDay.format(bankVO.getDate()));
+        sbTitle.append(" " +bankVO.getMaintype()+" ");
+        //設定幣別 null 新台幣
+        sbTitle.append(Common.getCurrency(bankVO.getCurrency()));
+        sbTitle.append(" "+bankVO.getMoney());
+        return  sbTitle.toString();
+    }
+
+    public static String setBankTittlesTwo(BankVO bankVO)
+    {
+        StringBuilder sbTitle=new StringBuilder();
+        sbTitle.append(Common.sTwo.format(bankVO.getDate()));
+        sbTitle.append(" " +bankVO.getMaintype()+" ");
+        //設定幣別 null 新台幣
+        sbTitle.append(Common.getCurrency(bankVO.getCurrency()));
+        sbTitle.append(" "+bankVO.getMoney());
         return  sbTitle.toString();
     }
 
@@ -154,6 +249,29 @@ public class Common {
         }
     }
 
+    public static List<String> code;
+    public static void createCurrencyPopMenu(PopupMenu popupMenu,Activity context) {
+        android.view.Menu menu_more = popupMenu.getMenu();
+        ChargeAPPDB chargeAPPDB=new ChargeAPPDB(context);
+        CurrencyDB currencyDB=new CurrencyDB(chargeAPPDB.getReadableDatabase());
+        HashMap<String,List<String>> types=currencyDB.getAllType();
+        code=types.get("code");
+        List<String> show=types.get("show");
+        show.add(0,"新台幣");
+        show.add("離開");
+        int size = show.size();
+        for (int i = 0; i < size; i++) {
+            menu_more.add(android.view.Menu.NONE, android.view.Menu.FIRST + i, i, show.get(i));
+        }
+
+    }
+
+    public static String CurrencyResult(Double total, CurrencyVO currencyVO)
+    {
+        total=Double.valueOf(total/Double.valueOf(currencyVO.getMoney()));
+        return  Currency().get(currencyVO.getType())+" "+doubleRemoveZero(total);
+    }
+
 
     public static HashMap<String,String> Currency()
     {
@@ -168,6 +286,39 @@ public class Common {
         Currency.put("THB","฿");//泰銖
         Currency.put("SGD","S$");//新加坡元
         Currency.put("CNY","CNY¥");//人民幣
+        return  Currency;
+    }
+
+    public static HashMap<String,String> basicCurrency()
+    {
+        HashMap<String,String> Currency=new HashMap<String,String>();
+        Currency.put("TWD","1.00");//新台幣
+        Currency.put("USD","31.22");//美元
+        Currency.put("JPY","0.2785");//日圓
+        Currency.put("EUR","35.99");//歐元
+        Currency.put("AUD","22.28");//澳幣
+        Currency.put("GBP","41.06");//英鎊
+        Currency.put("KRW","0.02944");//韓元
+        Currency.put("THB","1.0052");//泰銖
+        Currency.put("SGD","22.75");//新加坡元
+        Currency.put("CNY","4.522");//人民幣
+        return  Currency;
+    }
+
+
+    public static HashMap<String,String> showCurrency()
+    {
+        HashMap<String,String> Currency=new HashMap<String,String>();
+        Currency.put("TWD","新台幣");//新台幣
+        Currency.put("USD","美元");//美元
+        Currency.put("JPY","日圓");//日圓
+        Currency.put("EUR","歐元");//歐元
+        Currency.put("AUD","澳幣");//澳幣
+        Currency.put("GBP","英鎊");//英鎊
+        Currency.put("KRW","韓元");//韓元
+        Currency.put("THB","泰銖");//泰銖
+        Currency.put("SGD","新加坡元");//新加坡元
+        Currency.put("CNY","人民幣");//人民幣
         return  Currency;
     }
 
@@ -189,7 +340,11 @@ public class Common {
             MainActivity.chargeAPPDB = new ChargeAPPDB(activity);
         }
         colExist("Consumer","rdNumber");
+        colExist("Consumer","currency");
+        colExist("Consumer","realMoney");
         colExist("INVOICE","currency");
+        colExist("INVOICE","realAmount");
+        colExist("BANK","currency");
         tableExist("Currency",ChargeAPPDB.TABLE_Currency);
     }
 

@@ -1,10 +1,47 @@
 package com.chargeapp.whc.chargeapp.Model;
 
+import java.sql.Date;
+
 public class CurrencyVO {
 
+    private int id;
     private String type;
     private String money;
-    private boolean activity;
+    private Date time;
+
+    public CurrencyVO() {
+
+    }
+
+    public CurrencyVO(int id, String type, String money, Date time) {
+        this.id = id;
+        this.type = type;
+        this.money = money;
+        this.time = time;
+    }
+
+    public CurrencyVO(String type, String money, Date time) {
+        this.type = type;
+        this.money = money;
+        this.time = time;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
 
     public String getType() {
         return type;
@@ -22,11 +59,4 @@ public class CurrencyVO {
         this.money = money;
     }
 
-    public boolean isActivity() {
-        return activity;
-    }
-
-    public void setActivity(boolean activity) {
-        this.activity = activity;
-    }
 }

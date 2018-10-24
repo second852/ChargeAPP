@@ -4,6 +4,7 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,10 +25,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapDropDown;
 import com.beardedhen.androidbootstrap.BootstrapText;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
@@ -36,6 +39,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
@@ -97,17 +101,17 @@ public class SelectConsume extends Fragment {
     private InvoiceDB invoiceDB;
     private CarrierDB carrierDB;
     private ConsumeDB consumeDB;
-    private TextView PIdateTittle, describe;
+    private TextView PIdateTittle;
     private ImageView PIdateCut, PIdateAdd;
     public int choiceD;
     private List<CarrierVO> carrierVOS;
     private String TAG = "SelectConsume";
     private BarChart chart_bar;
-    private List<Map.Entry<String, Integer>> list_Data;
+    private List<Map.Entry<String, Double>> list_Data;
     private int month, year, day, dweek, extra;
     private BootstrapDropDown choiceCarrier, choicePeriod;
     private PieChart chart_pie;
-    private int total, period;
+    private int period;
     private String DesTittle;
     private boolean ShowConsume = true;
     private boolean ShowAllCarrier = true;
@@ -129,6 +133,15 @@ public class SelectConsume extends Fragment {
     private List<BootstrapText> periodTexts;
 
 
+    private AwesomeTextView otherMessage;
+    private BootstrapButton setCurrency;
+    private SharedPreferences sharedPreferences;
+    private String nowCurrency;
+    private CurrencyDB currencyDB;
+    private CurrencyVO currencyVO;
+    private double total;
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -145,6 +158,9 @@ public class SelectConsume extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Common.setScreen(Common.screenSize, context);
         final View view = inflater.inflate(R.layout.select_consume, container, false);
+        sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
+        nowCurrency=sharedPreferences.getString("choiceCurrency","TWD");
+
         if (end == null ) {
             end = Calendar.getInstance();
             SelectConsume.Statue = 1;
@@ -209,7 +225,6 @@ public class SelectConsume extends Fragment {
         chart_bar.setOnChartValueSelectedListener(new charvalue());
         chart_pie.setOnChartValueSelectedListener(new pievalue());
         goalVO = goalDB.getFindType("支出");
-
         dataAnalyze();
         //        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
 //        choiceCarrier.setOnItemSelectedListener(new ChoiceCarrier());
@@ -256,6 +271,7 @@ public class SelectConsume extends Fragment {
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
 
@@ -267,7 +283,10 @@ public class SelectConsume extends Fragment {
         choicePeriod = view.findViewById(R.id.choicePeriod);
         choiceCarrier = view.findViewById(R.id.choiceCarrier);
         chart_pie = view.findViewById(R.id.chart_pie);
-        describe = view.findViewById(R.id.describe);
+        otherMessage=view.findViewById(R.id.otherMessage);
+        setCurrency=view.findViewById(R.id.setCurrency);
+
+
         goalConsume = view.findViewById(R.id.goalConsume);
         ArrayList<String> SpinnerItem1 = new ArrayList<>();
         SpinnerItem1.add("  日  ");
@@ -332,9 +351,9 @@ public class SelectConsume extends Fragment {
     private void findMaxFive() {
         total = 0;
         OKey = new HashSet<>();
-        HashMap<String, Integer> hashMap = new HashMap<>();
+        HashMap<String, Double> hashMap = new HashMap<>();
         Calendar start, end;
-        ChartEntry other = new ChartEntry("其他", 0);
+        ChartEntry other = new ChartEntry("其他", 0.0);
         if (Statue == 0) {
             DesTittle = "當天花費";
             start = new GregorianCalendar(year, month, day, 0, 0, 0);
@@ -373,17 +392,20 @@ public class SelectConsume extends Fragment {
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrierVOS.get(choiceD).getCarNul());
             }
             for (InvoiceVO I : invoiceVOS) {
+
+                currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
+
                 if (I.getMaintype().equals("0") || I.getMaintype().equals("O")) {
-                    other.setValue(other.getValue() + Integer.valueOf(I.getAmount()));
+                    other.setValue(other.getValue() + I.getAmount()*Double.valueOf(currencyVO.getMoney()));
                     OKey.add(I.getMaintype());
                     continue;
                 }
                 if (hashMap.get(I.getMaintype()) == null) {
-                    hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()));
+                    hashMap.put(I.getMaintype(), I.getAmount()*Double.valueOf(currencyVO.getMoney()));
                 } else {
-                    hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()) + hashMap.get(I.getMaintype()));
+                    hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()) + hashMap.get(I.getMaintype())*Double.valueOf(currencyVO.getMoney()));
                 }
-                total = total + Integer.valueOf(I.getAmount());
+                total = total +I.getAmount()*Double.valueOf(currencyVO.getMoney());
             }
         }
         total = total + other.getValue();
@@ -392,20 +414,21 @@ public class SelectConsume extends Fragment {
         if (ShowConsume) {
             List<ConsumeVO> consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
             for (ConsumeVO c : consumeVOS) {
+                currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
                 if (hashMap.get(c.getMaintype()) == null) {
-                    hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()));
+                    hashMap.put(c.getMaintype(), c.getMoney()*Double.valueOf(currencyVO.getMoney()));
                 } else {
-                    hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()) + hashMap.get(c.getMaintype()));
+                    hashMap.put(c.getMaintype(), c.getMoney() + hashMap.get(c.getMaintype())*Double.valueOf(currencyVO.getMoney()));
                 }
-                total = total + Integer.valueOf(c.getMoney());
+                total = total + Integer.valueOf(c.getMoney())*Double.valueOf(currencyVO.getMoney());
             }
         }
 
-        list_Data = new ArrayList<Map.Entry<String, Integer>>(hashMap.entrySet());
-        Collections.sort(list_Data, new Comparator<Map.Entry<String, Integer>>() {
-            public int compare(Map.Entry<String, Integer> entry1,
-                               Map.Entry<String, Integer> entry2) {
-                return (entry2.getValue() - entry1.getValue());
+        list_Data = new ArrayList<Map.Entry<String, Double>>(hashMap.entrySet());
+        Collections.sort(list_Data, new Comparator<Map.Entry<String, Double>>() {
+            public int compare(Map.Entry<String, Double> entry1,
+                               Map.Entry<String, Double> entry2) {
+                return (int)(entry2.getValue() - entry1.getValue());
             }
         });
         for (int i = 0; i < list_Data.size(); i++) {
@@ -519,7 +542,7 @@ public class SelectConsume extends Fragment {
         Map<String, Integer> hashMap = new LinkedHashMap<>();
         boolean isOther;
         float[] f = new float[list_Data.size()];
-        ChartEntry other = new ChartEntry("其他", 0);
+        ChartEntry other = new ChartEntry("其他", 0.0);
         if (!noShowCarrier && carrierVOS.size() > 0) {
             if(CStatue>=carrierVOS.size())
             {
@@ -540,6 +563,7 @@ public class SelectConsume extends Fragment {
                 isOther = true;
                 for (Map.Entry e : list_Data) {
                     if (I.getMaintype().equals(e.getKey())) {
+
                         if (hashMap.get(I.getMaintype()) == null) {
                             hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()));
                         } else {
@@ -577,7 +601,7 @@ public class SelectConsume extends Fragment {
 
         for (int i = 0; i < list_Data.size(); i++) {
             if (list_Data.get(i).getKey().equals("其他")) {
-                f[i] = other.getValue();
+                f[i] = other.getValue().floatValue();
                 continue;
             }
             if (hashMap.get(list_Data.get(i).getKey()) == null) {
@@ -662,15 +686,15 @@ public class SelectConsume extends Fragment {
     }
 
     private void addChartPieData() {
-        describe.setText(DesTittle + nf.format(total) + "元");
+//        describe.setText(DesTittle + nf.format(total) + "元");
         final ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
         ShowZero = true;
-        for (int i = 0; i < list_Data.size(); i++) {
-            if (list_Data.get(i).getValue() > 0) {
-                ShowZero = false;
-                yVals1.add(new PieEntry(list_Data.get(i).getValue(), list_Data.get(i).getKey()));
-            }
-        }
+//        for (int i = 0; i < list_Data.size(); i++) {
+//            if (list_Data.get(i).getValue() > 0) {
+//                ShowZero = false;
+//                yVals1.add(new PieEntry(list_Data.get(i).getValue(), list_Data.get(i).getKey()));
+//            }
+//        }
 
         // create pie data set
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");

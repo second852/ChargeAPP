@@ -12,11 +12,11 @@ import java.sql.Date;
 public class ConsumeVO implements Serializable{
 
     private int id;//0花費名稱
-    private String maintype;//1次要種類
-    private String secondType;//2固定扣款日期
-    private int money;//3花費日期
-    private Date date;//4發票編碼
-    private String number;//5主要種類
+    private String maintype;//1主要種類
+    private String secondType;//2次要種類
+    private int money;//3 金額
+    private Date date;//4花費日期
+    private String number;//5發票編碼
     private String fixDate;//6固定日期時狀態
     private String fixDateDetail;//7固定日期時間細節
     private String  notify;//8繳費通知確認
@@ -25,7 +25,25 @@ public class ConsumeVO implements Serializable{
     private int autoId;//11自動產生母ID(-1:無)
     private String isWin;//12是否中獎
     private String isWinNul;//13中獎號碼
-    private String rdNumber;//QrCode 隨機碼
+    private String rdNumber;//14 QrCode 隨機碼
+    private String currency;//15 幣別
+    private String realMoney;//16 小數點金額
+
+    public String getRealMoney() {
+        return realMoney;
+    }
+
+    public void setRealMoney(String realMoney) {
+        this.realMoney = realMoney;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
     public String getRdNumber() {
         return rdNumber;

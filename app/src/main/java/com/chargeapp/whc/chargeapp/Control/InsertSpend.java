@@ -4,7 +4,9 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,19 +14,25 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
@@ -38,6 +46,7 @@ import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.beardedhen.androidbootstrap.BootstrapLabel;
 import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
+import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
@@ -54,11 +63,13 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_EXCLAMATION_CIRCLE;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_HEART;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_SAVE;
@@ -96,6 +107,11 @@ public class InsertSpend extends Fragment {
     private String resultStatue, resultDay;
     private View view;
     private RelativeLayout notifyRel;
+    private BootstrapButton currency;
+    private SharedPreferences sharedPreferences;
+    private String nowCurrency;
+    private PopupMenu popupMenu;
+    private GridView numberKeyBoard;
 
     public static InsertSpend instance()
     {
@@ -122,6 +138,7 @@ public class InsertSpend extends Fragment {
         }
         new Thread(runnable).start();
         new Thread(setOnClick).start();
+        new Thread(setKeyboard).start();
         return view;
     }
 
@@ -236,6 +253,7 @@ public class InsertSpend extends Fragment {
                         firstL.setVisibility(View.VISIBLE);
                         Common.showfirstgrid = false;
                     }
+                    currency.setText(Common.Currency().get(nowCurrency));
                     break;
                 case 1:
                     setSecondGridAdapt((ArrayList<Map<String, Object>>) msg.obj);
@@ -267,7 +285,41 @@ public class InsertSpend extends Fragment {
                     choiceday.setVisibility(View.GONE);
                     date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
                     break;
+                case 4:
+                    setKeyBoardGridAdapter(((ArrayList<Map<String, Object>>) msg.obj));
+                    money.setFocusable(false);
+                    money.setFocusableInTouchMode(false);
+                    money.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            numberKeyBoard.setVisibility(View.VISIBLE);
+                        }
+                    });
+                    break;
             }
+        }
+    };
+
+
+    private Runnable setKeyboard =new Runnable() {
+        @Override
+        public void run() {
+            showSb=new StringBuilder();
+            showSb.append("0");
+            numberKeyBoard=view.findViewById(R.id.numberKeyBoard);
+            numberKeyBoard.setOnItemClickListener(new setKeyboardInput());
+            ArrayList items = new ArrayList<Map<String, Object>>();
+            Map<String, Object> hashMap;
+            for(String s:Common.keyboardArray)
+            {
+                hashMap=new HashMap<>();
+                hashMap.put("text",s);
+                items.add(hashMap);
+            }
+            Message message=new Message();
+            message.obj=items;
+            message.what=4;
+            handlerPicture.sendMessage(message);
         }
     };
 
@@ -275,6 +327,21 @@ public class InsertSpend extends Fragment {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
+            //set Currency
+            sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
+            nowCurrency=sharedPreferences.getString("insertCurrency","TWD");
+            currency=view.findViewById(R.id.currency);
+            popupMenu = new PopupMenu(context, currency);
+            Common.createCurrencyPopMenu(popupMenu,context);
+            currency.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    popupMenu.show();
+                }
+            });
+            popupMenu.setOnMenuItemClickListener(new choiceCurrency());
+
+            //type
             typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
             consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
             firstG = view.findViewById(R.id.firstG);
@@ -290,7 +357,7 @@ public class InsertSpend extends Fragment {
             BsTextWeek = Common.DateChoiceSetBsTest(context, Common.WeekSetSpinnerBS);
             BsTextMonth = Common.DateChoiceSetBsTest(context, Common.MonthSetSpinnerBS());
             BsTextStatue = Common.DateChoiceSetBsTest(context, Common.DateStatueSetSpinner);
-            findviewByid();
+            findViewByid();
             gson = new Gson();
             setSetOnClickView();
             if(needSet)
@@ -393,9 +460,17 @@ public class InsertSpend extends Fragment {
         firstG.setNumColumns(4);
     }
 
+    private void setKeyBoardGridAdapter(ArrayList<Map<String, Object>> items)
+    {
+        SimpleAdapter adapter = new SimpleAdapter(context, items, R.layout.ele_hand_item, new String[]{"text"},
+                new int[]{R.id.cardview});
+        numberKeyBoard.setAdapter(adapter);
+        numberKeyBoard.setNumColumns(5);
+    }
 
 
-    public void findviewByid() {
+
+    public void findViewByid() {
         secondname = view.findViewById(R.id.secondname);
         money = view.findViewById(R.id.money);
         date = view.findViewById(R.id.date);
@@ -418,6 +493,7 @@ public class InsertSpend extends Fragment {
         notifyT = view.findViewById(R.id.notifyT);
         firstL = view.findViewById(R.id.firstL);
         notifyRel=view.findViewById(R.id.notifyRel);
+
     }
 
 
@@ -898,6 +974,79 @@ public class InsertSpend extends Fragment {
             }
         }
     }
+
+    private class choiceCurrency implements PopupMenu.OnMenuItemClickListener {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            switch (menuItem.getItemId())
+            {
+                case 1:
+                    nowCurrency="TWD";
+                    sharedPreferences.edit().putString("insertCurrency",nowCurrency).apply();
+                    currency.setText(Common.Currency().get(nowCurrency));
+                case 8:
+                    popupMenu.dismiss();
+                    break;
+                default:
+                    nowCurrency=Common.code.get(menuItem.getItemId()-2);
+                    sharedPreferences.edit().putString("insertCurrency",nowCurrency).apply();
+                    currency.setText(Common.Currency().get(nowCurrency));
+                    break;
+            }
+            return true;
+        }
+    }
+
+
+    private StringBuilder showSb;
+    private StringBuilder needCal=new StringBuilder();
+    private double oldnumber;
+    private double resultCal=0;
+    private boolean add=false,enter=false,cut=false;
+    private class setKeyboardInput implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            String word=Common.keyboardArray[i];
+            switch (word)
+            {
+                case "倒退":
+                    break;
+                case "歸零":
+                    break;
+                case "返回":
+                    break;
+                case "+":
+                    if(showSb.toString().trim().isEmpty())
+                    {
+                        break;
+                    }
+                    resultCal=resultCal+Double.valueOf(showSb.toString());
+                    add=true;
+                    showSb.append(word);
+                    money.setText(showSb.toString());
+                    showSb=new StringBuilder();
+                    break;
+                case "-":
+                    break;
+                case "=":
+                    if(add)
+                    {
+                        resultCal=resultCal+Double.valueOf(showSb.toString());
+                    }
+                    showSb=new StringBuilder();
+                    showSb.append(resultCal);
+                    resultCal=0;
+                    money.setText(showSb.toString());
+                    break;
+                default:
+                    showSb.append(word);
+                    money.setText(showSb.toString());
+                    break;
+            }
+
+        }
+    }
+
 }
 
 

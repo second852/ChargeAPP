@@ -87,7 +87,6 @@ public class SettingMain extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        context.setTitle(R.string.text_Setting);
         final View view = inflater.inflate(R.layout.setting_main, container, false);
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         listView = view.findViewById(R.id.list);
@@ -104,6 +103,7 @@ public class SettingMain extends Fragment {
         eleMainItemVOList.add(new EleMainItemVO("關閉提醒", R.drawable.notifyt));
         eleMainItemVOList.add(new EleMainItemVO("設定提醒時間", R.drawable.timei));
         eleMainItemVOList.add(new EleMainItemVO("設定定期項目", R.drawable.cancel));
+        eleMainItemVOList.add(new EleMainItemVO("本日匯率查詢", R.drawable.bouns));
         eleMainItemVOList.add(new EleMainItemVO("匯出檔案", R.drawable.importf));
         eleMainItemVOList.add(new EleMainItemVO("匯入檔案", R.drawable.export));
         eleMainItemVOList.add(new EleMainItemVO("重設資料庫", R.drawable.origin));
@@ -281,7 +281,17 @@ public class SettingMain extends Fragment {
                         switchFragment(fragment);
                     }
                 });
-            } else if (position == 4) {
+            }  else if (position == 4) {
+
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Fragment fragment=new SettingCurrency();
+                        switchFragment(fragment);
+                    }
+                });
+
+            }else if (position == 5) {
 
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -294,7 +304,7 @@ public class SettingMain extends Fragment {
                     }
                 });
 
-            }else if (position == 5) {
+            }else if (position == 6) {
 
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -307,7 +317,7 @@ public class SettingMain extends Fragment {
                     }
                 });
 
-            } else if (position == 6) {
+            } else if (position == 7) {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

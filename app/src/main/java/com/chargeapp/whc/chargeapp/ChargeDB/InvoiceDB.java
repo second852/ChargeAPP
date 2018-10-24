@@ -54,6 +54,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -89,6 +91,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -123,6 +127,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -158,6 +164,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -193,6 +201,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -231,6 +241,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -266,6 +278,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -367,6 +381,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -425,22 +441,24 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
         return invoiceVOSList;
     }
 
-    public HashMap<String,Integer> getInvoiceBytimeHashMap(Timestamp start, Timestamp end) {
-        String sql = "SELECT maintype,amount FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' order by amount desc;";
+    public HashMap<String,Double> getInvoiceByTimeHashMap(Timestamp start, Timestamp end) {
+        String sql = "SELECT maintype,realAmount,currency FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' order by amount desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
-        HashMap<String,Integer> hashMap=new HashMap<>();
+        HashMap<String,Double> hashMap=new HashMap<>();
         String main;
-        int money,total=0;
+        Double money,total=0.0;
         while (cursor.moveToNext()) {
             main=cursor.getString(0);
-            money=cursor.getInt(1);
+            money=Double.valueOf(cursor.getString(1))*Double.valueOf(cursor.getString(2));
             if(hashMap.get(main)==null)
             {
                 hashMap.put(main,money);
@@ -482,6 +500,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -516,6 +536,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -550,6 +572,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -584,6 +608,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -618,6 +644,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -654,6 +682,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
         }
         cursor.close();
         return invoiceVO;
@@ -687,13 +717,15 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
         }
         cursor.close();
         return invoiceVO;
     }
 
 
-    public List<ChartEntry> getInvoiceBytimeMaxType(Timestamp start, Timestamp end) {
+    public List<ChartEntry> getInvoiceByTimeMaxType(Timestamp start, Timestamp end) {
         String sql = "SELECT SUM(amount), maintype FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' group by maintype;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
@@ -701,7 +733,7 @@ public class InvoiceDB {
         ChartEntry chartEntry;
         while (cursor.moveToNext()) {
             chartEntry=new ChartEntry();
-            chartEntry.setValue(cursor.getInt(0));
+            chartEntry.setValue(cursor.getDouble(0));
             chartEntry.setKey(cursor.getString(1));
             chartEntries.add(chartEntry);
         }
@@ -737,6 +769,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -772,6 +806,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -806,6 +842,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -852,6 +890,8 @@ public class InvoiceDB {
             invoiceVO.setSellerBan(cursor.getString(17));
             invoiceVO.setSellerAddress(cursor.getString(18));
             invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -880,6 +920,8 @@ public class InvoiceDB {
         values.put("sellerBan",invoiceVO.getSellerBan());
         values.put("sellerAddress",invoiceVO.getSellerAddress());
         values.put("isWinNul",invoiceVO.getIsWinNul());
+        values.put("currency",invoiceVO.getCurrency());
+        values.put("realAmount",invoiceVO.getAmount());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -908,6 +950,8 @@ public class InvoiceDB {
         values.put("sellerBan",invoiceVO.getSellerBan());
         values.put("sellerAddress",invoiceVO.getSellerAddress());
         values.put("isWinNul",invoiceVO.getIsWinNul());
+        values.put("currency",invoiceVO.getCurrency());
+        values.put("realAmount",invoiceVO.getAmount());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -932,6 +976,8 @@ public class InvoiceDB {
         values.put("sellerBan",invoiceVO.getSellerBan());
         values.put("sellerAddress",invoiceVO.getSellerAddress());
         values.put("isWinNul",invoiceVO.getIsWinNul());
+        values.put("currency",invoiceVO.getCurrency());
+        values.put("realAmount",invoiceVO.getAmount());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(invoiceVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

@@ -26,15 +26,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:textSize="20sp"
+                android:layout_marginTop="30dp"
+                android:textSize="40sp"
                 app:bootstrapBrand="danger"
                 app:bootstrapText=" 本日台灣銀行現金賣出價位 " />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="30dp"
                 android:layout_gravity="center"
                 android:orientation="horizontal">
                 <TextView
@@ -44,7 +44,7 @@
                     android:gravity="center_vertical"
                     android:text="美金 US$ 1 = NT$ "
                     android:textColor="#000000"
-                    android:textSize="20sp" />
+                    android:textSize="40sp" />
 
 
                 <com.beardedhen.androidbootstrap.AwesomeTextView
@@ -59,7 +59,7 @@
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="20sp"
+                    android:textSize="40sp"
                     app:bootstrapBrand="primary"
                     app:bootstrapSize="lg"
                     app:roundedCorners="true"
@@ -68,7 +68,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:layout_gravity="center"
                 android:orientation="horizontal">
                 <TextView
@@ -78,7 +78,7 @@
                     android:gravity="center_vertical"
                     android:text="日圓  ¥ 1 = NT$ "
                     android:textColor="#000000"
-                    android:textSize="20sp" />
+                    android:textSize="40sp" />
 
 
                 <com.beardedhen.androidbootstrap.AwesomeTextView
@@ -93,7 +93,7 @@
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="20sp"
+                    android:textSize="40sp"
                     app:bootstrapBrand="primary"
                     app:bootstrapSize="lg"
                     app:roundedCorners="true"
@@ -102,7 +102,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:layout_gravity="center"
                 android:orientation="horizontal">
                 <TextView
@@ -112,7 +112,7 @@
                     android:gravity="center_vertical"
                     android:text="澳幣  ¥ 1 = NT$ "
                     android:textColor="#000000"
-                    android:textSize="20sp" />
+                    android:textSize="40sp" />
 
 
                 <com.beardedhen.androidbootstrap.AwesomeTextView
@@ -127,7 +127,7 @@
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="20sp"
+                    android:textSize="40sp"
                     app:bootstrapBrand="primary"
                     app:bootstrapSize="lg"
                     app:roundedCorners="true"
@@ -139,7 +139,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:layout_gravity="center"
                 android:orientation="horizontal">
                 <TextView
@@ -149,7 +149,7 @@
                     android:gravity="center_vertical"
                     android:text="歐元 € 1 = NT$ "
                     android:textColor="#000000"
-                    android:textSize="20sp" />
+                    android:textSize="40sp" />
 
 
                 <com.beardedhen.androidbootstrap.AwesomeTextView
@@ -164,7 +164,7 @@
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="20sp"
+                    android:textSize="40sp"
                     app:bootstrapBrand="primary"
                     app:bootstrapSize="lg"
                     app:roundedCorners="true"
@@ -173,7 +173,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:layout_gravity="center"
                 android:orientation="horizontal">
                 <TextView
@@ -183,7 +183,7 @@
                     android:gravity="center_vertical"
                     android:text="英鎊 £ 1 = NT$ "
                     android:textColor="#000000"
-                    android:textSize="20sp" />
+                    android:textSize="40sp" />
 
 
                 <com.beardedhen.androidbootstrap.AwesomeTextView
@@ -198,7 +198,7 @@
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="20sp"
+                    android:textSize="40sp"
                     app:bootstrapBrand="primary"
                     app:bootstrapSize="lg"
                     app:roundedCorners="true"
@@ -207,7 +207,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:layout_gravity="center"
                 android:orientation="horizontal">
                 <TextView
@@ -217,7 +217,7 @@
                     android:gravity="center_vertical"
                     android:text="人民幣  CNY¥ 1 = NT$ "
                     android:textColor="#000000"
-                    android:textSize="20sp" />
+                    android:textSize="40sp" />
 
 
                 <com.beardedhen.androidbootstrap.AwesomeTextView
@@ -232,7 +232,7 @@
                     android:singleLine="true"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="20sp"
+                    android:textSize="40sp"
                     app:bootstrapBrand="primary"
                     app:bootstrapSize="lg"
                     app:roundedCorners="true"

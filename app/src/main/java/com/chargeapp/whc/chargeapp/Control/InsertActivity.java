@@ -79,7 +79,6 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
             }
         }).start();
         text=view.findViewById(R.id.text);
-        activity.setTitle(R.string.text_Com);
         return  view;
     }
 

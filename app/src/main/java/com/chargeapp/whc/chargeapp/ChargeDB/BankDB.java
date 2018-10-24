@@ -39,6 +39,7 @@ public class BankDB {
             bankVO.setDetailname(cursor.getString(6));
             bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
             bankVO.setAutoId(cursor.getInt(8));
+            bankVO.setCurrency(cursor.getString(9));
             BankVOList.add(bankVO);
         }
         cursor.close();
@@ -62,6 +63,7 @@ public class BankDB {
             bankVO.setDetailname(cursor.getString(6));
             bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
             bankVO.setAutoId(cursor.getInt(8));
+            bankVO.setCurrency(cursor.getString(9));
             BankVOList.add(bankVO);
         }
         cursor.close();
@@ -85,6 +87,7 @@ public class BankDB {
             bankVO.setDetailname(cursor.getString(6));
             bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
             bankVO.setAutoId(cursor.getInt(8));
+            bankVO.setCurrency(cursor.getString(9));
             BankVOList.add(bankVO);
         }
         cursor.close();
@@ -108,6 +111,7 @@ public class BankDB {
             bankVO.setDetailname(cursor.getString(6));
             bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
             bankVO.setAutoId(cursor.getInt(8));
+            bankVO.setCurrency(cursor.getString(9));
             BankVOList.add(bankVO);
         }
         cursor.close();
@@ -130,6 +134,7 @@ public class BankDB {
             bankVO.setDetailname(cursor.getString(6));
             bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
             bankVO.setAutoId(cursor.getInt(8));
+            bankVO.setCurrency(cursor.getString(9));
         }
         cursor.close();
         return bankVO;
@@ -151,6 +156,7 @@ public class BankDB {
             b.setDetailname(cursor.getString(6));
             b.setAuto(Boolean.valueOf(cursor.getString(7)));
             b.setAutoId(cursor.getInt(8));
+            bankVO.setCurrency(cursor.getString(9));
         }
         cursor.close();
         return b;
@@ -200,6 +206,7 @@ public class BankDB {
             bankVO.setDetailname(cursor.getString(6));
             bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
             bankVO.setAutoId(cursor.getInt(8));
+            bankVO.setCurrency(cursor.getString(9));
             BankVOList.add(bankVO);
         }
         cursor.close();
@@ -223,6 +230,7 @@ public class BankDB {
             bankVO.setDetailname(cursor.getString(6));
             bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
             bankVO.setAutoId(cursor.getInt(8));
+            bankVO.setCurrency(cursor.getString(9));
             BankVOList.add(bankVO);
         }
         cursor.close();
@@ -246,6 +254,7 @@ public class BankDB {
             bankVO.setDetailname(cursor.getString(6));
             bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
             bankVO.setAutoId(cursor.getInt(8));
+            bankVO.setCurrency(cursor.getString(9));
         }
         cursor.close();
         return bankVO;
@@ -261,6 +270,7 @@ public class BankDB {
         values.put("detailname",bankVO.getDetailname());
         values.put("auto",String.valueOf(bankVO.isAuto()));
         values.put("autoId",bankVO.getAutoId());
+        values.put("currency",bankVO.getCurrency());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -275,6 +285,7 @@ public class BankDB {
         values.put("detailname",bankVO.getDetailname());
         values.put("auto",String.valueOf(bankVO.isAuto()));
         values.put("autoId",bankVO.getAutoId());
+        values.put("currency",bankVO.getCurrency());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -288,6 +299,7 @@ public class BankDB {
         values.put("detailname",bankVO.getDetailname());
         values.put("auto",String.valueOf(bankVO.isAuto()));
         values.put("autoId",bankVO.getAutoId());
+        values.put("currency",bankVO.getCurrency());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(bankVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

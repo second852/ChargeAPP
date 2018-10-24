@@ -74,7 +74,7 @@ public class SelectIncome extends Fragment {
     private String DesTittle;
     private List<String> chartLabels;
     private BankDB bankDB;
-    private List<Map.Entry<String, Integer>> list_Data;
+    private List<Map.Entry<String, Double>> list_Data;
     private List<BankVO> bankVOS;
     private ArrayList<String> Okey;
     private List<String> type;
@@ -195,8 +195,8 @@ public class SelectIncome extends Fragment {
     private void findMaxFive() {
         total = 0;
         Okey = new ArrayList<>();
-        ChartEntry other = new ChartEntry("其他", 0);
-        Map<String, Integer> hashMap = new HashMap<>();
+        ChartEntry other = new ChartEntry("其他", 0.0);
+        Map<String, Double> hashMap = new HashMap<>();
         Calendar start, end;
         if (Statue == 0) {
             DesTittle = "本月收入";
@@ -212,17 +212,17 @@ public class SelectIncome extends Fragment {
         bankVOS = bankDB.getTimeAll(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
         for (BankVO b : bankVOS) {
             if (hashMap.get(b.getMaintype()) == null) {
-                hashMap.put(b.getMaintype(), Integer.valueOf(b.getMoney()));
+                hashMap.put(b.getMaintype(), Double.valueOf(b.getMoney()));
             } else {
                 hashMap.put(b.getMaintype(), Integer.valueOf(b.getMoney()) + hashMap.get(b.getMaintype()));
             }
             total = total + Integer.valueOf(b.getMoney());
         }
-        list_Data = new ArrayList<Map.Entry<String, Integer>>(hashMap.entrySet());
-        Collections.sort(list_Data, new Comparator<Map.Entry<String, Integer>>() {
-            public int compare(Map.Entry<String, Integer> entry1,
-                               Map.Entry<String, Integer> entry2) {
-                return (entry2.getValue() - entry1.getValue());
+        list_Data = new ArrayList<Map.Entry<String, Double>>(hashMap.entrySet());
+        Collections.sort(list_Data, new Comparator<Map.Entry<String, Double>>() {
+            public int compare(Map.Entry<String, Double> entry1,
+                               Map.Entry<String, Double> entry2) {
+                return (int)(entry2.getValue() - entry1.getValue());
             }
         });
 
@@ -292,7 +292,7 @@ public class SelectIncome extends Fragment {
         float[] f = new float[list_Data.size()];
         List<BankVO> bankVOS = bankDB.getTimeAll(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
         boolean isOtherExist;
-        ChartEntry other = new ChartEntry("其他", 0);
+        ChartEntry other = new ChartEntry("其他", 0.0);
         for (BankVO b : bankVOS) {
             isOtherExist = true;
             for (int i = 0; i < list_Data.size(); i++) {
@@ -312,7 +312,7 @@ public class SelectIncome extends Fragment {
         }
         for (int i = 0; i < list_Data.size(); i++) {
             if (list_Data.get(i).getKey().equals("其他")) {
-                f[i] = other.getValue();
+                f[i] = other.getValue().floatValue();
                 continue;
             }
             if (barMap.get(list_Data.get(i).getKey()) == null) {
@@ -427,7 +427,7 @@ public class SelectIncome extends Fragment {
         describe.setText(DesTittle + Common.nf.format(total) + "元");
         ArrayList<PieEntry> pieEntries = new ArrayList<PieEntry>();
         boolean ShowZero = true;
-        ChartEntry other = new ChartEntry("其他", 0);
+        ChartEntry other = new ChartEntry("其他", 0.0);
         for (int i = 0; i < list_Data.size(); i++) {
             if (list_Data.get(i).getValue() <= 0) {
                 continue;
@@ -438,11 +438,11 @@ public class SelectIncome extends Fragment {
                 continue;
             }
             type.add(list_Data.get(i).getKey());
-            pieEntries.add(new PieEntry(list_Data.get(i).getValue(), list_Data.get(i).getKey()));
+            pieEntries.add(new PieEntry(list_Data.get(i).getValue().floatValue(), list_Data.get(i).getKey()));
         }
         if (other.getValue() > 0) {
             type.add("其他");
-            pieEntries.add(new PieEntry(other.getValue(), "其他"));
+            pieEntries.add(new PieEntry(other.getValue().floatValue(), "其他"));
         }
 
         // create pie data set

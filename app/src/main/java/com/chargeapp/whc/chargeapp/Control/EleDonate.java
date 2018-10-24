@@ -395,7 +395,7 @@ public class EleDonate extends Fragment {
             final InvoiceVO invoiceVO = invoiceVOS.get(position);
 
             //設定顯示標題
-            Title.setText(Common.setInvoiceTittle(invoiceVO));
+            Title.setText(Common.setMainInvoiceTittle(invoiceVO));
 
             //設定describe
             StringBuffer sbDecribe=new StringBuffer();

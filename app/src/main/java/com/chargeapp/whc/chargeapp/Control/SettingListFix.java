@@ -162,16 +162,16 @@ public class SettingListFix extends Fragment {
             deleteI.setVisibility(View.GONE);
             update.setText("檢視");
             final Object o=objects.get(position);
-            StringBuffer stringBuffer = new StringBuffer();
             if(o instanceof ConsumeVO)
             {
                 final ConsumeVO consumeVO= (ConsumeVO) o;
-                stringBuffer.append(Common.sTwo.format(consumeVO.getDate()));
-                stringBuffer.append(" "+consumeVO.getMaintype());
-                stringBuffer.append(" 共"+consumeVO.getMoney()+"元");
-                title.setText(stringBuffer.toString());
-                stringBuffer=new StringBuffer();
 
+                //設定tittle
+                title.setText(Common.setSecConsumerTittlesTwo(consumeVO));
+
+
+                //設定 此筆detail
+                StringBuffer stringBuffer=new StringBuffer();
                 //設定標籤
                 fixL.setVisibility(View.VISIBLE);
                 if(consumeVO.getNotify().equals("true"))
@@ -207,12 +207,10 @@ public class SettingListFix extends Fragment {
                 remindL.setVisibility(View.GONE);
 
                 final BankVO bankVO= (BankVO) o;
-                stringBuffer.append(Common.sTwo.format(bankVO.getDate()));
-                stringBuffer.append(" "+bankVO.getMaintype());
-                stringBuffer.append(" 共"+bankVO.getMoney()+"元");
-                title.setText(stringBuffer.toString());
+                //設定 tittle
+                title.setText(Common.setBankTittlesDay(bankVO));
                 //descide
-                stringBuffer=new StringBuffer();
+                StringBuffer stringBuffer=new StringBuffer();
                 JsonObject js=gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
                 String choiceStatue=js.get("choicestatue").getAsString().trim();
                 stringBuffer.append(choiceStatue);

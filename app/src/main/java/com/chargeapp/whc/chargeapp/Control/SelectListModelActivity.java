@@ -51,7 +51,6 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        context.setTitle(R.string.text_DataList);
         final View view = inflater.inflate(R.layout.select_list_main, container, false);
         SelAllviewPager = (ViewPager) view.findViewById(R.id.SelAllviewPager);
         goneMoney = view.findViewById(R.id.goneD);

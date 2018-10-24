@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -21,15 +22,18 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.PieChart;
@@ -77,12 +81,11 @@ public class SelectShowCircleDe extends Fragment {
     private  List<InvoiceVO> invoiceVOS;
     private List<ConsumeVO> consumeVOS;
     private String mainTitle;
-    private HashMap<String,Integer> hashMap;
+    private HashMap<String,Double> hashMap;
 
     private int Statue;
     private Calendar start,end;
     private PieChart pieChart;
-    private TextView detail;
     private List<Object> objects;
     private ProgressDialog progressDialog;
     private Gson gson;
@@ -93,8 +96,16 @@ public class SelectShowCircleDe extends Fragment {
     private ArrayList<String> Okey;
     private boolean ShowZero;
     private List<PieEntry> yVals1;
-    private int total;
     private Activity activity;
+
+    //新增幣別
+    private AwesomeTextView otherMessage;
+    private BootstrapButton setCurrency;
+    private SharedPreferences sharedPreferences;
+    private String nowCurrency;
+    private CurrencyDB currencyDB;
+    private CurrencyVO currencyVO;
+    private double total;
 
     @Override
     public void onAttach(Context context) {
@@ -110,6 +121,8 @@ public class SelectShowCircleDe extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_circle_detail, container, false);
+        sharedPreferences=activity.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
+        nowCurrency=sharedPreferences.getString("choiceCurrency","TWD");
         setDB();
         carrierVOS=carrierDB.getAll();
         findViewById(view);
@@ -166,7 +179,8 @@ public class SelectShowCircleDe extends Fragment {
     private void findViewById(View view) {
         listView=view.findViewById(R.id.listDetail);
         pieChart=view.findViewById(R.id.chart_pie);
-        detail=view.findViewById(R.id.detail);
+        otherMessage=view.findViewById(R.id.otherMessage);
+        setCurrency=view.findViewById(R.id.setCurrency);
     }
 
     private void setDB() {
@@ -174,12 +188,13 @@ public class SelectShowCircleDe extends Fragment {
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
     private PieData addData() {
         Okey=new ArrayList<>();
         yVals1 = new ArrayList<PieEntry>();
-        ChartEntry chartEntry=new ChartEntry("其他",0);
+        ChartEntry chartEntry=new ChartEntry("其他",0.00);
         double part=0.0;
         for(String s:hashMap.keySet())
         {
@@ -197,7 +212,7 @@ public class SelectShowCircleDe extends Fragment {
             }else {
                 if(part>6)
                 {
-                    yVals1.add(new PieEntry(hashMap.get(s),s));
+                    yVals1.add(new PieEntry(hashMap.get(s).floatValue(),s));
                 }else{
                     chartEntry.setValue(chartEntry.getValue()+hashMap.get(s));
                     Okey.add(s);
@@ -216,14 +231,14 @@ public class SelectShowCircleDe extends Fragment {
             while (yVals1.size()>5)
             {
                 Okey.add(yVals1.get(4).getLabel());
-                chartEntry.setValue((int) (chartEntry.getValue()+yVals1.get(4).getValue()));
+                chartEntry.setValue(chartEntry.getValue()+yVals1.get(4).getValue());
                 yVals1.remove(4);
             }
         }
 
         if(chartEntry.getValue()>0)
         {
-            yVals1.add(new PieEntry(chartEntry.getValue(),chartEntry.getKey()));
+            yVals1.add(new PieEntry(chartEntry.getValue().floatValue(),chartEntry.getKey()));
         }
 
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
@@ -300,11 +315,12 @@ public class SelectShowCircleDe extends Fragment {
             consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),mainTitle);
             for(ConsumeVO c:consumeVOS)
             {
+                currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
                 if(hashMap.get(c.getSecondType())==null)
                 {
-                    hashMap.put(c.getSecondType(),Integer.valueOf(c.getMoney()));
+                    hashMap.put(c.getSecondType(),Integer.valueOf(c.getMoney())*Double.valueOf(currencyVO.getMoney()));
                 }else{
-                    hashMap.put(c.getSecondType(),hashMap.get(c.getSecondType())+Integer.valueOf(c.getMoney()));
+                    hashMap.put(c.getSecondType(),hashMap.get(c.getSecondType())+Integer.valueOf(c.getMoney())*Double.valueOf(currencyVO.getMoney()));
                 }
                 total=total+c.getMoney();
             }
@@ -320,13 +336,14 @@ public class SelectShowCircleDe extends Fragment {
             }
             for(InvoiceVO I:invoiceVOS)
             {
+                currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
                 if(hashMap.get(I.getSecondtype())==null)
                 {
-                    hashMap.put(I.getSecondtype(),Integer.valueOf(I.getAmount()));
+                    hashMap.put(I.getSecondtype(),Integer.valueOf(I.getAmount())*Double.valueOf(currencyVO.getMoney()));
                 }else{
-                    hashMap.put(I.getSecondtype(),hashMap.get(I.getSecondtype())+Integer.valueOf(I.getAmount()));
+                    hashMap.put(I.getSecondtype(),hashMap.get(I.getSecondtype())+Integer.valueOf(I.getAmount())*Double.valueOf(currencyVO.getMoney()));
                 }
-                total= total+I.getAmount();
+                total= total+I.getAmount()*Double.valueOf(currencyVO.getMoney());
             }
             objects.addAll(invoiceVOS);
         }
@@ -378,7 +395,15 @@ public class SelectShowCircleDe extends Fragment {
         pieChart.invalidate();
 
         activity.setTitle(title);
-        detail.setText(mainTitle+" : 共"+Common.nf.format(total)+"元");
+
+        //設定顯示幣別
+        setCurrency.setText(Common.showCurrency().get(nowCurrency));
+        currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
+        otherMessage.setBootstrapBrand(null);
+        otherMessage.setTextColor(Color.BLACK);
+        otherMessage.setText(mainTitle+" : 共"+Common.CurrencyResult(total,currencyVO));
+
+
         if(listView.getAdapter()!=null)
         {
             ListAdapter adapter= (ListAdapter) listView.getAdapter();

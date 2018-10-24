@@ -144,7 +144,6 @@ public class SettingListFixCon extends Fragment {
             BootstrapButton update=itemView.findViewById(R.id.updateD);
             BootstrapButton deleteI=itemView.findViewById(R.id.deleteI);
             update.setText("修改");
-            StringBuffer stringBuffer = new StringBuffer();
             final ConsumeVO consumeVO=consumeVOS.get(position);
 
             if(consumeVO.isAuto())
@@ -168,13 +167,10 @@ public class SettingListFixCon extends Fragment {
                 fixL.setVisibility(View.VISIBLE);
             }
             //設定 title
-            stringBuffer.append(Common.sTwo.format(consumeVO.getDate()));
-            stringBuffer.append(" "+consumeVO.getMaintype());
-            stringBuffer.append(" 共"+consumeVO.getMoney()+"元");
-            title.setText(stringBuffer.toString());
+            title.setText(Common.setSecConsumerTittlesTwo(consumeVO));
 
             //設定 describe
-            stringBuffer=new StringBuffer();
+            StringBuilder stringBuffer=new StringBuilder();
             JsonObject js=gson.fromJson(consumeVO.getFixDateDetail(),JsonObject.class);
             stringBuffer.append(js.get("choicestatue").getAsString().trim());
             stringBuffer.append(" "+js.get("choicedate").getAsString().trim());

@@ -83,7 +83,6 @@ public class GoalListAll extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         firstShow = true;
-        context.setTitle(R.string.text_Goal);
         final View view = inflater.inflate(R.layout.goal_list, container, false);
         adView = view.findViewById(R.id.adView);
         Common.setAdView(adView, context);

@@ -8,5 +8,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/price_button"
     android:textColor="@color/price_color"
+    android:clickable="false"
+    android:focusable="false"
    >
 </Button>
