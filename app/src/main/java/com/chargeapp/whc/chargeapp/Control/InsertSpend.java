@@ -74,6 +74,7 @@ import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_HEART;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_SAVE;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_TWITTER;
+import static com.chargeapp.whc.chargeapp.Control.Common.doubleRemoveZero;
 
 
 public class InsertSpend extends Fragment {
@@ -107,7 +108,7 @@ public class InsertSpend extends Fragment {
     private String resultStatue, resultDay;
     private View view;
     private RelativeLayout notifyRel;
-    private BootstrapButton currency;
+    private BootstrapButton currency,calculate;
     private SharedPreferences sharedPreferences;
     private String nowCurrency;
     private PopupMenu popupMenu;
@@ -305,8 +306,8 @@ public class InsertSpend extends Fragment {
         @Override
         public void run() {
             showSb=new StringBuilder();
-            showSb.append("0");
             numberKeyBoard=view.findViewById(R.id.numberKeyBoard);
+            calculate=view.findViewById(R.id.calculate);
             numberKeyBoard.setOnItemClickListener(new setKeyboardInput());
             ArrayList items = new ArrayList<Map<String, Object>>();
             Map<String, Object> hashMap;
@@ -999,14 +1000,13 @@ public class InsertSpend extends Fragment {
 
 
     private StringBuilder showSb;
-    private StringBuilder needCal=new StringBuilder();
-    private double oldnumber;
-    private double resultCal=0;
-    private boolean add=false,enter=false,cut=false;
+    private double oldNumber;
+    private boolean doubleClick=false;
     private class setKeyboardInput implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             String word=Common.keyboardArray[i];
+            String symbol= calculate.getText().toString();
             switch (word)
             {
                 case "倒退":
@@ -1015,36 +1015,95 @@ public class InsertSpend extends Fragment {
                     break;
                 case "返回":
                     break;
+                case "x":
+                    calculate.setText("x");
+                    break;
+                case "÷":
+                    calculate.setText("÷");
+                    break;
                 case "+":
-                    if(showSb.toString().trim().isEmpty())
-                    {
-                        break;
-                    }
-                    resultCal=resultCal+Double.valueOf(showSb.toString());
-                    add=true;
-                    showSb.append(word);
-                    money.setText(showSb.toString());
-                    showSb=new StringBuilder();
+                    calculate.setText("+");
                     break;
                 case "-":
+                    calculate.setText("-");
                     break;
                 case "=":
-                    if(add)
+                    if(symbol==null||symbol.isEmpty())
                     {
-                        resultCal=resultCal+Double.valueOf(showSb.toString());
+                        break;
+                    }else{
+                        if(showSb.toString()==null||showSb.toString().isEmpty())
+                        {
+                            break;
+                        }
+                        showSb=new StringBuilder();
+                        showSb.append(resultCalculate(symbol));
+                        money.setText(showSb.toString());
+                        calculate.setText("");
                     }
-                    showSb=new StringBuilder();
-                    showSb.append(resultCal);
-                    resultCal=0;
-                    money.setText(showSb.toString());
                     break;
                 default:
-                    showSb.append(word);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    if(symbol==null||symbol.isEmpty())
+                    {
+                        showSb.append(word);
+                    }else{
+
+                        //存值和計算
+                        if(showSb.toString()==null||showSb.toString().isEmpty())
+                        {
+                            oldNumber=0;
+                        }else {
+                            oldNumber=Double.valueOf(resultCalculate(symbol));
+                        }
+                        //刷新
+                        showSb=new StringBuilder();
+                        showSb.append(word);
+                    }
                     money.setText(showSb.toString());
                     break;
             }
 
         }
+    }
+
+    private String resultCalculate(String symbol) {
+        double answer=0.0;
+        switch (symbol)
+        {
+            case "x":
+                answer=oldNumber*Double.valueOf(showSb.toString());
+                break;
+            case "÷":
+                answer=oldNumber/Double.valueOf(showSb.toString());
+                break;
+            case "+":
+                answer=oldNumber+Double.valueOf(showSb.toString());
+                break;
+            case "-":
+                answer=oldNumber-Double.valueOf(showSb.toString());
+                break;
+        }
+        return doubleRemoveZero(answer);
     }
 
 }

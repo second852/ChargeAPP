@@ -162,7 +162,19 @@
                     app:showOutline="false"
                     app:roundedCorners="true"
                     />
-
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/calculate"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapSize="md"
+                    app:buttonMode="regular"
+                    app:showOutline="true"
+                    app:roundedCorners="true"
+                    />
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/money"
                     android:layout_width="match_parent"

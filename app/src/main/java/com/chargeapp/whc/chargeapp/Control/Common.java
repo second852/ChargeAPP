@@ -90,7 +90,7 @@ public class Common {
     public static SimpleDateFormat sHour = new SimpleDateFormat("hh");
     public static SimpleDateFormat sYear = new SimpleDateFormat("yyy 年 MM 月");
 
-    public static String keyboardArray[]={"倒退","7","8","9","+","歸零","4","5","6","-","返回","1","2","3","x"," ",".","0","=","/"};
+    public static String keyboardArray[]={"倒退","7","8","9","+","歸零","4","5","6","-","返回","1","2","3","x"," ",".","0","=","÷"};
 
 
     public static NumberFormat nf = NumberFormat.getNumberInstance();
