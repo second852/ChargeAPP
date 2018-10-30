@@ -2,7 +2,6 @@ package com.chargeapp.whc.chargeapp.Control;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,27 +12,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
-import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
-import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
-import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
-import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,7 +43,6 @@ public class InsertIncomeType extends Fragment {
     private BankTypeVO bankTypeVO;
     private boolean onClick;
     private Activity context;
-    private AdView adView;
     private TextView button;
 
     @Override
@@ -117,9 +105,7 @@ public class InsertIncomeType extends Fragment {
         clear = view.findViewById(R.id.clear);
         choiceL = view.findViewById(R.id.choiceL);
         choiceG = view.findViewById(R.id.choiceG);
-        adView = view.findViewById(R.id.adView);
         button=view.findViewById(R.id.button);
-        Common.setAdView(adView,context);
     }
 
     private class showImage implements View.OnClickListener {

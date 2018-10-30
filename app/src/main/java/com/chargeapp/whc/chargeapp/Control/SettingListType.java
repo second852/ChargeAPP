@@ -27,8 +27,7 @@ import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +49,7 @@ public class SettingListType extends Fragment {
     private int spinnerC;
     private ArrayList<Object> objects;
     private Activity context;
-    private AdView adView;
+
 
     @Override
     public void onAttach(Context context) {
@@ -69,8 +68,6 @@ public class SettingListType extends Fragment {
         View view = inflater.inflate(R.layout.setting_list, container, false);
         listView = view.findViewById(R.id.list);
         typeH = view.findViewById(R.id.typeH);
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
         Common.setChargeDB(context);
         typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());

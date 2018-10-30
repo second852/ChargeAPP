@@ -90,7 +90,7 @@ public class Common {
     public static SimpleDateFormat sHour = new SimpleDateFormat("hh");
     public static SimpleDateFormat sYear = new SimpleDateFormat("yyy 年 MM 月");
 
-    public static String keyboardArray[]={"倒退","7","8","9","+","歸零","4","5","6","-","返回","1","2","3","x"," ",".","0","=","÷"};
+    public static String keyboardArray[]={"倒退","7","8","9","+","歸零","4","5","6","-","確定","1","2","3","x"," ",".","0","=","÷"};
 
 
     public static NumberFormat nf = NumberFormat.getNumberInstance();
@@ -345,6 +345,7 @@ public class Common {
         colExist("INVOICE","currency");
         colExist("INVOICE","realAmount");
         colExist("BANK","currency");
+        colExist("BANK","realMoney");
         tableExist("Currency",ChargeAPPDB.TABLE_Currency);
     }
 
@@ -654,6 +655,17 @@ public class Common {
         } else {
             return sb.toString();
         }
+    }
+
+    //純數字
+    public static Double onlyNumberToDouble(String s) {
+        StringBuilder sb = new StringBuilder();
+        Pattern ptn = Pattern.compile("[0-9]|[.]|[-]");
+        Matcher mch = ptn.matcher(s);
+        while (mch.find()) {
+            sb.append(mch.group());
+        }
+        return Double.valueOf(sb.toString());
     }
 
 

@@ -29,7 +29,6 @@ import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -61,7 +60,6 @@ public class InsertIncome extends Fragment {
     public static BankVO bankVO;
     public static boolean needSet;
     private Activity context;
-    private AdView adView;
     private String resultStatue,resultDay;
     private List<BootstrapText> BsTextDay,BsTextWeek,BsTextMonth,BsTextStatue;
     private int statueNumber;
@@ -121,7 +119,6 @@ public class InsertIncome extends Fragment {
                     date.setFocusableInTouchMode(false);
                     choiceStatue.setVisibility(View.GONE);
                     choiceday.setVisibility(View.GONE);
-                    Common.setAdView(adView,context);
                     date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
                     choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
                     standard.setVisibility(View.INVISIBLE);
@@ -359,7 +356,6 @@ public class InsertIncome extends Fragment {
         detailname=view.findViewById(R.id.detailname);
         fixDateT=view.findViewById(R.id.fixDateT);
         firstL = view.findViewById(R.id.firstL);
-        adView = view.findViewById(R.id.adView);
         standard=view.findViewById(R.id.standard);
     }
 

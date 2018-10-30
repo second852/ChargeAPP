@@ -19,6 +19,15 @@ public class BankVO implements Serializable{
     private boolean auto; //7 是否自動產生
     private int autoId;   //8 自動產生的母ID (-1:無)
     private String currency; //9 貨幣種類
+    private String realMoney;// 10 double
+
+    public String getRealMoney() {
+        return realMoney;
+    }
+
+    public void setRealMoney(String realMoney) {
+        this.realMoney = realMoney;
+    }
 
     public String getCurrency() {
         return currency;

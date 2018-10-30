@@ -40,6 +40,7 @@ import org.apache.poi.hssf.model.InternalSheet;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -50,6 +51,7 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -736,6 +738,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             invoiceVO.setSecondtype("0");
             invoiceVO.setIswin("0");
             invoiceVO.setDonateTime(invoiceVO.getTime());
+            invoiceVO.setCurrency(j.get("currency").getAsString());
             return invoiceVO;
         } catch (Exception e) {
             e.printStackTrace();
@@ -756,19 +759,18 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         StringBuilder jsonIn = new StringBuilder();
         HttpURLConnection conn = null;
         try {
-            conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setReadTimeout(2000);
-            conn.setConnectTimeout(2000);
-            conn.setRequestMethod("POST");
-            conn.setDoInput(true);
+            byte[] postData = getPostDataString(data).getBytes(StandardCharsets.UTF_8 );
+            conn= (HttpURLConnection) new URL( url ).openConnection();
             conn.setDoOutput(true);
-            OutputStream os = conn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
-            writer.write(getPostDataString(data));
-            writer.flush();
-            writer.close();
-            os.close();
+            conn.setInstanceFollowRedirects(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setUseCaches(false);
+            DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+            wr.write(postData);
+            wr.flush();
+            wr.close();
+            conn.getOutputStream().close();
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -776,7 +778,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 while ((line = br.readLine()) != null) {
                     jsonIn.append(line);
                 }
-                Log.d(TAG, "jsonin " + jsonIn);
+                Log.d("jsonIn",jsonIn.toString());
             }else{
                 jsonIn = new StringBuilder();
                 jsonIn.append("timeout");
@@ -959,7 +961,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private String getInvoiceDetail(InvoiceVO invoiceVO) {
         String urldetail = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
         HashMap<String, String> hashMap = new HashMap();
-        hashMap.put("version", "0.4");
+        hashMap.put("version", "0.5");
         hashMap.put("cardType", "3J0002");
         hashMap.put("cardNo", invoiceVO.getCarrier());
         hashMap.put("expTimeStamp", "2147483647");
@@ -998,7 +1000,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private String updateInvoiceDetail(InvoiceVO invoiceVO) {
         String urldetail = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
         HashMap<String, String> hashMap = new HashMap();
-        hashMap.put("version", "0.4");
+        hashMap.put("version", "0.5");
         hashMap.put("cardType", "3J0002");
         hashMap.put("cardNo", invoiceVO.getCarrier());
         hashMap.put("expTimeStamp", "2147483647");
@@ -1063,7 +1065,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
     private HashMap<String, String> getInvoice(String user, String password, String startDate, String endDate, String iswin) {
         HashMap<String, String> hashMap = new HashMap();
-        hashMap.put("version", "0.4");
+        hashMap.put("version", "0.5");
         hashMap.put("cardType", "3J0002");
         hashMap.put("cardNo", user);
         hashMap.put("expTimeStamp", "2147483647");

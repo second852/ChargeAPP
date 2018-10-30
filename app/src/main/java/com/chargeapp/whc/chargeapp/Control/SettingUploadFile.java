@@ -58,7 +58,6 @@ import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -121,7 +120,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private Type cdType;
     private Gson gson;
     private StringBuffer sb;
-    private AdView adView;
     private boolean firstEnter;
 
     Handler handler=new Handler(Looper.getMainLooper()){
@@ -190,9 +188,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         cancelF = view.findViewById(R.id.cancelF);
         choiceT = view.findViewById(R.id.choiceT);
         progressL=view.findViewById(R.id.progressL);
-        //廣告
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
 
         excel.setOnClickListener(new excelOnClick());
         txtFile.setOnClickListener(new txtOnClick());

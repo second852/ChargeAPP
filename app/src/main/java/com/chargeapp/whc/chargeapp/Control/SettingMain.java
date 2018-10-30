@@ -38,17 +38,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
+
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
-import com.chargeapp.whc.chargeapp.Model.BankVO;
-import com.chargeapp.whc.chargeapp.Model.CarrierVO;
+
 import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
-import java.sql.Timestamp;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,7 +53,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static android.content.Context.WINDOW_SERVICE;
+
 
 
 /**
@@ -70,7 +66,7 @@ public class SettingMain extends Fragment {
     private ListView listView;
     private SharedPreferences sharedPreferences;
     private Activity context;
-    private AdView adView;
+
 
     @Override
     public void onAttach(Context context) {
@@ -90,8 +86,6 @@ public class SettingMain extends Fragment {
         final View view = inflater.inflate(R.layout.setting_main, container, false);
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         listView = view.findViewById(R.id.list);
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
         List<EleMainItemVO> itemSon = getNewItem();
         listView.setAdapter(new ListAdapter(context, itemSon));
         return view;

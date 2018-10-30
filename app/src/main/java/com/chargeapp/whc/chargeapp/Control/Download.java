@@ -29,26 +29,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-import com.beardedhen.androidbootstrap.TypefaceProvider;
+
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
-import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
-import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdView;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
+
 import java.util.List;
-import java.util.Set;
+
 
 /**
  * Created by 1709008NB01 on 2018/1/29.
@@ -71,10 +64,8 @@ public class Download extends Fragment {
 
     private String food = "堡 三明治 優酪乳 肉 飯 雙手卷 腿 麵 麵包 熱狗 雞 手卷 肉 粉 蔬菜 牛 豬 起司 花生 豆 蛋 魚 菜 瓜 黑胡椒 土司 泡芙 排";
     private String drink = "咖啡 茶 豆漿 拿鐵 乳 飲 ml 罐 酒 杯 水 奶 冰 珍珠";
-    private Handler firstH;
     private GetSQLDate getSQLDate;
     private TextView percentage, progressT;
-    private AdView adView;
     public Activity activity;
 
     @Override
@@ -93,8 +84,6 @@ public class Download extends Fragment {
         final View view = inflater.inflate(R.layout.download_main, container, false);
         progressT = view.findViewById(R.id.progressT);
         percentage = view.findViewById(R.id.percentage);
-        adView =view.findViewById(R.id.adView);
-        Common.setAdView(adView,activity);
         originDownload();
         return view;
     }
@@ -104,8 +93,6 @@ public class Download extends Fragment {
     {
         Common.setChargeDB(activity);
         setData();
-
-
         ConnectivityManager mConnectivityManager = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
         if (mNetworkInfo != null) {

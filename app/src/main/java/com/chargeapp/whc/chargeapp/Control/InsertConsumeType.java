@@ -32,7 +32,7 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdView;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +58,6 @@ public class InsertConsumeType extends Fragment {
     private boolean mainClick, secondClick;
     private TextView mainT, button,gridT;
     private Activity context;
-    private AdView adView;
     private List<TypeVO> typeVOS;
     private boolean insertNewType;
     private boolean isTypeVO;
@@ -203,10 +202,8 @@ public class InsertConsumeType extends Fragment {
         choiceL = view.findViewById(R.id.choiceL);
         choiceG = view.findViewById(R.id.choiceG);
         mainT = view.findViewById(R.id.mainT);
-        adView = view.findViewById(R.id.adView);
         button = view.findViewById(R.id.button);
         gridT=view.findViewById(R.id.gridT);
-        Common.setAdView(adView, context);
     }
 
     private class showImage implements View.OnClickListener {

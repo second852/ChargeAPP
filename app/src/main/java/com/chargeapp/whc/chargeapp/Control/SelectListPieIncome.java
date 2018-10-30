@@ -1,19 +1,19 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
+
 import android.content.Context;
-import android.graphics.Color;
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
+
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,28 +21,19 @@ import android.widget.TextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
-import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+
 import com.chargeapp.whc.chargeapp.Model.BankVO;
-import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
-import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
+
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -64,7 +55,7 @@ public class SelectListPieIncome extends Fragment {
     private String title;
     private Gson gson;
     private Activity context;
-    private AdView adView;
+
 
     @Override
     public void onAttach(Context context) {
@@ -137,8 +128,6 @@ public class SelectListPieIncome extends Fragment {
     private void findViewById(View view) {
         listView = view.findViewById(R.id.listCircle);
         message = view.findViewById(R.id.message);
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
     }
 
 

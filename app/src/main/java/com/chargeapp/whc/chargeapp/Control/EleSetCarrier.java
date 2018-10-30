@@ -17,7 +17,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +24,6 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Adapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,15 +32,12 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
-import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
-import org.apache.poi.ss.formula.functions.T;
+
+
 
 import java.util.List;
 
@@ -65,10 +59,9 @@ public class EleSetCarrier extends Fragment {
     private  SharedPreferences sharedPreferences;
     private  int position;
     private CarrierVO carrierVO;
-    private Handler handler,adHadler;
+    private Handler handler;
     private View view;
     private Activity context;
-    private AdView adView;
     private DrawerLayout drawerLayout;
 
     @Override
@@ -89,8 +82,6 @@ public class EleSetCarrier extends Fragment {
         context.setTitle(R.string.text_SetCarrier);
         TypefaceProvider.registerDefaultIconSets();
         view = inflater.inflate(R.layout.ele_setcarrier, container, false);
-        adHadler=new Handler();
-        adHadler.post(AdRunnable);
         carrierVO=new CarrierVO();
         cellphone = view.findViewById(R.id.cellphone);
         certcode = view.findViewById(R.id.certcode);
@@ -136,13 +127,7 @@ public class EleSetCarrier extends Fragment {
         }
     };
 
-    private Runnable AdRunnable=new Runnable() {
-        @Override
-        public void run() {
-            adView =view.findViewById(R.id.adView);
-            Common.setAdView(adView,context);
-        }
-    };
+
 
 
     @Override
@@ -156,7 +141,6 @@ public class EleSetCarrier extends Fragment {
         {
             handler.removeCallbacks(runnable);
         }
-        adHadler.removeCallbacks(AdRunnable);
     }
 
     public void setListAdapt()

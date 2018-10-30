@@ -92,7 +92,7 @@ public class CurrencyDB {
         }
 
         //查詢
-        String sql = "SELECT * FROM Currency where time between '"+start+"' and '"+end+"' and type = '"+objectType+"';";
+        String sql = "SELECT * FROM Currency where time between '"+start+"' and '"+end+"' and type = '"+objectType+"' order by time desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         CurrencyVO currencyVO;

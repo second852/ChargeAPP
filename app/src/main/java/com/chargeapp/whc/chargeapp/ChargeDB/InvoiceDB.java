@@ -4,9 +4,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 
 import java.sql.Date;
@@ -28,6 +30,42 @@ public class InvoiceDB {
 
     public List<InvoiceVO> getAll() {
         String sql = "SELECT * FROM INVOICE order by time desc;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<InvoiceVO> invoiceVOSList = new ArrayList<>();
+        InvoiceVO invoiceVO;
+        while (cursor.moveToNext()) {
+            invoiceVO=new InvoiceVO();
+            invoiceVO.setId(cursor.getInt(0));
+            invoiceVO.setInvNum(cursor.getString(1));
+            invoiceVO.setCardType(cursor.getString(2));
+            invoiceVO.setCardNo(cursor.getString(3));
+            invoiceVO.setCardEncrypt(cursor.getString(4));
+            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
+            invoiceVO.setAmount(cursor.getInt(6));
+            invoiceVO.setDetail(cursor.getString(7));
+            invoiceVO.setSellerName(cursor.getString(8));
+            invoiceVO.setInvDonatable(cursor.getString(9));
+            invoiceVO.setDonateMark(cursor.getString(10));
+            invoiceVO.setCarrier(cursor.getString(11));
+            invoiceVO.setMaintype(cursor.getString(12));
+            invoiceVO.setSecondtype(cursor.getString(13));
+            invoiceVO.setHeartyteam(cursor.getString(14));
+            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
+            invoiceVO.setIswin(cursor.getString(16));
+            invoiceVO.setSellerBan(cursor.getString(17));
+            invoiceVO.setSellerAddress(cursor.getString(18));
+            invoiceVO.setIsWinNul(cursor.getString(19));
+            invoiceVO.setCurrency(cursor.getString(20));
+            invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVOSList.add(invoiceVO);
+        }
+        cursor.close();
+        return invoiceVOSList;
+    }
+
+    public List<InvoiceVO> getRealAmountIsNull() {
+        String sql = "SELECT * FROM INVOICE where realAmount isnull;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
@@ -401,17 +439,6 @@ public class InvoiceDB {
         return minTime;
     }
 
-    public Integer getTotalBytime(Timestamp start,Timestamp end) {
-        String sql = "SELECT amount FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' order by time desc;";
-        String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
-        int total=0;
-        while (cursor.moveToNext()) {
-           total=total+Integer.valueOf(cursor.getString(0));
-        }
-        cursor.close();
-        return total;
-    }
 
     public List<InvoiceVO> getInvoiceBytime(Timestamp start,Timestamp end) {
         String sql = "SELECT * FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' order by time desc;";
@@ -456,9 +483,12 @@ public class InvoiceDB {
         HashMap<String,Double> hashMap=new HashMap<>();
         String main;
         Double money,total=0.0;
+        CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        CurrencyVO currencyVO;
         while (cursor.moveToNext()) {
             main=cursor.getString(0);
-            money=Double.valueOf(cursor.getString(1))*Double.valueOf(cursor.getString(2));
+            currencyVO=currencyDB.getBytimeAndType(start.getTime(),end.getTime(),cursor.getString(2));
+            money=Double.valueOf(cursor.getString(1))*Double.valueOf(currencyVO.getMoney());
             if(hashMap.get(main)==null)
             {
                 hashMap.put(main,money);
@@ -725,20 +755,30 @@ public class InvoiceDB {
     }
 
 
-    public List<ChartEntry> getInvoiceByTimeMaxType(Timestamp start, Timestamp end) {
-        String sql = "SELECT SUM(amount), maintype FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' group by maintype;";
+    public HashMap<String,Double> getInvoiceByTimeMaxType(Timestamp start, Timestamp end) {
+        String sql = "SELECT maintype,realAmount,currency FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
-        List<ChartEntry> chartEntries=new ArrayList<>();
-        ChartEntry chartEntry;
+        HashMap<String,Double> hashMap=new HashMap<>();
+        CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        CurrencyVO currencyVO;
+        String mainType;
+        Double realAmount,total=0.0;
         while (cursor.moveToNext()) {
-            chartEntry=new ChartEntry();
-            chartEntry.setValue(cursor.getDouble(0));
-            chartEntry.setKey(cursor.getString(1));
-            chartEntries.add(chartEntry);
+          currencyVO=currencyDB.getBytimeAndType(start.getTime(),end.getTime(),cursor.getString(2));
+          mainType=cursor.getString(0);
+          realAmount=Double.valueOf(cursor.getString(1))*Double.valueOf(currencyVO.getMoney());
+          if(hashMap.get(mainType)==null)
+          {
+              hashMap.put(mainType,realAmount);
+          }else {
+              hashMap.put(mainType, hashMap.get(mainType)+realAmount);
+          }
+          total=total+realAmount;
         }
+        hashMap.put("total",total);
         cursor.close();
-        return chartEntries;
+        return hashMap;
     }
 
     public List<InvoiceVO> getInvoiceBytimeMainType(Timestamp start,Timestamp end,String mainType,String user) {

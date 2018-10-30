@@ -22,8 +22,7 @@ import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -51,7 +50,7 @@ public class SelectListBarIncome extends Fragment {
     private String title;
     private Gson gson;
     private Activity context;
-    private AdView adView;
+
 
     @Override
     public void onAttach(Context context) {
@@ -122,8 +121,6 @@ public class SelectListBarIncome extends Fragment {
     private void findViewById(View view) {
         listView=view.findViewById(R.id.listCircle);
         message=view.findViewById(R.id.message);
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
     }
 
 

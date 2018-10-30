@@ -6,8 +6,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
+import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 
 import java.sql.Date;
@@ -25,6 +27,39 @@ public class ConsumeDB {
     public ConsumeDB(SQLiteDatabase db) {
         this.db = db;
     }
+
+
+    public List<ConsumeVO> getRealMoneyIsNull() {
+        String sql = "SELECT * FROM Consumer where realMoney isnull;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<ConsumeVO> consumeList = new ArrayList<>();
+        ConsumeVO consumeVO;
+        while (cursor.moveToNext()) {
+            consumeVO = new ConsumeVO();
+            consumeVO.setId(cursor.getInt(0));
+            consumeVO.setMaintype(cursor.getString(1));
+            consumeVO.setSecondType(cursor.getString(2));
+            consumeVO.setMoney(cursor.getInt(3));
+            consumeVO.setDate(new Date(cursor.getLong(4)));
+            consumeVO.setNumber(cursor.getString(5));
+            consumeVO.setFixDate(cursor.getString(6));
+            consumeVO.setFixDateDetail(cursor.getString(7));
+            consumeVO.setNotify(cursor.getString(8));
+            consumeVO.setDetailname(cursor.getString(9));
+            consumeVO.setIsWin(cursor.getString(10));
+            consumeVO.setAuto(Boolean.valueOf(cursor.getString(11)));
+            consumeVO.setAutoId(cursor.getInt(12));
+            consumeVO.setIsWinNul(cursor.getString(13));
+            consumeVO.setRdNumber(cursor.getString(14));
+            consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
+            consumeList.add(consumeVO);
+        }
+        cursor.close();
+        return consumeList;
+    }
+
 
     public List<ConsumeVO> getAll() {
         String sql = "SELECT * FROM Consumer order by id desc;";
@@ -50,6 +85,7 @@ public class ConsumeDB {
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -80,6 +116,7 @@ public class ConsumeDB {
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -110,6 +147,7 @@ public class ConsumeDB {
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -140,6 +178,7 @@ public class ConsumeDB {
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -170,6 +209,7 @@ public class ConsumeDB {
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -200,6 +240,7 @@ public class ConsumeDB {
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -231,39 +272,39 @@ public class ConsumeDB {
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
             consumeList.add(consumeVO);
         }
         cursor.close();
         return consumeList;
     }
 
-    public Integer getTimeTotal(Timestamp startTime, Timestamp endTime) {
-        String sql = "SELECT money FROM Consumer where  date between '" + startTime.getTime() + "' and '" + endTime.getTime() + "' order by date ;";
-        String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
-        int total = 0;
-        while (cursor.moveToNext()) {
-            total = total + Integer.valueOf(cursor.getString(0));
-        }
-        cursor.close();
-        return total;
-    }
 
 
-    public List<ChartEntry> getTimeMaxType(Timestamp startTime, Timestamp endTime) {
-        String sql = "SELECT SUM(money),maintype FROM Consumer where date between '" + startTime.getTime() + "' and '" + endTime.getTime() + "' group by maintype ;";
+    public HashMap<String,Double> getTimeMaxType(Timestamp startTime, Timestamp endTime) {
+        String sql = "SELECT maintype,realMoney,currency FROM Consumer where date between '" + startTime.getTime() + "' and '" + endTime.getTime() + "';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
-        List<ChartEntry> chartEntries = new ArrayList<>();
-        ChartEntry chartEntry;
+        HashMap<String,Double> hashMap=new HashMap<>();
+        CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        CurrencyVO currencyVO;
+        String mainType;
+        Double realAmount,total=0.0;
         while (cursor.moveToNext()) {
-            chartEntry = new ChartEntry();
-            chartEntry.setValue(cursor.getDouble(0));
-            chartEntry.setKey(cursor.getString(1));
-            chartEntries.add(chartEntry);
+            currencyVO=currencyDB.getBytimeAndType(startTime.getTime(),endTime.getTime(),cursor.getString(2));
+            mainType=cursor.getString(0);
+            realAmount=Double.valueOf(cursor.getString(1))*Double.valueOf(currencyVO.getMoney());
+            if(hashMap.get(mainType)==null)
+            {
+                hashMap.put(mainType,realAmount);
+            }else {
+                hashMap.put(mainType, hashMap.get(mainType)+realAmount);
+            }
+            total=total+realAmount;
         }
+        hashMap.put("total",total);
         cursor.close();
-        return chartEntries;
+        return hashMap;
     }
 
     public long getMinTime() {
@@ -302,28 +343,34 @@ public class ConsumeDB {
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
             consumeList.add(consumeVO);
         }
         cursor.close();
         return consumeList;
     }
 
-    public HashMap<String, Integer> getTimePeriodHashMap(Timestamp startTime, Timestamp endTime) {
-        String sql = "SELECT maintype,money FROM Consumer where  date between '" + startTime.getTime() + "' and '" + endTime.getTime() + "' order by money desc ;";
+    public HashMap<String, Double> getTimePeriodHashMap(Timestamp startTime, Timestamp endTime) {
+        String sql = "SELECT maintype,realMoney,currency FROM Consumer where  date between '" + startTime.getTime() + "' and '" + endTime.getTime() + "' order by money desc ;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
-        HashMap<String, Integer> hashMap = new HashMap<>();
-        String main;
-        int money, total = 0;
+        HashMap<String, Double> hashMap = new HashMap<>();
+        String main,money,currency;
+        CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        CurrencyVO currencyVO;
+        Double total = 0.0,twd=0.0;
         while (cursor.moveToNext()) {
             main = cursor.getString(0);
-            money = cursor.getInt(1);
+            money = cursor.getString(1);
+            currency= cursor.getString(2);
+            currencyVO=currencyDB.getBytimeAndType(startTime.getTime(),endTime.getTime(),currency);
+            twd= Double.valueOf(money)*Double.valueOf(currencyVO.getMoney());
             if (hashMap.get(main) == null) {
-                hashMap.put(main, money);
+                hashMap.put(main, twd);
             } else {
-                hashMap.put(main, hashMap.get(main) + money);
+                hashMap.put(main,twd);
             }
-            total = money + total;
+            total = twd + total;
         }
         hashMap.put("total", total);
         cursor.close();
@@ -354,6 +401,7 @@ public class ConsumeDB {
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
         }
         cursor.close();
         return consumeVO;
@@ -384,6 +432,7 @@ public class ConsumeDB {
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -414,6 +463,7 @@ public class ConsumeDB {
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -445,6 +495,7 @@ public class ConsumeDB {
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
             consumeList.add(consumeVO);
         }
         cursor.close();
@@ -474,6 +525,7 @@ public class ConsumeDB {
             consumeVO.setIsWinNul(cursor.getString(13));
             consumeVO.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
         }
         cursor.close();
         return consumeVO;
@@ -505,6 +557,7 @@ public class ConsumeDB {
             c.setIsWinNul(cursor.getString(13));
             c.setRdNumber(cursor.getString(14));
             consumeVO.setCurrency(cursor.getString(15));
+            consumeVO.setRealMoney(cursor.getString(16));
         }
         cursor.close();
         return c;
@@ -514,7 +567,7 @@ public class ConsumeDB {
         ContentValues values = new ContentValues();
         values.put("maintype", consumeVO.getMaintype());
         values.put("secondtype", consumeVO.getSecondType());
-        values.put("money", consumeVO.getMoney());
+        values.put("realMoney", consumeVO.getRealMoney());
         values.put("date", consumeVO.getDate().getTime());
         values.put("number", consumeVO.getNumber());
         values.put("fixdate", consumeVO.getFixDate());
@@ -535,7 +588,7 @@ public class ConsumeDB {
         values.put("id", consumeVO.getId());
         values.put("maintype", consumeVO.getMaintype());
         values.put("secondtype", consumeVO.getSecondType());
-        values.put("money", consumeVO.getMoney());
+        values.put("realMoney", consumeVO.getRealMoney());
         values.put("date", consumeVO.getDate().getTime());
         values.put("number", consumeVO.getNumber());
         values.put("fixdate", consumeVO.getFixDate());
@@ -556,7 +609,7 @@ public class ConsumeDB {
         ContentValues values = new ContentValues();
         values.put("maintype", consumeVO.getMaintype());
         values.put("secondtype", consumeVO.getSecondType());
-        values.put("money", consumeVO.getMoney());
+        values.put("realMoney", consumeVO.getRealMoney());
         values.put("date", consumeVO.getDate().getTime());
         values.put("number", consumeVO.getNumber());
         values.put("fixdate", consumeVO.getFixDate());

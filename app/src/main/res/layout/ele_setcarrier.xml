@@ -102,7 +102,6 @@
         android:id="@+id/listcarrier"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/adView"
         android:layout_marginBottom="5dp"
         android:layout_below="@+id/listtiitle" />
 
@@ -110,7 +109,6 @@
         android:id="@+id/progressbarL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/adView"
         android:background="#f5f5f5"
         android:visibility="gone">
 
@@ -146,13 +144,4 @@
             android:textColor="#000000"
             android:textSize="20dp" />
     </RelativeLayout>
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        ads:adSize="SMART_BANNER"
-        ads:adUnitId="ca-app-pub-5169620543343332/5257007139"/>
 </RelativeLayout>

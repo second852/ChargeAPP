@@ -48,6 +48,7 @@ import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
+import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
     public View nowView;
     public boolean firstShowF;
     public static boolean firstShowInsertActivity;
+    private AdView adview;
 
 
     @Override
@@ -86,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         firstShowF = true;
         firstShowInsertActivity = true;
+        adview=findViewById(R.id.adView);
+        Common.setAdView(adview,this);
     }
 
 

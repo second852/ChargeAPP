@@ -3,7 +3,6 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,8 +27,6 @@ import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -76,7 +72,7 @@ public class SelectShowCircleDeList extends Fragment {
     private List<CarrierVO> carrierVOS;
     private List<String> Okey;
     private Activity context;
-    private AdView adView;
+
 
     @Override
     public void onAttach(Context context) {
@@ -236,8 +232,6 @@ public class SelectShowCircleDeList extends Fragment {
     private void findViewById(View view) {
         listView=view.findViewById(R.id.listCircle);
         message=view.findViewById(R.id.message);
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
     }
 
     private void setDB() {

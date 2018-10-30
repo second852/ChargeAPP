@@ -4,58 +4,39 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.beardedhen.androidbootstrap.BootstrapDropDown;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.beardedhen.androidbootstrap.BootstrapLabel;
-import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
-import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
-import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
-import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
-import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
-import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 
 public class SearchByQrCode extends Fragment {
@@ -67,7 +48,6 @@ public class SearchByQrCode extends Fragment {
     private Gson gson;
     private Activity context;
     private LinearLayout showdate;
-    private AdView adView;
     private ConsumeVO consumeVO;
     private TextView datesave;
     private String choicedate;
@@ -230,14 +210,12 @@ public class SearchByQrCode extends Fragment {
         back = view.findViewById(R.id.back);
         showdate = view.findViewById(R.id.showdate);
         datePicker = view.findViewById(R.id.datePicker);
-        adView = view.findViewById(R.id.adView);
         datesave = view.findViewById(R.id.datesave);
         progressL = view.findViewById(R.id.progressL);
         flashL = view.findViewById(R.id.flashL);
         flashR = view.findViewById(R.id.flashR);
         qrcodeP = view.findViewById(R.id.qrcodeP);
         rdNumberP = view.findViewById(R.id.rdNumberP);
-        Common.setAdView(adView, context);
     }
 
 

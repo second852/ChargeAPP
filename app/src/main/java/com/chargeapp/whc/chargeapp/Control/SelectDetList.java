@@ -29,8 +29,7 @@ import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -75,7 +74,7 @@ public class SelectDetList extends Fragment {
     private CarrierDB carrierDB;
     private List<CarrierVO> carrierVOS;
     private Activity context;
-    private AdView adView;
+
 
     @Override
     public void onAttach(Context context) {
@@ -184,8 +183,6 @@ public class SelectDetList extends Fragment {
     private void findViewById(View view) {
         listView=view.findViewById(R.id.listCircle);
         message=view.findViewById(R.id.message);
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
     }
 
     private void setDB() {

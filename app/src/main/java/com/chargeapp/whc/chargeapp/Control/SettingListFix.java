@@ -22,19 +22,12 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
+
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
-import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
+
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
-import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
-import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -59,7 +52,7 @@ public class SettingListFix extends Fragment {
     public static int p;
     public static int spinnerC;
     private Activity context;
-    private AdView adView;
+
 
     @Override
     public void onAttach(Context context) {
@@ -83,8 +76,6 @@ public class SettingListFix extends Fragment {
         listView = view.findViewById(R.id.list);
         typeH = view.findViewById(R.id.typeH);
         message=view.findViewById(R.id.message);
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
         typeH.setOnItemSelectedListener(new choiceType());
         setSpinner();
         setLayout();

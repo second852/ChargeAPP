@@ -7,23 +7,18 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
+
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdView;
+
 
 public class SelectListModelActivity extends Fragment implements ViewPager.OnPageChangeListener {
     private ViewPager SelAllviewPager;
@@ -34,7 +29,7 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
     private float movefirst;
     public TextView mainTitle;
     public static int page;
-    private AdView adView;
+
     private Activity context;
 
 
@@ -56,8 +51,7 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
         goneMoney = view.findViewById(R.id.goneD);
         exportMoney = view.findViewById(R.id.exportD);
         importMoney = view.findViewById(R.id.showD);
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
+
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         SelAllviewPager.setAdapter(mAdapterViewPager);
         SelAllviewPager.addOnPageChangeListener(this);

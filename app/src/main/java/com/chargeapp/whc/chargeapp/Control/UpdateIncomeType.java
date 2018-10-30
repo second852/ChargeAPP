@@ -38,8 +38,7 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,7 +68,6 @@ public class UpdateIncomeType extends Fragment {
     private Handler handler;
     private String oldname;
     private Activity context;
-    private AdView adView;
     private TextView button;
 
     @Override
@@ -158,9 +156,6 @@ public class UpdateIncomeType extends Fragment {
         choiceL = view.findViewById(R.id.choiceL);
         choiceG = view.findViewById(R.id.choiceG);
         button=view.findViewById(R.id.button);
-        //廣告
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
     }
 
     private class showImage implements View.OnClickListener {

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,14 +25,12 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.sql.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
+
 
 /**
  * Created by Wang on 2018/2/25.
@@ -51,7 +48,6 @@ public class GoalInsert extends Fragment {
     private String action;
     private ArrayList<String> listDayStatue;
     private Activity context;
-    private AdView adView;
     private BootstrapButton save,clear;
 
     @Override
@@ -133,8 +129,6 @@ public class GoalInsert extends Fragment {
         noWeekendT=view.findViewById(R.id.noWeekendT);
         remindT=view.findViewById(R.id.remindT);
         remindL=view.findViewById(R.id.remindL);
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
     }
 
     private class showDate implements View.OnClickListener {

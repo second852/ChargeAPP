@@ -34,17 +34,15 @@ import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+
 
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_STAR;
+
 
 
 /**
@@ -65,7 +63,6 @@ public class GoalListAll extends Fragment {
     private TextView message;
     private int p;
     private Activity context;
-    private AdView adView;
     private boolean firstShow;
 
 
@@ -84,8 +81,6 @@ public class GoalListAll extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         firstShow = true;
         final View view = inflater.inflate(R.layout.goal_list, container, false);
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView, context);
         Common.setChargeDB(context);
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());

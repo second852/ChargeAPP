@@ -43,11 +43,9 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.utils.MPPointF;
-import com.google.android.gms.ads.AdView;
+
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -55,7 +53,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
+
 
 
 /**
@@ -86,7 +84,6 @@ public class SelectOtherCircle extends Fragment {
     private List<CarrierVO> carrierVOS;
     private String title;
     private Activity context;
-    private AdView adView;
     private AwesomeTextView otherMessage;
     private BootstrapButton setCurrency;
     private SharedPreferences sharedPreferences;
@@ -127,10 +124,6 @@ public class SelectOtherCircle extends Fragment {
             }
         });
 
-
-        //廣告
-        adView=view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
 
         ShowConsume = (boolean) getArguments().getSerializable("ShowConsume");
         ShowAllCarrier = (boolean) getArguments().getSerializable("ShowAllCarrier");

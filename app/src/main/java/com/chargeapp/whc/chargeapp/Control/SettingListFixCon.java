@@ -22,17 +22,16 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
-import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
+
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
-import com.chargeapp.whc.chargeapp.Model.BankVO;
+
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 
@@ -51,7 +50,7 @@ public class SettingListFixCon extends Fragment {
     public List<ConsumeVO> consumeVOS;
     public ConsumeVO consumeVO;
     private Activity context;
-    private AdView adView;
+
 
     @Override
     public void onAttach(Context context) {
@@ -74,8 +73,6 @@ public class SettingListFixCon extends Fragment {
         p= (int) getArguments().getSerializable("position");
         listView=view.findViewById(R.id.list);
         message=view.findViewById(R.id.message);
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
         return view;
     }
 

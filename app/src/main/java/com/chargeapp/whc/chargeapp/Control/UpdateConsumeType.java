@@ -37,8 +37,7 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +63,6 @@ public class UpdateConsumeType extends Fragment {
     private Handler handler;
     private String oldName;
     private Activity context;
-    private AdView adView;
     private TextView button,gridT;
     private List<TypeVO> typeVOS;
     private boolean insertNewType,isTypeVO;
@@ -192,10 +190,8 @@ public class UpdateConsumeType extends Fragment {
         clear = view.findViewById(R.id.clear);
         choiceL = view.findViewById(R.id.choiceL);
         choiceG = view.findViewById(R.id.choiceG);
-        adView = view.findViewById(R.id.adView);
         button=view.findViewById(R.id.button);
         gridT=view.findViewById(R.id.gridT);
-        Common.setAdView(adView,context);
     }
 
     private class showImage implements View.OnClickListener {

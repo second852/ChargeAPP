@@ -35,11 +35,9 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -70,7 +68,7 @@ public class SelectDetCircle extends Fragment {
     private CarrierDB carrierDB;
     private Calendar start,end;
     private Activity context;
-    private AdView adView;
+
 
 
     @Override
@@ -89,8 +87,6 @@ public class SelectDetCircle extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.select_con_detail, container, false);
         ((AppCompatActivity)context).getSupportActionBar().setDisplayShowCustomEnabled(false);
-        adView =view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
         setDB();
         findViewById(view);
         hashMap = new HashMap<>();

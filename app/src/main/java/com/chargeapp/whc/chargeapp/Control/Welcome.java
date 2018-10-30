@@ -32,12 +32,16 @@ import android.view.WindowManager;
 import com.beardedhen.androidbootstrap.BootstrapThumbnail;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
+import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
+import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
+import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 
@@ -64,6 +68,7 @@ public class Welcome extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
+        Common.setChargeDB(this);
 //        new GetSQLDate(this).execute("download");
         new Thread(runnable).start();
         new Thread(modifyMoneyFromIntegerToString).start();
@@ -74,7 +79,20 @@ public class Welcome extends AppCompatActivity {
     private Runnable modifyMoneyFromIntegerToString=new Runnable() {
         @Override
         public void run() {
-
+            ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            List<ConsumeVO> consumeVOS=consumeDB.getRealMoneyIsNull();
+            for(ConsumeVO consumeVO:consumeVOS)
+            {
+                consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
+                consumeDB.update(consumeVO);
+            }
+            InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            List<InvoiceVO> invoiceVOS=invoiceDB.getRealAmountIsNull();
+            for(InvoiceVO invoiceVO:invoiceVOS)
+            {
+                invoiceVO.setRealAmount(String.valueOf(invoiceVO.getAmount()));
+                invoiceDB.update(invoiceVO);
+            }
         }
     };
 

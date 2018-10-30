@@ -2,11 +2,7 @@ package com.chargeapp.whc.chargeapp.Control;
 
 
 import android.app.Activity;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -21,9 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Adapter;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -34,12 +27,8 @@ import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
-import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdView;
 
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -54,10 +43,8 @@ public class EleUpdateCarrier extends Fragment {
     public CarrierDB carrierDB;
     public TextView listtiitle;
     private CarrierVO oldCarrierVO;
-    private Handler adHadler;
     private View view;
     private Activity context;
-    private AdView adView;
     private DrawerLayout drawerLayout;
     private RelativeLayout progressbarL;
     private TextView percentage,progressT;
@@ -80,8 +67,6 @@ public class EleUpdateCarrier extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.ele_setcarrier, container, false);
         context.setTitle("修改載具");
-        adHadler=new Handler();
-        adHadler.post(AdRunnable);
         cellphone = view.findViewById(R.id.cellphone);
         certcode = view.findViewById(R.id.certcode);
         listcarrier = view.findViewById(R.id.listcarrier);
@@ -122,13 +107,7 @@ public class EleUpdateCarrier extends Fragment {
 
 
 
-    private Runnable AdRunnable=new Runnable() {
-        @Override
-        public void run() {
-            adView =view.findViewById(R.id.adView);
-            Common.setAdView(adView,context);
-        }
-    };
+
 
 
     @Override
@@ -138,7 +117,6 @@ public class EleUpdateCarrier extends Fragment {
         {
             getIvnum.cancel(true);
         }
-        adHadler.removeCallbacks(AdRunnable);
     }
 
 

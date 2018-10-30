@@ -4,36 +4,28 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
+
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
-import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
-import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
-import java.sql.Date;
+import com.chargeapp.whc.chargeapp.R;
+
+
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +34,6 @@ public class HowGetPrice extends Fragment {
     private TextView needcarrier;
     private ListView list;
     private Activity context;
-    private AdView adView;
     private DrawerLayout drawerLayout;
 
     @Override
@@ -62,8 +53,6 @@ public class HowGetPrice extends Fragment {
         needcarrier = view.findViewById(R.id.needcarrier);
         needcarrier.setText("1.需攜帶中獎發票、中獎人印章、身分證到郵局領獎。\n\n2.無實體發票需列印出來，並攜帶此中獎發票、中獎人印章、身分證到郵局領獎。如果手機載具有綁定帳戶，不需要上述步驟，會自動匯到該戶頭。\n\n3.特別獎、特獎、頭獎及無實體雲端發票專屬百萬獎：中獎金額20萬元以上（含20萬元），請至25處指定郵局儲匯窗口兌領。");
         list = view.findViewById(R.id.list);
-        adView = view.findViewById(R.id.adView);
-        Common.setAdView(adView, context);
         List<String> title = new ArrayList<>();
         title.add("如何印無實體中獎發票");
         title.add("25處指定郵局兌領位置");
