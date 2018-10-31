@@ -12,8 +12,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
         >
         <com.beardedhen.androidbootstrap.BootstrapButton
             android:id="@+id/setCurrency"

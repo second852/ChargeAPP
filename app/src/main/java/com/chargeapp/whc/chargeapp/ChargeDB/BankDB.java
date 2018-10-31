@@ -171,15 +171,15 @@ public class BankDB {
     }
 
 
-    public Double getTimeTotal(Timestamp start, Timestamp end) {
-        String sql = "SELECT realMoney,currency  FROM BANK where date between '" + start.getTime() + "' and '" + end.getTime() + "' order by id;";
+    public Double getTimeTotal(long start, long end) {
+        String sql = "SELECT realMoney,currency  FROM BANK where date between '" + start + "' and '" + end + "' order by id;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         Double total = 0.0;
         CurrencyDB currencyDB = new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         CurrencyVO currencyVO;
         while (cursor.moveToNext()) {
-            currencyVO = currencyDB.getBytimeAndType(start.getTime(), end.getTime(), cursor.getString(1));
+            currencyVO = currencyDB.getBytimeAndType(start, end, cursor.getString(1));
             total = total + Double.valueOf(cursor.getString(0)) * Double.valueOf(currencyVO.getMoney());
         }
         cursor.close();

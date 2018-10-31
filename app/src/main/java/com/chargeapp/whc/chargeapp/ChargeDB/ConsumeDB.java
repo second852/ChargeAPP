@@ -281,8 +281,8 @@ public class ConsumeDB {
 
 
 
-    public HashMap<String,Double> getTimeMaxType(Timestamp startTime, Timestamp endTime) {
-        String sql = "SELECT maintype,realMoney,currency FROM Consumer where date between '" + startTime.getTime() + "' and '" + endTime.getTime() + "';";
+    public HashMap<String,Double> getTimeMaxType(long startTime, long endTime) {
+        String sql = "SELECT maintype,realMoney,currency FROM Consumer where date between '" + startTime + "' and '" + endTime + "';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         HashMap<String,Double> hashMap=new HashMap<>();
@@ -291,7 +291,7 @@ public class ConsumeDB {
         String mainType;
         Double realAmount,total=0.0;
         while (cursor.moveToNext()) {
-            currencyVO=currencyDB.getBytimeAndType(startTime.getTime(),endTime.getTime(),cursor.getString(2));
+            currencyVO=currencyDB.getBytimeAndType(startTime,endTime,cursor.getString(2));
             mainType=cursor.getString(0);
             realAmount=Double.valueOf(cursor.getString(1))*Double.valueOf(currencyVO.getMoney());
             if(hashMap.get(mainType)==null)

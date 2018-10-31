@@ -90,12 +90,16 @@ public class Common {
     public static SimpleDateFormat sHour = new SimpleDateFormat("hh");
     public static SimpleDateFormat sYear = new SimpleDateFormat("yyy 年 MM 月");
 
-    public static String keyboardArray[]={"倒退","7","8","9","+","歸零","4","5","6","-","確定","1","2","3","x"," ",".","0","=","÷"};
+    public static String keyboardArray[]={"倒退","7","8","9","+","歸零","4","5","6","-","確定","1","2","3","x","返回",".","0","=","÷"};
 
+
+    public final static String choiceCurrency="choiceCurrency";
+    public final static String insertCurrency="insertCurrency";
 
     public static NumberFormat nf = NumberFormat.getNumberInstance();
     public static List<CarrierVO> lostCarrier;
     public static Screen screenSize;
+
 
     public enum Screen {
         xLarge,
@@ -129,7 +133,7 @@ public class Common {
         }
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(invoiceVO.getCurrency()));
-        sbTitle.append(" "+invoiceVO.getAmount());
+        sbTitle.append(" "+invoiceVO.getRealAmount());
         return  sbTitle.toString();
     }
 
@@ -150,7 +154,7 @@ public class Common {
         }
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(invoiceVO.getSecondtype()));
-        sbTitle.append(" "+invoiceVO.getAmount());
+        sbTitle.append(" "+invoiceVO.getRealAmount());
         return  sbTitle.toString();
     }
 
@@ -162,7 +166,7 @@ public class Common {
         sbTitle.append(" " +consumeVO.getMaintype()+" ");
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(consumeVO.getCurrency()));
-        sbTitle.append(" "+consumeVO.getMoney());
+        sbTitle.append(" "+consumeVO.getRealMoney());
         return  sbTitle.toString();
     }
 
@@ -173,7 +177,7 @@ public class Common {
         sbTitle.append(" " +consumeVO.getSecondType()+" ");
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(consumeVO.getCurrency()));
-        sbTitle.append(" "+consumeVO.getMoney());
+        sbTitle.append(" "+consumeVO.getRealMoney());
         return  sbTitle.toString();
     }
 
@@ -184,7 +188,7 @@ public class Common {
         sbTitle.append(" " +consumeVO.getSecondType()+" ");
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(consumeVO.getCurrency()));
-        sbTitle.append(" "+consumeVO.getMoney());
+        sbTitle.append(" "+consumeVO.getRealMoney());
         return  sbTitle.toString();
     }
 
@@ -195,7 +199,7 @@ public class Common {
         sbTitle.append(" " +bankVO.getMaintype()+" ");
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(bankVO.getCurrency()));
-        sbTitle.append(" "+bankVO.getMoney());
+        sbTitle.append(" "+bankVO.getRealMoney());
         return  sbTitle.toString();
     }
 
@@ -206,7 +210,7 @@ public class Common {
         sbTitle.append(" " +bankVO.getMaintype()+" ");
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(bankVO.getCurrency()));
-        sbTitle.append(" "+bankVO.getMoney());
+        sbTitle.append(" "+bankVO.getRealMoney());
         return  sbTitle.toString();
     }
 
@@ -346,6 +350,8 @@ public class Common {
         colExist("INVOICE","realAmount");
         colExist("BANK","currency");
         colExist("BANK","realMoney");
+        colExist("Goal","currency");
+        colExist("Goal","realMoney");
         tableExist("Currency",ChargeAPPDB.TABLE_Currency);
     }
 

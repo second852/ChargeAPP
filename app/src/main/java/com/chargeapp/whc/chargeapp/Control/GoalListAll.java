@@ -187,9 +187,9 @@ public class GoalListAll extends Fragment {
                 serial++;
 
                 //描述成果
-                totalI = invoiceDB.getTotalBytime(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
-                totalC = consumeDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
-                totalB = bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
+//                totalI = invoiceDB.getTotalBytime(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
+//                totalC = consumeDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
+//                totalB = bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
                 amount = totalB - totalC - totalI;
                 Calendar today = Calendar.getInstance();
                 Calendar endDay = new GregorianCalendar();
@@ -310,8 +310,8 @@ public class GoalListAll extends Fragment {
                             break;
                     }
                     if (start != null && end != null) {
-                        totalI = invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                        totalC = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+//                        totalI = invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+//                        totalC = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
                         sbResult.append(" " + (totalI + totalC) + " 元");
                         if (goalVO.getMoney() > (totalI + totalC)) {
                             sbResult.insert(0, "  " + serial + ".成功 : ");
@@ -337,9 +337,9 @@ public class GoalListAll extends Fragment {
                             break;
                     }
                     if (start != null && end != null) {
-                        totalI = invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                        totalC = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                        totalB = bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+//                        totalI = invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+//                        totalC = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+//                        totalB = bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
                         sbResult.append(" " + (totalB - totalI - totalC) + " 元");
                         if (goalVO.getMoney() < (totalB - totalI - totalC)) {
                             sbResult.insert(0, "  " + serial + ".成功 : ");

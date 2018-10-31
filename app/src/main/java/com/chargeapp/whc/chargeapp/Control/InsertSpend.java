@@ -48,6 +48,7 @@ import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
+import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListener;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
@@ -75,6 +76,7 @@ import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_SAVE;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_TWITTER;
 import static com.chargeapp.whc.chargeapp.Control.Common.doubleRemoveZero;
+import static com.chargeapp.whc.chargeapp.Control.Common.insertCurrency;
 import static com.chargeapp.whc.chargeapp.Control.Common.onlyNumber;
 import static com.chargeapp.whc.chargeapp.Control.Common.onlyNumberToDouble;
 
@@ -305,11 +307,10 @@ public class InsertSpend extends Fragment {
     private Runnable setKeyboard = new Runnable() {
         @Override
         public void run() {
-            clearToZero = true;
-            firstCalculate=true;
             numberKeyBoard = view.findViewById(R.id.numberKeyBoard);
             calculate = view.findViewById(R.id.calculate);
-            numberKeyBoard.setOnItemClickListener(new setKeyboardInput());
+            money = view.findViewById(R.id.money);
+            numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,new StringBuilder(),true));
             ArrayList items = new ArrayList<Map<String, Object>>();
             Map<String, Object> hashMap;
             for (String s : Common.keyboardArray) {
@@ -330,7 +331,9 @@ public class InsertSpend extends Fragment {
         public void run() {
             //set Currency
             sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
-            nowCurrency = sharedPreferences.getString("insertCurrency", "TWD");
+            nowCurrency = sharedPreferences.getString(insertCurrency, "TWD");
+
+
             currency = view.findViewById(R.id.currency);
             popupMenu = new PopupMenu(context, currency);
             Common.createCurrencyPopMenu(popupMenu, context);
@@ -358,7 +361,7 @@ public class InsertSpend extends Fragment {
             BsTextWeek = Common.DateChoiceSetBsTest(context, Common.WeekSetSpinnerBS);
             BsTextMonth = Common.DateChoiceSetBsTest(context, Common.MonthSetSpinnerBS());
             BsTextStatue = Common.DateChoiceSetBsTest(context, Common.DateStatueSetSpinner);
-            findViewByid();
+            findViewById();
             gson = new Gson();
             setSetOnClickView();
             if (needSet) {
@@ -466,7 +469,7 @@ public class InsertSpend extends Fragment {
     }
 
 
-    public void findViewByid() {
+    public void findViewById() {
         secondname = view.findViewById(R.id.secondname);
         money = view.findViewById(R.id.money);
         date = view.findViewById(R.id.date);
@@ -975,231 +978,20 @@ public class InsertSpend extends Fragment {
             switch (menuItem.getItemId()) {
                 case 1:
                     nowCurrency = "TWD";
-                    sharedPreferences.edit().putString("insertCurrency", nowCurrency).apply();
+                    sharedPreferences.edit().putString(insertCurrency, nowCurrency).apply();
                     currency.setText(Common.Currency().get(nowCurrency));
                 case 8:
                     popupMenu.dismiss();
                     break;
                 default:
                     nowCurrency = Common.code.get(menuItem.getItemId() - 2);
-                    sharedPreferences.edit().putString("insertCurrency", nowCurrency).apply();
+                    sharedPreferences.edit().putString(insertCurrency, nowCurrency).apply();
                     currency.setText(Common.Currency().get(nowCurrency));
                     break;
             }
             return true;
         }
     }
-
-
-    private StringBuilder showSb;
-    private boolean clearToZero, needInit,firstCalculate;
-    private double oldNumber;
-
-
-
-    private class setKeyboardInput implements AdapterView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            String word = Common.keyboardArray[i];
-            String symbol = calculate.getText().toString().trim();
-            if (symbol == null || symbol.isEmpty()) {
-                symbol = new String(word);
-            }
-            if (clearToZero) {
-                clearToZero = false;
-                showSb = new StringBuilder();
-                if(word.equals("+")||word.equals("-")||word.equals("x")||word.equals("÷"))
-                {
-                    showSb.append("0");
-                    money.setText(showSb.toString());
-                    calculate.setText(word);
-                    firstCalculate=false;
-                    needInit=true;
-                    return;
-                }
-                if(word.equals("."))
-                {
-                    showSb.append("0");
-                }
-                showSb.append(word);
-                money.setText(showSb.toString());
-                return;
-            }
-            switch (word) {
-                case "倒退":
-                    if(needInit){
-                        Common.showToast(context,"計算中的數值，不能倒退");
-                        break;
-                    }
-                    if(showSb.length()==1)
-                    {
-                        showSb=new StringBuilder();
-                        showSb.append("0");
-                    }else {
-                        showSb.delete(showSb.length()-1,showSb.length());
-                    }
-                    money.setText(showSb.toString());
-                    break;
-                case "歸零":
-                    clearToZero=true;
-                    firstCalculate=true;
-                    needInit=false;
-                    oldNumber=0.0;
-                    showSb = new StringBuilder();
-                    showSb.append("0");
-                    money.setText(showSb.toString());
-                    calculate.setText(null);
-                    break;
-                case "確定":
-                    numberKeyBoard.setVisibility(View.GONE);
-                    calculate.setText(null);
-                    oldNumber = 0.0;
-                    needInit=false;
-                    firstCalculate=true;
-                    break;
-                case "x":
-                    if (needInit) {
-                        calculate.setText("x");
-                        break;
-                    }
-                    if(firstCalculate)
-                    {
-                        oldNumber=1;
-                        firstCalculate=false;
-                    }
-                    needInit = true;
-                    resultCalculate(symbol);
-                    calculate.setText("x");
-                    oldNumber = 0.0;
-                    break;
-                case "÷":
-                    if (needInit) {
-                        calculate.setText("÷");
-                        break;
-                    }
-                    if(firstCalculate)
-                    {
-                        oldNumber=1;
-                        firstCalculate=false;
-                    }
-                    resultCalculate(symbol);
-                    needInit = true;
-                    calculate.setText("÷");
-                    oldNumber = 0.0;
-                    break;
-                case "+":
-                    if (needInit) {
-                        calculate.setText("+");
-                        break;
-                    }
-                    if(firstCalculate)
-                    {
-                        oldNumber=0;
-                        firstCalculate=false;
-                    }
-                    resultCalculate(symbol);
-                    needInit = true;
-                    calculate.setText("+");
-                    oldNumber = 0.0;
-                    break;
-                case "-":
-                    if (needInit) {
-                        calculate.setText("-");
-                        break;
-                    }
-                    if(firstCalculate)
-                    {
-                        oldNumber=0;
-                        firstCalculate=false;
-                    }
-                    resultCalculate(symbol);
-                    needInit = true;
-                    calculate.setText("-");
-                    oldNumber = 0.0;
-                    break;
-                case ".":
-                    if(needInit){
-                        Common.showToast(context,"計算中的數值，不能使用小數點");
-                        break;
-                    }
-                    if(showSb.indexOf(".")!=-1)
-                    {
-                        Common.showToast(context,"不能加小數點");
-                        break;
-                    }
-                    if(showSb==null||showSb.length()<=0)
-                    {
-                        showSb=new StringBuilder();
-                        showSb.append("0.");
-                        break;
-                    }
-                    showSb.append(word);
-                    money.setText(showSb.toString());
-                    break;
-                case "=":
-                    //no symbol, no active
-                    if (symbol == null || symbol.isEmpty()) {
-                        break;
-                    } else {
-                        //calculate
-                        if(!needInit)
-                        {
-                            resultCalculate(symbol);
-                        }
-                        calculate.setText(null);
-                        oldNumber = 0.0;
-                        needInit = false;
-                        firstCalculate=true;
-                    }
-                    break;
-                default:
-                    //no calculate
-                    if (!needInit) {
-                        //If clear to zero,No append
-                        showSb.append(word);
-                    } else {
-                        //calculate
-                        oldNumber = onlyNumberToDouble(showSb.toString());
-                        needInit = false;
-                        showSb = new StringBuilder();
-                        showSb.append(word);
-                    }
-                    money.setText(showSb.toString());
-                    break;
-            }
-        }
-    }
-
-    private Double resultCalculate(String symbol) {
-        double answer = 0.0;
-        double nowNumber=onlyNumberToDouble(showSb.toString());
-        switch (symbol) {
-            case "x":
-                answer = oldNumber * nowNumber;
-                break;
-            case "÷":
-                if(showSb.toString().trim().equals("0"))
-                {
-                    Common.showToast(context,"除數不能為零");
-                    break;
-                }
-                answer = oldNumber / nowNumber;
-                break;
-            case "+":
-                answer = oldNumber + nowNumber;
-                break;
-            case "-":
-                answer = oldNumber - nowNumber;
-                break;
-        }
-        //init
-        showSb = new StringBuilder();
-        showSb.append(doubleRemoveZero(answer));
-        money.setText(showSb.toString());
-        //clear
-        return answer;
-    }
-
 }
 
 

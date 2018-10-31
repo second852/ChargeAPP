@@ -297,13 +297,13 @@ public class HomePagetList extends Fragment {
                     update.setText("修改");
                     Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                     List<JsonObject> js=gson.fromJson(I.getDetail(), cdType);
-                    float amout,n;
+                    float amount,n;
 
                     for (JsonObject j : js) {
                         try {
-                            amout=j.get("amount").getAsFloat();
+                            amount=j.get("amount").getAsFloat();
                         } catch (Exception e) {
-                            amout=0;
+                            amount=0;
                         }
                         try {
                             n = j.get("quantity").getAsFloat();
@@ -313,9 +313,9 @@ public class HomePagetList extends Fragment {
 
                         if(n!=0)
                         {
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
+                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amount/n) + "X" + (int)n + "=" + (int)amount + "元\n");
                         }else{
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)amout + "X" + 1 + "=" + (int)amout + "元\n");
+                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)amount + "X" + 1 + "=" + (int)amount + "元\n");
                         }
                     }
 

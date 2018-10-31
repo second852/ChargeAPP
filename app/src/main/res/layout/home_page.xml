@@ -17,21 +17,23 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@+id/pieChart"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
         >
         <TextView
             android:id="@+id/pieChartT"
             android:textColor="#000000"
+            android:layout_gravity="center_vertical"
             android:gravity="center"
             android:textSize="20sp"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <com.beardedhen.androidbootstrap.BootstrapButton
             android:id="@+id/currency"
-            android:layout_marginLeft="30dp"
-            android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"
+            android:layout_gravity="center_vertical"
             app:bootstrapBrand="warning"
             app:bootstrapSize="md"
             app:buttonMode="regular"

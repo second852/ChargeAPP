@@ -117,7 +117,7 @@ public class SelectDeposit extends Fragment {
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        findViewById(view);
+//        findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
 //        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
@@ -336,194 +336,194 @@ public class SelectDeposit extends Fragment {
 
 
     private void setDeposit() {
-        describeD.setText(pictureT);
-        describeD.setTextColor(Color.BLACK);
-        PIdateTittle.setText(Title);
-        LineDataSet dataSet = new LineDataSet(entries, pictureL);
-        dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
-        dataSet.setDrawFilled(true);
-        dataSet.setColor(Color.parseColor("#28a745"));
-        dataSet.setFillColor(Color.parseColor("#28a745"));
-        dataSet.setHighlightEnabled(false);
-        dataSet.setDrawValues(false);
-        LineData data = new LineData(dataSet);
-        XAxis xAxis = chart_line.getXAxis();
-        xAxis.setGranularity(1f);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                try {
-                    int index = (int) value;
-                    return getLabels().get(index);
-                } catch (Exception e) {
-                    return " ";
-                }
-            }
-        });
-        chart_line.setData(data);
-        chart_line.setDescription(Common.getDeescription());
-        chart_line.setTouchEnabled(false);
-        chart_line.setScaleEnabled(false);
-
-
-        if (goalVO != null) {
-            YAxis yAxis = chart_line.getAxisLeft();
-            yAxis.removeAllLimitLines();
-
-            if (Statue == 0 && goalVO.getTimeStatue().trim().equals("每月")) {
-                LimitLine yLimitLine = new LimitLine(goalVO.getMoney(), "儲蓄目標");
-                yLimitLine.setLineColor(Color.parseColor("#007bff"));
-                yLimitLine.setTextColor(Color.parseColor("#007bff"));
-                yAxis.addLimitLine(yLimitLine);
-                BootstrapText bootstrapText = new BootstrapText.Builder(context)
-                        .addFontAwesomeIcon(FA_FLAG)
-                        .addText(" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元")
-                        .build();
-
-                goalDeposit.setBootstrapText(bootstrapText);
-            } else if (Statue == 1 && goalVO.getTimeStatue().trim().equals("每年")) {
-                LimitLine yLimitLine = new LimitLine(goalVO.getMoney(), "儲蓄目標");
-                yLimitLine.setLineColor(Color.parseColor("#007bff"));
-                yLimitLine.setTextColor(Color.parseColor("#007bff"));
-                yAxis.addLimitLine(yLimitLine);
-                BootstrapText bootstrapText = new BootstrapText.Builder(context)
-                        .addFontAwesomeIcon(FA_FLAG)
-                        .addText(" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元")
-                        .build();
-                goalDeposit.setBootstrapText(bootstrapText);
-            } else {
-                goalDeposit.setText(null);
-            }
-
-            if (goalVO.getTimeStatue().trim().equals("今日") && goalVO.getEndTime().getTime() > System.currentTimeMillis()) {
-
-                //描素目標狀態
-                StringBuilder sb = new StringBuilder();
-
-                int Itotal = invoiceDB.getTotalBytime(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
-                int Btotal = bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
-                int Ctotal = consumeDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
-                int Alltotal = Btotal - Ctotal - Itotal;
-                int differentMoney = goalVO.getMoney() - Alltotal;
-
-                LimitLine xLimitLine;
-                Calendar endGoal = new GregorianCalendar();
-                endGoal.setTime(goalVO.getEndTime());
-                Calendar startGoal = new GregorianCalendar();
-                startGoal.setTime(goalVO.getStartTime());
-                Calendar nowCalendar = Calendar.getInstance();
-                int divideEndY = endGoal.get(Calendar.YEAR) - nowCalendar.get(Calendar.YEAR);
-                int divideStartY = startGoal.get(Calendar.YEAR) - nowCalendar.get(Calendar.YEAR);
-                XAxis xAxis1 = chart_line.getXAxis();
-                xAxis.removeAllLimitLines();
-
-                //倒數日期
-                long differentT = endGoal.getTimeInMillis() - nowCalendar.getTimeInMillis();
-                int differentDay = (int) (differentT / (1000 * 60 * 60 * 24));
-                sb.append("倒數" + differentDay + "天  ");
-
-
-                BootstrapText bootstrapText;
-                if (differentMoney <= 0) {
-                    sb.append("完成目標 ");
-                    bootstrapText = new BootstrapText.Builder(context)
-                            .addFontAwesomeIcon(FA_FLAG)
-                            .addText(" 目標 : " + goalVO.getName() + goalVO.getType() + goalVO.getMoney() + "元\n" + sb.toString()).addFontAwesomeIcon(FA_THUMBS_O_UP)
-                            .build();
-                } else {
-
-                    sb.append("還差" + differentMoney + "元 加油!");
-                    bootstrapText = new BootstrapText.Builder(context)
-                            .addFontAwesomeIcon(FA_FLAG)
-                            .addText(" 目標 : " + goalVO.getName() + goalVO.getType() + goalVO.getMoney() + "元\n" + sb.toString())
-                            .build();
-                }
-                goalDeposit.setBootstrapText(bootstrapText);
-
-
-                xAxis1.removeAllLimitLines();
-                //月-終止時間
-                if (Statue == 0 && divideEndY == 0) {
-                    float month = endGoal.get(Calendar.MONTH);
-                    float day =  (float)endGoal.get(Calendar.DAY_OF_MONTH) / endGoal.getActualMaximum(Calendar.DAY_OF_MONTH);
-                    xLimitLine = new LimitLine(month + day, "目標終止時間");
-                    xLimitLine.setTextColor(Color.RED);
-                    xAxis1.addLimitLine(xLimitLine);
-                }
-
-                //月-起始時間
-                if (Statue == 0 && divideStartY == 0) {
-                    //起始時間
-                    float month = startGoal.get(Calendar.MONTH);
-                    float day = (float) startGoal.get(Calendar.DAY_OF_MONTH) / startGoal.getActualMaximum(Calendar.DAY_OF_MONTH);
-                    xLimitLine = new LimitLine(month + day, "目標起始時間");
-                    xLimitLine.setTextColor(Color.RED);
-                    xAxis1.addLimitLine(xLimitLine);
-                }
-                //年-起始時間
-                if (Statue == 1) {
-                    //起始時間
-                    float month = (float) startGoal.get(Calendar.MONTH) / 12;
-                    float year=startGoal.get(Calendar.YEAR)-this.year;
-                    float total=month+year;
-                    xLimitLine = new LimitLine( total, "目標起始時間");
-                    xLimitLine.setTextColor(Color.RED);
-                    xAxis1.addLimitLine(xLimitLine);
-
-                    //終止時間
-                    month = Float.valueOf(endGoal.get(Calendar.MONTH) / 12);
-                    year=endGoal.get(Calendar.YEAR)-this.year;
-                    total=month+year;
-                    xLimitLine = new LimitLine(total, "目標終止時間");
-                    xLimitLine.setTextColor(Color.RED);
-                    xAxis1.addLimitLine(xLimitLine);
-                }
-            }
-        }
-
-
-        YAxis yAxis = chart_line.getAxis(YAxis.AxisDependency.LEFT);
-        YAxis yAxis1 = chart_line.getAxis(YAxis.AxisDependency.RIGHT);
-        yAxis1.setDrawAxisLine(false);
-        yAxis1.setDrawLabels(false);
-        Legend l = chart_line.getLegend();
-        l.setFormSize(18f);
-        l.setTextColor(Color.parseColor("#28a745"));
-
-
-            switch (Common.screenSize) {
-                case xLarge:
-                    xAxis.setTextSize(20f);
-                    yAxis.setTextSize(20f);
-                    yAxis1.setTextSize(20f);
-                    l.setTextSize(20f);
-                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                    l.setYEntrySpace(5f);
-                    l.setFormSize(20f);
-                    break;
-                case large:
-                    xAxis.setTextSize(20f);
-                    yAxis.setTextSize(20f);
-                    yAxis1.setTextSize(20f);
-                    l.setTextSize(20f);
-                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                    l.setYEntrySpace(5f);
-                    l.setFormSize(20f);
-                    break;
-                case normal:
-                    xAxis.setTextSize(11f);
-                    yAxis.setTextSize(12f);
-                    yAxis1.setTextSize(12f);
-                    l.setTextSize(12f);
-                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                    l.setYEntrySpace(5f);
-                    l.setFormSize(12f);
-                    break;
-            }
-
-        chart_line.notifyDataSetChanged();
-        chart_line.invalidate();
+//        describeD.setText(pictureT);
+//        describeD.setTextColor(Color.BLACK);
+//        PIdateTittle.setText(Title);
+//        LineDataSet dataSet = new LineDataSet(entries, pictureL);
+//        dataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+//        dataSet.setDrawFilled(true);
+//        dataSet.setColor(Color.parseColor("#28a745"));
+//        dataSet.setFillColor(Color.parseColor("#28a745"));
+//        dataSet.setHighlightEnabled(false);
+//        dataSet.setDrawValues(false);
+//        LineData data = new LineData(dataSet);
+//        XAxis xAxis = chart_line.getXAxis();
+//        xAxis.setGranularity(1f);
+//        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+//        xAxis.setValueFormatter(new IAxisValueFormatter() {
+//            @Override
+//            public String getFormattedValue(float value, AxisBase axis) {
+//                try {
+//                    int index = (int) value;
+//                    return getLabels().get(index);
+//                } catch (Exception e) {
+//                    return " ";
+//                }
+//            }
+//        });
+//        chart_line.setData(data);
+//        chart_line.setDescription(Common.getDeescription());
+//        chart_line.setTouchEnabled(false);
+//        chart_line.setScaleEnabled(false);
+//
+//
+//        if (goalVO != null) {
+//            YAxis yAxis = chart_line.getAxisLeft();
+//            yAxis.removeAllLimitLines();
+//
+//            if (Statue == 0 && goalVO.getTimeStatue().trim().equals("每月")) {
+//                LimitLine yLimitLine = new LimitLine(goalVO.getMoney(), "儲蓄目標");
+//                yLimitLine.setLineColor(Color.parseColor("#007bff"));
+//                yLimitLine.setTextColor(Color.parseColor("#007bff"));
+//                yAxis.addLimitLine(yLimitLine);
+//                BootstrapText bootstrapText = new BootstrapText.Builder(context)
+//                        .addFontAwesomeIcon(FA_FLAG)
+//                        .addText(" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元")
+//                        .build();
+//
+//                goalDeposit.setBootstrapText(bootstrapText);
+//            } else if (Statue == 1 && goalVO.getTimeStatue().trim().equals("每年")) {
+//                LimitLine yLimitLine = new LimitLine(goalVO.getMoney(), "儲蓄目標");
+//                yLimitLine.setLineColor(Color.parseColor("#007bff"));
+//                yLimitLine.setTextColor(Color.parseColor("#007bff"));
+//                yAxis.addLimitLine(yLimitLine);
+//                BootstrapText bootstrapText = new BootstrapText.Builder(context)
+//                        .addFontAwesomeIcon(FA_FLAG)
+//                        .addText(" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元")
+//                        .build();
+//                goalDeposit.setBootstrapText(bootstrapText);
+//            } else {
+//                goalDeposit.setText(null);
+//            }
+//
+//            if (goalVO.getTimeStatue().trim().equals("今日") && goalVO.getEndTime().getTime() > System.currentTimeMillis()) {
+//
+//                //描素目標狀態
+//                StringBuilder sb = new StringBuilder();
+//
+//                int Itotal = invoiceDB.getTotalBytime(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
+//                int Btotal = bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
+//                int Ctotal = consumeDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
+//                int Alltotal = Btotal - Ctotal - Itotal;
+//                int differentMoney = goalVO.getMoney() - Alltotal;
+//
+//                LimitLine xLimitLine;
+//                Calendar endGoal = new GregorianCalendar();
+//                endGoal.setTime(goalVO.getEndTime());
+//                Calendar startGoal = new GregorianCalendar();
+//                startGoal.setTime(goalVO.getStartTime());
+//                Calendar nowCalendar = Calendar.getInstance();
+//                int divideEndY = endGoal.get(Calendar.YEAR) - nowCalendar.get(Calendar.YEAR);
+//                int divideStartY = startGoal.get(Calendar.YEAR) - nowCalendar.get(Calendar.YEAR);
+//                XAxis xAxis1 = chart_line.getXAxis();
+//                xAxis.removeAllLimitLines();
+//
+//                //倒數日期
+//                long differentT = endGoal.getTimeInMillis() - nowCalendar.getTimeInMillis();
+//                int differentDay = (int) (differentT / (1000 * 60 * 60 * 24));
+//                sb.append("倒數" + differentDay + "天  ");
+//
+//
+//                BootstrapText bootstrapText;
+//                if (differentMoney <= 0) {
+//                    sb.append("完成目標 ");
+//                    bootstrapText = new BootstrapText.Builder(context)
+//                            .addFontAwesomeIcon(FA_FLAG)
+//                            .addText(" 目標 : " + goalVO.getName() + goalVO.getType() + goalVO.getMoney() + "元\n" + sb.toString()).addFontAwesomeIcon(FA_THUMBS_O_UP)
+//                            .build();
+//                } else {
+//
+//                    sb.append("還差" + differentMoney + "元 加油!");
+//                    bootstrapText = new BootstrapText.Builder(context)
+//                            .addFontAwesomeIcon(FA_FLAG)
+//                            .addText(" 目標 : " + goalVO.getName() + goalVO.getType() + goalVO.getMoney() + "元\n" + sb.toString())
+//                            .build();
+//                }
+//                goalDeposit.setBootstrapText(bootstrapText);
+//
+//
+//                xAxis1.removeAllLimitLines();
+//                //月-終止時間
+//                if (Statue == 0 && divideEndY == 0) {
+//                    float month = endGoal.get(Calendar.MONTH);
+//                    float day =  (float)endGoal.get(Calendar.DAY_OF_MONTH) / endGoal.getActualMaximum(Calendar.DAY_OF_MONTH);
+//                    xLimitLine = new LimitLine(month + day, "目標終止時間");
+//                    xLimitLine.setTextColor(Color.RED);
+//                    xAxis1.addLimitLine(xLimitLine);
+//                }
+//
+//                //月-起始時間
+//                if (Statue == 0 && divideStartY == 0) {
+//                    //起始時間
+//                    float month = startGoal.get(Calendar.MONTH);
+//                    float day = (float) startGoal.get(Calendar.DAY_OF_MONTH) / startGoal.getActualMaximum(Calendar.DAY_OF_MONTH);
+//                    xLimitLine = new LimitLine(month + day, "目標起始時間");
+//                    xLimitLine.setTextColor(Color.RED);
+//                    xAxis1.addLimitLine(xLimitLine);
+//                }
+//                //年-起始時間
+//                if (Statue == 1) {
+//                    //起始時間
+//                    float month = (float) startGoal.get(Calendar.MONTH) / 12;
+//                    float year=startGoal.get(Calendar.YEAR)-this.year;
+//                    float total=month+year;
+//                    xLimitLine = new LimitLine( total, "目標起始時間");
+//                    xLimitLine.setTextColor(Color.RED);
+//                    xAxis1.addLimitLine(xLimitLine);
+//
+//                    //終止時間
+//                    month = Float.valueOf(endGoal.get(Calendar.MONTH) / 12);
+//                    year=endGoal.get(Calendar.YEAR)-this.year;
+//                    total=month+year;
+//                    xLimitLine = new LimitLine(total, "目標終止時間");
+//                    xLimitLine.setTextColor(Color.RED);
+//                    xAxis1.addLimitLine(xLimitLine);
+//                }
+//            }
+//        }
+//
+//
+//        YAxis yAxis = chart_line.getAxis(YAxis.AxisDependency.LEFT);
+//        YAxis yAxis1 = chart_line.getAxis(YAxis.AxisDependency.RIGHT);
+//        yAxis1.setDrawAxisLine(false);
+//        yAxis1.setDrawLabels(false);
+//        Legend l = chart_line.getLegend();
+//        l.setFormSize(18f);
+//        l.setTextColor(Color.parseColor("#28a745"));
+//
+//
+//            switch (Common.screenSize) {
+//                case xLarge:
+//                    xAxis.setTextSize(20f);
+//                    yAxis.setTextSize(20f);
+//                    yAxis1.setTextSize(20f);
+//                    l.setTextSize(20f);
+//                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+//                    l.setYEntrySpace(5f);
+//                    l.setFormSize(20f);
+//                    break;
+//                case large:
+//                    xAxis.setTextSize(20f);
+//                    yAxis.setTextSize(20f);
+//                    yAxis1.setTextSize(20f);
+//                    l.setTextSize(20f);
+//                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+//                    l.setYEntrySpace(5f);
+//                    l.setFormSize(20f);
+//                    break;
+//                case normal:
+//                    xAxis.setTextSize(11f);
+//                    yAxis.setTextSize(12f);
+//                    yAxis1.setTextSize(12f);
+//                    l.setTextSize(12f);
+//                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+//                    l.setYEntrySpace(5f);
+//                    l.setFormSize(12f);
+//                    break;
+//            }
+//
+//        chart_line.notifyDataSetChanged();
+//        chart_line.invalidate();
     }
 
     private List<String> getLabels() {
@@ -541,50 +541,51 @@ public class SelectDeposit extends Fragment {
     }
 
     private List<Integer> PerStatue(Calendar start, Calendar end) {
-        int income, comsume, total, invoice;
-        List<Integer> addList = new ArrayList<>();
-        income = bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-        comsume = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-        invoice = invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-        total = income - comsume - invoice;
-        addList.add(invoice + comsume);
-        addList.add(income);
-        addList.add(total);
-
-        Alltotal = Alltotal + total;
-        Allincome = income + Allincome;
-        Allconsume = Allconsume + invoice + comsume;
-        return addList;
-    }
-
-    private void findViewById(View view) {
-        PIdateTittle = view.findViewById(R.id.PIdateTittle);
-        PIdateCut = view.findViewById(R.id.PIdateCut);
-        PIdateAdd = view.findViewById(R.id.PIdateAdd);
-        choicePeriod = view.findViewById(R.id.choicePeriod);
-        chart_line = view.findViewById(R.id.chart_line);
-        describeD = view.findViewById(R.id.describeD);
-        PIdateL = view.findViewById(R.id.PIdateL);
-        describeC = view.findViewById(R.id.describeC);
-        describeI = view.findViewById(R.id.describeI);
-        chart_consume = view.findViewById(R.id.chart_consume);
-        chart_income = view.findViewById(R.id.chart_income);
-        goalDeposit = view.findViewById(R.id.goalDeposit);
-
-        String[] SpinnerItem1 = new String[2];
-        SpinnerItem1[0] = " 月 ";
-        SpinnerItem1[1] = " 年 ";
-        periodDepoist = new ArrayList<>();
-        periodDepoist.add(Common.setPeriodSelectCBsTest(context, SpinnerItem1[0]));
-        periodDepoist.add(Common.setPeriodSelectCBsTest(context, SpinnerItem1[1]));
-        choicePeriod.setDropdownData(SpinnerItem1);
-        choicePeriod.setOnDropDownItemClickListener(new PeriodChoice());
-        dataAnalyze();
+//        int income, comsume, total, invoice;
+//        List<Integer> addList = new ArrayList<>();
+//        income = bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+//        comsume = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+//        invoice = invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+//        total = income - comsume - invoice;
+//        addList.add(invoice + comsume);
+//        addList.add(income);
+//        addList.add(total);
+//
+//        Alltotal = Alltotal + total;
+//        Allincome = income + Allincome;
+//        Allconsume = Allconsume + invoice + comsume;
+//        return addList;
+//    }
+//
+//    private void findViewById(View view) {
+//        PIdateTittle = view.findViewById(R.id.PIdateTittle);
+//        PIdateCut = view.findViewById(R.id.PIdateCut);
+//        PIdateAdd = view.findViewById(R.id.PIdateAdd);
+//        choicePeriod = view.findViewById(R.id.choicePeriod);
+//        chart_line = view.findViewById(R.id.chart_line);
+//        describeD = view.findViewById(R.id.describeD);
+//        PIdateL = view.findViewById(R.id.PIdateL);
+//        describeC = view.findViewById(R.id.describeC);
+//        describeI = view.findViewById(R.id.describeI);
+//        chart_consume = view.findViewById(R.id.chart_consume);
+//        chart_income = view.findViewById(R.id.chart_income);
+//        goalDeposit = view.findViewById(R.id.goalDeposit);
+//
+//        String[] SpinnerItem1 = new String[2];
+//        SpinnerItem1[0] = " 月 ";
+//        SpinnerItem1[1] = " 年 ";
+//        periodDepoist = new ArrayList<>();
+//        periodDepoist.add(Common.setPeriodSelectCBsTest(context, SpinnerItem1[0]));
+//        periodDepoist.add(Common.setPeriodSelectCBsTest(context, SpinnerItem1[1]));
+//        choicePeriod.setDropdownData(SpinnerItem1);
+//        choicePeriod.setOnDropDownItemClickListener(new PeriodChoice());
+//        dataAnalyze();
 
 
 //        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, SpinnerItem1);
 //        arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
 //        choicePeriod.setAdapter(arrayAdapter);
+        return null;
     }
 
 

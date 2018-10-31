@@ -129,19 +129,36 @@
                     android:textColor="#000000"
                     android:textSize="40sp" />
 
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/currency"
+                    android:layout_marginLeft="70dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    app:bootstrapBrand="warning"
+                    app:bootstrapSize="xl"
+                    app:buttonMode="regular"
+                    app:showOutline="false"
+                    app:roundedCorners="true"
+                    />
+
                 <com.beardedhen.androidbootstrap.BootstrapEditText
                     android:id="@+id/money"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="50dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="70dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="50dp"
                     android:gravity="center_vertical"
                     android:inputType="number"
                     android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#AAAAAA"
                     app:bootstrapBrand="primary"
-                    app:bootstrapSize="xl"
-                    app:roundedCorners="true" />
+                    app:roundedCorners="true"
+                    app:bootstrapSize="xl"  />
+
             </LinearLayout>
 
             <LinearLayout

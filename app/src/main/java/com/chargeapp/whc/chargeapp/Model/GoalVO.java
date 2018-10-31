@@ -22,6 +22,16 @@ public class GoalVO implements Serializable{
     private boolean noWeekend;   //10目標假日是否通知
     private int statue; //11 目標狀態 0:init 1:complete 2:fail
     private String currency;//12 幣別
+    private String realMoney;
+
+
+    public String getRealMoney() {
+        return realMoney;
+    }
+
+    public void setRealMoney(String realMoney) {
+        this.realMoney = realMoney;
+    }
 
     public String getCurrency() {
         return currency;

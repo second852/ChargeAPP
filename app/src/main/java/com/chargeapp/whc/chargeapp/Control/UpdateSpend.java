@@ -10,24 +10,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
@@ -38,8 +33,8 @@ import com.beardedhen.androidbootstrap.BootstrapLabel;
 import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
+import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListener;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
@@ -50,10 +45,7 @@ import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
 import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import com.google.zxing.qrcode.encoder.QRCode;
 
-import java.lang.reflect.Type;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -62,9 +54,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
+import static com.chargeapp.whc.chargeapp.Control.Common.*;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_SAVE;
 
 
@@ -102,7 +92,11 @@ public class UpdateSpend extends Fragment {
     private int statueNumber;
     private String resultStatue,resultDay;
     private RelativeLayout notifyRel;
-//    private boolean returnCM;
+    private BootstrapButton currency, calculate;
+    private PopupMenu popupMenu;
+    private GridView numberKeyBoard;
+    private String nowCurrency;
+
 
     @Override
     public void onAttach(Context context) {
@@ -119,8 +113,9 @@ public class UpdateSpend extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         TypefaceProvider.registerDefaultIconSets();
+
         View view = inflater.inflate(R.layout.insert_spend, container, false);
-        findviewByid(view);
+        findViewByid(view);
         action = (String) getArguments().getSerializable("action");
         consumeVO = (ConsumeVO) getArguments().getSerializable("consumeVO");
         ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
@@ -163,7 +158,41 @@ public class UpdateSpend extends Fragment {
         }
 //        showOnlyQRCodeToast();
         setUpdate();
+        setPopupMenu();
         return view;
+    }
+
+    private void setPopupMenu() {
+        popupMenu = new PopupMenu(context, currency);
+        Common.createCurrencyPopMenu(popupMenu, context);
+        currency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupMenu.show();
+            }
+        });
+        popupMenu.setOnMenuItemClickListener(new choiceUpdateCurrency());
+        StringBuilder showSb=new StringBuilder();
+        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,showSb.append(consumeVO.getRealMoney()),false));
+        ArrayList items = new ArrayList<Map<String, Object>>();
+        Map<String, Object> hashMap;
+        for (String s : Common.keyboardArray) {
+            hashMap = new HashMap<>();
+            hashMap.put("text", s);
+            items.add(hashMap);
+        }
+        SimpleAdapter adapter = new SimpleAdapter(context, items, R.layout.ele_hand_item, new String[]{"text"},
+                new int[]{R.id.cardview});
+        numberKeyBoard.setAdapter(adapter);
+        numberKeyBoard.setNumColumns(5);
+        money.setFocusable(false);
+        money.setFocusableInTouchMode(false);
+        money.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                numberKeyBoard.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
 //    private void showOnlyQRCodeToast() {
@@ -204,7 +233,17 @@ public class UpdateSpend extends Fragment {
 
 
         number.setText(consumeVO.getNumber());
-        money.setText(String.valueOf(consumeVO.getMoney()));
+        money.setText(consumeVO.getRealMoney());
+
+        if(consumeVO.getCurrency()==null)
+        {
+           nowCurrency="TWD";
+        }else{
+            nowCurrency=consumeVO.getCurrency();
+        }
+
+        currency.setText(Common.Currency().get(nowCurrency));
+
         date.setText(Common.sTwo.format(consumeVO.getDate()));
 
         //自動產生不能設fix和QRcode 掃描
@@ -354,7 +393,7 @@ public class UpdateSpend extends Fragment {
     }
 
 
-    private void returnThisFramgent(Fragment fragment) {
+    private void returnThisFragment(Fragment fragment) {
         setConsume();
         Bundle bundle = new Bundle();
         bundle.putSerializable("object", consumeVO);
@@ -416,7 +455,7 @@ public class UpdateSpend extends Fragment {
         switchFramgent(fragment);
     }
 
-    public void findviewByid(View view) {
+    public void findViewByid(View view) {
         firstG = view.findViewById(R.id.firstG);
         firstL = view.findViewById(R.id.firstL);
         secondG = view.findViewById(R.id.secondG);
@@ -450,6 +489,9 @@ public class UpdateSpend extends Fragment {
         notifyT=view.findViewById(R.id.notifyT);
         fixDateT=view.findViewById(R.id.fixDateT);
         notifyRel=view.findViewById(R.id.notifyRel);
+        currency=view.findViewById(R.id.currency);
+        calculate=view.findViewById(R.id.calculate);
+        numberKeyBoard=view.findViewById(R.id.numberKeyBoard);
     }
 
     private void setFirstGrid() {
@@ -779,16 +821,17 @@ public class UpdateSpend extends Fragment {
         consumeVO.setMaintype(name.getText().toString().trim());
         consumeVO.setSecondType(secondname.getText().toString().trim());
         consumeVO.setDate(d);
-        try {
-            consumeVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
-        }catch (NumberFormatException e)
-        {
-            consumeVO.setMoney(0);
-        }
+        consumeVO.setRealMoney(onlyNumber(money.getText().toString().trim()));
+        consumeVO.setCurrency(nowCurrency);
         consumeVO.setNumber(number.getText().toString().trim());
-        consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
-        consumeVO.setFixDateDetail(fixdatedetail);
-        consumeVO.setNotify(String.valueOf(notify.isChecked()));
+
+        if(!consumeVO.isAuto())
+        {
+            consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
+            consumeVO.setFixDateDetail(fixdatedetail);
+            consumeVO.setNotify(String.valueOf(notify.isChecked()));
+        }
+
     }
 
 
@@ -823,7 +866,7 @@ public class UpdateSpend extends Fragment {
                             break;
                         case R.id.searchInternet:
                             Fragment fragment=new SearchByQrCode();
-                            returnThisFramgent(fragment);
+                            returnThisFragment(fragment);
                             break;
                         default:
                             popupMenu.dismiss();
@@ -869,7 +912,7 @@ public class UpdateSpend extends Fragment {
             }
             if (type.equals("新增")) {
                 Common.showfirstgrid = true;
-                returnThisFramgent(new InsertConsumeType());
+                returnThisFragment(new InsertConsumeType());
                 return;
             }
             if (type.equals("取消")) {
@@ -896,7 +939,7 @@ public class UpdateSpend extends Fragment {
             }
             if (type.equals("新增")) {
                 Common.showsecondgrid = true;
-                returnThisFramgent(new InsertConsumeType());
+                returnThisFragment(new InsertConsumeType());
                 return;
             }
             if (type.equals("取消")) {
@@ -1098,7 +1141,7 @@ public class UpdateSpend extends Fragment {
     private class showDetail implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            returnThisFramgent(new UpdateConsumeDetail());
+            returnThisFragment(new UpdateConsumeDetail());
         }
     }
     private class choiceStateItemBS implements BootstrapDropDown.OnDropDownItemClickListener {
@@ -1159,6 +1202,25 @@ public class UpdateSpend extends Fragment {
                     resultDay=BsTextMonth.get(id).toString();
                     break;
             }
+        }
+    }
+
+    private class choiceUpdateCurrency implements PopupMenu.OnMenuItemClickListener {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case 1:
+                    nowCurrency="TWD";
+                    currency.setText(Common.Currency().get(nowCurrency));
+                case 8:
+                    popupMenu.dismiss();
+                    break;
+                default:
+                    nowCurrency=Common.code.get(menuItem.getItemId() - 2);
+                    currency.setText(Common.Currency().get(nowCurrency));
+                    break;
+            }
+            return true;
         }
     }
 }

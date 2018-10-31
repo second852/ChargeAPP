@@ -10,15 +10,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,17 +25,16 @@ import android.widget.TextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
-import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
-import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
+import static com.chargeapp.whc.chargeapp.Control.Common.*;
+
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -49,23 +44,19 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
-import org.apache.poi.ss.formula.functions.T;
+
 
 import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
+
 
 import static com.chargeapp.whc.chargeapp.Control.Common.Currency;
 import static com.chargeapp.whc.chargeapp.Control.Common.doubleRemoveZero;
@@ -111,14 +102,28 @@ public class HomePage extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         context.setTitle(R.string.text_Home);
-        final View view = inflater.inflate(R.layout.home_page, container, false);
+
+        //set View
+        View view = inflater.inflate(R.layout.home_page, container, false);
         pieChart = view.findViewById(R.id.pieChart);
         pieChartT = view.findViewById(R.id.pieChartT);
         listView = view.findViewById(R.id.list);
         currency=view.findViewById(R.id.currency);
+
+        //DB
+        Common.setChargeDB(context);
+        Common.setScreen(Common.screenSize, context);
+        goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+
+
+        //找出現在選擇Currency
         sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
-        nowCurrency = sharedPreferences.getString("insertCurrency", "TWD");
+        nowCurrency = sharedPreferences.getString("choiceCurrency", "TWD");
         currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        popupMenu=new PopupMenu(context,currency);
         Common.createCurrencyPopMenu(popupMenu, context);
         currency.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,19 +134,10 @@ public class HomePage extends Fragment {
         popupMenu.setOnMenuItemClickListener(new choiceCurrency());
 
 
-        Common.setChargeDB(context);
-        Common.setScreen(Common.screenSize, context);
-        goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         return view;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
+
 
     private void setListLayout() {
         List<GoalVO> goalVOS = goalDB.getNoCompleteAll();
@@ -165,6 +161,7 @@ public class HomePage extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        //init day
         end = Calendar.getInstance();
         year = end.get(Calendar.YEAR);
         month = end.get(Calendar.MONTH);
@@ -200,6 +197,7 @@ public class HomePage extends Fragment {
             }
             addData(consumeVOS);
         }
+
         pieChart.setEntryLabelColor(Color.BLACK);
         pieChart.setUsePercentValues(true);
         pieChart.setDrawHoleEnabled(true);
@@ -219,9 +217,9 @@ public class HomePage extends Fragment {
     @SuppressLint("SetTextI18n")
     private void addData(HashMap<String, Double> consumeVOS) {
         total=consumeVOS.get("total");
-        pieChartT.setText(Common.sDay.format(new Date(end.getTimeInMillis())) + "本日花費 : ");
-        currency.setText(Common.Currency().get(nowCurrency)+" "+doubleRemoveZero(total*Double.valueOf(currencyVO.getMoney())));
-        yVals1 = new ArrayList<PieEntry>();
+        pieChartT.setText(Common.sDay.format(new Date(end.getTimeInMillis())) + "本日花費 ");
+        currency.setText(Common.Currency().get(nowCurrency)+" "+doubleRemoveZero(total/Double.valueOf(currencyVO.getMoney())));
+        yVals1 = new ArrayList<>();
         Okey = new ArrayList<>();
         ShowZero = true;
         Double total = consumeVOS.get("total");
@@ -284,7 +282,6 @@ public class HomePage extends Fragment {
         pieChart.setData(data);
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
         pieChart.setOnChartValueSelectedListener(new pieValue());
-
     }
 
 
@@ -323,7 +320,6 @@ public class HomePage extends Fragment {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                 itemView = layoutInflater.inflate(R.layout.home_page_item, parent, false);
             }
-            NumberFormat nf = NumberFormat.getNumberInstance();
             Object o = objects.get(position);
             ImageView imageView = itemView.findViewById(R.id.ivImage);
             TextView title = itemView.findViewById(R.id.goal);
@@ -343,18 +339,18 @@ public class HomePage extends Fragment {
                 if (goalVO.getType().trim().equals("支出")) {
 
                     if (timeStatue.equals("每天")) {
-                        consumeCount = consumeDB.getTimeMaxType(new Timestamp(HomePage.this.start.getTimeInMillis()), new Timestamp(HomePage.this.end.getTimeInMillis())).get("total") +
-                                invoiceDB.getInvoiceByTimeMaxType(new Timestamp(HomePage.this.start.getTimeInMillis()), new Timestamp(HomePage.this.end.getTimeInMillis())).get("total");
+                        consumeCount = consumeDB.getTimeMaxType(HomePage.this.start.getTimeInMillis(),HomePage.this.end.getTimeInMillis()).get("total") +
+                                invoiceDB.getInvoiceByTimeMaxType(HomePage.this.start.getTimeInMillis(), HomePage.this.end.getTimeInMillis()).get("total");
                         describeContent.append("花費 : 本日支出" +Common.Currency().get(nowCurrency)+" ");
                         transFormCurrency=consumeCount/Double.valueOf(currencyVO.getMoney());
                         describeContent.append(doubleRemoveZero(transFormCurrency));
                         goalCurrencyVO=currencyDB.getBytimeAndType(HomePage.this.start.getTimeInMillis(),HomePage.this.end.getTimeInMillis(),goalVO.getCurrency());
                     } else if (timeStatue.equals("每周")) {
-                        int dweek = HomePage.this.start.get(Calendar.DAY_OF_WEEK);
-                        start = new GregorianCalendar(year, month, day - dweek + 1, 0, 0, 0);
-                        end = new GregorianCalendar(year, month, day - dweek + 7, 23, 59, 59);
-                        consumeCount = consumeDB.getTimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis())).get("total") +
-                                invoiceDB.getInvoiceByTimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis())).get("total");
+                        int dayWeek = HomePage.this.start.get(Calendar.DAY_OF_WEEK);
+                        start = new GregorianCalendar(year, month, day - dayWeek + 1, 0, 0, 0);
+                        end = new GregorianCalendar(year, month, day - dayWeek + 7, 23, 59, 59);
+                        consumeCount = consumeDB.getTimeMaxType(start.getTimeInMillis(),end.getTimeInMillis()).get("total") +
+                                invoiceDB.getInvoiceByTimeMaxType(start.getTimeInMillis(), end.getTimeInMillis()).get("total");
                         describeContent.append("花費 : 本周支出" +Common.Currency().get(nowCurrency)+" ");
                         transFormCurrency=consumeCount/Double.valueOf(currencyVO.getMoney());
                         describeContent.append(doubleRemoveZero(transFormCurrency));
@@ -363,8 +359,8 @@ public class HomePage extends Fragment {
                         int max = HomePage.this.start.getActualMaximum(Calendar.DAY_OF_MONTH);
                         start = new GregorianCalendar(year, month, 1, 0, 0, 0);
                         end = new GregorianCalendar(year, month, max, 23, 59, 59);
-                        consumeCount = consumeDB.getTimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis())).get("total") +
-                                invoiceDB.getInvoiceByTimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis())).get("total");
+                        consumeCount = consumeDB.getTimeMaxType(start.getTimeInMillis(),end.getTimeInMillis()).get("total") +
+                                invoiceDB.getInvoiceByTimeMaxType(start.getTimeInMillis(), end.getTimeInMillis()).get("total");
                         describeContent.append("花費 : 本月支出"  +Common.Currency().get(nowCurrency)+" ");
                         transFormCurrency=consumeCount/Double.valueOf(currencyVO.getMoney());
                         describeContent.append(doubleRemoveZero(transFormCurrency));
@@ -372,8 +368,8 @@ public class HomePage extends Fragment {
                     } else if (timeStatue.equals("每年")) {
                         start = new GregorianCalendar(year, 0, 1, 0, 0, 0);
                         end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
-                        consumeCount = consumeDB.getTimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis())).get("total") +
-                                invoiceDB.getInvoiceByTimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis())).get("total");
+                        consumeCount = consumeDB.getTimeMaxType(start.getTimeInMillis(), end.getTimeInMillis()).get("total") +
+                                invoiceDB.getInvoiceByTimeMaxType(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
                         describeContent.append("花費 : 本年支出"  +Common.Currency().get(nowCurrency)+" ");
                         transFormCurrency=consumeCount/Double.valueOf(currencyVO.getMoney());
                         describeContent.append(doubleRemoveZero(transFormCurrency));
@@ -381,13 +377,14 @@ public class HomePage extends Fragment {
                     }
 
                     //設定Title
-                    double goalVOMoney=(goalVO.getMoney()*Double.valueOf(goalCurrencyVO.getMoney()))/Double.valueOf(currencyVO.getMoney());
+                    double goalVOMoney=(Double.valueOf(goalVO.getRealMoney())*Double.valueOf(goalCurrencyVO.getMoney()))/Double.valueOf(currencyVO.getMoney());
+                    consumeCount=consumeCount/Double.valueOf(currencyVO.getMoney());
                     title.setText("目標 : " + goalVO.getName().trim() + goalVO.getTimeStatue().trim() + "支出" +Currency().get(nowCurrency)+" "+doubleRemoveZero(goalVOMoney));
 
-                    if (Integer.valueOf(goalVO.getMoney()) > consumeCount) {
+
+                    if (goalVOMoney > consumeCount) {
                         resultT.setText("達成");
                         resultT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
-
 
                     } else {
                         resultT.setText("失敗");
@@ -397,53 +394,56 @@ public class HomePage extends Fragment {
                 } else {
 
                     if (timeStatue.equals("今日")) {
-                        consumeCount = consumeDB.getTimeMaxType(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime())).get("total") +
-                                invoiceDB.getInvoiceByTimeMaxType(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime())).get("total");
-                        Double saveMoney = bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime())) - consumeCount;
+                        consumeCount = consumeDB.getTimeMaxType(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime()).get("total") +
+                                invoiceDB.getInvoiceByTimeMaxType(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime()).get("total");
+                        Double saveMoney = bankDB.getTimeTotal(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime()) - consumeCount;
                         saveMoney=saveMoney/Double.valueOf(currencyVO.getMoney());
+                        double goalVOMoney=(Double.valueOf(goalVO.getRealMoney())*Double.valueOf(goalCurrencyVO.getMoney()))/Double.valueOf(currencyVO.getMoney());
+                        String saveMoneyResult=Currency().get(nowCurrency)+doubleRemoveZero(saveMoney);
+                        String goalVOMoneyResult=Currency().get(nowCurrency)+" "+doubleRemoveZero(goalVOMoney);
+
                         if (goalVO.getEndTime().getTime() < System.currentTimeMillis()) {
-                            double goalVOMoney=(goalVO.getMoney()*Double.valueOf(goalCurrencyVO.getMoney()))/Double.valueOf(currencyVO.getMoney());
-                            title.setText("目標 : " + goalVO.getName() + "\n" + Common.sTwo.format(goalVO.getEndTime()) + "前 儲蓄" + goalVOMoney);
-                            if (Integer.valueOf(goalVO.getMoney()) < saveMoney) {
+                            title.setText("目標 : " + goalVO.getName() + "\n" + Common.sTwo.format(goalVO.getEndTime()) + "前 儲蓄"+goalVOMoneyResult);
+                            if (goalVOMoney < saveMoney) {
                                 goalVO.setStatue(1);
                                 goalVO.setNotify(false);
-                                describeContent.append(Common.sTwo.format(goalVO.getEndTime()) + "前\n已儲蓄" + nf.format(saveMoney) + "元");
+                                describeContent.append(Common.sTwo.format(goalVO.getEndTime()) + "前\n已儲蓄" +saveMoneyResult);
                                 resultT.setText("達成");
                                 resultT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                             } else {
                                 goalVO.setStatue(2);
                                 goalVO.setNotify(false);
-                                describeContent.append(Common.sTwo.format(goalVO.getEndTime()) + "前\n已儲蓄" + nf.format(saveMoney) + "元");
+                                describeContent.append(Common.sTwo.format(goalVO.getEndTime()) + "前\n已儲蓄" +saveMoneyResult);
                                 resultT.setText("失敗");
                                 resultT.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                             }
                             Log.d("goal", "homepage" + goalVO.getStatue());
                             goalDB.update(goalVO);
                         } else {
-                            title.setText("目標 : " + goalVO.getName() + "\n" + Common.sTwo.format(goalVO.getEndTime()) + "前 儲蓄" + nf.format(goalVO.getMoney()) + "元");
-                            double remainday = Double.valueOf(goalVO.getEndTime().getTime() - System.currentTimeMillis()) / (1000 * 60 * 60 * 24);
-                            if (remainday < 1) {
-                                double remainhour = remainday * 24;
-                                if (remainhour < 1) {
-                                    double remainMin = remainhour * 60;
+
+                            title.setText("目標 : " + goalVO.getName() + "\n" + Common.sTwo.format(goalVO.getEndTime()) + "前 儲蓄"+goalVOMoneyResult);
+                            double remainDay = Double.valueOf(goalVO.getEndTime().getTime() - System.currentTimeMillis()) / (1000 * 60 * 60 * 24);
+                            if (remainDay < 1) {
+                                double remainHour = remainDay * 24;
+                                if (remainHour < 1) {
+                                    double remainMin = remainHour * 60;
                                     describeContent.append(" 倒數" + (int) remainMin + "分鐘");
 
                                 } else {
-                                    describeContent.append(" 倒數" + (int) remainhour + "小時");
+                                    describeContent.append(" 倒數" + (int) remainHour + "小時");
                                 }
 
                             } else {
-                                describeContent.append(" 倒數" + (int) remainday + "天");
+                                describeContent.append(" 倒數" + (int) remainDay + "天");
                             }
-
-                            if (Integer.valueOf(goalVO.getMoney()) < saveMoney) {
+                            if (goalVOMoney < saveMoney) {
                                 goalVO.setStatue(1);
-                                describeContent.append("\n 目前已儲蓄" + saveMoney + "元 達成");
+                                describeContent.append("\n 目前已儲蓄" + saveMoneyResult);
                                 goalDB.update(goalVO);
                                 resultT.setText("達成");
                                 resultT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                             } else {
-                                describeContent.append("\n 目前已儲蓄" + saveMoney + "元");
+                                describeContent.append("\n 目前已儲蓄" + saveMoneyResult);
                                 resultT.setText("進行中");
                                 resultT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
                             }
@@ -454,12 +454,18 @@ public class HomePage extends Fragment {
                         int max = HomePage.this.start.getActualMaximum(Calendar.DAY_OF_MONTH);
                         start = new GregorianCalendar(year, month, 1, 0, 0, 0);
                         end = new GregorianCalendar(year, month, max, 23, 59, 59);
-                        consumeCount = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis())) +
-                                invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                        int savemoney = bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis())) - consumeCount;
-                        title.setText(" 目標 :" + goalVO.getName() + " 每月儲蓄" + nf.format(goalVO.getMoney()) + "元");
-                        describe.setText(" 目前 : 本月\n 已存款" + nf.format(savemoney) + "元");
-                        if (Integer.valueOf(goalVO.getMoney()) < savemoney) {
+                        consumeCount = consumeDB.getTimeMaxType(start.getTimeInMillis(),end.getTimeInMillis()).get("total") +
+                                invoiceDB.getInvoiceByTimeMaxType(start.getTimeInMillis(), end.getTimeInMillis()).get("total");
+
+                        Double saveMoney = bankDB.getTimeTotal(start.getTimeInMillis(),end.getTimeInMillis()) - consumeCount;
+                        saveMoney=saveMoney/Double.valueOf(currencyVO.getMoney());
+                        double goalVOMoney=(Double.valueOf(goalVO.getRealMoney())*Double.valueOf(goalCurrencyVO.getMoney()))/Double.valueOf(currencyVO.getMoney());
+                        String saveMoneyResult=Currency().get(nowCurrency)+doubleRemoveZero(saveMoney);
+                        String goalVOMoneyResult=Currency().get(nowCurrency)+" "+doubleRemoveZero(goalVOMoney);
+
+                        title.setText(" 目標 :" + goalVO.getName() + " 每月儲蓄" +goalVOMoneyResult);
+                        describe.setText(" 目前 : 本月\n 已存款" +saveMoneyResult);
+                        if (goalVOMoney < saveMoney) {
                             resultT.setText("達成");
                             resultT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                         } else {
@@ -469,12 +475,18 @@ public class HomePage extends Fragment {
                     } else if (timeStatue.equals("每年")) {
                         start = new GregorianCalendar(year, 0, 1, 0, 0, 0);
                         end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
-                        consumeCount = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis())) +
-                                invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                        int savemoney = bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis())) - consumeCount;
-                        title.setText(" 目標 :" + goalVO.getName() + " 每年儲蓄" + nf.format(goalVO.getMoney()) + "元");
-                        describe.setText(" 目前 : 本年\n 已存款" + nf.format(savemoney) + "元");
-                        if (Integer.valueOf(goalVO.getMoney()) < savemoney) {
+                        consumeCount =consumeDB.getTimeMaxType(start.getTimeInMillis(), end.getTimeInMillis()).get("total") +
+                                invoiceDB.getInvoiceByTimeMaxType(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
+
+                        Double saveMoney = bankDB.getTimeTotal(start.getTimeInMillis(), end.getTimeInMillis()) - consumeCount;
+                        saveMoney=saveMoney/Double.valueOf(currencyVO.getMoney());
+                        double goalVOMoney=(Double.valueOf(goalVO.getRealMoney())*Double.valueOf(goalCurrencyVO.getMoney()))/Double.valueOf(currencyVO.getMoney());
+                        String saveMoneyResult=Currency().get(nowCurrency)+doubleRemoveZero(saveMoney);
+                        String goalVOMoneyResult=Currency().get(nowCurrency)+" "+doubleRemoveZero(goalVOMoney);
+
+                        title.setText(" 目標 :" + goalVO.getName() + " 每年儲蓄" +goalVOMoneyResult);
+                        describe.setText(" 目前 : 本年\n 已存款" + saveMoneyResult);
+                        if (goalVOMoney < saveMoney) {
                             resultT.setText("達成");
                             resultT.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                         } else {
@@ -498,23 +510,23 @@ public class HomePage extends Fragment {
                     //顯示本周花費
                     imageView.setImageResource(R.drawable.bouns);
                     Calendar calendar = Calendar.getInstance();
-                    int dweek = calendar.get(Calendar.DAY_OF_WEEK);
-                    start = new GregorianCalendar(year, month, day - dweek + 1, 0, 0, 0);
-                    end = new GregorianCalendar(year, month, day - dweek + 7, 23, 59, 59);
-                    invoiceHashMap= invoiceDB.getInvoiceByTimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                    consumeHashMap= consumeDB.getTimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                    consumeCount = invoiceHashMap.get("total")+consumeHashMap.get("total");
-                    title.setText("本周支出 : " + Common.Currency().get(nowCurrency)+" "+doubleRemoveZero(consumeCount*Double.valueOf(currencyVO.getMoney())));
+                    int dayWeek = calendar.get(Calendar.DAY_OF_WEEK);
+                    start = new GregorianCalendar(year, month, day - dayWeek + 1, 0, 0, 0);
+                    end = new GregorianCalendar(year, month, day - dayWeek + 7, 23, 59, 59);
+                    invoiceHashMap= invoiceDB.getInvoiceByTimeMaxType(start.getTimeInMillis(), end.getTimeInMillis());
+                    consumeHashMap= consumeDB.getTimeMaxType(start.getTimeInMillis(),end.getTimeInMillis());
+                    consumeCount = (invoiceHashMap.get("total")+consumeHashMap.get("total"))/Double.valueOf(currencyVO.getMoney());
+                    title.setText("本周支出 : " + Common.Currency().get(nowCurrency)+" "+doubleRemoveZero(consumeCount));
                 } else {
                     //顯示本月花費
                     imageView.setImageResource(R.drawable.lotto);
                     int max = HomePage.this.start.getActualMaximum(Calendar.DAY_OF_MONTH);
                     start = new GregorianCalendar(year, month, 1, 0, 0, 0);
                     end = new GregorianCalendar(year, month, max, 23, 59, 59);
-                    invoiceHashMap= invoiceDB.getInvoiceByTimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                    consumeHashMap= consumeDB.getTimeMaxType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                    consumeCount = invoiceHashMap.get("total")+consumeHashMap.get("total");
-                    title.setText("本月支出 : " + Common.Currency().get(nowCurrency)+" "+doubleRemoveZero(consumeCount*Double.valueOf(currencyVO.getMoney())));
+                    invoiceHashMap= invoiceDB.getInvoiceByTimeMaxType(start.getTimeInMillis(), end.getTimeInMillis());
+                    consumeHashMap= consumeDB.getTimeMaxType(start.getTimeInMillis(), end.getTimeInMillis());
+                    consumeCount = (invoiceHashMap.get("total")+consumeHashMap.get("total"))/Double.valueOf(currencyVO.getMoney());
+                    title.setText("本月支出 : " + Common.Currency().get(nowCurrency)+" "+doubleRemoveZero(consumeCount));
                 }
                 totalKey.addAll(invoiceHashMap.keySet());
                 totalKey.addAll(consumeHashMap.keySet());
@@ -534,8 +546,8 @@ public class HomePage extends Fragment {
                             chartEntry.setValue(total);
                         }
                     }
-                    String maxMoney=doubleRemoveZero(chartEntry.getValue()*Double.valueOf(currencyVO.getMoney()));
-                    describe.setText("最多花費 : " + (chartEntry.getValue().equals("O") ? "其他" : chartEntry.getValue()) + " " +Common.Currency().get(nowCurrency)+" "+maxMoney);
+                    String maxMoney=doubleRemoveZero(chartEntry.getValue()/Double.valueOf(currencyVO.getMoney()));
+                    describe.setText("最多花費 : " + (chartEntry.getKey().equals("O") ? "其他" : chartEntry.getKey()) + " "+Common.Currency().get(nowCurrency)+" "+maxMoney);
                     describe.setVisibility(View.VISIBLE);
                 } else {
                     describe.setVisibility(View.GONE);
@@ -596,7 +608,7 @@ public class HomePage extends Fragment {
             switch (menuItem.getItemId()) {
                 case 1:
                     nowCurrency = "TWD";
-                    sharedPreferences.edit().putString("insertCurrency", nowCurrency).apply();
+                    sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
                     currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
                     currency.setText(Common.Currency().get(nowCurrency)+" "+doubleRemoveZero(total*Double.valueOf(currencyVO.getMoney())));
                 case 8:
@@ -604,11 +616,12 @@ public class HomePage extends Fragment {
                     break;
                 default:
                     nowCurrency = Common.code.get(menuItem.getItemId() - 2);
-                    sharedPreferences.edit().putString("insertCurrency", nowCurrency).apply();
+                    sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
                     currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
                     currency.setText(Common.Currency().get(nowCurrency)+" "+doubleRemoveZero(total*Double.valueOf(currencyVO.getMoney())));
                     break;
             }
+            setListLayout();
             return true;
         }
     }

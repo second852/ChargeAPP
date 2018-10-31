@@ -41,6 +41,8 @@ public class GoalDB {
            goalVO.setNotifyDate(cursor.getString(9));
            goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
            goalVO.setStatue(cursor.getInt(11));
+           goalVO.setCurrency(cursor.getString(12));
+           goalVO.setRealMoney(cursor.getString(13));
            goalVOS.add(goalVO);
         }
         cursor.close();
@@ -67,6 +69,8 @@ public class GoalDB {
             goalVO.setNotifyDate(cursor.getString(9));
             goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
             goalVO.setStatue(cursor.getInt(11));
+            goalVO.setCurrency(cursor.getString(12));
+            goalVO.setRealMoney(cursor.getString(13));
             goalVOS.add(goalVO);
         }
         cursor.close();
@@ -93,6 +97,8 @@ public class GoalDB {
             goalVO.setNotifyDate(cursor.getString(9));
             goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
             goalVO.setStatue(cursor.getInt(11));
+            goalVO.setCurrency(cursor.getString(12));
+            goalVO.setRealMoney(cursor.getString(13));
             goalVOS.add(goalVO);
         }
         cursor.close();
@@ -118,6 +124,8 @@ public class GoalDB {
             goalVO.setNotifyDate(cursor.getString(9));
             goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
             goalVO.setStatue(cursor.getInt(11));
+            goalVO.setCurrency(cursor.getString(12));
+            goalVO.setRealMoney(cursor.getString(13));
         }
         cursor.close();
         return goalVO;
@@ -142,6 +150,8 @@ public class GoalDB {
             goalVO.setNotifyDate(cursor.getString(9));
             goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
             goalVO.setStatue(cursor.getInt(11));
+            goalVO.setCurrency(cursor.getString(12));
+            goalVO.setRealMoney(cursor.getString(13));
         }
         cursor.close();
         return goalVO;
@@ -166,6 +176,8 @@ public class GoalDB {
             goalVO.setNotifyDate(cursor.getString(9));
             goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
             goalVO.setStatue(cursor.getInt(11));
+            goalVO.setCurrency(cursor.getString(12));
+            goalVO.setRealMoney(cursor.getString(13));
         }
         cursor.close();
         return goalVO;
@@ -185,6 +197,8 @@ public class GoalDB {
         values.put("notifyDate",goalVO.getNotifyDate());
         values.put("noWeekend",String.valueOf(goalVO.isNoWeekend()));
         values.put("statue",0);
+        values.put("currency",goalVO.getCurrency());
+        values.put("statue",goalVO.getRealMoney());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -202,6 +216,8 @@ public class GoalDB {
         values.put("notifyDate",goalVO.getNotifyDate());
         values.put("noWeekend",String.valueOf(goalVO.isNoWeekend()));
         values.put("statue",0);
+        values.put("currency",goalVO.getCurrency());
+        values.put("statue",goalVO.getRealMoney());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -218,6 +234,8 @@ public class GoalDB {
         values.put("notifyDate",goalVO.getNotifyDate());
         values.put("noWeekend",String.valueOf(goalVO.isNoWeekend()));
         values.put("statue",goalVO.getStatue());
+        values.put("currency",goalVO.getCurrency());
+        values.put("statue",goalVO.getRealMoney());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(goalVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);
