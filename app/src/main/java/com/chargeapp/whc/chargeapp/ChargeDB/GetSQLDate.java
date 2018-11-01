@@ -1,10 +1,8 @@
 package com.chargeapp.whc.chargeapp.ChargeDB;
 
 
-import android.app.Activity;
+
 import android.app.job.JobService;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 
@@ -19,7 +17,6 @@ import com.chargeapp.whc.chargeapp.Control.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.EleUpdateCarrier;
 import com.chargeapp.whc.chargeapp.Control.HomePagetList;
-import com.chargeapp.whc.chargeapp.Control.JobSchedulerService;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectDetList;
 import com.chargeapp.whc.chargeapp.Control.SelectListModelCom;
@@ -31,20 +28,16 @@ import com.chargeapp.whc.chargeapp.Model.ElePeriod;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
-import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.poi.hssf.model.InternalSheet;
+
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -709,7 +702,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private InvoiceVO jsonToInVoice(JsonObject j, String password, String user) {
         try {
             InvoiceVO invoiceVO = new InvoiceVO();
-            invoiceVO.setAmount(j.get("amount").getAsInt());
+            invoiceVO.setRealAmount(j.get("amount").getAsString());
             invoiceVO.setCardEncrypt(password);
             invoiceVO.setCardNo(j.get("cardNo").getAsString());
             invoiceVO.setCardType(j.get("cardType").getAsString());
@@ -875,7 +868,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             } else if (object instanceof UpdateInvoice) {
                 UpdateInvoice updateInvoice = (UpdateInvoice) object;
                 if (s.equals("timeout") || s.equals("error")) {
-                    updateInvoice.cancelshow();
+                    updateInvoice.cancelShow();
                 } else {
                     updateInvoice.setLayout();
                 }

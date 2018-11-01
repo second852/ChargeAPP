@@ -47,7 +47,7 @@ import java.util.Map;
 public class UpdateInvoice extends Fragment {
 
     private BootstrapEditText number, name, money, secondname, date;
-    private BootstrapButton save, clear;
+    private BootstrapButton save, clear,currency;
     private BootstrapLabel detailname;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
@@ -79,7 +79,7 @@ public class UpdateInvoice extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         TypefaceProvider.registerDefaultIconSets();
         View view = inflater.inflate(R.layout.update_invoice, container, false);
-        findviewByid(view);
+        findViewById(view);
         setInvoice();
         context.setTitle("修改資料");
         Common.setChargeDB(context);
@@ -189,20 +189,26 @@ public class UpdateInvoice extends Fragment {
             secondname.setText(invoiceVO.getSecondtype());
         }
 
+        if(invoiceVO.getCurrency()==null||invoiceVO.getCurrency().trim().isEmpty())
+        {
+           currency.setText(Common.Currency().get("TWD"));
+        }else {
+            currency.setText(Common.Currency().get(invoiceVO.getCurrency()));
+        }
 
         number.setText(invoiceVO.getInvNum());
-        money.setText(String.valueOf(invoiceVO.getAmount()));
+        money.setText(String.valueOf(invoiceVO.getRealAmount()));
         date.setText(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())));
         setLayout();
     }
 
-    public void cancelshow() {
+    public void cancelShow() {
         progressDialog.cancel();
         Common.showToast(context, "財政部網路忙線~");
     }
 
 
-    public void findviewByid(View view) {
+    public void findViewById(View view) {
         name = view.findViewById(R.id.name);
         name.setFocusable(false);
         name.setFocusableInTouchMode(false);
@@ -229,6 +235,7 @@ public class UpdateInvoice extends Fragment {
         secondG=view.findViewById(R.id.secondG);
         secondL=view.findViewById(R.id.secondL);
         progressDialog = new ProgressDialog(context);
+        currency=view.findViewById(R.id.currency);
     }
 
     public void setLayout() {

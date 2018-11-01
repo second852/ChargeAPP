@@ -3,8 +3,10 @@ package com.chargeapp.whc.chargeapp.Control;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -24,6 +27,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
@@ -35,6 +39,7 @@ import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
+import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListener;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
@@ -54,6 +59,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.chargeapp.whc.chargeapp.Control.Common.insertCurrency;
 
 
 public class UpdateIncome extends Fragment {
@@ -80,6 +87,12 @@ public class UpdateIncome extends Fragment {
     private String resultStatue,resultDay;
     private List<BootstrapText> BsTextDay,BsTextWeek,BsTextMonth,BsTextStatue;
     private int statueNumber;
+    private SharedPreferences sharedPreferences;
+    private String nowCurrency;
+    private PopupMenu popupMenu;
+    private GridView numberKeyBoard;
+    private BootstrapButton currency, calculate;
+    private View view;
 
     @Override
     public void onAttach(Context context) {
@@ -98,7 +111,7 @@ public class UpdateIncome extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         TypefaceProvider.registerDefaultIconSets();
-        View view = inflater.inflate(R.layout.insert_income, container, false);
+        view = inflater.inflate(R.layout.insert_income, container, false);
         findviewByid(view);
         BsTextDay=Common.DateChoiceSetBsTest(context,Common.DaySetSpinnerBS());
         BsTextWeek=Common.DateChoiceSetBsTest(context,Common.WeekSetSpinnerBS);
@@ -136,12 +149,14 @@ public class UpdateIncome extends Fragment {
             fixDateT.setVisibility(View.GONE);
         }
         setUpdate();
+        setCurrency();
         return view;
     }
 
     private void setSpinner() {
         choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
     }
+
 
     @Override
     public void onStart() {
@@ -152,6 +167,51 @@ public class UpdateIncome extends Fragment {
             Common.showfirstgrid = false;
         }
     }
+
+    private void setCurrency()
+    {
+        //insert currency
+        sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
+        nowCurrency = sharedPreferences.getString(insertCurrency, "TWD");
+        currency = view.findViewById(R.id.currency);
+        popupMenu = new PopupMenu(context, currency);
+        Common.createCurrencyPopMenu(popupMenu, context);
+        currency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupMenu.show();
+            }
+        });
+        popupMenu.setOnMenuItemClickListener(new choiceCurrency());
+
+
+        //insert keyboard
+        numberKeyBoard = view.findViewById(R.id.numberKeyBoard);
+        calculate = view.findViewById(R.id.calculate);
+        money = view.findViewById(R.id.money);
+        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,new StringBuilder(),false));
+        ArrayList items = new ArrayList<Map<String, Object>>();
+        Map<String, Object> hashMap;
+        for (String s : Common.keyboardArray) {
+            hashMap = new HashMap<>();
+            hashMap.put("text", s);
+            items.add(hashMap);
+        }
+        SimpleAdapter adapter = new SimpleAdapter(context, items, R.layout.ele_hand_item, new String[]{"text"},
+                new int[]{R.id.cardview});
+        numberKeyBoard.setAdapter(adapter);
+        numberKeyBoard.setNumColumns(5);
+        money.setFocusable(false);
+        money.setFocusableInTouchMode(false);
+        money.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                numberKeyBoard.setVisibility(View.VISIBLE);
+            }
+        });
+        currency.setText(Common.Currency().get(nowCurrency));
+    }
+
 
     private class firstGridOnClick implements AdapterView.OnItemClickListener {
         @Override
@@ -460,16 +520,18 @@ public class UpdateIncome extends Fragment {
         day = Integer.valueOf(dates[2]);
         c.set(year, month, day, 12, 0, 0);
         Date d = new Date(c.getTimeInMillis());
+
+        //設定幣別
+        bankVO.setRealMoney(money.getText().toString().trim());
+        bankVO.setCurrency(nowCurrency);
+
         bankVO.setMaintype(name.getText().toString().trim());
-        try {
-            bankVO.setMoney(Integer.valueOf(money.getText().toString().trim()));
-        }catch (NumberFormatException e)
-        {
-            bankVO.setMoney(0);
-        }
         bankVO.setDate(d);
-        bankVO.setFixDate(String.valueOf(fixdate.isChecked()));
-        bankVO.setFixDateDetail(fixdatedetail);
+        if(!bankVO.isAuto())
+        {
+            bankVO.setFixDate(String.valueOf(fixdate.isChecked()));
+            bankVO.setFixDateDetail(fixdatedetail);
+        }
         bankVO.setDetailname(detailname.getText().toString().trim());
     }
 
@@ -754,6 +816,27 @@ public class UpdateIncome extends Fragment {
                     resultDay=BsTextMonth.get(id).toString();
                     break;
             }
+        }
+    }
+
+    private class choiceCurrency implements PopupMenu.OnMenuItemClickListener {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case 1:
+                    nowCurrency = "TWD";
+                    sharedPreferences.edit().putString(insertCurrency, nowCurrency).apply();
+                    currency.setText(Common.Currency().get(nowCurrency));
+                case 8:
+                    popupMenu.dismiss();
+                    break;
+                default:
+                    nowCurrency = Common.code.get(menuItem.getItemId() - 2);
+                    sharedPreferences.edit().putString(insertCurrency, nowCurrency).apply();
+                    currency.setText(Common.Currency().get(nowCurrency));
+                    break;
+            }
+            return true;
         }
     }
 }

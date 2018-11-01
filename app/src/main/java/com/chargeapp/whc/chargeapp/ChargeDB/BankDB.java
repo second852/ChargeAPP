@@ -49,6 +49,31 @@ public class BankDB {
         return BankVOList;
     }
 
+    public List<BankVO> getrealMoneyIsNullAll() {
+        String sql = "SELECT * FROM BANK where realMoney isnull;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<BankVO> BankVOList = new ArrayList<>();
+        BankVO bankVO;
+        while (cursor.moveToNext()) {
+            bankVO = new BankVO();
+            bankVO.setId(cursor.getInt(0));
+            bankVO.setMaintype(cursor.getString(1));
+            bankVO.setMoney(cursor.getInt(2));
+            bankVO.setDate(new Date(cursor.getLong(3)));
+            bankVO.setFixDate(cursor.getString(4));
+            bankVO.setFixDateDetail(cursor.getString(5));
+            bankVO.setDetailname(cursor.getString(6));
+            bankVO.setAuto(Boolean.valueOf(cursor.getString(7)));
+            bankVO.setAutoId(cursor.getInt(8));
+            bankVO.setCurrency(cursor.getString(9));
+            bankVO.setRealMoney(cursor.getString(10));
+            BankVOList.add(bankVO);
+        }
+        cursor.close();
+        return BankVOList;
+    }
+
     public List<BankVO> getFixDate() {
         String sql = "SELECT * FROM BANK where  fixdate = 'true' order by id;";
         String[] args = {};

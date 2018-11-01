@@ -31,6 +31,7 @@ import android.view.WindowManager;
 
 import com.beardedhen.androidbootstrap.BootstrapThumbnail;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
+import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
@@ -39,6 +40,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
+import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
@@ -93,6 +95,14 @@ public class Welcome extends AppCompatActivity {
                 invoiceVO.setRealAmount(String.valueOf(invoiceVO.getAmount()));
                 invoiceDB.update(invoiceVO);
             }
+            BankDB bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            List<BankVO> bankVOS=bankDB.getrealMoneyIsNullAll();
+            for(BankVO bankVO:bankVOS)
+            {
+                bankVO.setRealMoney(String.valueOf(bankVO.getMoney()));
+                bankDB.update(bankVO);
+            }
+
         }
     };
 
@@ -134,9 +144,6 @@ public class Welcome extends AppCompatActivity {
                             break;
                         case 6:
                             currencyVO=new CurrencyVO("AUD",e.text(),new Date(System.currentTimeMillis()));
-                            break;
-                        case 8:
-                            currencyVO=new CurrencyVO("USD",e.text(),new Date(System.currentTimeMillis()));
                             break;
                         case 14:
                             currencyVO=new CurrencyVO("JPY",e.text(),new Date(System.currentTimeMillis()));

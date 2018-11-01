@@ -25,7 +25,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
-import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapDropDown;
 import com.beardedhen.androidbootstrap.BootstrapText;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
@@ -101,14 +100,14 @@ public class SelectConsume extends Fragment {
     private InvoiceDB invoiceDB;
     private CarrierDB carrierDB;
     private ConsumeDB consumeDB;
-    private TextView PIdateTittle;
+    private TextView PIdateTittle, describe;
     private ImageView PIdateCut, PIdateAdd;
     public int choiceD;
     private List<CarrierVO> carrierVOS;
     private String TAG = "SelectConsume";
     private BarChart chart_bar;
     private List<Map.Entry<String, Double>> list_Data;
-    private int month, year, day, dweek, extra;
+    private int month, year, day, dayWeek, extra;
     private BootstrapDropDown choiceCarrier, choicePeriod;
     private PieChart chart_pie;
     private int period;
@@ -131,10 +130,6 @@ public class SelectConsume extends Fragment {
     private AwesomeTextView goalConsume;
     private List<BootstrapText> carrierTexts;
     private List<BootstrapText> periodTexts;
-
-
-    private AwesomeTextView otherMessage;
-    private BootstrapButton setCurrency;
     private SharedPreferences sharedPreferences;
     private String nowCurrency;
     private CurrencyDB currencyDB;
@@ -159,19 +154,18 @@ public class SelectConsume extends Fragment {
         Common.setScreen(Common.screenSize, context);
         final View view = inflater.inflate(R.layout.select_consume, container, false);
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
-        nowCurrency=sharedPreferences.getString("choiceCurrency","TWD");
+        nowCurrency=sharedPreferences.getString(Common.choiceCurrency,"TWD");
 
         if (end == null ) {
             end = Calendar.getInstance();
             SelectConsume.Statue = 1;
         }
 
-
         month = end.get(Calendar.MONTH);
         year = end.get(Calendar.YEAR);
         day = end.get(Calendar.DAY_OF_MONTH);
-        dweek = end.get(Calendar.DAY_OF_WEEK);
-        //設定dweek period
+        dayWeek = end.get(Calendar.DAY_OF_WEEK);
+        //設定dayWeek period
         switch (Statue)
         {
             case 0:
@@ -179,7 +173,7 @@ public class SelectConsume extends Fragment {
                 break;
             case 1:
                 if (week == 1) {
-                    dweek = 1;
+                    dayWeek = 1;
                 }
                 period = 7 + extra;
                 extra = 0;
@@ -225,6 +219,7 @@ public class SelectConsume extends Fragment {
         chart_bar.setOnChartValueSelectedListener(new charvalue());
         chart_pie.setOnChartValueSelectedListener(new pievalue());
         goalVO = goalDB.getFindType("支出");
+
         dataAnalyze();
         //        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
 //        choiceCarrier.setOnItemSelectedListener(new ChoiceCarrier());
@@ -271,7 +266,6 @@ public class SelectConsume extends Fragment {
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
 
@@ -283,10 +277,7 @@ public class SelectConsume extends Fragment {
         choicePeriod = view.findViewById(R.id.choicePeriod);
         choiceCarrier = view.findViewById(R.id.choiceCarrier);
         chart_pie = view.findViewById(R.id.chart_pie);
-        otherMessage=view.findViewById(R.id.otherMessage);
-        setCurrency=view.findViewById(R.id.setCurrency);
-
-
+        describe = view.findViewById(R.id.describe);
         goalConsume = view.findViewById(R.id.goalConsume);
         ArrayList<String> SpinnerItem1 = new ArrayList<>();
         SpinnerItem1.add("  日  ");
@@ -361,8 +352,8 @@ public class SelectConsume extends Fragment {
             PIdateTittle.setText(Common.sOne.format(new Date(start.getTimeInMillis())));
         } else if (Statue == 1) {
             DesTittle = "這周花費";
-            start = new GregorianCalendar(year, month, day - dweek + 1, 0, 0, 0);
-            end = new GregorianCalendar(year, month, day - dweek + 1 + period - 1, 23, 59, 59);
+            start = new GregorianCalendar(year, month, day - dayWeek + 1, 0, 0, 0);
+            end = new GregorianCalendar(year, month, day - dayWeek + 1 + period - 1, 23, 59, 59);
             PIdateTittle.setText(Common.sTwo.format(new Date(start.getTimeInMillis())) + " ~ " + Common.sTwo.format(new Date(end.getTimeInMillis())));
         } else if (Statue == 2) {
             DesTittle = "本月花費";
@@ -392,20 +383,19 @@ public class SelectConsume extends Fragment {
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrierVOS.get(choiceD).getCarNul());
             }
             for (InvoiceVO I : invoiceVOS) {
-
                 currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
-
+                Double invoiceVOMoney=Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney());
                 if (I.getMaintype().equals("0") || I.getMaintype().equals("O")) {
-                    other.setValue(other.getValue() + I.getAmount()*Double.valueOf(currencyVO.getMoney()));
+                    other.setValue(other.getValue() + invoiceVOMoney);
                     OKey.add(I.getMaintype());
                     continue;
                 }
                 if (hashMap.get(I.getMaintype()) == null) {
-                    hashMap.put(I.getMaintype(), I.getAmount()*Double.valueOf(currencyVO.getMoney()));
+                    hashMap.put(I.getMaintype(), invoiceVOMoney);
                 } else {
-                    hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()) + hashMap.get(I.getMaintype())*Double.valueOf(currencyVO.getMoney()));
+                    hashMap.put(I.getMaintype(), invoiceVOMoney + hashMap.get(I.getMaintype()));
                 }
-                total = total +I.getAmount()*Double.valueOf(currencyVO.getMoney());
+                total = total +invoiceVOMoney;
             }
         }
         total = total + other.getValue();
@@ -415,12 +405,13 @@ public class SelectConsume extends Fragment {
             List<ConsumeVO> consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
             for (ConsumeVO c : consumeVOS) {
                 currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
+                Double consumeVOMoney=Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney());
                 if (hashMap.get(c.getMaintype()) == null) {
-                    hashMap.put(c.getMaintype(), c.getMoney()*Double.valueOf(currencyVO.getMoney()));
+                    hashMap.put(c.getMaintype(), consumeVOMoney);
                 } else {
-                    hashMap.put(c.getMaintype(), c.getMoney() + hashMap.get(c.getMaintype())*Double.valueOf(currencyVO.getMoney()));
+                    hashMap.put(c.getMaintype(), consumeVOMoney + hashMap.get(c.getMaintype()));
                 }
-                total = total + Integer.valueOf(c.getMoney())*Double.valueOf(currencyVO.getMoney());
+                total = total + consumeVOMoney;
             }
         }
 
@@ -461,7 +452,7 @@ public class SelectConsume extends Fragment {
             chartLabels.add(Common.sDay.format(new Date(time.getTimeInMillis())));
         } else if (Statue == 1) {
             for (int i = 0; i < period; i++) {
-                time = new GregorianCalendar(year, month, day - dweek + 1 + i);
+                time = new GregorianCalendar(year, month, day - dayWeek + 1 + i);
                 chartLabels.add(Common.sDay.format(new Date(time.getTimeInMillis())));
             }
         } else if (Statue == 2) {
@@ -490,8 +481,8 @@ public class SelectConsume extends Fragment {
         } else if (Statue == 1) {
             setGoalVO();
             for (int i = 0; i < period; i++) {
-                start = new GregorianCalendar(year, month, day - dweek + 1 + i, 0, 0, 0);
-                end = new GregorianCalendar(year, month, day - dweek + 1 + i, 23, 59, 59);
+                start = new GregorianCalendar(year, month, day - dayWeek + 1 + i, 0, 0, 0);
+                end = new GregorianCalendar(year, month, day - dayWeek + 1 + i, 23, 59, 59);
                 Log.d(TAG, "start" + Common.sDay.format(new Date(start.getTimeInMillis())));
                 BarEntry barEntry = new BarEntry(i, Periodfloat(start, end));
                 chartData.add(barEntry);
@@ -539,7 +530,7 @@ public class SelectConsume extends Fragment {
     }
 
     private float[] Periodfloat(Calendar start, Calendar end) {
-        Map<String, Integer> hashMap = new LinkedHashMap<>();
+        Map<String, Double> hashMap = new LinkedHashMap<>();
         boolean isOther;
         float[] f = new float[list_Data.size()];
         ChartEntry other = new ChartEntry("其他", 0.0);
@@ -561,20 +552,21 @@ public class SelectConsume extends Fragment {
             }
             for (InvoiceVO I : periodInvoice) {
                 isOther = true;
+                currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
+                double invoiceVOMoney=Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney());
                 for (Map.Entry e : list_Data) {
                     if (I.getMaintype().equals(e.getKey())) {
-
                         if (hashMap.get(I.getMaintype()) == null) {
-                            hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()));
+                            hashMap.put(I.getMaintype(), invoiceVOMoney);
                         } else {
-                            hashMap.put(I.getMaintype(), Integer.valueOf(I.getAmount()) + hashMap.get(I.getMaintype()));
+                            hashMap.put(I.getMaintype(), invoiceVOMoney + hashMap.get(I.getMaintype()));
                         }
                         isOther = false;
                         break;
                     }
                 }
                 if (isOther) {
-                    other.setValue(other.getValue() + Integer.valueOf(I.getAmount()));
+                    other.setValue(other.getValue() + invoiceVOMoney);
                 }
             }
         }
@@ -582,19 +574,21 @@ public class SelectConsume extends Fragment {
             List<ConsumeVO> periodConsume = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
             for (ConsumeVO c : periodConsume) {
                 isOther = true;
+                currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
+                double consumeVOMoney=Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney());
                 for (Map.Entry e : list_Data) {
                     if (c.getMaintype().equals(e.getKey())) {
                         if (hashMap.get(c.getMaintype()) == null) {
-                            hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()));
+                            hashMap.put(c.getMaintype(), consumeVOMoney);
                         } else {
-                            hashMap.put(c.getMaintype(), Integer.valueOf(c.getMoney()) + hashMap.get(c.getMaintype()));
+                            hashMap.put(c.getMaintype(), consumeVOMoney + hashMap.get(c.getMaintype()));
                         }
                         isOther = false;
                         break;
                     }
                 }
                 if (isOther) {
-                    other.setValue(other.getValue() + Integer.valueOf(c.getMoney()));
+                    other.setValue(other.getValue() + consumeVOMoney);
                 }
             }
         }
@@ -608,7 +602,7 @@ public class SelectConsume extends Fragment {
                 f[i] = 0;
                 continue;
             }
-            f[i] = hashMap.get(list_Data.get(i).getKey());
+            f[i] = hashMap.get(list_Data.get(i).getKey()).floatValue();
         }
         return f;
     }
@@ -686,15 +680,15 @@ public class SelectConsume extends Fragment {
     }
 
     private void addChartPieData() {
-//        describe.setText(DesTittle + nf.format(total) + "元");
+        describe.setText(DesTittle + nf.format(total) + "元");
         final ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
         ShowZero = true;
-//        for (int i = 0; i < list_Data.size(); i++) {
-//            if (list_Data.get(i).getValue() > 0) {
-//                ShowZero = false;
-//                yVals1.add(new PieEntry(list_Data.get(i).getValue(), list_Data.get(i).getKey()));
-//            }
-//        }
+        for (int i = 0; i < list_Data.size(); i++) {
+            if (list_Data.get(i).getValue() > 0) {
+                ShowZero = false;
+                yVals1.add(new PieEntry(list_Data.get(i).getValue().floatValue(), list_Data.get(i).getKey()));
+            }
+        }
 
         // create pie data set
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
@@ -780,7 +774,7 @@ public class SelectConsume extends Fragment {
                 day = day + 7;
                 period = 7;
                 end = new GregorianCalendar(year, month, day);
-                dweek = end.get(Calendar.DAY_OF_WEEK);
+                dayWeek = end.get(Calendar.DAY_OF_WEEK);
             } else if (Statue == 2) {
                 month = month + 1;
                 end = new GregorianCalendar(year, month, day);
@@ -804,7 +798,7 @@ public class SelectConsume extends Fragment {
                 day = day - 7;
                 period = 7;
                 end = new GregorianCalendar(year, month, day);
-                dweek = end.get(Calendar.DAY_OF_WEEK);
+                dayWeek = end.get(Calendar.DAY_OF_WEEK);
             } else if (Statue == 2) {
                 month = month - 1;
                 end = new GregorianCalendar(year, month, day);
@@ -826,14 +820,14 @@ public class SelectConsume extends Fragment {
             end = new GregorianCalendar(year, month, day);
             month = end.get(Calendar.MONTH);
             year = end.get(Calendar.YEAR);
-            dweek = end.get(Calendar.DAY_OF_WEEK);
+            dayWeek = end.get(Calendar.DAY_OF_WEEK);
             day = end.get(Calendar.DAY_OF_MONTH);
-            Log.d(TAG, "day" + Common.sDay.format(new Date(end.getTimeInMillis())) + " : " + dweek);
+            Log.d(TAG, "day" + Common.sDay.format(new Date(end.getTimeInMillis())) + " : " + dayWeek);
             if (position == 0) {
                 period = 1;
             } else if (position == 1) {
                 if (week == 1) {
-                    dweek = 1;
+                    dayWeek = 1;
                 }
                 period = 7 + extra;
                 extra = 0;
@@ -893,7 +887,7 @@ public class SelectConsume extends Fragment {
                 Statue = 1;
                 if (week == 1) {
                     Calendar calendar = new GregorianCalendar(year, month, 1, 0, 0, 0);
-                    dweek=1;
+                    dayWeek=1;
                     day = 1;
                     period=7-calendar.get(Calendar.DAY_OF_WEEK)+1;
                 } else if (week == period) {
@@ -902,14 +896,14 @@ public class SelectConsume extends Fragment {
                     calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                     day = calendar.get(Calendar.DAY_OF_MONTH);
                     period = calendar.getMaximum(Calendar.DAY_OF_MONTH) - day+1;
-                    dweek=1;
+                    dayWeek=1;
                 } else {
                     period=7;
                     Calendar calendar = new GregorianCalendar(year, month, 1);
                     calendar.set(Calendar.WEEK_OF_MONTH, week);
                     calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
                     day = calendar.get(Calendar.DAY_OF_MONTH);
-                    dweek=1;
+                    dayWeek=1;
                     extra = 0;
                 }
                 dataAnalyze();
@@ -930,7 +924,7 @@ public class SelectConsume extends Fragment {
                 bundle.putSerializable("carrier", choiceD);
                 bundle.putSerializable("total", (int) e.getY());
                 bundle.putSerializable("period", period);
-                bundle.putSerializable("dweek", dweek);
+                bundle.putSerializable("dweek", dayWeek);
                 bundle.putSerializable("statue", Statue);
                 fragment.setArguments(bundle);
                 switchFragment(fragment);
@@ -983,7 +977,7 @@ public class SelectConsume extends Fragment {
             bundle.putSerializable("carrier", choiceD);
             bundle.putSerializable("statue", Statue);
             bundle.putSerializable("period", period);
-            bundle.putSerializable("dweek", dweek);
+            bundle.putSerializable("dweek", dayWeek);
             bundle.putSerializable("position", 0);
             fragment.setArguments(bundle);
             switchFragment(fragment);
@@ -1028,14 +1022,14 @@ public class SelectConsume extends Fragment {
             end = new GregorianCalendar(year, month, day);
             month = end.get(Calendar.MONTH);
             year = end.get(Calendar.YEAR);
-            dweek = end.get(Calendar.DAY_OF_WEEK);
+            dayWeek = end.get(Calendar.DAY_OF_WEEK);
             day = end.get(Calendar.DAY_OF_MONTH);
-            Log.d(TAG, "day" + Common.sDay.format(new Date(end.getTimeInMillis())) + " : " + dweek);
+            Log.d(TAG, "day" + Common.sDay.format(new Date(end.getTimeInMillis())) + " : " + dayWeek);
             if (position == 0) {
                 period = 1;
             } else if (position == 1) {
                 if (week == 1) {
-                    dweek = 1;
+                    dayWeek = 1;
                 }
                 period = 7 + extra;
                 extra = 0;

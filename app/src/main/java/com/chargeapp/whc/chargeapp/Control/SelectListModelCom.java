@@ -217,7 +217,6 @@ public class SelectListModelCom extends Fragment {
 
 
             final Object o = objects.get(position);
-            StringBuffer sbTitle = new StringBuffer();
             StringBuffer sbDecribe = new StringBuffer();
             if (o instanceof InvoiceVO) {
                 final InvoiceVO I = (InvoiceVO) o;
@@ -238,22 +237,6 @@ public class SelectListModelCom extends Fragment {
                 {
                     eleTypeL.setVisibility(View.GONE);
                 }
-
-
-                //set Title
-                sbTitle.append(Common.sDay.format(new Date(I.getTime().getTime())) + " ");
-
-                //無法分類顯示其他
-                if(I.getSecondtype().trim().equals("0"))
-                {
-                    sbTitle.append("未知");
-                }else if(I.getSecondtype().trim().equals("O"))
-                {
-                    sbTitle.append("其他");
-                }else{
-                    sbTitle.append(I.getSecondtype());
-                }
-                sbTitle.append(" 共" + Common.nf.format(I.getAmount()) + "元");
 
                 //set detail
                 if (I.getDetail().equals("0")) {
@@ -311,7 +294,9 @@ public class SelectListModelCom extends Fragment {
                         }
                     });
                 }
-                title.setText(sbTitle.toString());
+
+
+                title.setText(Common.setSecInvoiceTittle(I));
                 decribe.setText(sbDecribe.toString());
             } else {
                 update.setText("修改");
@@ -341,14 +326,10 @@ public class SelectListModelCom extends Fragment {
 
 
                 //設定 title
-                StringBuffer stringBuffer = new StringBuffer();
-                stringBuffer.append(Common.sDay.format(c.getDate()));
-                stringBuffer.append(" " + c.getSecondType());
-                stringBuffer.append(" 共" + Common.nf.format(c.getMoney()) + "元");
-                title.setText(stringBuffer.toString());
+                title.setText(Common.setSecConsumerTittlesDay(c));
 
                 //設定 describe
-                stringBuffer = new StringBuffer();
+                StringBuffer stringBuffer = new StringBuffer();
                 fixL.setVisibility(View.GONE);
                 if (c.isAuto()) {
                     fixT.setText("自動");
