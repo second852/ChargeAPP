@@ -65,7 +65,7 @@ public class InvoiceDB {
     }
 
     public List<InvoiceVO> getRealAmountIsNull() {
-        String sql = "SELECT * FROM INVOICE where realAmount isnull;";
+        String sql = "SELECT * FROM INVOICE where realAmount isnull or trim(realAmount) = '';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
@@ -961,7 +961,7 @@ public class InvoiceDB {
         values.put("sellerAddress",invoiceVO.getSellerAddress());
         values.put("isWinNul",invoiceVO.getIsWinNul());
         values.put("currency",invoiceVO.getCurrency());
-        values.put("realAmount",invoiceVO.getAmount());
+        values.put("realAmount",invoiceVO.getRealAmount());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -991,7 +991,7 @@ public class InvoiceDB {
         values.put("sellerAddress",invoiceVO.getSellerAddress());
         values.put("isWinNul",invoiceVO.getIsWinNul());
         values.put("currency",invoiceVO.getCurrency());
-        values.put("realAmount",invoiceVO.getAmount());
+        values.put("realAmount",invoiceVO.getRealAmount());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -1017,7 +1017,7 @@ public class InvoiceDB {
         values.put("sellerAddress",invoiceVO.getSellerAddress());
         values.put("isWinNul",invoiceVO.getIsWinNul());
         values.put("currency",invoiceVO.getCurrency());
-        values.put("realAmount",invoiceVO.getAmount());
+        values.put("realAmount",invoiceVO.getRealAmount());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(invoiceVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

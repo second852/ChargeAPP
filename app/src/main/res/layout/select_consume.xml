@@ -89,20 +89,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal"
             >
-            <com.beardedhen.androidbootstrap.BootstrapButton
-                android:id="@+id/setCurrency"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:buttonMode="regular"
-                app:bootstrapBrand="warning"
-                app:bootstrapSize="md"
-                app:roundedCorners="true"
-                />
             <com.beardedhen.androidbootstrap.AwesomeTextView
                 android:id="@+id/otherMessage"
                 android:layout_centerHorizontal="true"
@@ -111,6 +100,17 @@
                 android:layout_gravity="center"
                 android:textSize="20sp"
                 app:bootstrapBrand="regular"
+                />
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/setCurrency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                app:buttonMode="regular"
+                app:bootstrapBrand="warning"
+                app:bootstrapSize="md"
+                app:roundedCorners="true"
                 />
         </LinearLayout>
         <com.github.mikephil.charting.charts.PieChart

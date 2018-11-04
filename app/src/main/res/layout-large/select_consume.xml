@@ -82,16 +82,35 @@
                 >
             </com.beardedhen.androidbootstrap.BootstrapDropDown>
         </RelativeLayout>
-        <TextView
-
-            android:layout_marginTop="20dp"
-            android:textColor="#000000"
-            android:textSize="30sp"
+        <LinearLayout
             android:id="@+id/describe"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            />
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center_horizontal"
+            >
+            <com.beardedhen.androidbootstrap.AwesomeTextView
+                android:id="@+id/otherMessage"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="30sp"
+                app:bootstrapBrand="regular"
+                />
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/setCurrency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                app:buttonMode="regular"
+                app:bootstrapBrand="warning"
+                app:bootstrapSize="lg"
+                app:roundedCorners="true"
+                />
+        </LinearLayout>
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/chart_pie"
             android:layout_marginLeft="20dp"

@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -17,8 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
@@ -53,7 +56,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
-
+import static com.chargeapp.whc.chargeapp.Control.Common.choiceCurrency;
 
 
 /**
@@ -91,6 +94,8 @@ public class SelectOtherCircle extends Fragment {
     private CurrencyDB currencyDB;
     private CurrencyVO currencyVO;
     private double total;
+    private LinearLayout resultL;
+    private PopupMenu popupMenu;
 
     @Override
     public void onAttach(Context context) {
@@ -107,22 +112,28 @@ public class SelectOtherCircle extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.select_con_detail, container, false);
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
-        nowCurrency=sharedPreferences.getString("choiceCurrency","TWD");
+        nowCurrency=sharedPreferences.getString(Common.choiceCurrency,"TWD");
         setDB();
         carrierVOS = carrierDB.getAll();
         ListKey = new ArrayList<>();
         listView = view.findViewById(R.id.listCircle);
+        listView.setY(20f);
         message = view.findViewById(R.id.message);
+        resultL=view.findViewById(R.id.resultL);
+        resultL.setY(10f);
 
+        popupMenu=new PopupMenu(context,setCurrency);
+        Common.createCurrencyPopMenu(popupMenu, context);
         otherMessage=view.findViewById(R.id.otherMessage);
         //設定顯示幣別
         setCurrency=view.findViewById(R.id.setCurrency);
         setCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopMenu(view);
+                popupMenu.show();
             }
         });
+        popupMenu.setOnMenuItemClickListener(new choiceCurrency());
 
 
         ShowConsume = (boolean) getArguments().getSerializable("ShowConsume");
@@ -153,6 +164,7 @@ public class SelectOtherCircle extends Fragment {
             end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
             title = Common.sFour.format(new Date(start.getTimeInMillis()));
         }
+        currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
         Common.setScreen(Common.screenSize,context);
         setLayout();
         return view;
@@ -160,34 +172,31 @@ public class SelectOtherCircle extends Fragment {
 
     private void setLayout() {
         //設定顯示幣別
-        setCurrency.setText(Common.showCurrency().get(nowCurrency));
-
 
         totalList = new ArrayList<>();
         mapHashMap = new HashMap<>();
         HashMap<String, Double> second;
         HashMap<String, Double> totalOther = new HashMap<>();
+        total = 0;
         for (int i = 0; i < Okey.size(); i++) {
             String key = Okey.get(i);
-            total = 0;
             if (ShowConsume) {
                 consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key);
                 for (ConsumeVO c : consumeVOS) {
-                    currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
-
+                 CurrencyVO  currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
                     if (mapHashMap.get(c.getMaintype()) == null) {
                         second = new HashMap<>();
-                        second.put(c.getSecondType(), Integer.valueOf(c.getMoney())*Double.valueOf(currencyVO.getMoney()));
+                        second.put(c.getSecondType(), Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney()));
                     } else {
                         second = mapHashMap.get(c.getMaintype());
                         if (second.get(c.getSecondType()) == null) {
-                            second.put(c.getSecondType(), Integer.valueOf(c.getMoney())*Double.valueOf(currencyVO.getMoney()));
+                            second.put(c.getSecondType(), Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney()));
                         } else {
-                            second.put(c.getSecondType(), second.get(c.getSecondType()) + Integer.valueOf(c.getMoney())*Double.valueOf(currencyVO.getMoney()));
+                            second.put(c.getSecondType(), second.get(c.getSecondType()) + Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney()));
                         }
                     }
                     mapHashMap.put(c.getMaintype(), second);
-                    total = total + Integer.valueOf(c.getMoney())*Double.valueOf(currencyVO.getMoney());
+                    total = total + Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney());
                 }
             }
 
@@ -198,20 +207,20 @@ public class SelectOtherCircle extends Fragment {
                     invoiceVOS = invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key, carrierVOS.get(carrier).getCarNul());
                 }
                 for (InvoiceVO I : invoiceVOS) {
-                    currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
+                    CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
                     if (mapHashMap.get(I.getMaintype()) == null) {
                         second = new HashMap<>();
-                        second.put(I.getSecondtype(), Integer.valueOf(I.getAmount())*Double.valueOf(currencyVO.getMoney()));
+                        second.put(I.getSecondtype(), Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney()));
                     } else {
                         second = mapHashMap.get(I.getMaintype());
                         if (second.get(I.getSecondtype()) == null) {
-                            second.put(I.getSecondtype(), Integer.valueOf(I.getAmount())*Double.valueOf(currencyVO.getMoney()));
+                            second.put(I.getSecondtype(), Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney()));
                         } else {
-                            second.put(I.getSecondtype(), second.get(I.getSecondtype()) +  Integer.valueOf(I.getAmount())*Double.valueOf(currencyVO.getMoney()));
+                            second.put(I.getSecondtype(), second.get(I.getSecondtype()) + Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney()));
                         }
                     }
                     mapHashMap.put(I.getMaintype(), second);
-                    total = total + I.getAmount();
+                    total = total + Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney());
                 }
             }
 
@@ -226,8 +235,8 @@ public class SelectOtherCircle extends Fragment {
         currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
         otherMessage.setBootstrapBrand(null);
         otherMessage.setTextColor(Color.BLACK);
-        otherMessage.setText(" 其他雜項 : 總共"+Common.CurrencyResult(total,currencyVO));
-
+        otherMessage.setText(" 其他雜項 : 總共");
+        setCurrency.setText(Common.CurrencyResult(total,currencyVO));
 
         if (ListKey.size() > 0) {
             listView.setVisibility(View.VISIBLE);
@@ -264,15 +273,14 @@ public class SelectOtherCircle extends Fragment {
             total = total + hashMap.get(s);
         }
 
-        CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
         if (key.equals("O")) {
-            detail.setText("其他" + " : 總共" + Common.CurrencyResult(total,currencyVO));
+            detail.setText("其他" + " : " + Common.CurrencyResult(total,currencyVO));
         } else if (key.equals("total")) {
-            detail.setText("其他細項 : 總共" +Common.CurrencyResult(total,currencyVO));
+            detail.setText("其他細項 : " +Common.CurrencyResult(total,currencyVO));
         } else if (key.equals("0")) {
-            detail.setText("未知" + " : 總共" + Common.CurrencyResult(total,currencyVO));
+            detail.setText("未知" + " : " + Common.CurrencyResult(total,currencyVO));
         } else {
-            detail.setText(key + " : 總共" + Common.CurrencyResult(total,currencyVO));
+            detail.setText(key + " : " + Common.CurrencyResult(total,currencyVO));
         }
 
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
@@ -408,41 +416,28 @@ public class SelectOtherCircle extends Fragment {
         fragmentTransaction.commit();
     }
 
-    private void showPopMenu(View view) {
-        final PopupMenu popupMenu = new PopupMenu(context, view);
-        android.view.Menu menu_more = popupMenu.getMenu();
-        HashMap<String,List<String>> types=currencyDB.getAllType();
-        final List<String> code=types.get("code");
-        List<String> show=types.get("show");
-        show.add(0,"新台幣");
-        show.add("離開");
-        int size = show.size();
-        for (int i = 0; i < size; i++) {
-            menu_more.add(android.view.Menu.NONE, android.view.Menu.FIRST + i, i, show.get(i));
-        }
 
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId())
-                {
-                    case 1:
-                        nowCurrency="TWD";
-                        sharedPreferences.edit().putString("choiceCurrency",nowCurrency).apply();
-                        setLayout();
-                    case 8:
-                        popupMenu.dismiss();
-                        break;
-                        default:
-                            nowCurrency=code.get(item.getItemId()-2);
-                            sharedPreferences.edit().putString("choiceCurrency",nowCurrency).apply();
-                            setLayout();
-                            break;
-                }
-                return true;
+    private class choiceCurrency implements PopupMenu.OnMenuItemClickListener {
+        @SuppressLint("SetTextI18n")
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case 1:
+                    nowCurrency = "TWD";
+                    sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
+                    currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
+                case 8:
+                    popupMenu.dismiss();
+                    break;
+                default:
+                    nowCurrency = Common.code.get(menuItem.getItemId() - 2);
+                    sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
+                    currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
+                    break;
             }
-        });
-        popupMenu.show();
+            setLayout();
+            return true;
+        }
     }
 
 

@@ -11,33 +11,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_gravity="center"
         >
-        <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/setCurrency"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:buttonMode="regular"
-            app:bootstrapBrand="warning"
-            app:bootstrapSize="md"
-            app:roundedCorners="true"
-            />
         <com.beardedhen.androidbootstrap.AwesomeTextView
             android:id="@+id/otherMessage"
-            android:layout_centerHorizontal="true"
+            android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="20sp"
             app:bootstrapBrand="regular"
             />
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/setCurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:gravity="center"
+            app:buttonMode="regular"
+            app:bootstrapBrand="warning"
+            app:bootstrapSize="md"
+            app:roundedCorners="true"
+            />
     </LinearLayout>
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/chart_pie"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:background="#f5f5f5"
@@ -46,7 +45,6 @@
         android:layout_height="250dp">
     </com.github.mikephil.charting.charts.PieChart>
     <ListView
-        android:layout_marginTop="10dp"
         android:id="@+id/listDetail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

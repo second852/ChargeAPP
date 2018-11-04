@@ -1,53 +1,46 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.solver.Goal;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.Spinner;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapDropDown;
 import com.beardedhen.androidbootstrap.BootstrapText;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
+
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
-import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
-import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -67,7 +60,6 @@ import com.github.mikephil.charting.highlight.Highlight;
 
 
 import java.sql.Timestamp;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -84,10 +76,12 @@ import java.util.Set;
 
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_BULLSEYE;
+
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_FLAG;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_STAR_O;
-import static com.chargeapp.whc.chargeapp.Control.Common.nf;
+import static com.chargeapp.whc.chargeapp.Control.Common.Currency;
+import static com.chargeapp.whc.chargeapp.Control.Common.choiceCurrency;
+import static com.chargeapp.whc.chargeapp.Control.Common.doubleRemoveZero;
+
 
 
 /**
@@ -100,7 +94,7 @@ public class SelectConsume extends Fragment {
     private InvoiceDB invoiceDB;
     private CarrierDB carrierDB;
     private ConsumeDB consumeDB;
-    private TextView PIdateTittle, describe;
+    private TextView PIdateTittle;
     private ImageView PIdateCut, PIdateAdd;
     public int choiceD;
     private List<CarrierVO> carrierVOS;
@@ -122,7 +116,7 @@ public class SelectConsume extends Fragment {
     private int week;
     private GoalDB goalDB;
     private GoalVO goalVO;
-    private int Max;
+    private Double Max;
     public static int Statue;
     public static Calendar end;
     public static int CStatue;
@@ -130,11 +124,17 @@ public class SelectConsume extends Fragment {
     private AwesomeTextView goalConsume;
     private List<BootstrapText> carrierTexts;
     private List<BootstrapText> periodTexts;
+
+
     private SharedPreferences sharedPreferences;
     private String nowCurrency;
     private CurrencyDB currencyDB;
     private CurrencyVO currencyVO;
     private double total;
+    private BootstrapButton setCurrency;
+    private AwesomeTextView otherMessage;
+    private PopupMenu popupMenu;
+    private Calendar startPopu,endPopu;
 
 
 
@@ -152,9 +152,28 @@ public class SelectConsume extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Common.setScreen(Common.screenSize, context);
+
         final View view = inflater.inflate(R.layout.select_consume, container, false);
+        //init DataBase
+        setDB();
+        findViewById(view);
+
+        //current
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         nowCurrency=sharedPreferences.getString(Common.choiceCurrency,"TWD");
+        setCurrency.setText(Currency().get(nowCurrency));
+        popupMenu=new PopupMenu(context,setCurrency);
+        Common.createCurrencyPopMenu(popupMenu, context);
+        setCurrency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupMenu.show();
+            }
+        });
+        popupMenu.setOnMenuItemClickListener(new choiceCurrency());
+
+
+
 
         if (end == null ) {
             end = Calendar.getInstance();
@@ -211,8 +230,7 @@ public class SelectConsume extends Fragment {
                 break;
         }
 
-        setDB();
-        findViewById(view);
+
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
 
@@ -241,20 +259,29 @@ public class SelectConsume extends Fragment {
     }
 
 
-    private void setGoalVO() {
-        Max = 0;
+    private void setGoalVO(Calendar start,Calendar end) {
+        Max = 0.0;
         choicePeriod.setBootstrapText(periodTexts.get(Statue));
         choicePeriod.setShowOutline(false);
         if (goalVO != null) {
             String goalTimeStatue = goalVO.getTimeStatue().trim();
             if (goalTimeStatue.equals("每天") && Statue == 0) {
-                Max = goalVO.getMoney();
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
+                Max = (Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney()))/Double.valueOf(this.currencyVO.getMoney());
             } else if (goalTimeStatue.equals("每天") && Statue == 1) {
-                Max = goalVO.getMoney();
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
+                Max = (Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney()))/Double.valueOf(this.currencyVO.getMoney());
             } else if (goalTimeStatue.equals("每周") && Statue == 2) {
-                Max = goalVO.getMoney();
+                int dayWeek=start.get(Calendar.WEEK_OF_MONTH);
+                start.set(Calendar.DAY_OF_MONTH,-dayWeek+1);
+                end.set(Calendar.DAY_OF_MONTH,-dayWeek+7);
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
+                Max = (Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney()))/Double.valueOf(this.currencyVO.getMoney());
             } else if (goalTimeStatue.equals("每月") && Statue == 3) {
-                Max = goalVO.getMoney();
+                start.set(Calendar.DAY_OF_MONTH,1);
+                end.set(Calendar.DAY_OF_MONTH,end.getActualMaximum(Calendar.DAY_OF_MONTH));
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
+                Max = (Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney()))/Double.valueOf(this.currencyVO.getMoney());
             }
         }
     }
@@ -266,6 +293,7 @@ public class SelectConsume extends Fragment {
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
 
 
@@ -277,8 +305,10 @@ public class SelectConsume extends Fragment {
         choicePeriod = view.findViewById(R.id.choicePeriod);
         choiceCarrier = view.findViewById(R.id.choiceCarrier);
         chart_pie = view.findViewById(R.id.chart_pie);
-        describe = view.findViewById(R.id.describe);
         goalConsume = view.findViewById(R.id.goalConsume);
+        setCurrency=view.findViewById(R.id.setCurrency);
+        otherMessage=view.findViewById(R.id.otherMessage);
+
         ArrayList<String> SpinnerItem1 = new ArrayList<>();
         SpinnerItem1.add("  日  ");
         SpinnerItem1.add("  周  ");
@@ -367,6 +397,14 @@ public class SelectConsume extends Fragment {
             PIdateTittle.setText(Common.sFour.format(new Date(start.getTimeInMillis())));
         }
 
+        startPopu=new GregorianCalendar();
+        startPopu.setTime(start.getTime());
+        endPopu=new GregorianCalendar();
+        endPopu.setTime(end.getTime());
+
+        //SetCurrency choice
+        currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
+
         if (!noShowCarrier && carrierVOS.size() > 0) {
             List<InvoiceVO> invoiceVOS;
             if (ShowAllCarrier) {
@@ -383,7 +421,7 @@ public class SelectConsume extends Fragment {
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrierVOS.get(choiceD).getCarNul());
             }
             for (InvoiceVO I : invoiceVOS) {
-                currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
+               CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
                 Double invoiceVOMoney=Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney());
                 if (I.getMaintype().equals("0") || I.getMaintype().equals("O")) {
                     other.setValue(other.getValue() + invoiceVOMoney);
@@ -404,7 +442,7 @@ public class SelectConsume extends Fragment {
         if (ShowConsume) {
             List<ConsumeVO> consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
             for (ConsumeVO c : consumeVOS) {
-                currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
                 Double consumeVOMoney=Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney());
                 if (hashMap.get(c.getMaintype()) == null) {
                     hashMap.put(c.getMaintype(), consumeVOMoney);
@@ -471,15 +509,14 @@ public class SelectConsume extends Fragment {
 
     private List<BarEntry> getChartData() {
         List<BarEntry> chartData = new ArrayList<>();
-        Calendar start, end;
+        Calendar start = null, end=null;
         if (Statue == 0) {
             start = new GregorianCalendar(year, month, day, 0, 0, 0);
             end = new GregorianCalendar(year, month, day, 23, 59, 59);
             BarEntry barEntry = new BarEntry(0, Periodfloat(start, end));
             chartData.add(barEntry);
-            setGoalVO();
+            setGoalVO(start,end);
         } else if (Statue == 1) {
-            setGoalVO();
             for (int i = 0; i < period; i++) {
                 start = new GregorianCalendar(year, month, day - dayWeek + 1 + i, 0, 0, 0);
                 end = new GregorianCalendar(year, month, day - dayWeek + 1 + i, 23, 59, 59);
@@ -487,11 +524,11 @@ public class SelectConsume extends Fragment {
                 BarEntry barEntry = new BarEntry(i, Periodfloat(start, end));
                 chartData.add(barEntry);
             }
+            setGoalVO(start,end);
         } else if (Statue == 2) {
             Calendar calendar = new GregorianCalendar(year, month, 1, 0, 0, 0);
             start = new GregorianCalendar(year, month, 1, 0, 0, 0);
             period = calendar.getActualMaximum(Calendar.WEEK_OF_MONTH);
-            setGoalVO();
             calendar.set(Calendar.WEEK_OF_MONTH, 1);
             calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
             end = new GregorianCalendar(year, month, calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
@@ -516,15 +553,16 @@ public class SelectConsume extends Fragment {
             end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
             barEntry = new BarEntry(period - 1, Periodfloat(start, end));
             chartData.add(barEntry);
+            setGoalVO(start,end);
             Log.d(TAG, "week " + String.valueOf(period - 1) + ":" + Common.sDay.format(new Date(start.getTimeInMillis())) + "~" + Common.sDay.format(new Date(end.getTimeInMillis())));
         } else {
-            setGoalVO();
             for (int i = 0; i < period; i++) {
                 start = new GregorianCalendar(year, month + i, 1, 0, 0, 0);
                 end = new GregorianCalendar(year, month + i, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
                 BarEntry barEntry = new BarEntry(i, Periodfloat(start, end));
                 chartData.add(barEntry);
             }
+            setGoalVO(start,end);
         }
         return chartData;
     }
@@ -552,8 +590,9 @@ public class SelectConsume extends Fragment {
             }
             for (InvoiceVO I : periodInvoice) {
                 isOther = true;
-                currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
                 double invoiceVOMoney=Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney());
+                invoiceVOMoney=invoiceVOMoney/Double.valueOf(this.currencyVO.getMoney());
                 for (Map.Entry e : list_Data) {
                     if (I.getMaintype().equals(e.getKey())) {
                         if (hashMap.get(I.getMaintype()) == null) {
@@ -574,8 +613,9 @@ public class SelectConsume extends Fragment {
             List<ConsumeVO> periodConsume = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
             for (ConsumeVO c : periodConsume) {
                 isOther = true;
-                currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
                 double consumeVOMoney=Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney());
+                consumeVOMoney=consumeVOMoney/Double.valueOf(this.currencyVO.getMoney());
                 for (Map.Entry e : list_Data) {
                     if (c.getMaintype().equals(e.getKey())) {
                         if (hashMap.get(c.getMaintype()) == null) {
@@ -654,7 +694,7 @@ public class SelectConsume extends Fragment {
                     .build();
             goalConsume.setBootstrapText(bootstrapText);
             yAxis.removeAllLimitLines();
-            LimitLine yLimitLine = new LimitLine(Max, "支出目標");
+            LimitLine yLimitLine = new LimitLine(Max.floatValue(), "支出目標");
             yLimitLine.setLineColor(Color.parseColor("#007bff"));
             yLimitLine.setTextColor(Color.parseColor("#007bff"));
             yAxis.addLimitLine(yLimitLine);
@@ -680,8 +720,12 @@ public class SelectConsume extends Fragment {
     }
 
     private void addChartPieData() {
-        describe.setText(DesTittle + nf.format(total) + "元");
-        final ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
+        total=total/Double.valueOf(currencyVO.getMoney());
+        otherMessage.setText(DesTittle);
+        setCurrency.setText(Currency().get(nowCurrency)+doubleRemoveZero(total));
+
+
+        ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
         ShowZero = true;
         for (int i = 0; i < list_Data.size(); i++) {
             if (list_Data.get(i).getValue() > 0) {
@@ -1043,4 +1087,28 @@ public class SelectConsume extends Fragment {
             dataAnalyze();
         }
     }
+
+    private class choiceCurrency implements PopupMenu.OnMenuItemClickListener {
+        @SuppressLint("SetTextI18n")
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case 1:
+                    nowCurrency = "TWD";
+                    sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
+                    currencyVO=currencyDB.getBytimeAndType(startPopu.getTimeInMillis(),endPopu.getTimeInMillis(),nowCurrency);
+                case 8:
+                    popupMenu.dismiss();
+                    break;
+                default:
+                    nowCurrency = Common.code.get(menuItem.getItemId() - 2);
+                    sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
+                    currencyVO=currencyDB.getBytimeAndType(startPopu.getTimeInMillis(),endPopu.getTimeInMillis(),nowCurrency);
+                    break;
+            }
+            dataAnalyze();
+            return true;
+        }
+    }
+
 }
