@@ -343,6 +343,9 @@ public class Common {
         if (MainActivity.chargeAPPDB == null) {
             MainActivity.chargeAPPDB = new ChargeAPPDB(activity);
         }
+    }
+
+    public static void insertNewTableCol() {
         colExist("Consumer","rdNumber");
         colExist("Consumer","currency");
         colExist("Consumer","realMoney");

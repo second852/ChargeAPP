@@ -476,8 +476,8 @@ public class InvoiceDB {
         return invoiceVOSList;
     }
 
-    public HashMap<String,Double> getInvoiceByTimeHashMap(Timestamp start, Timestamp end) {
-        String sql = "SELECT maintype,realAmount,currency FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' order by amount desc;";
+    public HashMap<String,Double> getInvoiceByTimeHashMap(long start, long end) {
+        String sql = "SELECT maintype,realAmount,currency FROM INVOICE  where time between '"+start+"' and '"+end+"' order by amount desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         HashMap<String,Double> hashMap=new HashMap<>();
@@ -487,7 +487,7 @@ public class InvoiceDB {
         CurrencyVO currencyVO;
         while (cursor.moveToNext()) {
             main=cursor.getString(0);
-            currencyVO=currencyDB.getBytimeAndType(start.getTime(),end.getTime(),cursor.getString(2));
+            currencyVO=currencyDB.getBytimeAndType(start,end,cursor.getString(2));
             money=Double.valueOf(cursor.getString(1))*Double.valueOf(currencyVO.getMoney());
             if(hashMap.get(main)==null)
             {

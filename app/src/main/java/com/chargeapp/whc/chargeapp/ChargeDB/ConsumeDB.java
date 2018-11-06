@@ -350,8 +350,8 @@ public class ConsumeDB {
         return consumeList;
     }
 
-    public HashMap<String, Double> getTimePeriodHashMap(Timestamp startTime, Timestamp endTime) {
-        String sql = "SELECT maintype,realMoney,currency FROM Consumer where  date between '" + startTime.getTime() + "' and '" + endTime.getTime() + "' order by money desc ;";
+    public HashMap<String, Double> getTimePeriodHashMap(long startTime, long endTime) {
+        String sql = "SELECT maintype,realMoney,currency FROM Consumer where  date between '" + startTime + "' and '" + endTime + "' order by money desc ;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         HashMap<String, Double> hashMap = new HashMap<>();
@@ -363,7 +363,7 @@ public class ConsumeDB {
             main = cursor.getString(0);
             money = cursor.getString(1);
             currency= cursor.getString(2);
-            currencyVO=currencyDB.getBytimeAndType(startTime.getTime(),endTime.getTime(),currency);
+            currencyVO=currencyDB.getBytimeAndType(startTime,endTime,currency);
             twd= Double.valueOf(money)*Double.valueOf(currencyVO.getMoney());
             if (hashMap.get(main) == null) {
                 hashMap.put(main, twd);

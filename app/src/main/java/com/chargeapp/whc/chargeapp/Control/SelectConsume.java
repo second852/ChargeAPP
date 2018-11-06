@@ -134,7 +134,7 @@ public class SelectConsume extends Fragment {
     private BootstrapButton setCurrency;
     private AwesomeTextView otherMessage;
     private PopupMenu popupMenu;
-    private Calendar startPopu,endPopu;
+    private Calendar startPopup,endPopup;
 
 
 
@@ -397,10 +397,10 @@ public class SelectConsume extends Fragment {
             PIdateTittle.setText(Common.sFour.format(new Date(start.getTimeInMillis())));
         }
 
-        startPopu=new GregorianCalendar();
-        startPopu.setTime(start.getTime());
-        endPopu=new GregorianCalendar();
-        endPopu.setTime(end.getTime());
+        startPopup=new GregorianCalendar();
+        startPopup.setTime(start.getTime());
+        endPopup=new GregorianCalendar();
+        endPopup.setTime(end.getTime());
 
         //SetCurrency choice
         currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
@@ -1096,14 +1096,14 @@ public class SelectConsume extends Fragment {
                 case 1:
                     nowCurrency = "TWD";
                     sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
-                    currencyVO=currencyDB.getBytimeAndType(startPopu.getTimeInMillis(),endPopu.getTimeInMillis(),nowCurrency);
+                    currencyVO=currencyDB.getBytimeAndType(startPopup.getTimeInMillis(),endPopup.getTimeInMillis(),nowCurrency);
                 case 8:
                     popupMenu.dismiss();
                     break;
                 default:
                     nowCurrency = Common.code.get(menuItem.getItemId() - 2);
                     sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
-                    currencyVO=currencyDB.getBytimeAndType(startPopu.getTimeInMillis(),endPopu.getTimeInMillis(),nowCurrency);
+                    currencyVO=currencyDB.getBytimeAndType(startPopup.getTimeInMillis(),endPopup.getTimeInMillis(),nowCurrency);
                     break;
             }
             dataAnalyze();

@@ -175,8 +175,8 @@ public class HomePage extends Fragment {
 
 
     private void setPieChart() {
-        HashMap<String, Double> consumeVOS = consumeDB.getTimePeriodHashMap(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-        HashMap<String, Double> invoiceVOS = invoiceDB.getInvoiceByTimeHashMap(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+        HashMap<String, Double> consumeVOS = consumeDB.getTimePeriodHashMap(start.getTimeInMillis(), end.getTimeInMillis());
+        HashMap<String, Double> invoiceVOS = invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(), end.getTimeInMillis());
 
         if (invoiceVOS.size() > consumeVOS.size()) {
             for (String s : consumeVOS.keySet()) {

@@ -71,6 +71,8 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
         Common.setChargeDB(this);
+        Common.insertNewTableCol();
+
 //        new GetSQLDate(this).execute("download");
         new Thread(runnable).start();
         new Thread(modifyMoneyFromIntegerToString).start();
