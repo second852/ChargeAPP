@@ -273,7 +273,7 @@ public class Common {
     public static String CurrencyResult(Double total, CurrencyVO currencyVO)
     {
         total=Double.valueOf(total/Double.valueOf(currencyVO.getMoney()));
-        return  Currency().get(currencyVO.getType())+" "+doubleRemoveZero(total);
+        return  getCurrency(currencyVO.getType())+" "+doubleRemoveZero(total);
     }
 
 

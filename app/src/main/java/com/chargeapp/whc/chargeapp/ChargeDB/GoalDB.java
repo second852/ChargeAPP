@@ -105,6 +105,34 @@ public class GoalDB {
         return goalVOS;
     }
 
+    public List<GoalVO> getRealMoneyIsNull() {
+        String sql = "SELECT * FROM goal where realMoney isnull or trim(realMoney) = '' ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<GoalVO> goalVOS = new ArrayList<>();
+        GoalVO goalVO;
+        while (cursor.moveToNext()) {
+            goalVO=new GoalVO();
+            goalVO.setId(cursor.getInt(0));
+            goalVO.setType(cursor.getString(1));
+            goalVO.setName(cursor.getString(2));
+            goalVO.setMoney(cursor.getInt(3));
+            goalVO.setTimeStatue(cursor.getString(4));
+            goalVO.setStartTime(new Date(cursor.getLong(5)));
+            goalVO.setEndTime(new Date(cursor.getLong(6)));
+            goalVO.setNotify(Boolean.valueOf(cursor.getString(7)));
+            goalVO.setNotifyStatue(cursor.getString(8));
+            goalVO.setNotifyDate(cursor.getString(9));
+            goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
+            goalVO.setStatue(cursor.getInt(11));
+            goalVO.setCurrency(cursor.getString(12));
+            goalVO.setRealMoney(cursor.getString(13));
+            goalVOS.add(goalVO);
+        }
+        cursor.close();
+        return goalVOS;
+    }
+
     public GoalVO getFindType(String type) {
         String sql = "SELECT * FROM goal where trim(type) = '"+type+"' and statue = 0 ;";
         String[] args = {};
@@ -198,7 +226,7 @@ public class GoalDB {
         values.put("noWeekend",String.valueOf(goalVO.isNoWeekend()));
         values.put("statue",0);
         values.put("currency",goalVO.getCurrency());
-        values.put("statue",goalVO.getRealMoney());
+        values.put("realMoney",goalVO.getRealMoney());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -217,7 +245,7 @@ public class GoalDB {
         values.put("noWeekend",String.valueOf(goalVO.isNoWeekend()));
         values.put("statue",0);
         values.put("currency",goalVO.getCurrency());
-        values.put("statue",goalVO.getRealMoney());
+        values.put("realMoney",goalVO.getRealMoney());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -235,7 +263,7 @@ public class GoalDB {
         values.put("noWeekend",String.valueOf(goalVO.isNoWeekend()));
         values.put("statue",goalVO.getStatue());
         values.put("currency",goalVO.getCurrency());
-        values.put("statue",goalVO.getRealMoney());
+        values.put("realMoney",goalVO.getRealMoney());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(goalVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

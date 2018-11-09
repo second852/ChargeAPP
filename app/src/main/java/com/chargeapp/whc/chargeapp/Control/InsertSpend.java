@@ -256,7 +256,7 @@ public class InsertSpend extends Fragment {
                         firstL.setVisibility(View.VISIBLE);
                         Common.showfirstgrid = false;
                     }
-                    currency.setText(Common.Currency().get(nowCurrency));
+                    currency.setText(Common.getCurrency(nowCurrency));
                     break;
                 case 1:
                     setSecondGridAdapt((ArrayList<Map<String, Object>>) msg.obj);
@@ -979,14 +979,14 @@ public class InsertSpend extends Fragment {
                 case 1:
                     nowCurrency = "TWD";
                     sharedPreferences.edit().putString(insertCurrency, nowCurrency).apply();
-                    currency.setText(Common.Currency().get(nowCurrency));
+                    currency.setText(Common.getCurrency(nowCurrency));
                 case 8:
                     popupMenu.dismiss();
                     break;
                 default:
                     nowCurrency = Common.code.get(menuItem.getItemId() - 2);
                     sharedPreferences.edit().putString(insertCurrency, nowCurrency).apply();
-                    currency.setText(Common.Currency().get(nowCurrency));
+                    currency.setText(Common.getCurrency(nowCurrency));
                     break;
             }
             return true;

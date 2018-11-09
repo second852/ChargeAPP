@@ -191,7 +191,7 @@ public class UpdateInvoice extends Fragment {
 
         if(invoiceVO.getCurrency()==null||invoiceVO.getCurrency().trim().isEmpty())
         {
-           currency.setText(Common.Currency().get("TWD"));
+           currency.setText(Common.getCurrency("TWD"));
         }else {
             currency.setText(Common.Currency().get(invoiceVO.getCurrency()));
         }

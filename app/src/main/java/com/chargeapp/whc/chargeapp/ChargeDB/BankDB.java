@@ -50,7 +50,7 @@ public class BankDB {
     }
 
     public List<BankVO> getrealMoneyIsNullAll() {
-        String sql = "SELECT * FROM BANK where realMoney isnull;";
+        String sql = "SELECT * FROM BANK where realMoney isnull or trim(realMoney) = '';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();

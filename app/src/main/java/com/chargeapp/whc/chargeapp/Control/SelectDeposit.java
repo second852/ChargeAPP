@@ -65,6 +65,7 @@ import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_THUMBS_O_UP;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_THUMBS_UP;
 import static com.chargeapp.whc.chargeapp.Control.Common.Currency;
 import static com.chargeapp.whc.chargeapp.Control.Common.choiceCurrency;
+import static com.chargeapp.whc.chargeapp.Control.Common.getCurrency;
 
 
 /**
@@ -143,7 +144,7 @@ public class SelectDeposit extends Fragment {
         //current
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         nowCurrency=sharedPreferences.getString(Common.choiceCurrency,"TWD");
-        setCurrency.setText(Currency().get(nowCurrency));
+        setCurrency.setText(getCurrency(nowCurrency));
         popupMenu=new PopupMenu(context,setCurrency);
         Common.createCurrencyPopMenu(popupMenu, context);
         setCurrency.setOnClickListener(new View.OnClickListener() {

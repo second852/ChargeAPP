@@ -30,7 +30,7 @@ public class ConsumeDB {
 
 
     public List<ConsumeVO> getRealMoneyIsNull() {
-        String sql = "SELECT * FROM Consumer where realMoney isnull;";
+        String sql = "SELECT * FROM Consumer where realMoney isnull or trim(realMoney) = '';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();

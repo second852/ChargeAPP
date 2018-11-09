@@ -78,7 +78,6 @@ public class UpdateSpend extends Fragment {
     private ConsumeVO consumeVO;
     private int updateChoice;
     private String action;
-    private boolean first = true;
     private LinearLayout firstL, secondL;
     private GridView firstG, secondG;
     private int year,month,day;
@@ -216,8 +215,6 @@ public class UpdateSpend extends Fragment {
 
 
     private void setUpdate() {
-        first = true;
-
         if(consumeVO.getMaintype().trim().equals("O"))
         {
             name.setText("其他");
@@ -242,7 +239,7 @@ public class UpdateSpend extends Fragment {
             nowCurrency=consumeVO.getCurrency();
         }
 
-        currency.setText(Common.Currency().get(nowCurrency));
+        currency.setText(Common.getCurrency(nowCurrency));
 
         date.setText(Common.sTwo.format(consumeVO.getDate()));
 
@@ -1211,13 +1208,13 @@ public class UpdateSpend extends Fragment {
             switch (menuItem.getItemId()) {
                 case 1:
                     nowCurrency="TWD";
-                    currency.setText(Common.Currency().get(nowCurrency));
+                    currency.setText(Common.getCurrency(nowCurrency));
                 case 8:
                     popupMenu.dismiss();
                     break;
                 default:
                     nowCurrency=Common.code.get(menuItem.getItemId() - 2);
-                    currency.setText(Common.Currency().get(nowCurrency));
+                    currency.setText(Common.getCurrency(nowCurrency));
                     break;
             }
             return true;

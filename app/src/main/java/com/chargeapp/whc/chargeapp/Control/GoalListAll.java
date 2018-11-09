@@ -30,8 +30,10 @@ import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
 
@@ -64,6 +66,7 @@ public class GoalListAll extends Fragment {
     private int p;
     private Activity context;
     private boolean firstShow;
+    private CurrencyDB currencyDB;
 
 
     @Override
@@ -86,6 +89,7 @@ public class GoalListAll extends Fragment {
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         try {
             p = (int) getArguments().getSerializable("position");
         } catch (Exception e) {
@@ -171,38 +175,41 @@ public class GoalListAll extends Fragment {
             title.setText(goalVO.getName());
 
             //設定敘述和檢驗目標
-            int serial = 1, totalI = 0, totalC = 0, totalB = 0, amount = 0;
+            int serial = 1 ;
+            double totalI = 0, totalC = 0, totalB = 0, amount = 0;
             StringBuffer sb = new StringBuffer();
             StringBuffer sbResult = new StringBuffer();
             String timeDec = goalVO.getTimeStatue().trim();
 
-            Log.d("goal",goalVO.getStatue()+" : "+goalVO.getType());
+            CurrencyVO currencyVO=currencyDB.getBytimeAndType(goalVO.getStartTime().getTime(),goalVO.getEndTime().getTime(),goalVO.getCurrency());
+            Double goalMoney=Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney());
 
             if (timeDec.equals("今日")) {
                 //描述目標
-                sb.append("  " + serial + ".起日 : " + Common.sTwo.format(goalVO.getStartTime()).trim() +
+                sb.append(" " + serial + ".起日 : " + Common.sTwo.format(goalVO.getStartTime()).trim() +
                         "\n     迄日 : " + Common.sTwo.format(goalVO.getEndTime()).trim() + "\n");
                 serial++;
-                sb.append("  " + serial + "." + goalVO.getType().trim() + " : " + goalVO.getMoney() + " 元");
+                sb.append(" " + serial + "." + goalVO.getType().trim() + " : " + Common.getCurrency(goalVO.getCurrency())+" "+goalVO.getRealMoney());
                 serial++;
 
                 //描述成果
-//                totalI = invoiceDB.getTotalBytime(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
-//                totalC = consumeDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
-//                totalB = bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()), new Timestamp(goalVO.getEndTime().getTime()));
+
+                totalI = invoiceDB.getInvoiceByTimeHashMap(goalVO.getStartTime().getTime(),goalVO.getEndTime().getTime()).get("total");
+                totalC = consumeDB.getTimePeriodHashMap(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime()).get("total");
+                totalB = bankDB.getTimeTotal(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime());
                 amount = totalB - totalC - totalI;
-                Calendar today = Calendar.getInstance();
+
                 Calendar endDay = new GregorianCalendar();
                 endDay.setTime(goalVO.getEndTime());
 
-                if (amount > Integer.valueOf(goalVO.getMoney())) {
+                if (amount >goalMoney) {
 
 
                     //彈跳視窗 顯示可以
                     if (firstShow&&goalVO.getStatue()==0) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         builder.setTitle("任務完成")
-                                .setMessage("恭喜完成" + " 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元")
+                                .setMessage("恭喜完成" + " 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + Common.getCurrency(goalVO.getCurrency())+goalVO.getRealMoney())
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.dismiss();
@@ -217,7 +224,7 @@ public class GoalListAll extends Fragment {
                         goalDB.update(goalVO);
                     }
 
-                    sbResult.append("  " + serial + ".成功 : 儲蓄 " + amount + " 元");
+                    sbResult.append(" " + serial + ".成功 : 儲蓄"+Common.CurrencyResult(amount,currencyVO));
                     resultG.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                     serial++;
                 } else {
@@ -227,7 +234,7 @@ public class GoalListAll extends Fragment {
                         if (firstShow&&goalVO.getStatue()==0) {
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setTitle("任務未完成!")
-                                    .setMessage("未完成" + " 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元!")
+                                    .setMessage("未完成" + " 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + Common.getCurrency(goalVO.getCurrency())+goalVO.getRealMoney())
                                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
                                             dialog.dismiss();
@@ -241,11 +248,14 @@ public class GoalListAll extends Fragment {
                             goalVO.setNotify(false);
                             goalDB.update(goalVO);
                         }
-                        sbResult.append("  " + serial + ".失敗 : 儲蓄" + amount + " 元\n     還缺 : "+(goalVO.getMoney()-amount)+" 元");
+                        double leaveMoney=goalMoney-amount;
+                        sbResult.append(" " + serial + ".失敗 : 儲蓄" + Common.CurrencyResult(amount,currencyVO) + "\n     還缺 : "+Common.CurrencyResult(leaveMoney,currencyVO));
                         resultG.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         serial++;
                     }else{
-                        sbResult.append("  " + serial + ".目前 : 儲蓄" + amount + " 元\n     還缺 : "+(goalVO.getMoney()-amount)+" 元");
+
+                        double leaveMoney=goalMoney-amount;
+                        sbResult.append(" " + serial + ".目前 : 儲蓄" + Common.CurrencyResult(amount,currencyVO) + "\n     還缺 : "+Common.CurrencyResult(leaveMoney,currencyVO));
                         double remainday=Double.valueOf(goalVO.getEndTime().getTime()-System.currentTimeMillis())/(1000*60*60*24);
 
                         if(remainday>0)
@@ -277,8 +287,8 @@ public class GoalListAll extends Fragment {
             } else {
 
 
-                sb.append("  " + serial + ".時間 : ");
-                sb.append(timeDec + goalVO.getType().trim() + " " + goalVO.getMoney() + " 元");
+                sb.append(" "+serial + ".時間 : ");
+                sb.append(timeDec + goalVO.getType().trim() + " "+Common.getCurrency(goalVO.getCurrency())+" "+goalVO.getRealMoney());
                 serial++;
 
                 Calendar start = null, end = null;
@@ -310,14 +320,15 @@ public class GoalListAll extends Fragment {
                             break;
                     }
                     if (start != null && end != null) {
-//                        totalI = invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-//                        totalC = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                        sbResult.append(" " + (totalI + totalC) + " 元");
-                        if (goalVO.getMoney() > (totalI + totalC)) {
-                            sbResult.insert(0, "  " + serial + ".成功 : ");
+                        totalI = invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
+                        totalC = consumeDB.getTimePeriodHashMap(start.getTimeInMillis(), end.getTimeInMillis()).get("total");
+                        double totalCon=totalI + totalC;
+                        sbResult.append(" " + Common.CurrencyResult(totalCon,currencyVO));
+                        if (goalMoney > totalCon) {
+                            sbResult.insert(0, " "+serial + ".成功 : ");
                             resultG.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
                         } else {
-                            sbResult.insert(0, "  " + serial + ".失敗 : ");
+                            sbResult.insert(0, " "+serial + ".目前 : ");
                             resultG.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         }
                     }
@@ -337,15 +348,16 @@ public class GoalListAll extends Fragment {
                             break;
                     }
                     if (start != null && end != null) {
-//                        totalI = invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-//                        totalC = consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-//                        totalB = bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
-                        sbResult.append(" " + (totalB - totalI - totalC) + " 元");
-                        if (goalVO.getMoney() < (totalB - totalI - totalC)) {
-                            sbResult.insert(0, "  " + serial + ".成功 : ");
+                        totalI = invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(), end.getTimeInMillis()).get("total");
+                        totalC = consumeDB.getTimePeriodHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
+                        totalB = bankDB.getTimeTotal(start.getTimeInMillis(),end.getTimeInMillis());
+                        double saveMoney=totalB - totalI - totalC;
+                        sbResult.append(" " +Common.CurrencyResult(saveMoney,currencyVO));
+                        if (goalMoney < saveMoney) {
+                            sbResult.insert(0, " "+serial + ".成功 : ");
                             resultG.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
                         } else {
-                            sbResult.insert(0, "  " + serial + ".未完成 : ");
+                            sbResult.insert(0, " "+serial + ".目前 : ");
                             resultG.setBootstrapBrand(null);
                             resultG.setTextColor(Color.BLACK);
                         }
@@ -371,7 +383,7 @@ public class GoalListAll extends Fragment {
             StringBuilder nbNotify = new StringBuilder();
             if (goalVO.isNotify()) {
                 serial++;
-                nbNotify.append("  " + serial + ".提醒 : " + goalVO.getNotifyStatue().trim()).append(" " + goalVO.getNotifyDate());
+                nbNotify.append(" " + serial + ".提醒 : " + goalVO.getNotifyStatue().trim()).append(" " + goalVO.getNotifyDate());
                 if (goalVO.isNoWeekend() && goalVO.getNotifyStatue().trim().equals("每天")) {
                     nbNotify.append("假日除外");
                 }

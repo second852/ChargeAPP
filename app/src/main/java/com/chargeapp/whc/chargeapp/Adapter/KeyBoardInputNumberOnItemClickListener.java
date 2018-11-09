@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
@@ -18,12 +19,12 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
     private boolean clearToZero, needInit,firstCalculate;
     private double oldNumber;
     private BootstrapButton  calculate;
-    private BootstrapEditText money;
+    private TextView money;
     private Activity context;
     private GridView numberKeyBoard;
 
 
-    public KeyBoardInputNumberOnItemClickListener(BootstrapButton calculate, BootstrapEditText money, Activity context, GridView numberKeyBoard,
+    public KeyBoardInputNumberOnItemClickListener(BootstrapButton calculate, TextView money, Activity context, GridView numberKeyBoard,
                                                   StringBuilder showSb,Boolean clearToZero) {
         this.calculate = calculate;
         this.money = money;

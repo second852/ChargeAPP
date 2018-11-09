@@ -19,6 +19,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.solver.Goal;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -36,6 +37,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
+import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
@@ -43,6 +45,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
+import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -103,6 +106,13 @@ public class Welcome extends AppCompatActivity {
             {
                 bankVO.setRealMoney(String.valueOf(bankVO.getMoney()));
                 bankDB.update(bankVO);
+            }
+            GoalDB goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            List<GoalVO> goalVOS=goalDB.getRealMoneyIsNull();
+            for(GoalVO goalVO:goalVOS)
+            {
+                goalVO.setRealMoney(String.valueOf(goalVO.getMoney()));
+                goalDB.update(goalVO);
             }
 
         }

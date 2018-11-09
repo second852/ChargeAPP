@@ -188,7 +188,7 @@ public class InsertIncome extends Fragment {
                             numberKeyBoard.setVisibility(View.VISIBLE);
                         }
                     });
-                    currency.setText(Common.Currency().get(nowCurrency));
+                    currency.setText(Common.getCurrency(nowCurrency));
                     break;
             }
         }
@@ -709,14 +709,14 @@ public class InsertIncome extends Fragment {
                 case 1:
                     nowCurrency = "TWD";
                     sharedPreferences.edit().putString(insertCurrency, nowCurrency).apply();
-                    currency.setText(Common.Currency().get(nowCurrency));
+                    currency.setText(Common.getCurrency(nowCurrency));
                 case 8:
                     popupMenu.dismiss();
                     break;
                 default:
                     nowCurrency = Common.code.get(menuItem.getItemId() - 2);
                     sharedPreferences.edit().putString(insertCurrency, nowCurrency).apply();
-                    currency.setText(Common.Currency().get(nowCurrency));
+                    currency.setText(Common.getCurrency(nowCurrency));
                     break;
             }
             return true;
