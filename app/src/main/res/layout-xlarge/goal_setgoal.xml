@@ -14,53 +14,75 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="80dp"
+                android:layout_marginEnd="80dp"
                 android:layout_marginTop="15dp">
 
                 <TextView
                     android:id="@+id/nameT"
-                    android:layout_marginLeft="25dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="目標名稱"
                     android:textColor="#000000"
-                    android:textSize="40dp" />
+                    android:textSize="40sp" />
 
                 <EditText
                     android:id="@+id/name"
                     android:layout_width="match_parent"
-                    android:layout_marginRight="50dp"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/nameT"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="50dp"
+                    android:layout_marginStart="50dp"
                     android:background="@drawable/input_modul"
                     android:inputType="text"
                     android:singleLine="true"
                     android:textColor="@color/input_color"
                     android:textColorHint="#AAAAAA"
                     android:textSize="40sp" />
-            </RelativeLayout>
+            </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="80dp"
+                android:layout_marginEnd="80dp"
                 android:layout_marginTop="15dp">
 
                 <TextView
                     android:id="@+id/moneyT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="25dp"
-                    android:gravity="right"
                     android:text="目標金額"
                     android:textColor="#000000"
-                    android:textSize="40dp" />
+                    android:textSize="40sp" />
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/currency"
+                    android:layout_marginStart="50dp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:bootstrapBrand="regular"
+                    app:bootstrapSize="xl"
+                    app:buttonMode="regular"
+                    app:showOutline="false"
+                    app:roundedCorners="true"
+                    />
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/calculate"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapSize="xl"
+                    app:buttonMode="regular"
+                    app:showOutline="true"
+                    app:roundedCorners="true"
+                    />
 
-                <EditText
+                <TextView
                     android:id="@+id/money"
                     android:layout_width="match_parent"
                     android:layout_marginRight="50dp"
@@ -73,7 +95,7 @@
                     android:textColor="@color/input_color"
                     android:textColorHint="#AAAAAA"
                     android:textSize="40sp" />
-            </RelativeLayout>
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
