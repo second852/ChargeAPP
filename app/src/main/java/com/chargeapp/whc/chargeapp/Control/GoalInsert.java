@@ -4,10 +4,12 @@ package com.chargeapp.whc.chargeapp.Control;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,6 +69,7 @@ public class GoalInsert extends Fragment {
     private GridView numberKeyBoard;
     private String nowCurrency;
     private SharedPreferences sharedPreferences;
+
 
 
 
@@ -134,7 +137,9 @@ public class GoalInsert extends Fragment {
         money.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Common.clossKeyword(context);
                 numberKeyBoard.setVisibility(View.VISIBLE);
+
             }
         });
     }
@@ -211,6 +216,7 @@ public class GoalInsert extends Fragment {
         currency=view.findViewById(R.id.currency);
         calculate=view.findViewById(R.id.calculate);
         numberKeyBoard=view.findViewById(R.id.numberKeyBoard);
+
     }
 
     private class showDate implements View.OnClickListener {
@@ -240,7 +246,7 @@ public class GoalInsert extends Fragment {
 
                 remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
                 remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
-                remindS.setX(spinnerT.getX());
+                remindS.setX(name.getX());
                 noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
                 noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/20);
 
@@ -354,9 +360,11 @@ public class GoalInsert extends Fragment {
                 name.setError("不能空白");
                 return;
             }
+
             if(goalMoney==null||goalMoney.length()<=0)
             {
-                money.setError("不能空白");
+                Common.showToast(context,"金額不能空白");
+                money.setError(" ");
                 return;
             }
 

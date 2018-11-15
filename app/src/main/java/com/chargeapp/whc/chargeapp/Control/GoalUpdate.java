@@ -3,12 +3,14 @@ package com.chargeapp.whc.chargeapp.Control;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -18,12 +20,16 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListener;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -33,18 +39,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.chargeapp.whc.chargeapp.Control.Common.insertCurrency;
 
 /**
  * Created by Wang on 2018/2/25.
  */
 
 public class GoalUpdate extends Fragment {
-    private EditText name, money;
+    private EditText name;
     private Spinner choiceStatue, remindS, remindD;
     private CheckBox remind, noWeekend;
     private LinearLayout showDate;
-    private TextView limitP,shift, noWeekendT, remindT, spinnerT;
+    private TextView limitP,shift, noWeekendT, remindT, spinnerT,money;
     private DatePicker datePicker;
     private GoalDB goalDB;
     private GoalVO goalVO;
@@ -55,6 +65,12 @@ public class GoalUpdate extends Fragment {
     private int poistion;
     private Activity context;
     private BootstrapButton save, clear;
+    private BootstrapButton currency, calculate;
+    private PopupMenu popupMenu;
+    private GridView numberKeyBoard;
+    private String nowCurrency;
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -84,6 +100,7 @@ public class GoalUpdate extends Fragment {
         choiceStatue.setOnItemSelectedListener(new choiceStatueSelected());
         setRemindS();
         setGoalVO();
+        setPopupMenu();
         return view;
     }
 
@@ -93,6 +110,41 @@ public class GoalUpdate extends Fragment {
         remindS.setAdapter(arrayAdapter);
     }
 
+    private void setPopupMenu() {
+
+        nowCurrency = goalVO.getCurrency();
+        currency.setText(Common.getCurrency(nowCurrency));
+
+
+        popupMenu = new PopupMenu(context, currency);
+        Common.createCurrencyPopMenu(popupMenu, context);
+        currency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupMenu.show();
+            }
+        });
+        popupMenu.setOnMenuItemClickListener(new choiceUpdateCurrency());
+        StringBuilder showSb=new StringBuilder();
+        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,showSb,false));
+        ArrayList items = new ArrayList<Map<String, Object>>();
+        Map<String, Object> hashMap;
+        for (String s : Common.keyboardArray) {
+            hashMap = new HashMap<>();
+            hashMap.put("text", s);
+            items.add(hashMap);
+        }
+        SimpleAdapter adapter = new SimpleAdapter(context, items, R.layout.ele_hand_item, new String[]{"text"},
+                new int[]{R.id.cardview});
+        numberKeyBoard.setAdapter(adapter);
+        numberKeyBoard.setNumColumns(5);
+        money.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                numberKeyBoard.setVisibility(View.VISIBLE);
+            }
+        });
+    }
 
     private void setGoalVO() {
         name.setText(goalVO.getName());
@@ -188,6 +240,9 @@ public class GoalUpdate extends Fragment {
         remindL = view.findViewById(R.id.remindL);
         noWeekendT = view.findViewById(R.id.noWeekendT);
         remindT = view.findViewById(R.id.remindT);
+        currency=view.findViewById(R.id.currency);
+        calculate=view.findViewById(R.id.calculate);
+        numberKeyBoard=view.findViewById(R.id.numberKeyBoard);
     }
 
     private class showDate implements View.OnClickListener {
@@ -330,19 +385,18 @@ public class GoalUpdate extends Fragment {
                 return;
             }
             if (goalMoney == null || goalMoney.length() <= 0) {
-                money.setError("不能空白");
+                Common.showToast(context, "金額不能空白");
+                money.setError(" ");
                 return;
             }
 
-            try {
-                if (Integer.valueOf(money.getText().toString().trim()) == 0) {
+
+            if (Double.valueOf(money.getText().toString().trim()) == 0) {
+                    Common.showToast(context, "金額不能為0");
                     money.setError("金額不能為0");
                     return;
                 }
-            } catch (Exception e) {
-                money.setError("只能輸入數字");
-                return;
-            }
+
 
             if (dayStatue.equals(startTitle)) {
                 if (day == null || day.length() <= 0) {
@@ -368,7 +422,10 @@ public class GoalUpdate extends Fragment {
             }
             String reMa = (remindD.getSelectedItem() == null) ? "" : remindD.getSelectedItem().toString().trim();
             goalVO.setName(goalName);
-            goalVO.setMoney(Integer.valueOf(goalMoney));
+
+            goalVO.setRealMoney(goalMoney);
+            goalVO.setCurrency(nowCurrency);
+
             goalVO.setNoWeekend(noWeekend.isChecked());
             goalVO.setNotify(remind.isChecked());
             goalVO.setNotifyDate(reMa);
@@ -419,6 +476,25 @@ public class GoalUpdate extends Fragment {
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
 
+        }
+    }
+
+    private class choiceUpdateCurrency implements PopupMenu.OnMenuItemClickListener {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case 1:
+                    nowCurrency="TWD";
+                    currency.setText(Common.getCurrency(nowCurrency));
+                case 8:
+                    popupMenu.dismiss();
+                    break;
+                default:
+                    nowCurrency=Common.code.get(menuItem.getItemId() - 2);
+                    currency.setText(Common.getCurrency(nowCurrency));
+                    break;
+            }
+            return true;
         }
     }
 }

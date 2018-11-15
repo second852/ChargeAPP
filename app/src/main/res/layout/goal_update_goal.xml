@@ -17,151 +17,180 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="50dp"
+                >
 
                 <TextView
                     android:id="@+id/nameT"
-                    android:layout_marginLeft="25dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="目標名稱"
-                    android:layout_centerVertical="true"
                     android:textColor="#000000"
-                    android:textSize="20dp" />
+                    android:layout_centerVertical="true"
+                    android:textSize="20sp"
+                    />
 
                 <EditText
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="30dp"
-                    android:layout_marginLeft="120dp"
-                    android:layout_centerVertical="true"
                     android:background="@drawable/input_modul"
                     android:inputType="text"
                     android:singleLine="true"
                     android:textColor="@color/input_color"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="20sp" />
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:textSize="20sp"
+                    android:layout_marginStart="25dp"
+                    android:layout_toRightOf="@+id/nameT"
+                    />
             </RelativeLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
+                android:orientation="horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="50dp">
 
                 <TextView
                     android:id="@+id/moneyT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="25dp"
-                    android:layout_centerVertical="true"
-                    android:gravity="right"
+                    android:gravity="center"
                     android:text="目標金額"
                     android:textColor="#000000"
-                    android:textSize="20dp" />
+                    android:layout_gravity="center"
+                    android:textSize="20sp" />
 
-                <EditText
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/currency"
+                    android:layout_marginStart="25dp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:bootstrapBrand="regular"
+                    app:bootstrapSize="md"
+                    app:buttonMode="regular"
+                    app:showOutline="false"
+                    app:roundedCorners="true"
+                    />
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/calculate"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapSize="md"
+                    app:buttonMode="regular"
+                    app:showOutline="true"
+                    app:roundedCorners="true"
+                    />
+
+                <TextView
                     android:id="@+id/money"
                     android:layout_width="match_parent"
-                    android:layout_marginRight="30dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="120dp"
+                    android:layout_marginStart="10dp"
                     android:background="@drawable/input_modul"
                     android:inputType="number"
                     android:singleLine="true"
                     android:textColor="@color/input_color"
                     android:textColorHint="#AAAAAA"
-                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
                     android:textSize="20sp" />
-            </RelativeLayout>
+            </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="50dp"
                 android:layout_marginTop="15dp">
 
                 <TextView
                     android:id="@+id/typeT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="25dp"
                     android:text="選擇類型"
-                    android:layout_centerVertical="true"
                     android:textColor="#000000"
-                    android:textSize="20dp" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/spinnerT"
-                    android:layout_marginLeft="120dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_marginStart="25dp"
+                    android:theme="@style/spinner_normal"
+                    android:layout_gravity="center"
+                    android:gravity="center"
                     android:textColor="#000000"
-                    android:layout_gravity="center_vertical"
+                    android:textSize="20sp"
                     android:background="#DDDDDD"
-                    android:visibility="visible"
-                    android:textSize="20sp" />
-            </RelativeLayout>
+                    />
+            </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="visible"
+                android:orientation="horizontal"
+                android:layout_marginStart="15dp"
                 android:layout_marginTop="15dp">
 
                 <TextView
                     android:id="@+id/dateT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:layout_centerVertical="true"
-                    android:gravity="center_vertical"
                     android:text="目標時間"
                     android:textColor="#000000"
-                    android:textSize="20dp" />
+                    android:textSize="20sp" />
 
                 <Spinner
                     android:id="@+id/choiceStatue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
+                    android:layout_marginStart="25dp"
                     android:theme="@style/spinner_normal"
-                    android:layout_marginLeft="120dp"
-                    android:backgroundTint="#000000"
-                    android:gravity="center_vertical" />
+
+                     />
                 <TextView
                     android:id="@+id/shift"
-                    android:layout_toRightOf="@+id/choiceStatue"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_centerVertical="true"
                     android:textColor="#000000"
                     android:gravity="center"
                     android:text="~"
                     android:layout_gravity="center"
                     android:visibility="gone"
-                    android:textSize="16sp" />
+                    android:textSize="18sp"
+                    />
                 <TextView
                     android:id="@+id/limitP"
-                    android:layout_width="110dp"
-                    android:layout_toRightOf="@+id/shift"
-                    android:layout_marginLeft="3dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/input_color"
+                    android:textColor="#000000"
                     android:hint="20YY/MM/dd"
                     android:textColorHint="#aaaaaa"
-                    android:gravity="center"
                     android:layout_gravity="center"
-                    android:background="@drawable/input_modul"
+                    android:layout_marginStart="10dp"
+                    android:background="#FFEE99"
                     android:visibility="gone"
-                    android:textSize="16sp" />
-            </RelativeLayout>
+                    android:textSize="17sp" />
+            </LinearLayout>
 
 
             <RelativeLayout
+                android:layout_marginStart="15dp"
                 android:id="@+id/remindL"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -170,10 +199,10 @@
 
                 <CheckBox
                     android:id="@+id/remind"
-                    android:layout_marginLeft="110dp"
+                    android:layout_marginLeft="150dp"
                     android:layout_toRightOf="@+id/remainT"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
                     android:gravity="center_vertical"
                     android:layout_centerVertical="true"
                     android:button="@null"
@@ -186,7 +215,6 @@
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
                     android:text="提醒"
-                    android:layout_centerHorizontal="true"
                     android:layout_toRightOf="@+id/remind"
                     android:textColor="#000000"
                     android:visibility="visible"
@@ -195,6 +223,8 @@
                     />
 
                 <Spinner
+                    android:layout_marginStart="25dp"
+                    android:layout_toRightOf="@+id/remindT"
                     android:id="@+id/remindS"
                     android:visibility="gone"
                     android:layout_centerVertical="true"
@@ -260,6 +290,7 @@
                     app:showOutline="false"
                     app:roundedCorners="true"
                     app:bootstrapText="儲存 {fa_save}"
+
                     />
 
                 <com.beardedhen.androidbootstrap.BootstrapButton
@@ -276,7 +307,7 @@
                     app:showOutline="false"
                     app:roundedCorners="true"
                     app:bootstrapText="清除 {fa_remove}"
-                     />
+                    />
             </RelativeLayout>
         </LinearLayout>
     </ScrollView>
@@ -313,4 +344,12 @@
             android:textColor="#000000"
             android:textSize="20sp" />
     </LinearLayout>
+    <GridView
+        android:id="@+id/numberKeyBoard"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#AAAAAA"
+        android:visibility="gone"
+        />
 </RelativeLayout>

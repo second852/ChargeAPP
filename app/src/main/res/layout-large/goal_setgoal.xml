@@ -47,38 +47,64 @@
                     android:textSize="30sp" />
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="35dp"
+                android:layout_marginEnd="50dp"
                 android:layout_marginTop="15dp">
 
                 <TextView
                     android:id="@+id/moneyT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="25dp"
-                    android:gravity="center_vertical"
-                    android:layout_centerVertical="true"
+                    android:gravity="center"
                     android:text="目標金額"
+                    android:layout_gravity="center"
                     android:textColor="#000000"
-                    android:textSize="30dp" />
+                    android:textSize="30sp" />
 
-                <EditText
-                    android:id="@+id/money"
-                    android:layout_width="300dp"
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/currency"
+                    android:layout_marginStart="25dp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/moneyT"
-                    android:layout_marginLeft="25dp"
+                    app:bootstrapBrand="regular"
+                    app:bootstrapSize="lg"
+                    app:buttonMode="regular"
+                    app:showOutline="false"
+                    app:roundedCorners="true"
+                    />
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/calculate"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapSize="lg"
+                    app:buttonMode="regular"
+                    app:showOutline="true"
+                    app:roundedCorners="true"
+                    />
+
+                <TextView
+                    android:id="@+id/money"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
                     android:background="@drawable/input_modul"
                     android:inputType="number"
                     android:singleLine="true"
                     android:textColor="@color/input_color"
                     android:textColorHint="#AAAAAA"
                     android:textSize="30sp" />
-            </RelativeLayout>
+            </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
+                android:layout_marginStart="35dp"
+                android:layout_marginEnd="50dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp">
@@ -87,25 +113,24 @@
                     android:id="@+id/typeT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="25dp"
                     android:text="選擇類型"
                     android:textColor="#000000"
-                    android:textSize="30dp" />
+                    android:textSize="30sp" />
 
                 <Spinner
                     android:id="@+id/spinnerT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/typeT"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginStart="25dp"
                     android:theme="@style/spinner_large"
-                    android:gravity="center_vertical"
-                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    android:layout_gravity="center"
                     />
-            </RelativeLayout>
+            </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
+                android:layout_marginStart="35dp"
+                android:layout_marginEnd="50dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="visible"
@@ -115,27 +140,22 @@
                     android:id="@+id/dateT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:gravity="right"
                     android:text="目標時間"
                     android:textColor="#000000"
-                    android:textSize="30dp" />
+                    android:textSize="30sp" />
 
                 <Spinner
                     android:id="@+id/choiceStatue"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginStart="25dp"
                     android:theme="@style/spinner_large"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/dateT"
-                    android:gravity="center_vertical" />
+                    android:layout_gravity="center"
+                    android:gravity="center" />
                 <TextView
                     android:id="@+id/shift"
-                    android:layout_toRightOf="@+id/choiceStatue"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_centerVertical="true"
                     android:textColor="#000000"
                     android:gravity="center"
                     android:text="~"
@@ -145,10 +165,8 @@
                 <TextView
                     android:id="@+id/limitP"
                     android:layout_width="wrap_content"
-                    android:layout_toRightOf="@+id/shift"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
                     android:textColor="#000000"
                     android:hint="20YY/MM/dd"
                     android:textColorHint="#aaaaaa"
@@ -157,10 +175,11 @@
                     android:background="#FFEE99"
                     android:visibility="gone"
                     android:textSize="27sp" />
-            </RelativeLayout>
+            </LinearLayout>
 
 
             <RelativeLayout
+                android:layout_marginStart="35dp"
                 android:id="@+id/remindL"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -169,10 +188,9 @@
 
                 <CheckBox
                     android:id="@+id/remind"
-                    android:layout_centerHorizontal="true"
-                    android:layout_toRightOf="@+id/remainT"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_marginStart="150dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_centerVertical="true"
                     android:button="@null"
                     android:visibility="visible"
