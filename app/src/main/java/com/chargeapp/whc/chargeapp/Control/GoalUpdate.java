@@ -126,7 +126,7 @@ public class GoalUpdate extends Fragment {
         });
         popupMenu.setOnMenuItemClickListener(new choiceUpdateCurrency());
         StringBuilder showSb=new StringBuilder();
-        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,showSb,false));
+//        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,showSb,false));
         ArrayList items = new ArrayList<Map<String, Object>>();
         Map<String, Object> hashMap;
         for (String s : Common.keyboardArray) {

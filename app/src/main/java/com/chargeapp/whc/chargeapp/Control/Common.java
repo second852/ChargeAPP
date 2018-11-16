@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -690,7 +691,16 @@ public class Common {
     public static void clossKeyword(Activity context) {
         InputMethodManager imm = (InputMethodManager) context
                 .getSystemService(INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(context.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        if(imm==null)
+        {
+            return;
+        }
+        IBinder nowBinder=context.getWindow().getCurrentFocus().getWindowToken();
+        if(nowBinder==null)
+        {
+            return;
+        }
+        imm.hideSoftInputFromWindow(nowBinder   , InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     public static String Utf8forURL(HashMap<String, String> params) throws UnsupportedEncodingException {

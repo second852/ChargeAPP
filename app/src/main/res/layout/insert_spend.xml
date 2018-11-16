@@ -95,7 +95,6 @@
                     android:inputType="text"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:focusable="false"
                     app:bootstrapBrand="primary"
                     app:roundedCorners="true"
                     app:bootstrapSize="lg"

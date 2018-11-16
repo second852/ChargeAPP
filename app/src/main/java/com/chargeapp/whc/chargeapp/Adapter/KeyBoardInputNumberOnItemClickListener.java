@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.Adapter;
 import android.app.Activity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -19,12 +20,12 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
     private boolean clearToZero, needInit,firstCalculate;
     private double oldNumber;
     private BootstrapButton  calculate;
-    private TextView money;
+    private EditText money;
     private Activity context;
     private GridView numberKeyBoard;
 
 
-    public KeyBoardInputNumberOnItemClickListener(BootstrapButton calculate, TextView money, Activity context, GridView numberKeyBoard,
+    public KeyBoardInputNumberOnItemClickListener(BootstrapButton calculate, EditText money, Activity context, GridView numberKeyBoard,
                                                   StringBuilder showSb,Boolean clearToZero) {
         this.calculate = calculate;
         this.money = money;
@@ -47,15 +48,13 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
             clearToZero = false;
             if(word.equals("+")||word.equals("-")||word.equals("x")||word.equals("÷"))
             {
-                showSb.append("0");
-                money.setText(showSb.toString());
-                calculate.setText(word);
-                firstCalculate=false;
-                needInit=true;
+                clearToZero=true;
+                Common.showToast(context,"沒有數字無法計算");
                 return;
             }
-            if(word.equals("倒退")||word.equals("歸零")||word.equals("確定")||word.equals("返回"))
+            if(word.equals("倒退")||word.equals("歸零")||word.equals("確定")||word.equals("返回")||word.equals("="))
             {
+                clearToZero=true;
                 return;
             }
             if(word.equals("."))
@@ -64,6 +63,7 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
             }
             showSb.append(word);
             money.setText(showSb.toString());
+            money.setSelection(showSb.length());
             return;
         }
         switch (word) {
@@ -80,15 +80,17 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
                     showSb.delete(showSb.length()-1,showSb.length());
                 }
                 money.setText(showSb.toString());
+                money.setSelection(showSb.length());
                 break;
             case "歸零":
-                clearToZero=true;
+                clearToZero=false;
                 firstCalculate=true;
-                needInit=false;
+                needInit=true;
                 oldNumber=0.0;
                 showSb = new StringBuilder();
                 showSb.append("0");
                 money.setText(showSb.toString());
+                money.setSelection(showSb.length());
                 calculate.setText(null);
                 break;
             case "確定":
@@ -97,6 +99,8 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
                 oldNumber = 0.0;
                 needInit=false;
                 firstCalculate=true;
+                money.setFocusableInTouchMode(true);
+                money.setSelection(showSb.length());
                 break;
             case "返回":
                 numberKeyBoard.setVisibility(View.GONE);
@@ -112,8 +116,10 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
                 }
                 if(firstCalculate)
                 {
-                    oldNumber=1;
                     firstCalculate=false;
+                    calculate.setText("x");
+                    needInit = true;
+                    break;
                 }
                 needInit = true;
                 resultCalculate(symbol);
@@ -127,11 +133,13 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
                 }
                 if(firstCalculate)
                 {
-                    oldNumber=1;
                     firstCalculate=false;
+                    calculate.setText("÷");
+                    needInit = true;
+                    break;
                 }
-                resultCalculate(symbol);
                 needInit = true;
+                resultCalculate(symbol);
                 calculate.setText("÷");
                 oldNumber = 0.0;
                 break;
@@ -144,6 +152,7 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
                 {
                     oldNumber=0;
                     firstCalculate=false;
+                    needInit = true;
                 }
                 resultCalculate(symbol);
                 needInit = true;
@@ -159,6 +168,7 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
                 {
                     oldNumber=0;
                     firstCalculate=false;
+                    needInit = true;
                 }
                 resultCalculate(symbol);
                 needInit = true;
@@ -179,14 +189,16 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
                 {
                     showSb=new StringBuilder();
                     showSb.append("0.");
+                    money.setSelection(showSb.length());
                     break;
                 }
                 showSb.append(word);
                 money.setText(showSb.toString());
+                money.setSelection(showSb.length());
                 break;
             case "=":
                 //no symbol, no active
-                if (symbol == null || symbol.isEmpty()) {
+                if (symbol == null || symbol.isEmpty()||symbol.equals("=")) {
                     break;
                 } else {
                     //calculate
@@ -213,6 +225,7 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
                     showSb.append(word);
                 }
                 money.setText(showSb.toString());
+                money.setSelection(showSb.length());
                 break;
         }
     }
@@ -226,8 +239,9 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
                 answer = oldNumber * nowNumber;
                 break;
             case "÷":
-                if(showSb.toString().trim().equals("0"))
+                if(Double.valueOf(showSb.toString().trim())==0.0)
                 {
+                    answer=oldNumber;
                     Common.showToast(context,"除數不能為零");
                     break;
                 }
@@ -244,6 +258,7 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
         showSb = new StringBuilder();
         showSb.append(doubleRemoveZero(answer));
         money.setText(showSb.toString());
+        money.setSelection(showSb.length());
         //clear
         return answer;
     }

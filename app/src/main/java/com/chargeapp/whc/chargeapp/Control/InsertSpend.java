@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
@@ -23,6 +24,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -61,6 +64,7 @@ import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.Calendar;
@@ -69,6 +73,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_EXCLAMATION_CIRCLE;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_HEART;
@@ -266,8 +271,6 @@ public class InsertSpend extends Fragment {
                     secondname.setFocusableInTouchMode(false);
                     date.setFocusable(false);
                     date.setFocusableInTouchMode(false);
-                    name.setFocusable(false);
-                    name.setFocusableInTouchMode(false);
                     choiceStatue.setVisibility(View.GONE);
                     choiceday.setVisibility(View.GONE);
                     setUpdate();
@@ -282,20 +285,26 @@ public class InsertSpend extends Fragment {
                     secondname.setFocusableInTouchMode(false);
                     date.setFocusable(false);
                     date.setFocusableInTouchMode(false);
-                    name.setFocusable(false);
-                    name.setFocusableInTouchMode(false);
                     choiceStatue.setVisibility(View.GONE);
                     choiceday.setVisibility(View.GONE);
                     date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
                     break;
                 case 4:
                     setKeyBoardGridAdapter(((ArrayList<Map<String, Object>>) msg.obj));
-                    money.setFocusable(false);
-                    money.setFocusableInTouchMode(false);
-                    money.setOnClickListener(new View.OnClickListener() {
+                    money.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                         @Override
-                        public void onClick(View view) {
-                            numberKeyBoard.setVisibility(View.VISIBLE);
+                        public void onFocusChange(View view, boolean b) {
+
+                            if(b)
+                            {
+                                money.setShowSoftInputOnFocus(false);
+                                Common.clossKeyword(context);
+                                numberKeyBoard.setVisibility(View.VISIBLE);
+                                number.clearFocus();
+                                name.clearFocus();
+                                secondname.clearFocus();
+                                date.clearFocus();
+                            }
                         }
                     });
                     break;
@@ -310,7 +319,7 @@ public class InsertSpend extends Fragment {
             numberKeyBoard = view.findViewById(R.id.numberKeyBoard);
             calculate = view.findViewById(R.id.calculate);
             money = view.findViewById(R.id.money);
-            numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,new StringBuilder(),true));
+            numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate, money, context, numberKeyBoard, new StringBuilder(), true));
             ArrayList items = new ArrayList<Map<String, Object>>();
             Map<String, Object> hashMap;
             for (String s : Common.keyboardArray) {
@@ -383,7 +392,7 @@ public class InsertSpend extends Fragment {
         save.setOnClickListener(new savecomsumer());
         noWek.setOnCheckedChangeListener(new nowWekchange());
         qrcode.setOnClickListener(new QrCodeClick());
-        name.setOnClickListener(new showFirstG());
+        name.setOnFocusChangeListener(new showFirstG());
         detailname.setOnClickListener(new DetailEdit());
         secondG.setOnItemClickListener(new secondGridOnClick());
     }
@@ -679,17 +688,20 @@ public class InsertSpend extends Fragment {
 
 
             if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
-                money.setError("金額不能空白");
+                Common.showToast(context, "金額不能空白");
+                money.setError(" ");
                 return;
             }
 
             try {
-                if (Integer.valueOf(money.getText().toString().trim()) == 0) {
-                    money.setError("金額不能為0");
+                if (Double.valueOf(money.getText().toString().trim()) == 0) {
+                    Common.showToast(context, "金額不能為0");
+                    money.setError(" ");
                     return;
                 }
             } catch (Exception e) {
-                money.setError("只能輸入數字");
+                Common.showToast(context, "金額不能為0");
+                money.setError(" ");
                 return;
             }
 
@@ -783,12 +795,20 @@ public class InsertSpend extends Fragment {
 
     }
 
-    private class showFirstG implements View.OnClickListener {
+    private class showFirstG implements View.OnFocusChangeListener {
+
+
         @Override
-        public void onClick(View view) {
+        public void onFocusChange(View view, boolean b) {
             showdate.setVisibility(View.GONE);
             secondL.setVisibility(View.GONE);
             firstL.setVisibility(View.VISIBLE);
+            numberKeyBoard.setVisibility(View.GONE);
+            Common.clossKeyword(context);
+            number.clearFocus();
+            money.clearFocus();
+            secondname.clearFocus();
+            date.clearFocus();
         }
     }
 
