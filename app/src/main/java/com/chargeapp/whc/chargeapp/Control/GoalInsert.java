@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -51,12 +52,11 @@ import static com.chargeapp.whc.chargeapp.Control.Common.insertCurrency;
  */
 
 public class GoalInsert extends Fragment {
-    private EditText name;
-    private TextView money;
+    private EditText name,money,limitP;
     private Spinner spinnerT,choiceStatue,remindS,remindD;
     private CheckBox remind,noWeekend;
     private LinearLayout showDate;
-    private TextView limitP,shift,noWeekendT,remindT;
+    private TextView shift,noWeekendT,remindT;
     private DatePicker datePicker;
     private RelativeLayout remindL;
     private GoalDB goalDB;
@@ -94,6 +94,10 @@ public class GoalInsert extends Fragment {
         findViewById(view);
         setSpinner();
         limitP.setOnClickListener(new showDate());
+        limitP.setOnFocusChangeListener(new showDate());
+        limitP.setShowSoftInputOnFocus(false);
+        limitP.setInputType(InputType.TYPE_NULL);
+
         showDate.setOnClickListener(new choicedateClick());
         remind.setOnCheckedChangeListener(new dateStatue());
         remindS.setOnItemSelectedListener(new choiceDateStatue());
@@ -101,6 +105,8 @@ public class GoalInsert extends Fragment {
         save.setOnClickListener(new saveOnClick());
         spinnerT.setOnItemSelectedListener(new SelectType());
         choiceStatue.setOnItemSelectedListener(new choiceStatueSelected());
+        name.setOnClickListener(new closeAllView());
+        name.requestFocus();
         setPopupMenu();
         return view;
     }
@@ -121,8 +127,7 @@ public class GoalInsert extends Fragment {
             }
         });
         popupMenu.setOnMenuItemClickListener(new choiceUpdateCurrency());
-        StringBuilder showSb=new StringBuilder();
-//        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,showSb,false));
+        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,new StringBuilder(),false));
         ArrayList items = new ArrayList<Map<String, Object>>();
         Map<String, Object> hashMap;
         for (String s : Common.keyboardArray) {
@@ -134,12 +139,25 @@ public class GoalInsert extends Fragment {
                 new int[]{R.id.cardview});
         numberKeyBoard.setAdapter(adapter);
         numberKeyBoard.setNumColumns(5);
+        money.setShowSoftInputOnFocus(false);
         money.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Common.clossKeyword(context);
                 numberKeyBoard.setVisibility(View.VISIBLE);
-
+                showDate.setVisibility(View.GONE);
+            }
+        });
+        money.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(b)
+                {
+                    Common.clossKeyword(context);
+                    numberKeyBoard.setVisibility(View.VISIBLE);
+                    showDate.setVisibility(View.GONE);
+                    name.clearFocus();
+                    limitP.clearFocus();
+                }
             }
         });
     }
@@ -219,19 +237,35 @@ public class GoalInsert extends Fragment {
 
     }
 
-    private class showDate implements View.OnClickListener {
+    private class showDate implements View.OnClickListener, View.OnFocusChangeListener {
         @Override
         public void onClick(View view) {
             showDate.setVisibility(View.VISIBLE);
+            numberKeyBoard.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onFocusChange(View view, boolean b) {
+            if(b)
+            {
+                showDate.setVisibility(View.VISIBLE);
+                numberKeyBoard.setVisibility(View.GONE);
+                Common.clossKeyword(context);
+                money.clearFocus();
+                name.clearFocus();
+            }
+
         }
     }
 
     private class choicedateClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            limitP.setError(null);
             String choicedate=datePicker.getYear()+"/"+String.valueOf(datePicker.getMonth()+1)+"/"+datePicker.getDayOfMonth();
             limitP.setText(choicedate);
             showDate.setVisibility(View.GONE);
+            limitP.setSelection(choicedate.length());
         }
     }
 
@@ -247,8 +281,8 @@ public class GoalInsert extends Fragment {
                 remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
                 remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
                 remindS.setX(name.getX());
-                noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
-                noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/20);
+                noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/10);
+                noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/10);
 
                 remindS.setVisibility(View.VISIBLE);
                 noWeekend.setVisibility(View.VISIBLE);
@@ -334,9 +368,14 @@ public class GoalInsert extends Fragment {
     private class clearOnClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            if(showDate.getVisibility()==View.VISIBLE)
+            {
+                return;
+            }
             name.setText("");
             money.setText("");
             remind.setChecked(false);
+            numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,new StringBuilder(),true));
         }
     }
 
@@ -344,10 +383,10 @@ public class GoalInsert extends Fragment {
         @Override
         public void onClick(View view) {
             GoalVO goalVO=new GoalVO();
-            String goalName = name.getText().toString().trim();
-            String goalMoney = money.getText().toString().trim();
-            String dayStatue=choiceStatue.getSelectedItem().toString().trim();
-            String day=limitP.getText().toString().trim();
+            String goalName = name.getText().toString();
+            String goalMoney = money.getText().toString();
+            String dayStatue=choiceStatue.getSelectedItem().toString();
+            String day=limitP.getText().toString();
 
             //showDate not save
             if(showDate.getVisibility()==View.VISIBLE)
@@ -370,13 +409,11 @@ public class GoalInsert extends Fragment {
 
             try {
                 if (Double.valueOf(money.getText().toString().trim()) == 0) {
-                    money.setError(" ");
-                    Common.showToast(context,"金額不能為0");
+                    money.setError("金額不能為0");
                     return;
                 }
             } catch (Exception e) {
-                money.setError(" ");
-                Common.showToast(context,"只能輸入數字");
+                money.setError("只能輸入數字");
                 return;
             }
 
@@ -394,8 +431,7 @@ public class GoalInsert extends Fragment {
                 Date d = new Date(c.getTimeInMillis());
                 if(c.getTimeInMillis()<System.currentTimeMillis())
                 {
-                    limitP.setError(" ");
-                    Common.showToast(context,"不能過去時間");
+                    limitP.setError("不能過去時間");
                     return;
                 }
 
@@ -488,6 +524,14 @@ public class GoalInsert extends Fragment {
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {
 
+        }
+    }
+
+    private class closeAllView implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            numberKeyBoard.setVisibility(View.GONE);
+            showDate.setVisibility(View.GONE);
         }
     }
 }

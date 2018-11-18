@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#f5f5f5"
     >
     <com.github.mikephil.charting.charts.PieChart
@@ -11,19 +12,41 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/pieChart"
         />
-    <TextView
-        android:id="@+id/pieChartT"
-        android:textColor="#000000"
-        android:gravity="center"
-        android:textSize="30sp"
+    <LinearLayout
         android:layout_marginTop="25dp"
+        android:id="@+id/pieChartL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_below="@+id/pieChart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        >
+        <TextView
+            android:id="@+id/pieChartT"
+            android:textColor="#000000"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/currency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:layout_gravity="center_vertical"
+            app:bootstrapBrand="warning"
+            app:bootstrapSize="xl"
+            app:buttonMode="regular"
+            app:showOutline="false"
+            app:roundedCorners="true"
+            />
+    </LinearLayout>
     <ListView
         android:id="@+id/list"
         android:layout_marginTop="25dp"
-        android:layout_below="@+id/pieChartT"
+        android:layout_below="@+id/pieChartL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </ListView>

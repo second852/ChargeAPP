@@ -6,8 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f5f5f5"
-    android:focusable="false"
-    android:focusableInTouchMode="false"
     android:orientation="vertical">
 
     <ScrollView
@@ -93,7 +91,6 @@
                     android:gravity="center_vertical"
                     android:singleLine="true"
                     android:inputType="text"
-                    android:focusable="false"
                     app:bootstrapBrand="primary"
                     app:roundedCorners="true"
                     app:bootstrapSize="xl"
@@ -124,7 +121,6 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="35dp"
                     android:gravity="center_vertical"
-                    android:focusable="false"
                     app:bootstrapBrand="primary"
                     app:roundedCorners="true"
                     app:bootstrapSize="xl" />

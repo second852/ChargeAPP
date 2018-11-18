@@ -93,19 +93,17 @@
                     app:roundedCorners="true"
                     />
 
-                <TextView
+                <EditText
                     android:id="@+id/money"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:background="@drawable/text_modul"
                     android:singleLine="true"
+                    android:background="@drawable/input_modul"
                     android:textColor="@color/input_color"
                     android:textColorHint="#AAAAAA"
                     android:layout_gravity="center"
                     android:gravity="center_vertical"
-                    android:clickable="false"
-                    android:focusable="false"
                     android:textSize="20sp" />
             </LinearLayout>
 
@@ -172,16 +170,16 @@
                     android:visibility="gone"
                     android:textSize="18sp"
                     />
-                <TextView
+                <EditText
                     android:id="@+id/limitP"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#000000"
                     android:hint="20YY/MM/dd"
                     android:textColorHint="#aaaaaa"
                     android:layout_gravity="center"
                     android:layout_marginStart="10dp"
-                    android:background="#FFEE99"
+                    android:background="@drawable/input_modul"
+                    android:textColor="@color/input_color"
                     android:visibility="gone"
                     android:textSize="17sp" />
             </LinearLayout>
@@ -191,7 +189,7 @@
                 android:layout_marginStart="15dp"
                 android:id="@+id/remindL"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:visibility="visible"
                 android:layout_marginTop="15dp">
 
@@ -226,12 +224,12 @@
                     android:id="@+id/remindS"
                     android:visibility="gone"
                     android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true"
                     android:theme="@style/spinner_normal"
                     android:gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
                 <Spinner
+                    android:layout_toRightOf="@+id/remindS"
                     android:id="@+id/remindD"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -240,23 +238,23 @@
                     android:visibility="gone"
                     />
                 <CheckBox
+                    android:layout_toRightOf="@+id/remindS"
                     android:id="@+id/noWeekend"
                     android:layout_centerVertical="true"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:buttonTint="#00BBFF"
-                    android:layout_toLeftOf="@+id/noWeekendT"
                     android:button="@null"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
                     android:visibility="gone" />
                 <TextView
+                    android:layout_toRightOf="@+id/noWeekend"
                     android:id="@+id/noWeekendT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
                     android:text="假日除外"
                     android:textColor="#000000"
-                    android:layout_alignParentRight="true"
                     android:visibility="gone"
                     android:layout_centerVertical="true"
                     />

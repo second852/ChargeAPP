@@ -130,6 +130,7 @@ public class UpdateSpend extends Fragment {
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
+        date.setOnFocusChangeListener(new dateClickListener());
         date.setOnClickListener(new dateClickListener());
         showdate.setOnClickListener(new choicedateClick());
         fixdate.setOnCheckedChangeListener(new showfixdateClick());
@@ -139,8 +140,11 @@ public class UpdateSpend extends Fragment {
         save.setOnClickListener(new savecomsumer());
         noWek.setOnCheckedChangeListener(new nowWekchange());
         qrcode.setOnClickListener(new QrCodeClick());
+        number.setOnClickListener(new closeAllGridView());
         name.setOnClickListener(new showFirstG());
+        name.setOnFocusChangeListener(new showFirstG());
         secondname.setOnClickListener(new showSecondG());
+        secondname.setOnFocusChangeListener(new showSecondG());
         firstG.setOnItemClickListener(new firstGridOnClick());
         secondG.setOnItemClickListener(new secondGridOnClick());
         detailname.setOnClickListener(new showDetail());
@@ -184,12 +188,30 @@ public class UpdateSpend extends Fragment {
                 new int[]{R.id.cardview});
         numberKeyBoard.setAdapter(adapter);
         numberKeyBoard.setNumColumns(5);
-        money.setFocusable(false);
-        money.setFocusableInTouchMode(false);
         money.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 numberKeyBoard.setVisibility(View.VISIBLE);
+                firstL.setVisibility(View.GONE);
+                secondL.setVisibility(View.GONE);
+                showdate.setVisibility(View.GONE);
+            }
+        });
+        money.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (b) {
+                    numberKeyBoard.setVisibility(View.VISIBLE);
+                    firstL.setVisibility(View.GONE);
+                    secondL.setVisibility(View.GONE);
+                    showdate.setVisibility(View.GONE);
+
+                    Common.clossKeyword(context);
+                    number.clearFocus();
+                    name.clearFocus();
+                    secondname.clearFocus();
+                    date.clearFocus();
+                }
             }
         });
     }
@@ -458,15 +480,13 @@ public class UpdateSpend extends Fragment {
         secondG = view.findViewById(R.id.secondG);
         secondL = view.findViewById(R.id.secondL);
         name = view.findViewById(R.id.name);
-        name.setFocusable(false);
-        name.setFocusableInTouchMode(false);
+        name.setShowSoftInputOnFocus(false);
         secondname = view.findViewById(R.id.secondname);
-        secondname.setFocusable(false);
-        secondname.setFocusableInTouchMode(false);
+        secondname.setShowSoftInputOnFocus(false);
         money = view.findViewById(R.id.money);
+        money.setShowSoftInputOnFocus(false);
         date = view.findViewById(R.id.date);
-        date.setFocusable(false);
-        date.setFocusableInTouchMode(false);
+        date.setShowSoftInputOnFocus(false);
         fixdate = view.findViewById(R.id.fixdate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
@@ -562,23 +582,45 @@ public class UpdateSpend extends Fragment {
         secondG.setNumColumns(4);
     }
 
-    private class dateClickListener implements View.OnClickListener {
+    private class dateClickListener implements  View.OnFocusChangeListener, View.OnClickListener {
         @Override
-        public void onClick(View v) {
+        public void onFocusChange(View view, boolean b) {
+            if (b) {
                 firstL.setVisibility(View.GONE);
                 secondL.setVisibility(View.GONE);
                 showdate.setVisibility(View.VISIBLE);
+                numberKeyBoard.setVisibility(View.GONE);
+
+                Common.clossKeyword(context);
+                name.clearFocus();
+                number.clearFocus();
+                money.clearFocus();
+                secondname.clearFocus();
+
+            }
+
+            date.setSelection(date.getText().toString().length());
         }
 
+        @Override
+        public void onClick(View view) {
+            firstL.setVisibility(View.GONE);
+            secondL.setVisibility(View.GONE);
+            showdate.setVisibility(View.VISIBLE);
+            numberKeyBoard.setVisibility(View.GONE);
+            date.setSelection(date.getText().toString().length());
+        }
     }
 
 
     private class choicedateClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            date.setError(null);
             choicedate = datePicker.getYear() + "/" + String.valueOf(datePicker.getMonth() + 1) + "/" + datePicker.getDayOfMonth();
             date.setText(choicedate);
             showdate.setVisibility(View.GONE);
+            date.setSelection(choicedate.length());
         }
     }
 
@@ -681,6 +723,7 @@ public class UpdateSpend extends Fragment {
             name.setText("");
             secondname.setText("");
             money.setText("");
+            numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate, money, context, numberKeyBoard, new StringBuilder(), true));
             fixdate.setChecked(false);
             number.setText("");
         }
@@ -716,21 +759,18 @@ public class UpdateSpend extends Fragment {
             }
 
             if (name.getText()== null || name.getText().toString().trim().length() == 0) {
-                name.setError("");
-                Common.showToast(context, "主項目不能空白");
+                name.setError("主項目不能空白");
                 return;
             }
 
             //無法分類自己設分類
             if (name.getText().toString().trim().equals("O") || name.getText().toString().trim().equals("0")) {
-                name.setError(" ");
-                Common.showToast(context, "主項目不能為其他");
+                name.setError("主項目不能為其他");
                 return;
             }
 
-            if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
-                secondname.setError(" ");
-                Common.showToast(context, "次項目不能空白");
+            if (secondname.getText() == null || secondname.getText().toString().trim().length() == 0) {
+                secondname.setError("次項目不能空白");
                 return;
             }
            try {
@@ -746,19 +786,18 @@ public class UpdateSpend extends Fragment {
            }
             //無法分類自己設分類
             if (secondname.getText().toString().trim().equals("O") || secondname.getText().toString().equals("0")) {
-                secondname.setError("ff471a");
-                Common.showToast(context, "次項目不能為其他");
+                secondname.setError("次項目不能為其他");
                 return;
             }
 
-            if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
+            if (money.getText()== null || money.getText().toString().trim().length() == 0) {
                 money.setError("金額不能空白");
                 return;
             }
 
             try {
-                if (Integer.valueOf(money.getText().toString().trim()) == 0) {
-                    money.setError("金額不能為0");
+                if (Double.valueOf(money.getText().toString().trim()) == 0) {
+                    money.setError("金額不能空白");
                     return;
                 }
             } catch (Exception e) {
@@ -767,9 +806,8 @@ public class UpdateSpend extends Fragment {
             }
 
 
-            if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
-                date.setError(" ");
-                Common.showToast(context, "日期不能空白");
+            if (date.getText()== null || date.getText().toString().trim().length() == 0) {
+                date.setError("日期不能空白");
                 return;
             }
 
@@ -889,18 +927,36 @@ public class UpdateSpend extends Fragment {
     }
 
 
-    private class showFirstG implements View.OnClickListener {
+    private class showFirstG implements View.OnClickListener, View.OnFocusChangeListener {
         @Override
         public void onClick(View view) {
             secondL.setVisibility(View.GONE);
             showdate.setVisibility(View.GONE);
             firstL.setVisibility(View.VISIBLE);
+            numberKeyBoard.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onFocusChange(View view, boolean b) {
+            if(b)
+            {
+                Common.clossKeyword(context);
+                number.clearFocus();
+                money.clearFocus();
+                secondname.clearFocus();
+                date.clearFocus();
+                secondL.setVisibility(View.GONE);
+                showdate.setVisibility(View.GONE);
+                numberKeyBoard.setVisibility(View.GONE);
+                firstL.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     private class firstGridOnClick implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            name.setError(null);
             TextView textView = view.findViewById(R.id.text);
             String type = textView.getText().toString().trim();
             if(i<typeVOS.size())
@@ -918,6 +974,7 @@ public class UpdateSpend extends Fragment {
                 return;
             }
             name.setText(type);
+            name.setSelection(type.length());
             setSecondGrid();
             firstL.setVisibility(View.GONE);
             secondL.setVisibility(View.VISIBLE);
@@ -927,6 +984,7 @@ public class UpdateSpend extends Fragment {
     private class secondGridOnClick implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            secondname.setError(null);
             TextView textView = view.findViewById(R.id.text);
             String type = textView.getText().toString().trim();
             if (type.equals("返回")) {
@@ -946,17 +1004,36 @@ public class UpdateSpend extends Fragment {
             }
             oldMainType=name.getText().toString().trim();
             secondname.setText(type);
+            secondname.setSelection(type.length());
             secondL.setVisibility(View.GONE);
         }
     }
 
 
-    private class showSecondG implements View.OnClickListener {
+    private class showSecondG implements View.OnClickListener, View.OnFocusChangeListener {
         @Override
         public void onClick(View view) {
             firstL.setVisibility(View.GONE);
             showdate.setVisibility(View.GONE);
+            numberKeyBoard.setVisibility(View.GONE);
             secondL.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onFocusChange(View view, boolean b) {
+            if(b)
+            {
+                Common.clossKeyword(context);
+                number.clearFocus();
+                money.clearFocus();
+                name.clearFocus();
+                date.clearFocus();
+                firstL.setVisibility(View.GONE);
+                showdate.setVisibility(View.GONE);
+                numberKeyBoard.setVisibility(View.GONE);
+                secondL.setVisibility(View.VISIBLE);
+            }
+
         }
     }
 
@@ -979,50 +1056,43 @@ public class UpdateSpend extends Fragment {
             {
                 return;
             }
-            name.setBackgroundColor(Color.parseColor("#FFEE99"));
-            secondname.setBackgroundColor(Color.parseColor("#FFEE99"));
-            if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
-                name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(context, "主項目不能空白");
+            if (name.getText()== null || name.getText().toString().trim().length() == 0) {
+                name.setError("主項目不能空白");
                 return;
             }
 
             if (name.getText().toString().trim().equals("O") || name.getText().toString().trim().equals("0")) {
-                name.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(context, "主項目不能為其他");
+                name.setError("主項目不能為其他");
                 return;
             }
 
 
-            if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
-                secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(context, "次項目不能空白");
+            if (secondname.getText() == null || secondname.getText().toString().trim().length() == 0) {
+                secondname.setError("次項目不能空白");
                 return;
             }
 
             if (secondname.getText().toString().trim().equals("O") || secondname.getText().toString().trim().equals("0")) {
-                secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                Common.showToast(context, "次項目不能為其他");
+                secondname.setError("次項目不能為其他");
                 return;
             }
            try {
                if(!oldMainType.equals(name.getText().toString().trim()))
                {
-                   secondname.setBackgroundColor(Color.parseColor("#ff471a"));
-                   Common.showToast(context, "次項目不屬於主項目種類");
+                   secondname.setError("次項目不屬於主項目種類");
                    return;
                }
            }catch (Exception e)
            {
 
            }
-            if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
+            if (money.getText()== null || money.getText().toString().trim().length() == 0) {
                 money.setError("金額不能空白");
                 return;
             }
 
             try {
-                if (Integer.valueOf(money.getText().toString().trim()) == 0) {
+                if (Double.valueOf(money.getText().toString().trim()) == 0) {
                     money.setError("金額不能為0");
                     return;
                 }
@@ -1031,9 +1101,8 @@ public class UpdateSpend extends Fragment {
                 return;
             }
 
-            if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
-                name.setError(" ");
-                Common.showToast(context, "日期不能空白");
+            if (date.getText() == null || date.getText().toString().trim().length() == 0) {
+                name.setError("日期不能空白");
                 return;
             }
 
@@ -1218,6 +1287,16 @@ public class UpdateSpend extends Fragment {
                     break;
             }
             return true;
+        }
+    }
+
+    private class closeAllGridView implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            firstL.setVisibility(View.GONE);
+            secondL.setVisibility(View.GONE);
+            showdate.setVisibility(View.GONE);
+            numberKeyBoard.setVisibility(View.GONE);
         }
     }
 }

@@ -6,8 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f5f5f5"
-    android:focusable="false"
-    android:focusableInTouchMode="false"
     android:orientation="vertical">
 
     <ScrollView
@@ -92,12 +90,13 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:singleLine="true"
-                    android:inputType="text"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
+                    android:inputType="datetime"
                     app:bootstrapBrand="primary"
                     app:roundedCorners="true"
                     app:bootstrapSize="lg"
+
                     />
             </LinearLayout>
 
@@ -127,7 +126,7 @@
                     android:gravity="center_vertical"
                     android:textColor="#000000"
                     android:textColorHint="#AAAAAA"
-                    android:focusable="false"
+                    android:inputType="datetime"
                     app:bootstrapBrand="primary"
                     app:roundedCorners="true"
                     app:bootstrapSize="lg" />
@@ -216,7 +215,6 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="30dp"
                     android:gravity="center_vertical"
-                    android:inputType="date"
                     android:singleLine="true"
                     android:textColor="#000000"
                     app:bootstrapBrand="primary"

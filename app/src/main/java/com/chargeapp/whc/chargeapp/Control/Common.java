@@ -658,12 +658,17 @@ public class Common {
         while (mch.find()) {
             sb.append(mch.group());
         }
-        double dValue = Double.valueOf(sb.toString());
-        int value = (int) dValue;
-        if (value == dValue) {
-            return String.valueOf(value);
-        } else {
-            return sb.toString();
+        if(sb.length()>0)
+        {
+            double dValue = Double.valueOf(sb.toString());
+            int value = (int) dValue;
+            if (value == dValue) {
+                return String.valueOf(value);
+            } else {
+                return sb.toString();
+            }
+        }else{
+            return "0";
         }
     }
 
@@ -695,12 +700,12 @@ public class Common {
         {
             return;
         }
-        IBinder nowBinder=context.getWindow().getCurrentFocus().getWindowToken();
-        if(nowBinder==null)
+        View view=context.getWindow().getCurrentFocus();
+        if(view==null)
         {
             return;
         }
-        imm.hideSoftInputFromWindow(nowBinder   , InputMethodManager.HIDE_NOT_ALWAYS);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     public static String Utf8forURL(HashMap<String, String> params) throws UnsupportedEncodingException {

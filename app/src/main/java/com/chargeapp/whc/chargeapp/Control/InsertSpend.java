@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,32 +12,23 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.RecyclerView;
+
 import android.text.InputType;
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
+
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
@@ -48,8 +37,7 @@ import com.beardedhen.androidbootstrap.BootstrapDropDown;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.beardedhen.androidbootstrap.BootstrapLabel;
 import com.beardedhen.androidbootstrap.BootstrapText;
-import com.beardedhen.androidbootstrap.TypefaceProvider;
-import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
+
 import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
 import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListener;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
@@ -64,38 +52,29 @@ import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import java.net.Proxy;
+
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.Calendar;
-import java.util.Currency;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static android.content.Context.INPUT_METHOD_SERVICE;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_EXCLAMATION_CIRCLE;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_HEART;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_SAVE;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_TWITTER;
-import static com.chargeapp.whc.chargeapp.Control.Common.doubleRemoveZero;
+
 import static com.chargeapp.whc.chargeapp.Control.Common.insertCurrency;
 import static com.chargeapp.whc.chargeapp.Control.Common.onlyNumber;
-import static com.chargeapp.whc.chargeapp.Control.Common.onlyNumberToDouble;
-
 
 public class InsertSpend extends Fragment {
 
-    private BootstrapEditText number, name, money, secondname, date;
-    private CheckBox fixdate, notify, noWek;
-    private BootstrapLabel detailname;
+    private BootstrapEditText number, name, money, secondName, date;
+    private CheckBox fixDate, notify, noWek;
+    private BootstrapLabel detailName;
     private BootstrapButton save, clear;
-    private LinearLayout showdate;
+    private LinearLayout showDate;
     private DatePicker datePicker;
-    private String choicedate;
-    private BootstrapDropDown choiceStatue, choiceday;
+    private String choiceDate;
+    private BootstrapDropDown choiceStatue, choiceDay;
     private Gson gson;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
@@ -155,13 +134,13 @@ public class InsertSpend extends Fragment {
     private void setUpdate() {
         if (consumeVO.getMaintype().equals("O")) {
             name.setText("其他");
-            secondname.setText("其他");
+            secondName.setText("其他");
         } else if (consumeVO.getSecondType().equals("0")) {
             name.setText("未知");
-            secondname.setText("未知");
+            secondName.setText("未知");
         } else {
             name.setText(consumeVO.getMaintype());
-            secondname.setText(consumeVO.getSecondType());
+            secondName.setText(consumeVO.getSecondType());
         }
 
         number.setText(consumeVO.getNumber());
@@ -174,7 +153,7 @@ public class InsertSpend extends Fragment {
             return;
         }
         if (consumeVO.getFixDate().equals("true")) {
-            fixdate.setChecked(Boolean.valueOf(consumeVO.getFixDate()));
+            fixDate.setChecked(Boolean.valueOf(consumeVO.getFixDate()));
             notify.setChecked(Boolean.valueOf(consumeVO.getNotify()));
             JsonObject js = gson.fromJson(consumeVO.getFixDateDetail(), JsonObject.class);
             String choicestatue = js.get("choicestatue").getAsString().trim();
@@ -185,20 +164,20 @@ public class InsertSpend extends Fragment {
                 statueNumber = 0;
                 noWekT.setVisibility(View.VISIBLE);
                 noWek.setVisibility(View.VISIBLE);
-                choiceday.setVisibility(View.GONE);
+                choiceDay.setVisibility(View.GONE);
                 resultStatue = BsTextStatue.get(0).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
                 choiceStatue.setVisibility(View.VISIBLE);
-                choiceday.setExpandDirection(ExpandDirection.UP);
+                choiceDay.setExpandDirection(ExpandDirection.UP);
                 resultDay = "";
             } else if (choicestatue.trim().equals("每周")) {
                 statueNumber = 1;
                 noWekT.setVisibility(View.GONE);
                 noWek.setVisibility(View.GONE);
-                choiceday.setVisibility(View.VISIBLE);
+                choiceDay.setVisibility(View.VISIBLE);
                 resultStatue = BsTextStatue.get(1).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(1));
-                choiceday.setDropdownData(Common.WeekSetSpinnerBS);
+                choiceDay.setDropdownData(Common.WeekSetSpinnerBS);
                 choiceStatue.setVisibility(View.VISIBLE);
                 if (choicedate.equals("星期一")) {
                     updateChoice = 0;
@@ -215,36 +194,36 @@ public class InsertSpend extends Fragment {
                 } else {
                     updateChoice = 6;
                 }
-                choiceday.setBootstrapText(BsTextWeek.get(updateChoice));
+                choiceDay.setBootstrapText(BsTextWeek.get(updateChoice));
                 resultDay = BsTextWeek.get(updateChoice).toString();
-                choiceday.setExpandDirection(ExpandDirection.UP);
+                choiceDay.setExpandDirection(ExpandDirection.UP);
             } else if (choicestatue.trim().equals("每月")) {
                 statueNumber = 2;
                 noWekT.setVisibility(View.GONE);
                 noWek.setVisibility(View.GONE);
-                choiceday.setVisibility(View.VISIBLE);
+                choiceDay.setVisibility(View.VISIBLE);
                 resultStatue = BsTextStatue.get(2).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(2));
                 choiceStatue.setVisibility(View.VISIBLE);
                 choicedate = choicedate.substring(0, choicedate.indexOf("日"));
                 updateChoice = Integer.valueOf(choicedate) - 1;
                 resultDay = BsTextDay.get(updateChoice).toString();
-                choiceday.setBootstrapText(BsTextDay.get(updateChoice));
-                choiceday.setDropdownData(Common.DaySetSpinnerBS());
-                choiceday.setExpandDirection(ExpandDirection.UP);
+                choiceDay.setBootstrapText(BsTextDay.get(updateChoice));
+                choiceDay.setDropdownData(Common.DaySetSpinnerBS());
+                choiceDay.setExpandDirection(ExpandDirection.UP);
             } else {
                 statueNumber = 3;
                 noWekT.setVisibility(View.GONE);
                 noWek.setVisibility(View.GONE);
-                choiceday.setVisibility(View.VISIBLE);
+                choiceDay.setVisibility(View.VISIBLE);
                 resultStatue = BsTextStatue.get(3).toString();
                 choiceStatue.setBootstrapText(BsTextStatue.get(3));
                 choiceStatue.setVisibility(View.VISIBLE);
                 updateChoice = Integer.valueOf(choicedate.substring(0, choicedate.indexOf("月"))) - 1;
                 resultDay = BsTextMonth.get(updateChoice).toString();
-                choiceday.setBootstrapText(BsTextMonth.get(updateChoice));
-                choiceday.setDropdownData(Common.MonthSetSpinnerBS());
-                choiceday.setExpandDirection(ExpandDirection.UP);
+                choiceDay.setBootstrapText(BsTextMonth.get(updateChoice));
+                choiceDay.setDropdownData(Common.MonthSetSpinnerBS());
+                choiceDay.setExpandDirection(ExpandDirection.UP);
             }
         }
         setSecondGrid();
@@ -267,26 +246,21 @@ public class InsertSpend extends Fragment {
                     setSecondGridAdapt((ArrayList<Map<String, Object>>) msg.obj);
                     break;
                 case 2:
-                    secondname.setFocusable(false);
-                    secondname.setFocusableInTouchMode(false);
-                    date.setFocusable(false);
-                    date.setFocusableInTouchMode(false);
                     choiceStatue.setVisibility(View.GONE);
-                    choiceday.setVisibility(View.GONE);
+                    choiceDay.setVisibility(View.GONE);
                     setUpdate();
-                    secondname.setOnClickListener(new showSecondG());
+                    secondName.setOnFocusChangeListener(new showSecondG());
+                    secondName.setOnClickListener(new showSecondG());
+                    secondName.setInputType(InputType.TYPE_NULL);
+
                     if (Common.showsecondgrid) {
                         secondL.setVisibility(View.VISIBLE);
                         Common.showsecondgrid = false;
                     }
                     break;
                 case 3:
-                    secondname.setFocusable(false);
-                    secondname.setFocusableInTouchMode(false);
-                    date.setFocusable(false);
-                    date.setFocusableInTouchMode(false);
                     choiceStatue.setVisibility(View.GONE);
-                    choiceday.setVisibility(View.GONE);
+                    choiceDay.setVisibility(View.GONE);
                     date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
                     break;
                 case 4:
@@ -295,18 +269,35 @@ public class InsertSpend extends Fragment {
                         @Override
                         public void onFocusChange(View view, boolean b) {
 
-                            if(b)
-                            {
-                                money.setShowSoftInputOnFocus(false);
-                                Common.clossKeyword(context);
+                            if (b) {
                                 numberKeyBoard.setVisibility(View.VISIBLE);
+                                firstL.setVisibility(View.GONE);
+                                secondL.setVisibility(View.GONE);
+                                showDate.setVisibility(View.GONE);
+
+                                Common.clossKeyword(context);
                                 number.clearFocus();
                                 name.clearFocus();
-                                secondname.clearFocus();
+                                secondName.clearFocus();
                                 date.clearFocus();
                             }
                         }
                     });
+                    money.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            numberKeyBoard.setVisibility(View.VISIBLE);
+                            firstL.setVisibility(View.GONE);
+                            secondL.setVisibility(View.GONE);
+                            showDate.setVisibility(View.GONE);
+                        }
+                    });
+                    break;
+                case 5:
+                    name.setShowSoftInputOnFocus(false);
+                    secondName.setShowSoftInputOnFocus(false);
+                    money.setShowSoftInputOnFocus(false);
+                    date.setShowSoftInputOnFocus(false);
                     break;
             }
         }
@@ -342,7 +333,6 @@ public class InsertSpend extends Fragment {
             sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
             nowCurrency = sharedPreferences.getString(insertCurrency, "TWD");
 
-
             currency = view.findViewById(R.id.currency);
             popupMenu = new PopupMenu(context, currency);
             Common.createCurrencyPopMenu(popupMenu, context);
@@ -373,6 +363,8 @@ public class InsertSpend extends Fragment {
             findViewById();
             gson = new Gson();
             setSetOnClickView();
+
+            handlerPicture.sendEmptyMessage(5);
             if (needSet) {
                 handlerPicture.sendEmptyMessage(2);
             } else {
@@ -382,18 +374,21 @@ public class InsertSpend extends Fragment {
     };
 
     private void setSetOnClickView() {
-        date.setOnClickListener(new dateClickListener());
-        showdate.setOnClickListener(new choicedateClick());
-        fixdate.setOnCheckedChangeListener(new showfixdateClick());
+
+        showDate.setOnClickListener(new choicedateClick());
+        fixDate.setOnCheckedChangeListener(new showfixdateClick());
         choiceStatue.setOnDropDownItemClickListener(new choiceStateItemBS());
-        choiceday.setOnDropDownItemClickListener(new choicedayItemBS());
-//        choiceStatue.setOnItemSelectedListener(new choiceStateItem());
+        choiceDay.setOnDropDownItemClickListener(new choicedayItemBS());
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new savecomsumer());
         noWek.setOnCheckedChangeListener(new nowWekchange());
         qrcode.setOnClickListener(new QrCodeClick());
+        number.setOnClickListener(new closeAllGridView());
+        name.setOnClickListener(new showFirstG());
         name.setOnFocusChangeListener(new showFirstG());
-        detailname.setOnClickListener(new DetailEdit());
+        name.setInputType(InputType.TYPE_NULL);
+        date.setOnFocusChangeListener(new dateClickListener());
+        detailName.setOnClickListener(new DetailEdit());
         secondG.setOnItemClickListener(new secondGridOnClick());
     }
 
@@ -479,18 +474,18 @@ public class InsertSpend extends Fragment {
 
 
     public void findViewById() {
-        secondname = view.findViewById(R.id.secondname);
+        secondName = view.findViewById(R.id.secondname);
         money = view.findViewById(R.id.money);
         date = view.findViewById(R.id.date);
-        fixdate = view.findViewById(R.id.fixdate);
+        fixDate = view.findViewById(R.id.fixdate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
-        showdate = view.findViewById(R.id.showdate);
+        showDate = view.findViewById(R.id.showdate);
         datePicker = view.findViewById(R.id.datePicker);
         choiceStatue = view.findViewById(R.id.choiceStatue);
-        choiceday = view.findViewById(R.id.choiceday);
+        choiceDay = view.findViewById(R.id.choiceday);
         number = view.findViewById(R.id.number);
-        detailname = view.findViewById(R.id.detailname);
+        detailName = view.findViewById(R.id.detailname);
         notify = view.findViewById(R.id.notify);
         noWek = view.findViewById(R.id.noWek);
         qrcode = view.findViewById(R.id.qrcode);
@@ -505,23 +500,37 @@ public class InsertSpend extends Fragment {
     }
 
 
-    private class dateClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            firstL.setVisibility(View.GONE);
-            secondL.setVisibility(View.GONE);
-            showdate.setVisibility(View.VISIBLE);
-        }
+    private class dateClickListener implements View.OnFocusChangeListener {
 
+        @Override
+        public void onFocusChange(View view, boolean b) {
+
+            if (b) {
+                firstL.setVisibility(View.GONE);
+                secondL.setVisibility(View.GONE);
+                showDate.setVisibility(View.VISIBLE);
+                numberKeyBoard.setVisibility(View.GONE);
+
+                Common.clossKeyword(context);
+                name.clearFocus();
+                number.clearFocus();
+                money.clearFocus();
+                secondName.clearFocus();
+
+            }
+
+            date.setSelection(date.getText().toString().length());
+        }
     }
 
 
     private class choicedateClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            choicedate = datePicker.getYear() + "/" + String.valueOf(datePicker.getMonth() + 1) + "/" + datePicker.getDayOfMonth();
-            date.setText(choicedate);
-            showdate.setVisibility(View.GONE);
+            choiceDate = datePicker.getYear() + "/" + String.valueOf(datePicker.getMonth() + 1) + "/" + datePicker.getDayOfMonth();
+            date.setText(choiceDate);
+            showDate.setVisibility(View.GONE);
+            date.setSelection(choiceDate.length());
         }
     }
 
@@ -545,7 +554,7 @@ public class InsertSpend extends Fragment {
                 noWekT.setVisibility(View.GONE);
                 notify.setVisibility(View.GONE);
                 choiceStatue.setVisibility(View.GONE);
-                choiceday.setVisibility(View.GONE);
+                choiceDay.setVisibility(View.GONE);
                 noWek.setVisibility(View.GONE);
                 notify.setChecked(false);
             }
@@ -606,19 +615,20 @@ public class InsertSpend extends Fragment {
             }
 
             //date show not save
-            if (showdate.getVisibility() == View.VISIBLE) {
+            if (showDate.getVisibility() == View.VISIBLE) {
                 return;
             }
             name.setText("");
-            secondname.setText("");
+            secondName.setText("");
             money.setText("");
-            fixdate.setChecked(false);
+            numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate, money, context, numberKeyBoard, new StringBuilder(), true));
+            fixDate.setChecked(false);
             number.setText("");
             consumeVO = new ConsumeVO();
             choiceStatue.setBootstrapText(BsTextStatue.get(0));
-            choiceday.setBootstrapText(BsTextDay.get(0));
+            choiceDay.setBootstrapText(BsTextDay.get(0));
             choiceStatue.setVisibility(View.GONE);
-            choiceday.setVisibility(View.GONE);
+            choiceDay.setVisibility(View.GONE);
             resultDay = "";
             resultStatue = "";
         }
@@ -646,40 +656,35 @@ public class InsertSpend extends Fragment {
             }
 
             //date show not save
-            if (showdate.getVisibility() == View.VISIBLE) {
+            if (showDate.getVisibility() == View.VISIBLE) {
                 return;
             }
 
             //必填資料
             if (name.getText() == null || name.getText().toString().trim().length() == 0) {
-                name.setError("");
-                Common.showToast(context, "主項目不能空白");
+                name.setError("主項目不能空白");
                 return;
             }
 
             //必填資料
             if (name.getText().toString().trim().equals("0") || name.getText().toString().trim().equals("O")) {
-                name.setError("");
-                Common.showToast(context, "主項目不能為其他");
+                name.setError("主項目不能為其他");
                 return;
             }
 
-            if (secondname.getText().toString().trim() == null || secondname.getText().toString().trim().length() == 0) {
-                secondname.setError("");
-                Common.showToast(context, "次項目不能空白");
+            if (secondName.getText() == null || secondName.getText().toString().trim().length() == 0) {
+                secondName.setError("次項目不能空白");
                 return;
             }
 
-            if (secondname.getText().toString().trim().equals("0") || secondname.getText().toString().trim().equals("O")) {
-                secondname.setError("");
-                Common.showToast(context, "次項目不能為其他");
+            if (secondName.getText().toString().trim().equals("0") || secondName.getText().toString().trim().equals("O")) {
+                secondName.setError("次項目不能為其他");
                 return;
             }
 
             try {
                 if (!oldMainType.equals(name.getText().toString().trim())) {
-                    secondname.setError("");
-                    Common.showToast(context, "次項目不屬於主項目種類");
+                    secondName.setError("次項目不屬於主項目種類");
                     return;
                 }
             } catch (Exception e) {
@@ -687,28 +692,24 @@ public class InsertSpend extends Fragment {
             }
 
 
-            if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
-                Common.showToast(context, "金額不能空白");
-                money.setError(" ");
+            if (money.getText() == null || money.getText().toString().trim().length() == 0) {
+                money.setError("金額不能空白!");
                 return;
             }
 
             try {
                 if (Double.valueOf(money.getText().toString().trim()) == 0) {
-                    Common.showToast(context, "金額不能為0");
-                    money.setError(" ");
+                    money.setError("金額不能為0");
                     return;
                 }
             } catch (Exception e) {
-                Common.showToast(context, "金額不能為0");
-                money.setError(" ");
+                money.setError("不是數字!");
                 return;
             }
 
 
-            if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
-                date.setError(" ");
-                Common.showToast(context, "日期不能空白");
+            if (date.getText() == null || date.getText().toString().trim().length() == 0) {
+                date.setError("日期不能空白");
                 return;
             }
 
@@ -736,9 +737,9 @@ public class InsertSpend extends Fragment {
             Common.showToast(context, "新增成功");
             consumeVO = new ConsumeVO();
             name.setText("");
-            secondname.setText("");
+            secondName.setText("");
             money.setText("");
-            fixdate.setChecked(false);
+            fixDate.setChecked(false);
             number.setText("");
 //            choiceStatue.setBottom(0);
 //            choiceday.setSelection(0);
@@ -795,27 +796,40 @@ public class InsertSpend extends Fragment {
 
     }
 
-    private class showFirstG implements View.OnFocusChangeListener {
-
+    private class showFirstG implements View.OnClickListener, View.OnFocusChangeListener {
 
         @Override
-        public void onFocusChange(View view, boolean b) {
-            showdate.setVisibility(View.GONE);
+        public void onClick(View view) {
+            showDate.setVisibility(View.GONE);
             secondL.setVisibility(View.GONE);
             firstL.setVisibility(View.VISIBLE);
             numberKeyBoard.setVisibility(View.GONE);
-            Common.clossKeyword(context);
-            number.clearFocus();
-            money.clearFocus();
-            secondname.clearFocus();
-            date.clearFocus();
+        }
+
+        @Override
+        public void onFocusChange(View view, boolean b) {
+            if(b)
+            {
+                Common.clossKeyword(context);
+                number.clearFocus();
+                money.clearFocus();
+                secondName.clearFocus();
+                date.clearFocus();
+                showDate.setVisibility(View.GONE);
+                secondL.setVisibility(View.GONE);
+                firstL.setVisibility(View.VISIBLE);
+                numberKeyBoard.setVisibility(View.GONE);
+            }
+
         }
     }
+
 
 
     private class firstGridOnClick implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            name.setError(null);
             TextView textView = view.findViewById(R.id.text);
             String type = textView.getText().toString().trim();
             if (i < typeVOS.size()) {
@@ -832,10 +846,15 @@ public class InsertSpend extends Fragment {
                 return;
             }
             name.setText(type);
+            name.setSelection(type.length());
+
+
             setSecondGrid();
             firstL.setVisibility(View.GONE);
             secondL.setVisibility(View.VISIBLE);
-            secondname.setOnClickListener(new showSecondG());
+            secondName.setOnFocusChangeListener(new showSecondG());
+            secondName.setOnClickListener(new showSecondG());
+            secondName.setInputType(InputType.TYPE_NULL);
             Common.showfirstgrid = false;
         }
     }
@@ -843,6 +862,7 @@ public class InsertSpend extends Fragment {
     private class secondGridOnClick implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            secondName.setError(null);
             TextView textView = view.findViewById(R.id.text);
             String type = textView.getText().toString().trim();
             if (type.equals("返回")) {
@@ -861,17 +881,37 @@ public class InsertSpend extends Fragment {
                 return;
             }
             oldMainType = name.getText().toString().trim();
-            secondname.setText(type);
+            secondName.setText(type);
+            secondName.setSelection(type.length());
             secondL.setVisibility(View.GONE);
             Common.showsecondgrid = false;
+
         }
     }
 
-    private class showSecondG implements View.OnClickListener {
+    private class showSecondG implements View.OnFocusChangeListener, View.OnClickListener {
+
+        @Override
+        public void onFocusChange(View view, boolean b) {
+            if (b) {
+                Common.clossKeyword(context);
+                number.clearFocus();
+                money.clearFocus();
+                name.clearFocus();
+                date.clearFocus();
+                firstL.setVisibility(View.GONE);
+                showDate.setVisibility(View.GONE);
+                numberKeyBoard.setVisibility(View.GONE);
+                secondL.setVisibility(View.VISIBLE);
+            }
+
+        }
+
         @Override
         public void onClick(View view) {
             firstL.setVisibility(View.GONE);
-            showdate.setVisibility(View.GONE);
+            showDate.setVisibility(View.GONE);
+            numberKeyBoard.setVisibility(View.GONE);
             secondL.setVisibility(View.VISIBLE);
         }
     }
@@ -908,12 +948,14 @@ public class InsertSpend extends Fragment {
         c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
         Date d = new Date(c.getTimeInMillis());
         consumeVO.setMaintype(name.getText().toString().trim());
-        consumeVO.setSecondType(secondname.getText().toString().trim());
+        consumeVO.setSecondType(secondName.getText().toString().trim());
+
 
         consumeVO.setRealMoney(onlyNumber(money.getText().toString().trim()));
+
         consumeVO.setDate(d);
         consumeVO.setNumber(number.getText().toString().trim());
-        consumeVO.setFixDate(String.valueOf(fixdate.isChecked()));
+        consumeVO.setFixDate(String.valueOf(fixDate.isChecked()));
         consumeVO.setFixDateDetail(fixdatedetail);
         consumeVO.setNotify(String.valueOf(notify.isChecked()));
         consumeVO.setAuto(false);
@@ -938,10 +980,10 @@ public class InsertSpend extends Fragment {
             resultStatue = BsTextStatue.get(id).toString();
             choiceStatue.setBootstrapText(BsTextStatue.get(id));
             statueNumber = id;
-            choiceday.setExpandDirection(ExpandDirection.UP);
+            choiceDay.setExpandDirection(ExpandDirection.UP);
             if (id == 0) {
                 resultDay = "";
-                choiceday.setVisibility(View.GONE);
+                choiceDay.setVisibility(View.GONE);
                 noWek.setVisibility(View.VISIBLE);
                 choiceStatue.setVisibility(View.VISIBLE);
                 notifyT.setVisibility(View.VISIBLE);
@@ -950,21 +992,21 @@ public class InsertSpend extends Fragment {
             }
             if (id == 1) {
                 resultDay = BsTextWeek.get(0).toString();
-                choiceday.setBootstrapText(BsTextWeek.get(0));
-                choiceday.setDropdownData(Common.WeekSetSpinnerBS);
+                choiceDay.setBootstrapText(BsTextWeek.get(0));
+                choiceDay.setDropdownData(Common.WeekSetSpinnerBS);
             }
             if (id == 2) {
                 resultDay = BsTextDay.get(0).toString();
-                choiceday.setBootstrapText(BsTextDay.get(0));
-                choiceday.setDropdownData(Common.DaySetSpinnerBS());
+                choiceDay.setBootstrapText(BsTextDay.get(0));
+                choiceDay.setDropdownData(Common.DaySetSpinnerBS());
             }
             if (id == 3) {
                 resultDay = BsTextMonth.get(0).toString();
-                choiceday.setBootstrapText(BsTextMonth.get(0));
-                choiceday.setDropdownData(Common.MonthSetSpinnerBS());
+                choiceDay.setBootstrapText(BsTextMonth.get(0));
+                choiceDay.setDropdownData(Common.MonthSetSpinnerBS());
             }
 
-            choiceday.setVisibility(View.VISIBLE);
+            choiceDay.setVisibility(View.VISIBLE);
             notifyT.setVisibility(View.VISIBLE);
             noWek.setVisibility(View.GONE);
             noWekT.setVisibility(View.GONE);
@@ -977,15 +1019,15 @@ public class InsertSpend extends Fragment {
         public void onItemClick(ViewGroup parent, View v, int id) {
             switch (statueNumber) {
                 case 1:
-                    choiceday.setBootstrapText(BsTextWeek.get(id));
+                    choiceDay.setBootstrapText(BsTextWeek.get(id));
                     resultDay = BsTextWeek.get(id).toString();
                     break;
                 case 2:
-                    choiceday.setBootstrapText(BsTextDay.get(id));
+                    choiceDay.setBootstrapText(BsTextDay.get(id));
                     resultDay = BsTextDay.get(id).toString();
                     break;
                 case 3:
-                    choiceday.setBootstrapText(BsTextMonth.get(id));
+                    choiceDay.setBootstrapText(BsTextMonth.get(id));
                     resultDay = BsTextMonth.get(id).toString();
                     break;
             }
@@ -1010,6 +1052,19 @@ public class InsertSpend extends Fragment {
                     break;
             }
             return true;
+        }
+    }
+
+    private class closeAllGridView implements View.OnClickListener {
+
+
+        @Override
+        public void onClick(View view) {
+            number.setError(null);
+            firstL.setVisibility(View.GONE);
+            secondL.setVisibility(View.GONE);
+            showDate.setVisibility(View.GONE);
+            numberKeyBoard.setVisibility(View.GONE);
         }
     }
 }

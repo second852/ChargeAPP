@@ -46,6 +46,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
         }else {
             activity=getActivity();
         }
+        activity.setTitle(R.string.text_Com);
     }
 
     private  Handler handlerP=new Handler(Looper.getMainLooper()){
@@ -67,6 +68,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         view = inflater.inflate(R.layout.insert_main, container, false);
         new Thread(new Runnable() {
             @Override

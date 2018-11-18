@@ -14,99 +14,120 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="80dp"
+                android:layout_marginEnd="80dp"
                 android:layout_marginTop="15dp">
 
                 <TextView
                     android:id="@+id/nameT"
-                    android:layout_marginLeft="25dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="目標名稱"
                     android:textColor="#000000"
-                    android:layout_centerVertical="true"
-                    android:textSize="40dp" />
+                    android:textSize="40sp" />
 
                 <EditText
                     android:id="@+id/name"
-                    android:layout_width="500dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/nameT"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="50dp"
+                    android:layout_marginStart="50dp"
                     android:background="@drawable/input_modul"
                     android:inputType="text"
                     android:singleLine="true"
                     android:textColor="@color/input_color"
                     android:textColorHint="#AAAAAA"
                     android:textSize="40sp" />
-            </RelativeLayout>
+            </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="80dp"
+                android:layout_marginEnd="80dp"
                 android:layout_marginTop="15dp">
 
                 <TextView
                     android:id="@+id/moneyT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="25dp"
-                    android:gravity="right"
                     android:text="目標金額"
-                    android:layout_centerVertical="true"
                     android:textColor="#000000"
-                    android:textSize="40dp" />
-
-                <EditText
-                    android:id="@+id/money"
-                    android:layout_width="500dp"
+                    android:textSize="40sp" />
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/currency"
+                    android:layout_marginStart="50dp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="50dp"
-                    android:layout_toRightOf="@+id/moneyT"
+                    app:bootstrapBrand="regular"
+                    app:bootstrapSize="xl"
+                    app:buttonMode="regular"
+                    app:showOutline="false"
+                    app:roundedCorners="true"
+                    />
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/calculate"
+                    android:layout_marginStart="20dp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapSize="xl"
+                    app:buttonMode="regular"
+                    app:showOutline="true"
+                    app:roundedCorners="true"
+                    />
+
+                <TextView
+                    android:id="@+id/money"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
                     android:background="@drawable/input_modul"
-                    android:inputType="number"
-                    android:layout_centerVertical="true"
                     android:singleLine="true"
                     android:textColor="@color/input_color"
                     android:textColorHint="#AAAAAA"
-                    android:textSize="40sp" />
-            </RelativeLayout>
+                    android:textSize="40sp"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    />
+            </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="80dp"
+                android:layout_marginEnd="80dp"
                 android:layout_marginTop="15dp">
 
                 <TextView
                     android:id="@+id/typeT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="25dp"
                     android:text="選擇類型"
-                    android:layout_centerVertical="true"
                     android:textColor="#000000"
-                    android:textSize="40dp" />
+                    android:textSize="40sp" />
 
                 <TextView
                     android:id="@+id/spinnerT"
-                    android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
-                    android:layout_toRightOf="@+id/typeT"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                    android:layout_marginStart="50dp"
+                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:textColor="#000000"
-                    android:layout_gravity="center_vertical"
                     android:background="#DDDDDD"
-                    android:visibility="visible"
-                    android:textSize="40sp" />
-            </RelativeLayout>
+                    android:textSize="40sp"
+                    />
+            </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
+                android:layout_marginStart="80dp"
+                android:layout_marginEnd="80dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="visible"
@@ -116,54 +137,49 @@
                     android:id="@+id/dateT"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:gravity="right"
+                    android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="目標時間"
                     android:textColor="#000000"
-                    android:layout_centerVertical="true"
-                    android:textSize="40dp" />
+                    android:textSize="40sp" />
 
                 <Spinner
                     android:id="@+id/choiceStatue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/dateT"
-                    android:layout_marginLeft="50dp"
+                    android:layout_marginStart="50dp"
                     android:theme="@style/spinner_xlarge"
                     android:visibility="visible"
                     android:gravity="center" />
                 <TextView
                     android:id="@+id/shift"
-                    android:layout_toRightOf="@+id/choiceStatue"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="50dp"
+                    android:layout_marginStart="50dp"
                     android:textColor="#000000"
                     android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="~"
                     android:visibility="gone"
                     android:textSize="38sp" />
-                <TextView
+                <EditText
                     android:id="@+id/limitP"
                     android:layout_width="wrap_content"
-                    android:layout_toRightOf="@+id/shift"
-                    android:layout_marginLeft="60dp"
+                    android:layout_marginStart="60dp"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:textColor="#000000"
                     android:hint="20YY/MM/dd"
                     android:textColorHint="#aaaaaa"
                     android:gravity="center"
                     android:layout_gravity="center"
-                    android:background="#FFEE99"
+                    android:background="@drawable/input_modul"
+                    android:textColor="@color/input_color"
                     android:visibility="gone"
                     android:textSize="37sp" />
-            </RelativeLayout>
+            </LinearLayout>
 
 
             <RelativeLayout
+                android:layout_marginStart="80dp"
                 android:id="@+id/remindL"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -172,11 +188,9 @@
 
                 <CheckBox
                     android:id="@+id/remind"
-                    android:layout_centerHorizontal="true"
-                    android:layout_toRightOf="@+id/remainT"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_centerVertical="true"
+                    android:layout_marginStart="230dp"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:button="@null"
                     android:visibility="visible"
                     android:background="?android:attr/listChoiceIndicatorMultiple"
@@ -187,7 +201,6 @@
                     android:layout_height="wrap_content"
                     android:textSize="40sp"
                     android:text="提醒"
-                    android:layout_centerHorizontal="true"
                     android:layout_toRightOf="@+id/remind"
                     android:textColor="#000000"
                     android:visibility="visible"
@@ -261,8 +274,7 @@
                     app:showOutline="false"
                     app:roundedCorners="true"
                     app:bootstrapText="儲存 {fa_save}"
-
-              />
+                    />
 
                 <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/clear"

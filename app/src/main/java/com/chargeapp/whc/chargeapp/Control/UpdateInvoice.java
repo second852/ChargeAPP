@@ -210,11 +210,9 @@ public class UpdateInvoice extends Fragment {
 
     public void findViewById(View view) {
         name = view.findViewById(R.id.name);
-        name.setFocusable(false);
-        name.setFocusableInTouchMode(false);
+        name.setShowSoftInputOnFocus(false);
         secondname = view.findViewById(R.id.secondname);
-        secondname.setFocusable(false);
-        secondname.setFocusableInTouchMode(false);
+        secondname.setShowSoftInputOnFocus(false);
         money = view.findViewById(R.id.money);
         money.setFocusable(false);
         money.setFocusableInTouchMode(false);
@@ -326,7 +324,7 @@ public class UpdateInvoice extends Fragment {
 
             }
 
-            if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
+            if (money.getText() == null || money.getText().toString().trim().length() == 0) {
                 money.setError("金額不能空白");
                 return;
             }
@@ -342,7 +340,7 @@ public class UpdateInvoice extends Fragment {
             }
 
 
-            if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
+            if (date.getText() == null || date.getText().toString().trim().length() == 0) {
                 name.setError(" ");
                 Common.showToast(context, "日期不能空白");
                 return;
@@ -527,11 +525,13 @@ public class UpdateInvoice extends Fragment {
             secondL.setVisibility(View.GONE);
             firstL.setVisibility(View.VISIBLE);
         }
+
     }
 
     private class firstGridOnClick implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            name.setError(null);
             TextView textView=view.findViewById(R.id.text);
             String type=textView.getText().toString().trim();
             if(i<typeVOS.size())
@@ -556,6 +556,7 @@ public class UpdateInvoice extends Fragment {
                 return;
             }
             name.setText(type);
+            name.setSelection(type.length());
             setSecondGrid();
             firstL.setVisibility(View.GONE);
             secondL.setVisibility(View.VISIBLE);
@@ -565,6 +566,7 @@ public class UpdateInvoice extends Fragment {
     private class secondGridOnClick implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            secondname.setError(null);
             TextView textView=view.findViewById(R.id.text);
             String type=textView.getText().toString().trim();
             if(type.equals("返回"))
@@ -591,6 +593,7 @@ public class UpdateInvoice extends Fragment {
             }
             oldMainType=name.getText().toString().trim();
             secondname.setText(type);
+            secondname.setSelection(type.length());
             secondL.setVisibility(View.GONE);
             firstL.setVisibility(View.GONE);
         }

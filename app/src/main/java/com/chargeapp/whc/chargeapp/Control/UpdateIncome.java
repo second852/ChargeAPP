@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -127,11 +128,17 @@ public class UpdateIncome extends Fragment {
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         name.setOnClickListener(new showFirstG());
+        name.setOnFocusChangeListener(new showFirstG());
+        name.setInputType(InputType.TYPE_NULL);
+
         firstG.setOnItemClickListener(new firstGridOnClick());
-        date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
+
         date.setOnClickListener(new dateClickListener());
+        date.setOnFocusChangeListener(new dateClickListener());
+
+        detailname.setOnClickListener(new closeAllShow());
+
         showdate.setOnClickListener(new choicedateClick());
-//        choiceStatue.setOnItemSelectedListener(new choiceStateItem());
         choiceStatue.setOnDropDownItemClickListener(new choiceStateItemBS());
         choiceday.setOnDropDownItemClickListener(new choicedayItemBS());
         clear.setOnClickListener(new clearAllInput());
@@ -189,7 +196,9 @@ public class UpdateIncome extends Fragment {
         numberKeyBoard = view.findViewById(R.id.numberKeyBoard);
         calculate = view.findViewById(R.id.calculate);
         money = view.findViewById(R.id.money);
-        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,new StringBuilder(),false));
+        StringBuilder stringBuilder=new StringBuilder();
+        stringBuilder.append(bankVO.getRealMoney());
+        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,stringBuilder,false));
         ArrayList items = new ArrayList<Map<String, Object>>();
         Map<String, Object> hashMap;
         for (String s : Common.keyboardArray) {
@@ -201,12 +210,27 @@ public class UpdateIncome extends Fragment {
                 new int[]{R.id.cardview});
         numberKeyBoard.setAdapter(adapter);
         numberKeyBoard.setNumColumns(5);
-        money.setFocusable(false);
-        money.setFocusableInTouchMode(false);
         money.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 numberKeyBoard.setVisibility(View.VISIBLE);
+                firstL.setVisibility(View.GONE);
+                showdate.setVisibility(View.GONE);
+            }
+        });
+        money.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(b)
+                {
+                    Common.clossKeyword(context);
+                    numberKeyBoard.setVisibility(View.VISIBLE);
+                    firstL.setVisibility(View.GONE);
+                    showdate.setVisibility(View.GONE);
+                    name.clearFocus();
+                    date.clearFocus();
+                    detailname.clearFocus();
+                }
             }
         });
         currency.setText(Common.getCurrency(nowCurrency));
@@ -260,11 +284,26 @@ public class UpdateIncome extends Fragment {
     }
 
 
-    private class showFirstG implements View.OnClickListener {
+    private class showFirstG implements View.OnClickListener, View.OnFocusChangeListener {
         @Override
         public void onClick(View view) {
             showdate.setVisibility(View.GONE);
+            numberKeyBoard.setVisibility(View.GONE);
             firstL.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onFocusChange(View view, boolean b) {
+            if(b)
+            {
+                Common.clossKeyword(context);
+                money.clearFocus();
+                date.clearFocus();
+                detailname.clearFocus();
+                showdate.setVisibility(View.GONE);
+                numberKeyBoard.setVisibility(View.GONE);
+                firstL.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -363,12 +402,12 @@ public class UpdateIncome extends Fragment {
     public void findviewByid(View view) {
         gson = new Gson();
         name = view.findViewById(R.id.name);
-        name.setFocusable(false);
-        name.setFocusableInTouchMode(false);
+        name.setShowSoftInputOnFocus(false);
         money = view.findViewById(R.id.money);
+        money.setShowSoftInputOnFocus(false);
         date = view.findViewById(R.id.date);
-        date.setFocusable(false);
-        date.setFocusableInTouchMode(false);
+        date.setShowSoftInputOnFocus(false);
+
         fixdate = view.findViewById(R.id.fixdate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
@@ -388,13 +427,25 @@ public class UpdateIncome extends Fragment {
     }
 
 
-    private class dateClickListener implements View.OnClickListener {
+    private class dateClickListener implements View.OnClickListener, View.OnFocusChangeListener {
         @Override
         public void onClick(View v) {
+            numberKeyBoard.setVisibility(View.GONE);
             firstL.setVisibility(View.GONE);
             showdate.setVisibility(View.VISIBLE);
         }
 
+        @Override
+        public void onFocusChange(View view, boolean b) {
+            Common.clossKeyword(context);
+            numberKeyBoard.setVisibility(View.GONE);
+            firstL.setVisibility(View.GONE);
+            showdate.setVisibility(View.VISIBLE);
+            name.clearFocus();
+            money.clearFocus();
+            detailname.clearFocus();
+            date.setSelection(date.getText().toString().length());
+        }
     }
 
     private class choicedateClick implements View.OnClickListener {
@@ -403,6 +454,7 @@ public class UpdateIncome extends Fragment {
             choicedate = datePicker.getYear() + "/" + String.valueOf(datePicker.getMonth() + 1) + "/" + datePicker.getDayOfMonth();
             date.setText(choicedate);
             showdate.setVisibility(View.GONE);
+            date.setSelection(choicedate.length());
         }
     }
 
@@ -574,18 +626,17 @@ public class UpdateIncome extends Fragment {
                 return;
             }
             if (name.getText() == null || name.getText().toString().trim().length() == 0) {
-                name.setError(" ");
-                Common.showToast(context, "主項目不能空白");
+                name.setError("主項目不能空白");
                 return;
             }
-            if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
+            if (money.getText()== null || money.getText().toString().trim().length() == 0) {
                 money.setError("金額不能空白");
                 return;
             }
 
 
             try {
-                if (Integer.valueOf(money.getText().toString().trim()) == 0) {
+                if (Double.valueOf(money.getText().toString().trim()) == 0) {
                     money.setError("金額不能為0");
                     return;
                 }
@@ -594,9 +645,8 @@ public class UpdateIncome extends Fragment {
                 return;
             }
 
-            if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
-                date.setError(" ");
-                Common.showToast(context, "日期不能空白");
+            if (date.getText() == null || date.getText().toString().trim().length() == 0) {
+                date.setError("日期不能空白");
                 return;
             }
             setBankVO();
@@ -656,12 +706,11 @@ public class UpdateIncome extends Fragment {
         @Override
         public void onClick(View v) {
 
-            if (name.getText().toString().trim() == null || name.getText().toString().trim().length() == 0) {
-                name.setError(" ");
-                Common.showToast(context, "主項目不能空白");
+            if (name.getText() == null || name.getText().toString().trim().length() == 0) {
+                name.setError("主項目不能空白");
                 return;
             }
-            if (money.getText().toString().trim() == null || money.getText().toString().trim().length() == 0) {
+            if (money.getText()== null || money.getText().toString().trim().length() == 0) {
                 money.setError("金額不能空白");
                 return;
             }
@@ -675,9 +724,8 @@ public class UpdateIncome extends Fragment {
                 money.setError("只能輸入數字");
                 return;
             }
-            if (date.getText().toString().trim() == null || date.getText().toString().trim().length() == 0) {
-                date.setError(" ");
-                Common.showToast(context, "日期不能空白");
+            if (date.getText()== null || date.getText().toString().trim().length() == 0) {
+                date.setError("日期不能空白");
                 return;
             }
             setBankVO();
@@ -837,6 +885,15 @@ public class UpdateIncome extends Fragment {
                     break;
             }
             return true;
+        }
+    }
+
+    private class closeAllShow implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            firstL.setVisibility(View.GONE);
+            numberKeyBoard.setVisibility(View.GONE);
+            date.setVisibility(View.GONE);
         }
     }
 }
