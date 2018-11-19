@@ -281,8 +281,8 @@ public class GoalInsert extends Fragment {
                 remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
                 remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
                 remindS.setX(name.getX());
-                noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/10);
-                noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/10);
+                noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/7);
+                noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/7);
 
                 remindS.setVisibility(View.VISIBLE);
                 noWeekend.setVisibility(View.VISIBLE);
@@ -312,8 +312,8 @@ public class GoalInsert extends Fragment {
                 remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
                 remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
                 remindS.setX(spinnerT.getX());
-                noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
-                noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/20);
+                noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/7);
+                noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/7);
                 remindD.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
 
                 noWeekend.setVisibility(View.VISIBLE);
@@ -349,8 +349,8 @@ public class GoalInsert extends Fragment {
             remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
             remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
             remindS.setX(spinnerT.getX());
-            noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
-            noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/20);
+            noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/7);
+            noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/7);
             remindD.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/20);
 
 

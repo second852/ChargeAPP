@@ -87,13 +87,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:background="@drawable/input_modul"
                     android:singleLine="true"
+                    android:background="@drawable/input_modul"
                     android:textColor="@color/input_color"
                     android:textColorHint="#AAAAAA"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
                     android:textSize="40sp"
-                    android:gravity="center"
-                    android:layout_gravity="center_vertical"
                     />
             </LinearLayout>
 
@@ -334,4 +334,5 @@
         android:background="#AAAAAA"
         android:visibility="gone"
         />
+
 </RelativeLayout>

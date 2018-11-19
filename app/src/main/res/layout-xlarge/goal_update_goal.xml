@@ -82,7 +82,7 @@
                     app:roundedCorners="true"
                     />
 
-                <TextView
+                <EditText
                     android:id="@+id/money"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -92,8 +92,7 @@
                     android:textColor="@color/input_color"
                     android:textColorHint="#AAAAAA"
                     android:textSize="40sp"
-                    android:gravity="center"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_vertical"
                     />
             </LinearLayout>
 
@@ -187,6 +186,8 @@
                 android:layout_marginTop="15dp">
 
                 <CheckBox
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
                     android:id="@+id/remind"
                     android:layout_marginStart="230dp"
                     android:layout_width="60dp"
@@ -327,4 +328,12 @@
             android:textColor="#000000"
             android:textSize="35sp" />
     </LinearLayout>
+    <GridView
+        android:id="@+id/numberKeyBoard"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#AAAAAA"
+        android:visibility="gone"
+        />
 </RelativeLayout>

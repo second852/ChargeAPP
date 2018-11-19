@@ -518,4 +518,12 @@
             android:textColor="#000000"
             android:textSize="20sp" />
     </LinearLayout>
+    <GridView
+        android:id="@+id/numberKeyBoard"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#AAAAAA"
+        android:visibility="gone"
+        />
 </RelativeLayout>
