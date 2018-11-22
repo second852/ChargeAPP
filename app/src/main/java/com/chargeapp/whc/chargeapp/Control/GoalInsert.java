@@ -56,7 +56,7 @@ public class GoalInsert extends Fragment {
     private Spinner spinnerT,choiceStatue,remindS,remindD;
     private CheckBox remind,noWeekend;
     private LinearLayout showDate;
-    private TextView shift,noWeekendT,remindT;
+    private TextView noWeekendT,remindT;
     private DatePicker datePicker;
     private RelativeLayout remindL;
     private GoalDB goalDB;
@@ -227,7 +227,6 @@ public class GoalInsert extends Fragment {
         clear=view.findViewById(R.id.clear);
         save=view.findViewById(R.id.save);
         choiceStatue=view.findViewById(R.id.choiceStatue);
-        shift=view.findViewById(R.id.shift);
         noWeekendT=view.findViewById(R.id.noWeekendT);
         remindT=view.findViewById(R.id.remindT);
         remindL=view.findViewById(R.id.remindL);
@@ -385,8 +384,8 @@ public class GoalInsert extends Fragment {
             GoalVO goalVO=new GoalVO();
             String goalName = name.getText().toString();
             String goalMoney = money.getText().toString();
-            String dayStatue=choiceStatue.getSelectedItem().toString();
-            String day=limitP.getText().toString();
+            String dayStatue=choiceStatue.getSelectedItem().toString().trim();
+            String day=limitP.getText().toString().trim();
 
             //showDate not save
             if(showDate.getVisibility()==View.VISIBLE)
@@ -402,8 +401,7 @@ public class GoalInsert extends Fragment {
 
             if(goalMoney==null||goalMoney.length()<=0)
             {
-                Common.showToast(context,"金額不能空白");
-                money.setError(" ");
+                money.setError("金額不能空白");
                 return;
             }
 
@@ -416,7 +414,6 @@ public class GoalInsert extends Fragment {
                 money.setError("只能輸入數字");
                 return;
             }
-
 
             if(dayStatue.equals("今日"))
             {
@@ -445,11 +442,13 @@ public class GoalInsert extends Fragment {
             calendar.set(Calendar.SECOND,0);
             goalVO.setStartTime(new Date(calendar.getTimeInMillis()));
             String reMa=(remindD.getSelectedItem()==null)?"":remindD.getSelectedItem().toString().trim();
-            goalVO.setName(goalName);
 
-            goalVO.setRealMoney(Common.onlyNumber(goalMoney));
+
+            goalVO.setName(goalName.trim());
+
+            goalVO.setRealMoney(Common.onlyNumber(goalMoney.trim()));
+
             goalVO.setCurrency(nowCurrency);
-
             goalVO.setNoWeekend(noWeekend.isChecked());
             goalVO.setNotify(remind.isChecked());
             goalVO.setNotifyDate(reMa);
@@ -513,10 +512,8 @@ public class GoalInsert extends Fragment {
             String s=textView.getText().toString().trim();
             if(s.equals("今日"))
             {
-                shift.setVisibility(View.VISIBLE);
                 limitP.setVisibility(View.VISIBLE);
             }else{
-                shift.setVisibility(View.GONE);
                 limitP.setVisibility(View.GONE);
             }
         }

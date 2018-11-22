@@ -55,7 +55,7 @@ public class GoalUpdate extends Fragment {
     private Spinner choiceStatue, remindS, remindD;
     private CheckBox remind, noWeekend;
     private LinearLayout showDate;
-    private TextView shift, noWeekendT, remindT, spinnerT;
+    private TextView noWeekendT, remindT, spinnerT;
     private DatePicker datePicker;
     private GoalDB goalDB;
     private GoalVO goalVO;
@@ -260,7 +260,6 @@ public class GoalUpdate extends Fragment {
         clear = view.findViewById(R.id.clear);
         save = view.findViewById(R.id.save);
         choiceStatue = view.findViewById(R.id.choiceStatue);
-        shift = view.findViewById(R.id.shift);
         remindL = view.findViewById(R.id.remindL);
         noWeekendT = view.findViewById(R.id.noWeekendT);
         remindT = view.findViewById(R.id.remindT);
@@ -506,10 +505,8 @@ public class GoalUpdate extends Fragment {
             }
             String s = textView.getText().toString().trim();
             if (s.equals(startTitle)) {
-                shift.setVisibility(View.VISIBLE);
                 limitP.setVisibility(View.VISIBLE);
             } else {
-                shift.setVisibility(View.GONE);
                 limitP.setVisibility(View.GONE);
             }
         }

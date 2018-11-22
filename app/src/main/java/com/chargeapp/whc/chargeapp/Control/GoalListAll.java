@@ -186,10 +186,11 @@ public class GoalListAll extends Fragment {
 
             if (timeDec.equals("今日")) {
                 //描述目標
-                sb.append(" " + serial + ".起日 : " + Common.sTwo.format(goalVO.getStartTime()).trim() +
-                        "\n     迄日 : " + Common.sTwo.format(goalVO.getEndTime()).trim() + "\n");
+                sb.append(" " + serial + ". 起日 : " + Common.sTwo.format(goalVO.getStartTime()).trim());
                 serial++;
-                sb.append(" " + serial + "." + goalVO.getType().trim() + " : " + Common.getCurrency(goalVO.getCurrency())+" "+goalVO.getRealMoney());
+                sb.append("\n "+serial+". 訖日 : "+ Common.sTwo.format(goalVO.getEndTime()).trim());
+                serial++;
+                sb.append("\n " + serial + ". " + goalVO.getType().trim() + " : " + Common.getCurrency(goalVO.getCurrency())+" "+goalVO.getRealMoney());
                 serial++;
 
                 //描述成果
@@ -224,7 +225,7 @@ public class GoalListAll extends Fragment {
                         goalDB.update(goalVO);
                     }
 
-                    sbResult.append(" " + serial + ".成功 : 儲蓄"+Common.CurrencyResult(amount,currencyVO));
+                    sbResult.append(" " + serial + ". 成功 : 儲蓄"+Common.CurrencyResult(amount,currencyVO));
                     resultG.setBootstrapBrand(DefaultBootstrapBrand.SUCCESS);
                     serial++;
                 } else {
@@ -249,13 +250,18 @@ public class GoalListAll extends Fragment {
                             goalDB.update(goalVO);
                         }
                         double leaveMoney=goalMoney-amount;
-                        sbResult.append(" " + serial + ".失敗 : 儲蓄" + Common.CurrencyResult(amount,currencyVO) + "\n     還缺 : "+Common.CurrencyResult(leaveMoney,currencyVO));
+                        sbResult.append(" " + serial + ". 失敗 : 儲蓄" + Common.CurrencyResult(amount,currencyVO));
+                        serial++;
+                        sbResult.append("\n " + serial +"還缺  : "+Common.CurrencyResult(leaveMoney,currencyVO));
                         resultG.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         serial++;
                     }else{
 
                         double leaveMoney=goalMoney-amount;
-                        sbResult.append(" " + serial + ".目前 : 儲蓄" + Common.CurrencyResult(amount,currencyVO) + "\n     還缺 : "+Common.CurrencyResult(leaveMoney,currencyVO));
+                        sbResult.append(" " + serial + ". 目前 : 儲蓄" + Common.CurrencyResult(amount,currencyVO));
+                        serial++;
+                        sbResult.append( "\n " + serial + ". 還缺 : "+Common.CurrencyResult(leaveMoney,currencyVO));
+                        serial++;
                         double remainday=Double.valueOf(goalVO.getEndTime().getTime()-System.currentTimeMillis())/(1000*60*60*24);
 
                         if(remainday>0)
@@ -267,14 +273,14 @@ public class GoalListAll extends Fragment {
                                 if(remainhour<1)
                                 {
                                     double remainMin=remainhour*60;
-                                    sbResult.append("\n     倒數"+(int)remainMin+"分鐘");
+                                    sbResult.append("\n " + serial + ". 倒數 : "+(int)remainMin+"分鐘");
 
                                 }else{
-                                    sbResult.append("\n     倒數"+(int)remainhour+"小時");
+                                    sbResult.append("\n " + serial + ". 倒數 : "+(int)remainhour+"小時");
                                 }
 
                             }else {
-                                sbResult.append("\n     倒數"+(int)remainday+"天");
+                                sbResult.append("\n " + serial + ". 倒數 : "+(int)remainday+"天");
                             }
                         }
                         resultG.setBootstrapBrand(null);
@@ -287,12 +293,13 @@ public class GoalListAll extends Fragment {
             } else {
 
 
-                sb.append(" "+serial + ".時間 : ");
+                sb.append(" "+serial + ". ");
                 sb.append(timeDec + goalVO.getType().trim() + " "+Common.getCurrency(goalVO.getCurrency())+" "+goalVO.getRealMoney());
                 serial++;
 
                 Calendar start = null, end = null;
                 if (goalVO.getType().trim().equals("支出")) {
+                    sbResult.append(" "+serial + ". ");
                     goalConsumeComplete = false;
                     Calendar cal = Calendar.getInstance();
                     switch (timeDec) {
@@ -325,16 +332,16 @@ public class GoalListAll extends Fragment {
                         double totalCon=totalI + totalC;
                         sbResult.append(" " + Common.CurrencyResult(totalCon,currencyVO));
                         if (goalMoney > totalCon) {
-                            sbResult.insert(0, " "+serial + ".成功 : ");
+                            serial++;
+                            sbResult.append("\n "+serial + ". 完成目標");
                             resultG.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
-                        } else {
-                            sbResult.insert(0, " "+serial + ".目前 : ");
+                        }else{
                             resultG.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         }
                     }
-
                 } else {
                     Calendar cal = Calendar.getInstance();
+                    sbResult.append(" "+serial + ". ");
                     switch (timeDec) {
                         case "每月":
                             sbResult.append("本月儲蓄");
@@ -354,12 +361,11 @@ public class GoalListAll extends Fragment {
                         double saveMoney=totalB - totalI - totalC;
                         sbResult.append(" " +Common.CurrencyResult(saveMoney,currencyVO));
                         if (goalMoney < saveMoney) {
-                            sbResult.insert(0, " "+serial + ".成功 : ");
+                            serial++;
+                            sbResult.append("\n "+serial + ". 完成目標");
                             resultG.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
                         } else {
-                            sbResult.insert(0, " "+serial + ".目前 : ");
-                            resultG.setBootstrapBrand(null);
-                            resultG.setTextColor(Color.BLACK);
+                            resultG.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         }
                     }
                     if (goalVO.getStatue() == 0) {
@@ -383,7 +389,7 @@ public class GoalListAll extends Fragment {
             StringBuilder nbNotify = new StringBuilder();
             if (goalVO.isNotify()) {
                 serial++;
-                nbNotify.append(" " + serial + ".提醒 : " + goalVO.getNotifyStatue().trim()).append(" " + goalVO.getNotifyDate());
+                nbNotify.append(" " + serial + ". 提醒 : " + goalVO.getNotifyStatue().trim()).append(" " + goalVO.getNotifyDate());
                 if (goalVO.isNoWeekend() && goalVO.getNotifyStatue().trim().equals("每天")) {
                     nbNotify.append("假日除外");
                 }

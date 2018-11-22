@@ -153,40 +153,32 @@
                     android:text="目標時間"
                     android:textColor="#000000"
                     android:textSize="20sp" />
-
-                <Spinner
-                    android:id="@+id/choiceStatue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
+                <LinearLayout
                     android:layout_marginStart="25dp"
-                    android:theme="@style/spinner_normal"
-
-                     />
-                <TextView
-                    android:id="@+id/shift"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:textColor="#000000"
-                    android:gravity="center"
-                    android:text="~"
-                    android:layout_gravity="center"
-                    android:visibility="gone"
-                    android:textSize="18sp"
-                    />
-                <EditText
-                    android:id="@+id/limitP"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="20YY/MM/dd"
-                    android:textColorHint="#aaaaaa"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="10dp"
-                    android:visibility="gone"
-                    android:textSize="17sp"
-                    android:background="@drawable/input_modul"
-                    android:textColor="@color/input_color"
-                    />
+                    android:orientation="vertical"
+                    >
+                    <Spinner
+                        android:id="@+id/choiceStatue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:theme="@style/spinner_normal"
+                        />
+                    <EditText
+                        android:id="@+id/limitP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:hint="20YY/MM/dd"
+                        android:textColorHint="#aaaaaa"
+                        android:visibility="visible"
+                        android:textSize="17sp"
+                        android:background="@drawable/input_modul"
+                        android:textColor="@color/input_color"
+                        android:layout_marginTop="5dp"
+                        />
+                </LinearLayout>
             </LinearLayout>
 
 

@@ -422,10 +422,10 @@ public class SelectDeposit extends Fragment {
             YAxis yAxis = chart_line.getAxisLeft();
             yAxis.removeAllLimitLines();
             CurrencyVO currencyVO=currencyDB.getBytimeAndType(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime(),goalVO.getCurrency());
-            double goalMoney=Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney());
+            Double goalMoney=Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney());
 
             if (Statue == 0 && goalVO.getTimeStatue().trim().equals("每月")) {
-                LimitLine yLimitLine = new LimitLine(goalVO.getMoney(), "儲蓄目標");
+                LimitLine yLimitLine = new LimitLine(goalMoney.floatValue(), "儲蓄目標");
                 yLimitLine.setLineColor(Color.parseColor("#007bff"));
                 yLimitLine.setTextColor(Color.parseColor("#007bff"));
                 yAxis.addLimitLine(yLimitLine);
@@ -436,7 +436,7 @@ public class SelectDeposit extends Fragment {
 
                 goalDeposit.setBootstrapText(bootstrapText);
             } else if (Statue == 1 && goalVO.getTimeStatue().trim().equals("每年")) {
-                LimitLine yLimitLine = new LimitLine(goalVO.getMoney(), "儲蓄目標");
+                LimitLine yLimitLine = new LimitLine(goalMoney.floatValue(), "儲蓄目標");
                 yLimitLine.setLineColor(Color.parseColor("#007bff"));
                 yLimitLine.setTextColor(Color.parseColor("#007bff"));
                 yAxis.addLimitLine(yLimitLine);
@@ -468,9 +468,9 @@ public class SelectDeposit extends Fragment {
                 Calendar nowCalendar = Calendar.getInstance();
                 int divideEndY = endGoal.get(Calendar.YEAR) - nowCalendar.get(Calendar.YEAR);
                 int divideStartY = startGoal.get(Calendar.YEAR) - nowCalendar.get(Calendar.YEAR);
+
                 XAxis xAxis1 = chart_line.getXAxis();
                 xAxis.removeAllLimitLines();
-
                 //倒數日期
                 long differentT = endGoal.getTimeInMillis() - nowCalendar.getTimeInMillis();
                 int differentDay = (int) (differentT / (1000 * 60 * 60 * 24));
@@ -500,8 +500,19 @@ public class SelectDeposit extends Fragment {
                 if (Statue == 0 && divideEndY == 0) {
                     float month = endGoal.get(Calendar.MONTH);
                     float day =  (float)endGoal.get(Calendar.DAY_OF_MONTH) / endGoal.getActualMaximum(Calendar.DAY_OF_MONTH);
-                    xLimitLine = new LimitLine(month + day, "目標終止時間");
+                    if(month==11)
+                    {
+                        xLimitLine = new LimitLine(month,"目標訖日");
+                    }else {
+                        xLimitLine = new LimitLine(month + day, "目標訖日");
+                    }
                     xLimitLine.setTextColor(Color.RED);
+                    if(month>9)
+                    {
+                        xLimitLine.setLabelPosition(LimitLine.LimitLabelPosition.LEFT_BOTTOM);
+                    }else{
+                        xLimitLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+                    }
                     xAxis1.addLimitLine(xLimitLine);
                 }
 
@@ -510,8 +521,18 @@ public class SelectDeposit extends Fragment {
                     //起始時間
                     float month = startGoal.get(Calendar.MONTH);
                     float day = (float) startGoal.get(Calendar.DAY_OF_MONTH) / startGoal.getActualMaximum(Calendar.DAY_OF_MONTH);
-                    xLimitLine = new LimitLine(month + day, "目標起始時間");
-                    xLimitLine.setTextColor(Color.RED);
+                    if(month==11)
+                    {
+                        xLimitLine = new LimitLine(11,"目標起日");
+                    }else {
+                        xLimitLine = new LimitLine(month + day, "目標起日");
+                    }
+                    if(month>9)
+                    {
+                        xLimitLine.setLabelPosition(LimitLine.LimitLabelPosition.LEFT_TOP);
+                    }
+                    xLimitLine.setTextColor(Color.BLUE);
+                    xLimitLine.setLineColor(Color.BLUE);
                     xAxis1.addLimitLine(xLimitLine);
                 }
                 //年-起始時間
@@ -520,15 +541,17 @@ public class SelectDeposit extends Fragment {
                     float month = (float) startGoal.get(Calendar.MONTH) / 12;
                     float year=startGoal.get(Calendar.YEAR)-this.year;
                     float total=month+year;
-                    xLimitLine = new LimitLine( total, "目標起始時間");
-                    xLimitLine.setTextColor(Color.RED);
+                    xLimitLine = new LimitLine( total, "目標起日");
+                    xLimitLine.setTextColor(Color.BLUE);
+                    xLimitLine.setLineColor(Color.BLUE);
                     xAxis1.addLimitLine(xLimitLine);
 
                     //終止時間
                     month = Float.valueOf(endGoal.get(Calendar.MONTH) / 12);
                     year=endGoal.get(Calendar.YEAR)-this.year;
                     total=month+year;
-                    xLimitLine = new LimitLine(total, "目標終止時間");
+                    xLimitLine = new LimitLine(total, "目標訖日");
+                    xLimitLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
                     xLimitLine.setTextColor(Color.RED);
                     xAxis1.addLimitLine(xLimitLine);
                 }

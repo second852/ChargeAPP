@@ -690,7 +690,7 @@ public class SelectConsume extends Fragment {
         if (goalVO != null && Max != 0) {
             BootstrapText bootstrapText = new BootstrapText.Builder(context)
                     .addFontAwesomeIcon(FA_FLAG)
-                    .addText(" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + goalVO.getMoney() + "元")
+                    .addText(" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + Common.Currency().get(goalVO.getCurrency())+goalVO.getRealMoney())
                     .build();
             goalConsume.setBootstrapText(bootstrapText);
             yAxis.removeAllLimitLines();
