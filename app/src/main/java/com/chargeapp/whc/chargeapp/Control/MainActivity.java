@@ -789,7 +789,7 @@ public class MainActivity extends AppCompatActivity {
             String m = eleOneS[0].substring(29, 37);
             String rdNumber = eleOneS[0].substring(17, 21);
             Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
-            InsertSpend.consumeVO.setMoney(Integer.parseInt(m, 16));
+            InsertSpend.consumeVO.setRealMoney(String.valueOf(Integer.parseInt(m, 16)));
             InsertSpend.consumeVO.setNumber(EleNul);
             InsertSpend.consumeVO.setDate(new Date(calendar.getTimeInMillis()));
             InsertSpend.consumeVO.setRdNumber(rdNumber);
@@ -858,7 +858,7 @@ public class MainActivity extends AppCompatActivity {
                 String m = EleNulAll[0].substring(29, 37);
                 String rdNumber = EleNulAll[0].substring(17, 21);
                 Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
-                consumeVO.setMoney(Integer.parseInt(m, 16));
+                InsertSpend.consumeVO.setRealMoney(String.valueOf(Integer.parseInt(m, 16)));
                 consumeVO.setNumber(EleNul);
                 consumeVO.setDate(new Date(calendar.getTimeInMillis()));
                 consumeVO.setRdNumber(rdNumber);
@@ -965,7 +965,7 @@ public class MainActivity extends AppCompatActivity {
             String m = eleOneS[0].substring(29, 37);
             String rdNumber = eleOneS[0].substring(17, 21);
             Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
-            consumeVO.setMoney(Integer.parseInt(m, 16));
+            consumeVO.setRealMoney(String.valueOf(Integer.parseInt(m, 16)));
             consumeVO.setNumber(EleNul);
             consumeVO.setDate(new Date(calendar.getTimeInMillis()));
             consumeVO.setRdNumber(rdNumber);
@@ -1064,8 +1064,7 @@ public class MainActivity extends AppCompatActivity {
     public ConsumeVO QRCodeNetResult(String s, ConsumeVO consumeVO) {
         Gson gson = new Gson();
         JsonObject js = gson.fromJson(s, JsonObject.class);
-        Type cdType = new TypeToken<List<JsonObject>>() {
-        }.getType();
+        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
         String result = js.get("details").toString();
         List<JsonObject> b = gson.fromJson(result, cdType);
         double price, unit, unitTotal;
@@ -1107,7 +1106,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-        consumeVO.setMoney(Common.DoubleToInt(total));
+        consumeVO.setRealMoney(String.valueOf(Common.DoubleToInt(total)));
         consumeVO.setDetailname(sb.toString());
         consumeVO = getType(consumeVO);
         return consumeVO;

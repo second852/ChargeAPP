@@ -401,6 +401,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 bw.append("日期 ");
                 bw.append("主項目 ");
                 bw.append("次項目 ");
+                bw.append("幣別 ");
                 bw.append("金額 ");
                 bw.append("發票號碼 ");
                 bw.append("細節 ");
@@ -437,7 +438,8 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         bw.append(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())) + " ");
                         bw.append(Common.getType(invoiceVO.getMaintype()) + " ");
                         bw.append(Common.getType(invoiceVO.getSecondtype()) + " ");
-                        bw.append(invoiceVO.getAmount() + " ");
+                        bw.append(Common.getCurrency(invoiceVO.getCurrency())+" ");
+                        bw.append(invoiceVO.getRealAmount() + " ");
                         bw.append(invoiceVO.getInvNum() + " ");
                         //電子發票細節
                         List<JsonObject> js = gson.fromJson(invoiceVO.getDetail(), cdType);
@@ -481,28 +483,29 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         bw.append(Common.sTwo.format(new Date(consumeVO.getDate().getTime())) + " ");
                         bw.append(consumeVO.getMaintype() + " ");
                         bw.append(consumeVO.getSecondType() + " ");
-                        bw.append(consumeVO.getMoney() + " ");
+                        bw.append(Common.getCurrency(consumeVO.getCurrency())+" ");
+                        bw.append(consumeVO.getRealMoney() + " ");
                         bw.append(consumeVO.getNumber() + " ");
                         bw.append((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()) + " ");
                         //中獎訊息
                         try {
                             if(consumeVO.getIsWin().equals("0"))
                             {
-                                bw.append("尚未對獎");
+                                bw.append("尚未對獎 ");
                             }else if(consumeVO.getIsWin().equals("N")){
-                                bw.append("無中獎");
+                                bw.append("無中獎 ");
                             }else {
                                 bw.append(Common.getPriceName().get(consumeVO.getIsWin()));
                             }
                         }catch (Exception e)
                         {
-                            bw.append("尚未對獎");
+                            bw.append("尚未對獎 ");
                         }
                         if(consumeVO.getNumber()==null||consumeVO.getNumber().trim().length()>0)
                         {
-                            bw.append("無發票" + " ");
+                            bw.append("無發票 ");
                         }else{
-                            bw.append("紙本發票" + " ");
+                            bw.append("紙本發票 ");
                         }
                         bw.newLine();
                         bw.write("\r\n");
@@ -515,6 +518,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 bw.write("\r\n");
                 bw.append("日期 ");
                 bw.append("主項目 ");
+                bw.append("幣別" );
                 bw.append("金額 ");
                 bw.append("細節 ");
                 bw.newLine();
@@ -523,7 +527,9 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     BankVO bankVO = bankVOS.get(i);
                     bw.append(Common.sTwo.format(new Date(bankVO.getDate().getTime())) + " ");
                     bw.append(bankVO.getMaintype() + " ");
-                    bw.append(bankVO.getMoney() + " ");
+                    bw.append(Common.getCurrency(bankVO.getCurrency())+" ");
+
+                    bw.append(bankVO.getRealMoney() + " ");
                     bw.append(bankVO.getDetailname() + " ");
                     bw.newLine();
                     bw.write("\r\n");
@@ -572,16 +578,17 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 Sheet sheetCon = workbook.createSheet("消費");
                 sheetCon.setColumnWidth(0, 11 * 256);// 調整欄位寬度
                 sheetCon.setColumnWidth(1, 13 * 256);// 調整欄位寬度
-                sheetCon.setColumnWidth(7, 100 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(8, 100 * 256);// 調整欄位寬度
                 Row rowTitle = sheetCon.createRow(0);
                 rowTitle.createCell(0).setCellValue("日期");
                 rowTitle.createCell(1).setCellValue("發票號碼");
-                rowTitle.createCell(2).setCellValue("金額");
-                rowTitle.createCell(3).setCellValue("主項目");
-                rowTitle.createCell(4).setCellValue("次項目");
-                rowTitle.createCell(5).setCellValue("中獎");
-                rowTitle.createCell(6).setCellValue("類別");
-                rowTitle.createCell(7).setCellValue("細節");
+                rowTitle.createCell(2).setCellValue("幣別");
+                rowTitle.createCell(3).setCellValue("金額");
+                rowTitle.createCell(4).setCellValue("主項目");
+                rowTitle.createCell(5).setCellValue("次項目");
+                rowTitle.createCell(6).setCellValue("中獎");
+                rowTitle.createCell(7).setCellValue("類別");
+                rowTitle.createCell(8).setCellValue("細節");
                 List<ConsumeVO> consumeVOS = consumeDB.getAll();
                 List<InvoiceVO> invoiceVOS = invoiceDB.getAll();
                 List<Object> objects = new ArrayList<>();
@@ -612,24 +619,25 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         InvoiceVO invoiceVO = (InvoiceVO) o;
                         rowContent.createCell(0).setCellValue(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())));
                         rowContent.createCell(1).setCellValue(invoiceVO.getInvNum());
-                        rowContent.createCell(2).setCellValue(invoiceVO.getAmount());
-                        rowContent.createCell(3).setCellValue(Common.getType(invoiceVO.getMaintype()));
-                        rowContent.createCell(4).setCellValue(Common.getType(invoiceVO.getSecondtype()));
+                        rowContent.createCell(2).setCellValue(Common.getCurrency(invoiceVO.getCurrency()));
+                        rowContent.createCell(3).setCellValue(invoiceVO.getRealAmount());
+                        rowContent.createCell(4).setCellValue(Common.getType(invoiceVO.getMaintype()));
+                        rowContent.createCell(5).setCellValue(Common.getType(invoiceVO.getSecondtype()));
                         //中獎訊息
                         try {
                             if(invoiceVO.getIswin().equals("0"))
                             {
-                                rowContent.createCell(5).setCellValue("尚未對獎");
+                                rowContent.createCell(6).setCellValue("尚未對獎");
                             }else if(invoiceVO.getIswin().equals("N")){
-                                rowContent.createCell(5).setCellValue("無中獎");
+                                rowContent.createCell(6).setCellValue("無中獎");
                             }else {
-                                rowContent.createCell(5).setCellValue(Common.getPriceName().get(invoiceVO.getIswin()));
+                                rowContent.createCell(6).setCellValue(Common.getPriceName().get(invoiceVO.getIswin()));
                             }
                         }catch (Exception e)
                         {
-                            rowContent.createCell(5).setCellValue("尚未對獎");
+                            rowContent.createCell(6).setCellValue("尚未對獎");
                         }
-                        rowContent.createCell(6).setCellValue("雲端發票");
+                        rowContent.createCell(7).setCellValue("雲端發票");
                         //電子發票細節
                         List<JsonObject> js = gson.fromJson(invoiceVO.getDetail(), cdType);
                         sb=new StringBuffer();
@@ -649,35 +657,36 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                                 sb.append(j.get("description").getAsString() + " : \n" + 0 + "X" + 0 + "=" + 0 + "元\n");
                             }
                         }
-                        rowContent.createCell(7).setCellValue(sb.toString());
+                        rowContent.createCell(8).setCellValue(sb.toString());
                     } else {
                         ConsumeVO consumeVO = (ConsumeVO) o;
                         rowContent.createCell(0).setCellValue(Common.sTwo.format(new Date(consumeVO.getDate().getTime())));
                         rowContent.createCell(1).setCellValue(consumeVO.getNumber());
-                        rowContent.createCell(2).setCellValue(consumeVO.getMoney());
-                        rowContent.createCell(3).setCellValue(consumeVO.getMaintype());
-                        rowContent.createCell(4).setCellValue(consumeVO.getSecondType());
+                        rowContent.createCell(2).setCellValue(Common.getCurrency(consumeVO.getCurrency()));
+                        rowContent.createCell(3).setCellValue(consumeVO.getRealMoney());
+                        rowContent.createCell(4).setCellValue(consumeVO.getMaintype());
+                        rowContent.createCell(5).setCellValue(consumeVO.getSecondType());
                         //中獎訊息
                         try {
                             if(consumeVO.getIsWin().equals("0"))
                             {
-                                rowContent.createCell(5).setCellValue("尚未對獎");
+                                rowContent.createCell(6).setCellValue("尚未對獎");
                             }else if(consumeVO.getIsWin().equals("N")){
-                                rowContent.createCell(5).setCellValue("無中獎");
+                                rowContent.createCell(6).setCellValue("無中獎");
                             }else {
-                                rowContent.createCell(5).setCellValue(Common.getPriceName().get(consumeVO.getIsWin()));
+                                rowContent.createCell(6).setCellValue(Common.getPriceName().get(consumeVO.getIsWin()));
                             }
                         }catch (Exception e)
                         {
-                            rowContent.createCell(5).setCellValue("尚未對獎");
+                            rowContent.createCell(6).setCellValue("尚未對獎");
                         }
                         if(consumeVO.getNumber()==null||consumeVO.getNumber().length()>0)
                         {
-                            rowContent.createCell(6).setCellValue("無發票");
+                            rowContent.createCell(7).setCellValue("無發票");
                         }else{
-                            rowContent.createCell(6).setCellValue("紙本發票");
+                            rowContent.createCell(7).setCellValue("紙本發票");
                         }
-                        rowContent.createCell(7).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
+                        rowContent.createCell(8).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
                     }
                 }
             }
@@ -685,20 +694,22 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 Sheet sheetCon = workbook.createSheet("收入");
                 sheetCon.setColumnWidth(0, 12*256);// 調整欄位寬度
                 sheetCon.setColumnWidth(2, 12*256);// 調整欄位寬度
-                sheetCon.setColumnWidth(3, 100*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(4, 100*256);// 調整欄位寬度
                 Row rowTitle = sheetCon.createRow(0);
                 rowTitle.createCell(0).setCellValue("日期");
                 rowTitle.createCell(1).setCellValue("主項目");
-                rowTitle.createCell(2).setCellValue("金額");
-                rowTitle.createCell(3).setCellValue("細節");
+                rowTitle.createCell(2).setCellValue("幣別");
+                rowTitle.createCell(3).setCellValue("金額");
+                rowTitle.createCell(4).setCellValue("細節");
                 List<BankVO> bankVOS = bankDB.getAll();
                 for (int i = 0; i < bankVOS.size(); i++) {
                     Row rowContent = sheetCon.createRow(i + 1); // 建立儲存格
                     BankVO bankVO = bankVOS.get(i);
                     rowContent.createCell(0).setCellValue(Common.sTwo.format(new Date(bankVO.getDate().getTime())));
                     rowContent.createCell(1).setCellValue(bankVO.getMaintype());
-                    rowContent.createCell(2).setCellValue(bankVO.getMoney());
-                    rowContent.createCell(3).setCellValue(bankVO.getDetailname());
+                    rowContent.createCell(2).setCellValue(Common.getCurrency(bankVO.getCurrency()));
+                    rowContent.createCell(3).setCellValue(bankVO.getRealMoney());
+                    rowContent.createCell(4).setCellValue(bankVO.getDetailname());
                 }
             }
             if (all) {
@@ -746,7 +757,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(0).setCellValue(goalVO.getId());
                     rowContent.createCell(1).setCellValue(goalVO.getType());
                     rowContent.createCell(2).setCellValue(goalVO.getName());
-                    rowContent.createCell(3).setCellValue(goalVO.getMoney());
+                    rowContent.createCell(3).setCellValue(goalVO.getRealMoney());
                     rowContent.createCell(4).setCellValue(goalVO.getTimeStatue());
                     rowContent.createCell(5).setCellValue(goalVO.getStartTime());
                     rowContent.createCell(6).setCellValue(goalVO.getEndTime());
@@ -755,6 +766,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(9).setCellValue(goalVO.getNotifyDate());
                     rowContent.createCell(10).setCellValue(goalVO.isNoWeekend());
                     rowContent.createCell(11).setCellValue(goalVO.getStatue());
+                    rowContent.createCell(12).setCellValue(goalVO.getCurrency());
                 }
 
                 //bank
@@ -765,13 +777,14 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     BankVO bankVO = bankVOS.get(i);
                     rowContent.createCell(0).setCellValue(bankVO.getId());
                     rowContent.createCell(1).setCellValue(bankVO.getMaintype());
-                    rowContent.createCell(2).setCellValue(bankVO.getMoney());
+                    rowContent.createCell(2).setCellValue(bankVO.getRealMoney());
                     rowContent.createCell(3).setCellValue(bankVO.getDate().getTime());
                     rowContent.createCell(4).setCellValue(bankVO.getFixDate());
                     rowContent.createCell(5).setCellValue(bankVO.getFixDateDetail());
                     rowContent.createCell(6).setCellValue(bankVO.getDetailname());
                     rowContent.createCell(7).setCellValue(bankVO.isAuto());
                     rowContent.createCell(8).setCellValue(bankVO.getAutoId());
+                    rowContent.createCell(9).setCellValue(bankVO.getCurrency());
                 }
 
                 //Consume
@@ -783,7 +796,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(0).setCellValue(consumeVO.getId());
                     rowContent.createCell(1).setCellValue(consumeVO.getMaintype());
                     rowContent.createCell(2).setCellValue(consumeVO.getSecondType());
-                    rowContent.createCell(3).setCellValue(consumeVO.getMoney());
+                    rowContent.createCell(3).setCellValue(consumeVO.getRealMoney());
                     rowContent.createCell(4).setCellValue(consumeVO.getDate().getTime());
                     rowContent.createCell(5).setCellValue(consumeVO.getNumber());
                     rowContent.createCell(6).setCellValue(consumeVO.getFixDate());
@@ -795,6 +808,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(12).setCellValue(consumeVO.getIsWin());
                     rowContent.createCell(13).setCellValue(consumeVO.getIsWinNul());
                     rowContent.createCell(14).setCellValue(consumeVO.getRdNumber());
+                    rowContent.createCell(15).setCellValue(consumeVO.getCurrency());
                 }
 
                 //Invoice
@@ -809,7 +823,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(3).setCellValue(invoiceVO.getCardNo());
                     rowContent.createCell(4).setCellValue(invoiceVO.getCardEncrypt());
                     rowContent.createCell(5).setCellValue(invoiceVO.getTime().getTime());
-                    rowContent.createCell(6).setCellValue(invoiceVO.getAmount());
+                    rowContent.createCell(6).setCellValue(invoiceVO.getRealAmount());
                     rowContent.createCell(7).setCellValue(invoiceVO.getDetail());
                     rowContent.createCell(8).setCellValue(invoiceVO.getInvDonatable());
                     rowContent.createCell(9).setCellValue(invoiceVO.getDonateMark());
@@ -823,6 +837,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(17).setCellValue(invoiceVO.getSellerAddress());
                     rowContent.createCell(18).setCellValue(invoiceVO.getIswin());
                     rowContent.createCell(19).setCellValue(invoiceVO.getIsWinNul());
+                    rowContent.createCell(20).setCellValue(invoiceVO.getCurrency());
                 }
                 //Carrier
                 Sheet sheetCon7 = workbook.createSheet("Carrier");
@@ -888,7 +903,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
 

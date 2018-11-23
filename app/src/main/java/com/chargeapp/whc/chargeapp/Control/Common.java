@@ -294,6 +294,7 @@ public class Common {
         return  Currency;
     }
 
+
     public static HashMap<String,String> basicCurrency()
     {
         HashMap<String,String> Currency=new HashMap<String,String>();

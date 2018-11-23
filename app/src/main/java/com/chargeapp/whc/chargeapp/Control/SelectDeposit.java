@@ -465,7 +465,7 @@ public class SelectDeposit extends Fragment {
                 endGoal.setTime(goalVO.getEndTime());
                 Calendar startGoal = new GregorianCalendar();
                 startGoal.setTime(goalVO.getStartTime());
-                Calendar nowCalendar = Calendar.getInstance();
+                Calendar nowCalendar =new GregorianCalendar(year,month,1);
                 int divideEndY = endGoal.get(Calendar.YEAR) - nowCalendar.get(Calendar.YEAR);
                 int divideStartY = startGoal.get(Calendar.YEAR) - nowCalendar.get(Calendar.YEAR);
 

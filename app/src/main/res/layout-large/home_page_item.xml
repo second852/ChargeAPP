@@ -13,29 +13,53 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
+        android:layout_margin="6dp"
         android:orientation="horizontal">
         <ImageView
             android:id="@+id/ivImage"
             android:layout_width="60dp"
-            android:layout_height="60sp"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true" />
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
             android:layout_toRightOf="@+id/ivImage"
             android:orientation="vertical">
-            <TextView
-                android:id="@+id/goal"
+            <RelativeLayout
+                android:layout_marginBottom="6dp"
+                android:layout_marginStart="6dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:padding="6dp"
-                android:textColor="#000000"
-                android:textSize="30sp" />
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/goal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="#000000"
+                    android:textSize="30sp"
+                    android:layout_toLeftOf="@+id/resultT"
+                    />
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/resultT"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="固定"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:layout_margin="1dp"
+                    android:layout_gravity="center"
+                    android:textSize="30sp"
+                    android:layout_alignParentEnd="true"
+                    app:bootstrapBrand="danger"
+                    app:buttonMode="regular"
+                    app:bootstrapSize="lg"
+                    app:roundedCorners="true"
+                    app:showOutline="true"
+                    />
+            </RelativeLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -44,36 +68,13 @@
                 <TextView
                     android:id="@+id/describe"
                     android:layout_width="wrap_content"
+                    android:layout_alignParentLeft="true"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
+                    android:layout_toLeftOf="@+id/resultL"
                     android:padding="6dp"
                     android:textColor="#000000"
                     android:textSize="30sp" />
-                <LinearLayout
-                    android:id="@+id/resultL"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_margin="8dp"
-                    >
-                    <com.beardedhen.androidbootstrap.BootstrapButton
-                        android:id="@+id/resultT"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="固定"
-                        android:gravity="center"
-                        android:padding="2dp"
-                        android:layout_margin="1dp"
-                        android:layout_gravity="center"
-                        android:textSize="30sp"
-                        app:bootstrapBrand="danger"
-                        app:buttonMode="regular"
-                        app:bootstrapSize="md"
-                        app:roundedCorners="true"
-                        app:showOutline="true"
-                        />
-                </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
     </RelativeLayout>
