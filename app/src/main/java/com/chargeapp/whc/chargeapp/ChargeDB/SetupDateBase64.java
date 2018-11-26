@@ -15,6 +15,7 @@ import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -23,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
@@ -150,7 +152,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
         } else {
             period = period.substring(0, 5);
         }
-        data.put("version","0.4");
+        data.put("version","0.5");
         data.put("type","Barcode");
         data.put("invNum",imformation.substring(0,10));
         data.put("action","qryInvDetail");
@@ -256,20 +258,24 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
 
     private String getRemoteData(String url,HashMap<String,String> data)  {
         StringBuilder jsonIn = new StringBuilder();
+        HttpURLConnection conn;
         try {
-            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+            byte[] postData = getPostDataString(data).getBytes(StandardCharsets.UTF_8 );
+            conn= (HttpURLConnection) new URL( url ).openConnection();
+            conn.setDoOutput(true);
+            conn.setInstanceFollowRedirects(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setUseCaches(false);
             conn.setReadTimeout(1500);
             conn.setConnectTimeout(1500);
-            conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);
-            OutputStream os = conn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
-            writer.write(getPostDataString(data));
-            writer.flush();
-            writer.close();
-            os.close();
+            DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
+            wr.write(postData);
+            wr.flush();
+            wr.close();
+            conn.getOutputStream().close();
             int responseCode = conn.getResponseCode();
             if (responseCode == 200) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));

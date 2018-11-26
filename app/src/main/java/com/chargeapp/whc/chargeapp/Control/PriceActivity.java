@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 
 
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdView;
 
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
     private static int nowPoint = 0;
     private Button exportMoney;
     private Activity context;
+    private AdView adview;
 
     @Override
     public void onAttach(Context context) {
@@ -64,6 +66,8 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
         showN = view.findViewById(R.id.showN);
         text = view.findViewById(R.id.text);
         goneD=view.findViewById(R.id.goneD);
+        adview=view.findViewById(R.id.adView);
+        Common.setAdView(adview,context);
         setLayout();
         priceViewPager.setCurrentItem(nowPoint);
         return view;

@@ -145,7 +145,8 @@ public class InsertSpend extends Fragment {
 
         number.setText(consumeVO.getNumber());
         money.setText(String.valueOf(consumeVO.getRealMoney()));
-
+        nowCurrency=consumeVO.getCurrency();
+        currency.setText(Common.getCurrency(nowCurrency));
         date.setText(Common.sTwo.format(consumeVO.getDate()));
         if (consumeVO.getFixDate() == null) {
             setSecondGrid();

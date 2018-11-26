@@ -11,16 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="10dp"/>
+        android:layout_above="@+id/adView"
+       />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addGoal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
         android:layout_marginBottom="30dp"
         android:layout_marginEnd="30dp"
+        android:layout_above="@+id/adView"
         app:srcCompat="@drawable/addtwo" />
     <TextView
         android:id="@+id/message"
@@ -32,4 +33,13 @@
         android:textColor="#FF7744"
         android:textSize="26sp"
         android:visibility="gone" />
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="ca-app-pub-5169620543343332/7293800428" />
 </RelativeLayout>

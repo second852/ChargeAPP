@@ -204,16 +204,20 @@ public class EleAddBank extends Fragment {
             }
         });
         try {
-            HashMap<String,String> data=new HashMap();
-            data.put("UUID","second");
-            data.put("appID","EINV3201711184648");
-            data.put("CardCode","3J0002");
-            data.put("CardNo",carrierVO.getCarNul());
-            data.put("VerifyCode",carrierVO.getPassword());
-            StringBuffer sURL=new StringBuffer();
-            sURL.append("https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierBankAccBlank?");
-            sURL.append(Common.Utf8forURL(data));
-            webView.loadUrl(sURL.toString());
+
+           String url= "<!DOCTYPE html>" +
+                    "<html>" +
+                    "<body onload='document.frm1.submit()'>" +
+                    "<form action='https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierBankAccBlank?' method='post' name='frm1' enctype='application/x-www-form-urlencoded'>" +
+                    "  <input type='hidden' name='uuid' value='second'><br>" +
+                    "  <input type='hidden' name='appID' value='EINV3201711184648'><br>" +
+                    "  <input type='hidden' name='cardCode' value='3J0002'><br>" +
+                    "  <input type='hidden' name='cardNo' value='"+carrierVO.getCarNul()+"'><br>" +
+                    "  <input type='hidden' name='verifyCode' value='"+carrierVO.getPassword()+"'><br>" +
+                    "</form>" +
+                    "</body>" +
+                    "</html>";
+            webView.loadData(url, "text/html", "UTF-8");
         }catch (Exception e)
         {
             Common.showToast(context,"手機載具有問題!");

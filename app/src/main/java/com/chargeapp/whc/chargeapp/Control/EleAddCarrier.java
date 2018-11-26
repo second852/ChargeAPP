@@ -217,7 +217,7 @@ public class EleAddCarrier extends Fragment {
             }
         });
 
-        webView.loadUrl(url);
+        webView.loadData(url, "text/html", "UTF-8");
     }
 
     private String UTF8toURL() {
@@ -256,8 +256,18 @@ public class EleAddCarrier extends Fragment {
     private class CliientListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierLinkBlank?UUID=second&appID=EINV3201711184648&CardCode=3J0002&";
-            url = url + "CardNo=" + carrierVO.getCarNul() + "&VerifyCode=" + carrierVO.getPassword();
+            url= "<!DOCTYPE html>" +
+                    "<html>" +
+                    "<body onload='document.frm1.submit()'>" +
+                    "<form action='https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/carrierLinkBlank' method='post' name='frm1' enctype='application/x-www-form-urlencoded'>" +
+                    "  <input type='hidden' name='uuid' value='second'><br>" +
+                    "  <input type='hidden' name='appID' value='EINV3201711184648'><br>" +
+                    "  <input type='hidden' name='cardCode' value='3J0002'><br>" +
+                    "  <input type='hidden' name='cardNo' value='"+carrierVO.getCarNul()+"'><br>" +
+                    "  <input type='hidden' name='verifyCode' value='"+carrierVO.getPassword()+"'><br>" +
+                    "</form>" +
+                    "</body>" +
+                    "</html>";
             webViewSetting();
             showError.setVisibility(View.GONE);
         }

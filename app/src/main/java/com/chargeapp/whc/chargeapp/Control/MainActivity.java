@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     public View nowView;
     public boolean firstShowF;
     public static boolean firstShowInsertActivity;
-    private AdView adview;
+
 
 
     @Override
@@ -88,8 +88,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         firstShowF = true;
         firstShowInsertActivity = true;
-        adview=findViewById(R.id.adView);
-        Common.setAdView(adview,this);
     }
 
 
@@ -654,7 +652,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         Intent intent = new Intent();
                         intent.setAction(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("http://www.nknu.edu.tw/~psl/new.file/103/08/1030825reciept1.pdf"));
+                        intent.setData(Uri.parse("https://www.einvoice.nat.gov.tw/index!easyKnow"));
                         startActivity(intent);
                     }
                 }
@@ -1064,6 +1062,19 @@ public class MainActivity extends AppCompatActivity {
     public ConsumeVO QRCodeNetResult(String s, ConsumeVO consumeVO) {
         Gson gson = new Gson();
         JsonObject js = gson.fromJson(s, JsonObject.class);
+
+        String currency;
+        try {
+            currency=js.get("currency").getAsString();
+            if(currency==null||currency.trim().length()<=0)
+            {
+                currency="TWD";
+            }
+        }catch (Exception e)
+        {
+            currency="TWD";
+        }
+        consumeVO.setCurrency(currency);
         Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
         String result = js.get("details").toString();
         List<JsonObject> b = gson.fromJson(result, cdType);

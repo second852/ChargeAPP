@@ -152,13 +152,17 @@ public class EleNewCarrier extends Fragment {
 
 
         try {
-            HashMap<String,String> data=new HashMap();
-            data.put("UUID","second");
-            data.put("appID","EINV3201711184648");
-            StringBuffer sURL=new StringBuffer();
-            sURL.append("https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/generalCarrierRegBlank?");
-            sURL.append(Common.Utf8forURL(data));
-            webView.loadUrl(sURL.toString());
+
+            String html = "<!DOCTYPE html>" +
+                    "<html>" +
+                    "<body onload='document.frm1.submit()'>" +
+                    "<form action='https://api.einvoice.nat.gov.tw/PB2CAPIVAN/APIService/generalCarrierRegBlank' method='post' name='frm1' enctype='application/x-www-form-urlencoded'>" +
+                    "  <input type='hidden' name='uuid' value='second'><br>" +
+                    "  <input type='hidden' name='appID' value='EINV3201711184648'><br>" +
+                    "</form>" +
+                    "</body>" +
+                    "</html>";
+            webView.loadData(html, "text/html", "UTF-8");
         }catch (Exception e)
         {
             Common.showToast(activity,"資料有誤");

@@ -95,13 +95,13 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         if(object instanceof InvoiceVO)
         {
             InvoiceVO I= (InvoiceVO) object;
-            message=I.getSecondtype()+" "+I.getAmount()+"元";
+            message=I.getSecondtype()+" "+Common.getCurrency(I.getCarrier()) + I.getRealAmount();
         }else if(object instanceof ConsumeVO){
             ConsumeVO c= (ConsumeVO) object;
-            message=c.getSecondType()+" "+c.getMoney()+"元";
+            message=c.getSecondType()+" "+Common.getCurrency(c.getCurrency())+c.getRealMoney();
         }else if(object instanceof BankVO){
             BankVO b= (BankVO) object;
-            message=b.getMaintype()+" "+b.getMoney()+"元";
+            message=b.getMaintype()+" "+Common.getCurrency(b.getCurrency())+b.getRealMoney();
         }else if(object instanceof GoalVO){
             GoalVO b= (GoalVO) object;
             message=b.getName();

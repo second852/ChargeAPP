@@ -328,8 +328,19 @@ public class SearchByQrCode extends Fragment {
         }
 
         JsonObject js = gson.fromJson(s, JsonObject.class);
-        Type cdType = new TypeToken<List<JsonObject>>() {
-        }.getType();
+        String currency;
+        try {
+            currency=js.get("currency").getAsString();
+            if(currency==null||currency.trim().length()<=0)
+            {
+                currency="TWD";
+            }
+        }catch (Exception e)
+        {
+            currency="TWD";
+        }
+        consumeVO.setCurrency(currency);
+        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
         String result = js.get("details").toString();
         List<JsonObject> b = gson.fromJson(result, cdType);
         double price, unit, unitTotal;
@@ -376,7 +387,7 @@ public class SearchByQrCode extends Fragment {
             }
 
         }
-        consumeVO.setMoney(Common.DoubleToInt(total));
+        consumeVO.setRealMoney(String.valueOf(Common.DoubleToInt(total)));
         consumeVO.setDetailname(sb.toString());
         consumeVO = getType(consumeVO);
         Common.showToast(context, "查詢成功!");
