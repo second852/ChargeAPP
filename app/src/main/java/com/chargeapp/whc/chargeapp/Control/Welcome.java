@@ -57,6 +57,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -76,10 +77,13 @@ public class Welcome extends AppCompatActivity {
         Common.setChargeDB(this);
         Common.insertNewTableCol();
 
-//        new GetSQLDate(this).execute("download");
-        new Thread(runnable).start();
-        new Thread(modifyMoneyFromIntegerToString).start();
-        new Thread(downloadCurrency).start();
+
+        InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB.deleteBytime(Timestamp.valueOf("2018-11-01 00:00:00"));
+        new GetSQLDate(this).execute("download");
+//        new Thread(runnable).start();
+//        new Thread(modifyMoneyFromIntegerToString).start();
+//        new Thread(downloadCurrency).start();
     }
 
     //將conume and invoice to String

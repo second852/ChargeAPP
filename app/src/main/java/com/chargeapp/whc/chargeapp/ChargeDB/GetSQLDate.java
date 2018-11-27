@@ -383,6 +383,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         startDate = Common.sTwo.format(new Date(cal.getTimeInMillis()));
         cal.set(year, month, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
         endDate = Common.sTwo.format(new Date(cal.getTimeInMillis()));
+        Log.d(TAG,"startDay"+startDate+"endDate"+endDate);
         //設定傳遞參數
         data = getInvoice(user, password, startDate, endDate, "N");
         url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
@@ -587,7 +588,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 }
                 Log.d("XXXXXXx", todayMonth + ":" + todayYear);
                 //到最大個月為止
-                if (todayMonth <= lastMonth && todayYear<=lastYear) {
+                if (todayMonth <= lastMonth && todayYear <= lastYear) {
                     break;
                 }
             }
@@ -604,36 +605,59 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
 
     public String searchTodayDate(Calendar last, Calendar today, String user, String password) throws IOException {
-        String startday = sf.format(last.getTime());
-        String endday = sf.format(today.getTime());
+       String jsonIn;
+       int finalDay=last.get(Calendar.DAY_OF_MONTH);
+        Calendar searchStart=new GregorianCalendar(last.get(Calendar.YEAR),last.get(Calendar.MONTH)-1,1);
+        Calendar searchEnd=new GregorianCalendar(last.get(Calendar.YEAR),last.get(Calendar.MONTH)-1,searchStart.getActualMaximum(Calendar.DAY_OF_MONTH));
+       switch (finalDay)
+       {
+           case 1:
+
+               //前三天
+               searchStart.set(Calendar.DAY_OF_MONTH,searchEnd.get(Calendar.DAY_OF_MONTH)-3);
+               Log.d(TAG, "startDate: " + sd.format(searchStart.getTime()) + "endDate" + sd.format(searchEnd.getTime()) + "user" + user);
+               searchInvoiceData(searchStart, searchEnd,user,password);
+               //更新
+               jsonIn=searchInvoiceData(last, today,user,password);
+               break;
+           case 2:
+               //前三天
+               searchStart.set(Calendar.DAY_OF_MONTH,searchEnd.get(Calendar.DAY_OF_MONTH)-2);
+               searchInvoiceData(searchStart, searchEnd,user,password);
+               last.set(Calendar.DAY_OF_MONTH,1);
+               //更新
+               jsonIn=searchInvoiceData(last, today,user,password);
+               break;
+           case 3:
+               //前三天
+               searchStart.set(Calendar.DAY_OF_MONTH,searchEnd.get(Calendar.DAY_OF_MONTH)-1);
+               searchInvoiceData(searchStart, searchEnd,user,password);
+               last.set(Calendar.DAY_OF_MONTH,1);
+               //更新
+               jsonIn=searchInvoiceData(last, today,user,password);
+               break;
+           default:
+               last.add(Calendar.DAY_OF_MONTH,-3);
+               //更新
+               jsonIn=searchInvoiceData(last, today,user,password);
+               break;
+       }
+        return jsonIn;
+    }
+
+
+    public String searchInvoiceData(Calendar last, Calendar today, String user, String password) throws IOException {
+        String startDay = sf.format(last.getTime());
+        String endDay = sf.format(today.getTime());
         HashMap data;
-        Log.d(TAG, "startDate: " + startday + "endDate" + endday + "user" + user);
-        data = getInvoice(user, password, startday, endday, "N");
+        Log.d(TAG, "startDate: " + startDay + "endDate" + endDay + "user" + user);
+        data = getInvoice(user, password, startDay, endDay, "N");
         String url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
         String jsonIn = getRemoteData(url, data);
         if (jsonIn.indexOf("200") == -1) {
             return jsonIn;
         }
         jsonIn = getjsonIn(jsonIn, password, user);
-//        Calendar cal = last;
-//        Timestamp start = new Timestamp(cal.getTimeInMillis() - 86400000);
-//        Timestamp end = new Timestamp(cal.getTimeInMillis() + 86400000);
-//        List<InvoiceVO> newInvoicelist = todayjsonIn(jsonIn, password, user);
-//        List<InvoiceVO> oldInvoicelist = invoiceDB.getInvoiceBytime(start, end, user);
-//        for (InvoiceVO i : newInvoicelist) {
-//            boolean isequals = false;
-//            for (InvoiceVO old : oldInvoicelist) {
-//                Log.d(TAG, "check : " + i.getInvNum() + " : " + old.getInvNum() + " : " + old.getInvNum().equals(i.getInvNum()));
-//                if (old.getInvNum().equals(i.getInvNum())) {
-//                    isequals = true;
-//                    break;
-//                }
-//            }
-//            if (!isequals) {
-//                getInvoiceDetail(i);
-//                Log.d(TAG, "insert new :" + i.getInvNum());
-//            }
-//        }
         return jsonIn;
     }
 
@@ -753,7 +777,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         HttpURLConnection conn = null;
         try {
             byte[] postData = getPostDataString(data).getBytes(StandardCharsets.UTF_8 );
-            conn= (HttpURLConnection) new URL( url ).openConnection();
+//            conn= (HttpURLConnection) new URL( url ).openConnection();
             conn.setDoOutput(true);
             conn.setInstanceFollowRedirects(false);
             conn.setRequestMethod("POST");
