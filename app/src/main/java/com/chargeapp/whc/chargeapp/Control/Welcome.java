@@ -36,6 +36,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ElePeriodDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
@@ -45,6 +46,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
+import com.chargeapp.whc.chargeapp.Model.ElePeriod;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
@@ -78,12 +80,15 @@ public class Welcome extends AppCompatActivity {
         Common.insertNewTableCol();
 
 
-        InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB.deleteBytime(Timestamp.valueOf("2018-11-01 00:00:00"));
-        new GetSQLDate(this).execute("download");
-//        new Thread(runnable).start();
-//        new Thread(modifyMoneyFromIntegerToString).start();
-//        new Thread(downloadCurrency).start();
+//        InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+//        invoiceDB.deleteBytime(Timestamp.valueOf("2018-11-04 00:00:00"));
+//
+//        ElePeriodDB ele=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
+//        ele.deleteByCARNUL("/2RDO8+P");
+//        new GetSQLDate(this).execute("download");u
+        new Thread(runnable).start();
+        new Thread(modifyMoneyFromIntegerToString).start();
+        new Thread(downloadCurrency).start();
     }
 
     //將conume and invoice to String

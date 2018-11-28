@@ -152,7 +152,6 @@ public class SelectConsume extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Common.setScreen(Common.screenSize, context);
-
         final View view = inflater.inflate(R.layout.select_consume, container, false);
         //init DataBase
         setDB();
@@ -308,6 +307,8 @@ public class SelectConsume extends Fragment {
         goalConsume = view.findViewById(R.id.goalConsume);
         setCurrency=view.findViewById(R.id.setCurrency);
         otherMessage=view.findViewById(R.id.otherMessage);
+        otherMessage.setBootstrapBrand(null);
+        otherMessage.setTextColor(Color.BLACK);
 
         ArrayList<String> SpinnerItem1 = new ArrayList<>();
         SpinnerItem1.add("  日  ");

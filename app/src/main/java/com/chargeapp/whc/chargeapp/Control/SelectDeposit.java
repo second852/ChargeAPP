@@ -102,7 +102,6 @@ public class SelectDeposit extends Fragment {
     private String nowCurrency;
     private CurrencyDB currencyDB;
     private CurrencyVO currencyVO;
-    private double total;
     private BootstrapButton setCurrency;
     private AwesomeTextView otherMessage;
     private PopupMenu popupMenu;

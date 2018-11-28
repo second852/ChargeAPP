@@ -1,8 +1,10 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,20 +12,26 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.beardedhen.androidbootstrap.AwesomeTextView;
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapDropDown;
 import com.beardedhen.androidbootstrap.BootstrapText;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
+import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -55,6 +63,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.chargeapp.whc.chargeapp.Control.Common.choiceCurrency;
+import static com.chargeapp.whc.chargeapp.Control.Common.getCurrency;
+
 
 /**
  * Created by 1709008NB01 on 2017/12/7.
@@ -70,7 +81,7 @@ public class SelectIncome extends Fragment {
     private int month, year,day;
     private BootstrapDropDown choicePeriod;
     private PieChart chart_pie;
-    private int total, period;
+    private int period;
     private String DesTittle;
     private List<String> chartLabels;
     private BankDB bankDB;
@@ -82,6 +93,16 @@ public class SelectIncome extends Fragment {
     public static int Statue;
     private Activity context;
     private List<BootstrapText> periodIncome;
+
+    private SharedPreferences sharedPreferences;
+    private String nowCurrency;
+    private CurrencyDB currencyDB;
+    private CurrencyVO currencyVO;
+    private double total;
+    private BootstrapButton setCurrency;
+    private AwesomeTextView otherMessage;
+    private PopupMenu popupMenu;
+    private Calendar startPopup,endPopup;
 
 
     @Override
@@ -115,6 +136,23 @@ public class SelectIncome extends Fragment {
         chart_pie.setOnChartValueSelectedListener(new pievalue());
         chart_bar.setOnChartValueSelectedListener(new charValue());
         choicePeriod.setOnDropDownItemClickListener(new choicePeriodI());
+
+
+        //current
+        sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
+        nowCurrency=sharedPreferences.getString(Common.choiceCurrency,"TWD");
+        setCurrency.setText(getCurrency(nowCurrency));
+        popupMenu=new PopupMenu(context,setCurrency);
+        Common.createCurrencyPopMenu(popupMenu, context);
+        setCurrency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupMenu.show();
+            }
+        });
+        popupMenu.setOnMenuItemClickListener(new choiceCurrency());
+
+
         //        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
 //        choicePeriod.setSelection(Statue);
 
@@ -209,6 +247,15 @@ public class SelectIncome extends Fragment {
             end = new GregorianCalendar(year, 11, 31, 23, 59, 59);
             PIdateTittle.setText(Common.sFour.format(new Date(start.getTimeInMillis())));
         }
+
+
+        startPopup=new GregorianCalendar();
+        startPopup.setTime(start.getTime());
+        endPopup=new GregorianCalendar();
+        endPopup.setTime(end.getTime());
+        //SetCurrency choice
+        currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
+
         bankVOS = bankDB.getTimeAll(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
         for (BankVO b : bankVOS) {
             if (hashMap.get(b.getMaintype()) == null) {
@@ -612,6 +659,29 @@ public class SelectIncome extends Fragment {
                 dataAnalyze();
             }
 
+        }
+    }
+
+    private class choiceCurrency implements PopupMenu.OnMenuItemClickListener {
+        @SuppressLint("SetTextI18n")
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case 1:
+                    nowCurrency = "TWD";
+                    sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
+                    currencyVO=currencyDB.getBytimeAndType(startPopup.getTimeInMillis(),endPopup.getTimeInMillis(),nowCurrency);
+                case 8:
+                    popupMenu.dismiss();
+                    break;
+                default:
+                    nowCurrency = Common.code.get(menuItem.getItemId() - 2);
+                    sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
+                    currencyVO=currencyDB.getBytimeAndType(startPopup.getTimeInMillis(),endPopup.getTimeInMillis(),nowCurrency);
+                    break;
+            }
+            dataAnalyze();
+            return true;
         }
     }
 }

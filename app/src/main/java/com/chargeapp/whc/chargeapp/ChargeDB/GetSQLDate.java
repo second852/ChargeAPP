@@ -580,20 +580,29 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         } else {
             //先insert ElePeriod 在一次找尋 false
             while (true) {
-                elePeriodDB.insert(new ElePeriod(todayYear, todayMonth, carrierVO.getCarNul(), false));
+                //如果有舊的
+                ElePeriod elePeriod=elePeriodDB.OldElePeriod(new ElePeriod(todayYear, todayMonth, carrierVO.getCarNul(),false));
+                if(elePeriod!=null)
+                {
+                    elePeriod.setDownload(false);
+                    elePeriodDB.update(elePeriod);
+                }else{
+                    elePeriodDB.insert(new ElePeriod(todayYear, todayMonth, carrierVO.getCarNul(), false));
+                }
+
+
+
                 todayMonth = todayMonth - 1;
                 if (todayMonth < 0) {
                     todayMonth = 12 + todayMonth;
                     todayYear = todayYear - 1;
                 }
-                Log.d("XXXXXXx", todayMonth + ":" + todayYear);
                 //到最大個月為止
-                if (todayMonth <= lastMonth && todayYear <= lastYear) {
+                if (todayMonth < lastMonth && todayYear <= lastYear) {
                     break;
                 }
             }
-            downLoadOtherMon(carrierVO);
-            jsonIn = searchTodayDate(oldMax, today, carrierVO.getCarNul(), carrierVO.getPassword());
+            jsonIn = downLoadOtherMon(carrierVO);
             //detail = 0
             List<InvoiceVO> invoiceVOS = invoiceDB.getNoDetailAll();
             for (InvoiceVO invoiceVO : invoiceVOS) {
@@ -615,7 +624,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
                //前三天
                searchStart.set(Calendar.DAY_OF_MONTH,searchEnd.get(Calendar.DAY_OF_MONTH)-3);
-               Log.d(TAG, "startDate: " + sd.format(searchStart.getTime()) + "endDate" + sd.format(searchEnd.getTime()) + "user" + user);
                searchInvoiceData(searchStart, searchEnd,user,password);
                //更新
                jsonIn=searchInvoiceData(last, today,user,password);
@@ -635,11 +643,13 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                last.set(Calendar.DAY_OF_MONTH,1);
                //更新
                jsonIn=searchInvoiceData(last, today,user,password);
+               Log.d(TAG,"startDay"+finalDay);
                break;
            default:
                last.add(Calendar.DAY_OF_MONTH,-3);
                //更新
                jsonIn=searchInvoiceData(last, today,user,password);
+               Log.d(TAG,"startDay default"+finalDay);
                break;
        }
         return jsonIn;
@@ -777,7 +787,11 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         HttpURLConnection conn = null;
         try {
             byte[] postData = getPostDataString(data).getBytes(StandardCharsets.UTF_8 );
-//            conn= (HttpURLConnection) new URL( url ).openConnection();
+            if(conn==null)
+            {
+                return "error";
+            }
+            conn= (HttpURLConnection) new URL( url ).openConnection();
             conn.setDoOutput(true);
             conn.setInstanceFollowRedirects(false);
             conn.setRequestMethod("POST");

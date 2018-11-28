@@ -325,7 +325,7 @@ public class HomePage extends Fragment {
             TextView title = itemView.findViewById(R.id.goal);
             TextView describe = itemView.findViewById(R.id.describe);
             BootstrapButton resultT = itemView.findViewById(R.id.resultT);
-            LinearLayout resultL = itemView.findViewById(R.id.resultL);
+
 
             StringBuilder sbResult=new StringBuilder();
 
@@ -529,9 +529,9 @@ public class HomePage extends Fragment {
             } else {
 
                 //沒有目標顯示
+                resultT.setVisibility(View.GONE);
                 //顯示本周花費
                 double consumeCount;
-                resultL.setVisibility(View.GONE);
                 HashMap<String,Double> invoiceHashMap,consumeHashMap;
                 Set<String> totalKey=new HashSet<>();
                 if (position == 0) {

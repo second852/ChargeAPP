@@ -70,14 +70,35 @@
             app:showOutline="false"
             />
     </RelativeLayout>
-    <TextView
-        android:id="@+id/describeD"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/describe"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:textColor="#000000"
-        android:textSize="30sp" />
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal"
+        >
+        <com.beardedhen.androidbootstrap.AwesomeTextView
+            android:id="@+id/otherMessage"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="30sp"
+            app:bootstrapBrand="regular"
+            />
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/setCurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            app:buttonMode="regular"
+            app:bootstrapBrand="warning"
+            app:bootstrapSize="lg"
+            app:roundedCorners="true"
+            />
+    </LinearLayout>
     <com.beardedhen.androidbootstrap.AwesomeTextView
         android:id="@+id/goalDeposit"
         android:layout_width="wrap_content"
