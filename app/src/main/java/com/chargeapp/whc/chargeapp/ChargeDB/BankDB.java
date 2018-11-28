@@ -124,8 +124,8 @@ public class BankDB {
         return BankVOList;
     }
 
-    public List<BankVO> getTimeAll(Timestamp start, Timestamp end) {
-        String sql = "SELECT * FROM BANK where date between '" + start.getTime() + "' and '" + end.getTime() + "' order by date desc;";
+    public List<BankVO> getTimeAll(Long start, Long end) {
+        String sql = "SELECT * FROM BANK where date between '" + start + "' and '" + end + "' order by date desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();

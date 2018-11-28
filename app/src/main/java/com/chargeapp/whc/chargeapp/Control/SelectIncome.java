@@ -256,14 +256,16 @@ public class SelectIncome extends Fragment {
         //SetCurrency choice
         currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
 
-        bankVOS = bankDB.getTimeAll(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+        bankVOS = bankDB.getTimeAll(start.getTimeInMillis(), end.getTimeInMillis());
         for (BankVO b : bankVOS) {
+            CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),b.getCurrency());
+            Double bankAmount=Double.valueOf(b.getRealMoney())*Double.valueOf(currencyVO.getMoney());
             if (hashMap.get(b.getMaintype()) == null) {
-                hashMap.put(b.getMaintype(), Double.valueOf(b.getMoney()));
+                hashMap.put(b.getMaintype(), bankAmount);
             } else {
-                hashMap.put(b.getMaintype(), Integer.valueOf(b.getMoney()) + hashMap.get(b.getMaintype()));
+                hashMap.put(b.getMaintype(), bankAmount + hashMap.get(b.getMaintype()));
             }
-            total = total + Integer.valueOf(b.getMoney());
+            total = total + bankAmount;
         }
         list_Data = new ArrayList<Map.Entry<String, Double>>(hashMap.entrySet());
         Collections.sort(list_Data, new Comparator<Map.Entry<String, Double>>() {
@@ -337,7 +339,7 @@ public class SelectIncome extends Fragment {
     private float[] Periodfloat(Calendar start, Calendar end) {
         Map<String, Integer> barMap = new HashMap<>();
         float[] f = new float[list_Data.size()];
-        List<BankVO> bankVOS = bankDB.getTimeAll(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+        List<BankVO> bankVOS = bankDB.getTimeAll(start.getTimeInMillis(),end.getTimeInMillis());
         boolean isOtherExist;
         ChartEntry other = new ChartEntry("其他", 0.0);
         for (BankVO b : bankVOS) {
