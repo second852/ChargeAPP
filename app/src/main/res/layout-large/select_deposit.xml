@@ -64,7 +64,7 @@
             android:layout_margin="2dp"
             android:gravity="center"
             app:bootstrapBrand="regular"
-            app:bootstrapSize="xl"
+            app:bootstrapSize="lg"
             app:dropdownResource="@array/fixDay"
             app:roundedCorners="true"
             app:showOutline="false"

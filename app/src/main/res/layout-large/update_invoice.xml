@@ -142,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="right"
                     app:bootstrapBrand="warning"
-                    app:bootstrapSize="xl"
+                    app:bootstrapSize="lg"
                     app:buttonMode="regular"
                     app:showOutline="false"
                     app:roundedCorners="true"

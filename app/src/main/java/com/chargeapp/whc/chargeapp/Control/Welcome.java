@@ -77,6 +77,7 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
         Common.setChargeDB(this);
+//        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Currency;");
         Common.insertNewTableCol();
 
 
@@ -153,27 +154,172 @@ public class Welcome extends AppCompatActivity {
                 Elements newsHeadlines=doc.getElementsByAttributeValue("data-table","本行現金賣出");
                 int i=0;
                 CurrencyVO currencyVO=null;
+                String typeName;
                 for(Element e:newsHeadlines)
                 {
                     switch(i)
                     {
                         case 0:
-                            currencyVO=new CurrencyVO("USD",e.text(),new Date(System.currentTimeMillis()));
+                            typeName="USD";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
+                            break;
+                        case 2:
+                            typeName="HKD";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
                             break;
                         case 4:
-                            currencyVO=new CurrencyVO("GBP",e.text(),new Date(System.currentTimeMillis()));
+                            typeName="GBP";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
                             break;
                         case 6:
-                            currencyVO=new CurrencyVO("AUD",e.text(),new Date(System.currentTimeMillis()));
+                            typeName="AUD";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
+                            break;
+                        case 8:
+                            typeName="CAD";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
+                            break;
+                        case 10:
+                            typeName="SGD";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
+                            break;
+                        case 12:
+                            typeName="CHF";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
                             break;
                         case 14:
-                            currencyVO=new CurrencyVO("JPY",e.text(),new Date(System.currentTimeMillis()));
+                            typeName="JPY";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
+                            break;
+                        case 18:
+                            typeName="SEK";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
+                            break;
+                        case 20:
+                            typeName="NZD";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
+                            break;
+                        case 22:
+                            typeName="THB";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
+                            break;
+                        case 24:
+                            typeName="PHP";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
+                            break;
+                        case 26:
+                            typeName="IDR";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
                             break;
                         case 28:
-                            currencyVO=new CurrencyVO("EUR",e.text(),new Date(System.currentTimeMillis()));
+                            typeName="EUR";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
+                            break;
+                        case 30:
+                            typeName="KRW";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
+                            break;
+                        case 32:
+                            typeName="VND";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
+                            break;
+                        case 34:
+                            typeName="MYR";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
                             break;
                         case 36:
-                            currencyVO=new CurrencyVO("CNY",e.text(),new Date(System.currentTimeMillis()));
+                            typeName="CNY";
+                            currencyVO=new CurrencyVO();
+                            currencyVO.setType(typeName);
+                            currencyVO.setName(Common.showCurrency().get(typeName));
+                            currencyVO.setSymbol(Common.Currency().get(typeName));
+                            currencyVO.setMoney(e.text());
+                            currencyVO.setTime(new Date(System.currentTimeMillis()));
                             break;
                     }
                     if(currencyVO!=null)
@@ -182,6 +328,20 @@ public class Welcome extends AppCompatActivity {
                         currencyVO=null;
                     }
                     i++;
+                }
+                newsHeadlines=doc.getElementsByAttributeValue("data-table","本行即期賣出");
+
+
+                typeName="ZAR";
+                currencyVO=new CurrencyVO();
+                currencyVO.setType(typeName);
+                currencyVO.setName(Common.showCurrency().get(typeName));
+                currencyVO.setSymbol(Common.Currency().get(typeName));
+                currencyVO.setMoney(newsHeadlines.get(16).text());
+                currencyVO.setTime(new Date(System.currentTimeMillis()));
+                if(currencyVO!=null)
+                {
+                    currencyDB.insert(currencyVO);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

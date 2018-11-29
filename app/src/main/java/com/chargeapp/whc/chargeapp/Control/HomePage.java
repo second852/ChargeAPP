@@ -203,7 +203,7 @@ public class HomePage extends Fragment {
         pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleRadius(7);
         pieChart.setTransparentCircleRadius(10);
-        pieChart.setRotationAngle(30);
+        pieChart.setRotationAngle(60);
         pieChart.setRotationEnabled(true);
         pieChart.setDescription(Common.getDeescription());
         // customize legends
@@ -260,17 +260,20 @@ public class HomePage extends Fragment {
         dataSet.setValueTextColor(Color.BLACK);
         dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         dataSet.setSliceSpace(0);
-        dataSet.setSelectionShift(20f);
+
         switch (Common.screenSize) {
             case xLarge:
-                dataSet.setValueTextSize(30f);
-                pieChart.setEntryLabelTextSize(30f);
+                dataSet.setSelectionShift(30f);
+                dataSet.setValueTextSize(25f);
+                pieChart.setEntryLabelTextSize(25f);
                 break;
             case large:
+                dataSet.setSelectionShift(30f);
                 dataSet.setValueTextSize(25f);
                 pieChart.setEntryLabelTextSize(25f);
                 break;
             case normal:
+                dataSet.setSelectionShift(20f);
                 dataSet.setValueTextSize(15f);
                 pieChart.setEntryLabelTextSize(15f);
                 break;
@@ -282,6 +285,7 @@ public class HomePage extends Fragment {
         pieChart.setData(data);
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
         pieChart.setOnChartValueSelectedListener(new pieValue());
+
     }
 
 

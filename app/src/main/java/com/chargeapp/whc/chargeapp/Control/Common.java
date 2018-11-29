@@ -283,13 +283,23 @@ public class Common {
         HashMap<String,String> Currency=new HashMap<String,String>();
         Currency.put("TWD","NT$");//新台幣
         Currency.put("USD","US$");//美元
-        Currency.put("JPY","¥");//日圓
-        Currency.put("EUR","€");//歐元
-        Currency.put("AUD","AUD$");//澳幣
+        Currency.put("HKD","HK$");//港幣
         Currency.put("GBP","£");//英鎊
+        Currency.put("AUD","AUD$");//澳幣
+        Currency.put("CAD","C$");//加拿大幣
+        Currency.put("SGD","S$");//新加坡幣
+        Currency.put("CHF","CHF");//瑞士法郎
+        Currency.put("JPY","¥");//日圓
+        Currency.put("ZAR","R");//南非幣
+        Currency.put("SEK","kr");//瑞典幣
+        Currency.put("NZD","NZD$");//紐元
+        Currency.put("THB","฿");//泰幣
+        Currency.put("PHP","₱");//菲國比索
+        Currency.put("IDR","Rp");//印尼幣
+        Currency.put("EUR","€");//歐元
         Currency.put("KRW","₩");//韓元
-        Currency.put("THB","฿");//泰銖
-        Currency.put("SGD","S$");//新加坡元
+        Currency.put("VND","₫");//越南盾
+        Currency.put("MYR","RM");//馬來幣
         Currency.put("CNY","CNY¥");//人民幣
         return  Currency;
     }
@@ -300,13 +310,23 @@ public class Common {
         HashMap<String,String> Currency=new HashMap<String,String>();
         Currency.put("TWD","1.00");//新台幣
         Currency.put("USD","31.22");//美元
-        Currency.put("JPY","0.2785");//日圓
-        Currency.put("EUR","35.99");//歐元
-        Currency.put("AUD","22.28");//澳幣
+        Currency.put("HKD","3.991");//港幣
         Currency.put("GBP","41.06");//英鎊
+        Currency.put("AUD","22.28");//澳幣
+        Currency.put("CAD","23.67");//加拿大幣
+        Currency.put("SGD","22.75");//新加坡幣
+        Currency.put("CHF","31.44");//瑞士法郎
+        Currency.put("JPY","0.2785");//日圓
+        Currency.put("ZAR","2.29");//南非幣
+        Currency.put("SEK","3.55");//瑞典幣
+        Currency.put("NZD","21.59");//紐元
+        Currency.put("THB","1.0052");//泰幣
+        Currency.put("PHP","0.6476");//菲國比索
+        Currency.put("IDR","0.00248");//印尼幣
+        Currency.put("EUR","35.99");//歐元
         Currency.put("KRW","0.02944");//韓元
-        Currency.put("THB","1.0052");//泰銖
-        Currency.put("SGD","22.75");//新加坡元
+        Currency.put("VND","0.00145");//越南盾
+        Currency.put("MYR","7.899");//馬來幣
         Currency.put("CNY","4.522");//人民幣
         return  Currency;
     }
@@ -317,13 +337,23 @@ public class Common {
         HashMap<String,String> Currency=new HashMap<String,String>();
         Currency.put("TWD","新台幣");//新台幣
         Currency.put("USD","美元");//美元
-        Currency.put("JPY","日圓");//日圓
-        Currency.put("EUR","歐元");//歐元
-        Currency.put("AUD","澳幣");//澳幣
+        Currency.put("HKD","港幣");//港幣
         Currency.put("GBP","英鎊");//英鎊
+        Currency.put("AUD","澳幣");//澳幣
+        Currency.put("CAD","加拿大幣");//加拿大幣
+        Currency.put("SGD","新加坡幣");//新加坡幣
+        Currency.put("CHF","瑞士法郎 ");//瑞士法郎
+        Currency.put("JPY","日圓");//日圓
+        Currency.put("ZAR","南非幣");//南非幣
+        Currency.put("SEK","瑞典幣");//瑞典幣
+        Currency.put("NZD","紐元");//紐元
+        Currency.put("THB","泰幣");//泰幣
+        Currency.put("PHP","菲國比索");//菲國比索
+        Currency.put("IDR","印尼幣");//印尼幣
+        Currency.put("EUR","歐元");//歐元
         Currency.put("KRW","韓元");//韓元
-        Currency.put("THB","泰銖");//泰銖
-        Currency.put("SGD","新加坡元");//新加坡元
+        Currency.put("VND","越南盾");//越南盾
+        Currency.put("MYR","馬來幣");//馬來幣
         Currency.put("CNY","人民幣");//人民幣
         return  Currency;
     }

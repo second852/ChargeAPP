@@ -38,7 +38,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:textColor="#000000"
-                    android:textSize="35sp"
+                    android:textSize="30sp"
                     android:layout_toLeftOf="@+id/resultT"
                     />
                 <com.beardedhen.androidbootstrap.BootstrapButton
@@ -50,7 +50,7 @@
                     android:padding="2dp"
                     android:layout_margin="1dp"
                     android:layout_gravity="center"
-                    android:textSize="35sp"
+                    android:textSize="30sp"
                     android:layout_alignParentEnd="true"
                     app:bootstrapBrand="danger"
                     app:buttonMode="regular"
@@ -73,7 +73,7 @@
                     android:layout_gravity="center_vertical"
                     android:padding="6dp"
                     android:textColor="#000000"
-                    android:textSize="35sp" />
+                    android:textSize="30sp" />
             </RelativeLayout>
         </LinearLayout>
     </RelativeLayout>

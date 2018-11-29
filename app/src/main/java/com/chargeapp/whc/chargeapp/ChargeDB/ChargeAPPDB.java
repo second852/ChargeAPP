@@ -70,7 +70,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
 
     public static final String TABLE_Currency =
             "CREATE TABLE Currency ( id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT NOT NULL," +
-                    "money TEXT,time DATETIME) ;";
+                    "name TEXT,symbol TEXT,money TEXT,time DATETIME) ;";
 
     public ChargeAPPDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);

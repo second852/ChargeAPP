@@ -160,7 +160,6 @@ public class SelectConsume extends Fragment {
         //current
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         nowCurrency=sharedPreferences.getString(Common.choiceCurrency,"TWD");
-        setCurrency.setText(getCurrency(nowCurrency));
         popupMenu=new PopupMenu(context,setCurrency);
         Common.createCurrencyPopMenu(popupMenu, context);
         setCurrency.setOnClickListener(new View.OnClickListener() {
@@ -723,7 +722,7 @@ public class SelectConsume extends Fragment {
     private void addChartPieData() {
         total=total/Double.valueOf(currencyVO.getMoney());
         otherMessage.setText(DesTittle);
-        setCurrency.setText(getCurrency(nowCurrency)+doubleRemoveZero(total));
+        setCurrency.setText(Common.CurrencyResult(total,currencyVO));
 
 
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();

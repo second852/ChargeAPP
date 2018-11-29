@@ -60,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:bootstrapBrand="regular"
-                app:bootstrapSize="xl"
+                app:bootstrapSize="lg"
                 app:dropdownResource="@array/fixDay"
                 app:roundedCorners="true"
                 app:showOutline="false"

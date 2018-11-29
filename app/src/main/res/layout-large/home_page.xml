@@ -8,7 +8,7 @@
     <com.github.mikephil.charting.charts.PieChart
         android:layout_marginTop="15dp"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="350dp"
         android:layout_centerHorizontal="true"
         android:id="@+id/pieChart"
         />
@@ -37,7 +37,7 @@
             android:gravity="right"
             android:layout_gravity="center_vertical"
             app:bootstrapBrand="warning"
-            app:bootstrapSize="xl"
+            app:bootstrapSize="lg"
             app:buttonMode="regular"
             app:showOutline="false"
             app:roundedCorners="true"

@@ -35,16 +35,33 @@ public class CurrencyDB {
         List<CurrencyVO> currencyVOS = new ArrayList<>();
         CurrencyVO currencyVO;
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String type=cursor.getString(1);
-            String money =cursor.getString(2);
-            Date time=new Date(cursor.getLong(3));
-            currencyVO=new CurrencyVO(id,type,money,time);
+            currencyVO=new CurrencyVO();
+            currencyVO.setId(cursor.getInt(0));
+            currencyVO.setType(cursor.getString(1));
+            currencyVO.setName(cursor.getString(2));
+            currencyVO.setSymbol(cursor.getString(3));
+            currencyVO.setMoney(cursor.getString(4));
+            currencyVO.setTime(new Date(cursor.getLong(5)));
             currencyVOS.add(currencyVO);
         }
         cursor.close();
         return currencyVOS;
     }
+
+
+    public List<String> getAllTypeName() {
+        String sql = "SELECT type FROM Currency GROUP BY type order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<String> types=new ArrayList<>();
+        while (cursor.moveToNext()) {
+            String type=cursor.getString(0);
+            types.add(type);
+        }
+        cursor.close();
+        return types;
+    }
+
 
     public HashMap<String,List<String>> getAllType() {
         String sql = "SELECT type FROM Currency GROUP BY type order by id;";
@@ -71,11 +88,13 @@ public class CurrencyDB {
         List<CurrencyVO> currencyVOS = new ArrayList<>();
         CurrencyVO currencyVO;
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String type=cursor.getString(1);
-            String money =cursor.getString(2);
-            Date time=new Date(cursor.getLong(3));
-            currencyVO=new CurrencyVO(id,type,money,time);
+            currencyVO=new CurrencyVO();
+            currencyVO.setId(cursor.getInt(0));
+            currencyVO.setType(cursor.getString(1));
+            currencyVO.setName(cursor.getString(2));
+            currencyVO.setSymbol(cursor.getString(3));
+            currencyVO.setMoney(cursor.getString(4));
+            currencyVO.setTime(new Date(cursor.getLong(5)));
             currencyVOS.add(currencyVO);
         }
         cursor.close();
@@ -88,7 +107,13 @@ public class CurrencyDB {
         //以下情況 設為TWD
         if(objectType==null||objectType.trim().length()<=0||objectType.trim().equals("TWD"))
         {
-            return new CurrencyVO("TWD","1",new Date(System.currentTimeMillis()));
+            CurrencyVO currencyVO=new CurrencyVO();
+            currencyVO.setName("新台幣");
+            currencyVO.setMoney("1");
+            currencyVO.setTime(new Date(System.currentTimeMillis()));
+            currencyVO.setSymbol("NT$");
+            currencyVO.setType("TWD");
+            return  currencyVO;
         }
 
         //查詢
@@ -97,11 +122,13 @@ public class CurrencyDB {
         Cursor cursor = db.rawQuery(sql, args);
         CurrencyVO currencyVO;
         if (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String type=cursor.getString(1);
-            String money =cursor.getString(2);
-            Date time=new Date(cursor.getLong(3));
-            currencyVO=new CurrencyVO(id,type,money,time);
+            currencyVO=new CurrencyVO();
+            currencyVO.setId(cursor.getInt(0));
+            currencyVO.setType(cursor.getString(1));
+            currencyVO.setName(cursor.getString(2));
+            currencyVO.setSymbol(cursor.getString(3));
+            currencyVO.setMoney(cursor.getString(4));
+            currencyVO.setTime(new Date(cursor.getLong(5)));
         }else {
             currencyVO=getOneByType(objectType);
         }
@@ -109,7 +136,12 @@ public class CurrencyDB {
         //找不到用內建
         if(currencyVO==null)
         {
-            currencyVO=new CurrencyVO(objectType,Common.basicCurrency().get(objectType),new Date(System.currentTimeMillis()));
+            currencyVO=new CurrencyVO();
+            currencyVO.setType(objectType);
+            currencyVO.setName(Common.showCurrency().get(objectType));
+            currencyVO.setSymbol(Common.Currency().get(objectType));
+            currencyVO.setMoney(Common.basicCurrency().get(objectType));
+            currencyVO.setTime(new Date(System.currentTimeMillis()));
         }
 
         return currencyVO;
@@ -122,11 +154,13 @@ public class CurrencyDB {
         Cursor cursor = db.rawQuery(sql, args);
         CurrencyVO currencyVO=null;
         if (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String type=cursor.getString(1);
-            String money =cursor.getString(2);
-            Date time=new Date(cursor.getLong(3));
-            currencyVO=new CurrencyVO(id,type,money,time);
+            currencyVO=new CurrencyVO();
+            currencyVO.setId(cursor.getInt(0));
+            currencyVO.setType(cursor.getString(1));
+            currencyVO.setName(cursor.getString(2));
+            currencyVO.setSymbol(cursor.getString(3));
+            currencyVO.setMoney(cursor.getString(4));
+            currencyVO.setTime(new Date(cursor.getLong(5)));
         }
         cursor.close();
         return currencyVO;
@@ -139,6 +173,8 @@ public class CurrencyDB {
     public long insert(CurrencyVO currencyVO) {
         ContentValues values = new ContentValues();
         values.put("type",currencyVO.getType());
+        values.put("name",currencyVO.getName());
+        values.put("symbol",currencyVO.getSymbol());
         values.put("money",currencyVO.getMoney());
         values.put("time",currencyVO.getTime().getTime());
         return db.insert(TABLE_NAME, null, values);
@@ -148,6 +184,8 @@ public class CurrencyDB {
     public int update(CurrencyVO currencyVO) {
         ContentValues values = new ContentValues();
         values.put("type",currencyVO.getType());
+        values.put("name",currencyVO.getName());
+        values.put("symbol",currencyVO.getSymbol());
         values.put("money",currencyVO.getMoney());
         values.put("time",currencyVO.getTime().getTime());
         String whereClause = COL_id + " = ?;";

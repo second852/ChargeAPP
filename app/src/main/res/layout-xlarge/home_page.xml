@@ -11,7 +11,7 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/pieChart"/>
     <LinearLayout
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="25dp"
         android:id="@+id/pieChartL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
     </LinearLayout>
     <ListView
         android:id="@+id/list"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_below="@+id/pieChartL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
