@@ -256,7 +256,7 @@ public class GoalListAll extends Fragment {
                         double leaveMoney=goalMoney-amount;
                         sbResult.append(" " + serial + ". 失敗 : 儲蓄" + Common.CurrencyResult(amount,currencyVO));
                         serial++;
-                        sbResult.append("\n " + serial +"還缺  : "+Common.CurrencyResult(leaveMoney,currencyVO));
+                        sbResult.append("\n " + serial +". 還缺 : "+Common.CurrencyResult(leaveMoney,currencyVO));
                         resultG.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         serial++;
                     }else{

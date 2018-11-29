@@ -88,7 +88,6 @@ public class UpdateIncome extends Fragment {
     private String resultStatue,resultDay;
     private List<BootstrapText> BsTextDay,BsTextWeek,BsTextMonth,BsTextStatue;
     private int statueNumber;
-    private SharedPreferences sharedPreferences;
     private String nowCurrency;
     private PopupMenu popupMenu;
     private GridView numberKeyBoard;
@@ -137,6 +136,7 @@ public class UpdateIncome extends Fragment {
         date.setOnFocusChangeListener(new dateClickListener());
 
         detailname.setOnClickListener(new closeAllShow());
+        detailname.setOnFocusChangeListener(new closeAllShow());
 
         showdate.setOnClickListener(new choicedateClick());
         choiceStatue.setOnDropDownItemClickListener(new choiceStateItemBS());
@@ -178,8 +178,7 @@ public class UpdateIncome extends Fragment {
     private void setCurrency()
     {
         //insert currency
-        sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
-        nowCurrency = sharedPreferences.getString(insertCurrency, "TWD");
+        nowCurrency = bankVO.getCurrency();
         currency = view.findViewById(R.id.currency);
         popupMenu = new PopupMenu(context, currency);
         Common.createCurrencyPopMenu(popupMenu, context);
@@ -190,6 +189,8 @@ public class UpdateIncome extends Fragment {
             }
         });
         popupMenu.setOnMenuItemClickListener(new choiceCurrency());
+        currency.setText(Common.getCurrency(nowCurrency));
+
 
 
         //insert keyboard
@@ -233,7 +234,6 @@ public class UpdateIncome extends Fragment {
                 }
             }
         });
-        currency.setText(Common.getCurrency(nowCurrency));
     }
 
 
@@ -299,7 +299,6 @@ public class UpdateIncome extends Fragment {
                 Common.clossKeyword(context);
                 money.clearFocus();
                 date.clearFocus();
-                detailname.clearFocus();
                 showdate.setVisibility(View.GONE);
                 numberKeyBoard.setVisibility(View.GONE);
                 firstL.setVisibility(View.VISIBLE);
@@ -309,7 +308,7 @@ public class UpdateIncome extends Fragment {
 
     private void setUpdate() {
         name.setText(bankVO.getMaintype());
-        money.setText(String.valueOf(bankVO.getMoney()));
+        money.setText(String.valueOf(bankVO.getRealMoney()));
         date.setText(Common.sTwo.format(bankVO.getDate()));
         detailname.setText(bankVO.getDetailname());
         fixdate.setChecked(Boolean.valueOf(bankVO.getFixDate()));
@@ -437,14 +436,18 @@ public class UpdateIncome extends Fragment {
 
         @Override
         public void onFocusChange(View view, boolean b) {
-            Common.clossKeyword(context);
-            numberKeyBoard.setVisibility(View.GONE);
-            firstL.setVisibility(View.GONE);
-            showdate.setVisibility(View.VISIBLE);
-            name.clearFocus();
-            money.clearFocus();
-            detailname.clearFocus();
-            date.setSelection(date.getText().toString().length());
+            if(b)
+            {
+                Common.clossKeyword(context);
+                numberKeyBoard.setVisibility(View.GONE);
+                firstL.setVisibility(View.GONE);
+                showdate.setVisibility(View.VISIBLE);
+                name.clearFocus();
+                money.clearFocus();
+                detailname.clearFocus();
+                date.setSelection(date.getText().toString().length());
+            }
+
         }
     }
 
@@ -549,6 +552,8 @@ public class UpdateIncome extends Fragment {
             name.setText(" ");
             money.setText(" ");
             fixdate.setChecked(false);
+            numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,new StringBuilder(),true));
+
         }
     }
 
@@ -873,14 +878,12 @@ public class UpdateIncome extends Fragment {
             switch (menuItem.getItemId()) {
                 case 1:
                     nowCurrency = "TWD";
-                    sharedPreferences.edit().putString(insertCurrency, nowCurrency).apply();
                     currency.setText(Common.getCurrency(nowCurrency));
                 case 8:
                     popupMenu.dismiss();
                     break;
                 default:
                     nowCurrency = Common.code.get(menuItem.getItemId() - 2);
-                    sharedPreferences.edit().putString(insertCurrency, nowCurrency).apply();
                     currency.setText(Common.getCurrency(nowCurrency));
                     break;
             }
@@ -888,12 +891,26 @@ public class UpdateIncome extends Fragment {
         }
     }
 
-    private class closeAllShow implements View.OnClickListener {
+    private class closeAllShow implements View.OnClickListener, View.OnFocusChangeListener {
         @Override
         public void onClick(View view) {
             firstL.setVisibility(View.GONE);
             numberKeyBoard.setVisibility(View.GONE);
-            date.setVisibility(View.GONE);
+            showdate.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onFocusChange(View view, boolean b) {
+            if(b)
+            {
+                firstL.setVisibility(View.GONE);
+                numberKeyBoard.setVisibility(View.GONE);
+                showdate.setVisibility(View.GONE);
+                name.clearFocus();
+                money.clearFocus();
+                date.clearFocus();
+            }
+
         }
     }
 }

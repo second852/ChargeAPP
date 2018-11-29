@@ -787,10 +787,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         HttpURLConnection conn = null;
         try {
             byte[] postData = getPostDataString(data).getBytes(StandardCharsets.UTF_8 );
-            if(conn==null)
-            {
-                return "error";
-            }
             conn= (HttpURLConnection) new URL( url ).openConnection();
             conn.setDoOutput(true);
             conn.setInstanceFollowRedirects(false);

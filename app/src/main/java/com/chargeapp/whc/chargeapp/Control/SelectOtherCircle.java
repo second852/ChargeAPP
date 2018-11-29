@@ -121,12 +121,11 @@ public class SelectOtherCircle extends Fragment {
         message = view.findViewById(R.id.message);
         resultL=view.findViewById(R.id.resultL);
         resultL.setY(10f);
-
+        //設定顯示幣別
+        setCurrency=view.findViewById(R.id.setCurrency);
         popupMenu=new PopupMenu(context,setCurrency);
         Common.createCurrencyPopMenu(popupMenu, context);
         otherMessage=view.findViewById(R.id.otherMessage);
-        //設定顯示幣別
-        setCurrency=view.findViewById(R.id.setCurrency);
         setCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

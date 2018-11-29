@@ -389,6 +389,7 @@ public class InsertSpend extends Fragment {
         name.setOnFocusChangeListener(new showFirstG());
         name.setInputType(InputType.TYPE_NULL);
         date.setOnFocusChangeListener(new dateClickListener());
+        date.setOnClickListener(new dateClickListener());
         detailName.setOnClickListener(new DetailEdit());
         secondG.setOnItemClickListener(new secondGridOnClick());
     }
@@ -501,7 +502,7 @@ public class InsertSpend extends Fragment {
     }
 
 
-    private class dateClickListener implements View.OnFocusChangeListener {
+    private class dateClickListener implements View.OnFocusChangeListener, View.OnClickListener {
 
         @Override
         public void onFocusChange(View view, boolean b) {
@@ -521,6 +522,14 @@ public class InsertSpend extends Fragment {
             }
 
             date.setSelection(date.getText().toString().length());
+        }
+
+        @Override
+        public void onClick(View view) {
+            firstL.setVisibility(View.GONE);
+            secondL.setVisibility(View.GONE);
+            showDate.setVisibility(View.VISIBLE);
+            numberKeyBoard.setVisibility(View.GONE);
         }
     }
 

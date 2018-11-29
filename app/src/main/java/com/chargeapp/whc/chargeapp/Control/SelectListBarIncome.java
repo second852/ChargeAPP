@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.R;
 
@@ -50,6 +51,7 @@ public class SelectListBarIncome extends Fragment {
     private String title;
     private Gson gson;
     private Activity context;
+
 
 
     @Override
@@ -99,7 +101,7 @@ public class SelectListBarIncome extends Fragment {
 
     public void setLayout()
     {
-        List<BankVO>  bankVOS=bankDB.getTimeAll(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
+        List<BankVO>  bankVOS=bankDB.getTimeAll(start.getTimeInMillis(),end.getTimeInMillis());
         ListAdapter baseAdapter= (ListAdapter) listView.getAdapter();
         if(baseAdapter==null)
         {
@@ -168,14 +170,9 @@ public class SelectListBarIncome extends Fragment {
 
 
             //設定 title
-            StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append(Common.sDay.format(bankVO.getDate()));
-            stringBuffer.append(" " + bankVO.getMaintype());
-            stringBuffer.append(" 共" + Common.nf.format(bankVO.getMoney()) + "元");
-            title.setText(stringBuffer.toString());
-
+            title.setText(Common.setBankTittlesDay(bankVO));
             //設定 describe
-            stringBuffer = new StringBuffer();
+            StringBuilder stringBuffer = new StringBuilder();
             if (bankVO.isAuto()) {
                 fixT.setText("自動");
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.INFO);

@@ -454,8 +454,10 @@ public class PriceHand extends Fragment {
 
             //提示不顯示
             awardRemain.setText("");
-            Vibrator myVibrator = (Vibrator) this.context.getSystemService(Service.VIBRATOR_SERVICE);
-            myVibrator.vibrate(500);
+
+            //震動
+//            Vibrator myVibrator = (Vibrator) this.context.getSystemService(Service.VIBRATOR_SERVICE);
+//            myVibrator.vibrate(500);
             return;
         }
 

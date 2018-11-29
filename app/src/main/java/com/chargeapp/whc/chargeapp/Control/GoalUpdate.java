@@ -306,8 +306,8 @@ public class GoalUpdate extends Fragment {
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             remind.setChecked(b);
             if (b) {
-                remind.setX(remindL.getWidth() / 10 - remindL.getWidth() / 20);
-                remindT.setX(remindL.getWidth() / 10 + remind.getWidth() - remindL.getWidth() / 20);
+                remind.setX(remindL.getWidth() / 10 - remindL.getWidth() / 10);
+                remindT.setX(remindL.getWidth() / 10 + remind.getWidth() - remindL.getWidth() / 10);
                 remindS.setX(spinnerT.getX());
                 noWeekend.setX((remindL.getWidth() * 2 / 3) + remindL.getWidth() / 20 - remindL.getWidth() / 7);
                 noWeekendT.setX((remindL.getWidth() * 2 / 3) + remindL.getWidth() / 20 + noWeekend.getWidth() - remindL.getWidth() / 7);
@@ -334,8 +334,8 @@ public class GoalUpdate extends Fragment {
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
             ArrayList<String> spinneritem = new ArrayList<>();
             if (position == 0) {
-                remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
-                remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
+                remind.setX(remindL.getWidth()/10-remindL.getWidth()/10);
+                remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/10);
                 remindS.setX(spinnerT.getX());
                 noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/7);
                 noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/7);
@@ -369,8 +369,8 @@ public class GoalUpdate extends Fragment {
             remindD.setAdapter(arrayAdapter);
             remindD.setVisibility(View.VISIBLE);
             noWeekend.setChecked(false);
-            remind.setX(remindL.getWidth()/10-remindL.getWidth()/20);
-            remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/20);
+            remind.setX(remindL.getWidth()/10-remindL.getWidth()/10);
+            remindT.setX(remindL.getWidth()/10+remind.getWidth()-remindL.getWidth()/10);
             remindS.setX(spinnerT.getX());
             noWeekend.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20-remindL.getWidth()/7);
             noWeekendT.setX((remindL.getWidth()*2/3)+remindL.getWidth()/20+noWeekend.getWidth()-remindL.getWidth()/7);

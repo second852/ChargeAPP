@@ -74,7 +74,7 @@ import static com.chargeapp.whc.chargeapp.Control.Common.getCurrency;
 public class SelectIncome extends Fragment {
 
 
-    private TextView PIdateTittle, describe;
+    private TextView PIdateTittle;
     private ImageView PIdateCut, PIdateAdd;
     private String TAG = "SelectIncome";
     private BarChart chart_bar;
@@ -105,6 +105,7 @@ public class SelectIncome extends Fragment {
     private Calendar startPopup,endPopup;
 
 
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -130,6 +131,7 @@ public class SelectIncome extends Fragment {
         day=end.get(Calendar.DAY_OF_MONTH);
         Common.setChargeDB(context);
         bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
@@ -188,7 +190,10 @@ public class SelectIncome extends Fragment {
         chart_bar = view.findViewById(R.id.chart_bar);
         choicePeriod = view.findViewById(R.id.choicePeriod);
         chart_pie = view.findViewById(R.id.chart_pie);
-        describe = view.findViewById(R.id.describe);
+        otherMessage=view.findViewById(R.id.otherMessage);
+        otherMessage.setBootstrapBrand(null);
+        otherMessage.setTextColor(Color.BLACK);
+        setCurrency=view.findViewById(R.id.setCurrency);
         ArrayList<String> SpinnerItem1 = new ArrayList<>();
         SpinnerItem1.add(" 月 ");
         SpinnerItem1.add(" 年 ");
@@ -337,19 +342,22 @@ public class SelectIncome extends Fragment {
     }
 
     private float[] Periodfloat(Calendar start, Calendar end) {
-        Map<String, Integer> barMap = new HashMap<>();
+        Map<String, Double> barMap = new HashMap<>();
         float[] f = new float[list_Data.size()];
         List<BankVO> bankVOS = bankDB.getTimeAll(start.getTimeInMillis(),end.getTimeInMillis());
         boolean isOtherExist;
         ChartEntry other = new ChartEntry("其他", 0.0);
         for (BankVO b : bankVOS) {
             isOtherExist = true;
+            CurrencyVO currencyVO =currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),b.getCurrency());
+            Double bankAmount=Double.valueOf(b.getRealMoney())*Double.valueOf(currencyVO.getMoney());
+            bankAmount=bankAmount/Double.valueOf(this.currencyVO.getMoney());
             for (int i = 0; i < list_Data.size(); i++) {
                 if (list_Data.get(i).getKey().equals(b.getMaintype())) {
                     if (barMap.get(b.getMaintype()) == null) {
-                        barMap.put(b.getMaintype(), Integer.valueOf(b.getMoney()));
+                        barMap.put(b.getMaintype(), bankAmount);
                     } else {
-                        barMap.put(b.getMaintype(), Integer.valueOf(b.getMoney()) + barMap.get(b.getMaintype()));
+                        barMap.put(b.getMaintype(),bankAmount+ barMap.get(b.getMaintype()));
                     }
                     isOtherExist = false;
                     break;
@@ -368,7 +376,7 @@ public class SelectIncome extends Fragment {
                 f[i] = 0;
                 continue;
             }
-            f[i] = barMap.get(list_Data.get(i).getKey());
+            f[i] = barMap.get(list_Data.get(i).getKey()).floatValue();
         }
         return f;
     }
@@ -473,7 +481,10 @@ public class SelectIncome extends Fragment {
 
     private void addChartPieData() {
         type = new ArrayList<>();
-        describe.setText(DesTittle + Common.nf.format(total) + "元");
+        otherMessage.setText(DesTittle);
+        setCurrency.setText(Common.CurrencyResult(total,currencyVO));
+
+
         ArrayList<PieEntry> pieEntries = new ArrayList<PieEntry>();
         boolean ShowZero = true;
         ChartEntry other = new ChartEntry("其他", 0.0);

@@ -85,7 +85,7 @@ public class Welcome extends AppCompatActivity {
 //
 //        ElePeriodDB ele=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
 //        ele.deleteByCARNUL("/2RDO8+P");
-//        new GetSQLDate(this).execute("download");u
+//        new GetSQLDate(this).execute("download");
         new Thread(runnable).start();
         new Thread(modifyMoneyFromIntegerToString).start();
         new Thread(downloadCurrency).start();

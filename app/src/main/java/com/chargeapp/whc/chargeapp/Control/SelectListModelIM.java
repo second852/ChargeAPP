@@ -81,7 +81,7 @@ public class SelectListModelIM extends Fragment {
     public void setLayout() {
         start = new GregorianCalendar(year, month, 1, 0, 0, 0);
         end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
-        List<BankVO> bankVOS = bankDB.getTimeAll(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+        List<BankVO> bankVOS = bankDB.getTimeAll(start.getTimeInMillis(), end.getTimeInMillis());
         String title = Common.sThree.format(new Date(start.getTimeInMillis()));
         DRcarrier.setText(title);
         if (bankVOS.size() <= 0) {

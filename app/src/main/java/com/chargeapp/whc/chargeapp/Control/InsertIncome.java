@@ -192,7 +192,6 @@ public class InsertIncome extends Fragment {
                                 showdate.setVisibility(View.GONE);
                                 name.clearFocus();
                                 date.clearFocus();
-                                detailname.clearFocus();
                             }
                         }
                     });
@@ -251,6 +250,7 @@ public class InsertIncome extends Fragment {
         choiceStatue.setOnDropDownItemClickListener(new choiceStateItemBS());
         choiceday.setOnDropDownItemClickListener(new choicedayItemBS());
         detailname.setOnClickListener(new closeAllShow());
+        detailname.setOnFocusChangeListener(new closeAllShow());
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new savecomsumer());
         fixdate.setOnCheckedChangeListener(new showfixdateClick());
@@ -355,7 +355,6 @@ public class InsertIncome extends Fragment {
                 Common.clossKeyword(context);
                 money.clearFocus();
                 date.clearFocus();
-                detailname.clearFocus();
                 showdate.setVisibility(View.GONE);
                 numberKeyBoard.setVisibility(View.GONE);
                 firstL.setVisibility(View.VISIBLE);
@@ -483,7 +482,6 @@ public class InsertIncome extends Fragment {
                 showdate.setVisibility(View.VISIBLE);
                 name.clearFocus();
                 money.clearFocus();
-                detailname.clearFocus();
                 date.setSelection(date.getText().toString().length());
             }
         }
@@ -601,6 +599,7 @@ public class InsertIncome extends Fragment {
             choiceday.setBootstrapText(BsTextDay.get(0));
             resultDay="";
             resultStatue="";
+            numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,new StringBuilder(),true));
         }
     }
 
@@ -776,12 +775,23 @@ public class InsertIncome extends Fragment {
         }
     }
 
-    private class closeAllShow implements View.OnClickListener {
+    private class closeAllShow implements View.OnClickListener, View.OnFocusChangeListener {
         @Override
         public void onClick(View view) {
             firstL.setVisibility(View.GONE);
             numberKeyBoard.setVisibility(View.GONE);
-            date.setVisibility(View.GONE);
+            showdate.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onFocusChange(View view, boolean b) {
+            if(b)
+            {
+                money.clearFocus();
+                firstL.setVisibility(View.GONE);
+                numberKeyBoard.setVisibility(View.GONE);
+                showdate.setVisibility(View.GONE);
+            }
         }
     }
 }

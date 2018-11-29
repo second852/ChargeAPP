@@ -190,7 +190,7 @@
 
                 <CheckBox
                     android:id="@+id/remind"
-                    android:layout_marginStart="150dp"
+                    android:layout_marginStart="200dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_centerVertical="true"
@@ -257,19 +257,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="55dp">
 
-                <TextView
-                    android:id="@+id/standard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true" />
-
                 <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/save"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="60dp"
-                    android:layout_toLeftOf="@+id/standard"
+                    android:layout_marginStart="80dp"
                     android:gravity="center"
                     android:padding="5dp"
                     app:bootstrapBrand="success"
@@ -284,8 +276,8 @@
                     android:id="@+id/clear"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="60dp"
-                    android:layout_toRightOf="@+id/standard"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="80dp"
                     android:gravity="center"
                     android:padding="5dp"
                     app:bootstrapBrand="danger"
@@ -331,4 +323,12 @@
             android:textColor="#000000"
             android:textSize="30sp" />
     </LinearLayout>
+    <GridView
+        android:id="@+id/numberKeyBoard"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#AAAAAA"
+        android:visibility="gone"
+        />
 </RelativeLayout>

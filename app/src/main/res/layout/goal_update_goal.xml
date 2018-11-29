@@ -192,7 +192,7 @@
 
                 <CheckBox
                     android:id="@+id/remind"
-                    android:layout_marginStart="150dp"
+                    android:layout_marginStart="130dp"
                     android:layout_toRightOf="@+id/remainT"
                     android:layout_width="25dp"
                     android:layout_height="25dp"

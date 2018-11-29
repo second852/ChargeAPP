@@ -22,8 +22,10 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 
+import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 
+import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -55,6 +57,8 @@ public class SelectListPieIncome extends Fragment {
     private String title;
     private Gson gson;
     private Activity context;
+
+
 
 
     @Override
@@ -167,6 +171,7 @@ public class SelectListPieIncome extends Fragment {
             LinearLayout typeL=itemView.findViewById(R.id.typeL);
 
 
+
             //設定標籤
             typeL.setVisibility(View.GONE);
             remindL.setVisibility(View.GONE);
@@ -174,15 +179,11 @@ public class SelectListPieIncome extends Fragment {
 
 
 
-            //設定 title
-            StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append(Common.sDay.format(bankVO.getDate()));
-            stringBuffer.append(" " + bankVO.getMaintype());
-            stringBuffer.append(" 共" + Common.nf.format(bankVO.getMoney()) + "元");
-            title.setText(stringBuffer.toString());
+            //設定 tittle
+            title.setText(Common.setBankTittlesDay(bankVO));
 
             //設定 describe
-            stringBuffer = new StringBuffer();
+            StringBuilder stringBuffer = new StringBuilder();
             if (bankVO.isAuto()) {
                 fixT.setText("自動");
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.INFO);

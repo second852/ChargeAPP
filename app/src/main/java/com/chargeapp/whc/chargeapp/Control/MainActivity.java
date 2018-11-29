@@ -435,7 +435,7 @@ public class MainActivity extends AppCompatActivity {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-
+                   Common.clossKeyword(MainActivity.this);
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -613,7 +613,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     oldSecondView = view;
                     view.setBackgroundColor(Color.parseColor("#EEFFBB"));
-
+                    Common.clossKeyword(MainActivity.this);
                     if (i1 == 0) {
                         fragment = new EleSetCarrier();
                         switchFragment();

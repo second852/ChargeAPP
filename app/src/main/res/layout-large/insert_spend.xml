@@ -144,7 +144,7 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/currency"
-                    android:layout_marginLeft="40dp"
+                    android:layout_marginLeft="50dp"
                     android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -396,7 +396,7 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/save"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginLeft="80dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="儲存"
@@ -415,7 +415,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="30dp"
+                    android:layout_marginRight="80dp"
                     android:text="清除"
                     android:textColor="#000000"
                     app:bootstrapBrand="danger"
@@ -512,24 +512,25 @@
         android:visibility="gone">
 
         <DatePicker
+            android:gravity="center"
             android:id="@+id/datePicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:calendarViewShown="false"
             android:datePickerMode="spinner"
+            android:layout_gravity="center"
             android:spinnersShown="true"
             android:theme="@style/spinner_large"/>
 
         <TextView
             android:id="@+id/datesave"
-            android:layout_width="100dp"
-            android:layout_height="60dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="1dp"
             android:background="#BDBDBD"
             android:gravity="center"
-            android:padding="5dp"
             android:text="確認"
             android:textColor="#000000"
             android:textSize="35sp" />
