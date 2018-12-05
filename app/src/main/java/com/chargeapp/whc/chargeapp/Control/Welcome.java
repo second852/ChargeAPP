@@ -96,6 +96,8 @@ public class Welcome extends AppCompatActivity {
     private Runnable modifyMoneyFromIntegerToString=new Runnable() {
         @Override
         public void run() {
+            Common.setChargeDB(Welcome.this);
+            Common.insertNewTableCol();
             ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
             List<ConsumeVO> consumeVOS=consumeDB.getRealMoneyIsNull();
             for(ConsumeVO consumeVO:consumeVOS)
@@ -137,6 +139,7 @@ public class Welcome extends AppCompatActivity {
 
 
                 Common.setChargeDB(Welcome.this);
+                Common.insertNewTableCol();
                 CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
 
 //                if it  has downloaded today,not run;
@@ -361,6 +364,8 @@ public class Welcome extends AppCompatActivity {
 
 
     private void setJob() {
+        Common.setChargeDB(Welcome.this);
+        Common.insertNewTableCol();
         JobScheduler tm = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         //判斷是否建立過
 //     tm.cancelAll(); no need,becauseCompiler will remove all job

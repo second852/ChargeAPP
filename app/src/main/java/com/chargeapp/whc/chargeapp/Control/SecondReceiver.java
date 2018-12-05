@@ -49,173 +49,180 @@ public class SecondReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("service","onReceive");
-        sf=new SimpleDateFormat("yyyy-MM-dd");
 
-        SharedPreferences sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
-        boolean setNotify = sharedPreferences.getBoolean("notify", true);
+        try {
+            Log.d("service","onReceive");
+            sf=new SimpleDateFormat("yyyy-MM-dd");
 
-        notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+            SharedPreferences sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
+            boolean setNotify = sharedPreferences.getBoolean("notify", true);
 
-
-        Common.setChargeDB(context);
-        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
-
-        //Detail
-        gson=new Gson();
-        Calendar date = Calendar.getInstance();
-        year = date.get(Calendar.YEAR);
-        month = date.get(Calendar.MONTH);
-        day = date.get(Calendar.DAY_OF_MONTH);
-        dweek = date.get(Calendar.DAY_OF_WEEK);
+            notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 
 
-        //notify message
-        String message,title;
-        Intent activeI;
-        if(setNotify)
-        {
-            Log.d("service", "consumeNotify");
-            activeI=new Intent(context,Welcome.class);
-            activeI.setAction("showFix");
+            Common.setChargeDB(context);
+            Common.insertNewTableCol();
+            consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
 
-            List<ConsumeVO> consumeVOS=consumeDB.getNotify();
-            title=" "+sf.format(new Date(System.currentTimeMillis()))+"今天繳費提醒";
+            //Detail
+            gson=new Gson();
+            Calendar date = Calendar.getInstance();
+            year = date.get(Calendar.YEAR);
+            month = date.get(Calendar.MONTH);
+            day = date.get(Calendar.DAY_OF_MONTH);
+            dweek = date.get(Calendar.DAY_OF_WEEK);
 
-            for (ConsumeVO consumeVO:consumeVOS)
+
+            //notify message
+            String message,title;
+            Intent activeI;
+            if(setNotify)
             {
-                detail = consumeVO.getFixDateDetail();
-                jsonObject = gson.fromJson(detail, JsonObject.class);
-                String action = jsonObject.get("choicestatue").getAsString().trim();
-                if ("每天".equals(action)) {
-                    Log.d("service", "consumeVO");
-                    boolean noWeekend = jsonObject.get("noweek").getAsBoolean();
-                    if (noWeekend && dweek == 7) {
-                        continue;
-                    }
-                    if (noWeekend && dweek == 1) {
-                        continue;
-                    }
-                }else if ("每周".equals(action)) {
-                    String fixdetail = jsonObject.get("choicedate").getAsString().trim();
-                    HashMap<String, Integer> change = getStringtoInt();
-                    if (date.get(Calendar.DAY_OF_WEEK) != change.get(fixdetail)) {
-                        continue;
-                    }
-                }else if ("每月".equals(action)) {
-                    int Maxday = date.getActualMaximum(Calendar.DAY_OF_MONTH);
-                    String fixdate = jsonObject.get("choicedate").getAsString().trim();
-                    fixdate = fixdate.substring(0, fixdate.indexOf("日"));
-                    boolean needNotify=false;//是否需要通知
-                    if (fixdate.equals(String.valueOf(day))) {
-                        needNotify=true;
-                    }
-                    if (Maxday < Integer.valueOf(fixdate) && day == Maxday) {
-                        needNotify=true;
-                    }
+                Log.d("service", "consumeNotify");
+                activeI=new Intent(context,Welcome.class);
+                activeI.setAction("showFix");
 
-                    if(!needNotify)
-                    {
-                        continue;
-                    }
-                }else{
-                    //每年
-                    String fixdate = jsonObject.get("choicedate").getAsString().trim();
-                    fixdate = fixdate.substring(0, fixdate.indexOf("月"));
-                    int d = Integer.valueOf(fixdate) - 1;
-                    if (!(month == d && day == 1)) {
-                        continue;
-                    }
-                }
+                List<ConsumeVO> consumeVOS=consumeDB.getNotify();
+                title=" "+sf.format(new Date(System.currentTimeMillis()))+"今天繳費提醒";
 
-                message = " 繳納" + consumeVO.getSecondType() + "費用:" + consumeVO.getMoney()+" 元";
-                showNotification(title,message,context,id,activeI);
-                id++;
-            }
+                for (ConsumeVO consumeVO:consumeVOS)
+                {
+                    detail = consumeVO.getFixDateDetail();
+                    jsonObject = gson.fromJson(detail, JsonObject.class);
+                    String action = jsonObject.get("choicestatue").getAsString().trim();
+                    if ("每天".equals(action)) {
+                        Log.d("service", "consumeVO");
+                        boolean noWeekend = jsonObject.get("noweek").getAsBoolean();
+                        if (noWeekend && dweek == 7) {
+                            continue;
+                        }
+                        if (noWeekend && dweek == 1) {
+                            continue;
+                        }
+                    }else if ("每周".equals(action)) {
+                        String fixdetail = jsonObject.get("choicedate").getAsString().trim();
+                        HashMap<String, Integer> change = getStringtoInt();
+                        if (date.get(Calendar.DAY_OF_WEEK) != change.get(fixdetail)) {
+                            continue;
+                        }
+                    }else if ("每月".equals(action)) {
+                        int Maxday = date.getActualMaximum(Calendar.DAY_OF_MONTH);
+                        String fixdate = jsonObject.get("choicedate").getAsString().trim();
+                        fixdate = fixdate.substring(0, fixdate.indexOf("日"));
+                        boolean needNotify=false;//是否需要通知
+                        if (fixdate.equals(String.valueOf(day))) {
+                            needNotify=true;
+                        }
+                        if (Maxday < Integer.valueOf(fixdate) && day == Maxday) {
+                            needNotify=true;
+                        }
 
-            Calendar calendar = Calendar.getInstance();
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
-            int month = calendar.get(Calendar.MONTH) + 1;
-            int year=calendar.get(Calendar.YEAR)-1911;
-            if (month == 1 || month == 3 || month == 5 || month == 7 || month == 9 || month == 11) {
-                if (day == 25) {
-                    //統一發票 通知
-                    activeI=new Intent(context,Welcome.class);
-                    activeI.setAction("nulPriceNotify");
-                    title=" 統一發票";
-                    if(month==1)
-                    {
-                        message=" 民國"+(year-1)+"年11-12月開獎";
-                    }
-                    else if(month==3)
-                    {
-                        message=" 民國"+year+"年1-2月開獎";
-                    } else if(month==5)
-                    {
-                        message=" 民國"+year+"年3-4月開獎";
-                    } else if(month==7)
-                    {
-                        message=" 民國"+year+"年5-6月開獎";
-                    } else if(month==9)
-                    {
-                        message=" 民國"+year+"年7-8月開獎";
-                    } else
-                    {
-                        message=" 民國"+year+"年9-10月開獎";
-                    }
-                    showNotification(title,message,context,id,activeI);
-                    id++;
-                }
-            }
-
-
-            List<GoalVO> goalVOS=goalDB.getNotify();
-            Log.d("service", String.valueOf(goalVOS.size()));
-            //set Goal
-            for (GoalVO goalVO:goalVOS)
-            {
-                String statue = goalVO.getNotifyStatue().trim();
-                if (statue.equals("每天")) {
-                    if (goalVO.isNoWeekend()) {
-                        if (dweek == 1 || dweek == 7) {
+                        if(!needNotify)
+                        {
+                            continue;
+                        }
+                    }else{
+                        //每年
+                        String fixdate = jsonObject.get("choicedate").getAsString().trim();
+                        fixdate = fixdate.substring(0, fixdate.indexOf("月"));
+                        int d = Integer.valueOf(fixdate) - 1;
+                        if (!(month == d && day == 1)) {
                             continue;
                         }
                     }
-                    setGoalNotification(goalVO,context);
+
+                    message = " 繳納" + consumeVO.getSecondType() + "費用:" + consumeVO.getMoney()+" 元";
+                    showNotification(title,message,context,id,activeI);
                     id++;
-                } else if (statue.equals("每周")) {
-                    HashMap<String, Integer> change = getStringtoInt();
-                    String dateStatue = goalVO.getNotifyDate().trim();
-                    if (dweek == change.get(dateStatue)) {
-                        setGoalNotification(goalVO,context);
-                        id++;
-                    }
-                } else if (statue.equals("每月")) {
-                    int max = date.getActualMaximum(Calendar.DAY_OF_MONTH);
-                    String dateStatue = goalVO.getNotifyDate().trim();
-                    dateStatue = dateStatue.substring(0, dateStatue.indexOf("日"));
-                    Log.d("service",dateStatue+" : "+day);
-                    if (dateStatue.equals(String.valueOf(day))) {
-                        setGoalNotification(goalVO,context);
-                        id++;
-                    }
-                    if (day == max && Integer.valueOf(dateStatue) > day) {
-                        setGoalNotification(goalVO,context);
-                        id++;
-                    }
-                } else {
-                    String fixdate = goalVO.getNotifyDate().trim();
-                    fixdate = fixdate.substring(0, fixdate.indexOf("月"));
-                    int d = Integer.valueOf(fixdate) - 1;
-                    if (month == d && day == 1) {
-                        setGoalNotification(goalVO,context);
+                }
+
+                Calendar calendar = Calendar.getInstance();
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                int month = calendar.get(Calendar.MONTH) + 1;
+                int year=calendar.get(Calendar.YEAR)-1911;
+                if (month == 1 || month == 3 || month == 5 || month == 7 || month == 9 || month == 11) {
+                    if (day == 25) {
+                        //統一發票 通知
+                        activeI=new Intent(context,Welcome.class);
+                        activeI.setAction("nulPriceNotify");
+                        title=" 統一發票";
+                        if(month==1)
+                        {
+                            message=" 民國"+(year-1)+"年11-12月開獎";
+                        }
+                        else if(month==3)
+                        {
+                            message=" 民國"+year+"年1-2月開獎";
+                        } else if(month==5)
+                        {
+                            message=" 民國"+year+"年3-4月開獎";
+                        } else if(month==7)
+                        {
+                            message=" 民國"+year+"年5-6月開獎";
+                        } else if(month==9)
+                        {
+                            message=" 民國"+year+"年7-8月開獎";
+                        } else
+                        {
+                            message=" 民國"+year+"年9-10月開獎";
+                        }
+                        showNotification(title,message,context,id,activeI);
                         id++;
                     }
                 }
+
+
+                List<GoalVO> goalVOS=goalDB.getNotify();
+                Log.d("service", String.valueOf(goalVOS.size()));
+                //set Goal
+                for (GoalVO goalVO:goalVOS)
+                {
+                    String statue = goalVO.getNotifyStatue().trim();
+                    if (statue.equals("每天")) {
+                        if (goalVO.isNoWeekend()) {
+                            if (dweek == 1 || dweek == 7) {
+                                continue;
+                            }
+                        }
+                        setGoalNotification(goalVO,context);
+                        id++;
+                    } else if (statue.equals("每周")) {
+                        HashMap<String, Integer> change = getStringtoInt();
+                        String dateStatue = goalVO.getNotifyDate().trim();
+                        if (dweek == change.get(dateStatue)) {
+                            setGoalNotification(goalVO,context);
+                            id++;
+                        }
+                    } else if (statue.equals("每月")) {
+                        int max = date.getActualMaximum(Calendar.DAY_OF_MONTH);
+                        String dateStatue = goalVO.getNotifyDate().trim();
+                        dateStatue = dateStatue.substring(0, dateStatue.indexOf("日"));
+                        Log.d("service",dateStatue+" : "+day);
+                        if (dateStatue.equals(String.valueOf(day))) {
+                            setGoalNotification(goalVO,context);
+                            id++;
+                        }
+                        if (day == max && Integer.valueOf(dateStatue) > day) {
+                            setGoalNotification(goalVO,context);
+                            id++;
+                        }
+                    } else {
+                        String fixdate = goalVO.getNotifyDate().trim();
+                        fixdate = fixdate.substring(0, fixdate.indexOf("月"));
+                        int d = Integer.valueOf(fixdate) - 1;
+                        if (month == d && day == 1) {
+                            setGoalNotification(goalVO,context);
+                            id++;
+                        }
+                    }
+                }
             }
+        }catch (Exception e)
+        {
+
         }
     }
 
