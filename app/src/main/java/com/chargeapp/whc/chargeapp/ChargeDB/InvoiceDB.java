@@ -477,7 +477,7 @@ public class InvoiceDB {
     }
 
     public HashMap<String,Double> getInvoiceByTimeHashMap(long start, long end) {
-        String sql = "SELECT maintype,realAmount,currency FROM INVOICE  where time between '"+start+"' and '"+end+"' order by amount desc;";
+        String sql = "SELECT maintype,realAmount,currency FROM INVOICE  where time between '"+start+"' and '"+end+"' order by realAmount desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         HashMap<String,Double> hashMap=new HashMap<>();
@@ -686,7 +686,7 @@ public class InvoiceDB {
     public InvoiceVO findOldInvoiceVO(InvoiceVO oldInvoiceVO) {
         String sql = "SELECT * FROM INVOICE  where maintype ='"+oldInvoiceVO.getMaintype()+"' " +
                 "and  secondtype = '"+oldInvoiceVO.getSecondtype()+"' and " +
-                "time = '"+oldInvoiceVO.getTime().getTime()+"' and amount = '"+oldInvoiceVO.getRealAmount()+"';";
+                "time = '"+oldInvoiceVO.getTime().getTime()+"' and realAmount = '"+oldInvoiceVO.getRealAmount()+"';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         InvoiceVO invoiceVO=null;
@@ -721,7 +721,7 @@ public class InvoiceDB {
 
     public InvoiceVO findOldByNulAmount(String nul,int amount) {
         String sql = "SELECT * FROM INVOICE  where "+
-                "invNum = '"+nul+"' and amount = '"+amount+"';";
+                "invNum = '"+nul+"' and realAmount = '"+amount+"';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         InvoiceVO invoiceVO=null;

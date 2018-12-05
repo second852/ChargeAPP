@@ -21,7 +21,6 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,7 +29,7 @@ import java.util.List;
  * Created by 1709008NB01 on 2018/3/13.
  */
 
-public class SimpleWidgetProvider extends AppWidgetProvider {
+public class SimpleWidgetProviderSmall extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -53,11 +52,11 @@ public class SimpleWidgetProvider extends AppWidgetProvider {
                 Intent intent = new Intent(context, Welcome.class);
                 if(springItem.size()>0)
                 {
-                    remoteViews.setBitmap(R.id.imageView, "setImageBitmap",encodeAsBitmap(springItem.get(b), BarcodeFormat.CODE_39, 600, 100));
-                    remoteViews.setTextViewText(R.id.text,springItem.get(b));
+                    remoteViews.setBitmap(R.id.imageView, "setImageBitmap",encodeAsBitmap(springItem.get(b), BarcodeFormat.CODE_39, 1000, 200));
+//                    remoteViews.setTextViewText(R.id.text,springItem.get(b));
                     remoteViews.setViewVisibility(R.id.imageView, View.VISIBLE);
                 }else{
-                    remoteViews.setTextViewText(R.id.text,"無載具，請點擊新增載具");
+//                    remoteViews.setTextViewText(R.id.text,"無載具，請點擊新增載具");
                     remoteViews.setViewVisibility(R.id.imageView, View.GONE);
                 }
                 intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);

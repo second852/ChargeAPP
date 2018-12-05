@@ -147,9 +147,9 @@ public class EleSetCarrier extends Fragment {
     {
         position=sharedPreferences.getInt("carrier",0);
         carrierlist=carrierDB.getAll();
-        Intent intent = new Intent(context, SimpleWidgetProvider.class);
+        Intent intent = new Intent(context, SimpleWidgetProviderBig.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        int[] ids = AppWidgetManager.getInstance(context.getApplication()).getAppWidgetIds(new ComponentName(context.getApplication(), SimpleWidgetProvider.class));
+        int[] ids = AppWidgetManager.getInstance(context.getApplication()).getAppWidgetIds(new ComponentName(context.getApplication(), SimpleWidgetProviderBig.class));
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         context.sendBroadcast(intent);
         if(carrierlist!=null&&carrierlist.size()>0)

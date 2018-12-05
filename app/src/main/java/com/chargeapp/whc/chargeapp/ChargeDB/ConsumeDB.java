@@ -351,7 +351,7 @@ public class ConsumeDB {
     }
 
     public HashMap<String, Double> getTimePeriodHashMap(long startTime, long endTime) {
-        String sql = "SELECT maintype,realMoney,currency FROM Consumer where  date between '" + startTime + "' and '" + endTime + "' order by money desc ;";
+        String sql = "SELECT maintype,realMoney,currency FROM Consumer where  date between '" + startTime + "' and '" + endTime + "' order by realMoney desc ;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         HashMap<String, Double> hashMap = new HashMap<>();
@@ -535,7 +535,7 @@ public class ConsumeDB {
     public ConsumeVO findOldCon(ConsumeVO consumeVO) {
         String sql = "SELECT * FROM Consumer where maintype = '" + consumeVO.getMaintype() + "' " +
                 "and secondtype = '" + consumeVO.getSecondType() + "' and date = '" + consumeVO.getDate().getTime() + "'" +
-                "and money = '" + consumeVO.getRealMoney() + "';";
+                "and realMoney = '" + consumeVO.getRealMoney() + "';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         ConsumeVO c = null;

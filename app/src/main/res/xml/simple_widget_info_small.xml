@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="210dp"
+    android:minHeight="30dp"
+    android:updatePeriodMillis="1800000"
+    android:initialLayout="@layout/simple_widget_small"
+    android:resizeMode="horizontal|vertical"
+    android:widgetCategory="home_screen"
+    android:previewImage="@drawable/barcodep">
+</appwidget-provider>

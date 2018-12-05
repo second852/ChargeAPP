@@ -751,6 +751,7 @@ public class InsertSpend extends Fragment {
             money.setText("");
             fixDate.setChecked(false);
             number.setText("");
+            numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate, money, context, numberKeyBoard, new StringBuilder(), true));
 //            choiceStatue.setBottom(0);
 //            choiceday.setSelection(0);
         }

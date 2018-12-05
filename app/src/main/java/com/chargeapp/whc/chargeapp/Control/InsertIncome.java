@@ -686,6 +686,7 @@ public class InsertIncome extends Fragment {
             money.setText("");
             fixdate.setChecked(false);
             detailname.setText("");
+            numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,new StringBuilder(),true));
 //            choiceStatue.setSelection(0);
 //            choiceday.setSelection(0);
         }

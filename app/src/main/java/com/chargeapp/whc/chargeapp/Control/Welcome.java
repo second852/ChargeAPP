@@ -77,19 +77,41 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
         Common.setChargeDB(this);
-//        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Currency;");
         Common.insertNewTableCol();
-
-
-//        InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-//        invoiceDB.deleteBytime(Timestamp.valueOf("2018-11-04 00:00:00"));
-//
-//        ElePeriodDB ele=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
-//        ele.deleteByCARNUL("/2RDO8+P");
-//        new GetSQLDate(this).execute("download");
         new Thread(runnable).start();
         new Thread(modifyMoneyFromIntegerToString).start();
         new Thread(downloadCurrency).start();
+    }
+
+
+   private void testConsume()
+   {
+        Common.setChargeDB(this);
+        Common.insertNewTableCol();
+        ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        for(ConsumeVO consumeVO:consumeDB.getAll())
+        {
+            ConsumeVO c=consumeDB.findOldCon(consumeVO);
+            if(c==null)
+            {
+                Log.d("XXXXX","Id :"+consumeVO.getId());
+            }
+        }
+
+   }
+
+
+
+    private void testInvoiceDownload()
+    {
+
+        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Currency;");
+        InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB.deleteBytime(Timestamp.valueOf("2018-11-04 00:00:00"));
+
+        ElePeriodDB ele=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        ele.deleteByCARNUL("/2RDO8+P");
+        new GetSQLDate(this).execute("download");
     }
 
     //將conume and invoice to String
