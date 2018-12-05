@@ -686,7 +686,7 @@ public class InvoiceDB {
     public InvoiceVO findOldInvoiceVO(InvoiceVO oldInvoiceVO) {
         String sql = "SELECT * FROM INVOICE  where maintype ='"+oldInvoiceVO.getMaintype()+"' " +
                 "and  secondtype = '"+oldInvoiceVO.getSecondtype()+"' and " +
-                "time = '"+oldInvoiceVO.getTime().getTime()+"' and amount = '"+oldInvoiceVO.getAmount()+"';";
+                "time = '"+oldInvoiceVO.getTime().getTime()+"' and amount = '"+oldInvoiceVO.getRealAmount()+"';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         InvoiceVO invoiceVO=null;

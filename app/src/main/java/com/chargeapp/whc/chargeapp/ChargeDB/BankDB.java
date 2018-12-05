@@ -173,7 +173,7 @@ public class BankDB {
     }
 
     public BankVO getFindOldBank(BankVO bankVO) {
-        String sql = "SELECT * FROM BANK where maintype = '" + bankVO.getMaintype() + "' and money = '" + bankVO.getMoney() + "' and date = '" + bankVO.getDate().getTime() + "';";
+        String sql = "SELECT * FROM BANK where maintype = '" + bankVO.getMaintype() + "' and money = '" + bankVO.getRealMoney() + "' and date = '" + bankVO.getDate().getTime() + "';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         BankVO b = null;

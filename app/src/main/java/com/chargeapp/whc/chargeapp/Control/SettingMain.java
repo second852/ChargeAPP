@@ -112,6 +112,7 @@ public class SettingMain extends Fragment {
     {
         context.deleteDatabase("ChargeAPP");
         MainActivity.chargeAPPDB=new ChargeAPPDB(context);
+        Common.insertNewTableCol();
         new Download().setData();
     }
 

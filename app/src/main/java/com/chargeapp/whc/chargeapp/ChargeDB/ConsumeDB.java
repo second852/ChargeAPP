@@ -535,7 +535,7 @@ public class ConsumeDB {
     public ConsumeVO findOldCon(ConsumeVO consumeVO) {
         String sql = "SELECT * FROM Consumer where maintype = '" + consumeVO.getMaintype() + "' " +
                 "and secondtype = '" + consumeVO.getSecondType() + "' and date = '" + consumeVO.getDate().getTime() + "'" +
-                "and money = '" + consumeVO.getMoney() + "';";
+                "and money = '" + consumeVO.getRealMoney() + "';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         ConsumeVO c = null;
