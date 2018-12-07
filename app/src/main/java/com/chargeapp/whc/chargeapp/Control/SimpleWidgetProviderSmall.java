@@ -48,15 +48,15 @@ public class SimpleWidgetProviderSmall extends AppWidgetProvider {
             for (int i = 0; i < count; i++) {
                 int widgetId = appWidgetIds[i];
                 RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
-                        R.layout.simple_widget);
+                        R.layout.simple_widget_small);
                 Intent intent = new Intent(context, Welcome.class);
                 if(springItem.size()>0)
                 {
-                    remoteViews.setBitmap(R.id.imageView, "setImageBitmap",encodeAsBitmap(springItem.get(b), BarcodeFormat.CODE_39, 1000, 200));
-//                    remoteViews.setTextViewText(R.id.text,springItem.get(b));
+                    remoteViews.setBitmap(R.id.imageView, "setImageBitmap",encodeAsBitmap(springItem.get(b), BarcodeFormat.CODE_39, 600, 100));
+                    remoteViews.setTextViewText(R.id.text,springItem.get(b));
                     remoteViews.setViewVisibility(R.id.imageView, View.VISIBLE);
                 }else{
-//                    remoteViews.setTextViewText(R.id.text,"無載具，請點擊新增載具");
+                    remoteViews.setTextViewText(R.id.text,"無載具，請點擊新增載具");
                     remoteViews.setViewVisibility(R.id.imageView, View.GONE);
                 }
                 intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
