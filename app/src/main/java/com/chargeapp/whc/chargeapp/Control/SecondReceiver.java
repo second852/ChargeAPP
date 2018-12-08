@@ -15,9 +15,11 @@ import android.util.Log;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
@@ -46,6 +48,8 @@ public class SecondReceiver extends BroadcastReceiver {
     private String detail;
     private Gson gson;
     private int year,month,day,dweek;
+    private CurrencyDB currencyDB;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -66,7 +70,7 @@ public class SecondReceiver extends BroadcastReceiver {
             invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
             bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
             goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
-
+            currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
             //Detail
             gson=new Gson();
             Calendar date = Calendar.getInstance();
@@ -134,7 +138,7 @@ public class SecondReceiver extends BroadcastReceiver {
                         }
                     }
 
-                    message = " 繳納" + consumeVO.getSecondType() + "費用:" + consumeVO.getMoney()+" 元";
+                    message = " 繳納" + consumeVO.getSecondType() + "費用:" + Common.getCurrency(consumeVO.getCurrency())+consumeVO.getRealMoney();
                     showNotification(title,message,context,id,activeI);
                     id++;
                 }
@@ -228,127 +232,140 @@ public class SecondReceiver extends BroadcastReceiver {
 
     private void setGoalNotification(GoalVO goalVO,Context context) {
 
-//        String timeStatue=goalVO.getTimeStatue().trim();
-//        int consumeCount=0;
-//        String title="",message="";
-//        Calendar now=Calendar.getInstance();
-//        Calendar start,end;
-//        int year=now.get(Calendar.YEAR);
-//        int month=now.get(Calendar.MONTH);
-//        int day=now.get(Calendar.DAY_OF_MONTH);
-//        int dweek=now.get(Calendar.DAY_OF_WEEK);
-//
-//
-//        if(goalVO.getType().trim().equals("支出"))
-//        {
-//            if(timeStatue.equals("每天"))
-//            {
-//                start=new GregorianCalendar(year,month,day,0,0,0);
-////                consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()))+
-////                        invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(System.currentTimeMillis()));
-//                message=" 花費 : 本日支出"+consumeCount+"元";
-//            }else if(timeStatue.equals("每周"))
-//            {
-//                start=new GregorianCalendar(year,month,day-dweek+1,0,0,0);
-//                end=new GregorianCalendar(year,month,day,23,59,59);
-////                consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
-////                        invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
-//                message=" 花費 : 本周支出"+consumeCount+"元";
-//            }else if(timeStatue.equals("每月"))
-//            {
-//                start=new GregorianCalendar(year,month,1,0,0,0);
-//                end=new GregorianCalendar(year,month,day,23,59,59);
-//                consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
-//                        invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
-//                message=" 花費 : 本月支出"+consumeCount+"元";
-//            }else if(timeStatue.equals("每年"))
-//            {
-//                int max=now.getActualMaximum(Calendar.DAY_OF_MONTH);
-//                start=new GregorianCalendar(year,month,1,0,0,0);
-//                end=new GregorianCalendar(year,month,max,23,59,59);
-////                consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
-////                        invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
-//                message=" 花費 : 本年支出"+consumeCount+"元";
-//            }
-//            title=" 目標 : "+goalVO.getName()+" "+goalVO.getTimeStatue()+"支出"+goalVO.getMoney()+"元";
-//        }else {
-//            if(timeStatue.equals("今日"))
-//            {
-//
-////                consumeCount=consumeDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()),new Timestamp(goalVO.getEndTime().getTime()))+
-////                        invoiceDB.getTotalBytime(new Timestamp(goalVO.getStartTime().getTime()),new Timestamp(goalVO.getEndTime().getTime()));
-////                int saveMoney=bankDB.getTimeTotal(new Timestamp(goalVO.getStartTime().getTime()),new Timestamp(goalVO.getEndTime().getTime()))-consumeCount;
-//
-//                if(goalVO.getEndTime().getTime()<System.currentTimeMillis())
-//                {
-//                    title=" 目標 :"+goalVO.getName()+" "+Common.sTwo.format(goalVO.getEndTime())+"前儲蓄"+goalVO.getMoney()+"元";
-//                    if(Integer.valueOf(goalVO.getMoney())<saveMoney)
-//                    {
-//                        goalVO.setStatue(1);
-//                        goalVO.setNotify(false);
-//                        message=Common.sTwo.format(goalVO.getEndTime())+"前已儲蓄"+saveMoney+"元 達成";
-//                    }else{
-//                        goalVO.setStatue(2);
-//                        goalVO.setNotify(false);
-//                        message=Common.sTwo.format(goalVO.getEndTime())+"前已儲蓄"+saveMoney+"元 失敗";
-//                    }
-//                    goalDB.update(goalVO);
-//                }else{
-//                    title=" 目標 :"+goalVO.getName()+" "+Common.sTwo.format(goalVO.getEndTime())+"前儲蓄"+goalVO.getMoney()+"元";
-//                    double remainday=Double.valueOf(goalVO.getEndTime().getTime()-System.currentTimeMillis())/(1000*60*60*24);
-//                    if(remainday<1)
-//                    {
-//                        double remainhour=remainday*24;
-//                        if(remainhour<1)
-//                        {
-//                            double remainMin=remainhour*60;
-//                            message=" 倒數"+(int)remainMin+"分鐘";
-//
-//                        }else{
-//                            message=" 倒數"+(int)remainhour+"小時";
-//                        }
-//
-//                    }else {
-//                        message=" 倒數"+(int)remainday+"天";
-//                    }
-//
-//
-//                    if(Integer.valueOf(goalVO.getMoney())<saveMoney)
-//                    {
-//                        goalVO.setStatue(1);
-//                        message=message+" 目前已儲蓄"+saveMoney+"元 達成";
+        String timeStatue=goalVO.getTimeStatue().trim();
+        double consumeCount=0;
+        String title="",message="";
+        Calendar now=Calendar.getInstance();
+        Calendar start,end;
+        int year=now.get(Calendar.YEAR);
+        int month=now.get(Calendar.MONTH);
+        int day=now.get(Calendar.DAY_OF_MONTH);
+        int dweek=now.get(Calendar.DAY_OF_WEEK);
+
+
+
+        if(goalVO.getType().trim().equals("支出"))
+        {
+            if(timeStatue.equals("每天"))
+            {
+
+                start=new GregorianCalendar(year,month,day,0,0,0);
+                end=new GregorianCalendar(year,month,day,23,59,59);
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
+                consumeCount=consumeDB.getTimePeriodHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total")+
+                        invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
+                consumeCount=consumeCount/Double.valueOf(currencyVO.getMoney());
+                message=" 花費 : 本日支出"+Common.CurrencyResult(consumeCount,currencyVO);
+            }else if(timeStatue.equals("每周"))
+            {
+                start=new GregorianCalendar(year,month,day-dweek+1,0,0,0);
+                end=new GregorianCalendar(year,month,day,23,59,59);
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
+                consumeCount=consumeDB.getTimePeriodHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total")+
+                        invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
+                message=" 花費 : 本周支出"+Common.CurrencyResult(consumeCount,currencyVO);
+            }else if(timeStatue.equals("每月"))
+            {
+                int max=now.getActualMaximum(Calendar.DAY_OF_MONTH);
+                start=new GregorianCalendar(year,month,1,0,0,0);
+                end=new GregorianCalendar(year,month,max,23,59,59);
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
+                consumeCount=consumeDB.getTimePeriodHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total")+
+                        invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
+                message=" 花費 : 本月支出"+Common.CurrencyResult(consumeCount,currencyVO);
+            }else if(timeStatue.equals("每年"))
+            {
+                start=new GregorianCalendar(year,0,1,0,0,0);
+                end=new GregorianCalendar(year,11,31,23,59,59);
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
+                consumeCount=consumeDB.getTimePeriodHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total")+
+                        invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
+                message=" 花費 : 本年支出"+Common.CurrencyResult(consumeCount,currencyVO);
+            }
+            title=" 目標 : "+goalVO.getName()+" "+goalVO.getTimeStatue()+"支出"+Common.getCurrency(goalVO.getCurrency())+goalVO.getRealMoney();
+        }else {
+            if(timeStatue.equals("今日"))
+            {
+
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(goalVO.getStartTime().getTime(),goalVO.getEndTime().getTime(),goalVO.getCurrency());
+                consumeCount=consumeDB.getTimePeriodHashMap(goalVO.getStartTime().getTime(),goalVO.getEndTime().getTime()).get("total")+
+                        invoiceDB.getInvoiceByTimeHashMap(goalVO.getStartTime().getTime(),goalVO.getEndTime().getTime()).get("total");
+                double saveMoney=bankDB.getTimeTotal(goalVO.getStartTime().getTime(),goalVO.getEndTime().getTime())-consumeCount;
+                saveMoney=saveMoney/Double.valueOf(currencyVO.getMoney());
+
+                if(goalVO.getEndTime().getTime()<System.currentTimeMillis())
+                {
+                    title=" 目標 :"+goalVO.getName()+" "+Common.sTwo.format(goalVO.getEndTime())+"前儲蓄"+Common.getCurrency(goalVO.getCurrency())+goalVO.getRealMoney();
+                    if(Double.valueOf(goalVO.getRealMoney())<saveMoney)
+                    {
+                        goalVO.setStatue(1);
+                        goalVO.setNotify(false);
+                        message=Common.sTwo.format(goalVO.getEndTime())+"前已儲蓄"+Common.goalCurrencyResult(saveMoney,goalVO.getCurrency())+" 達成";
+                    }else{
+                        goalVO.setStatue(2);
+                        goalVO.setNotify(false);
+                        message=Common.sTwo.format(goalVO.getEndTime())+"前已儲蓄"+Common.goalCurrencyResult(saveMoney,goalVO.getCurrency())+" 失敗";
+                    }
+                    goalDB.update(goalVO);
+                }else{
+                    title=" 目標 :"+goalVO.getName()+" "+Common.sTwo.format(goalVO.getEndTime())+"前儲蓄"+Common.goalCurrencyResult(
+                            Double.valueOf(goalVO.getRealMoney()),goalVO.getCurrency());
+                    double remainday=Double.valueOf(goalVO.getEndTime().getTime()-System.currentTimeMillis())/(1000*60*60*24);
+                    if(remainday<1)
+                    {
+                        double remainhour=remainday*24;
+                        if(remainhour<1)
+                        {
+                            double remainMin=remainhour*60;
+                            message=" 倒數"+(int)remainMin+"分鐘";
+
+                        }else{
+                            message=" 倒數"+(int)remainhour+"小時";
+                        }
+
+                    }else {
+                        message=" 倒數"+(int)remainday+"天";
+                    }
+
+
+                    if(Double.valueOf(goalVO.getRealMoney())<saveMoney)
+                    {
+                        goalVO.setStatue(1);
+                        message=message+" 目前已儲蓄"+Common.goalCurrencyResult(saveMoney,goalVO.getCurrency())+" 達成";
 //                        goalDB.update(goalVO);
-//                    }else{
-//                        message=message+" 目前已儲蓄"+saveMoney+"元";
-//                    }
-//                }
-//            }else if(timeStatue.equals("每月"))
-//            {
-//                int max=now.getActualMaximum(Calendar.DAY_OF_MONTH);
-//                start=new GregorianCalendar(year,month,1,0,0,0);
-//                end=new GregorianCalendar(year,month,max,23,59,59);
-//                consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
-//                        invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
-//                int savemoney=bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))-consumeCount;
-//                title=" 目標 :"+goalVO.getName()+" 每月儲蓄"+goalVO.getMoney()+"元";
-//                message=" 目前 : 本月已存款"+savemoney+"元";
-//            }else if(timeStatue.equals("每年"))
-//            {
-//                start=new GregorianCalendar(year,0,1,0,0,0);
-//                end=new GregorianCalendar(year,11,31,23,59,59);
-//                consumeCount=consumeDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))+
-//                        invoiceDB.getTotalBytime(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()));
-//                int savemoney=bankDB.getTimeTotal(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()))-consumeCount;
-//                title=" 目標 :"+goalVO.getName()+" 每年儲蓄"+goalVO.getMoney()+"元";
-//                message=" 目前 : 本年已存款"+savemoney+"元";
-//            }
-//        }
-//        if(title.trim().length()>0)
-//        {
-//            Intent activeI =new Intent(context,Welcome.class);
-//            activeI.setAction("goal");
-//            showNotification(title,message,context,this.id,activeI);
-//        }
+                    }else{
+                        message=message+" 目前已儲蓄"+Common.goalCurrencyResult(saveMoney,goalVO.getCurrency());
+                    }
+                }
+            }else if(timeStatue.equals("每月"))
+            {
+                int max=now.getActualMaximum(Calendar.DAY_OF_MONTH);
+                start=new GregorianCalendar(year,month,1,0,0,0);
+                end=new GregorianCalendar(year,month,max,23,59,59);
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
+                consumeCount=consumeDB.getTimePeriodHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total")+
+                        invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
+                double saveMoney=bankDB.getTimeTotal(start.getTimeInMillis(),end.getTimeInMillis())-consumeCount;
+                title=" 目標 :"+goalVO.getName()+" 每月儲蓄"+Common.goalCurrencyResult(Double.valueOf(goalVO.getRealMoney()),goalVO.getCurrency());
+                message=" 目前 : 本月已存款"+Common.CurrencyResult(saveMoney,currencyVO);
+            }else if(timeStatue.equals("每年"))
+            {
+                start=new GregorianCalendar(year,0,1,0,0,0);
+                end=new GregorianCalendar(year,11,31,23,59,59);
+                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
+                consumeCount=consumeDB.getTimePeriodHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total")+
+                        invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
+                double saveMoney=bankDB.getTimeTotal(start.getTimeInMillis(),end.getTimeInMillis())-consumeCount;
+                title=" 目標 :"+goalVO.getName()+" 每年儲蓄"+Common.goalCurrencyResult(Double.valueOf(goalVO.getRealMoney()),goalVO.getCurrency());
+                message=" 目前 : 本年已存款"+Common.CurrencyResult(saveMoney,currencyVO);
+            }
+        }
+        if(title.trim().length()>0)
+        {
+            Intent activeI =new Intent(context,Welcome.class);
+            activeI.setAction("goal");
+            showNotification(title,message,context,this.id,activeI);
+        }
     }
 
     private void showNotification(String title,String message,Context context,int NOTIFICATION_ID,Intent intent) {

@@ -277,6 +277,11 @@ public class Common {
         return  getCurrency(currencyVO.getType())+" "+doubleRemoveZero(total);
     }
 
+    public static String goalCurrencyResult(Double total,String currency)
+    {
+        return  getCurrency(currency)+" "+doubleRemoveZero(total);
+    }
+
 
     public static HashMap<String,String> Currency()
     {
