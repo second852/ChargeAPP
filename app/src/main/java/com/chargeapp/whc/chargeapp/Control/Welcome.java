@@ -122,28 +122,28 @@ public class Welcome extends AppCompatActivity {
         public void run() {
             Common.setChargeDB(Welcome.this);
             Common.insertNewTableCol();
-            ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
             List<ConsumeVO> consumeVOS=consumeDB.getRealMoneyIsNull();
             for(ConsumeVO consumeVO:consumeVOS)
             {
                 consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
                 consumeDB.update(consumeVO);
             }
-            InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getWritableDatabase());
             List<InvoiceVO> invoiceVOS=invoiceDB.getRealAmountIsNull();
             for(InvoiceVO invoiceVO:invoiceVOS)
             {
                 invoiceVO.setRealAmount(String.valueOf(invoiceVO.getAmount()));
                 invoiceDB.update(invoiceVO);
             }
-            BankDB bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            BankDB bankDB=new BankDB(MainActivity.chargeAPPDB.getWritableDatabase());
             List<BankVO> bankVOS=bankDB.getrealMoneyIsNullAll();
             for(BankVO bankVO:bankVOS)
             {
                 bankVO.setRealMoney(String.valueOf(bankVO.getMoney()));
                 bankDB.update(bankVO);
             }
-            GoalDB goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            GoalDB goalDB=new GoalDB(MainActivity.chargeAPPDB.getWritableDatabase());
             List<GoalVO> goalVOS=goalDB.getRealMoneyIsNull();
             for(GoalVO goalVO:goalVOS)
             {

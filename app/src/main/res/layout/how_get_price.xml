@@ -8,11 +8,13 @@
     android:orientation="vertical"
     tools:context="com.chargeapp.whc.chargeapp.Control.MainActivity">
     <TextView
-        android:id="@+id/needcarrier"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#000000"
         android:textSize="20sp"
+        android:text="兌獎方式"
+        android:gravity="center"
+        android:layout_marginTop="15dp"
         />
     <ListView
         android:layout_marginTop="10dp"

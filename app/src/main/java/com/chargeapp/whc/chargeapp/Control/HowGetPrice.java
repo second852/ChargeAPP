@@ -31,7 +31,7 @@ import java.util.List;
 
 
 public class HowGetPrice extends Fragment {
-    private TextView needcarrier;
+
     private ListView list;
     private Activity context;
     private DrawerLayout drawerLayout;
@@ -50,13 +50,13 @@ public class HowGetPrice extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         context.setTitle(R.string.text_HowGet);;
         final View view = inflater.inflate(R.layout.how_get_price, container, false);
-        needcarrier = view.findViewById(R.id.needcarrier);
-        needcarrier.setText("1.需攜帶中獎發票、中獎人印章、身分證到郵局領獎。\n\n2.無實體發票需列印出來，並攜帶此中獎發票、中獎人印章、身分證到郵局領獎。如果手機載具有綁定帳戶，不需要上述步驟，會自動匯到該戶頭。\n\n3.特別獎、特獎、頭獎及無實體雲端發票專屬百萬獎：中獎金額20萬元以上（含20萬元），請至25處指定郵局儲匯窗口兌領。");
+//        needcarrier.setText("1.需攜帶中獎發票和身分證。\n\n2.無實體發票需列印出來，並攜帶此中獎發票和身分證到郵局領獎。如果手機載具有綁定帳戶，不需要上述步驟，會自動匯到該戶頭。");
         list = view.findViewById(R.id.list);
         List<String> title = new ArrayList<>();
-        title.add("如何印無實體中獎發票");
-        title.add("25處指定郵局兌領位置");
-        title.add("雲端發票綁定銀行帳戶\n(財政部網站)");
+        title.add("據點");
+        title.add("第一銀行、彰化銀行、全國農業金庫、金門縣信用合作社、連江縣農會信用部");
+        title.add("四大超商、全聯、美聯社");
+        title.add("統一發票兌獎APP");
         list.setAdapter(new ListAdapter(context, title));
         drawerLayout = this.context.findViewById(R.id.drawer_layout);
         ViewTreeObserver vto = view.getViewTreeObserver();
@@ -105,31 +105,42 @@ public class HowGetPrice extends Fragment {
         public View getView(final int position, View itemView, final ViewGroup parent) {
             if (itemView == null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
-                itemView = layoutInflater.inflate(R.layout.ele_hand_item, parent, false);
+                itemView = layoutInflater.inflate(R.layout.how_adapter_item, parent, false);
             }
-            final Button cardView = itemView.findViewById(R.id.cardview);
-            cardView.setText(strings.get(position));
-            cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (position == 0) {
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("http://event.family.com.tw/2016_invoice/invoice.html"));
-                        startActivity(intent);
-                    } else if (position == 1) {
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("https://www.post.gov.tw/post/internet/B_saving/index.jsp?ID=30306#localpost"));
-                        startActivity(intent);
-                    }  else if (position == 2) {
-                        Intent intent = new Intent();
-                        intent.setAction(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("https://www.einvoice.nat.gov.tw/APMEMBERVAN/GeneralCarrier/generalCarrier!login"));
-                        startActivity(intent);
-                    }
-                }
-            });
+            TextView port=itemView.findViewById(R.id.port);
+            TextView price=itemView.findViewById(R.id.price);
+            TextView time=itemView.findViewById(R.id.time);
+            switch (position)
+            {
+                case 0:
+                    port.setText(strings.get(0));
+                    price.setText("獎別");
+                    time.setText("服務時間");
+                    break;
+                case 1:
+                    port.setText(strings.get(1));
+                    price.setText("全部獎品");
+                    time.setText("於營業時間內兌換");
+                    break;
+                case 2:
+                    port.setText(strings.get(2));
+                    price.setText("二獎以下獎品\n雲端發票專屬千元獎");
+                    time.setText("於營業時間內兌換");
+                    break;
+                case 3:
+                    port.setText(strings.get(3));
+                    price.setText("五獎\n六獎");
+                    time.setText("9~23點(兌換現金、等值商品、儲值金)\n其餘時間(等值商品、儲值金)");
+                    break;
+                case 4:
+                    port.setText(strings.get(4));
+                    price.setText("全部獎項(此期開獎前以綁定回款帳戶)\n五獎、六獎(此期開獎後，需要電子平鎮)");
+                    time.setText("24小時皆可兌換");
+                    break;
+            }
+
+
+
             return itemView;
         }
     }
