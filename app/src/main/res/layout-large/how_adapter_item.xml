@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    >
+        <TextView
+            android:id="@+id/port"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="0.3"
+            android:textSize="25sp"
+            android:gravity="center"
+            android:background="@drawable/show_date_model_1"
+            android:textColor="#000000"/>
+        <TextView
+            android:id="@+id/price"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="0.3"
+            android:textSize="25sp"
+            android:background="@drawable/show_date_model_1"
+            android:gravity="center"
+            android:textColor="#000000"/>
+        <TextView
+            android:id="@+id/time"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:textSize="25sp"
+            android:background="@drawable/show_date_model_1"
+            android:gravity="center"
+            android:textColor="#000000"/>
+</LinearLayout>

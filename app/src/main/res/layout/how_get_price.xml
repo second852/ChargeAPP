@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#000000"
-        android:textSize="15sp"
+        android:textSize="18sp"
         android:text="1.準備身分證和實體發票\n"
         android:gravity="left"
         android:layout_marginTop="10dp"

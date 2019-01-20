@@ -33,6 +33,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.View;
 
 import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
@@ -148,6 +149,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         mBarcode = barcode;
         if(barcode==null)
         {
+            MultiTrackerActivity.result=null;
             postInvalidate();
             return;
         }
@@ -330,9 +332,9 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         {
             return;
         }
-        if(MultiTrackerActivity.result==null)
+        if(MultiTrackerActivity.result==null&&MultiTrackerActivity.answer.getVisibility()== View.VISIBLE)
         {
-            MultiTrackerActivity.answer.setText("請對準左邊QRCode~");
+            MultiTrackerActivity.answer.setText("1.請對準左邊QRCode~\n2.如果無法辨識，請手動兌獎!");
             return;
         }
 

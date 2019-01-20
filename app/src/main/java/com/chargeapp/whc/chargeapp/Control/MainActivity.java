@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     public View nowView;
     public boolean firstShowF;
     public static boolean firstShowInsertActivity;
+    public static GridView numberKeyBoard;
 
 
 
@@ -476,13 +478,16 @@ public class MainActivity extends AppCompatActivity {
                                 return;
                             } else if (i == 2) {
                                 PriceInvoice.first = true;
-                                if (firstShowInsertActivity) {
-                                    showFragment2(3);
-                                    firstShowInsertActivity = false;
-                                } else {
-                                    fragment = new PriceActivity();
-                                    switchFragment();
-                                }
+                                firstShowInsertActivity=false;
+                                fragment = new PriceActivity();
+                                switchFragment();
+//                                if (firstShowInsertActivity) {
+//                                    showFragment2(3);
+//                                    firstShowInsertActivity = false;
+//                                } else {
+//                                    fragment = new PriceActivity();
+//                                    switchFragment();
+//                                }
 
                                 Message message=new Message();
                                 message.obj= getResources().getString(R.string.text_Price);

@@ -64,7 +64,7 @@ public class HowGetPrice extends Fragment {
                 startActivity(intent);
             }
         });
-        needCarrier.setText("1.需攜帶中獎發票和身分證，到下列地點兌換。\n\n2.無實體發票需列印出來，並攜帶此中獎發票和身分證到到下列地點兌換。如果手機載具有綁定帳戶，不需要上述步驟，會自動匯到該戶頭。");
+        needCarrier.setText("1.需攜帶中獎發票和身分證，到下列地點兌換。\n2.無實體發票需列印出來，並攜帶此中獎發票和身分證到到下列地點兌換。如果手機載具有綁定帳戶，不需要上述步驟，會自動匯到該戶頭。");
         list = view.findViewById(R.id.list);
         List<String> title = new ArrayList<>();
         title.add("據點");
@@ -156,7 +156,7 @@ public class HowGetPrice extends Fragment {
                 case 4:
                     drawable=context.getResources().getDrawable(R.drawable.show_date_model_2);
                     port.setText(strings.get(4));
-                    price.setText("五獎、六獎(需要綁定匯款帳戶，掃描實體中獎發票上傳)");
+                    price.setText("五獎、六獎(需要實體中獎發票，用此APP上傳)");
                     time.setText("24小時皆可兌換");
                     break;
             }
