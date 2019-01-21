@@ -141,6 +141,7 @@ public class UpdateSpend extends Fragment {
         noWek.setOnCheckedChangeListener(new nowWekchange());
         qrcode.setOnClickListener(new QrCodeClick());
         number.setOnClickListener(new closeAllGridView());
+        number.setOnFocusChangeListener(new closeAllGridView());
         name.setOnClickListener(new showFirstG());
         name.setOnFocusChangeListener(new showFirstG());
         secondname.setOnClickListener(new showSecondG());
@@ -1290,12 +1291,17 @@ public class UpdateSpend extends Fragment {
         }
     }
 
-    private class closeAllGridView implements View.OnClickListener {
+    private class closeAllGridView implements View.OnClickListener, View.OnFocusChangeListener {
         @Override
         public void onClick(View view) {
             firstL.setVisibility(View.GONE);
             secondL.setVisibility(View.GONE);
             showdate.setVisibility(View.GONE);
+            numberKeyBoard.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onFocusChange(View view, boolean b) {
             numberKeyBoard.setVisibility(View.GONE);
         }
     }

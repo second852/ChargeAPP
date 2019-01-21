@@ -69,7 +69,7 @@ public class HowGetPrice extends Fragment {
         List<String> title = new ArrayList<>();
         title.add("據點");
         title.add("第一銀行、彰化銀行、全國農業金庫、金門縣信用合作社、連江縣農會信用部");
-        title.add("指定之信用合作社\n 農/漁會信用部");
+        title.add("指定之信用合作社、農/漁會信用部");
         title.add("四大超商、全聯、美聯社");
         title.add("統一發票兌獎APP");
         list.setDividerHeight(0);

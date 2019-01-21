@@ -183,7 +183,7 @@ public class SelectShowCircleDe extends Fragment {
             title=title.substring(0,title.indexOf("年")+1);
         }
         setLayout();
-        Common.setScreen(Common.screenSize,activity);
+
         return view;
     }
 
@@ -397,6 +397,7 @@ public class SelectShowCircleDe extends Fragment {
         pieChart.setOnChartValueSelectedListener(new pieValue());
         pieChart.setBackgroundColor(Color.parseColor("#f5f5f5"));
         PieDataSet dataSet = (PieDataSet) pieChart.getData().getDataSet();
+        Common.setScreen(Common.screenSize,activity);
         switch (Common.screenSize){
             case xLarge:
                 dataSet.setValueTextSize(25f);

@@ -264,7 +264,8 @@ public class SelectIncome extends Fragment {
         bankVOS = bankDB.getTimeAll(start.getTimeInMillis(), end.getTimeInMillis());
         for (BankVO b : bankVOS) {
             CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),b.getCurrency());
-            Double bankAmount=Double.valueOf(b.getRealMoney())*Double.valueOf(currencyVO.getMoney());
+            String money= (b.getRealMoney()==null)? String.valueOf(b.getMoney()):b.getRealMoney();
+            Double bankAmount=Double.valueOf(money)*Double.valueOf(currencyVO.getMoney());
             if (hashMap.get(b.getMaintype()) == null) {
                 hashMap.put(b.getMaintype(), bankAmount);
             } else {

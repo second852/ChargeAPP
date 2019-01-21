@@ -387,6 +387,7 @@ public class InsertSpend extends Fragment {
         noWek.setOnCheckedChangeListener(new nowWekchange());
         qrcode.setOnClickListener(new QrCodeClick());
         number.setOnClickListener(new closeAllGridView());
+        number.setOnFocusChangeListener(new closeAllGridView());
         name.setOnClickListener(new showFirstG());
         name.setOnFocusChangeListener(new showFirstG());
         name.setInputType(InputType.TYPE_NULL);
@@ -1068,7 +1069,7 @@ public class InsertSpend extends Fragment {
         }
     }
 
-    private class closeAllGridView implements View.OnClickListener {
+    private class closeAllGridView implements View.OnClickListener, View.OnFocusChangeListener {
 
 
         @Override
@@ -1078,6 +1079,14 @@ public class InsertSpend extends Fragment {
             secondL.setVisibility(View.GONE);
             showDate.setVisibility(View.GONE);
             numberKeyBoard.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onFocusChange(View view, boolean b) {
+            if(b)
+            {
+                numberKeyBoard.setVisibility(View.GONE);
+            }
         }
     }
 
