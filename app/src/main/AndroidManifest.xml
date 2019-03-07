@@ -53,20 +53,20 @@
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode,face" />
 
-        <receiver android:name=".Control.BootReceiver"/>
-        <receiver android:name=".Control.SecondReceiver" />
-        <receiver android:name=".Control.ThirdReceiver" />
+        <receiver android:name=".Control.Job.BootReceiver"/>
+        <receiver android:name=".Control.Job.SecondReceiver" />
+        <receiver android:name=".Control.Job.ThirdReceiver" />
 
         <service
-            android:name=".Control.JobSchedulerService"
+            android:name=".Control.Job.JobSchedulerService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
-            android:name=".Control.DowloadNewDataJob"
+            android:name=".Control.Job.DowloadNewDataJob"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <receiver
-            android:name=".Control.SimpleWidgetProviderBig"
+            android:name=".Control.Widge.SimpleWidgetProviderBig"
             android:label="手機載具(大)">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -78,7 +78,7 @@
         </receiver>
 
         <receiver
-            android:name=".Control.SimpleWidgetProviderSmall"
+            android:name=".Control.Widge.SimpleWidgetProviderSmall"
             android:label="手機載具(小)">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

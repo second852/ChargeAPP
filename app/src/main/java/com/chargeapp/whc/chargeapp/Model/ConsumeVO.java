@@ -1,6 +1,6 @@
 package com.chargeapp.whc.chargeapp.Model;
 
-import android.net.wifi.hotspot2.omadm.PpsMoParser;
+
 
 import java.io.Serializable;
 import java.sql.Date;

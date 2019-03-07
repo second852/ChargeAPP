@@ -5,21 +5,17 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.chargeapp.whc.chargeapp.Control.Common;
-import com.chargeapp.whc.chargeapp.Control.EleDonate;
+import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
-import com.chargeapp.whc.chargeapp.Control.SearchByQrCode;
+import com.chargeapp.whc.chargeapp.Control.Insert.SearchByQrCode;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
-import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
