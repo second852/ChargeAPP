@@ -283,7 +283,7 @@ public class EleDonate extends Fragment {
         public View getView(final int position, View itemView, final ViewGroup parent) {
             if (itemView == null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
-                itemView = layoutInflater.inflate(R.layout.ele_main_item, parent, false);
+                itemView = layoutInflater.inflate(R.layout.ele_set_item, parent, false);
             }
 
             //close BootstrapButton

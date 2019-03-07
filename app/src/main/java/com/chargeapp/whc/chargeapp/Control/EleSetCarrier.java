@@ -204,7 +204,7 @@ public class EleSetCarrier extends Fragment {
         public View getView(final int position, View itemView, final ViewGroup parent) {
             if (itemView == null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
-                itemView = layoutInflater.inflate(R.layout.ele_main_item, parent, false);
+                itemView = layoutInflater.inflate(R.layout.ele_set_item, parent, false);
             }
             final CarrierVO carrierVO = CarNulList.get(position);
             TextView tvId = (TextView) itemView.findViewById(R.id.tvId);

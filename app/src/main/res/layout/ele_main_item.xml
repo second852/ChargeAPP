@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:background="#DDDDDD"
@@ -9,8 +10,8 @@
     >
     <ImageView
         android:id="@+id/ivImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_centerVertical="true"
         android:layout_margin="10dp"
         android:padding="6dp" />
@@ -25,56 +26,7 @@
         android:layout_centerVertical="true"
         android:textSize="22sp"
         android:text="ID" />
-
-    <com.beardedhen.androidbootstrap.BootstrapButton
-        android:id="@+id/widgetShow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center_vertical"
-        android:layout_marginRight="8dp"
-        android:layout_toLeftOf="@+id/updateC"
-        android:gravity="center"
-        android:text="選取"
-        android:textColor="#000000"
-        app:bootstrapBrand="warning"
-        app:bootstrapSize="md"
-        app:buttonMode="regular"
-        app:roundedCorners="true" />
-    <com.beardedhen.androidbootstrap.BootstrapButton
-        android:id="@+id/updateC"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/deletecarrier"
-        android:layout_marginRight="8dp"
-        android:layout_gravity="center_vertical"
-        android:layout_centerVertical="true"
-        android:textColor="#000000"
-        android:visibility="visible"
-        android:text="修改"
-        android:gravity="center"
-        app:bootstrapSize="md"
-        app:bootstrapBrand="info"
-        app:roundedCorners="true"
-        app:buttonMode="regular"
-        />
-    <com.beardedhen.androidbootstrap.BootstrapButton
-        android:id="@+id/deletecarrier"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="8dp"
-        android:layout_gravity="center_vertical"
-        android:layout_centerVertical="true"
-        android:text="刪除"
-        android:textColor="#000000"
-        android:visibility="visible"
-        android:gravity="center"
-        app:bootstrapSize="md"
-        app:bootstrapBrand="danger"
-        app:roundedCorners="true"
-        app:buttonMode="regular"
-        />
+    .
     <ImageView
         android:id="@+id/ele_indicator"
         android:layout_width="wrap_content"

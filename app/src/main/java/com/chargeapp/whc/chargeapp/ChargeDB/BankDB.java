@@ -143,6 +143,7 @@ public class BankDB {
             bankVO.setAutoId(cursor.getInt(8));
             bankVO.setCurrency(cursor.getString(9));
             bankVO.setRealMoney(cursor.getString(10));
+            bankVO.setPropertyId(cursor.getInt(11));
             BankVOList.add(bankVO);
         }
         cursor.close();
@@ -167,6 +168,7 @@ public class BankDB {
             bankVO.setAutoId(cursor.getInt(8));
             bankVO.setCurrency(cursor.getString(9));
             bankVO.setRealMoney(cursor.getString(10));
+            bankVO.setPropertyId(cursor.getInt(11));
         }
         cursor.close();
         return bankVO;
@@ -190,6 +192,7 @@ public class BankDB {
             b.setAutoId(cursor.getInt(8));
             bankVO.setCurrency(cursor.getString(9));
             bankVO.setRealMoney(cursor.getString(10));
+            bankVO.setPropertyId(cursor.getInt(11));
         }
         cursor.close();
         return b;
@@ -243,6 +246,7 @@ public class BankDB {
             bankVO.setAutoId(cursor.getInt(8));
             bankVO.setCurrency(cursor.getString(9));
             bankVO.setRealMoney(cursor.getString(10));
+            bankVO.setPropertyId(cursor.getInt(11));
             BankVOList.add(bankVO);
         }
         cursor.close();
@@ -268,6 +272,7 @@ public class BankDB {
             bankVO.setAutoId(cursor.getInt(8));
             bankVO.setCurrency(cursor.getString(9));
             bankVO.setRealMoney(cursor.getString(10));
+            bankVO.setPropertyId(cursor.getInt(11));
             BankVOList.add(bankVO);
         }
         cursor.close();
@@ -293,6 +298,7 @@ public class BankDB {
             bankVO.setAutoId(cursor.getInt(8));
             bankVO.setCurrency(cursor.getString(9));
             bankVO.setRealMoney(cursor.getString(10));
+            bankVO.setPropertyId(cursor.getInt(11));
         }
         cursor.close();
         return bankVO;
@@ -310,6 +316,7 @@ public class BankDB {
         values.put("autoId", bankVO.getAutoId());
         values.put("currency", bankVO.getCurrency());
         values.put("realMoney", bankVO.getRealMoney());
+        values.put("propertyId", bankVO.getPropertyId());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -326,6 +333,7 @@ public class BankDB {
         values.put("autoId", bankVO.getAutoId());
         values.put("currency", bankVO.getCurrency());
         values.put("realMoney", bankVO.getRealMoney());
+        values.put("propertyId", bankVO.getPropertyId());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -341,6 +349,7 @@ public class BankDB {
         values.put("autoId", bankVO.getAutoId());
         values.put("currency", bankVO.getCurrency());
         values.put("realMoney", bankVO.getRealMoney());
+        values.put("propertyId", bankVO.getPropertyId());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(bankVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

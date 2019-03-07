@@ -383,16 +383,20 @@ public class Common {
     }
 
     public static void insertNewTableCol() {
-        colExist("Consumer","rdNumber");
-        colExist("Consumer","currency");
-        colExist("Consumer","realMoney");
-        colExist("INVOICE","currency");
-        colExist("INVOICE","realAmount");
-        colExist("BANK","currency");
-        colExist("BANK","realMoney");
-        colExist("Goal","currency");
-        colExist("Goal","realMoney");
         tableExist("Currency",ChargeAPPDB.TABLE_Currency);
+        tableExist("Property",ChargeAPPDB.TABLE_Property);
+        colExist("Consumer","rdNumber","text");
+        colExist("Consumer","currency","text");
+        colExist("Consumer","realMoney","text");
+        colExist("Consumer","propertyId","Integer");
+        colExist("INVOICE","currency","text");
+        colExist("INVOICE","realAmount","text");
+        colExist("INVOICE","propertyId","Integer");
+        colExist("BANK","currency","text");
+        colExist("BANK","realMoney","text");
+        colExist("BANK","propertyId","Integer");
+        colExist("Goal","currency","text");
+        colExist("Goal","realMoney","text");
     }
 
 
@@ -427,7 +431,7 @@ public class Common {
 
 
     //新增欄位
-    public static void colExist(String table,String col) {
+    public static void colExist(String table,String col,String property) {
         Cursor cursor=null;
         SQLiteDatabase db=MainActivity.chargeAPPDB.getReadableDatabase();
         //如果有就return
@@ -448,7 +452,7 @@ public class Common {
 
         //新增欄位
         try {
-            String add = "ALTER TABLE '"+table+"' ADD '" + col + "' text;";
+            String add = "ALTER TABLE '"+table+"' ADD '" + col + "' "+property+";";
             db.execSQL(add);
         } catch (Exception e) {
 

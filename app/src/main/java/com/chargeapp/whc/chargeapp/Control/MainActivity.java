@@ -204,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Com, R.drawable.book));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Ele, R.drawable.barcode));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Price, R.drawable.bouns));
+        eleMainItemVOList.add(new EleMainItemVO(R.string.text_Property, R.drawable.property));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_DataPicture, R.drawable.chart));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_DataList, R.drawable.invent));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Goal, R.drawable.goal));
@@ -401,13 +402,6 @@ public class MainActivity extends AppCompatActivity {
             RelativeLayout rea = view.findViewById(R.id.rea);
 
             //not show bottom
-            BootstrapButton deletecarrier = view.findViewById(R.id.deletecarrier);
-            BootstrapButton widgetShow = view.findViewById(R.id.widgetShow);
-            BootstrapButton updateC = view.findViewById(R.id.updateC);
-            widgetShow.setVisibility(View.GONE);
-            deletecarrier.setVisibility(View.GONE);
-            updateC.setVisibility(View.GONE);
-
             if (oldMainView == view && MainActivity.this.position == i) {
                 rea.setBackgroundColor(Color.parseColor("#FFDD55"));
             } else {
@@ -481,14 +475,6 @@ public class MainActivity extends AppCompatActivity {
                                 firstShowInsertActivity=false;
                                 fragment = new PriceActivity();
                                 switchFragment();
-//                                if (firstShowInsertActivity) {
-//                                    showFragment2(3);
-//                                    firstShowInsertActivity = false;
-//                                } else {
-//                                    fragment = new PriceActivity();
-//                                    switchFragment();
-//                                }
-
                                 Message message=new Message();
                                 message.obj= getResources().getString(R.string.text_Price);
                                 setTittle.sendMessage(message);

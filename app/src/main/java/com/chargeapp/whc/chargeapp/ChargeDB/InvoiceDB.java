@@ -58,6 +58,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -94,6 +95,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -131,6 +133,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -167,6 +170,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -204,6 +208,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -241,6 +246,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -281,6 +287,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -318,6 +325,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -421,6 +429,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -470,6 +479,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -532,6 +542,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -568,6 +579,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -604,6 +616,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -640,6 +653,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -676,6 +690,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -714,6 +729,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
         }
         cursor.close();
         return invoiceVO;
@@ -749,6 +765,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
         }
         cursor.close();
         return invoiceVO;
@@ -811,6 +828,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -848,6 +866,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -884,6 +903,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -932,6 +952,7 @@ public class InvoiceDB {
             invoiceVO.setIsWinNul(cursor.getString(19));
             invoiceVO.setCurrency(cursor.getString(20));
             invoiceVO.setRealAmount(cursor.getString(21));
+            invoiceVO.setPropertyId(cursor.getInt(22));
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -962,6 +983,7 @@ public class InvoiceDB {
         values.put("isWinNul",invoiceVO.getIsWinNul());
         values.put("currency",invoiceVO.getCurrency());
         values.put("realAmount",invoiceVO.getRealAmount());
+        values.put("propertyId",invoiceVO.getPropertyId());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -992,6 +1014,7 @@ public class InvoiceDB {
         values.put("isWinNul",invoiceVO.getIsWinNul());
         values.put("currency",invoiceVO.getCurrency());
         values.put("realAmount",invoiceVO.getRealAmount());
+        values.put("propertyId",invoiceVO.getPropertyId());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -1018,6 +1041,7 @@ public class InvoiceDB {
         values.put("isWinNul",invoiceVO.getIsWinNul());
         values.put("currency",invoiceVO.getCurrency());
         values.put("realAmount",invoiceVO.getRealAmount());
+        values.put("propertyId",invoiceVO.getPropertyId());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(invoiceVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

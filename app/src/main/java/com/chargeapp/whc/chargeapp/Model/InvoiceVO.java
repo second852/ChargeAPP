@@ -31,6 +31,15 @@ public class InvoiceVO implements Serializable{
     private String isWinNul; //19電子發票中獎號碼
     private String currency;// 20幣別
     private String realAmount;//21小數點金額 新的
+    private int propertyId;//22 資產
+
+    public int getPropertyId() {
+        return propertyId;
+    }
+
+    public void setPropertyId(int propertyId) {
+        this.propertyId = propertyId;
+    }
 
     public String getRealAmount() {
         return realAmount;

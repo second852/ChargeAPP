@@ -12,6 +12,7 @@
 
     <string name="text_Open">open</string>
     <string name="text_Close">close</string>
+    <string name="text_Property">資產管理</string>
     <string name="text_Com">記一筆</string>
     <string name="text_Ele">雲端發票</string>
     <string name="text_Price">發票對獎</string>
