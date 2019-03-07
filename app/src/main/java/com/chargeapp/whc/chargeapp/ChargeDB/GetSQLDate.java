@@ -579,6 +579,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             return jsonIn;
         } else {
             //先insert ElePeriod 在一次找尋 false
+            int max=6,i=0;//超過6個月不下載
             while (true) {
                 //如果有舊的
                 ElePeriod elePeriod=elePeriodDB.OldElePeriod(new ElePeriod(todayYear, todayMonth, carrierVO.getCarNul(),false));
@@ -598,9 +599,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     todayYear = todayYear - 1;
                 }
                 //到最大個月為止
-                if (todayMonth < lastMonth && todayYear <= lastYear) {
+                if ((todayMonth < lastMonth && todayYear <= lastYear)||i>=max) {
                     break;
                 }
+                i++;
             }
             jsonIn = downLoadOtherMon(carrierVO);
             //detail = 0
