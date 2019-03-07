@@ -107,13 +107,13 @@ public class Welcome extends AppCompatActivity {
     private void testInvoiceDownload()
     {
 
-        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Currency;");
-        InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB.deleteBytime(Timestamp.valueOf("2018-11-04 00:00:00"));
+//        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Currency;");
+          InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+          invoiceDB.deleteBytime(Timestamp.valueOf("2019-02-01 00:00:00"));
 
-        ElePeriodDB ele=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        ele.deleteByCARNUL("/2RDO8+P");
-        new GetSQLDate(this).execute("download");
+//        ElePeriodDB ele=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
+//        ele.deleteByCARNUL("/2RDO8+P");
+//        new GetSQLDate(this).execute("download");
     }
 
     //將conume and invoice to String
