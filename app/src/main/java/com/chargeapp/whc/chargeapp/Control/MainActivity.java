@@ -59,6 +59,7 @@ import com.chargeapp.whc.chargeapp.Control.Price.HowGetPrice;
 import com.chargeapp.whc.chargeapp.Control.Price.PriceActivity;
 import com.chargeapp.whc.chargeapp.Control.Price.PriceHand;
 import com.chargeapp.whc.chargeapp.Control.Price.PriceInvoice;
+import com.chargeapp.whc.chargeapp.Control.Property.PropertyMain;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetCircle;
@@ -141,8 +142,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public Fragment[] fragments = {new HomePage(), new HomePage(), new InsertActivity(), new PriceActivity(), new SelectActivity(), new SelectListModelActivity(), new GoalListAll(), new SettingMain()};
-    public String[] fragmentTags = {"firstFragment", "HomePage", "InserActivity", "PriceActivity", "SelectActivity", "SelectListModelActivity", "GoalListAll", "SettingMain"};
+    public Fragment[] fragments = {new HomePage(), new HomePage(), new InsertActivity(), new PriceActivity(), new PropertyMain(),new SelectActivity(), new SelectListModelActivity(), new GoalListAll(), new SettingMain()};
+    public String[] fragmentTags = {"firstFragment", "HomePage", "InserActivity", "PriceActivity", "PropertyMain","SelectActivity", "SelectListModelActivity", "GoalListAll", "SettingMain"};
 
     private void initFragment() {
         FragmentManager fManager = getSupportFragmentManager();
@@ -513,10 +514,26 @@ public class MainActivity extends AppCompatActivity {
                                 message.obj= getResources().getString(R.string.text_Price);
                                 setTittle.sendMessage(message);
 
-                            } else if (i == 3) {
+                            }else if(i== 3) {
+
 
                                 if (firstShowInsertActivity) {
                                     showFragment2(4);
+                                    firstShowInsertActivity = false;
+
+                                } else {
+                                    fragment = new PropertyMain();
+                                    switchFragment();
+                                }
+
+                                Message message=new Message();
+                                message.obj= getResources().getString(R.string.text_Property);
+                                setTittle.sendMessage(message);
+
+                            } else if (i == 4) {
+
+                                if (firstShowInsertActivity) {
+                                    showFragment2(5);
                                     firstShowInsertActivity = false;
 
                                 } else {
@@ -528,10 +545,10 @@ public class MainActivity extends AppCompatActivity {
                                 message.obj= getResources().getString(R.string.text_DataPicture);
                                 setTittle.sendMessage(message);
 
-                            } else if (i == 4) {
+                            } else if (i == 5) {
 
                                 if (firstShowInsertActivity) {
-                                    showFragment2(5);
+                                    showFragment2(6);
                                     firstShowInsertActivity = false;
 
                                 } else {
@@ -543,10 +560,10 @@ public class MainActivity extends AppCompatActivity {
                                 Message message=new Message();
                                 message.obj= getResources().getString(R.string.text_DataList);
                                 setTittle.sendMessage(message);
-                            } else if (i == 5) {
+                            } else if (i == 6) {
 
                                 if (firstShowInsertActivity) {
-                                    showFragment2(6);
+                                    showFragment2(7);
                                     firstShowInsertActivity = false;
                                 } else {
 
@@ -557,10 +574,10 @@ public class MainActivity extends AppCompatActivity {
                                 message.obj= getResources().getString(R.string.text_Goal);
                                 setTittle.sendMessage(message);
 
-                            } else if (i == 6) {
+                            } else if (i == 7) {
 
                                 if (firstShowInsertActivity) {
-                                    showFragment2(7);
+                                    showFragment2(8);
                                     firstShowInsertActivity = false;
 
                                 } else {
@@ -571,7 +588,7 @@ public class MainActivity extends AppCompatActivity {
                                 Message message=new Message();
                                 message.obj= getResources().getString(R.string.text_Setting);
                                 setTittle.sendMessage(message);
-                            } else if (i == 7) {
+                            } else if (i == 8) {
                                 if (firstShowInsertActivity) {
                                     showFragment2(1);
                                     firstShowInsertActivity = false;

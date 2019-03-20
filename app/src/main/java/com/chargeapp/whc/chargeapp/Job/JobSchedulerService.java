@@ -1,4 +1,4 @@
-package com.chargeapp.whc.chargeapp.Control.Job;
+package com.chargeapp.whc.chargeapp.Job;
 
 
 import android.Manifest;

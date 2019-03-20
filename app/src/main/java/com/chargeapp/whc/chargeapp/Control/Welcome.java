@@ -36,9 +36,9 @@ import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertActivity;
-import com.chargeapp.whc.chargeapp.Control.Job.DowloadNewDataJob;
-import com.chargeapp.whc.chargeapp.Control.Job.JobSchedulerService;
-import com.chargeapp.whc.chargeapp.Control.Job.ThirdReceiver;
+import com.chargeapp.whc.chargeapp.Job.DownloadNewDataJob;
+import com.chargeapp.whc.chargeapp.Job.JobSchedulerService;
+import com.chargeapp.whc.chargeapp.Job.ThirdReceiver;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
@@ -413,7 +413,7 @@ public class Welcome extends AppCompatActivity {
         builder.setRequiresDeviceIdle(false);
         tm.schedule(builder.build());
 
-        ComponentName DowloadComponet = new ComponentName(this, DowloadNewDataJob.class);
+        ComponentName DowloadComponet = new ComponentName(this, DownloadNewDataJob.class);
         JobInfo.Builder DownloadBuilder = new JobInfo.Builder(1, DowloadComponet);
         DownloadBuilder.setPersisted(true);
         DownloadBuilder.setPeriodic(1000*60*60);

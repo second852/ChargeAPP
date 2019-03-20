@@ -29,7 +29,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.Control.Download;
-import com.chargeapp.whc.chargeapp.Control.Job.JobSchedulerService;
+import com.chargeapp.whc.chargeapp.Job.JobSchedulerService;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.R;

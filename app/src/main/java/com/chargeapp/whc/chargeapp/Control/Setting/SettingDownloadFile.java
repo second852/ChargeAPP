@@ -51,6 +51,7 @@ import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -136,6 +137,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         progressL = view.findViewById(R.id.progressL);
         listView.setAdapter(new ListAdapter(context, itemSon));
         progressL.setVisibility(View.GONE);
+        Common.setAdView((AdView) view.findViewById(R.id.adView),context);
         return view;
     }
 

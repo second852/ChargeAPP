@@ -1,17 +1,14 @@
-package com.chargeapp.whc.chargeapp.Control.Job;
+package com.chargeapp.whc.chargeapp.Job;
+
 
 
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
@@ -36,57 +33,67 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
 
-public class ThirdReceiver extends BroadcastReceiver {
 
+public class SecondReceiver extends BroadcastReceiver {
+    private  NotificationManager notificationManager;
     private SimpleDateFormat sf;
-    private int id;
-    private String title;
-    private ConsumeDB consumeDB;
+    private int id=0;
+    private  ConsumeDB consumeDB;
     private InvoiceDB invoiceDB;
     private BankDB bankDB;
     private GoalDB goalDB;
     private JsonObject jsonObject;
     private String detail;
     private Gson gson;
-    private int year, month, day, dweek;
+    private int year,month,day,dweek;
     private CurrencyDB currencyDB;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
         try {
-            sf = new SimpleDateFormat("yyyy-MM-dd");
+            Log.d("service","onReceive");
+            sf=new SimpleDateFormat("yyyy-MM-dd");
 
             SharedPreferences sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
             boolean setNotify = sharedPreferences.getBoolean("notify", true);
 
+            notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+
+
             Common.setChargeDB(context);
-            consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            Common.insertNewTableCol();
+            consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
             currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
             //Detail
-            gson = new Gson();
+            gson=new Gson();
             Calendar date = Calendar.getInstance();
             year = date.get(Calendar.YEAR);
             month = date.get(Calendar.MONTH);
             day = date.get(Calendar.DAY_OF_MONTH);
             dweek = date.get(Calendar.DAY_OF_WEEK);
-            //notify message
-            String message;
-            Intent activeI;
 
-            if (setNotify) {
-                activeI = new Intent(context, Welcome.class);
+
+            //notify message
+            String message,title;
+            Intent activeI;
+            if(setNotify)
+            {
+                Log.d("service", "consumeNotify");
+                activeI=new Intent(context,Welcome.class);
                 activeI.setAction("showFix");
 
-                List<ConsumeVO> consumeVOS = consumeDB.getNotify();
-                title = " " + sf.format(new Date(System.currentTimeMillis())) + "今天繳費提醒";
+                List<ConsumeVO> consumeVOS=consumeDB.getNotify();
+                title=" "+sf.format(new Date(System.currentTimeMillis()))+"今天繳費提醒";
 
-                for (ConsumeVO consumeVO : consumeVOS) {
-
+                for (ConsumeVO consumeVO:consumeVOS)
+                {
                     detail = consumeVO.getFixDateDetail();
                     jsonObject = gson.fromJson(detail, JsonObject.class);
                     String action = jsonObject.get("choicestatue").getAsString().trim();
@@ -99,28 +106,29 @@ public class ThirdReceiver extends BroadcastReceiver {
                         if (noWeekend && dweek == 1) {
                             continue;
                         }
-                    } else if ("每周".equals(action)) {
+                    }else if ("每周".equals(action)) {
                         String fixdetail = jsonObject.get("choicedate").getAsString().trim();
                         HashMap<String, Integer> change = getStringtoInt();
                         if (date.get(Calendar.DAY_OF_WEEK) != change.get(fixdetail)) {
                             continue;
                         }
-                    } else if ("每月".equals(action)) {
+                    }else if ("每月".equals(action)) {
                         int Maxday = date.getActualMaximum(Calendar.DAY_OF_MONTH);
                         String fixdate = jsonObject.get("choicedate").getAsString().trim();
                         fixdate = fixdate.substring(0, fixdate.indexOf("日"));
-                        boolean needNotify = false;//是否需要通知
+                        boolean needNotify=false;//是否需要通知
                         if (fixdate.equals(String.valueOf(day))) {
-                            needNotify = true;
+                            needNotify=true;
                         }
                         if (Maxday < Integer.valueOf(fixdate) && day == Maxday) {
-                            needNotify = true;
+                            needNotify=true;
                         }
 
-                        if (!needNotify) {
+                        if(!needNotify)
+                        {
                             continue;
                         }
-                    } else {
+                    }else{
                         //每年
                         String fixdate = jsonObject.get("choicedate").getAsString().trim();
                         fixdate = fixdate.substring(0, fixdate.indexOf("月"));
@@ -131,7 +139,7 @@ public class ThirdReceiver extends BroadcastReceiver {
                     }
 
                     message = " 繳納" + consumeVO.getSecondType() + "費用:" + Common.getCurrency(consumeVO.getCurrency())+consumeVO.getRealMoney();
-                    showNotification(title, message, context, id, activeI);
+                    showNotification(title,message,context,id,activeI);
                     id++;
                 }
 
@@ -170,8 +178,12 @@ public class ThirdReceiver extends BroadcastReceiver {
                     }
                 }
 
-                List<GoalVO> goalVOS = goalDB.getNotify();
-                for (GoalVO goalVO : goalVOS) {
+
+                List<GoalVO> goalVOS=goalDB.getNotify();
+                Log.d("service", String.valueOf(goalVOS.size()));
+                //set Goal
+                for (GoalVO goalVO:goalVOS)
+                {
                     String statue = goalVO.getNotifyStatue().trim();
                     if (statue.equals("每天")) {
                         if (goalVO.isNoWeekend()) {
@@ -179,26 +191,26 @@ public class ThirdReceiver extends BroadcastReceiver {
                                 continue;
                             }
                         }
-                        setGoalNotification(goalVO, context);
+                        setGoalNotification(goalVO,context);
                         id++;
                     } else if (statue.equals("每周")) {
                         HashMap<String, Integer> change = getStringtoInt();
                         String dateStatue = goalVO.getNotifyDate().trim();
                         if (dweek == change.get(dateStatue)) {
-                            setGoalNotification(goalVO, context);
+                            setGoalNotification(goalVO,context);
                             id++;
                         }
                     } else if (statue.equals("每月")) {
                         int max = date.getActualMaximum(Calendar.DAY_OF_MONTH);
                         String dateStatue = goalVO.getNotifyDate().trim();
                         dateStatue = dateStatue.substring(0, dateStatue.indexOf("日"));
-                        Log.d("service", dateStatue + " : " + day);
+                        Log.d("service",dateStatue+" : "+day);
                         if (dateStatue.equals(String.valueOf(day))) {
-                            setGoalNotification(goalVO, context);
+                            setGoalNotification(goalVO,context);
                             id++;
                         }
                         if (day == max && Integer.valueOf(dateStatue) > day) {
-                            setGoalNotification(goalVO, context);
+                            setGoalNotification(goalVO,context);
                             id++;
                         }
                     } else {
@@ -206,7 +218,7 @@ public class ThirdReceiver extends BroadcastReceiver {
                         fixdate = fixdate.substring(0, fixdate.indexOf("月"));
                         int d = Integer.valueOf(fixdate) - 1;
                         if (month == d && day == 1) {
-                            setGoalNotification(goalVO, context);
+                            setGoalNotification(goalVO,context);
                             id++;
                         }
                     }
@@ -218,8 +230,7 @@ public class ThirdReceiver extends BroadcastReceiver {
         }
     }
 
-
-    private void setGoalNotification(GoalVO goalVO, Context context) {
+    private void setGoalNotification(GoalVO goalVO,Context context) {
 
         String timeStatue=goalVO.getTimeStatue().trim();
         double consumeCount=0;
@@ -357,36 +368,20 @@ public class ThirdReceiver extends BroadcastReceiver {
         }
     }
 
-    //set Channel
-    public final String PRIMARY_CHANNEL = "記帳小助手";
-    NotificationManager manager;
+    private void showNotification(String title,String message,Context context,int NOTIFICATION_ID,Intent intent) {
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void channel(Context ctx) {
-        NotificationChannel chan1 = new NotificationChannel(PRIMARY_CHANNEL,
-                PRIMARY_CHANNEL, NotificationManager.IMPORTANCE_DEFAULT);
-        chan1.setLightColor(Color.GREEN);
-        chan1.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-        manager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.createNotificationChannel(chan1);
-    }
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+                intent, 0);
+        Notification notification = new Notification.Builder(context)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setSmallIcon(R.drawable.ic_stat_name)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .setWhen(System.currentTimeMillis())
+                .build();
 
-    private void showNotification(String title, String message, Context context, int NOTIFICATION_ID, Intent intent) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-
-            if (manager == null) {
-                channel(context);
-            }
-            PendingIntent appIntent = PendingIntent.getActivity(context, 0, intent, 0);
-            Notification.Builder nb = new Notification.Builder(context.getApplicationContext(), PRIMARY_CHANNEL)
-                    .setContentTitle(title)
-                    .setContentText(message)
-                    .setSmallIcon(R.drawable.ic_stat_name)
-                    .setAutoCancel(true)
-                    .setWhen(System.currentTimeMillis())
-                    .setContentIntent(appIntent);
-            manager.notify(NOTIFICATION_ID, nb.build());
-        }
+        notificationManager.notify(NOTIFICATION_ID, notification);
     }
 
     public HashMap<String, Integer> getStringtoInt() {

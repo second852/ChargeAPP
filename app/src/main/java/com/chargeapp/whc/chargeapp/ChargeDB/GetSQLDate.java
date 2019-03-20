@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 
 import com.chargeapp.whc.chargeapp.Control.Common;
-import com.chargeapp.whc.chargeapp.Control.Job.DowloadNewDataJob;
+import com.chargeapp.whc.chargeapp.Job.DownloadNewDataJob;
 import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleSetCarrier;
@@ -939,7 +939,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             }else if (object instanceof EleUpdateCarrier) {
                 EleUpdateCarrier eleUpdateCarrier = (EleUpdateCarrier) object;
                 eleUpdateCarrier.check(s);
-            }else if (object instanceof DowloadNewDataJob) {
+            }else if (object instanceof DownloadNewDataJob) {
                 new Common().AutoSetPrice();
             }
         } catch (Exception e) {

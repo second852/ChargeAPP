@@ -30,7 +30,6 @@
             android:layout_below="@+id/typeR"
             android:background="#f5f5f5"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
     </ListView>

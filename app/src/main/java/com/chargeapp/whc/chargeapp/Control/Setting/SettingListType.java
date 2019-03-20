@@ -31,6 +31,7 @@ import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdView;
 
 
 import java.util.ArrayList;
@@ -79,6 +80,7 @@ public class SettingListType extends Fragment {
         p = (int) getArguments().getSerializable("position");
         spinnerC = (int) getArguments().getSerializable("spinnerC");
         typeH.setOnItemSelectedListener(new choiceType());
+        Common.setAdView((AdView) view.findViewById(R.id.adView),context);
         setSpinner();
         setLayout();
         return view;

@@ -26,6 +26,7 @@ import com.chargeapp.whc.chargeapp.Control.Update.UpdateSpend;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.R;
 
+import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -71,6 +72,7 @@ public class SettingListFixCon extends Fragment {
         p= (int) getArguments().getSerializable("position");
         listView=view.findViewById(R.id.list);
         message=view.findViewById(R.id.message);
+        Common.setAdView((AdView) view.findViewById(R.id.adView),context);
         return view;
     }
 

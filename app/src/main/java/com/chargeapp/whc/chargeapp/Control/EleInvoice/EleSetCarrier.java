@@ -36,7 +36,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
-import com.chargeapp.whc.chargeapp.Control.Widge.SimpleWidgetProviderBig;
+import com.chargeapp.whc.chargeapp.Control.Widget.SimpleWidgetProviderBig;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.R;
 

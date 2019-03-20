@@ -63,7 +63,6 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
         setcurrentpage();
         text = view.findViewById(R.id.text);
         movefirst = -importMoney.getWidth();
-
         return view;
     }
 

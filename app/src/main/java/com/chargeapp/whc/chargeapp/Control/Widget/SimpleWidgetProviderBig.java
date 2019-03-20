@@ -1,4 +1,4 @@
-package com.chargeapp.whc.chargeapp.Control.Widge;
+package com.chargeapp.whc.chargeapp.Control.Widget;
 
 
 import android.app.PendingIntent;
