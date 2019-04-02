@@ -719,7 +719,7 @@ public class SelectConsume extends Fragment {
     }
 
     private void addChartPieData() {
-        total=total/Double.valueOf(currencyVO.getMoney());
+
         otherMessage.setText(DesTittle);
         setCurrency.setText(Common.CurrencyResult(total,currencyVO));
 

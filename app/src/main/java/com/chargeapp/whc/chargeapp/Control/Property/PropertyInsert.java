@@ -8,7 +8,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
+import com.beardedhen.androidbootstrap.BootstrapLabel;
 import com.chargeapp.whc.chargeapp.R;
 
 /**
@@ -18,23 +20,46 @@ import com.chargeapp.whc.chargeapp.R;
 public class PropertyInsert extends Fragment {
 
     private View view;
-    private Activity context;
+    private Activity activity;
+    private BootstrapLabel propertyFrom;
+    private LinearLayout propertyL;
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if(context instanceof Activity)
         {
-            this.context=(Activity) context;
+            this.activity=(Activity) context;
         }else{
-            this.context=getActivity();
+            this.activity=getActivity();
         }
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.property_list, container, false);
+        view = inflater.inflate(R.layout.property_insert, container, false);
+        findViewById();
+        setListener();
         return view;
+    }
+
+    private void setListener() {
+        propertyFrom.setOnClickListener(new AddNewSource());
+    }
+
+    private void findViewById() {
+        propertyFrom=view.findViewById(R.id.propertyFrom);
+        propertyL=view.findViewById(R.id.propertyL);
+    }
+
+    private class AddNewSource implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            View child = getLayoutInflater().inflate(R.layout.property_insert_item, null);
+            propertyL.addView(child);
+        }
     }
 }

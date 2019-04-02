@@ -8,6 +8,7 @@ import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyVO;
+import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -34,10 +35,11 @@ public class PropertyDB {
             propertyVO=new PropertyVO();
             propertyVO.setId(cursor.getInt(0));
             propertyVO.setName(cursor.getString(1));
-            propertyVO.setCurrency(cursor.getString(2));
-            propertyVO.setInitMoney(cursor.getString(3));
-            propertyVO.setNowMoney(cursor.getString(4));
-            propertyVO.setDetail(cursor.getString(5));
+            propertyVO.setPropertyType(PropertyType.valueOf(cursor.getString(2)));
+            propertyVO.setCurrency(cursor.getString(3));
+            propertyVO.setInitMoney(cursor.getString(4));
+            propertyVO.setNowMoney(cursor.getString(5));
+            propertyVO.setDetail(cursor.getString(6));
             propertyVOS.add(propertyVO);
         }
         cursor.close();
@@ -49,6 +51,7 @@ public class PropertyDB {
     public long insert(PropertyVO propertyVO) {
         ContentValues values = new ContentValues();
         values.put("name", propertyVO.getName());
+        values.put("property", propertyVO.getPropertyType().getName());
         values.put("currency", propertyVO.getCurrency());
         values.put("initMoney", propertyVO.getInitMoney());
         values.put("nowMoney", propertyVO.getNowMoney());
@@ -60,6 +63,7 @@ public class PropertyDB {
     public int update(PropertyVO propertyVO) {
         ContentValues values = new ContentValues();
         values.put("name", propertyVO.getName());
+        values.put("property", propertyVO.getPropertyType().getName());
         values.put("currency", propertyVO.getCurrency());
         values.put("initMoney", propertyVO.getInitMoney());
         values.put("nowMoney", propertyVO.getNowMoney());

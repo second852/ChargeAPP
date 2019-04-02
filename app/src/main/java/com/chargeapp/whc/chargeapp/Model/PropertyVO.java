@@ -1,5 +1,7 @@
 package com.chargeapp.whc.chargeapp.Model;
 
+import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
+
 /**
  * Created by Wang on 2019/1/25.
  */
@@ -8,17 +10,20 @@ public class PropertyVO {
 
     private int id; //Id
     private String name; //名子
+    private PropertyType propertyType;//種類
     private String currency; //幣別
-    private String initMoney; //起始金額
     private String nowMoney; //目前加總
-    private String detail;
 
-    public String getDetail() {
-        return detail;
+
+
+
+
+    public PropertyType getPropertyType() {
+        return propertyType;
     }
 
-    public void setDetail(String detail) {
-        this.detail = detail;
+    public void setPropertyType(PropertyType propertyType) {
+        this.propertyType = propertyType;
     }
 
     public int getId() {
@@ -47,13 +52,7 @@ public class PropertyVO {
         this.currency = currency;
     }
 
-    public String getInitMoney() {
-        return initMoney;
-    }
 
-    public void setInitMoney(String initMoney) {
-        this.initMoney = initMoney;
-    }
 
     public String getNowMoney() {
         return nowMoney;
