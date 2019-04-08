@@ -1,17 +1,27 @@
 package com.chargeapp.whc.chargeapp.Control.Property;
 
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
-import com.beardedhen.androidbootstrap.BootstrapLabel;
+
+
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.BootstrapEditText;
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
+import com.chargeapp.whc.chargeapp.Control.Common;
+import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
+
+
 
 /**
  * Created by Wang on 2019/3/12.
@@ -21,8 +31,11 @@ public class PropertyInsert extends Fragment {
 
     private View view;
     private Activity activity;
-    private BootstrapLabel propertyFrom;
-    private LinearLayout propertyL;
+    private BootstrapButton save;
+    private BootstrapEditText name;
+    private PropertyDB propertyDB;
+
+
 
 
     @Override
@@ -42,24 +55,48 @@ public class PropertyInsert extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.property_insert, container, false);
         findViewById();
-        setListener();
+        save.setOnClickListener(new saveData());
+        Common.setChargeDB(activity);
+        propertyDB=new PropertyDB( MainActivity.chargeAPPDB.getReadableDatabase());
         return view;
     }
 
-    private void setListener() {
-        propertyFrom.setOnClickListener(new AddNewSource());
-    }
+
+
+
 
     private void findViewById() {
-        propertyFrom=view.findViewById(R.id.propertyFrom);
-        propertyL=view.findViewById(R.id.propertyL);
+        save=view.findViewById(R.id.save);
+        name=view.findViewById(R.id.name);
     }
 
-    private class AddNewSource implements View.OnClickListener {
+
+
+
+    private class saveData implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            View child = getLayoutInflater().inflate(R.layout.property_insert_item, null);
-            propertyL.addView(child);
+            Editable nameE=name.getText();
+            if(nameE==null||nameE.length()<=0)
+            {
+                name.setError("名稱不能空白!");
+                return;
+            }
+            String nameP=nameE.toString().trim();
+            if(nameP.isEmpty())
+            {
+                name.setError("名稱不能空白!");
+                return;
+            }
+            PropertyVO old=propertyDB.findByName(nameP);
+            if(old!=null)
+            {
+                name.setError("名稱重複!");
+                return;
+            }
+            PropertyVO propertyVO=new PropertyVO();
+            propertyVO.setName(nameP);
+            propertyDB.insert(propertyVO);
         }
     }
 }

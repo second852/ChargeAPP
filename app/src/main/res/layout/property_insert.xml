@@ -5,8 +5,7 @@
     android:id="@+id/propertyMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f5f5f5"
-    android:orientation="vertical">
+    android:background="#f5f5f5">
 
     <ScrollView
         android:id="@+id/scroll"
@@ -20,155 +19,46 @@
             android:id="@+id/propertyL"
             android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="50dp"
-                    android:gravity="center_vertical"
-                    android:text="名稱"
-                    android:textColor="#000000"
-                    android:textSize="20sp" />
-
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
-                    app:bootstrapBrand="primary"
-                    android:singleLine="true"
-                    android:inputType="text"
-                    android:textColor="#000000"
-                    android:textColorHint="#AAAAAA"
-                    app:roundedCorners="true"
-                    app:bootstrapSize="lg"
-                    />
-            </LinearLayout>
-
-            <LinearLayout
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:text="名稱"
+                android:textColor="#000000"
+                android:textSize="20sp" />
+            <com.beardedhen.androidbootstrap.BootstrapEditText
+                android:id="@+id/name"
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="50dp"
-                    android:gravity="center_vertical"
-                    android:text="幣別"
-                    android:textColor="#000000"
-                    android:textSize="20sp" />
-                <com.beardedhen.androidbootstrap.BootstrapButton
-                    android:id="@+id/currency"
-                    android:layout_marginLeft="30dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    app:bootstrapBrand="warning"
-                    app:bootstrapSize="md"
-                    app:buttonMode="regular"
-                    app:showOutline="false"
-                    app:roundedCorners="true"
-                    />
-                <com.beardedhen.androidbootstrap.BootstrapButton
-                    android:id="@+id/calculate"
-                    android:layout_marginLeft="10dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="right"
-                    app:bootstrapBrand="primary"
-                    app:bootstrapSize="md"
-                    app:buttonMode="regular"
-                    app:showOutline="true"
-                    app:roundedCorners="true"
-                    />
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/money"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="30dp"
-                    android:layout_marginLeft="5dp"
-                    android:gravity="center_vertical"
-                    android:hint="0"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:textColor="#000000"
-                    android:textColorHint="#AAAAAA"
-                    app:bootstrapBrand="primary"
-                    app:roundedCorners="true"
-                    app:bootstrapSize="lg"  />
-            </LinearLayout>
-
-
-
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                app:bootstrapBrand="primary"
+                android:singleLine="true"
+                android:inputType="text"
+                android:textColor="#000000"
+                android:textColorHint="#AAAAAA"
+                app:roundedCorners="true"
+                app:bootstrapSize="lg"
+                />
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/save"
+                android:layout_marginTop="80dp"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp">
-
-                <com.beardedhen.androidbootstrap.BootstrapButton
-                    android:id="@+id/standard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:gravity="center"
-                    android:visibility="gone"
-                    app:bootstrapBrand="regular"
-                    app:bootstrapSize="lg"
-                    app:buttonMode="regular"
-                    app:showOutline="false"
-                    app:roundedCorners="true"
-                    />
-
-                <com.beardedhen.androidbootstrap.BootstrapButton
-                    android:id="@+id/save"
-                    android:layout_marginLeft="25dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#000000"
-                    app:bootstrapBrand="success"
-                    app:bootstrapSize="lg"
-                    app:buttonMode="regular"
-                    app:showOutline="false"
-                    app:roundedCorners="true"
-                    app:bootstrapText="儲存 {fa_save}"
-                    />
-
-                <com.beardedhen.androidbootstrap.BootstrapButton
-                    android:id="@+id/clear"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="25dp"
-                    android:text="清除"
-                    android:textColor="#000000"
-                    app:bootstrapBrand="danger"
-                    app:bootstrapSize="lg"
-                    app:buttonMode="regular"
-                    app:showOutline="false"
-                    app:roundedCorners="true"
-                    app:bootstrapText="清除 {fa_remove}"
-                    />
-            </RelativeLayout>
+                android:textColor="#000000"
+                app:bootstrapBrand="success"
+                app:bootstrapSize="lg"
+                app:buttonMode="regular"
+                app:showOutline="false"
+                app:roundedCorners="true"
+                app:bootstrapText="儲存 {fa_save}"
+                />
         </LinearLayout>
     </ScrollView>
-
 </RelativeLayout>

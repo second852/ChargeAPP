@@ -76,6 +76,10 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
             "CREATE TABLE Property ( id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL," +
                     "currency TEXT,initMoney TEXT,nowMoney TEXT) ;";
 
+    public static final String TABLE_PropertyFrom =
+            "CREATE TABLE PropertyFrom ( id INTEGER PRIMARY KEY AUTOINCREMENT, sourceId TEXT NOT NULL," +
+                    "sourceMoney TEXT,fixImport TEXT,fixDateCode TEXT,fixDateDetail TEXT,propertyId TEXT) ;";
+
     public ChargeAPPDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }

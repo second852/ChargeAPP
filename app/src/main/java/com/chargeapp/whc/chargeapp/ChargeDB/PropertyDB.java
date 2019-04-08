@@ -37,9 +37,7 @@ public class PropertyDB {
             propertyVO.setName(cursor.getString(1));
             propertyVO.setPropertyType(PropertyType.valueOf(cursor.getString(2)));
             propertyVO.setCurrency(cursor.getString(3));
-            propertyVO.setInitMoney(cursor.getString(4));
             propertyVO.setNowMoney(cursor.getString(5));
-            propertyVO.setDetail(cursor.getString(6));
             propertyVOS.add(propertyVO);
         }
         cursor.close();
@@ -47,15 +45,30 @@ public class PropertyDB {
     }
 
 
+    public PropertyVO findByName(String name) {
+        String sql = "SELECT * FROM Property where name ='"+name +"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        PropertyVO propertyVO=null;
+        if (cursor.moveToNext()) {
+            propertyVO=new PropertyVO();
+            propertyVO.setId(cursor.getInt(0));
+            propertyVO.setName(cursor.getString(1));
+            propertyVO.setPropertyType(PropertyType.valueOf(cursor.getString(2)));
+            propertyVO.setCurrency(cursor.getString(3));
+            propertyVO.setNowMoney(cursor.getString(5));
+        }
+        cursor.close();
+        return propertyVO;
+    }
+
 
     public long insert(PropertyVO propertyVO) {
         ContentValues values = new ContentValues();
         values.put("name", propertyVO.getName());
         values.put("property", propertyVO.getPropertyType().getName());
         values.put("currency", propertyVO.getCurrency());
-        values.put("initMoney", propertyVO.getInitMoney());
         values.put("nowMoney", propertyVO.getNowMoney());
-        values.put("detail", propertyVO.getDetail());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -65,9 +78,7 @@ public class PropertyDB {
         values.put("name", propertyVO.getName());
         values.put("property", propertyVO.getPropertyType().getName());
         values.put("currency", propertyVO.getCurrency());
-        values.put("initMoney", propertyVO.getInitMoney());
         values.put("nowMoney", propertyVO.getNowMoney());
-        values.put("detail", propertyVO.getDetail());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(propertyVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

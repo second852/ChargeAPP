@@ -385,6 +385,7 @@ public class Common {
     public static void insertNewTableCol() {
         tableExist("Currency",ChargeAPPDB.TABLE_Currency);
         tableExist("Property",ChargeAPPDB.TABLE_Property);
+        tableExist("PropertyFrom",ChargeAPPDB.TABLE_Property);
         colExist("Consumer","rdNumber","text");
         colExist("Consumer","currency","text");
         colExist("Consumer","realMoney","text");
