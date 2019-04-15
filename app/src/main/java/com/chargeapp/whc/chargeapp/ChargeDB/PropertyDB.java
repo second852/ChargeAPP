@@ -36,8 +36,7 @@ public class PropertyDB {
             propertyVO.setId(cursor.getInt(0));
             propertyVO.setName(cursor.getString(1));
             propertyVO.setPropertyType(PropertyType.valueOf(cursor.getString(2)));
-            propertyVO.setCurrency(cursor.getString(3));
-            propertyVO.setNowMoney(cursor.getString(5));
+            propertyVO.setNowMoney(cursor.getString(3));
             propertyVOS.add(propertyVO);
         }
         cursor.close();
@@ -55,8 +54,7 @@ public class PropertyDB {
             propertyVO.setId(cursor.getInt(0));
             propertyVO.setName(cursor.getString(1));
             propertyVO.setPropertyType(PropertyType.valueOf(cursor.getString(2)));
-            propertyVO.setCurrency(cursor.getString(3));
-            propertyVO.setNowMoney(cursor.getString(5));
+            propertyVO.setNowMoney(cursor.getString(3));
         }
         cursor.close();
         return propertyVO;
@@ -67,7 +65,6 @@ public class PropertyDB {
         ContentValues values = new ContentValues();
         values.put("name", propertyVO.getName());
         values.put("property", propertyVO.getPropertyType().getName());
-        values.put("currency", propertyVO.getCurrency());
         values.put("nowMoney", propertyVO.getNowMoney());
         return db.insert(TABLE_NAME, null, values);
     }
@@ -77,7 +74,6 @@ public class PropertyDB {
         ContentValues values = new ContentValues();
         values.put("name", propertyVO.getName());
         values.put("property", propertyVO.getPropertyType().getName());
-        values.put("currency", propertyVO.getCurrency());
         values.put("nowMoney", propertyVO.getNowMoney());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(propertyVO.getId())};

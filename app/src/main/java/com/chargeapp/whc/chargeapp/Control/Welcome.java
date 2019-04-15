@@ -72,6 +72,9 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
         Common.setChargeDB(this);
+
+//        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Property;");
+
         Common.insertNewTableCol();
         new Thread(runnable).start();
         new Thread(modifyMoneyFromIntegerToString).start();

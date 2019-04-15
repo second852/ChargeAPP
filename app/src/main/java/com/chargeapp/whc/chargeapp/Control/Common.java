@@ -10,6 +10,9 @@ import android.graphics.Color;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -35,6 +38,7 @@ import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
+import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.components.Description;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -64,6 +68,7 @@ import java.util.regex.Pattern;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.content.Context.WINDOW_SERVICE;
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_BANK;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_CHECK_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_MINUS_O;
@@ -93,7 +98,7 @@ public class Common {
 
     public static String keyboardArray[]={"倒退","7","8","9","+","歸零","4","5","6","-","確定","1","2","3","x","返回",".","0","=","÷"};
 
-
+    public final static String propertyCurrency="propertyCurrency";
     public final static String choiceCurrency="choiceCurrency";
     public final static String insertCurrency="insertCurrency";
 
@@ -385,7 +390,7 @@ public class Common {
     public static void insertNewTableCol() {
         tableExist("Currency",ChargeAPPDB.TABLE_Currency);
         tableExist("Property",ChargeAPPDB.TABLE_Property);
-        tableExist("PropertyFrom",ChargeAPPDB.TABLE_Property);
+        tableExist("PropertyFrom",ChargeAPPDB.TABLE_PropertyFrom);
         colExist("Consumer","rdNumber","text");
         colExist("Consumer","currency","text");
         colExist("Consumer","realMoney","text");
@@ -639,6 +644,19 @@ public class Common {
             BootstrapText text = new BootstrapText.Builder(activity)
                     .addText(s + " ")
                     .addFontAwesomeIcon(FA_CALCULATOR)
+                    .build();
+            bootstrapTexts.add(text);
+        }
+        return bootstrapTexts;
+    }
+
+
+    public static List<BootstrapText> propertyInsertMoneyData(Activity activity, String[] data) {
+        List<BootstrapText> bootstrapTexts = new ArrayList<>();
+        for (String s : data) {
+            BootstrapText text = new BootstrapText.Builder(activity)
+                    .addText(s + " ")
+                    .addFontAwesomeIcon(FA_MONEY)
                     .build();
             bootstrapTexts.add(text);
         }
@@ -1043,4 +1061,14 @@ public class Common {
     }
 
 
+    public static void switchFragment(Fragment fragment, String fragmentTag,FragmentManager fragmentManager) {
+        MainActivity.oldFramgent.add(fragmentTag);
+        MainActivity.bundles.add(fragment.getArguments());
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        for (Fragment fragment1 : fragmentManager.getFragments()) {
+            fragmentTransaction.remove(fragment1);
+        }
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
+    }
 }

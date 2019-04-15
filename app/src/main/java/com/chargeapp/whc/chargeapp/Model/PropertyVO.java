@@ -11,12 +11,7 @@ public class PropertyVO {
     private int id; //Id
     private String name; //名子
     private PropertyType propertyType;//種類
-    private String currency; //幣別
-    private String nowMoney; //目前加總
-
-
-
-
+    private String nowMoney; //目前加總 TWD
 
     public PropertyType getPropertyType() {
         return propertyType;
@@ -43,16 +38,6 @@ public class PropertyVO {
     public void setName(String name) {
         this.name = name;
     }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-
 
     public String getNowMoney() {
         return nowMoney;

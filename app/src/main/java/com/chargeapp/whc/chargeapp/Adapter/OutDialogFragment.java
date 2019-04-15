@@ -1,7 +1,9 @@
 package com.chargeapp.whc.chargeapp.Adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,15 +20,17 @@ import com.chargeapp.whc.chargeapp.R;
 
 public class OutDialogFragment extends DialogFragment implements  DialogInterface.OnClickListener{
 
+    private Activity activity;
 
-    private Object object;
-
-    public Object getObject() {
-        return object;
-    }
-
-    public void setObject(Object object) {
-        this.object = object;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity)
+        {
+            activity=(Activity) context;
+        }else{
+            activity=getActivity();
+        }
     }
 
     @NonNull
@@ -49,8 +53,7 @@ public class OutDialogFragment extends DialogFragment implements  DialogInterfac
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {
             case DialogInterface.BUTTON_POSITIVE:
-                MainActivity mainActivity= (MainActivity) object;
-                mainActivity.finish();
+                getActivity().finish();
                 System.exit(0);
                 break;
             default:

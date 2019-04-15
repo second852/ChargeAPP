@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.chargeapp.whc.chargeapp.Control.Common;
+import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertActivity;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertSpend;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
@@ -56,6 +58,16 @@ public class UpdateConsumeDetail extends Fragment {
             }
 
         }else{
+
+            if(getArguments().getSerializable("consumeVO")==null)
+            {
+                MainActivity.oldFramgent.clear();
+                MainActivity.bundles.clear();
+                switchFragment(new HomePage());
+                Common.showToast(context,"資料遺失!請重新操作!");
+                return view;
+            }
+
             consumeVO= (ConsumeVO) getArguments().getSerializable("consumeVO");
             if(consumeVO.getDetailname()==null)
             {

@@ -5,13 +5,29 @@ import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 public class PropertyFromVO {
 
     private String id; //id
-    private String sourceId; //來源Id
+    private String sourceId; //來源Id consume secondType income mainType
     private String sourceMoney; //來源金額
+    private String sourceCurrency;//來源幣別
     private Boolean fixImport;  //是否定期
     private FixDateCode fixDateCode;
     private String fixDateDetail;
     private String propertyId;
 
+    public String getSourceCurrency() {
+        return sourceCurrency;
+    }
+
+    public void setSourceCurrency(String sourceCurrency) {
+        this.sourceCurrency = sourceCurrency;
+    }
+
+    public Boolean getFixImport() {
+        return fixImport;
+    }
+
+    public void setFixImport(Boolean fixImport) {
+        this.fixImport = fixImport;
+    }
 
     public String getSourceMoney() {
         return sourceMoney;
@@ -51,14 +67,6 @@ public class PropertyFromVO {
 
     public void setSourceId(String sourceId) {
         this.sourceId = sourceId;
-    }
-
-    public Boolean isFixImport() {
-        return fixImport;
-    }
-
-    public void setFixImport(Boolean fixImport) {
-        this.fixImport = fixImport;
     }
 
     public FixDateCode getFixDateCode() {

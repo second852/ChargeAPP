@@ -96,7 +96,10 @@ public class PropertyInsert extends Fragment {
             }
             PropertyVO propertyVO=new PropertyVO();
             propertyVO.setName(nameP);
-            propertyDB.insert(propertyVO);
+            long id=propertyDB.insert(propertyVO);
+            Fragment fragment=new PropertyMoneyList();
+            fragment.getArguments().putString("propertyID",String.valueOf(id));
+            Common.switchFragment(fragment,"PropertyMoneyList",getFragmentManager());
         }
     }
 }

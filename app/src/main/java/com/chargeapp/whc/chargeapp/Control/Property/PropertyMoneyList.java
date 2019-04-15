@@ -21,18 +21,21 @@ import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.R;
 
 import java.util.Calendar;
+import java.util.List;
 
 import static com.chargeapp.whc.chargeapp.Control.Common.CurrencyResult;
 import static com.chargeapp.whc.chargeapp.Control.Common.choiceCurrency;
+import static com.chargeapp.whc.chargeapp.Control.Common.propertyCurrency;
 
 /**
  * Created by Wang on 2019/3/12.
  */
 
-public class PropertyList extends Fragment {
+public class PropertyMoneyList extends Fragment {
 
     private View view;
     private Activity activity;
@@ -45,7 +48,10 @@ public class PropertyList extends Fragment {
     private CurrencyVO currencyVO;
     private Calendar start,end;
     private PropertyFromDB propertyFromDB;
+    private String propertyId;
     private double total;
+    private List<PropertyFromVO> propertyFromVOS;
+
 
     @Override
     public void onAttach(Context context) {
@@ -63,10 +69,26 @@ public class PropertyList extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.property_list, container, false);
         Common.setChargeDB(activity);
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
+//        propertyId=getArguments().getBundle("propertyId").toString();
+        propertyId="0";
         findViewById();
         setPopupMenu();
+        setNowMoney();
         return view;
+    }
+
+    private void setNowMoney() {
+        total=0.0;
+        propertyFromVOS=propertyFromDB.findByPropertyId(propertyId);
+        for(PropertyFromVO propertyFromVO:propertyFromVOS)
+        {
+            CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getSourceCurrency());
+            total=total+Double.valueOf(propertyFromVO.getSourceMoney())*Double.valueOf(currencyVO.getMoney());
+        }
+        currency.setText(Common.CurrencyResult(total,currencyVO));
     }
 
     private void setPopupMenu() {
@@ -79,9 +101,9 @@ public class PropertyList extends Fragment {
         end.set(Calendar.HOUR_OF_DAY,23);
         end.set(Calendar.MINUTE,59);
         end.set(Calendar.SECOND,59);
-
         sharedPreferences = activity.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
-        nowCurrency = sharedPreferences.getString(choiceCurrency, "TWD");
+        nowCurrency = sharedPreferences.getString(propertyCurrency, "TWD");
+        currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
         popupMenu=new PopupMenu(activity,currency);
         Common.createCurrencyPopMenu(popupMenu, activity);
         currency.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +128,7 @@ public class PropertyList extends Fragment {
             switch (menuItem.getItemId()) {
                 case 1:
                     nowCurrency = "TWD";
-                    sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
+                    sharedPreferences.edit().putString(propertyCurrency, nowCurrency).apply();
                     currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
                     currency.setText(CurrencyResult(total,currencyVO));
                 case 8:
@@ -114,7 +136,7 @@ public class PropertyList extends Fragment {
                     break;
                 default:
                     nowCurrency = Common.code.get(menuItem.getItemId() - 2);
-                    sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
+                    sharedPreferences.edit().putString(propertyCurrency, nowCurrency).apply();
                     currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
                     currency.setText(CurrencyResult(total,currencyVO));
                     break;

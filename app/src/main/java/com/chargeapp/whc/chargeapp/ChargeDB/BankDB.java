@@ -12,7 +12,9 @@ import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class BankDB {
@@ -47,6 +49,39 @@ public class BankDB {
         }
         cursor.close();
         return BankVOList;
+    }
+
+
+    public List<String> getAllName() {
+        String sql = "SELECT distinct maintype FROM BANK order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<String> allName = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            allName.add(cursor.getString(0));
+        }
+        cursor.close();
+        return allName;
+    }
+
+    public Map<String,Object> getTotalMoneyByName(String mainType) {
+        String sql = "SELECT realAmount,currency FROM BANK  where mainType = '"+mainType+"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        Map<String,Object> result=new HashMap<String, Object>();
+        CurrencyDB currencyDB=new CurrencyDB(db);
+        Double total=0.0;
+        CurrencyVO currencyVO=null;
+        String money;
+        while (cursor.moveToNext()) {
+            money=cursor.getString(0);
+            currencyVO=currencyDB.getOneByType(cursor.getString(1));
+            total=total+Double.valueOf(money)*Double.valueOf(currencyVO.getMoney());
+        }
+        result.put("total",total);
+        result.put("currency",currencyVO);
+        cursor.close();
+        return result;
     }
 
     public List<BankVO> getrealMoneyIsNullAll() {

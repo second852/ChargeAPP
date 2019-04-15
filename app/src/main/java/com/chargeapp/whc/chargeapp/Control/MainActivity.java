@@ -1170,9 +1170,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity", String.valueOf(oldFramgent.size()) + ":" + String.valueOf(bundles.size()));
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (oldFramgent.size() == 0 || bundles.size() == 0) {
-                OutDialogFragment aa = new OutDialogFragment();
-                aa.setObject(MainActivity.this);
-                aa.show(this.getSupportFragmentManager(), "show");
+                OutDialogFragment out = new OutDialogFragment();
+                out.show(this.getSupportFragmentManager(), "show");
             } else {
                 String action = oldFramgent.getLast();
                 Bundle bundle = bundles.getLast();

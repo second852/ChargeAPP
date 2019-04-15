@@ -16,10 +16,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.chargeapp.whc.chargeapp.Control.Common;
-import com.chargeapp.whc.chargeapp.Control.Price.PriceHand;
-import com.chargeapp.whc.chargeapp.Control.Price.PriceInvoice;
-import com.chargeapp.whc.chargeapp.Control.Price.PriceNumber;
-import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelActivity;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.android.gms.ads.AdView;
 
@@ -49,7 +45,7 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
         }else{
             this.activity=getActivity();
         }
-        activity.setTitle(R.string.text_DonateMain);
+        activity.setTitle(R.string.text_Property);
     }
 
 
@@ -176,12 +172,16 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
 
         @Override
         public Fragment getItem(int position) {
-            if (position == 0) {
-                return new PropertyList();
-            } else if (position == 1) {
-                return new PropertyCircle();
-            } else {
-                return new PropertyInsert();
+            switch (position)
+            {
+                case 0:
+                    return new PropertyMoneyList();
+                case 1:
+                    return new PropertyCircle();
+                case 2:
+                    return new PropertyInsert();
+                default:
+                    return new PropertyInsertMoney();
             }
         }
     }
