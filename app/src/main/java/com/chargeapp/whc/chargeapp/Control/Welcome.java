@@ -73,7 +73,7 @@ public class Welcome extends AppCompatActivity {
         setContentView(R.layout.welcome);
         Common.setChargeDB(this);
 
-//        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Property;");
+//        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE PropertyFrom;");
 
         Common.insertNewTableCol();
         new Thread(runnable).start();

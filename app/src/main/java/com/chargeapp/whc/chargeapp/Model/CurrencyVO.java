@@ -15,6 +15,11 @@ public class CurrencyVO {
 
     }
 
+    public CurrencyVO(String type, String money) {
+        this.type = type;
+        this.money = money;
+    }
+
     public String getName() {
         return name;
     }

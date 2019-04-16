@@ -116,7 +116,7 @@ public class Common {
     public static String doubleRemoveZero(double d) {
         int a = (int) d;
         if (a == d) {
-            return String.valueOf(a);
+            return String.valueOf(Common.nf.format(a));
         } else {
             return String.valueOf(Common.nf.format(d));
         }

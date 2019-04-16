@@ -64,24 +64,22 @@ public class BankDB {
         return allName;
     }
 
-    public Map<String,Object> getTotalMoneyByName(String mainType) {
-        String sql = "SELECT realAmount,currency FROM BANK  where mainType = '"+mainType+"' order by id;";
+    public Double getTotalMoneyByName(String mainType) {
+        String sql = "SELECT realMoney,currency FROM BANK  where mainType = '"+mainType+"' order by id;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
-        Map<String,Object> result=new HashMap<String, Object>();
         CurrencyDB currencyDB=new CurrencyDB(db);
         Double total=0.0;
-        CurrencyVO currencyVO=null;
-        String money;
+        CurrencyVO currencyVO;
+        String money,currencyMoney;
         while (cursor.moveToNext()) {
             money=cursor.getString(0);
             currencyVO=currencyDB.getOneByType(cursor.getString(1));
-            total=total+Double.valueOf(money)*Double.valueOf(currencyVO.getMoney());
+            currencyMoney=(currencyVO==null)?"1":currencyVO.getMoney();
+            total=total+Double.valueOf(money)*Double.valueOf(currencyMoney);
         }
-        result.put("total",total);
-        result.put("currency",currencyVO);
         cursor.close();
-        return result;
+        return total;
     }
 
     public List<BankVO> getrealMoneyIsNullAll() {

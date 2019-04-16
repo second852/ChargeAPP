@@ -161,6 +161,8 @@ public class CurrencyDB {
             currencyVO.setSymbol(cursor.getString(3));
             currencyVO.setMoney(cursor.getString(4));
             currencyVO.setTime(new Date(cursor.getLong(5)));
+        }else{
+            currencyVO=new CurrencyVO("TWD","1");
         }
         cursor.close();
         return currencyVO;

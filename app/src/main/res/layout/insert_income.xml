@@ -197,7 +197,7 @@
                     android:layout_marginTop="5dp"
                     >
                     <CheckBox
-                        android:id="@+id/fixdate"
+                        android:id="@+id/fixDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="150dp"
@@ -209,7 +209,7 @@
                         android:id="@+id/fixDateT"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toRightOf="@+id/fixdate"
+                        android:layout_toRightOf="@+id/fixDate"
                         android:textSize="20dp"
                         android:text="定期收入"
                         android:textColor="#000000"

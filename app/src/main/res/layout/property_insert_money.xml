@@ -12,7 +12,6 @@
         android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/choiceitem"
         android:scrollbars="vertical"
         android:layout_marginTop="30dp"
         >
@@ -31,9 +30,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="55dp"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
+                    android:layout_marginStart="70dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
                     android:text="項目"
                     android:textColor="#000000"
                     android:textSize="20sp" />
@@ -41,7 +40,7 @@
                     android:id="@+id/choicePropertyFrom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
+                    android:layout_marginStart="10dp"
                     app:bootstrapBrand="regular"
                     android:layout_centerVertical="true"
                     app:bootstrapExpandDirection="up"
@@ -62,16 +61,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="55dp"
+                    android:layout_marginStart="30dp"
                     android:text="現有金額"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical"
+                    android:layout_gravity="center"
+                    android:gravity="center"
                     android:textColor="#000000"
                     android:textSize="20sp" />
 
                 <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/currency"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginStart="10dp"
                     android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -87,8 +86,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginRight="30dp"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginStart="5dp"
                     android:gravity="center_vertical"
                     android:hint="0"
                     android:inputType="text"
@@ -110,7 +109,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="55dp"
+                    android:layout_marginStart="30dp"
                     android:text="轉入金額"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
@@ -119,7 +118,67 @@
 
                 <com.beardedhen.androidbootstrap.BootstrapButton
                     android:id="@+id/importCurrency"
-                    android:layout_marginLeft="25dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    app:bootstrapBrand="warning"
+                    app:bootstrapSize="md"
+                    app:buttonMode="regular"
+                    app:showOutline="false"
+                    app:roundedCorners="true"
+                    />
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/importCalculate"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapSize="md"
+                    app:buttonMode="regular"
+                    app:showOutline="true"
+                    app:roundedCorners="true"
+                    />
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                    android:id="@+id/importMoney"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginStart="5dp"
+                    android:gravity="center_vertical"
+                    android:hint="0"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#AAAAAA"
+                    app:bootstrapBrand="primary"
+                    app:roundedCorners="true"
+                    app:bootstrapSize="lg"  />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="50dp"
+                    android:text="手續費"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+                <com.beardedhen.androidbootstrap.BootstrapButton
+                    android:id="@+id/feeCurrency"
+                    android:layout_marginStart="10dp"
                     android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -131,12 +190,12 @@
                     app:roundedCorners="true"
                     />
                 <com.beardedhen.androidbootstrap.BootstrapButton
-                    android:id="@+id/importCalculate"
-                    android:layout_marginLeft="10dp"
+                    android:id="@+id/feeCalculate"
+                    android:layout_marginStart="10dp"
                     android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
+                    android:gravity="center"
                     app:bootstrapBrand="primary"
                     app:bootstrapSize="md"
                     app:buttonMode="regular"
@@ -144,7 +203,7 @@
                     app:roundedCorners="true"
                     />
                 <com.beardedhen.androidbootstrap.BootstrapEditText
-                    android:id="@+id/importMoney"
+                    android:id="@+id/feeMoney"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -160,7 +219,6 @@
                     app:roundedCorners="true"
                     app:bootstrapSize="lg"  />
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/showFixDate"
                 android:layout_width="match_parent"
@@ -224,7 +282,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="40dp"
                 >
                 <Button
                     android:id="@+id/standard"
@@ -273,6 +331,14 @@
 
     <GridView
         android:id="@+id/numberKeyBoard"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#AAAAAA"
+        android:visibility="gone"
+        />
+    <GridView
+        android:id="@+id/numberKeyBoard1"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1169,6 +1169,21 @@ public class MainActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         Log.d("MainActivity", String.valueOf(oldFramgent.size()) + ":" + String.valueOf(bundles.size()));
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            //close KeyBoard
+            View numberKeyBoard=findViewById(R.id.numberKeyBoard);
+            if(numberKeyBoard!=null&&numberKeyBoard.getVisibility()==View.VISIBLE)
+            {
+                numberKeyBoard.setVisibility(View.GONE);
+                return true;
+            }
+            View numberKeyBoard1=findViewById(R.id.numberKeyBoard1);
+            if(numberKeyBoard1!=null&&numberKeyBoard1.getVisibility()==View.VISIBLE)
+            {
+                numberKeyBoard1.setVisibility(View.GONE);
+                return true;
+            }
+
             if (oldFramgent.size() == 0 || bundles.size() == 0) {
                 OutDialogFragment out = new OutDialogFragment();
                 out.show(this.getSupportFragmentManager(), "show");

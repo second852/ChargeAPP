@@ -8,10 +8,19 @@ public class PropertyFromVO {
     private String sourceId; //來源Id consume secondType income mainType
     private String sourceMoney; //來源金額
     private String sourceCurrency;//來源幣別
+    private String importFee;//轉入手續費
     private Boolean fixImport;  //是否定期
     private FixDateCode fixDateCode;
     private String fixDateDetail;
     private String propertyId;
+
+    public String getImportFee() {
+        return importFee;
+    }
+
+    public void setImportFee(String importFee) {
+        this.importFee = importFee;
+    }
 
     public String getSourceCurrency() {
         return sourceCurrency;

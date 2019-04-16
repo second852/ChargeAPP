@@ -54,7 +54,7 @@ import static com.chargeapp.whc.chargeapp.Control.Common.onlyNumber;
 
 public class InsertIncome extends Fragment {
     private BootstrapEditText money,detailname,name,date;
-    private CheckBox fixdate;
+    private CheckBox fixDate;
     private TextView fixDateT;
     private BootstrapButton save, clear,standard;
     private LinearLayout showdate,showfixdate;
@@ -255,7 +255,7 @@ public class InsertIncome extends Fragment {
         detailname.setOnFocusChangeListener(new closeAllShow());
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new savecomsumer());
-        fixdate.setOnCheckedChangeListener(new showfixdateClick());
+        fixDate.setOnCheckedChangeListener(new showfixdateClick());
     }
 
 
@@ -371,7 +371,7 @@ public class InsertIncome extends Fragment {
         money.setText(String.valueOf(bankVO.getMoney()));
         date.setText(Common.sTwo.format(bankVO.getDate()));
         detailname.setText(bankVO.getDetailname());
-        fixdate.setChecked(Boolean.valueOf(bankVO.getFixDate()));
+        fixDate.setChecked(Boolean.valueOf(bankVO.getFixDate()));
         if(bankVO.getFixDate().equals("true"))
         {
 
@@ -440,8 +440,8 @@ public class InsertIncome extends Fragment {
                 choiceday.setDropdownData(Common.MonthSetSpinnerBS());
                 choiceday.setExpandDirection(ExpandDirection.UP);
             }
-            fixdate.setX(showfixdate.getWidth()/20);
-            fixDateT.setX(showfixdate.getWidth()/20+fixdate.getWidth());
+            fixDate.setX(showfixdate.getWidth()/20);
+            fixDateT.setX(showfixdate.getWidth()/20+fixDate.getWidth());
             choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/10);
             choiceday.setX((showfixdate.getWidth()*2/3)+showfixdate.getWidth()/20);
         }
@@ -453,7 +453,7 @@ public class InsertIncome extends Fragment {
         name = view.findViewById(R.id.name);
         money = view.findViewById(R.id.money);
         date = view.findViewById(R.id.date);
-        fixdate = view.findViewById(R.id.fixdate);
+        fixDate = view.findViewById(R.id.fixDate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
         showdate=view.findViewById(R.id.showdate);
@@ -515,8 +515,8 @@ public class InsertIncome extends Fragment {
             {
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
                 resultStatue=BsTextStatue.get(0).toString();
-                fixdate.setX(showfixdate.getWidth()/10);
-                fixDateT.setX(showfixdate.getWidth()/10+fixdate.getWidth());
+                fixDate.setX(showfixdate.getWidth()/10);
+                fixDateT.setX(showfixdate.getWidth()/10+fixDate.getWidth());
                 choiceStatue.setX(showfixdate.getWidth()/2+showfixdate.getWidth()/10);
                 choiceStatue.setVisibility(View.VISIBLE);
             }else{
@@ -524,8 +524,8 @@ public class InsertIncome extends Fragment {
                 resultDay="";
                 choiceStatue.setVisibility(View.GONE);
                 choiceday.setVisibility(View.GONE);
-                fixdate.setX(showfixdate.getWidth()/3);
-                fixDateT.setX(showfixdate.getWidth()/3+fixdate.getWidth());
+                fixDate.setX(showfixdate.getWidth()/3);
+                fixDateT.setX(showfixdate.getWidth()/3+fixDate.getWidth());
             }
         }
     }
@@ -595,7 +595,7 @@ public class InsertIncome extends Fragment {
             }
             name.setText("");
             money.setText("");
-            fixdate.setChecked(false);
+            fixDate.setChecked(false);
             detailname.setText("");
             choiceStatue.setBootstrapText(BsTextStatue.get(0));
             choiceday.setBootstrapText(BsTextDay.get(0));
@@ -629,7 +629,7 @@ public class InsertIncome extends Fragment {
         bankVO.setRealMoney(onlyNumber(money.getText().toString().trim()));
         bankVO.setCurrency(nowCurrency);
         bankVO.setDate(d);
-        bankVO.setFixDate(String.valueOf(fixdate.isChecked()));
+        bankVO.setFixDate(String.valueOf(fixDate.isChecked()));
         bankVO.setFixDateDetail(fixdatedetail);
         bankVO.setDetailname(detailname.getText().toString().trim());
         bankVO.setAuto(false);
@@ -686,7 +686,7 @@ public class InsertIncome extends Fragment {
             bankVO=new BankVO();
             name.setText("");
             money.setText("");
-            fixdate.setChecked(false);
+            fixDate.setChecked(false);
             detailname.setText("");
             numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate,money,context,numberKeyBoard,new StringBuilder(),true));
 //            choiceStatue.setSelection(0);
@@ -705,8 +705,8 @@ public class InsertIncome extends Fragment {
             {
                 resultDay="";
                 choiceday.setVisibility(View.GONE);
-                fixdate.setX(showfixdate.getWidth()/10);
-                fixDateT.setX(showfixdate.getWidth()/10+fixdate.getWidth());
+                fixDate.setX(showfixdate.getWidth()/10);
+                fixDateT.setX(showfixdate.getWidth()/10+fixDate.getWidth());
                 choiceStatue.setX(showfixdate.getWidth()/2+showfixdate.getWidth()/10);
                 choiceStatue.setVisibility(View.VISIBLE);
                 return;
@@ -730,8 +730,8 @@ public class InsertIncome extends Fragment {
                 choiceday.setDropdownData(Common.MonthSetSpinnerBS());
             }
             choiceday.setVisibility(View.VISIBLE);
-            fixdate.setX(showfixdate.getWidth()/20);
-            fixDateT.setX(showfixdate.getWidth()/20+fixdate.getWidth());
+            fixDate.setX(showfixdate.getWidth()/20);
+            fixDateT.setX(showfixdate.getWidth()/20+fixDate.getWidth());
             choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/10);
             choiceday.setX((showfixdate.getWidth()*2/3)+showfixdate.getWidth()/20);
         }
