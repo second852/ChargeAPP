@@ -1,20 +1,23 @@
 package com.chargeapp.whc.chargeapp.Control.Property;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -22,31 +25,37 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapDropDown;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.beardedhen.androidbootstrap.BootstrapText;
-import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
 import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListener;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
-import com.chargeapp.whc.chargeapp.Control.Insert.InsertIncome;
+import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 
-import java.lang.reflect.Array;
+
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.chargeapp.whc.chargeapp.Control.Common.Currency;
-import static com.chargeapp.whc.chargeapp.Control.Common.propertyCurrency;
+
+import static com.chargeapp.whc.chargeapp.Control.Common.*;
+
 
 public class PropertyInsertMoney extends Fragment {
 
     private BootstrapDropDown choicePropertyFrom,choiceStatue,choiceDay;
-    private BootstrapButton currency,importCalculate,importCurrency,feeCalculate,feeCurrency;
+    private BootstrapButton currency,importCalculate,importCurrency,feeCalculate,feeCurrency,save;
     private BootstrapEditText money,importMoney,feeMoney;
     private BankDB bankDB;
     private Activity activity;
@@ -65,6 +74,9 @@ public class PropertyInsertMoney extends Fragment {
     private TextView fixDateT;
     private int statueNumber;
     private Double total;
+    private PopupMenu popupMenu;
+    private String nowCurrency,choiceSource;
+    private String propertyId;
 
     @Override
     public void onAttach(Context context) {
@@ -81,9 +93,17 @@ public class PropertyInsertMoney extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.property_insert_money, container, false);
+        Object propertyId=getArguments().getSerializable(Common.propertyID);
+        if(propertyId==null)
+        {
+            Common.homePageFragment(getFragmentManager(),activity);
+            return view;
+        }
+        this.propertyId= (String) propertyId;
         findViewById();
         setDataBase();
         setDropDown();
+        setPopupMenu();
         return view;
     }
 
@@ -114,6 +134,8 @@ public class PropertyInsertMoney extends Fragment {
         BsTextWeek=Common.DateChoiceSetBsTest(activity,Common.WeekSetSpinnerBS);
         BsTextMonth=Common.DateChoiceSetBsTest(activity,Common.MonthSetSpinnerBS());
         BsTextStatue=Common.DateChoiceSetBsTest(activity,Common.DateStatueSetSpinner);
+        resultStatue=Common.DateStatueSetSpinner[0];
+        choiceSource=nameData[0];
     }
 
     private void setDataBase() {
@@ -141,7 +163,9 @@ public class PropertyInsertMoney extends Fragment {
 
         currency=view.findViewById(R.id.currency);
         money=view.findViewById(R.id.money);
-
+        //save
+        save=view.findViewById(R.id.save);
+        save.setOnClickListener(new savePropertyFrom());
         //numberKeyBoard
         importCurrency=view.findViewById(R.id.importCurrency);
         numberKeyBoard = view.findViewById(R.id.numberKeyBoard);
@@ -213,11 +237,11 @@ public class PropertyInsertMoney extends Fragment {
     private class choiceMoneyName implements BootstrapDropDown.OnDropDownItemClickListener {
         @Override
         public void onItemClick(ViewGroup parent, View v, int id) {
+            choiceSource=nameData[id];
             choicePropertyFrom.setBootstrapText(propertyTypes.get(id));
-            total=bankDB.getTotalMoneyByName(nameData[id])-propertyFromDB.findBySourceId(nameData[id]);
+            total=bankDB.getTotalMoneyByName(choiceSource)-propertyFromDB.findBySourceId(choiceSource);
             money.setText(Common.doubleRemoveZero(total/Double.valueOf(currencyVO.getMoney())));
-
-
+            money.setBackgroundColor(Color.parseColor("#DDDDDD"));
         }
     }
 
@@ -228,7 +252,7 @@ public class PropertyInsertMoney extends Fragment {
             if(b)
             {
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
-                resultStatue=BsTextStatue.get(0).toString();
+                resultStatue=Common.DateStatueSetSpinner[0];
                 fixDate.setX(showFixDate.getWidth()/10);
                 fixDateT.setX(showFixDate.getWidth()/10+fixDate.getWidth());
                 choiceStatue.setX(showFixDate.getWidth()/2+showFixDate.getWidth()/10);
@@ -247,7 +271,7 @@ public class PropertyInsertMoney extends Fragment {
     private class choiceStateItemBS implements BootstrapDropDown.OnDropDownItemClickListener {
         @Override
         public void onItemClick(ViewGroup parent, View v, int id) {
-            resultStatue=BsTextStatue.get(id).toString();
+            resultStatue=Common.DateStatueSetSpinner[id];
             choiceStatue.setBootstrapText(BsTextStatue.get(id));
             statueNumber=id;
             choiceDay.setExpandDirection(ExpandDirection.UP);
@@ -263,19 +287,19 @@ public class PropertyInsertMoney extends Fragment {
             }
             if(id==1)
             {
-                resultDay=BsTextWeek.get(0).toString();
+                resultDay=Common.WeekSetSpinnerBS[0];
                 choiceDay.setBootstrapText(BsTextWeek.get(0));
                 choiceDay.setDropdownData(Common.WeekSetSpinnerBS);
             }
             if(id==2)
             {
-                resultDay=BsTextDay.get(0).toString();
+                resultDay=Common.DaySetSpinnerBS()[0];
                 choiceDay.setBootstrapText(BsTextDay.get(0));
                 choiceDay.setDropdownData(Common.DaySetSpinnerBS());
             }
             if(id==3)
             {
-                resultDay=BsTextMonth.get(0).toString();
+                resultDay=Common.MonthSetSpinnerBS()[0];
                 choiceDay.setBootstrapText(BsTextMonth.get(0));
                 choiceDay.setDropdownData(Common.MonthSetSpinnerBS());
             }
@@ -293,19 +317,145 @@ public class PropertyInsertMoney extends Fragment {
             {
                 case 1:
                     choiceDay.setBootstrapText(BsTextWeek.get(id));
-                    resultDay=BsTextWeek.get(id).toString();
+                    resultDay=Common.WeekSetSpinnerBS[id];
                     break;
                 case 2:
                     choiceDay.setBootstrapText(BsTextDay.get(id));
-                    resultDay=BsTextDay.get(id).toString();
+                    resultDay=Common.DaySetSpinnerBS()[id];
                     break;
                 case 3:
                     choiceDay.setBootstrapText(BsTextMonth.get(id));
-                    resultDay=BsTextMonth.get(id).toString();
+                    resultDay=Common.MonthSetSpinnerBS()[id];
                     break;
             }
         }
     }
 
+
+    private class savePropertyFrom implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            if(importMoney.getText()==null){
+                importMoney.setError(getString(R.string.error_Zero));
+                return;
+            }
+            String stringMoney=importMoney.getText().toString().trim();
+            if(stringMoney.isEmpty())
+            {
+                importMoney.setError(getString(R.string.error_Zero));
+                return;
+            }
+            Integer iMoney;
+            try {
+                  iMoney=Integer.valueOf(stringMoney);
+                  if(iMoney<0)
+                  {
+                      importMoney.setError(getString(R.string.error_negative_Integer));
+                  }
+            }catch (Exception e)
+            {
+                importMoney.setError(getString(R.string.error_Integer));
+                return;
+            }
+            Integer fee=0;
+            if(feeMoney.getText()!=null)
+            {
+
+                try {
+                    fee=Integer.valueOf(feeMoney.getText().toString().trim());
+                    if(fee<0)
+                    {
+                        feeMoney.setError(getString(R.string.error_negative_Integer));
+                    }
+                }catch (Exception e)
+                {
+                    feeMoney.setError(getString(R.string.error_Integer));
+                    return;
+                }
+            }
+            Double actuallyTotal=total/Double.valueOf(currencyVO.getMoney());
+            if(actuallyTotal<(iMoney+fee))
+            {
+                importMoney.setError(getString(R.string.error_overMoney));
+                return;
+            }
+            PropertyFromVO propertyFromVO=new PropertyFromVO();
+            propertyFromVO.setSourceId(choiceSource);
+            propertyFromVO.setSourceCurrency(nowCurrency);
+            propertyFromVO.setSourceMoney(iMoney.toString());
+            propertyFromVO.setImportFee(fee.toString());
+            propertyFromVO.setPropertyId(propertyId);
+            propertyFromVO.setFixImport(fixDate.isChecked());
+            propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(resultStatue.trim()));
+            propertyFromVO.setFixDateDetail(resultDay);
+            propertyFromDB.insert(propertyFromVO);
+
+            if(fee>0)
+            {
+                ConsumeVO consumeVO=new ConsumeVO();
+                consumeVO.setMaintype("銀行");
+                consumeVO.setSecondType("轉帳");
+                consumeVO.setCurrency(nowCurrency);
+                consumeVO.setRealMoney(fee.toString());
+
+                PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+                PropertyVO propertyVO=propertyDB.findById(propertyId);
+                consumeVO.setDetailname("轉入"+propertyVO.getName()+"的費用");
+                consumeVO.setDate(new Date(System.currentTimeMillis()));
+            }
+
+
+            Fragment fragment=new PropertyMoneyList();
+            Bundle bundle=new Bundle();
+            bundle.putSerializable(Common.propertyID,propertyId);
+            fragment.setArguments(bundle);
+            Common.switchConfirmFragment(fragment,getFragmentManager());
+            Common.showToast(activity,getString(R.string.insert_success));
+        }
+    }
+
+
+    private void  setPopupMenu()
+    {
+        popupMenu=new PopupMenu(activity,importCurrency);
+        Common.createCurrencyPopMenu(popupMenu, activity);
+        importCurrency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupMenu.show();
+            }
+        });
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        popupMenu.setOnMenuItemClickListener(new choiceCurrency());
+    }
+
+    private class choiceCurrency implements PopupMenu.OnMenuItemClickListener {
+        @SuppressLint("SetTextI18n")
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case 1:
+                    nowCurrency = "TWD";
+                    sharedPreferences.edit().putString(propertyCurrency, nowCurrency).apply();
+                    currencyVO=new CurrencyVO("TWD","1");
+                case 8:
+                    popupMenu.dismiss();
+                    break;
+                default:
+                    nowCurrency = Common.code.get(menuItem.getItemId() - 2);
+                    sharedPreferences.edit().putString(propertyCurrency, nowCurrency).apply();
+                    currencyVO=currencyDB.getOneByType(nowCurrency);
+                    break;
+            }
+
+            String cResult=Common.Currency().get(currencyVO.getType());
+            currency.setText(cResult);
+            importCurrency.setText(cResult);
+            feeCurrency.setText(cResult);
+            money.setText(Common.doubleRemoveZero(total/Double.valueOf(currencyVO.getMoney())));
+
+            return true;
+        }
+    }
 
 }

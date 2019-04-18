@@ -43,6 +43,23 @@ public class PropertyDB {
         return propertyVOS;
     }
 
+    public PropertyVO findById(String Id) {
+        String sql = "SELECT * FROM Property where id ='"+Id +"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        PropertyVO propertyVO=null;
+        if (cursor.moveToNext()) {
+            propertyVO=new PropertyVO();
+            propertyVO.setId(cursor.getInt(0));
+            propertyVO.setName(cursor.getString(1));
+            propertyVO.setPropertyType(PropertyType.valueOf(cursor.getString(2)));
+            propertyVO.setNowMoney(cursor.getString(3));
+        }
+        cursor.close();
+        return propertyVO;
+    }
+
+
 
     public PropertyVO findByName(String name) {
         String sql = "SELECT * FROM Property where name ='"+name +"' order by id;";
@@ -64,7 +81,7 @@ public class PropertyDB {
     public long insert(PropertyVO propertyVO) {
         ContentValues values = new ContentValues();
         values.put("name", propertyVO.getName());
-        values.put("property", propertyVO.getPropertyType().getName());
+        values.put("propertyType", propertyVO.getPropertyType().getName());
         values.put("nowMoney", propertyVO.getNowMoney());
         return db.insert(TABLE_NAME, null, values);
     }
@@ -73,7 +90,7 @@ public class PropertyDB {
     public int update(PropertyVO propertyVO) {
         ContentValues values = new ContentValues();
         values.put("name", propertyVO.getName());
-        values.put("property", propertyVO.getPropertyType().getName());
+        values.put("propertyType", propertyVO.getPropertyType().getName());
         values.put("nowMoney", propertyVO.getNowMoney());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(propertyVO.getId())};

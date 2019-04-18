@@ -99,6 +99,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 
+import static com.chargeapp.whc.chargeapp.Control.Common.*;
+
+
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
@@ -1191,86 +1194,97 @@ public class MainActivity extends AppCompatActivity {
                 String action = oldFramgent.getLast();
                 Bundle bundle = bundles.getLast();
                 Log.d("MainActivity", action);
-                if (action.equals("SelectActivity")) {
-                    fragment = new SelectActivity();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SelectListPieIncome")) {
-                    fragment = new SelectListPieIncome();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SelectListBarIncome")) {
-                    fragment = new SelectListBarIncome();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SelectListModelIM")) {
-                    fragment = new SelectListModelActivity();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SelectListModelCom")) {
-                    fragment = new SelectListModelActivity();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SelectConsume")) {
-                    fragment = new SelectActivity();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SelectOtherCircle")) {
-                    fragment = new SelectOtherCircle();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SelectDetList")) {
-                    fragment = new SelectDetList();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SelectShowCircleDe")) {
-                    fragment = new SelectShowCircleDe();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SelectDetCircle")) {
-                    fragment = new SelectDetCircle();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SettingListFix")) {
-                    fragment = new SettingListFix();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SettingListFixIon")) {
-                    fragment = new SettingListFixIon();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SettingListFixCon")) {
-                    fragment = new SettingListFixCon();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SelectShowCircleDeList")) {
-                    fragment = new SelectShowCircleDeList();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("UpdateInvoice")) {
-                    fragment = new UpdateInvoice();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("UpdateSpend")) {
-                    fragment = new UpdateSpend();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("UpdateIncome")) {
-                    fragment = new UpdateIncome();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("HomePage")) {
-                    fragment = new HomePage();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("HomePagetList")) {
-                    fragment = new HomePagetList();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("InsertSpend") || action.equals("InsertIncome")) {
-                    fragment = new InsertActivity();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SettingListType")) {
-                    fragment = new SettingListType();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("SettingMain")) {
-                    fragment = new SettingMain();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("GoalListAll")) {
-                    fragment = new GoalListAll();
-                    fragment.setArguments(bundle);
-                } else if (action.equals("EleSetCarrier")) {
-                    fragment = new EleSetCarrier();
-                    fragment.setArguments(bundle);
+                switch (action)
+                {
+                    case "SelectActivity":
+                        fragment = new SelectActivity();
+                       break;
+                     case "SelectListPieIncome":
+                         fragment = new SelectListPieIncome();
+                    break;
+                    case "SelectListBarIncome":
+                        fragment = new SelectListBarIncome();
+                    break;
+                    case "SelectListModelIM":
+                        fragment = new SelectListModelActivity();
+                    break;
+                    case "SelectListModelCom":
+                        fragment = new SelectListModelActivity();
+                    break;
+                    case "SelectConsume":
+                        fragment = new SelectActivity();
+                    break;
+                    case "SelectOtherCircle":
+                        fragment = new SelectOtherCircle();
+                    break;
+                    case "SelectDetList":
+                        fragment = new SelectDetList();
+                    break;
+                    case "SelectShowCircleDe":
+                        fragment = new SelectShowCircleDe();
+                    break;
+                    case "SelectDetCircle":
+                        fragment = new SelectDetCircle();
+                        break;
+                     case "SettingListFix":
+                         fragment = new SettingListFix();
+                    break;
+                     case "SettingListFixIon":
+                         fragment = new SettingListFixIon();
+                    break;
+                     case "SettingListFixCon":
+                         fragment = new SettingListFixCon();
+                    break;
+                     case "SelectShowCircleDeList":
+                         fragment = new SelectShowCircleDeList();
+                    break;
+                     case "UpdateInvoice":
+                         fragment = new UpdateInvoice();
+                    break;
+                     case "UpdateSpend":
+                         fragment = new UpdateSpend();
+                    break;
+                     case "UpdateIncome":
+                         fragment = new UpdateIncome();
+                    break;
+                    case "HomePage":
+                        fragment = new HomePage();
+                        break;
+                    case "HomePagetList":
+                        fragment = new HomePagetList();
+                      break;
+                      case "InsertSpend":
+                      case "InsertIncome":
+                          fragment = new InsertActivity();
+                    break;
+                     case "SettingListType":
+                         fragment = new SettingListType();
+                    break;
+                     case "SettingMain":
+                         fragment = new SettingMain();
+                    break;
+                     case "GoalListAll":
+                         fragment = new GoalListAll();
+                    break;
+                     case "EleSetCarrier":
+                         fragment = new EleSetCarrier();
+                    break;
+                     case propertyMain:
+                         fragment=new PropertyMain();
+                    break;
+                    case Common.PropertyMoneyList:
+                        fragment =new com.chargeapp.whc.chargeapp.Control.Property.PropertyMoneyList();
+                        break;
                 }
+                fragment.setArguments(bundle);
 
-                //關閉keyboart
+                //------關閉keyboard-----//
                 View v = this.getCurrentFocus();
                 if (v != null) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
+                //-------------------//
                 oldFramgent.remove(oldFramgent.size() - 1);
                 bundles.remove(bundles.size() - 1);
                 switchFragment();

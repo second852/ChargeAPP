@@ -17,7 +17,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -32,6 +31,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
+import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
@@ -68,11 +68,8 @@ import java.util.regex.Pattern;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.content.Context.WINDOW_SERVICE;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_BANK;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_CHECK_O;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_MINUS_O;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_MONEY;
 
@@ -101,6 +98,13 @@ public class Common {
     public final static String propertyCurrency="propertyCurrency";
     public final static String choiceCurrency="choiceCurrency";
     public final static String insertCurrency="insertCurrency";
+
+
+    public final static String propertyID="propertyID";
+    public final static String propertyMain="propertyMain";
+    public final static String PropertyMoneyList="PropertyMoneyList";
+
+
 
     public static NumberFormat nf = NumberFormat.getNumberInstance();
     public static List<CarrierVO> lostCarrier;
@@ -1070,5 +1074,30 @@ public class Common {
         }
         fragmentTransaction.replace(R.id.body, fragment);
         fragmentTransaction.commit();
+    }
+
+    public static void switchConfirmFragment(Fragment fragment,FragmentManager fragmentManager) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        for (Fragment fragment1 : fragmentManager.getFragments()) {
+            fragmentTransaction.remove(fragment1);
+        }
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
+        MainActivity.oldFramgent.removeLast();
+        MainActivity.bundles.removeLast();
+
+    }
+
+
+    public static void homePageFragment(FragmentManager fragmentManager,Activity activity) {
+        MainActivity.oldFramgent.clear();
+        MainActivity.bundles.clear();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        for (Fragment fragment1 : fragmentManager.getFragments()) {
+            fragmentTransaction.remove(fragment1);
+        }
+        fragmentTransaction.replace(R.id.body, new HomePage());
+        fragmentTransaction.commit();
+        showToast(activity,activity.getString(R.string.error_lostData));
     }
 }

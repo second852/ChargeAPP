@@ -32,10 +32,21 @@
     <string name="chart_title">支出</string>
     <string name="text_Teach">教學影片</string>
     <string name="text_AddCarrier">載具歸戶</string>
+    <string name="text_update">修改</string>
+    <string name="text_delete">刪除</string>
+
+    <string name="insert_success">新增成功!</string>
 
     <string name="property_list">列表</string>
     <string name="property_circle">圖表</string>
     <string name="property_new">新增</string>
 
+
+    <string name="error_Zero">數值不能為0!</string>
+    <string name="error_Integer">不是數值!</string>
+    <string name="error_negative_Integer">不能為負值!</string>
+    <string name="error_overMoney">超過金額上限!</string>
+    <string name="error_lostData">資料遺失!</string>
+    <string name="error_noHaveData">沒有資料!</string>
 
 </resources>

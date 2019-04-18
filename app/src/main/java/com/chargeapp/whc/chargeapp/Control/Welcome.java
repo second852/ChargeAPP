@@ -34,6 +34,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertActivity;
 import com.chargeapp.whc.chargeapp.Job.DownloadNewDataJob;
@@ -44,8 +45,10 @@ import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -72,9 +75,7 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
         Common.setChargeDB(this);
-
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE PropertyFrom;");
-
         Common.insertNewTableCol();
         new Thread(runnable).start();
         new Thread(modifyMoneyFromIntegerToString).start();

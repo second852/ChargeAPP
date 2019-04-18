@@ -37,9 +37,10 @@ public class PropertyFromDB {
             propertyFromVO.setSourceCurrency(cursor.getString(3));
             propertyFromVO.setImportFee(cursor.getString(4));
             propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(5)));
-            propertyFromVO.setFixDateCode(FixDateCode.valueOf(cursor.getString(6)));
-            propertyFromVO.setFixDateDetail(cursor.getString(7));
+            propertyFromVO.setFixDateCode(FixDateCode.FixDay);
+            propertyFromVO.setFixDateDetail(cursor.getString(6));
             propertyFromVO.setPropertyId(cursor.getString(8));
+            propertyFromVOS.add(propertyFromVO);
         }
         cursor.close();
         return propertyFromVOS;
@@ -60,9 +61,10 @@ public class PropertyFromDB {
             propertyFromVO.setSourceCurrency(cursor.getString(3));
             propertyFromVO.setImportFee(cursor.getString(4));
             propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(5)));
-            propertyFromVO.setFixDateCode(FixDateCode.valueOf(cursor.getString(6)));
+            propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(cursor.getString(6)));
             propertyFromVO.setFixDateDetail(cursor.getString(7));
             propertyFromVO.setPropertyId(cursor.getString(8));
+            propertyFromVOS.add(propertyFromVO);
         }
         cursor.close();
         return propertyFromVOS;
@@ -98,7 +100,7 @@ public class PropertyFromDB {
         values.put("sourceCurrency",propertyFromVO.getSourceCurrency());
         values.put("importFee",propertyFromVO.getImportFee());
         values.put("fixImport", propertyFromVO.getFixImport().toString());
-        values.put("fixDateCode", propertyFromVO.getFixDateDetail());
+        values.put("fixDateCode", propertyFromVO.getFixDateCode().getDetail());
         values.put("fixDateDetail", propertyFromVO.getFixDateDetail());
         values.put("propertyId", propertyFromVO.getPropertyId());
         return db.insert(TABLE_NAME, null, values);
@@ -112,7 +114,7 @@ public class PropertyFromDB {
         values.put("sourceCurrency",propertyFromVO.getSourceCurrency());
         values.put("importFee",propertyFromVO.getImportFee());
         values.put("fixImport", propertyFromVO.getFixImport().toString());
-        values.put("fixDateCode", propertyFromVO.getFixDateDetail());
+        values.put("fixDateCode", propertyFromVO.getFixDateCode().getDetail());
         values.put("fixDateDetail", propertyFromVO.getFixDateDetail());
         values.put("propertyId", propertyFromVO.getPropertyId());
         String whereClause = COL_id + " = ?;";

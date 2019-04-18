@@ -175,13 +175,13 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
             switch (position)
             {
                 case 0:
-                    return new PropertyMoneyList();
+                    return new PropertyCircle();
                 case 1:
                     return new PropertyCircle();
                 case 2:
                     return new PropertyInsert();
                 default:
-                    return new PropertyInsertMoney();
+                    return new PropertyCircle();
             }
         }
     }

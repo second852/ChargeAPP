@@ -20,7 +20,7 @@ import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
-
+import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 
 
 /**
@@ -95,11 +95,15 @@ public class PropertyInsert extends Fragment {
                 return;
             }
             PropertyVO propertyVO=new PropertyVO();
+            propertyVO.setPropertyType(PropertyType.Positive);
+            propertyVO.setNowMoney("0");
             propertyVO.setName(nameP);
             long id=propertyDB.insert(propertyVO);
             Fragment fragment=new PropertyMoneyList();
-            fragment.getArguments().putString("propertyID",String.valueOf(id));
-            Common.switchFragment(fragment,"PropertyMoneyList",getFragmentManager());
+            Bundle bundle=new Bundle();
+            bundle.putSerializable(Common.propertyID,String.valueOf(id));
+            fragment.setArguments(bundle);
+            Common.switchFragment(fragment,Common.propertyMain,getFragmentManager());
         }
     }
 }
