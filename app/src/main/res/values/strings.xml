@@ -34,6 +34,7 @@
     <string name="text_AddCarrier">載具歸戶</string>
     <string name="text_update">修改</string>
     <string name="text_delete">刪除</string>
+    <string name="text_show">檢視</string>
 
     <string name="insert_success">新增成功!</string>
 

@@ -26,7 +26,7 @@ public class PropertyDB {
     }
 
     public List<PropertyVO> getAll() {
-        String sql = "SELECT * FROM Property order by id;";
+        String sql = "SELECT * FROM Property order by id desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<PropertyVO> propertyVOS = new ArrayList<>();
@@ -35,8 +35,7 @@ public class PropertyDB {
             propertyVO=new PropertyVO();
             propertyVO.setId(cursor.getInt(0));
             propertyVO.setName(cursor.getString(1));
-            propertyVO.setPropertyType(PropertyType.valueOf(cursor.getString(2)));
-            propertyVO.setNowMoney(cursor.getString(3));
+            propertyVO.setCurrency(cursor.getString(2));
             propertyVOS.add(propertyVO);
         }
         cursor.close();
@@ -52,8 +51,7 @@ public class PropertyDB {
             propertyVO=new PropertyVO();
             propertyVO.setId(cursor.getInt(0));
             propertyVO.setName(cursor.getString(1));
-            propertyVO.setPropertyType(PropertyType.valueOf(cursor.getString(2)));
-            propertyVO.setNowMoney(cursor.getString(3));
+            propertyVO.setCurrency(cursor.getString(2));
         }
         cursor.close();
         return propertyVO;
@@ -70,8 +68,7 @@ public class PropertyDB {
             propertyVO=new PropertyVO();
             propertyVO.setId(cursor.getInt(0));
             propertyVO.setName(cursor.getString(1));
-            propertyVO.setPropertyType(PropertyType.valueOf(cursor.getString(2)));
-            propertyVO.setNowMoney(cursor.getString(3));
+            propertyVO.setCurrency(cursor.getString(2));
         }
         cursor.close();
         return propertyVO;
@@ -81,8 +78,7 @@ public class PropertyDB {
     public long insert(PropertyVO propertyVO) {
         ContentValues values = new ContentValues();
         values.put("name", propertyVO.getName());
-        values.put("propertyType", propertyVO.getPropertyType().getName());
-        values.put("nowMoney", propertyVO.getNowMoney());
+        values.put("currency", propertyVO.getCurrency());
         return db.insert(TABLE_NAME, null, values);
     }
 
@@ -90,8 +86,7 @@ public class PropertyDB {
     public int update(PropertyVO propertyVO) {
         ContentValues values = new ContentValues();
         values.put("name", propertyVO.getName());
-        values.put("propertyType", propertyVO.getPropertyType().getName());
-        values.put("nowMoney", propertyVO.getNowMoney());
+        values.put("currency", propertyVO.getCurrency());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(propertyVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);

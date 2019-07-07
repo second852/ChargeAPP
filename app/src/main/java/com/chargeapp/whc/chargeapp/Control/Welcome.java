@@ -75,6 +75,7 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
         Common.setChargeDB(this);
+//        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Property;");
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE PropertyFrom;");
         Common.insertNewTableCol();
         new Thread(runnable).start();
@@ -127,8 +128,6 @@ public class Welcome extends AppCompatActivity {
     private Runnable modifyMoneyFromIntegerToString=new Runnable() {
         @Override
         public void run() {
-            Common.setChargeDB(Welcome.this);
-            Common.insertNewTableCol();
             ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
             List<ConsumeVO> consumeVOS=consumeDB.getRealMoneyIsNull();
             for(ConsumeVO consumeVO:consumeVOS)

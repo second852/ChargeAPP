@@ -175,7 +175,7 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
             switch (position)
             {
                 case 0:
-                    return new PropertyCircle();
+                    return new PropertyList();
                 case 1:
                     return new PropertyCircle();
                 case 2:

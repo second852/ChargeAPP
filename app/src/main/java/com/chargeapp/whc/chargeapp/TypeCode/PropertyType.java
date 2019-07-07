@@ -28,4 +28,19 @@ public enum PropertyType {
     public Integer getCode() {
         return code;
     }
+
+    public static PropertyType codeToEnum(Integer code)
+    {
+        switch (code)
+        {
+            case 1:
+                return PropertyType.Positive;
+            case 2:
+                return PropertyType.Negative;
+             default:
+                 return null;
+        }
+    }
+
+
 }

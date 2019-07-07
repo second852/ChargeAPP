@@ -45,6 +45,22 @@
                 app:roundedCorners="true"
                 app:bootstrapSize="lg"
                 />
+
+            <com.beardedhen.androidbootstrap.BootstrapDropDown
+                android:id="@+id/currency"
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:bootstrapBrand="regular"
+                app:bootstrapExpandDirection="down"
+                app:bootstrapSize="md"
+                app:bootstrapText="新台幣 {fa_money}"
+                app:dropdownResource="@array/fixDay"
+                app:roundedCorners="true"
+                app:showOutline="true"
+                />
+
             <com.beardedhen.androidbootstrap.BootstrapButton
                 android:id="@+id/save"
                 android:layout_marginTop="80dp"

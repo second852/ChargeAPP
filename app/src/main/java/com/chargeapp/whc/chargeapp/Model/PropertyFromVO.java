@@ -1,11 +1,13 @@
 package com.chargeapp.whc.chargeapp.Model;
 
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
+import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 
 public class PropertyFromVO {
 
     private String id; //id
     private String sourceId; //來源Id consume secondType income mainType
+    private PropertyType type;//來源類別
     private String sourceMoney; //來源金額
     private String sourceCurrency;//來源幣別
     private String importFee;//轉入手續費
@@ -13,6 +15,14 @@ public class PropertyFromVO {
     private FixDateCode fixDateCode;
     private String fixDateDetail;
     private String propertyId;
+
+    public PropertyType getType() {
+        return type;
+    }
+
+    public void setType(PropertyType type) {
+        this.type = type;
+    }
 
     public String getImportFee() {
         return importFee;

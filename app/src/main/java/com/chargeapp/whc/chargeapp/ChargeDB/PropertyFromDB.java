@@ -33,13 +33,14 @@ public class PropertyFromDB {
             propertyFromVO=new PropertyFromVO();
             propertyFromVO.setId(cursor.getString(0));
             propertyFromVO.setSourceId(cursor.getString(1));
-            propertyFromVO.setSourceMoney(cursor.getString(2));
-            propertyFromVO.setSourceCurrency(cursor.getString(3));
-            propertyFromVO.setImportFee(cursor.getString(4));
-            propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(5)));
-            propertyFromVO.setFixDateCode(FixDateCode.FixDay);
-            propertyFromVO.setFixDateDetail(cursor.getString(6));
-            propertyFromVO.setPropertyId(cursor.getString(8));
+            propertyFromVO.setType(PropertyType.codeToEnum(cursor.getInt(2)));
+            propertyFromVO.setSourceMoney(cursor.getString(3));
+            propertyFromVO.setSourceCurrency(cursor.getString(4));
+            propertyFromVO.setImportFee(cursor.getString(5));
+            propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(6)));
+            propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(cursor.getString(7)));
+            propertyFromVO.setFixDateDetail(cursor.getString(8));
+            propertyFromVO.setPropertyId(cursor.getString(9));
             propertyFromVOS.add(propertyFromVO);
         }
         cursor.close();
@@ -57,17 +58,37 @@ public class PropertyFromDB {
             propertyFromVO=new PropertyFromVO();
             propertyFromVO.setId(cursor.getString(0));
             propertyFromVO.setSourceId(cursor.getString(1));
-            propertyFromVO.setSourceMoney(cursor.getString(2));
-            propertyFromVO.setSourceCurrency(cursor.getString(3));
-            propertyFromVO.setImportFee(cursor.getString(4));
-            propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(5)));
-            propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(cursor.getString(6)));
-            propertyFromVO.setFixDateDetail(cursor.getString(7));
-            propertyFromVO.setPropertyId(cursor.getString(8));
+            propertyFromVO.setType(PropertyType.codeToEnum(cursor.getInt(2)));
+            propertyFromVO.setSourceMoney(cursor.getString(3));
+            propertyFromVO.setSourceCurrency(cursor.getString(4));
+            propertyFromVO.setImportFee(cursor.getString(5));
+            propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(6)));
+            propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(cursor.getString(7)));
+            propertyFromVO.setFixDateDetail(cursor.getString(8));
+            propertyFromVO.setPropertyId(cursor.getString(9));
             propertyFromVOS.add(propertyFromVO);
         }
         cursor.close();
         return propertyFromVOS;
+    }
+
+
+    public Double totalConsume(Integer propertyId,PropertyType type) {
+        String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where propertyId ='"+propertyId +"' and type = '"+type.getCode()+"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        Double total=0.0;
+        CurrencyVO currencyVO;
+        CurrencyDB currencyDB=new CurrencyDB(db);
+        String money,currencyMoney;
+        if (cursor.moveToNext()) {
+            money=cursor.getString(0);
+            currencyVO=currencyDB.getOneByType(cursor.getString(1));
+            currencyMoney=(currencyVO==null)?"1":currencyVO.getMoney();
+            total=total+Double.valueOf(currencyMoney)*Double.valueOf(money);
+        }
+        cursor.close();
+        return total;
     }
 
 
@@ -96,6 +117,7 @@ public class PropertyFromDB {
     public long insert(PropertyFromVO propertyFromVO) {
         ContentValues values = new ContentValues();
         values.put("sourceId", propertyFromVO.getSourceId());
+        values.put("type",propertyFromVO.getType().getCode());
         values.put("sourceMoney",propertyFromVO.getSourceMoney());
         values.put("sourceCurrency",propertyFromVO.getSourceCurrency());
         values.put("importFee",propertyFromVO.getImportFee());
@@ -110,6 +132,7 @@ public class PropertyFromDB {
     public int update(PropertyFromVO propertyFromVO) {
         ContentValues values = new ContentValues();
         values.put("sourceId", propertyFromVO.getSourceId());
+        values.put("type",propertyFromVO.getType().getCode());
         values.put("sourceMoney",propertyFromVO.getSourceMoney());
         values.put("sourceCurrency",propertyFromVO.getSourceCurrency());
         values.put("importFee",propertyFromVO.getImportFee());

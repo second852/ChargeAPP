@@ -372,6 +372,32 @@ public class Common {
         return  Currency;
     }
 
+
+    public static List<String> getALLCurrencyKey()
+    {
+        List<String> name=new ArrayList<>();
+        for(String s:showCurrency().keySet())
+        {
+            name.add(s);
+        }
+        name.remove("TWD");
+        name.set(0,"TWD");
+        return  name;
+    }
+
+
+    public static List<String> getALLCurrencyValue()
+    {
+        List<String> name=new ArrayList<>();
+        for(String s:showCurrency().values())
+        {
+            name.add(s);
+        }
+        name.remove("新台幣");
+        name.set(0,"新台幣");
+        return  name;
+    }
+
     public static String getCurrency(String dollor)
     {
         String currency= Currency().get(dollor);
@@ -658,6 +684,20 @@ public class Common {
     public static List<BootstrapText> propertyInsertMoneyData(Activity activity, String[] data) {
         List<BootstrapText> bootstrapTexts = new ArrayList<>();
         for (String s : data) {
+            BootstrapText text = new BootstrapText.Builder(activity)
+                    .addText(s + " ")
+                    .addFontAwesomeIcon(FA_MONEY)
+                    .build();
+            bootstrapTexts.add(text);
+        }
+        return bootstrapTexts;
+    }
+
+    public static List<BootstrapText> currecyData(Activity activity, String[] data) {
+        List<BootstrapText> bootstrapTexts = new ArrayList<>();
+        for (String s : data)
+        {
+            s=Common.showCurrency().get(s);
             BootstrapText text = new BootstrapText.Builder(activity)
                     .addText(s + " ")
                     .addFontAwesomeIcon(FA_MONEY)

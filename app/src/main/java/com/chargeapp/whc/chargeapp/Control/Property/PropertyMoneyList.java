@@ -153,7 +153,7 @@ public class PropertyMoneyList extends Fragment {
         });
 
         //返回
-        returnMain=returnMain.findViewById(R.id.returnMain);
+        returnMain=view.findViewById(R.id.returnMain);
         returnMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
