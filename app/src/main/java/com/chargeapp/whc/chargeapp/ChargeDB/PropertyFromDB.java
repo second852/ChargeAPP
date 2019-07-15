@@ -110,7 +110,22 @@ public class PropertyFromDB {
         return total;
     }
 
-
+    public Double getTotalAll() {
+        String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        CurrencyDB currencyDB=new CurrencyDB(db);
+        Double total=0.0;
+        CurrencyVO currencyVO;
+        String money;
+        if (cursor.moveToNext()) {
+            money=cursor.getString(0);
+            currencyVO=currencyDB.getOneByType(cursor.getString(1));
+            total=total+Double.valueOf(currencyVO.getMoney())*Double.valueOf(money);
+        }
+        cursor.close();
+        return total;
+    }
 
 
 

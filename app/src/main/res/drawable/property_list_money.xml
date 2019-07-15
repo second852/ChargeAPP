@@ -80,7 +80,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="新增收入"/>
+            android:text="新增來源"/>
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
@@ -88,34 +88,6 @@
             android:layout_marginStart="10dp"
             app:backgroundTint="@color/bootstrap_brand_primary"
             app:srcCompat="@drawable/property_add"
-            app:fabSize="mini"/>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/insertConsume"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:clipToPadding="false"
-        android:layout_marginEnd="23dp"
-        android:gravity="center"
-        android:layout_marginBottom="23dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="新增支出"/>
-
-        <android.support.design.widget.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            app:backgroundTint="@color/bootstrap_brand_primary"
-            app:srcCompat="@drawable/property_cut"
             app:fabSize="mini"/>
     </LinearLayout>
 

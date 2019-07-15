@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
@@ -81,19 +82,29 @@ public class PropertyList extends Fragment {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                 itemView = layoutInflater.inflate(R.layout.property_list_from_detail, parent, false);
             }
-
+            BootstrapButton showD=itemView.findViewById(R.id.showD);
             TextView listTitle=itemView.findViewById(R.id.listTitle);
             TextView detail=itemView.findViewById(R.id.listDetail);
-            PropertyVO propertyVO=propertyVOS.get(position);
+            final PropertyVO propertyVO=propertyVOS.get(position);
             CurrencyVO currencyVO=currencyDB.getOneByType(propertyVO.getCurrency());
             Double consume=propertyFromDB.totalConsume(propertyVO.getId(), PropertyType.Negative);
             Double income=propertyFromDB.totalConsume(propertyVO.getId(), PropertyType.Positive);
             Double total=income-consume;
             String title=propertyVO.getName()+" "+Common.CurrencyResult(total,currencyVO);
-            String detaile="收入 :"+Common.CurrencyResult(income,currencyVO)+"\n" +
+            String detailE="收入 :"+Common.CurrencyResult(income,currencyVO)+"\n" +
                            "支出 :"+Common.CurrencyResult(consume,currencyVO);
             listTitle.setText(title);
-            detail.setText(detaile);
+            detail.setText(detailE);
+            showD.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Fragment fragment=new PropertyMoneyList();
+                    Bundle bundle=new Bundle();
+                    bundle.putSerializable(Common.propertyID,String.valueOf(propertyVO.getId()));
+                    fragment.setArguments(bundle);
+                    Common.switchFragment(fragment,Common.propertyMain,getFragmentManager());
+                }
+            });
             return itemView;
         }
 

@@ -7,4 +7,5 @@
     <color name="chart_color_JP">#E7655A</color>
     <color name="chart_color_KR">#F6CE5D</color>
     <color name="chart_color_Others">#BAE6FB</color>
+    <color name="colorTransBg">#26000000</color>
 </resources>

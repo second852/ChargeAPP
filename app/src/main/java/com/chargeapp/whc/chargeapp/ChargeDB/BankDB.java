@@ -248,6 +248,22 @@ public class BankDB {
     }
 
 
+    public Double getAllTotal() {
+        String sql = "SELECT realMoney,currency  FROM BANK where date;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        Double total = 0.0;
+        CurrencyDB currencyDB = new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        CurrencyVO currencyVO;
+        while (cursor.moveToNext()) {
+            currencyVO = currencyDB.getOneByType(cursor.getString(1));
+            total = total + Double.valueOf(cursor.getString(0)) * Double.valueOf(currencyVO.getMoney());
+        }
+        cursor.close();
+        return total;
+    }
+
+
     public long getMinTime() {
         String sql = "SELECT min(date) FROM BANK ;";
         String[] args = {};

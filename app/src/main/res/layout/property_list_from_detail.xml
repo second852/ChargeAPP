@@ -54,7 +54,7 @@
     </RelativeLayout>
 
     <com.beardedhen.androidbootstrap.BootstrapButton
-        android:id="@+id/updateD"
+        android:id="@+id/showD"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
