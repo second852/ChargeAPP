@@ -14,10 +14,12 @@ import android.widget.TextView;
 
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
+import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyVO;
@@ -83,6 +85,7 @@ public class PropertyList extends Fragment {
                 itemView = layoutInflater.inflate(R.layout.property_list_from_detail, parent, false);
             }
             BootstrapButton showD=itemView.findViewById(R.id.showD);
+            BootstrapButton deleteI=itemView.findViewById(R.id.deleteI);
             TextView listTitle=itemView.findViewById(R.id.listTitle);
             TextView detail=itemView.findViewById(R.id.listDetail);
             final PropertyVO propertyVO=propertyVOS.get(position);
@@ -98,13 +101,23 @@ public class PropertyList extends Fragment {
             showD.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Fragment fragment=new PropertyMoneyList();
+                    Fragment fragment=new PropertyTotal();
                     Bundle bundle=new Bundle();
                     bundle.putSerializable(Common.propertyID,String.valueOf(propertyVO.getId()));
                     fragment.setArguments(bundle);
                     Common.switchFragment(fragment,Common.propertyMain,getFragmentManager());
                 }
             });
+            deleteI.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DeleteDialogFragment deleteObject= new DeleteDialogFragment();
+                    deleteObject.setObject(propertyVO);
+                    deleteObject.setFragement(PropertyList.this);
+                    deleteObject.show(getFragmentManager(),"show");
+                }
+            });
+
             return itemView;
         }
 

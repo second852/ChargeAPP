@@ -4,14 +4,19 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
+import com.github.mikephil.charting.data.PieEntry;
 
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class PropertyFromDB {
@@ -23,6 +28,53 @@ public class PropertyFromDB {
         this.db = db;
     }
 
+
+
+    //select object
+    public PropertyFromVO getPropertyFromVO(Cursor cursor)
+    {
+        PropertyFromVO propertyFromVO=new PropertyFromVO();
+        propertyFromVO.setId(cursor.getString(0));
+        propertyFromVO.setSourceId(cursor.getString(1));
+        propertyFromVO.setType(PropertyType.codeToEnum(cursor.getInt(2)));
+        propertyFromVO.setSourceMoney(cursor.getString(3));
+        propertyFromVO.setSourceCurrency(cursor.getString(4));
+        propertyFromVO.setSourceMainType(cursor.getString(5));
+        propertyFromVO.setSourceSecondType(cursor.getString(6));
+        propertyFromVO.setSourceTime(new Date(cursor.getLong(7)));
+        propertyFromVO.setImportFee(cursor.getString(8));
+        propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(9)));
+        propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(cursor.getString(10)));
+        propertyFromVO.setFixDateDetail(cursor.getString(11));
+        propertyFromVO.setPropertyId(cursor.getString(12));
+        propertyFromVO.setFixFromId(cursor.getString(13));
+        return propertyFromVO;
+    }
+
+
+    //insert/update
+    public ContentValues getContentValues(PropertyFromVO propertyFromVO)
+    {
+        ContentValues values = new ContentValues();
+        values.put("sourceId", propertyFromVO.getSourceId());
+        values.put("type",propertyFromVO.getType().getCode());
+        values.put("sourceMoney",propertyFromVO.getSourceMoney());
+        values.put("sourceCurrency",propertyFromVO.getSourceCurrency());
+        values.put("sourceMainType",propertyFromVO.getSourceMainType());
+        values.put("sourceSecondType",propertyFromVO.getSourceSecondType());
+        values.put("sourceTime",propertyFromVO.getSourceTime().getTime());
+        values.put("importFee",propertyFromVO.getImportFee());
+        values.put("fixImport", propertyFromVO.getFixImport().toString());
+        values.put("fixDateCode", propertyFromVO.getFixDateCode().getDetail());
+        values.put("fixDateDetail", propertyFromVO.getFixDateDetail());
+        values.put("propertyId", propertyFromVO.getPropertyId());
+        values.put("fixFromId", propertyFromVO.getFixFromId());
+        return values;
+    }
+
+
+
+
     public List<PropertyFromVO> getAll() {
         String sql = "SELECT * FROM PropertyFrom order by id;";
         String[] args = {};
@@ -30,17 +82,7 @@ public class PropertyFromDB {
         List<PropertyFromVO> propertyFromVOS = new ArrayList<>();
         PropertyFromVO propertyFromVO;
         while (cursor.moveToNext()) {
-            propertyFromVO=new PropertyFromVO();
-            propertyFromVO.setId(cursor.getString(0));
-            propertyFromVO.setSourceId(cursor.getString(1));
-            propertyFromVO.setType(PropertyType.codeToEnum(cursor.getInt(2)));
-            propertyFromVO.setSourceMoney(cursor.getString(3));
-            propertyFromVO.setSourceCurrency(cursor.getString(4));
-            propertyFromVO.setImportFee(cursor.getString(5));
-            propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(6)));
-            propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(cursor.getString(7)));
-            propertyFromVO.setFixDateDetail(cursor.getString(8));
-            propertyFromVO.setPropertyId(cursor.getString(9));
+            propertyFromVO=getPropertyFromVO(cursor);
             propertyFromVOS.add(propertyFromVO);
         }
         cursor.close();
@@ -55,17 +97,7 @@ public class PropertyFromDB {
         List<PropertyFromVO> propertyFromVOS = new ArrayList<>();
         PropertyFromVO propertyFromVO;
         while (cursor.moveToNext()) {
-            propertyFromVO=new PropertyFromVO();
-            propertyFromVO.setId(cursor.getString(0));
-            propertyFromVO.setSourceId(cursor.getString(1));
-            propertyFromVO.setType(PropertyType.codeToEnum(cursor.getInt(2)));
-            propertyFromVO.setSourceMoney(cursor.getString(3));
-            propertyFromVO.setSourceCurrency(cursor.getString(4));
-            propertyFromVO.setImportFee(cursor.getString(5));
-            propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(6)));
-            propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(cursor.getString(7)));
-            propertyFromVO.setFixDateDetail(cursor.getString(8));
-            propertyFromVO.setPropertyId(cursor.getString(9));
+            propertyFromVO=getPropertyFromVO(cursor);
             propertyFromVOS.add(propertyFromVO);
         }
         cursor.close();
@@ -128,33 +160,42 @@ public class PropertyFromDB {
     }
 
 
+    public Map<String,Double> getPieDataMaiType(PropertyType propertyType)
+    {
+        String sql = "SELECT * FROM PropertyFrom where type ='"+propertyType.getCode() +"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        CurrencyDB currencyDB=new CurrencyDB(db);
+        PropertyFromVO propertyFromVO;
+        Map<String,Double> map=new HashMap<>();
+        while (cursor.moveToNext()) {
+            propertyFromVO=getPropertyFromVO(cursor);
+            Double moneyMap=map.get(propertyFromVO.getSourceMainType());
+            Long start=propertyFromVO.getSourceTime().getTime()-86400000L;
+            Long end=propertyFromVO.getSourceTime().getTime()+86400000L;
+            CurrencyVO currencyVO=currencyDB.getBytimeAndType(start,end,propertyFromVO.getSourceCurrency());
+            Double money=Double.valueOf(propertyFromVO.getSourceMoney())*Double.valueOf(currencyVO.getMoney());
+            if(moneyMap==null)
+            {
+                moneyMap=money;
+            }else{
+                moneyMap=moneyMap+money;
+            }
+            map.put(propertyFromVO.getSourceMainType(),moneyMap);
+        }
+        return map;
+    }
+
+
 
     public long insert(PropertyFromVO propertyFromVO) {
-        ContentValues values = new ContentValues();
-        values.put("sourceId", propertyFromVO.getSourceId());
-        values.put("type",propertyFromVO.getType().getCode());
-        values.put("sourceMoney",propertyFromVO.getSourceMoney());
-        values.put("sourceCurrency",propertyFromVO.getSourceCurrency());
-        values.put("importFee",propertyFromVO.getImportFee());
-        values.put("fixImport", propertyFromVO.getFixImport().toString());
-        values.put("fixDateCode", propertyFromVO.getFixDateCode().getDetail());
-        values.put("fixDateDetail", propertyFromVO.getFixDateDetail());
-        values.put("propertyId", propertyFromVO.getPropertyId());
+        ContentValues values = getContentValues(propertyFromVO);
         return db.insert(TABLE_NAME, null, values);
     }
 
 
-    public int update(PropertyFromVO propertyFromVO) {
-        ContentValues values = new ContentValues();
-        values.put("sourceId", propertyFromVO.getSourceId());
-        values.put("type",propertyFromVO.getType().getCode());
-        values.put("sourceMoney",propertyFromVO.getSourceMoney());
-        values.put("sourceCurrency",propertyFromVO.getSourceCurrency());
-        values.put("importFee",propertyFromVO.getImportFee());
-        values.put("fixImport", propertyFromVO.getFixImport().toString());
-        values.put("fixDateCode", propertyFromVO.getFixDateCode().getDetail());
-        values.put("fixDateDetail", propertyFromVO.getFixDateDetail());
-        values.put("propertyId", propertyFromVO.getPropertyId());
+    public long update(PropertyFromVO propertyFromVO) {
+        ContentValues values = getContentValues(propertyFromVO);
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {propertyFromVO.getId()};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);
@@ -163,6 +204,12 @@ public class PropertyFromDB {
     public int deleteById(int id) {
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {String.valueOf(id)};
+        return db.delete(TABLE_NAME, whereClause, whereArgs);
+    }
+
+    public int deleteByPropertyId(int propertyId) {
+        String whereClause ="propertyId = ?;";
+        String[] whereArgs = {String.valueOf(propertyId)};
         return db.delete(TABLE_NAME, whereClause, whereArgs);
     }
 

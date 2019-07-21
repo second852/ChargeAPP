@@ -1058,7 +1058,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
     private InvoiceVO getType(InvoiceVO invoiceVO) {
         List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
-        String main = "O", second = "O";
+        String main = "其他", second = "其他";
         int x = 0, total = 0;
         for (TypeDetailVO t : typeDetailVOS) {
             x = 0;

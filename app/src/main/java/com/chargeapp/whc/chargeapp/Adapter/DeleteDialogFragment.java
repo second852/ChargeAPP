@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -18,6 +19,8 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ElePeriodDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
@@ -42,6 +45,7 @@ import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -64,6 +68,8 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     private CarrierDB carrierDB;
     private ElePeriodDB elePeriodDB;
     private Activity activity;
+    private PropertyDB propertyDB;
+    private PropertyFromDB propertyFromDB;
 
     public Object getObject() {
         return object;
@@ -94,15 +100,18 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String message=null;
         Common.setChargeDB(activity);
-        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDB=new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB=new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        elePeriodDB=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        SQLiteDatabase database=MainActivity.chargeAPPDB.getWritableDatabase();
+        consumeDB=new ConsumeDB(database);
+        invoiceDB=new InvoiceDB(database);
+        bankDB=new BankDB(database);
+        goalDB=new GoalDB(database);
+        typeDB=new TypeDB(database);
+        typeDetailDB=new TypeDetailDB(database);
+        bankTybeDB=new BankTybeDB(database);
+        carrierDB=new CarrierDB(database);
+        elePeriodDB=new ElePeriodDB(database);
+        propertyDB=new PropertyDB(database);
+        propertyFromDB=new PropertyFromDB(database);
         String title="確定要刪除這筆資料?";
         if(object instanceof InvoiceVO)
         {
@@ -138,7 +147,13 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
             CarrierVO carrierVO= (CarrierVO) object;
             message=carrierVO.getCarNul()+"相關資料會一併刪除!";
             title="確定要刪除載具?";
+        }else if(object instanceof PropertyVO)
+        {
+            PropertyVO propertyVO= (PropertyVO) object;
+            message=propertyVO.getName()+"相關資料會一併刪除!";
+            title=propertyVO.getName();
         }
+
 
         return new AlertDialog.Builder(getActivity())
                 .setTitle(Html.fromHtml(title))
@@ -189,6 +204,11 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                     carrierDB.deleteByCarNul(carrierVO.getCarNul());
                     invoiceDB.deleteById(carrierVO.getCarNul());
                     elePeriodDB.deleteByCARNUL(carrierVO.getCarNul());
+                }else if(object instanceof PropertyVO)
+                {
+                    PropertyVO propertyVO= (PropertyVO) object;
+                    propertyFromDB.deleteById(propertyVO.getId());
+                    propertyDB.deleteById(propertyVO.getId());
                 }
 
 

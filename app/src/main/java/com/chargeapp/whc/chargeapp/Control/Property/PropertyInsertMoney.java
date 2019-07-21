@@ -383,6 +383,9 @@ public class PropertyInsertMoney extends Fragment {
             propertyFromVO.setSourceId(choiceSource);
             propertyFromVO.setSourceCurrency(nowCurrency);
             propertyFromVO.setSourceMoney(iMoney.toString());
+            propertyFromVO.setSourceMainType(choiceSource);
+            propertyFromVO.setSourceSecondType(null);
+            propertyFromVO.setSourceTime(new Date(System.currentTimeMillis()));
             propertyFromVO.setImportFee(fee.toString());
             propertyFromVO.setPropertyId(propertyId);
             propertyFromVO.setFixImport(fixDate.isChecked());

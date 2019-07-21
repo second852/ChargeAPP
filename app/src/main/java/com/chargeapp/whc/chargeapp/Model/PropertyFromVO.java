@@ -3,6 +3,8 @@ package com.chargeapp.whc.chargeapp.Model;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 
+import java.sql.Date;
+
 public class PropertyFromVO {
 
     private String id; //id
@@ -10,11 +12,48 @@ public class PropertyFromVO {
     private PropertyType type;//來源類別
     private String sourceMoney; //來源金額
     private String sourceCurrency;//來源幣別
+    private String sourceMainType;//來原主類別
+    private String sourceSecondType;//來源類別
+    private Date sourceTime;//來源時間
     private String importFee;//轉入手續費
     private Boolean fixImport;  //是否定期
     private FixDateCode fixDateCode;
     private String fixDateDetail;
     private String propertyId;
+    private String fixFromId;//定期Id
+
+
+    public Date getSourceTime() {
+        return sourceTime;
+    }
+
+    public void setSourceTime(Date sourceTime) {
+        this.sourceTime = sourceTime;
+    }
+
+    public String getSourceMainType() {
+        return sourceMainType;
+    }
+
+    public void setSourceMainType(String sourceMainType) {
+        this.sourceMainType = sourceMainType;
+    }
+
+    public String getSourceSecondType() {
+        return sourceSecondType;
+    }
+
+    public void setSourceSecondType(String sourceSecondType) {
+        this.sourceSecondType = sourceSecondType;
+    }
+
+    public String getFixFromId() {
+        return fixFromId;
+    }
+
+    public void setFixFromId(String fixFromId) {
+        this.fixFromId = fixFromId;
+    }
 
     public PropertyType getType() {
         return type;
