@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -33,7 +32,6 @@ import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
-import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
@@ -41,9 +39,6 @@ import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
-
-
-import org.jsoup.helper.StringUtil;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -53,11 +48,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.chargeapp.whc.chargeapp.Control.Common.propertyCurrency;
 
-import static com.chargeapp.whc.chargeapp.Control.Common.*;
 
-
-public class PropertyInsertMoney extends Fragment {
+public class PropertyInsertConsume extends Fragment {
 
     private BootstrapDropDown choicePropertyFrom,choiceStatue,choiceDay;
     private BootstrapButton currency,importCalculate,importCurrency,feeCalculate,feeCurrency,save;

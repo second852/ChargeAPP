@@ -220,6 +220,42 @@
                     app:roundedCorners="true"
                     app:bootstrapSize="lg"  />
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:layout_marginLeft="55dp"
+                    android:text="日期"
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+                    android:id="@+id/date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="center_vertical"
+                    android:inputType="date"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    app:bootstrapBrand="primary"
+                    app:roundedCorners="true"
+                    app:bootstrapSize="lg"
+                    />
+            </LinearLayout>
+
+
+
             <LinearLayout
                 android:id="@+id/showFixDate"
                 android:layout_width="match_parent"
@@ -280,6 +316,7 @@
                         />
                 </RelativeLayout>
             </LinearLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -346,4 +383,41 @@
         android:background="#AAAAAA"
         android:visibility="gone"
         />
+
+
+    <LinearLayout
+        android:id="@+id/showDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:background="#ffffff"
+        android:visibility="gone"
+        >
+        <DatePicker
+            android:id="@+id/datePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner"
+            android:theme="@style/spinner_normal"
+            android:spinnersShown="true">
+        </DatePicker>
+        <TextView
+            android:id="@+id/dateSave"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="5dp"
+            android:background="#BDBDBD"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="5dp"
+            android:text="確認"
+            android:textColor="#000000"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+
 </RelativeLayout>

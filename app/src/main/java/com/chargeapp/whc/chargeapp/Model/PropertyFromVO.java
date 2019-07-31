@@ -3,7 +3,7 @@ package com.chargeapp.whc.chargeapp.Model;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class PropertyFromVO {
 
