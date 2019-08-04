@@ -25,6 +25,18 @@ public class PropertyDB {
         this.db = db;
     }
 
+
+    private PropertyVO configPropertyVO(Cursor cursor)
+    {
+        PropertyVO propertyVO=new PropertyVO();
+        propertyVO.setId(cursor.getLong(0));
+        propertyVO.setName(cursor.getString(1));
+        propertyVO.setCurrency(cursor.getString(2));
+        return propertyVO;
+    }
+
+
+
     public List<PropertyVO> getAll() {
         String sql = "SELECT * FROM Property order by id desc;";
         String[] args = {};
@@ -32,26 +44,20 @@ public class PropertyDB {
         List<PropertyVO> propertyVOS = new ArrayList<>();
         PropertyVO propertyVO;
         while (cursor.moveToNext()) {
-            propertyVO=new PropertyVO();
-            propertyVO.setId(cursor.getInt(0));
-            propertyVO.setName(cursor.getString(1));
-            propertyVO.setCurrency(cursor.getString(2));
+            propertyVO=configPropertyVO(cursor);
             propertyVOS.add(propertyVO);
         }
         cursor.close();
         return propertyVOS;
     }
 
-    public PropertyVO findById(String Id) {
+    public PropertyVO findById(Long Id) {
         String sql = "SELECT * FROM Property where id ='"+Id +"' order by id;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         PropertyVO propertyVO=null;
         if (cursor.moveToNext()) {
-            propertyVO=new PropertyVO();
-            propertyVO.setId(cursor.getInt(0));
-            propertyVO.setName(cursor.getString(1));
-            propertyVO.setCurrency(cursor.getString(2));
+            propertyVO=configPropertyVO(cursor);
         }
         cursor.close();
         return propertyVO;
@@ -65,10 +71,7 @@ public class PropertyDB {
         Cursor cursor = db.rawQuery(sql, args);
         PropertyVO propertyVO=null;
         if (cursor.moveToNext()) {
-            propertyVO=new PropertyVO();
-            propertyVO.setId(cursor.getInt(0));
-            propertyVO.setName(cursor.getString(1));
-            propertyVO.setCurrency(cursor.getString(2));
+            propertyVO=configPropertyVO(cursor);
         }
         cursor.close();
         return propertyVO;
@@ -88,7 +91,7 @@ public class PropertyDB {
         values.put("name", propertyVO.getName());
         values.put("currency", propertyVO.getCurrency());
         String whereClause = COL_id + " = ?;";
-        String[] whereArgs = {Integer.toString(propertyVO.getId())};
+        String[] whereArgs = {Long.toString(propertyVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);
     }
 

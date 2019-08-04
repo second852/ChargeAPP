@@ -8,7 +8,6 @@ import java.util.Date;
 public class PropertyFromVO {
 
     private String id; //id
-    private String sourceId; //來源Id consume secondType income mainType
     private PropertyType type;//來源類別
     private String sourceMoney; //來源金額
     private String sourceCurrency;//來源幣別
@@ -19,7 +18,7 @@ public class PropertyFromVO {
     private Boolean fixImport;  //是否定期
     private FixDateCode fixDateCode;
     private String fixDateDetail;
-    private String propertyId;
+    private Long propertyId;
     private String fixFromId;//定期Id
 
 
@@ -103,11 +102,12 @@ public class PropertyFromVO {
         this.fixDateDetail = fixDateDetail;
     }
 
-    public String getPropertyId() {
+
+    public Long getPropertyId() {
         return propertyId;
     }
 
-    public void setPropertyId(String propertyId) {
+    public void setPropertyId(Long propertyId) {
         this.propertyId = propertyId;
     }
 
@@ -117,14 +117,6 @@ public class PropertyFromVO {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getSourceId() {
-        return sourceId;
-    }
-
-    public void setSourceId(String sourceId) {
-        this.sourceId = sourceId;
     }
 
     public FixDateCode getFixDateCode() {

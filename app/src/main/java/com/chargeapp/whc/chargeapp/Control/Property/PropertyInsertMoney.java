@@ -29,6 +29,7 @@ import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
 import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListener;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
@@ -81,10 +82,10 @@ public class PropertyInsertMoney extends Fragment {
     private Double total;
     private PopupMenu popupMenu;
     private String nowCurrency,choiceSource;
-    private String propertyId;
     private DatePicker datePicker;
     private String choiceDate;
     private LinearLayout showDate;
+    private PropertyVO propertyVO;
 
     @Override
     public void onAttach(Context context) {
@@ -101,13 +102,16 @@ public class PropertyInsertMoney extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.property_insert_money, container, false);
-        Object propertyId=getArguments().getSerializable(Common.propertyID);
-        if(propertyId==null)
+        Object object=getArguments().getSerializable(Common.propertyID);
+        if(propertyVO==null)
         {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
-        this.propertyId= (String) propertyId;
+
+        PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        propertyVO=propertyDB.findById((long)object);
+
         findViewById();
         setDataBase();
         setDropDown();
@@ -122,7 +126,7 @@ public class PropertyInsertMoney extends Fragment {
         propertyTypes=Common.propertyInsertMoneyData(activity,nameData);
         choicePropertyFrom.setBootstrapText(propertyTypes.get(0));
         choicePropertyFrom.setOnDropDownItemClickListener(new choiceMoneyName());
-        total=bankDB.getTotalMoneyByName(nameData[0])-propertyFromDB.findBySourceId(nameData[0]);
+        total=bankDB.getTotalMoneyByName(nameData[0])-propertyFromDB.findBySourceMainType(nameData[0]);
         sharedPreferences = activity.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
         String nowCurrency = sharedPreferences.getString(propertyCurrency, "TWD");
         currencyVO=currencyDB.getOneByType(nowCurrency);
@@ -260,7 +264,7 @@ public class PropertyInsertMoney extends Fragment {
         public void onItemClick(ViewGroup parent, View v, int id) {
             choiceSource=nameData[id];
             choicePropertyFrom.setBootstrapText(propertyTypes.get(id));
-            total=bankDB.getTotalMoneyByName(choiceSource)-propertyFromDB.findBySourceId(choiceSource);
+            total=bankDB.getTotalMoneyByName(choiceSource)-propertyFromDB.findBySourceMainType(choiceSource);
             money.setText(Common.doubleRemoveZero(total/Double.valueOf(currencyVO.getMoney())));
             money.setBackgroundColor(Color.parseColor("#DDDDDD"));
         }
@@ -404,7 +408,6 @@ public class PropertyInsertMoney extends Fragment {
 
 
             PropertyFromVO propertyFromVO=new PropertyFromVO();
-            propertyFromVO.setSourceId(choiceSource);
             propertyFromVO.setSourceCurrency(nowCurrency);
             propertyFromVO.setSourceMoney(iMoney.toString());
             propertyFromVO.setSourceMainType(choiceSource);
@@ -418,7 +421,7 @@ public class PropertyInsertMoney extends Fragment {
 
 
             propertyFromVO.setImportFee(fee.toString());
-            propertyFromVO.setPropertyId(propertyId);
+            propertyFromVO.setPropertyId(propertyVO.getId());
             propertyFromVO.setFixImport(fixDate.isChecked());
             propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(resultStatue.trim()));
             propertyFromVO.setFixDateDetail(resultDay);
@@ -432,16 +435,16 @@ public class PropertyInsertMoney extends Fragment {
                 consumeVO.setCurrency(nowCurrency);
                 consumeVO.setRealMoney(fee.toString());
 
-                PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
-                PropertyVO propertyVO=propertyDB.findById(propertyId);
                 consumeVO.setDetailname("轉入"+propertyVO.getName()+"的費用");
                 consumeVO.setDate(new Date(System.currentTimeMillis()));
+                ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
+                consumeDB.insert(consumeVO);
             }
 
 
             Fragment fragment=new PropertyMoneyList();
             Bundle bundle=new Bundle();
-            bundle.putSerializable(Common.propertyID,propertyId);
+            bundle.putSerializable(Common.propertyID,propertyVO.getId());
             fragment.setArguments(bundle);
             Common.switchConfirmFragment(fragment,getFragmentManager());
             Common.showToast(activity,getString(R.string.insert_success));

@@ -35,19 +35,18 @@ public class PropertyFromDB {
     {
         PropertyFromVO propertyFromVO=new PropertyFromVO();
         propertyFromVO.setId(cursor.getString(0));
-        propertyFromVO.setSourceId(cursor.getString(1));
-        propertyFromVO.setType(PropertyType.codeToEnum(cursor.getInt(2)));
-        propertyFromVO.setSourceMoney(cursor.getString(3));
-        propertyFromVO.setSourceCurrency(cursor.getString(4));
-        propertyFromVO.setSourceMainType(cursor.getString(5));
-        propertyFromVO.setSourceSecondType(cursor.getString(6));
-        propertyFromVO.setSourceTime(new Date(cursor.getLong(7)));
-        propertyFromVO.setImportFee(cursor.getString(8));
-        propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(9)));
-        propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(cursor.getString(10)));
-        propertyFromVO.setFixDateDetail(cursor.getString(11));
-        propertyFromVO.setPropertyId(cursor.getString(12));
-        propertyFromVO.setFixFromId(cursor.getString(13));
+        propertyFromVO.setType(PropertyType.codeToEnum(cursor.getInt(1)));
+        propertyFromVO.setSourceMoney(cursor.getString(2));
+        propertyFromVO.setSourceCurrency(cursor.getString(3));
+        propertyFromVO.setSourceMainType(cursor.getString(4));
+        propertyFromVO.setSourceSecondType(cursor.getString(5));
+        propertyFromVO.setSourceTime(new Date(cursor.getLong(6)));
+        propertyFromVO.setImportFee(cursor.getString(7));
+        propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(8)));
+        propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(cursor.getString(9)));
+        propertyFromVO.setFixDateDetail(cursor.getString(10));
+        propertyFromVO.setPropertyId(cursor.getLong(11));
+        propertyFromVO.setFixFromId(cursor.getString(12));
         return propertyFromVO;
     }
 
@@ -56,7 +55,6 @@ public class PropertyFromDB {
     public ContentValues getContentValues(PropertyFromVO propertyFromVO)
     {
         ContentValues values = new ContentValues();
-        values.put("sourceId", propertyFromVO.getSourceId());
         values.put("type",propertyFromVO.getType().getCode());
         values.put("sourceMoney",propertyFromVO.getSourceMoney());
         values.put("sourceCurrency",propertyFromVO.getSourceCurrency());
@@ -90,7 +88,7 @@ public class PropertyFromDB {
     }
 
 
-    public List<PropertyFromVO> findByPropertyId(String propertyId) {
+    public List<PropertyFromVO> findByPropertyId(Long propertyId) {
         String sql = "SELECT * FROM PropertyFrom where propertyId ='"+propertyId +"' order by id;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
@@ -105,7 +103,7 @@ public class PropertyFromDB {
     }
 
 
-    public Double totalConsume(Integer propertyId,PropertyType type) {
+    public Double totalConsume(Long propertyId,PropertyType type) {
         String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where propertyId ='"+propertyId +"' and type = '"+type.getCode()+"' order by id;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
@@ -124,8 +122,8 @@ public class PropertyFromDB {
     }
 
 
-    public Double findBySourceId(String sourceId) {
-        String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where sourceId ='"+sourceId +"' order by id;";
+    public Double findBySourceMainType(String sourceMainType) {
+        String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where sourceMainType ='"+sourceMainType +"' order by id;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         CurrencyDB currencyDB=new CurrencyDB(db);
@@ -141,6 +139,25 @@ public class PropertyFromDB {
         cursor.close();
         return total;
     }
+
+    public Double findBySourceSecondType(String sourceSecondType) {
+        String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where sourceSecondType ='"+sourceSecondType +"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        CurrencyDB currencyDB=new CurrencyDB(db);
+        Double total=0.0;
+        CurrencyVO currencyVO;
+        String money,currencyMoney;
+        if (cursor.moveToNext()) {
+            money=cursor.getString(0);
+            currencyVO=currencyDB.getOneByType(cursor.getString(1));
+            currencyMoney=(currencyVO==null)?"1":currencyVO.getMoney();
+            total=total+Double.valueOf(currencyMoney)*Double.valueOf(money);
+        }
+        cursor.close();
+        return total;
+    }
+
 
     public Double getTotalAll() {
         String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom ;";

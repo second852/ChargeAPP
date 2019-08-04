@@ -23,6 +23,7 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapSize;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
@@ -35,6 +36,8 @@ import com.chargeapp.whc.chargeapp.R;
 import java.util.Calendar;
 import java.util.List;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
+
+import org.jsoup.helper.StringUtil;
 
 import static com.chargeapp.whc.chargeapp.Control.Common.*;
 
@@ -56,7 +59,7 @@ public class PropertyMoneyList extends Fragment {
     private CurrencyVO currencyVO;
     private Calendar start,end;
     private PropertyFromDB propertyFromDB;
-    private String propertyId;
+    private Long propertyId;
     private double total;
     private List<PropertyFromVO> propertyFromVOS;
     private TextView name;
@@ -88,7 +91,7 @@ public class PropertyMoneyList extends Fragment {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
-        propertyId=object.toString();
+        propertyId= (Long) object;
         Common.setChargeDB(activity);
         currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -174,16 +177,31 @@ public class PropertyMoneyList extends Fragment {
             @Override
             public void onClick(View view) {
                 BankDB bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-                PropertyFromDB propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
-
-                Double remainMoney=(bankDB.getAllTotal()-propertyFromDB.getTotalAll());
-                if(remainMoney<=0)
+                if(bankDB.getAllTotal()<=0)
                 {
                     Common.showToast(activity,"沒有資金，請增加收入!");
                     closeFABMenu();
                     return;
                 }
                 Fragment fragment=new PropertyInsertMoney();
+                Bundle bundle=new Bundle();
+                bundle.putSerializable(Common.propertyID,propertyId);
+                fragment.setArguments(bundle);
+                Common.switchFragment(fragment,PropertyMoneyList,getFragmentManager());
+            }
+        });
+
+        insertConsume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+                if(consumeDB.getAllMoney()<=0)
+                {
+                    Common.showToast(activity,"沒有消費，無法歸類!");
+                    closeFABMenu();
+                    return;
+                }
+                Fragment fragment=new PropertyInsertConsume();
                 Bundle bundle=new Bundle();
                 bundle.putSerializable(Common.propertyID,propertyId);
                 fragment.setArguments(bundle);
@@ -252,7 +270,15 @@ public class PropertyMoneyList extends Fragment {
             TextView listTitle=itemView.findViewById(R.id.listTitle);
             TextView listDetail=itemView.findViewById(R.id.listDetail);
             StringBuilder title=new StringBuilder();
-            title.append(propertyFromVO.getSourceId());
+
+            if(StringUtil.isBlank(propertyFromVO.getSourceSecondType()))
+            {
+                title.append(propertyFromVO.getSourceMainType());
+            }else{
+                title.append(propertyFromVO.getSourceSecondType());
+            }
+
+
             title.append(" "+Common.getCurrency(propertyFromVO.getSourceCurrency()));
             title.append(" "+Common.doubleRemoveZero(Double.valueOf(propertyFromVO.getSourceMoney())));
             listTitle.setText(title.toString());

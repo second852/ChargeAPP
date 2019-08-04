@@ -2,13 +2,15 @@ package com.chargeapp.whc.chargeapp.Model;
 
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 
+import java.io.Serializable;
+
 /**
  * Created by Wang on 2019/1/25.
  */
 
-public class PropertyVO {
+public class PropertyVO implements Serializable {
 
-    private int id; //Id
+    private Long id; //Id
     private String name; //名子
     private String currency;//幣別
 
@@ -21,15 +23,13 @@ public class PropertyVO {
         this.currency = currency;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
-
-
 
     public String getName() {
         return name;

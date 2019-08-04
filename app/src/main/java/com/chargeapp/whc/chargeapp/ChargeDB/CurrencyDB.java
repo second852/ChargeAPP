@@ -81,6 +81,35 @@ public class CurrencyDB {
         return types;
     }
 
+    public CurrencyVO getAllByDate(Date time,String type) {
+        String sql = "SELECT * FROM Currency where date(time) =date("+time+") and type ='"+type+"' order by time desc;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        CurrencyVO currencyVO;
+        if (cursor.moveToNext()) {
+            currencyVO=new CurrencyVO();
+            currencyVO.setId(cursor.getInt(0));
+            currencyVO.setType(cursor.getString(1));
+            currencyVO.setName(cursor.getString(2));
+            currencyVO.setSymbol(cursor.getString(3));
+            currencyVO.setMoney(cursor.getString(4));
+            currencyVO.setTime(new Date(cursor.getLong(5)));
+        }else{
+            currencyVO=new CurrencyVO();
+            currencyVO.setName("新台幣");
+            currencyVO.setMoney("1");
+            currencyVO.setTime(new Date(System.currentTimeMillis()));
+            currencyVO.setSymbol("NT$");
+            currencyVO.setType("TWD");
+        }
+        cursor.close();
+        return currencyVO;
+    }
+
+
+
+
+
     public List<CurrencyVO> getAllBytime(Long start,Long end) {
         String sql = "SELECT * FROM Currency where time between '"+start+"' and '"+end+"';";
         String[] args = {};

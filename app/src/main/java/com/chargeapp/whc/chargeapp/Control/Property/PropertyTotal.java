@@ -39,6 +39,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 
+import org.jsoup.helper.StringUtil;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -67,7 +69,7 @@ public class PropertyTotal extends Fragment {
     private CurrencyVO currencyVO;
     private Calendar start,end;
     private PropertyFromDB propertyFromDB;
-    private String propertyId;
+    private Long propertyId;
     private double total;
     private List<PropertyFromVO> propertyFromVOS;
     private TextView name,namePositive,nameNagative;
@@ -101,7 +103,7 @@ public class PropertyTotal extends Fragment {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
-        propertyId=object.toString();
+        propertyId= (Long) object;
         Common.setChargeDB(activity);
         currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -368,7 +370,12 @@ public class PropertyTotal extends Fragment {
             TextView listTitle=itemView.findViewById(R.id.listTitle);
             TextView listDetail=itemView.findViewById(R.id.listDetail);
             StringBuilder title=new StringBuilder();
-            title.append(propertyFromVO.getSourceId());
+            if(StringUtil.isBlank(propertyFromVO.getSourceSecondType()))
+            {
+                title.append(propertyFromVO.getSourceMainType());
+            }else{
+                title.append(propertyFromVO.getSourceSecondType());
+            }
             title.append(" "+Common.getCurrency(propertyFromVO.getSourceCurrency()));
             title.append(" "+Common.doubleRemoveZero(Double.valueOf(propertyFromVO.getSourceMoney())));
             listTitle.setText(title.toString());
