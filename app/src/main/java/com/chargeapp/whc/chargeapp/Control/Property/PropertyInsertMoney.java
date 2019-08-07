@@ -103,7 +103,7 @@ public class PropertyInsertMoney extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.property_insert_money, container, false);
         Object object=getArguments().getSerializable(Common.propertyID);
-        if(propertyVO==null)
+        if(object==null)
         {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;

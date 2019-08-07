@@ -218,7 +218,7 @@ public class PropertyFromDB {
         return db.update(TABLE_NAME, values, whereClause, whereArgs);
     }
 
-    public int deleteById(int id) {
+    public int deleteById(Long id) {
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {String.valueOf(id)};
         return db.delete(TABLE_NAME, whereClause, whereArgs);

@@ -73,7 +73,6 @@ public class PropertyTotal extends Fragment {
     private double total;
     private List<PropertyFromVO> propertyFromVOS;
     private TextView name,namePositive,nameNagative;
-    private ListView listData;
     private PropertyVO propertyVO;
     private FloatingActionButton fab;
     private LinearLayout insertMoney,insertConsume,returnMain;
@@ -218,7 +217,6 @@ public class PropertyTotal extends Fragment {
 
     private void setListView() {
         List<PropertyFromVO> propertyFromVOS=propertyFromDB.findByPropertyId(propertyId);
-        listData.setAdapter(new ListAdapter(activity,propertyFromVOS));
     }
 
     private void setNowMoney() {
@@ -265,7 +263,6 @@ public class PropertyTotal extends Fragment {
         name=view.findViewById(R.id.name);
         name.setText(propertyVO.getName());
         currency=view.findViewById(R.id.currency);
-        listData=view.findViewById(R.id.listData);
         fabBGLayout=view.findViewById(R.id.fabBGLayout);
         insertConsume=view.findViewById(R.id.insertConsume);
         insertMoney= view.findViewById(R.id.insertMoney);

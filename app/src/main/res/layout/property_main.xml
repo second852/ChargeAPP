@@ -47,25 +47,6 @@
                 android:textColor="#ffffff"
                 android:textSize="25sp"
                 android:text="圖表" />
-            <Button
-                android:id="@+id/fourth"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/exportD"
-                android:background="#000000"
-                android:textColor="#ffffff"
-                android:textSize="25sp"
-                android:text="新增" />
-
-            <Button
-                android:id="@+id/fifth"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/exportD"
-                android:background="#000000"
-                android:textColor="#ffffff"
-                android:textSize="25sp"
-                android:text="設定" />
         </LinearLayout>
     </HorizontalScrollView>
     <android.support.v4.view.ViewPager

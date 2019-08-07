@@ -31,7 +31,7 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
     private ViewPager propertyViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
     private LinearLayout choiceItem;
-    private Button first,second,third,fourth,fifth;
+    private Button first,second,third;
     private float moveD;
     private int nowPage;
     private AdView adView;
@@ -74,8 +74,6 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
         first=view.findViewById(R.id.first);
         second=view.findViewById(R.id.second);
         third=view.findViewById(R.id.third);
-        fourth=view.findViewById(R.id.fourth);
-        fifth=view.findViewById(R.id.fifth);
     }
 
 
@@ -85,26 +83,18 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
             case 0:
                 second.setOnClickListener(new ChangePage(page));
                 third.setOnClickListener(new ChangePage(page + 1));
-                fourth.setOnClickListener(new ChangePage(page + 2));
-                fifth.setOnClickListener(new ChangePage(page + 3));
                 break;
             case 1:
                 second.setOnClickListener(new ChangePage(page));
                 third.setOnClickListener(new ChangePage(page - 1));
-                fourth.setOnClickListener(new ChangePage(page + 1));
-                fifth.setOnClickListener(new ChangePage(page + 2));
                 break;
             case 2:
                 second.setOnClickListener(new ChangePage(page));
                 third.setOnClickListener(new ChangePage(page - 1));
-                fourth.setOnClickListener(new ChangePage(page -2));
-                fifth.setOnClickListener(new ChangePage(page + 1));
                 break;
             case 3:
                 second.setOnClickListener(new ChangePage(page));
                 third.setOnClickListener(new ChangePage(page - 1));
-                fourth.setOnClickListener(new ChangePage(page + 1));
-                fifth.setOnClickListener(new ChangePage(page + 2));
                 break;
         }
     }
@@ -123,32 +113,14 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
         nowPage=position;
         switch (nowPage) {
             case 0:
-                first.setText(R.string.text_Setting);
+                first.setText(R.string.property_new);
                 second.setText(R.string.property_list);
-                third.setText(R.string.property_circle);
-                fourth.setText(R.string.property_new);
-                fifth.setText(R.string.text_Setting);
+                third.setText(R.string.property_new);
                 break;
             case 1:
                 first.setText(R.string.property_list);
-                second.setText(R.string.property_circle);
-                third.setText(R.string.property_new);
-                fourth.setText(R.string.text_Setting);
-                fifth.setText(R.string.property_list);
-                break;
-            case 2:
-                first.setText(R.string.property_circle);
                 second.setText(R.string.property_new);
-                third.setText(R.string.text_Setting);
-                fourth.setText(R.string.property_list);
-                fifth.setText(R.string.property_circle);
-                break;
-            case 3:
-                first.setText(R.string.property_new);
-                second.setText(R.string.text_Setting);
                 third.setText(R.string.property_list);
-                fourth.setText(R.string.property_circle);
-                fifth.setText(R.string.property_new);
                 break;
         }
     }
@@ -159,7 +131,7 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
     }
 
     public static class MainPagerAdapter extends FragmentPagerAdapter {
-        private int NUM_ITEMS = 4;
+        private int NUM_ITEMS = 2;
 
         MainPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -176,12 +148,8 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
             {
                 case 0:
                     return new PropertyList();
-                case 1:
-                    return new PropertyCircle();
-                case 2:
-                    return new PropertyInsert();
                 default:
-                    return new PropertyCircle();
+                    return new PropertyInsert();
             }
         }
     }

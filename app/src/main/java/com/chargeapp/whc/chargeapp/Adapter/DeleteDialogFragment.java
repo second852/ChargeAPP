@@ -28,6 +28,7 @@ import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.Goal.GoalListAll;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePagetList;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.Property.PropertyList;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelCom;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelIM;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetList;
@@ -267,6 +268,10 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 {
                     SelectShowCircleDeList selectShowCircleDeList= (SelectShowCircleDeList) fragement;
                     selectShowCircleDeList.choiceLayout();
+                }else if(fragement instanceof PropertyList)
+                {
+                    PropertyList propertyList= (PropertyList) fragement;
+                    propertyList.setAdapt();
                 }
                 break;
             default:

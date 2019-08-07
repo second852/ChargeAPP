@@ -41,7 +41,7 @@ public class ConsumeDB {
         Double total=0.0;
         while (cursor.moveToNext())
         {
-            total=total+Long.valueOf(cursor.getString(0));
+            total=total+Double.valueOf(cursor.getString(0));
         }
         return total;
     }
@@ -64,7 +64,7 @@ public class ConsumeDB {
 
     public List<String> getAllSecondType(String mainType)
     {
-        String sql = "SELECT secondType FROM Consumer where mainType = "+mainType+" group by secondType;";
+        String sql = "SELECT secondtype FROM Consumer where maintype = '"+mainType+"' group by secondtype;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<String> type = new ArrayList<>();
@@ -76,9 +76,9 @@ public class ConsumeDB {
     }
 
 
-    public Double getAllSecondTypeMoney(String mainType)
+    public Double getAllSecondTypeMoney(String secondType)
     {
-        String sql = "SELECT currency,realMoney,date FROM Consumer where mainType = "+mainType+" group by secondType;";
+        String sql = "SELECT currency,realMoney,date FROM Consumer where secondType = '"+secondType+"';";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         Double total=0.0;

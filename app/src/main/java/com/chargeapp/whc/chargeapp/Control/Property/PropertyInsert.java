@@ -123,7 +123,7 @@ public class PropertyInsert extends Fragment {
             long id=propertyDB.insert(propertyVO);
             Fragment fragment=new PropertyMoneyList();
             Bundle bundle=new Bundle();
-            bundle.putSerializable(Common.propertyID,String.valueOf(id));
+            bundle.putSerializable(Common.propertyID,id);
             fragment.setArguments(bundle);
             Common.switchFragment(fragment,Common.propertyMain,getFragmentManager());
         }

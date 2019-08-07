@@ -239,7 +239,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             year = cal.get(Calendar.YEAR);
             month = cal.get(Calendar.MONTH);
             jsonIn = findMonthHead(year, month, user, password);
-            if(jsonIn.indexOf("919")!=-1)
+            JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
+            if(js.get("code").getAsString().equals("919"))
             {
                 if(Common.lostCarrier==null)
                 {

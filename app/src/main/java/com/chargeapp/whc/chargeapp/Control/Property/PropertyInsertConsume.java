@@ -94,9 +94,9 @@ public class PropertyInsertConsume extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.property_insert_money, container, false);
+        view = inflater.inflate(R.layout.property_insert_consume, container, false);
         Object object=getArguments().getSerializable(Common.propertyID);
-        if(propertyVO==null)
+        if(object==null)
         {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
@@ -276,6 +276,7 @@ public class PropertyInsertConsume extends Fragment {
         date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
         showDate=view.findViewById(R.id.showDate);
         showDate.setOnClickListener(new choiceDateClick());
+
     }
 
 

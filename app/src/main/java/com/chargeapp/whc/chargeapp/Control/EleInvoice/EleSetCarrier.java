@@ -219,39 +219,43 @@ public class EleSetCarrier extends Fragment {
             deletecarrier.setVisibility(View.VISIBLE);
             updateC.setVisibility(View.VISIBLE);
             //顯示有問題帳號
-            if(Common.lostCarrier!=null)
+            if(Common.lostCarrier!=null&&!Common.lostCarrier.isEmpty())
             {
                 for (CarrierVO c:Common.lostCarrier)
                 {
                     if(c.getCarNul().equals(carrierVO.getCarNul()))
                     {
+                        widgetShow.setShowOutline(false);
+                        widgetShow.setText("密碼錯誤");
+                        widgetShow.setEnabled(true);
                         itemView.setBackgroundColor(Color.RED);
                         break;
                     }
                 }
 
-            }
-
-
-            //小工具綁定工具列
-            if(carrierlist.size()>1&&position!=EleSetCarrier.this.position)
-            {
-                widgetShow.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        sharedPreferences.edit().putInt("carrier",position).apply();
-                        setListAdapt();
-                    }
-                });
-                widgetShow.setShowOutline(false);
-                widgetShow.setBadgeText("選取");
-                widgetShow.setEnabled(true);
             }else {
-                widgetShow.setShowOutline(true);
-                widgetShow.setText("已選取");
-                widgetShow.setOnClickListener(null);
-                widgetShow.setEnabled(false);
+                //小工具綁定工具列
+                if(carrierlist.size()>1&&position!=EleSetCarrier.this.position)
+                {
+                    widgetShow.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            sharedPreferences.edit().putInt("carrier",position).apply();
+                            setListAdapt();
+                        }
+                    });
+                    widgetShow.setShowOutline(false);
+                    widgetShow.setText("選取");
+                    widgetShow.setEnabled(true);
+                }else {
+                    widgetShow.setShowOutline(true);
+                    widgetShow.setText("已選取");
+                    widgetShow.setOnClickListener(null);
+                    widgetShow.setEnabled(false);
+                }
+
             }
+
             String show=carrierVO.getCarNul();
             tvId.setText(show);
             deletecarrier.setOnClickListener(new View.OnClickListener() {
@@ -265,6 +269,7 @@ public class EleSetCarrier extends Fragment {
 
                 }
             });
+
 
             updateC.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -58,10 +58,16 @@ public class PropertyList extends Fragment {
         propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
         list=view.findViewById(R.id.list);
-        List<PropertyVO> propertyVOS=propertyDB.getAll();
-        list.setAdapter(new ListAdapter(activity,propertyVOS));
+        setAdapt();
         return view;
     }
+
+    public void setAdapt()
+    {
+        List<PropertyVO> propertyVOS=propertyDB.getAll();
+        list.setAdapter(new ListAdapter(activity,propertyVOS));
+    }
+
 
     //Adapter
     private class ListAdapter extends BaseAdapter {
@@ -103,7 +109,7 @@ public class PropertyList extends Fragment {
                 public void onClick(View view) {
                     Fragment fragment=new PropertyTotal();
                     Bundle bundle=new Bundle();
-                    bundle.putSerializable(Common.propertyID,String.valueOf(propertyVO.getId()));
+                    bundle.putSerializable(Common.propertyID,propertyVO.getId());
                     fragment.setArguments(bundle);
                     Common.switchFragment(fragment,Common.propertyMain,getFragmentManager());
                 }
