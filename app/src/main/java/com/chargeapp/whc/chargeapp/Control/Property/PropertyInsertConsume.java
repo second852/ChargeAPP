@@ -40,6 +40,7 @@ import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
+import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -453,6 +454,7 @@ public class PropertyInsertConsume extends Fragment {
 
 
             PropertyFromVO propertyFromVO=new PropertyFromVO();
+            propertyFromVO.setType(PropertyType.Negative);
             propertyFromVO.setSourceCurrency(nowCurrency);
             propertyFromVO.setSourceMoney(iMoney.toString());
             propertyFromVO.setSourceMainType(choiceSource);

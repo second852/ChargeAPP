@@ -187,7 +187,7 @@ public class PropertyMoneyList extends Fragment {
                 Bundle bundle=new Bundle();
                 bundle.putSerializable(Common.propertyID,propertyId);
                 fragment.setArguments(bundle);
-                Common.switchFragment(fragment,PropertyMoneyList,getFragmentManager());
+                Common.switchFragment(fragment,Common.PropertyMoneyListString,getFragmentManager());
             }
         });
 
@@ -205,7 +205,7 @@ public class PropertyMoneyList extends Fragment {
                 Bundle bundle=new Bundle();
                 bundle.putSerializable(Common.propertyID,propertyId);
                 fragment.setArguments(bundle);
-                Common.switchFragment(fragment,PropertyMoneyList,getFragmentManager());
+                Common.switchFragment(fragment,Common.PropertyMoneyListString,getFragmentManager());
             }
         });
 
@@ -266,9 +266,10 @@ public class PropertyMoneyList extends Fragment {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                 itemView = layoutInflater.inflate(R.layout.property_list_from_detail, parent, false);
             }
-            PropertyFromVO propertyFromVO=propertyFromVOS.get(position);
+            final PropertyFromVO propertyFromVO=propertyFromVOS.get(position);
             TextView listTitle=itemView.findViewById(R.id.listTitle);
             TextView listDetail=itemView.findViewById(R.id.listDetail);
+            BootstrapButton showD=itemView.findViewById(R.id.showD);
             StringBuilder title=new StringBuilder();
 
             if(StringUtil.isBlank(propertyFromVO.getSourceSecondType()))
@@ -294,6 +295,26 @@ public class PropertyMoneyList extends Fragment {
                 }
             }
             listDetail.setText(detail.toString());
+            showD.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Fragment fragment=null;
+                    switch (propertyFromVO.getType())
+                    {
+                        case Positive:
+                            fragment=new PropertyUpdateMoney();
+                            break;
+                        case Negative:
+                            fragment=new PropertyUpdateConsume();
+                            break;
+
+                    }
+                    Bundle bundle=new Bundle();
+                    bundle.putSerializable(Common.propertyFromVoId,propertyFromVO.getId());
+                    fragment.setArguments(bundle);
+                    Common.switchFragment(fragment,Common.PropertyMoneyListString,getFragmentManager());
+                }
+            });
             return itemView;
         }
 

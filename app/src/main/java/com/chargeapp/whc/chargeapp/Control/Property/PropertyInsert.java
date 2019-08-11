@@ -121,7 +121,7 @@ public class PropertyInsert extends Fragment {
             propertyVO.setName(nameP);
             propertyVO.setCurrency(currencyName);
             long id=propertyDB.insert(propertyVO);
-            Fragment fragment=new PropertyMoneyList();
+            Fragment fragment=new PropertyTotal();
             Bundle bundle=new Bundle();
             bundle.putSerializable(Common.propertyID,id);
             fragment.setArguments(bundle);

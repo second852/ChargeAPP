@@ -60,6 +60,8 @@ import com.chargeapp.whc.chargeapp.Control.Price.PriceActivity;
 import com.chargeapp.whc.chargeapp.Control.Price.PriceHand;
 import com.chargeapp.whc.chargeapp.Control.Price.PriceInvoice;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyMain;
+import com.chargeapp.whc.chargeapp.Control.Property.PropertyMoneyList;
+import com.chargeapp.whc.chargeapp.Control.Property.PropertyTotal;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetCircle;
@@ -1272,8 +1274,11 @@ public class MainActivity extends AppCompatActivity {
                      case propertyMain:
                          fragment=new PropertyMain();
                     break;
-                    case Common.PropertyMoneyList:
-                        fragment =new com.chargeapp.whc.chargeapp.Control.Property.PropertyMoneyList();
+                    case Common.PropertyMoneyListString:
+                        fragment =new PropertyMoneyList();
+                        break;
+                    case Common.PropertyTotalString:
+                        fragment =new PropertyTotal();
                         break;
                 }
                 fragment.setArguments(bundle);

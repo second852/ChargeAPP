@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -34,7 +33,6 @@ import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
-import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
@@ -44,9 +42,6 @@ import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 
-
-import org.jsoup.helper.StringUtil;
-
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,11 +50,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_MONEY;
+import static com.chargeapp.whc.chargeapp.Control.Common.propertyCurrency;
 
-import static com.chargeapp.whc.chargeapp.Control.Common.*;
 
-
-public class PropertyInsertMoney extends Fragment {
+public class PropertyUpdateMoney extends Fragment {
 
     private BootstrapDropDown choicePropertyFrom,choiceStatue,choiceDay;
     private BootstrapButton currency,importCalculate,importCurrency,feeCalculate,feeCurrency,save;
@@ -86,6 +81,7 @@ public class PropertyInsertMoney extends Fragment {
     private DatePicker datePicker;
     private String choiceDate;
     private LinearLayout showDate;
+    private PropertyFromVO propertyFromVO;
     private PropertyVO propertyVO;
 
     @Override
@@ -103,18 +99,18 @@ public class PropertyInsertMoney extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.property_insert_money, container, false);
-        Object object=getArguments().getSerializable(Common.propertyID);
+        Object object=getArguments().getSerializable(Common.propertyFromVoId);
         if(object==null)
         {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
-
-        PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyVO=propertyDB.findById((long)object);
-
         findViewById();
         setDataBase();
+
+        propertyFromVO=propertyFromDB.findByPropertyFromId((Long) object);
+        PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getWritableDatabase());
+        propertyVO=propertyDB.findById(propertyFromVO.getPropertyId());
         setDropDown();
         setPopupMenu();
         return view;
@@ -125,9 +121,15 @@ public class PropertyInsertMoney extends Fragment {
         nameData=nameList.toArray(new String[nameList.size()]);
         choicePropertyFrom.setDropdownData(nameData);
         propertyTypes=Common.propertyInsertMoneyData(activity,nameData);
-        choicePropertyFrom.setBootstrapText(propertyTypes.get(0));
+
+        BootstrapText text = new BootstrapText.Builder(activity)
+                .addText(propertyFromVO.getSourceMainType() + " ")
+                .addFontAwesomeIcon(FA_MONEY)
+                .build();
+
+        choicePropertyFrom.setBootstrapText(text);
         choicePropertyFrom.setOnDropDownItemClickListener(new choiceMoneyName());
-        total=bankDB.getTotalMoneyByName(nameData[0])-propertyFromDB.findBySourceMainType(nameData[0]);
+        total=bankDB.getTotalMoneyByName(propertyFromVO.getSourceMainType())-propertyFromDB.findBySourceMainType(propertyFromVO.getSourceMainType());
         sharedPreferences = activity.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
         String nowCurrency = sharedPreferences.getString(propertyCurrency, "TWD");
         currencyVO=currencyDB.getOneByType(nowCurrency);
@@ -156,6 +158,7 @@ public class PropertyInsertMoney extends Fragment {
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
         currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+
     }
 
     private void findViewById() {

@@ -29,7 +29,9 @@
     <string name="text_HowSetC">悠遊卡如何載具歸戶?</string>
     <string name="text_EleWhat">雲端發票是什麼?</string>
     <string name="text_Home">首頁</string>
-    <string name="chart_title">支出</string>
+    <string name="string_export">支出</string>
+    <string name="string_import">收入</string>
+
     <string name="text_Teach">教學影片</string>
     <string name="text_AddCarrier">載具歸戶</string>
     <string name="text_update">修改</string>

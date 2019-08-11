@@ -4,12 +4,12 @@ import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
@@ -40,27 +39,26 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 
-
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
 import static com.chargeapp.whc.chargeapp.Control.Common.CurrencyResult;
-
+import static com.chargeapp.whc.chargeapp.Control.Common.propertyCurrency;
 
 
 /**
  * Created by Wang on 2019/3/12.
  */
 
-public class PropertyTotal extends Fragment {
+public class PropertyConsumeShow extends Fragment {
 
     private View view;
     private Activity activity;
     private BootstrapButton currency;
     private PropertyDB propertyDB;
+    private SharedPreferences sharedPreferences;
     private String nowCurrency;
     private PopupMenu popupMenu;
     private CurrencyDB currencyDB;
@@ -68,17 +66,17 @@ public class PropertyTotal extends Fragment {
     private Calendar start,end;
     private PropertyFromDB propertyFromDB;
     private Long propertyId;
-    private double total,consumeTotal,incomeTotal;
+    private String mainType;
+    private double total;
     private List<PropertyFromVO> propertyFromVOS;
-    private TextView name,namePositive,nameNagative;
+    private TextView name,nameNagative;
     private PropertyVO propertyVO;
     private FloatingActionButton fab;
     private LinearLayout insertMoney,insertConsume,returnMain;
     boolean isFABOpen=false;
     private View fabBGLayout;
-    private PieChart chartPositive,chartNegative;
-    private List<PieEntry> consume,income;
-
+    private PieChart chartNegative;
+    private List<PieEntry>  consume;
 
 
     @Override
@@ -95,14 +93,15 @@ public class PropertyTotal extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.property_total, container, false);
-        Object object=getArguments().getSerializable(Common.propertyID);
-        if(object==null)
+        view = inflater.inflate(R.layout.property_consume_total, container, false);
+        Bundle bundle=getArguments();
+        if(bundle==null)
         {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
-        propertyId= (Long) object;
+        propertyId= (Long) getArguments().getSerializable(Common.propertyID);
+        mainType= (String) getArguments().getSerializable(Common.propertyMainType);
         Common.setChargeDB(activity);
         currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -119,10 +118,7 @@ public class PropertyTotal extends Fragment {
         setPopupMenu();
         setNowMoney();
         setCircle(chartNegative,PropertyType.Negative);
-        setCircle(chartPositive,PropertyType.Positive);
-        chartNegative.setOnChartValueSelectedListener(new choiceData(PropertyTotal.this.getString(R.string.string_export)));
-        chartPositive.setOnChartValueSelectedListener(new choiceData(PropertyTotal.this.getString(R.string.string_import)));
-        setTotal();
+        chartNegative.setOnChartValueSelectedListener(new choiceData(PropertyConsumeShow.this.getString(R.string.string_export)));
     }
 
     private void setCircle(PieChart pieChart, PropertyType propertyType) {
@@ -175,35 +171,23 @@ public class PropertyTotal extends Fragment {
 
     private PieData getChartDataSet(PropertyType propertyType)
     {
+
         consume=new ArrayList<>();
-        income=new ArrayList<>();
-        Map<String,Double> dataMap=propertyFromDB.getPieDataMainType(propertyType);
+        Map<String,Double> dataMap=propertyFromDB.getPieDataSecondType(propertyType,mainType);
         List<PieEntry> pieEntries=new ArrayList<>();
-        PieEntry dataEntry;
+        PieEntry pieEntry;
         for(String key:dataMap.keySet())
         {
 
-
             if(key.equals("O"))
             {
-                dataEntry=new PieEntry(dataMap.get(key).floatValue(),"其他");
+
+                pieEntry=new PieEntry(dataMap.get(key).floatValue(),"其他");
             }else{
-                dataEntry=new PieEntry(dataMap.get(key).floatValue(),key);
+                pieEntry=new PieEntry(dataMap.get(key).floatValue(),key);
             }
-
-            switch (propertyType)
-            {
-                case Negative:
-                    consume.add(dataEntry);
-                    consumeTotal=consumeTotal+dataMap.get(key);
-                    break;
-                case Positive:
-                    income.add(dataEntry);
-                    incomeTotal=incomeTotal+dataMap.get(key);
-                    break;
-            }
-
-            pieEntries.add(dataEntry);
+            pieEntries.add(pieEntry);
+            consume.add(pieEntry);
         }
 
         // create pie data set
@@ -257,8 +241,8 @@ public class PropertyTotal extends Fragment {
         end.set(Calendar.HOUR_OF_DAY,23);
         end.set(Calendar.MINUTE,59);
         end.set(Calendar.SECOND,59);
-
-        nowCurrency =propertyVO.getCurrency();
+        sharedPreferences = activity.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
+        nowCurrency = sharedPreferences.getString(propertyCurrency, "TWD");
         currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
         popupMenu=new PopupMenu(activity,currency);
         Common.createCurrencyPopMenu(popupMenu, activity);
@@ -273,9 +257,7 @@ public class PropertyTotal extends Fragment {
     }
 
     private void findViewById() {
-        chartPositive=view.findViewById(R.id.chart_positive);
         chartNegative=view.findViewById(R.id.chart_negative);
-        namePositive=view.findViewById(R.id.name_positive);
         nameNagative=view.findViewById(R.id.name_negative);
         name=view.findViewById(R.id.name);
         name.setText(propertyVO.getName());
@@ -323,24 +305,6 @@ public class PropertyTotal extends Fragment {
             }
         });
 
-        insertConsume.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-                if(consumeDB.getAllMoney()<=0)
-                {
-                    Common.showToast(activity,"沒有消費，無法歸類!");
-                    closeFABMenu();
-                    return;
-                }
-                Fragment fragment=new PropertyInsertConsume();
-                Bundle bundle=new Bundle();
-                bundle.putSerializable(Common.propertyID,propertyId);
-                fragment.setArguments(bundle);
-                Common.switchFragment(fragment,Common.PropertyMoneyListString,getFragmentManager());
-            }
-        });
-
         //返回
         returnMain.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -359,6 +323,7 @@ public class PropertyTotal extends Fragment {
             switch (menuItem.getItemId()) {
                 case 1:
                     nowCurrency = "TWD";
+                    sharedPreferences.edit().putString(propertyCurrency, nowCurrency).apply();
                     currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
                     currency.setText(CurrencyResult(total,currencyVO));
                 case 8:
@@ -366,21 +331,15 @@ public class PropertyTotal extends Fragment {
                     break;
                 default:
                     nowCurrency = Common.code.get(menuItem.getItemId() - 2);
+                    sharedPreferences.edit().putString(propertyCurrency, nowCurrency).apply();
                     currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
                     currency.setText(CurrencyResult(total,currencyVO));
                     break;
             }
-
-            setTotal();
             return true;
         }
     }
 
-    private void setTotal()
-    {
-        nameNagative.setText("支出 "+Common.CurrencyResult(consumeTotal,currencyVO));
-        namePositive.setText("收入 "+Common.CurrencyResult(incomeTotal,currencyVO));
-    }
 
 
 
@@ -452,7 +411,6 @@ public class PropertyTotal extends Fragment {
     private class choiceData implements com.github.mikephil.charting.listener.OnChartValueSelectedListener {
 
         String type;
-        int index;
 
         public choiceData(String type) {
             this.type = type;
@@ -460,35 +418,12 @@ public class PropertyTotal extends Fragment {
 
         @Override
         public void onValueSelected(Entry entry, Highlight highlight) {
-            String stringExport=PropertyTotal.this.getString(R.string.string_export);
-            index= (int) highlight.getX();
+            int index=highlight.getDataIndex();
+            Fragment fragment=new PropertyList();
             Bundle bundle=new Bundle();
-            Fragment fragment;
             bundle.putSerializable(Common.propertyID,propertyId);
-            if(type.equals(stringExport))
-            {
-                if(consumeTotal>0)
-                {
-                    fragment=new PropertyConsumeShow();
-                    bundle.putSerializable(Common.propertyMainType,consume.get(index).getLabel());
-                    fragment.setArguments(bundle);
-                    Common.switchFragment(fragment,Common.PropertyTotalString,getFragmentManager());
-                }
-
-            }else{
-                if(incomeTotal>0)
-                {
-                    fragment=new PropertyMoneyList();
-                    bundle.putSerializable(Common.propertyMainType,income.get(index).getLabel());
-                    fragment.setArguments(bundle);
-                    Common.switchFragment(fragment,Common.PropertyTotalString,getFragmentManager());
-                }
-
-            }
-
-
-            Log.d("XXXXXX",entry.getX()+" : "+entry.getY());
-
+            bundle.putSerializable(Common.propertyMainType,consume.get(index).getLabel());
+            fragment.setArguments(bundle);
         }
 
         @Override

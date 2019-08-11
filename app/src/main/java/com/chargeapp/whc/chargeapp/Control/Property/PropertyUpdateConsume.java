@@ -3,10 +3,8 @@ package com.chargeapp.whc.chargeapp.Control.Property;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -28,13 +26,11 @@ import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
 import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListener;
-import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
-import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
@@ -43,9 +39,6 @@ import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
-
-
-import org.jsoup.helper.StringUtil;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -56,21 +49,17 @@ import java.util.List;
 import java.util.Map;
 
 
-import static com.chargeapp.whc.chargeapp.Control.Common.*;
+public class PropertyUpdateConsume extends Fragment {
 
-
-public class PropertyInsertMoney extends Fragment {
-
-    private BootstrapDropDown choicePropertyFrom,choiceStatue,choiceDay;
+    private BootstrapDropDown choiceMain,choiceStatue,choiceDay,choiceSecond;
     private BootstrapButton currency,importCalculate,importCurrency,feeCalculate,feeCurrency,save;
     private BootstrapEditText money,importMoney,feeMoney,date;
-    private BankDB bankDB;
+    private ConsumeDB consumeDB;
     private Activity activity;
     private View view;
-    private String[] nameData;
-    private List<BootstrapText> propertyTypes;
+    private String[] nameData,secondData;
+    private List<BootstrapText> propertyTypes,secondTypes;
     private PropertyFromDB propertyFromDB;
-    private SharedPreferences sharedPreferences;
     private CurrencyVO currencyVO;
     private CurrencyDB currencyDB;
     private GridView numberKeyBoard,numberKeyBoard1;
@@ -82,7 +71,7 @@ public class PropertyInsertMoney extends Fragment {
     private int statueNumber;
     private Double total;
     private PopupMenu popupMenu;
-    private String nowCurrency,choiceSource;
+    private String nowCurrency,choiceSource,choiceSecSource;
     private DatePicker datePicker;
     private String choiceDate;
     private LinearLayout showDate;
@@ -102,7 +91,7 @@ public class PropertyInsertMoney extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.property_insert_money, container, false);
+        view = inflater.inflate(R.layout.property_insert_consume, container, false);
         Object object=getArguments().getSerializable(Common.propertyID);
         if(object==null)
         {
@@ -115,23 +104,45 @@ public class PropertyInsertMoney extends Fragment {
 
         findViewById();
         setDataBase();
-        setDropDown();
+        initDropData();
+        setMainDropDown();
         setPopupMenu();
         return view;
     }
 
-    private void setDropDown() {
-        List<String> nameList=bankDB.getAllName();
+    private void initDropData() {
+        List<String> nameList=consumeDB.getAllMainType();
         nameData=nameList.toArray(new String[nameList.size()]);
-        choicePropertyFrom.setDropdownData(nameData);
+        choiceSource=nameData[0];
         propertyTypes=Common.propertyInsertMoneyData(activity,nameData);
-        choicePropertyFrom.setBootstrapText(propertyTypes.get(0));
-        choicePropertyFrom.setOnDropDownItemClickListener(new choiceMoneyName());
-        total=bankDB.getTotalMoneyByName(nameData[0])-propertyFromDB.findBySourceMainType(nameData[0]);
-        sharedPreferences = activity.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
-        String nowCurrency = sharedPreferences.getString(propertyCurrency, "TWD");
-        currencyVO=currencyDB.getOneByType(nowCurrency);
+    }
 
+    private void setMainDropDown() {
+
+        //-----------------------------main type------------------------//
+        choiceMain.setDropdownData(nameData);
+        choiceMain.setBootstrapText(propertyTypes.get(0));
+        choiceMain.setOnDropDownItemClickListener(new choiceMoneyName());
+
+
+        //-----------------------------second type------------------------//
+        List<String> nameSecondList=consumeDB.getAllSecondType(choiceSource);
+        secondData=nameSecondList.toArray(new String[nameSecondList.size()]);
+        choiceSecond.setDropdownData(secondData);
+        secondTypes=Common.propertyInsertMoneyData(activity,secondData);
+        choiceSecond.setBootstrapText(secondTypes.get(0));
+        choiceSecSource=secondData[0];
+        choiceSecond.setOnDropDownItemClickListener(new choiceSecondName());
+
+
+        //-----------------------------money-------------------------------//
+        Double consume=consumeDB.getAllSecondTypeMoney(choiceSecSource);
+        Double cSource=propertyFromDB.findBySourceSecondType(nameData[0]);
+        total=consume-cSource;
+
+
+        //-------------------------------Currency---------------------------------//
+        currencyVO=currencyDB.getOneByType(propertyVO.getCurrency());
         String cResult=Common.Currency().get(currencyVO.getType());
         currency.setText(cResult);
         importCurrency.setText(cResult);
@@ -148,12 +159,15 @@ public class PropertyInsertMoney extends Fragment {
         BsTextMonth=Common.DateChoiceSetBsTest(activity,Common.MonthSetSpinnerBS());
         BsTextStatue=Common.DateChoiceSetBsTest(activity,Common.DateStatueSetSpinner);
         resultStatue=Common.DateStatueSetSpinner[0];
-        choiceSource=nameData[0];
+
     }
+
+
+
 
     private void setDataBase() {
         Common.setChargeDB(activity);
-        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
         currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
     }
@@ -172,7 +186,9 @@ public class PropertyInsertMoney extends Fragment {
         choiceStatue.setOnDropDownItemClickListener(new choiceStateItemBS());
         choiceDay.setOnDropDownItemClickListener(new choiceDayItemBS());
 
-        choicePropertyFrom=view.findViewById(R.id.choicePropertyFrom);
+        choiceMain=view.findViewById(R.id.choiceMain);
+        choiceSecond=view.findViewById(R.id.choiceSecond);
+
 
         currency=view.findViewById(R.id.currency);
         money=view.findViewById(R.id.money);
@@ -257,6 +273,7 @@ public class PropertyInsertMoney extends Fragment {
         date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
         showDate=view.findViewById(R.id.showDate);
         showDate.setOnClickListener(new choiceDateClick());
+
     }
 
 
@@ -264,8 +281,32 @@ public class PropertyInsertMoney extends Fragment {
         @Override
         public void onItemClick(ViewGroup parent, View v, int id) {
             choiceSource=nameData[id];
-            choicePropertyFrom.setBootstrapText(propertyTypes.get(id));
-            total=bankDB.getTotalMoneyByName(choiceSource)-propertyFromDB.findBySourceMainType(choiceSource);
+            choiceMain.setBootstrapText(propertyTypes.get(id));
+            List<String> nameSecondList=consumeDB.getAllSecondType(choiceSource);
+            secondData=nameSecondList.toArray(new String[nameSecondList.size()]);
+            choiceSecond.setDropdownData(secondData);
+            secondTypes=Common.propertyInsertMoneyData(activity,secondData);
+            choiceSecond.setBootstrapText(secondTypes.get(0));
+            choiceSecSource=secondData[0];
+            Double consume=consumeDB.getAllSecondTypeMoney(choiceSecSource);
+            Double cSource=propertyFromDB.findBySourceSecondType(nameData[0]);
+            total=consume-cSource;
+            money.setText(Common.doubleRemoveZero(total/Double.valueOf(currencyVO.getMoney())));
+            money.setBackgroundColor(Color.parseColor("#DDDDDD"));
+        }
+    }
+
+
+    private class choiceSecondName implements BootstrapDropDown.OnDropDownItemClickListener {
+        @Override
+        public void onItemClick(ViewGroup parent, View v, int id) {
+            //-----------------------------second type------------------------//
+            choiceSecSource=secondData[id];
+            choiceSecond.setBootstrapText(secondTypes.get(id));
+            //-----------------------------money-------------------------------//
+            Double consume=consumeDB.getAllSecondTypeMoney(choiceSecSource);
+            Double cSource=propertyFromDB.findBySourceSecondType(choiceSecSource);
+            total=consume-cSource;
             money.setText(Common.doubleRemoveZero(total/Double.valueOf(currencyVO.getMoney())));
             money.setBackgroundColor(Color.parseColor("#DDDDDD"));
         }
@@ -409,16 +450,19 @@ public class PropertyInsertMoney extends Fragment {
 
 
             PropertyFromVO propertyFromVO=new PropertyFromVO();
-            propertyFromVO.setType(PropertyType.Positive);
+            propertyFromVO.setType(PropertyType.Negative);
             propertyFromVO.setSourceCurrency(nowCurrency);
             propertyFromVO.setSourceMoney(iMoney.toString());
             propertyFromVO.setSourceMainType(choiceSource);
-            propertyFromVO.setSourceSecondType(null);
+            propertyFromVO.setSourceSecondType(choiceSecSource);
 
             String sourceDate=date.getText().toString();
             String[] dateArray=sourceDate.split("/");
             Calendar sourceTime=new GregorianCalendar(Integer.valueOf(dateArray[0]),Integer.valueOf(dateArray[1]),Integer.valueOf(dateArray[2]));
             propertyFromVO.setSourceTime(sourceTime.getTime());
+
+
+
             propertyFromVO.setImportFee(fee.toString());
             propertyFromVO.setPropertyId(propertyVO.getId());
             propertyFromVO.setFixImport(fixDate.isChecked());
@@ -434,8 +478,10 @@ public class PropertyInsertMoney extends Fragment {
                 consumeVO.setCurrency(nowCurrency);
                 consumeVO.setRealMoney(fee.toString());
 
+
                 consumeVO.setDetailname("轉入"+propertyVO.getName()+"的費用");
                 consumeVO.setDate(new Date(System.currentTimeMillis()));
+
                 ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
                 consumeDB.insert(consumeVO);
             }
@@ -472,14 +518,12 @@ public class PropertyInsertMoney extends Fragment {
             switch (menuItem.getItemId()) {
                 case 1:
                     nowCurrency = "TWD";
-                    sharedPreferences.edit().putString(propertyCurrency, nowCurrency).apply();
                     currencyVO=new CurrencyVO("TWD","1");
                 case 8:
                     popupMenu.dismiss();
                     break;
                 default:
                     nowCurrency = Common.code.get(menuItem.getItemId() - 2);
-                    sharedPreferences.edit().putString(propertyCurrency, nowCurrency).apply();
                     currencyVO=currencyDB.getOneByType(nowCurrency);
                     break;
             }
@@ -503,8 +547,6 @@ public class PropertyInsertMoney extends Fragment {
             date.setText(choiceDate);
             showDate.setVisibility(View.GONE);
             date.setSelection(choiceDate.length());
-
-
         }
     }
 

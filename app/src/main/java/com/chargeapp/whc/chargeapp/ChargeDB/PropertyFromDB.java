@@ -60,7 +60,7 @@ public class PropertyFromDB {
         values.put("sourceCurrency",propertyFromVO.getSourceCurrency());
         values.put("sourceMainType",propertyFromVO.getSourceMainType());
         values.put("sourceSecondType",propertyFromVO.getSourceSecondType());
-        values.put("sourceTime",propertyFromVO.getSourceTime().getTime());
+        values.put("sourceDate",propertyFromVO.getSourceTime().getTime());
         values.put("importFee",propertyFromVO.getImportFee());
         values.put("fixImport", propertyFromVO.getFixImport().toString());
         values.put("fixDateCode", propertyFromVO.getFixDateCode().getDetail());
@@ -100,6 +100,19 @@ public class PropertyFromDB {
         }
         cursor.close();
         return propertyFromVOS;
+    }
+
+
+    public PropertyFromVO findByPropertyFromId(Long id) {
+        String sql = "SELECT * FROM PropertyFrom where id ='"+id +"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        PropertyFromVO propertyFromVO=null;
+        if (cursor.moveToNext()) {
+            propertyFromVO=getPropertyFromVO(cursor);
+        }
+        cursor.close();
+        return propertyFromVO;
     }
 
 
@@ -177,7 +190,7 @@ public class PropertyFromDB {
     }
 
 
-    public Map<String,Double> getPieDataMaiType(PropertyType propertyType)
+    public Map<String,Double> getPieDataMainType(PropertyType propertyType)
     {
         String sql = "SELECT * FROM PropertyFrom where type ='"+propertyType.getCode() +"' order by id;";
         String[] args = {};
@@ -204,6 +217,33 @@ public class PropertyFromDB {
     }
 
 
+
+
+    public Map<String,Double> getPieDataSecondType(PropertyType propertyType,String sourceMainType)
+    {
+        String sql = "SELECT * FROM PropertyFrom where type ='"+propertyType.getCode() +"' and sourceMainType =  '"+sourceMainType+"' order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        CurrencyDB currencyDB=new CurrencyDB(db);
+        PropertyFromVO propertyFromVO;
+        Map<String,Double> map=new HashMap<>();
+        while (cursor.moveToNext()) {
+            propertyFromVO=getPropertyFromVO(cursor);
+            Double moneyMap=map.get(propertyFromVO.getSourceSecondType());
+            Long start=propertyFromVO.getSourceTime().getTime()-86400000L;
+            Long end=propertyFromVO.getSourceTime().getTime()+86400000L;
+            CurrencyVO currencyVO=currencyDB.getBytimeAndType(start,end,propertyFromVO.getSourceCurrency());
+            Double money=Double.valueOf(propertyFromVO.getSourceMoney())*Double.valueOf(currencyVO.getMoney());
+            if(moneyMap==null)
+            {
+                moneyMap=money;
+            }else{
+                moneyMap=moneyMap+money;
+            }
+            map.put(propertyFromVO.getSourceMainType(),moneyMap);
+        }
+        return map;
+    }
 
     public long insert(PropertyFromVO propertyFromVO) {
         ContentValues values = getContentValues(propertyFromVO);
