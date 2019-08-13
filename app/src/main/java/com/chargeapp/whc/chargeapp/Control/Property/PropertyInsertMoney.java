@@ -424,7 +424,7 @@ public class PropertyInsertMoney extends Fragment {
             propertyFromVO.setFixImport(fixDate.isChecked());
             propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(resultStatue.trim()));
             propertyFromVO.setFixDateDetail(resultDay);
-            propertyFromDB.insert(propertyFromVO);
+
 
             if(fee>0)
             {
@@ -437,9 +437,10 @@ public class PropertyInsertMoney extends Fragment {
                 consumeVO.setDetailname("轉入"+propertyVO.getName()+"的費用");
                 consumeVO.setDate(new Date(System.currentTimeMillis()));
                 ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
-                consumeDB.insert(consumeVO);
+                propertyFromVO.setImportFeeId(consumeDB.insert(consumeVO));
             }
 
+            propertyFromDB.insert(propertyFromVO);
 
             Fragment fragment=new PropertyMoneyList();
             Bundle bundle=new Bundle();

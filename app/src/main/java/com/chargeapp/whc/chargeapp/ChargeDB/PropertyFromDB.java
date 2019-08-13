@@ -34,7 +34,7 @@ public class PropertyFromDB {
     public PropertyFromVO getPropertyFromVO(Cursor cursor)
     {
         PropertyFromVO propertyFromVO=new PropertyFromVO();
-        propertyFromVO.setId(cursor.getString(0));
+        propertyFromVO.setId(cursor.getLong(0));
         propertyFromVO.setType(PropertyType.codeToEnum(cursor.getInt(1)));
         propertyFromVO.setSourceMoney(cursor.getString(2));
         propertyFromVO.setSourceCurrency(cursor.getString(3));
@@ -42,11 +42,12 @@ public class PropertyFromDB {
         propertyFromVO.setSourceSecondType(cursor.getString(5));
         propertyFromVO.setSourceTime(new Date(cursor.getLong(6)));
         propertyFromVO.setImportFee(cursor.getString(7));
-        propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(8)));
-        propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(cursor.getString(9)));
-        propertyFromVO.setFixDateDetail(cursor.getString(10));
-        propertyFromVO.setPropertyId(cursor.getLong(11));
-        propertyFromVO.setFixFromId(cursor.getString(12));
+        propertyFromVO.setImportFeeId(cursor.getLong(8));
+        propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(9)));
+        propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(cursor.getString(10)));
+        propertyFromVO.setFixDateDetail(cursor.getString(11));
+        propertyFromVO.setPropertyId(cursor.getLong(12));
+        propertyFromVO.setFixFromId(cursor.getString(13));
         return propertyFromVO;
     }
 
@@ -62,6 +63,7 @@ public class PropertyFromDB {
         values.put("sourceSecondType",propertyFromVO.getSourceSecondType());
         values.put("sourceDate",propertyFromVO.getSourceTime().getTime());
         values.put("importFee",propertyFromVO.getImportFee());
+        values.put("importFeeId",propertyFromVO.getImportFeeId());
         values.put("fixImport", propertyFromVO.getFixImport().toString());
         values.put("fixDateCode", propertyFromVO.getFixDateCode().getDetail());
         values.put("fixDateDetail", propertyFromVO.getFixDateDetail());
@@ -254,7 +256,7 @@ public class PropertyFromDB {
     public long update(PropertyFromVO propertyFromVO) {
         ContentValues values = getContentValues(propertyFromVO);
         String whereClause = COL_id + " = ?;";
-        String[] whereArgs = {propertyFromVO.getId()};
+        String[] whereArgs = {String.valueOf(propertyFromVO.getId())};
         return db.update(TABLE_NAME, values, whereClause, whereArgs);
     }
 

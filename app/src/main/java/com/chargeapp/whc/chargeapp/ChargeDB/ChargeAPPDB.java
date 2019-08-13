@@ -77,7 +77,7 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
 
     public static final String TABLE_PropertyFrom =
             "CREATE TABLE PropertyFrom ( id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "type integer,sourceMoney TEXT,sourceCurrency TEXT,sourceMainType text,sourceSecondType text,sourceDate dateTime,importFee TEXT,fixImport TEXT,fixDateCode TEXT,fixDateDetail TEXT,propertyId Integer,fixFromId TEXT) ;";
+                    "type integer,sourceMoney TEXT,sourceCurrency TEXT,sourceMainType text,sourceSecondType text,sourceDate dateTime,importFee TEXT,importFeeId integer,fixImport TEXT,fixDateCode TEXT,fixDateDetail TEXT,propertyId Integer,fixFromId TEXT) ;";
 
     public ChargeAPPDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
