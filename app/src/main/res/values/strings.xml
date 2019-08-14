@@ -39,6 +39,7 @@
     <string name="text_show">檢視</string>
 
     <string name="insert_success">新增成功!</string>
+    <string name="update_success">修改成功!</string>
 
     <string name="property_list">列表</string>
     <string name="property_new">新增</string>

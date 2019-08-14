@@ -6,11 +6,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public enum FixDateCode {
 
-    FixDay(1,"FixDay","每天"),
-    FixWeek(2,"FixWeek","每周"),
-    FixMonth(3,"FixMonth","每月"),
-    FixQuarterly(4,"FixQuarterly","每季"),
-    FixYear(5,"FixYear","每年");
+    FixDay(0,"FixDay","每天"),
+    FixWeek(1,"FixWeek","每周"),
+    FixMonth(2,"FixMonth","每月"),
+    FixYear(3,"FixYear","每年");
 
     private final Integer code;
     private final String name;

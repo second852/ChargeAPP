@@ -86,6 +86,7 @@ public class PropertyUpdateMoney extends Fragment {
     private LinearLayout showDate;
     private PropertyFromVO propertyFromVO;
     private PropertyVO propertyVO;
+    private Bundle bundle;
 
     @Override
     public void onAttach(Context context) {
@@ -102,18 +103,14 @@ public class PropertyUpdateMoney extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.property_insert_money, container, false);
-        Object object=getArguments().getSerializable(Common.propertyFromVoId);
-        if(object==null)
+        bundle=getArguments();
+        if(bundle==null)
         {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
-        findViewById();
         setDataBase();
-
-        propertyFromVO=propertyFromDB.findByPropertyFromId((Long) object);
-        PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getWritableDatabase());
-        propertyVO=propertyDB.findById(propertyFromVO.getPropertyId());
+        findViewById();
         setDropDown();
         setPopupMenu();
         return view;
@@ -161,63 +158,58 @@ public class PropertyUpdateMoney extends Fragment {
         if(propertyFromVO.getFixImport())
         {
             int updateChoice;
-            String dayDetail=propertyFromVO.getFixDateDetail();
-            resultStatue=propertyFromVO.getFixDateCode().getName();
+            choiceDate=propertyFromVO.getFixDateDetail().trim();
+            resultStatue=propertyFromVO.getFixDateCode().getDetail();
+            resultDay=propertyFromVO.getFixDateDetail().trim();
+            statueNumber=propertyFromVO.getFixDateCode().getCode();
             switch (propertyFromVO.getFixDateCode())
             {
                 case FixDay:
+                    statueNumber=0;
                     choiceStatue.setBootstrapText(BsTextStatue.get(0));
-                    resultStatue=BsTextStatue.get(0).toString();
-                    resultDay="";
                     choiceStatue.setBootstrapText(BsTextStatue.get(0));
                     choiceDay.setVisibility(View.GONE);
                     choiceDay.setExpandDirection(ExpandDirection.UP);
                     break;
                 case FixWeek:
                     choiceStatue.setBootstrapText(BsTextStatue.get(1));
-                    resultStatue=BsTextStatue.get(1).toString();
                     choiceStatue.setBootstrapText(BsTextStatue.get(1));
                     choiceDay.setDropdownData(Common.WeekSetSpinnerBS);
-                    if(dayDetail.equals("星期一"))
+                    if(choiceDate.equals("星期一"))
                     {
                         updateChoice=0;
-                    }else if(dayDetail.equals("星期二"))
+                    }else if(choiceDate.equals("星期二"))
                     {
                         updateChoice=1;
-                    }else if(dayDetail.equals("星期三"))
+                    }else if(choiceDate.equals("星期三"))
                     {
                         updateChoice=2;
-                    }else if(dayDetail.equals("星期四"))
+                    }else if(choiceDate.equals("星期四"))
                     {
                         updateChoice=3;
-                    }else if(dayDetail.equals("星期五"))
+                    }else if(choiceDate.equals("星期五"))
                     {
                         updateChoice=4;
-                    }else if(dayDetail.equals("星期六"))
+                    }else if(choiceDate.equals("星期六"))
                     {
                         updateChoice=5;
                     }else{
                         updateChoice=6;
                     }
                     choiceDay.setBootstrapText(BsTextWeek.get(updateChoice));
-                    resultDay=BsTextWeek.get(updateChoice).toString();
                     choiceDay.setExpandDirection(ExpandDirection.UP);
                     break;
                 case FixMonth:
-                    resultStatue=BsTextStatue.get(2).toString();
                     choiceStatue.setBootstrapText(BsTextStatue.get(2));
                     choiceDate=choiceDate.substring(0,choiceDate.indexOf("日"));
                     updateChoice= Integer.valueOf(choiceDate)-1;
-                    resultDay=BsTextDay.get(updateChoice).toString();
                     choiceDay.setBootstrapText(BsTextDay.get(updateChoice));
                     choiceDay.setDropdownData(Common.DaySetSpinnerBS());
                     choiceDay.setExpandDirection(ExpandDirection.UP);
                     break;
                 case FixYear:
-                    resultStatue=BsTextStatue.get(3).toString();
                     choiceStatue.setBootstrapText(BsTextStatue.get(3));
                     updateChoice=Integer.valueOf(choiceDate.substring(0,choiceDate.indexOf("月")))-1;
-                    resultDay=BsTextMonth.get(updateChoice).toString();
                     choiceDay.setBootstrapText(BsTextMonth.get(updateChoice));
                     choiceDay.setDropdownData(Common.MonthSetSpinnerBS());
                     choiceDay.setExpandDirection(ExpandDirection.UP);
@@ -263,10 +255,13 @@ public class PropertyUpdateMoney extends Fragment {
 
     private void setDataBase() {
         Common.setChargeDB(activity);
+        PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getWritableDatabase());
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
         currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
-
+        Long propertyId= (Long) bundle.getSerializable(Common.propertyFromVoId);
+        propertyFromVO=propertyFromDB.findByPropertyFromId(propertyId);
+        propertyVO=propertyDB.findById(propertyFromVO.getPropertyId());
     }
 
     private void findViewById() {
@@ -315,7 +310,9 @@ public class PropertyUpdateMoney extends Fragment {
                 new int[]{R.id.cardview});
         numberKeyBoard.setAdapter(adapter);
         numberKeyBoard.setNumColumns(5);
-        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(importCalculate,importMoney,activity,numberKeyBoard,new StringBuilder(),true));
+        StringBuilder sbOne=new StringBuilder();
+        sbOne.append(propertyFromVO.getSourceMoney());
+        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(importCalculate,importMoney,activity,numberKeyBoard,sbOne,false));
         importMoney.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -333,8 +330,9 @@ public class PropertyUpdateMoney extends Fragment {
                 }
             }
         });
-
-        numberKeyBoard1.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(feeCalculate,feeMoney,activity,numberKeyBoard,new StringBuilder(),true));
+        StringBuilder sbTwo=new StringBuilder();
+        sbTwo.append(propertyFromVO.getImportFee());
+        numberKeyBoard1.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(feeCalculate,feeMoney,activity,numberKeyBoard1,sbTwo,false));
         numberKeyBoard1.setAdapter(adapter);
         numberKeyBoard1.setNumColumns(5);
         feeMoney.setOnClickListener(new View.OnClickListener() {
@@ -519,7 +517,7 @@ public class PropertyUpdateMoney extends Fragment {
 
 
 
-            PropertyFromVO propertyFromVO=new PropertyFromVO();
+
             propertyFromVO.setType(PropertyType.Positive);
             propertyFromVO.setSourceCurrency(nowCurrency);
             propertyFromVO.setSourceMoney(iMoney.toString());
@@ -565,13 +563,10 @@ public class PropertyUpdateMoney extends Fragment {
             }
 
             propertyFromDB.update(propertyFromVO);
-
             Fragment fragment=new PropertyMoneyList();
-            Bundle bundle=new Bundle();
-            bundle.putSerializable(Common.propertyID,propertyVO.getId());
             fragment.setArguments(bundle);
             Common.switchConfirmFragment(fragment,getFragmentManager());
-            Common.showToast(activity,getString(R.string.insert_success));
+            Common.showToast(activity,getString(R.string.update_success));
         }
     }
 

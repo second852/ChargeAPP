@@ -106,6 +106,7 @@ public class Common {
     public final static String PropertyTotalString="PropertyTotal";
     public final static String propertyMainType="propertyMainType";
     public final static String propertyFromVoId="propertyFromVoId";
+    public final static String propertyFragment="propertyFragment";
 
 
     public static NumberFormat nf = NumberFormat.getNumberInstance();

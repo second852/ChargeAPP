@@ -155,6 +155,20 @@ public class PropertyFromDB {
         return total;
     }
 
+
+    public List<PropertyFromVO> findByPropertyMainType(String sourceMainType,Long propertyId) {
+        String sql = "SELECT * FROM PropertyFrom where sourceMainType ='"+sourceMainType +"' and  propertyId = '"+propertyId+"' order by sourceDate desc;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<PropertyFromVO> propertyFromVOList=new ArrayList<>();
+        while (cursor.moveToNext()) {
+            PropertyFromVO propertyFromVO=getPropertyFromVO(cursor);
+            propertyFromVOList.add(propertyFromVO);
+        }
+        cursor.close();
+        return propertyFromVOList;
+    }
+
     public Double findBySourceSecondType(String sourceSecondType) {
         String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where sourceSecondType ='"+sourceSecondType +"' order by id;";
         String[] args = {};

@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.chargeapp.whc.chargeapp.Control.Common.CurrencyResult;
-
+import static com.chargeapp.whc.chargeapp.Control.Common.PropertyTotalString;
 
 
 /**
@@ -117,7 +117,6 @@ public class PropertyTotal extends Fragment {
         super.onStart();
         findViewById();
         setPopupMenu();
-        setNowMoney();
         setCircle(chartNegative,PropertyType.Negative);
         setCircle(chartPositive,PropertyType.Positive);
         chartNegative.setOnChartValueSelectedListener(new choiceData(PropertyTotal.this.getString(R.string.string_export)));
@@ -236,16 +235,7 @@ public class PropertyTotal extends Fragment {
 
 
 
-    private void setNowMoney() {
-        total=0.0;
-        propertyFromVOS=propertyFromDB.findByPropertyId(propertyId);
-        for(PropertyFromVO propertyFromVO:propertyFromVOS)
-        {
-            CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getSourceCurrency());
-            total=total+Double.valueOf(propertyFromVO.getSourceMoney())*Double.valueOf(currencyVO.getMoney());
-        }
-        currency.setText(Common.CurrencyResult(total,currencyVO));
-    }
+
 
     private void setPopupMenu() {
         //找出現在選擇Currency
@@ -319,7 +309,7 @@ public class PropertyTotal extends Fragment {
                 Bundle bundle=new Bundle();
                 bundle.putSerializable(Common.propertyID,propertyId);
                 fragment.setArguments(bundle);
-                Common.switchFragment(fragment,Common.PropertyTotalString,getFragmentManager());
+                Common.switchFragment(fragment, PropertyTotalString,getFragmentManager());
             }
         });
 
@@ -380,6 +370,8 @@ public class PropertyTotal extends Fragment {
     {
         nameNagative.setText("支出 "+Common.CurrencyResult(consumeTotal,currencyVO));
         namePositive.setText("收入 "+Common.CurrencyResult(incomeTotal,currencyVO));
+        total=incomeTotal-consumeTotal;
+        currency.setText(Common.CurrencyResult(total,currencyVO));
     }
 
 
@@ -472,16 +464,17 @@ public class PropertyTotal extends Fragment {
                     fragment=new PropertyConsumeShow();
                     bundle.putSerializable(Common.propertyMainType,consume.get(index).getLabel());
                     fragment.setArguments(bundle);
-                    Common.switchFragment(fragment,Common.PropertyTotalString,getFragmentManager());
+                    Common.switchFragment(fragment, PropertyTotalString,getFragmentManager());
                 }
 
             }else{
                 if(incomeTotal>0)
                 {
                     fragment=new PropertyMoneyList();
+                    bundle.putSerializable(Common.propertyFragment,PropertyTotalString);
                     bundle.putSerializable(Common.propertyMainType,income.get(index).getLabel());
                     fragment.setArguments(bundle);
-                    Common.switchFragment(fragment,Common.PropertyTotalString,getFragmentManager());
+                    Common.switchFragment(fragment, PropertyTotalString,getFragmentManager());
                 }
 
             }

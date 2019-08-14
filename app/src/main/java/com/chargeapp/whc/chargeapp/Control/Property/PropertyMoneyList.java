@@ -69,6 +69,8 @@ public class PropertyMoneyList extends Fragment {
     private LinearLayout insertMoney,insertConsume,returnMain;
     boolean isFABOpen=false;
     private View fabBGLayout;
+    private String mainType,fragmentString,secondType;
+    private Bundle bundle;
 
     @Override
     public void onAttach(Context context) {
@@ -85,13 +87,14 @@ public class PropertyMoneyList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.property_list_money, container, false);
-        Object object=getArguments().getSerializable(Common.propertyID);
-        if(object==null)
+        bundle=getArguments();
+        if(bundle==null)
         {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
-        propertyId= (Long) object;
+        propertyId= (Long) bundle.getSerializable(Common.propertyID);
+        fragmentString= (String) bundle.getSerializable(Common.propertyFragment);
         Common.setChargeDB(activity);
         currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -99,19 +102,25 @@ public class PropertyMoneyList extends Fragment {
         propertyVO=propertyDB.findById(propertyId);
         findViewById();
         setPopupMenu();
-        setNowMoney();
         setListView();
+        setNowMoney();
         return view;
     }
 
     private void setListView() {
-        List<PropertyFromVO> propertyFromVOS=propertyFromDB.findByPropertyId(propertyId);
+
+        if(fragmentString.equals(Common.PropertyTotalString))
+        {
+            mainType= (String) bundle.getSerializable(Common.propertyMainType);
+            propertyFromVOS=propertyFromDB.findByPropertyMainType(mainType,propertyId);
+        }else{
+
+        }
         listData.setAdapter(new ListAdapter(activity,propertyFromVOS));
     }
 
     private void setNowMoney() {
         total=0.0;
-        propertyFromVOS=propertyFromDB.findByPropertyId(propertyId);
         for(PropertyFromVO propertyFromVO:propertyFromVOS)
         {
             CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getSourceCurrency());
@@ -240,6 +249,7 @@ public class PropertyMoneyList extends Fragment {
                     currency.setText(CurrencyResult(total,currencyVO));
                     break;
             }
+            setListView();
             return true;
         }
     }
@@ -309,7 +319,6 @@ public class PropertyMoneyList extends Fragment {
                             break;
 
                     }
-                    Bundle bundle=new Bundle();
                     bundle.putSerializable(Common.propertyFromVoId,propertyFromVO.getId());
                     fragment.setArguments(bundle);
                     Common.switchFragment(fragment,Common.PropertyMoneyListString,getFragmentManager());
