@@ -50,6 +50,7 @@ import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -113,6 +114,7 @@ public class SelectIncome extends Fragment {
         }else{
             this.context=getActivity();
         }
+        Utils.init(this.context);
     }
 
     @Override

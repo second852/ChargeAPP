@@ -80,6 +80,7 @@ public class PropertyInsertConsume extends Fragment {
     private String choiceDate;
     private LinearLayout showDate;
     private PropertyVO propertyVO;
+    private Bundle bundle;
 
     @Override
     public void onAttach(Context context) {
@@ -96,13 +97,13 @@ public class PropertyInsertConsume extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.property_insert_consume, container, false);
-        Object object=getArguments().getSerializable(Common.propertyID);
-        if(object==null)
+        bundle=getArguments();
+        if(bundle==null)
         {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
-
+        Object object=getArguments().getSerializable(Common.propertyID);
         PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyVO=propertyDB.findById((long)object);
 
@@ -492,8 +493,8 @@ public class PropertyInsertConsume extends Fragment {
 
 
             Fragment fragment=new PropertyMoneyList();
-            Bundle bundle=new Bundle();
-            bundle.putSerializable(Common.propertyID,propertyVO.getId());
+            bundle.putSerializable(Common.propertyFragment,Common.propertyInsertString);
+            bundle.putSerializable(Common.propertySecondType,choiceSecSource);
             fragment.setArguments(bundle);
             Common.switchConfirmFragment(fragment,getFragmentManager());
             Common.showToast(activity,getString(R.string.insert_success));

@@ -118,7 +118,7 @@ public class PropertyFromDB {
     }
 
 
-    public Double totalConsume(Long propertyId,PropertyType type) {
+    public Double totalType(Long propertyId, PropertyType type) {
         String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where propertyId ='"+propertyId +"' and type = '"+type.getCode()+"' order by id;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
@@ -158,6 +158,20 @@ public class PropertyFromDB {
 
     public List<PropertyFromVO> findByPropertyMainType(String sourceMainType,Long propertyId) {
         String sql = "SELECT * FROM PropertyFrom where sourceMainType ='"+sourceMainType +"' and  propertyId = '"+propertyId+"' order by sourceDate desc;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<PropertyFromVO> propertyFromVOList=new ArrayList<>();
+        while (cursor.moveToNext()) {
+            PropertyFromVO propertyFromVO=getPropertyFromVO(cursor);
+            propertyFromVOList.add(propertyFromVO);
+        }
+        cursor.close();
+        return propertyFromVOList;
+    }
+
+
+    public List<PropertyFromVO> findByPropertySecondType(String sourceSecondType,Long propertyId) {
+        String sql = "SELECT * FROM PropertyFrom where sourceSecondType ='"+sourceSecondType +"' and  propertyId = '"+propertyId+"' order by sourceDate desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOList=new ArrayList<>();
@@ -233,11 +247,35 @@ public class PropertyFromDB {
     }
 
 
-
-
-    public Map<String,Double> getPieDataSecondType(PropertyType propertyType,String sourceMainType)
+    public Map<String,Double> getPieDataByPropertyId(PropertyType propertyType, Long propertyId)
     {
-        String sql = "SELECT * FROM PropertyFrom where type ='"+propertyType.getCode() +"' and sourceMainType =  '"+sourceMainType+"' order by id;";
+        String sql = "SELECT * FROM PropertyFrom where type ='"+propertyType.getCode() +"' and propertyId = "+propertyId+" order by id;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        CurrencyDB currencyDB=new CurrencyDB(db);
+        PropertyFromVO propertyFromVO;
+        Map<String,Double> map=new HashMap<>();
+        while (cursor.moveToNext()) {
+            propertyFromVO=getPropertyFromVO(cursor);
+            Double moneyMap=map.get(propertyFromVO.getSourceMainType());
+            Long start=propertyFromVO.getSourceTime().getTime()-86400000L;
+            Long end=propertyFromVO.getSourceTime().getTime()+86400000L;
+            CurrencyVO currencyVO=currencyDB.getBytimeAndType(start,end,propertyFromVO.getSourceCurrency());
+            Double money=Double.valueOf(propertyFromVO.getSourceMoney())*Double.valueOf(currencyVO.getMoney());
+            if(moneyMap==null)
+            {
+                moneyMap=money;
+            }else{
+                moneyMap=moneyMap+money;
+            }
+            map.put(propertyFromVO.getSourceMainType(),moneyMap);
+        }
+        return map;
+    }
+
+    public Map<String,Double> getPieDataSecondType(PropertyType propertyType,String sourceMainType,Long propertyId)
+    {
+        String sql = "SELECT * FROM PropertyFrom where type ='"+propertyType.getCode() +"' and sourceMainType =  '"+sourceMainType+"' and propertyId = '"+propertyId+"' order by id;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
         CurrencyDB currencyDB=new CurrencyDB(db);
@@ -256,7 +294,7 @@ public class PropertyFromDB {
             }else{
                 moneyMap=moneyMap+money;
             }
-            map.put(propertyFromVO.getSourceMainType(),moneyMap);
+            map.put(propertyFromVO.getSourceSecondType(),moneyMap);
         }
         return map;
     }

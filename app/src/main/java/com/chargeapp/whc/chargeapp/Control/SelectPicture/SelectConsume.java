@@ -77,6 +77,7 @@ import java.util.Set;
 
 
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.Utils;
 
 
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_FLAG;
@@ -145,6 +146,7 @@ public class SelectConsume extends Fragment {
         } else {
             this.context = getActivity();
         }
+        Utils.init(this.context);
     }
 
 

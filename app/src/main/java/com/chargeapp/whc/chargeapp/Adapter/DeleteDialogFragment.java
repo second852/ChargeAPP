@@ -29,6 +29,7 @@ import com.chargeapp.whc.chargeapp.Control.Goal.GoalListAll;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePagetList;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyList;
+import com.chargeapp.whc.chargeapp.Control.Property.PropertyMoneyList;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelCom;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelIM;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetList;
@@ -46,10 +47,13 @@ import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+
+import org.jsoup.helper.StringUtil;
 
 /**
  * Created by Wang on 2018/1/3.
@@ -153,6 +157,15 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
             PropertyVO propertyVO= (PropertyVO) object;
             message=propertyVO.getName()+"相關資料會一併刪除!";
             title=propertyVO.getName();
+        }else if(object instanceof PropertyFromVO)
+        {
+            PropertyFromVO propertyFromVO= (PropertyFromVO) object;
+            if(StringUtil.isBlank(propertyFromVO.getSourceMainType()))
+            {
+                message=propertyFromVO.getSourceMainType();
+            }else {
+                message=propertyFromVO.getSourceSecondType();
+            }
         }
 
 
@@ -208,8 +221,12 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 }else if(object instanceof PropertyVO)
                 {
                     PropertyVO propertyVO= (PropertyVO) object;
-                    propertyFromDB.deleteById(propertyVO.getId());
+                    propertyFromDB.deleteByPropertyId(propertyVO.getId().intValue());
                     propertyDB.deleteById(propertyVO.getId());
+                }else  if(object instanceof PropertyFromVO)
+                {
+                    PropertyFromVO propertyFromVO= (PropertyFromVO) object;
+                    propertyFromDB.deleteById(propertyFromVO.getId());
                 }
 
 
@@ -272,6 +289,10 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 {
                     PropertyList propertyList= (PropertyList) fragement;
                     propertyList.setAdapt();
+                }else if(fragement instanceof PropertyMoneyList)
+                {
+                    PropertyMoneyList propertyMoneyList= (PropertyMoneyList) fragement;
+                    propertyMoneyList.setListView();
                 }
                 break;
             default:

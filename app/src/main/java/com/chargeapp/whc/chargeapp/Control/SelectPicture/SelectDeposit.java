@@ -51,6 +51,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.utils.Utils;
 
 import java.sql.Timestamp;
 import java.text.NumberFormat;
@@ -118,6 +119,7 @@ public class SelectDeposit extends Fragment {
         } else {
             this.context = getActivity();
         }
+        Utils.init(this.context);
     }
 
     @Override

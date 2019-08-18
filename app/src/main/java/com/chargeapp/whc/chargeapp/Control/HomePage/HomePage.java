@@ -45,6 +45,7 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.Utils;
 
 
 import java.util.ArrayList;
@@ -94,6 +95,7 @@ public class HomePage extends Fragment {
         } else {
             this.context = getActivity();
         }
+        Utils.init(this.context);
     }
 
 

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -40,6 +41,8 @@ import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 
+import org.jsoup.helper.StringUtil;
+
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,6 +50,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_MONEY;
 
 
 public class PropertyUpdateConsume extends Fragment {
@@ -75,7 +80,8 @@ public class PropertyUpdateConsume extends Fragment {
     private DatePicker datePicker;
     private String choiceDate;
     private LinearLayout showDate;
-    private PropertyVO propertyVO;
+    private Bundle bundle;
+    private PropertyFromVO propertyFromVO;
 
     @Override
     public void onAttach(Context context) {
@@ -92,57 +98,172 @@ public class PropertyUpdateConsume extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.property_insert_consume, container, false);
-        Object object=getArguments().getSerializable(Common.propertyID);
-        if(object==null)
+        bundle=getArguments();
+        if(bundle==null)
         {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
 
-        PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyVO=propertyDB.findById((long)object);
+        Object object=getArguments().getSerializable(Common.propertyFromVoId);
+        PropertyFromDB propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        propertyFromVO=propertyFromDB.findByPropertyFromId((Long) object);
+        return view;
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
         findViewById();
         setDataBase();
         initDropData();
         setMainDropDown();
         setPopupMenu();
-        return view;
     }
 
     private void initDropData() {
         List<String> nameList=consumeDB.getAllMainType();
         nameData=nameList.toArray(new String[nameList.size()]);
-        choiceSource=nameData[0];
         propertyTypes=Common.propertyInsertMoneyData(activity,nameData);
     }
 
     private void setMainDropDown() {
 
+
+        //-------------------setProperty--------------------------------//
+        choiceSource = propertyFromVO.getSourceMainType();
+        BootstrapText mainText = new BootstrapText.Builder(activity)
+                .addText(choiceSource + " ")
+                .addFontAwesomeIcon(FA_MONEY)
+                .build();
+        choiceMain.setBootstrapText(mainText);
+        choiceSecSource = propertyFromVO.getSourceSecondType();
+        BootstrapText secondText = new BootstrapText.Builder(activity)
+                .addText(choiceSecSource + " ")
+                .addFontAwesomeIcon(FA_MONEY)
+                .build();
+        choiceSecond.setBootstrapText(secondText);
+
+        importMoney.setText(propertyFromVO.getSourceMoney());
+        feeMoney.setText(propertyFromVO.getImportFee());
+        date.setText(Common.sTwo.format(propertyFromVO.getSourceTime()));
+
+
+        if(propertyFromVO.getFixImport())
+        {
+            String choice;
+            if(StringUtil.isBlank(propertyFromVO.getFixDateDetail()))
+            {
+                resultDay="";
+            }else{
+                resultDay=propertyFromVO.getFixDateDetail().trim();
+            }
+
+            resultStatue=propertyFromVO.getFixDateCode().getDetail();
+            int updateChoice;
+            switch (propertyFromVO.getFixDateCode())
+            {
+                case FixDay:
+                    choiceDay.setVisibility(View.GONE);
+                    choiceDay.setExpandDirection(ExpandDirection.UP);
+                    break;
+                case FixWeek:
+                    choiceStatue.setBootstrapText(BsTextStatue.get(1));
+                    choiceStatue.setBootstrapText(BsTextStatue.get(1));
+                    choiceDay.setDropdownData(Common.WeekSetSpinnerBS);
+                    if(resultDay.equals("星期一"))
+                    {
+                        updateChoice=0;
+                    }else if(resultDay.equals("星期二"))
+                    {
+                        updateChoice=1;
+                    }else if(resultDay.equals("星期三"))
+                    {
+                        updateChoice=2;
+                    }else if(resultDay.equals("星期四"))
+                    {
+                        updateChoice=3;
+                    }else if(resultDay.equals("星期五"))
+                    {
+                        updateChoice=4;
+                    }else if(resultDay.equals("星期六"))
+                    {
+                        updateChoice=5;
+                    }else{
+                        updateChoice=6;
+                    }
+                    choiceDay.setBootstrapText(BsTextWeek.get(updateChoice));
+                    choiceDay.setExpandDirection(ExpandDirection.UP);
+                    break;
+                case FixMonth:
+                    choiceStatue.setBootstrapText(BsTextStatue.get(2));
+                    choice=resultDay.substring(0,resultDay.indexOf("日"));
+                    updateChoice= Integer.valueOf(choice)-1;
+                    choiceDay.setBootstrapText(BsTextDay.get(updateChoice));
+                    choiceDay.setDropdownData(Common.DaySetSpinnerBS());
+                    choiceDay.setExpandDirection(ExpandDirection.UP);
+                    break;
+                case FixYear:
+                    choiceStatue.setBootstrapText(BsTextStatue.get(3));
+                    updateChoice=Integer.valueOf(resultDay.substring(0,resultDay.indexOf("月")))-1;
+                    choiceDay.setBootstrapText(BsTextMonth.get(updateChoice));
+                    choiceDay.setDropdownData(Common.MonthSetSpinnerBS());
+                    choiceDay.setExpandDirection(ExpandDirection.UP);
+                    break;
+            }
+
+            final ViewTreeObserver vto = view.getViewTreeObserver();
+            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    if(propertyFromVO.getFixDateCode().equals(FixDateCode.FixDay))
+                    {
+                        choiceDay.setVisibility(View.GONE);
+                        fixDate.setX(showFixDate.getWidth()/10);
+                        fixDateT.setX(showFixDate.getWidth()/10+fixDate.getWidth());
+                        choiceStatue.setX(showFixDate.getWidth()/2+showFixDate.getWidth()/10);
+                        choiceStatue.setVisibility(View.VISIBLE);
+                    }else {
+                        choiceDay.setVisibility(View.VISIBLE);
+                        fixDate.setX(showFixDate.getWidth()/20);
+                        fixDateT.setX(showFixDate.getWidth()/20+fixDate.getWidth());
+                        choiceStatue.setX(showFixDate.getWidth()/3+showFixDate.getWidth()/10);
+                        choiceDay.setX((showFixDate.getWidth()*2/3)+showFixDate.getWidth()/20);
+                    }
+                }
+            });
+
+        }else{
+            resultStatue=Common.DateStatueSetSpinner[0];
+        }
+
+
+
+
+
+
+
         //-----------------------------main type------------------------//
         choiceMain.setDropdownData(nameData);
-        choiceMain.setBootstrapText(propertyTypes.get(0));
         choiceMain.setOnDropDownItemClickListener(new choiceMoneyName());
-
 
         //-----------------------------second type------------------------//
         List<String> nameSecondList=consumeDB.getAllSecondType(choiceSource);
         secondData=nameSecondList.toArray(new String[nameSecondList.size()]);
         choiceSecond.setDropdownData(secondData);
         secondTypes=Common.propertyInsertMoneyData(activity,secondData);
-        choiceSecond.setBootstrapText(secondTypes.get(0));
-        choiceSecSource=secondData[0];
         choiceSecond.setOnDropDownItemClickListener(new choiceSecondName());
 
 
         //-----------------------------money-------------------------------//
         Double consume=consumeDB.getAllSecondTypeMoney(choiceSecSource);
-        Double cSource=propertyFromDB.findBySourceSecondType(nameData[0]);
+        Double cSource=propertyFromDB.findBySourceSecondType(choiceSecSource);
         total=consume-cSource;
 
 
         //-------------------------------Currency---------------------------------//
-        currencyVO=currencyDB.getOneByType(propertyVO.getCurrency());
+        currencyVO=currencyDB.getOneByType(propertyFromVO.getSourceCurrency());
         String cResult=Common.Currency().get(currencyVO.getType());
         currency.setText(cResult);
         importCurrency.setText(cResult);
@@ -158,7 +279,7 @@ public class PropertyUpdateConsume extends Fragment {
         BsTextWeek=Common.DateChoiceSetBsTest(activity,Common.WeekSetSpinnerBS);
         BsTextMonth=Common.DateChoiceSetBsTest(activity,Common.MonthSetSpinnerBS());
         BsTextStatue=Common.DateChoiceSetBsTest(activity,Common.DateStatueSetSpinner);
-        resultStatue=Common.DateStatueSetSpinner[0];
+
 
     }
 
@@ -182,6 +303,7 @@ public class PropertyUpdateConsume extends Fragment {
         choiceStatue.setVisibility(View.GONE);
         choiceDay=view.findViewById(R.id.choiceDay);
         choiceDay.setVisibility(View.GONE);
+        fixDate.setChecked(propertyFromVO.getFixImport());
         fixDate.setOnCheckedChangeListener(new showFixDate());
         choiceStatue.setOnDropDownItemClickListener(new choiceStateItemBS());
         choiceDay.setOnDropDownItemClickListener(new choiceDayItemBS());
@@ -220,7 +342,9 @@ public class PropertyUpdateConsume extends Fragment {
                 new int[]{R.id.cardview});
         numberKeyBoard.setAdapter(adapter);
         numberKeyBoard.setNumColumns(5);
-        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(importCalculate,importMoney,activity,numberKeyBoard,new StringBuilder(),true));
+        StringBuilder sb=new StringBuilder();
+        sb.append(propertyFromVO.getSourceMoney());
+        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(importCalculate,importMoney,activity,numberKeyBoard,sb,false));
         importMoney.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -239,7 +363,9 @@ public class PropertyUpdateConsume extends Fragment {
             }
         });
 
-        numberKeyBoard1.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(feeCalculate,feeMoney,activity,numberKeyBoard,new StringBuilder(),true));
+        StringBuilder two=new StringBuilder();
+        two.append(propertyFromVO.getImportFee());
+        numberKeyBoard1.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(feeCalculate,feeMoney,activity,numberKeyBoard1,two,false));
         numberKeyBoard1.setAdapter(adapter);
         numberKeyBoard1.setNumColumns(5);
         feeMoney.setOnClickListener(new View.OnClickListener() {
@@ -270,7 +396,6 @@ public class PropertyUpdateConsume extends Fragment {
             }
         });
         date.setShowSoftInputOnFocus(false);
-        date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
         showDate=view.findViewById(R.id.showDate);
         showDate.setOnClickListener(new choiceDateClick());
 
@@ -449,7 +574,7 @@ public class PropertyUpdateConsume extends Fragment {
 
 
 
-            PropertyFromVO propertyFromVO=new PropertyFromVO();
+            propertyFromVO=new PropertyFromVO();
             propertyFromVO.setType(PropertyType.Negative);
             propertyFromVO.setSourceCurrency(nowCurrency);
             propertyFromVO.setSourceMoney(iMoney.toString());
@@ -464,7 +589,7 @@ public class PropertyUpdateConsume extends Fragment {
 
 
             propertyFromVO.setImportFee(fee.toString());
-            propertyFromVO.setPropertyId(propertyVO.getId());
+            propertyFromVO.setPropertyId(propertyFromVO.getPropertyId());
             propertyFromVO.setFixImport(fixDate.isChecked());
             propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(resultStatue.trim()));
             propertyFromVO.setFixDateDetail(resultDay);
@@ -479,7 +604,7 @@ public class PropertyUpdateConsume extends Fragment {
                 consumeVO.setRealMoney(fee.toString());
 
 
-                consumeVO.setDetailname("轉入"+propertyVO.getName()+"的費用");
+                consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
                 consumeVO.setDate(new Date(System.currentTimeMillis()));
 
                 ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
@@ -488,8 +613,6 @@ public class PropertyUpdateConsume extends Fragment {
 
 
             Fragment fragment=new PropertyMoneyList();
-            Bundle bundle=new Bundle();
-            bundle.putSerializable(Common.propertyID,propertyVO.getId());
             fragment.setArguments(bundle);
             Common.switchConfirmFragment(fragment,getFragmentManager());
             Common.showToast(activity,getString(R.string.insert_success));

@@ -33,6 +33,7 @@
                 android:layout_gravity="center"
                 >
                 <TextView
+                    android:id="@+id/totalString"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="總金額"
@@ -63,16 +64,6 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="20dp"
                 android:background="#f5f5f5"/>
-            <TextView
-                android:layout_marginTop="20dp"
-                android:id="@+id/name_negative"
-                android:layout_below="@+id/chart_negative"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="支出"
-                android:textSize="16sp"
-                android:layout_centerHorizontal="true"
-                />
         </RelativeLayout>
     </ScrollView>
     <View

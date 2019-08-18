@@ -39,6 +39,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.utils.Utils;
 
 
 import java.sql.Timestamp;
@@ -98,6 +99,7 @@ public class SelectOtherCircle extends Fragment {
         } else {
             this.context = getActivity();
         }
+        Utils.init(this.context);
     }
 
 

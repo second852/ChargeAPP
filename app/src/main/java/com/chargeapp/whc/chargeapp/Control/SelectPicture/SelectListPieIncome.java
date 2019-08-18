@@ -29,6 +29,7 @@ import com.chargeapp.whc.chargeapp.Control.Update.UpdateIncome;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 
 import com.chargeapp.whc.chargeapp.R;
+import com.github.mikephil.charting.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -72,6 +73,7 @@ public class SelectListPieIncome extends Fragment {
         }else{
             this.context=getActivity();
         }
+        Utils.init(this.context);
     }
 
 

@@ -38,6 +38,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,7 +70,7 @@ public class PropertyConsumeShow extends Fragment {
     private String mainType;
     private double total;
     private List<PropertyFromVO> propertyFromVOS;
-    private TextView name,nameNagative;
+    private TextView name,totalString;
     private PropertyVO propertyVO;
     private FloatingActionButton fab;
     private LinearLayout insertMoney,insertConsume,returnMain;
@@ -77,6 +78,7 @@ public class PropertyConsumeShow extends Fragment {
     private View fabBGLayout;
     private PieChart chartNegative;
     private List<PieEntry>  consume;
+    private Bundle bundle;
 
 
     @Override
@@ -88,20 +90,21 @@ public class PropertyConsumeShow extends Fragment {
         }else{
             this.activity=getActivity();
         }
+        Utils.init(activity);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.property_consume_total, container, false);
-        Bundle bundle=getArguments();
+        bundle=getArguments();
         if(bundle==null)
         {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
-        propertyId= (Long) getArguments().getSerializable(Common.propertyID);
-        mainType= (String) getArguments().getSerializable(Common.propertyMainType);
+        propertyId= (Long) bundle.getSerializable(Common.propertyID);
+        mainType= (String) bundle.getSerializable(Common.propertyMainType);
         Common.setChargeDB(activity);
         currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -114,6 +117,7 @@ public class PropertyConsumeShow extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        Utils.init(activity);
         findViewById();
         setPopupMenu();
         setNowMoney();
@@ -173,7 +177,7 @@ public class PropertyConsumeShow extends Fragment {
     {
 
         consume=new ArrayList<>();
-        Map<String,Double> dataMap=propertyFromDB.getPieDataSecondType(propertyType,mainType);
+        Map<String,Double> dataMap=propertyFromDB.getPieDataSecondType(propertyType,mainType,propertyId);
         List<PieEntry> pieEntries=new ArrayList<>();
         PieEntry pieEntry;
         for(String key:dataMap.keySet())
@@ -194,7 +198,7 @@ public class PropertyConsumeShow extends Fragment {
         PieDataSet dataSet = new PieDataSet(pieEntries, "種類");
         if (pieEntries.isEmpty()) {
             dataSet.setDrawValues(false);
-            pieEntries.add(new PieEntry(1, "無收入"));
+            pieEntries.add(new PieEntry(1, "無支出"));
             int[] c = {Color.parseColor("#CCEEFF")};
             dataSet.setColors(c);
         } else {
@@ -221,6 +225,7 @@ public class PropertyConsumeShow extends Fragment {
 
 
     private void setNowMoney() {
+        totalString.setText(mainType+"總支出");
         total=0.0;
         propertyFromVOS=propertyFromDB.findByPropertyId(propertyId);
         for(PropertyFromVO propertyFromVO:propertyFromVOS)
@@ -258,7 +263,6 @@ public class PropertyConsumeShow extends Fragment {
 
     private void findViewById() {
         chartNegative=view.findViewById(R.id.chart_negative);
-        nameNagative=view.findViewById(R.id.name_negative);
         name=view.findViewById(R.id.name);
         name.setText(propertyVO.getName());
         currency=view.findViewById(R.id.currency);
@@ -266,6 +270,7 @@ public class PropertyConsumeShow extends Fragment {
         insertConsume=view.findViewById(R.id.insertConsume);
         insertMoney= view.findViewById(R.id.insertMoney);
         returnMain= view.findViewById(R.id.returnMain);
+        totalString=view.findViewById(R.id.totalString);
         fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -298,8 +303,6 @@ public class PropertyConsumeShow extends Fragment {
                     return;
                 }
                 Fragment fragment=new PropertyInsertMoney();
-                Bundle bundle=new Bundle();
-                bundle.putSerializable(Common.propertyID,propertyId);
                 fragment.setArguments(bundle);
                 Common.switchFragment(fragment,Common.PropertyTotalString,getFragmentManager());
             }
@@ -309,7 +312,8 @@ public class PropertyConsumeShow extends Fragment {
         returnMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Common.switchConfirmFragment(new PropertyMain(),getFragmentManager());
+                Fragment fragment=Common.returnFragment();
+                Common.switchConfirmFragment(fragment,getFragmentManager());
             }
         });
 
@@ -418,12 +422,12 @@ public class PropertyConsumeShow extends Fragment {
 
         @Override
         public void onValueSelected(Entry entry, Highlight highlight) {
-            int index=highlight.getDataIndex();
-            Fragment fragment=new PropertyList();
-            Bundle bundle=new Bundle();
-            bundle.putSerializable(Common.propertyID,propertyId);
-            bundle.putSerializable(Common.propertyMainType,consume.get(index).getLabel());
+            int index= (int) highlight.getX();
+            Fragment fragment=new PropertyMoneyList();
+            bundle.putSerializable(Common.propertySecondType,consume.get(index).getLabel());
+            bundle.putSerializable(Common.propertyFragment,Common.propertyConsumeShowString);
             fragment.setArguments(bundle);
+            Common.switchFragment(fragment,Common.propertyConsumeShowString,getFragmentManager());
         }
 
         @Override

@@ -27,6 +27,7 @@
         android:layout_gravity="center"
         >
         <TextView
+            android:id="@+id/totalString"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="總金額"
@@ -55,6 +56,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
     </ListView>
+
+    <TextView
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/message"
+        android:textSize="35sp"
+        android:text="@string/error_noHaveData"
+        android:textColor="#FF7744"
+        android:visibility="gone"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        />
 
 
     <View

@@ -50,6 +50,7 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -123,6 +124,7 @@ public class SelectShowCircleDe extends Fragment {
         }else {
             activity=getActivity();
         }
+        Utils.init(activity);
     }
 
     @Override

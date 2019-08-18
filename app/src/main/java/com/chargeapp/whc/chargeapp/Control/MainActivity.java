@@ -59,6 +59,7 @@ import com.chargeapp.whc.chargeapp.Control.Price.HowGetPrice;
 import com.chargeapp.whc.chargeapp.Control.Price.PriceActivity;
 import com.chargeapp.whc.chargeapp.Control.Price.PriceHand;
 import com.chargeapp.whc.chargeapp.Control.Price.PriceInvoice;
+import com.chargeapp.whc.chargeapp.Control.Property.PropertyConsumeShow;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyMain;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyMoneyList;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyTotal;
@@ -1193,106 +1194,19 @@ public class MainActivity extends AppCompatActivity {
                 OutDialogFragment out = new OutDialogFragment();
                 out.show(this.getSupportFragmentManager(), "show");
             } else {
-                String action = oldFramgent.getLast();
-                Bundle bundle = bundles.getLast();
-                Log.d("MainActivity", action);
-                switch (action)
-                {
-                    case "SelectActivity":
-                        fragment = new SelectActivity();
-                       break;
-                     case "SelectListPieIncome":
-                         fragment = new SelectListPieIncome();
-                    break;
-                    case "SelectListBarIncome":
-                        fragment = new SelectListBarIncome();
-                    break;
-                    case "SelectListModelIM":
-                        fragment = new SelectListModelActivity();
-                    break;
-                    case "SelectListModelCom":
-                        fragment = new SelectListModelActivity();
-                    break;
-                    case "SelectConsume":
-                        fragment = new SelectActivity();
-                    break;
-                    case "SelectOtherCircle":
-                        fragment = new SelectOtherCircle();
-                    break;
-                    case "SelectDetList":
-                        fragment = new SelectDetList();
-                    break;
-                    case "SelectShowCircleDe":
-                        fragment = new SelectShowCircleDe();
-                    break;
-                    case "SelectDetCircle":
-                        fragment = new SelectDetCircle();
-                        break;
-                     case "SettingListFix":
-                         fragment = new SettingListFix();
-                    break;
-                     case "SettingListFixIon":
-                         fragment = new SettingListFixIon();
-                    break;
-                     case "SettingListFixCon":
-                         fragment = new SettingListFixCon();
-                    break;
-                     case "SelectShowCircleDeList":
-                         fragment = new SelectShowCircleDeList();
-                    break;
-                     case "UpdateInvoice":
-                         fragment = new UpdateInvoice();
-                    break;
-                     case "UpdateSpend":
-                         fragment = new UpdateSpend();
-                    break;
-                     case "UpdateIncome":
-                         fragment = new UpdateIncome();
-                    break;
-                    case "HomePage":
-                        fragment = new HomePage();
-                        break;
-                    case "HomePagetList":
-                        fragment = new HomePagetList();
-                      break;
-                      case "InsertSpend":
-                      case "InsertIncome":
-                          fragment = new InsertActivity();
-                    break;
-                     case "SettingListType":
-                         fragment = new SettingListType();
-                    break;
-                     case "SettingMain":
-                         fragment = new SettingMain();
-                    break;
-                     case "GoalListAll":
-                         fragment = new GoalListAll();
-                    break;
-                     case "EleSetCarrier":
-                         fragment = new EleSetCarrier();
-                    break;
-                     case propertyMain:
-                         fragment=new PropertyMain();
-                    break;
-                    case Common.PropertyMoneyListString:
-                        fragment =new PropertyMoneyList();
-                        break;
-                    case Common.PropertyTotalString:
-                        fragment =new PropertyTotal();
-                        break;
-                }
-                fragment.setArguments(bundle);
+
+                fragment=Common.returnFragment();
 
                 //------關閉keyboard-----//
-                View v = this.getCurrentFocus();
+                View v = MainActivity.this.getCurrentFocus();
                 if (v != null) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
-                //-------------------//
-                oldFramgent.remove(oldFramgent.size() - 1);
-                bundles.remove(bundles.size() - 1);
+                //------- 切換-----------//
                 switchFragment();
+                MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size() - 1);
+                MainActivity.bundles.remove(MainActivity.bundles.size() - 1);
                 return true;
             }
         }

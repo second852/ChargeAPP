@@ -39,7 +39,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
-
+import com.github.mikephil.charting.utils.Utils;
 
 
 import java.util.ArrayList;
@@ -90,6 +90,7 @@ public class PropertyTotal extends Fragment {
         }else{
             this.activity=getActivity();
         }
+        Utils.init(activity);
     }
 
     @Nullable
@@ -117,6 +118,8 @@ public class PropertyTotal extends Fragment {
         super.onStart();
         findViewById();
         setPopupMenu();
+        consume=new ArrayList<>();
+        income=new ArrayList<>();
         setCircle(chartNegative,PropertyType.Negative);
         setCircle(chartPositive,PropertyType.Positive);
         chartNegative.setOnChartValueSelectedListener(new choiceData(PropertyTotal.this.getString(R.string.string_export)));
@@ -174,9 +177,8 @@ public class PropertyTotal extends Fragment {
 
     private PieData getChartDataSet(PropertyType propertyType)
     {
-        consume=new ArrayList<>();
-        income=new ArrayList<>();
-        Map<String,Double> dataMap=propertyFromDB.getPieDataMainType(propertyType);
+
+        Map<String,Double> dataMap=propertyFromDB.getPieDataByPropertyId(propertyType,propertyId);
         List<PieEntry> pieEntries=new ArrayList<>();
         PieEntry dataEntry;
         for(String key:dataMap.keySet())
@@ -209,7 +211,7 @@ public class PropertyTotal extends Fragment {
         PieDataSet dataSet = new PieDataSet(pieEntries, "種類");
         if (pieEntries.isEmpty()) {
             dataSet.setDrawValues(false);
-            pieEntries.add(new PieEntry(1, "無收入"));
+            pieEntries.add(new PieEntry(1, propertyType.equals(PropertyType.Negative)?"無支出":"無收入"));
             int[] c = {Color.parseColor("#CCEEFF")};
             dataSet.setColors(c);
         } else {
@@ -327,7 +329,7 @@ public class PropertyTotal extends Fragment {
                 Bundle bundle=new Bundle();
                 bundle.putSerializable(Common.propertyID,propertyId);
                 fragment.setArguments(bundle);
-                Common.switchFragment(fragment,Common.PropertyMoneyListString,getFragmentManager());
+                Common.switchFragment(fragment,Common.PropertyTotalString,getFragmentManager());
             }
         });
 
@@ -335,7 +337,8 @@ public class PropertyTotal extends Fragment {
         returnMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Common.switchConfirmFragment(new PropertyMain(),getFragmentManager());
+                Fragment fragment=Common.returnFragment();
+                Common.switchConfirmFragment(fragment,getFragmentManager());
             }
         });
 
@@ -479,8 +482,6 @@ public class PropertyTotal extends Fragment {
 
             }
 
-
-            Log.d("XXXXXX",entry.getX()+" : "+entry.getY());
 
         }
 

@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -31,7 +32,32 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
+import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleSetCarrier;
+import com.chargeapp.whc.chargeapp.Control.Goal.GoalListAll;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
+import com.chargeapp.whc.chargeapp.Control.HomePage.HomePagetList;
+import com.chargeapp.whc.chargeapp.Control.Insert.InsertActivity;
+import com.chargeapp.whc.chargeapp.Control.Property.PropertyConsumeShow;
+import com.chargeapp.whc.chargeapp.Control.Property.PropertyMain;
+import com.chargeapp.whc.chargeapp.Control.Property.PropertyMoneyList;
+import com.chargeapp.whc.chargeapp.Control.Property.PropertyTotal;
+import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelActivity;
+import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectActivity;
+import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetCircle;
+import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetList;
+import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectListBarIncome;
+import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectListPieIncome;
+import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectOtherCircle;
+import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDe;
+import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDeList;
+import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFix;
+import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixCon;
+import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixIon;
+import com.chargeapp.whc.chargeapp.Control.Setting.SettingListType;
+import com.chargeapp.whc.chargeapp.Control.Setting.SettingMain;
+import com.chargeapp.whc.chargeapp.Control.Update.UpdateIncome;
+import com.chargeapp.whc.chargeapp.Control.Update.UpdateInvoice;
+import com.chargeapp.whc.chargeapp.Control.Update.UpdateSpend;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
@@ -105,8 +131,11 @@ public class Common {
     public final static String PropertyMoneyListString="PropertyMoneyList";
     public final static String PropertyTotalString="PropertyTotal";
     public final static String propertyMainType="propertyMainType";
+    public final static String propertySecondType="propertySecondType";
     public final static String propertyFromVoId="propertyFromVoId";
     public final static String propertyFragment="propertyFragment";
+    public final static String propertyInsertString="propertyInsertString";
+    public final static String propertyConsumeShowString="propertyConsumeShowString";
 
 
     public static NumberFormat nf = NumberFormat.getNumberInstance();
@@ -669,6 +698,106 @@ public class Common {
 
 
     public static String[] DateStatueSetSpinner = {"每天", "每周", "每月", "每年"};
+
+
+    public static Fragment returnFragment()
+    {
+        Fragment fragment=null;
+        String action = MainActivity.oldFramgent.getLast();
+        Bundle bundle = MainActivity.bundles.getLast();
+        Log.d("MainActivity", action);
+        switch (action)
+        {
+            case "SelectActivity":
+                fragment = new SelectActivity();
+                break;
+            case "SelectListPieIncome":
+                fragment = new SelectListPieIncome();
+                break;
+            case "SelectListBarIncome":
+                fragment = new SelectListBarIncome();
+                break;
+            case "SelectListModelIM":
+                fragment = new SelectListModelActivity();
+                break;
+            case "SelectListModelCom":
+                fragment = new SelectListModelActivity();
+                break;
+            case "SelectConsume":
+                fragment = new SelectActivity();
+                break;
+            case "SelectOtherCircle":
+                fragment = new SelectOtherCircle();
+                break;
+            case "SelectDetList":
+                fragment = new SelectDetList();
+                break;
+            case "SelectShowCircleDe":
+                fragment = new SelectShowCircleDe();
+                break;
+            case "SelectDetCircle":
+                fragment = new SelectDetCircle();
+                break;
+            case "SettingListFix":
+                fragment = new SettingListFix();
+                break;
+            case "SettingListFixIon":
+                fragment = new SettingListFixIon();
+                break;
+            case "SettingListFixCon":
+                fragment = new SettingListFixCon();
+                break;
+            case "SelectShowCircleDeList":
+                fragment = new SelectShowCircleDeList();
+                break;
+            case "UpdateInvoice":
+                fragment = new UpdateInvoice();
+                break;
+            case "UpdateSpend":
+                fragment = new UpdateSpend();
+                break;
+            case "UpdateIncome":
+                fragment = new UpdateIncome();
+                break;
+            case "HomePage":
+                fragment = new HomePage();
+                break;
+            case "HomePagetList":
+                fragment = new HomePagetList();
+                break;
+            case "InsertSpend":
+            case "InsertIncome":
+                fragment = new InsertActivity();
+                break;
+            case "SettingListType":
+                fragment = new SettingListType();
+                break;
+            case "SettingMain":
+                fragment = new SettingMain();
+                break;
+            case "GoalListAll":
+                fragment = new GoalListAll();
+                break;
+            case "EleSetCarrier":
+                fragment = new EleSetCarrier();
+                break;
+            case propertyMain:
+                fragment=new PropertyMain();
+                break;
+            case Common.PropertyMoneyListString:
+                fragment =new PropertyMoneyList();
+                break;
+            case Common.PropertyTotalString:
+                fragment =new PropertyTotal();
+                break;
+            case Common.propertyConsumeShowString:
+                fragment=new PropertyConsumeShow();
+                break;
+        }
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
 
 
     public static List<BootstrapText> DateChoiceSetBsTest(Activity activity, String[] data) {

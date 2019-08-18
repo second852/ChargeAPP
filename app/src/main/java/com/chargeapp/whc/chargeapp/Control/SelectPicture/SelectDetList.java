@@ -33,6 +33,7 @@ import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 
+import com.github.mikephil.charting.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -88,6 +89,7 @@ public class SelectDetList extends Fragment {
         }else{
             this.context=getActivity();
         }
+        Utils.init(this.context);
     }
 
 

@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapSize;
+import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
@@ -71,6 +72,8 @@ public class PropertyMoneyList extends Fragment {
     private View fabBGLayout;
     private String mainType,fragmentString,secondType;
     private Bundle bundle;
+    private TextView message,totalString;
+
 
     @Override
     public void onAttach(Context context) {
@@ -101,21 +104,43 @@ public class PropertyMoneyList extends Fragment {
         propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyVO=propertyDB.findById(propertyId);
         findViewById();
-        setPopupMenu();
-        setListView();
-        setNowMoney();
+
         return view;
     }
 
-    private void setListView() {
+    @Override
+    public void onStart() {
+        super.onStart();
+        setPopupMenu();
+        setListView();
+        setNowMoney();
+    }
 
-        if(fragmentString.equals(Common.PropertyTotalString))
+    public void setListView() {
+
+
+        switch (fragmentString)
         {
-            mainType= (String) bundle.getSerializable(Common.propertyMainType);
-            propertyFromVOS=propertyFromDB.findByPropertyMainType(mainType,propertyId);
-        }else{
-
+            case Common.PropertyTotalString:
+                mainType= (String) bundle.getSerializable(Common.propertyMainType);
+                propertyFromVOS=propertyFromDB.findByPropertyMainType(mainType,propertyId);
+                totalString.setText(mainType+"總收入");
+                break;
+             case Common.propertyInsertString:
+             case Common.propertyConsumeShowString:
+                 secondType= (String) bundle.getSerializable(Common.propertySecondType);
+                 propertyFromVOS=propertyFromDB.findByPropertySecondType(secondType,propertyId);
+                 totalString.setText(secondType+"總支出");
+                break;
         }
+
+        if(propertyFromVOS.isEmpty())
+        {
+            message.setVisibility(View.VISIBLE);
+        }else {
+            message.setVisibility(View.GONE);
+        }
+
         listData.setAdapter(new ListAdapter(activity,propertyFromVOS));
     }
 
@@ -155,6 +180,7 @@ public class PropertyMoneyList extends Fragment {
     }
 
     private void findViewById() {
+        message=view.findViewById(R.id.message);
         name=view.findViewById(R.id.name);
         name.setText(propertyVO.getName());
         currency=view.findViewById(R.id.currency);
@@ -164,6 +190,8 @@ public class PropertyMoneyList extends Fragment {
         insertConsume=view.findViewById(R.id.insertConsume);
         insertMoney= view.findViewById(R.id.insertMoney);
         returnMain= view.findViewById(R.id.returnMain);
+        totalString=view.findViewById(R.id.totalString);
+
         fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,7 +250,8 @@ public class PropertyMoneyList extends Fragment {
         returnMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Common.switchConfirmFragment(new PropertyMain(),getFragmentManager());
+                Fragment fragment=Common.returnFragment();
+                Common.switchConfirmFragment(fragment,getFragmentManager());
             }
         });
 
@@ -280,7 +309,9 @@ public class PropertyMoneyList extends Fragment {
             TextView listTitle=itemView.findViewById(R.id.listTitle);
             TextView listDetail=itemView.findViewById(R.id.listDetail);
             BootstrapButton showD=itemView.findViewById(R.id.showD);
+            BootstrapButton deleteI=itemView.findViewById(R.id.deleteI);
             StringBuilder title=new StringBuilder();
+
 
             if(StringUtil.isBlank(propertyFromVO.getSourceSecondType()))
             {
@@ -294,11 +325,12 @@ public class PropertyMoneyList extends Fragment {
             title.append(" "+Common.doubleRemoveZero(Double.valueOf(propertyFromVO.getSourceMoney())));
             listTitle.setText(title.toString());
             StringBuilder detail=new StringBuilder();
-            detail.append("1. 手續費 : ");
+            detail.append("1. 日期 : "+Common.sTwo.format(propertyFromVO.getSourceTime())+" \n");
+            detail.append("2. 手續費 : ");
             detail.append(Common.getCurrency(propertyFromVO.getSourceCurrency())).append(propertyFromVO.getImportFee()+"\n");
             if(propertyFromVO.getFixImport())
             {
-                detail.append("2. 定期匯入 : ").append(propertyFromVO.getFixDateCode().getDetail());
+                detail.append("3. 定期匯入 : ").append(propertyFromVO.getFixDateCode().getDetail());
                 if(propertyFromVO.getFixDateDetail()!=null)
                 {
                     detail.append(" "+propertyFromVO.getFixDateDetail());
@@ -324,6 +356,18 @@ public class PropertyMoneyList extends Fragment {
                     Common.switchFragment(fragment,Common.PropertyMoneyListString,getFragmentManager());
                 }
             });
+
+            deleteI.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DeleteDialogFragment deleteObject= new DeleteDialogFragment();
+                    deleteObject.setObject(propertyFromVO);
+                    deleteObject.setFragement(PropertyMoneyList.this);
+                    deleteObject.show(getFragmentManager(),"show");
+                }
+            });
+
+
             return itemView;
         }
 
