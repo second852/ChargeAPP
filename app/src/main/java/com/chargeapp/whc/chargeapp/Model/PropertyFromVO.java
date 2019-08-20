@@ -20,7 +20,7 @@ public class PropertyFromVO {
     private FixDateCode fixDateCode;
     private String fixDateDetail;
     private Long propertyId;
-    private String fixFromId;//定期Id
+    private Long fixFromId;//定期Id
 
     public Long getImportFeeId() {
         return importFeeId;
@@ -54,11 +54,11 @@ public class PropertyFromVO {
         this.sourceSecondType = sourceSecondType;
     }
 
-    public String getFixFromId() {
+    public Long getFixFromId() {
         return fixFromId;
     }
 
-    public void setFixFromId(String fixFromId) {
+    public void setFixFromId(Long fixFromId) {
         this.fixFromId = fixFromId;
     }
 

@@ -112,7 +112,7 @@ public class PropertyInsertMoney extends Fragment {
 
         PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyVO=propertyDB.findById((long)object);
-
+        nowCurrency="TWD";
         findViewById();
         setDataBase();
         setDropDown();
@@ -424,6 +424,7 @@ public class PropertyInsertMoney extends Fragment {
             propertyFromVO.setFixImport(fixDate.isChecked());
             propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(resultStatue.trim()));
             propertyFromVO.setFixDateDetail(resultDay);
+
 
 
             if(fee>0)

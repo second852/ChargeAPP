@@ -22,11 +22,16 @@ import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -46,11 +51,14 @@ public class SettingListFix extends Fragment {
     private ArrayList<Object> objects;
     private BankDB bankDB;
     private ConsumeDB consumeDB;
+    private PropertyFromDB propertyFromDB;
+    private PropertyDB propertyDB;
     private Gson gson;
     private TextView message;
     public static int p;
     public static int spinnerC;
     private Activity context;
+
 
 
     @Override
@@ -72,6 +80,8 @@ public class SettingListFix extends Fragment {
         Common.setChargeDB(context);
         bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         listView = view.findViewById(R.id.list);
         typeH = view.findViewById(R.id.typeH);
         message=view.findViewById(R.id.message);
@@ -83,8 +93,10 @@ public class SettingListFix extends Fragment {
 
     private void setSpinner() {
         ArrayList<String> spinnerItem = new ArrayList<>();
-        spinnerItem.add("定期支出");
-        spinnerItem.add("定期收入");
+        spinnerItem.add("  定期支出  ");
+        spinnerItem.add("  定期收入  ");
+        spinnerItem.add("定期資產收入");
+        spinnerItem.add("定期資產支出");
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, spinnerItem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         typeH.setAdapter(arrayAdapter);
@@ -93,12 +105,25 @@ public class SettingListFix extends Fragment {
 
     public void setLayout() {
         objects=new ArrayList<>();
-        if(spinnerC==0)
+
+        switch(spinnerC)
         {
-            objects.addAll(consumeDB.getFixdate());
-        }else{
-            objects.addAll(bankDB.getFixDate());
+            case 0:
+                objects.addAll(consumeDB.getFixdate());
+                break;
+            case 1:
+                objects.addAll(bankDB.getFixDate());
+                break;
+            case 2:
+                objects.addAll(propertyFromDB.getFixAll(PropertyType.Positive));
+                break;
+            case 3:
+                objects.addAll(propertyFromDB.getFixAll(PropertyType.Negative));
+                break;
         }
+
+
+
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {
             listView.setAdapter(new ListAdapter(context, objects));
@@ -191,7 +216,7 @@ public class SettingListFix extends Fragment {
                     }
                 });
 
-            }else{
+            }else if(o instanceof  BankVO){
                 //設定標記
                 fixL.setVisibility(View.VISIBLE);
                 remindL.setVisibility(View.GONE);
@@ -220,6 +245,39 @@ public class SettingListFix extends Fragment {
                         switchFragment(fragment);
                     }
                 });
+            }else if(o instanceof PropertyFromVO)
+            {
+                fixL.setVisibility(View.VISIBLE);
+                remindL.setVisibility(View.GONE);
+                final PropertyFromVO propertyFromVO= (PropertyFromVO) o;
+                PropertyVO propertyVO=propertyDB.findById(propertyFromVO.getPropertyId());
+                title.setText(propertyVO.getName());
+                StringBuilder stringBuilder=new StringBuilder();
+                switch (propertyFromVO.getType())
+                {
+                    case Negative:
+                        stringBuilder.append("1. 項目 : "+propertyFromVO.getSourceSecondType()+"\n");
+                        stringBuilder.append("2. 定期支出 : "+Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
+                        break;
+                    case Positive:
+                        stringBuilder.append("1. 項目 : "+propertyFromVO.getSourceMainType()+"\n");
+                        stringBuilder.append("2. 定期收入 : "+Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
+                        break;
+                }
+                stringBuilder.append("3. 時間 : "+propertyFromVO.getFixDateCode().getDetail()+propertyFromVO.getFixDateDetail());
+                decribe.setText(stringBuilder.toString());
+                update.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Fragment fragment=new SettingListFixProperty();
+                        Bundle bundle=new Bundle();
+                        bundle.putSerializable(Common.propertyFromVoId,propertyFromVO.getId());
+                        bundle.putSerializable("position",0);
+                        fragment.setArguments(bundle);
+                        switchFragment(fragment);
+                    }
+                });
+
             }
             return itemView;
         }

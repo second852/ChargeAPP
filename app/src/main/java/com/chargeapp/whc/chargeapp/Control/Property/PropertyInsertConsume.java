@@ -106,13 +106,19 @@ public class PropertyInsertConsume extends Fragment {
         Object object=getArguments().getSerializable(Common.propertyID);
         PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyVO=propertyDB.findById((long)object);
+        nowCurrency = "TWD";
 
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         findViewById();
         setDataBase();
         initDropData();
         setMainDropDown();
         setPopupMenu();
-        return view;
     }
 
     private void initDropData() {
