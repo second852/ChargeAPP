@@ -125,6 +125,10 @@ public class Common {
     public final static String choiceCurrency="choiceCurrency";
     public final static String insertCurrency="insertCurrency";
 
+    public final static String fragment="fragment";
+
+    public final static String settingListFixPropertyString="settingListFixProperty";
+
 
     public final static String propertyID="propertyID";
     public final static String propertyMain="propertyMain";

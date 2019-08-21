@@ -39,6 +39,7 @@ import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDe;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDeList;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixCon;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixIon;
+import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixProperty;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingListType;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingMain;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
@@ -293,6 +294,10 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 {
                     PropertyMoneyList propertyMoneyList= (PropertyMoneyList) fragement;
                     propertyMoneyList.setListView();
+                }else if(fragement instanceof SettingListFixProperty)
+                {
+                    SettingListFixProperty settingListFixProperty= (SettingListFixProperty) fragement;
+                    settingListFixProperty.setLayout();
                 }
                 break;
             default:

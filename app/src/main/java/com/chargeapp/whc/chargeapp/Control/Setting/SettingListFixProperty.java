@@ -22,6 +22,8 @@ import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateConsume;
+import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateMoney;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateSpend;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
@@ -44,11 +46,12 @@ public class SettingListFixProperty extends Fragment {
     private ListView listView;
     public int p;
     private PropertyFromDB propertyFromDB;
-    private Gson gson;
     private TextView message;
     public List<PropertyFromVO> propertyFromVOS;
     public PropertyFromVO propertyFromVO;
     private Activity context;
+    private PropertyDB propertyDB;
+    private Bundle bundle;
 
 
     @Override
@@ -64,10 +67,11 @@ public class SettingListFixProperty extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        gson=new Gson();
         Common.setChargeDB(context);
         View view = inflater.inflate(R.layout.setting_main, container, false);
         propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bundle=getArguments();
         Long id= (Long) getArguments().getSerializable(Common.propertyFromVoId);
         propertyFromVO=propertyFromDB.findByPropertyFromId(id);
         p= (int) getArguments().getSerializable("position");
@@ -147,21 +151,20 @@ public class SettingListFixProperty extends Fragment {
             final PropertyFromVO propertyFromVO=propertyFromVOS.get(position);
 
             StringBuilder titleString=new StringBuilder();
+            PropertyVO propertyVO=propertyDB.findById(propertyFromVO.getPropertyId());
+
 
             if(!propertyFromVO.getFixImport())
             {
                 fixL.setVisibility(View.VISIBLE);
-                fixT.setText("子體");
+                fixT.setText("自動");
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
-                remindL.setVisibility(View.VISIBLE);
-                remainT.setText("自動");
-                remainT.setBootstrapBrand(DefaultBootstrapBrand.INFO);
-
+                remindL.setVisibility(View.GONE);
                 titleString.append(Common.sTwo.format(propertyFromVO.getSourceTime()));
 
             }else {
                 remindL.setVisibility(View.GONE);
-                fixT.setText("本體");
+                fixT.setText("設定檔");
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
                 fixL.setVisibility(View.VISIBLE);
             }
@@ -170,23 +173,44 @@ public class SettingListFixProperty extends Fragment {
 
             //設定 describe
             StringBuilder stringBuilder=new StringBuilder();
+            stringBuilder.append("1. 資產 : "+propertyVO.getName()+"\n");
             switch (propertyFromVO.getType())
             {
                 case Negative:
                     titleString.append(" "+propertyFromVO.getSourceSecondType());
-                    stringBuilder.append("1. 定期支出 : "+Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
+                    stringBuilder.append("2. 定期支出 : "+Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
                     break;
                 case Positive:
                     titleString.append(" "+propertyFromVO.getSourceMainType());
-                    stringBuilder.append("1. 定期收入 : "+Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
+                    stringBuilder.append("2. 定期收入 : "+Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
                     break;
             }
-            stringBuilder.append("2. 時間 : "+propertyFromVO.getFixDateCode().getDetail()+propertyFromVO.getFixDateDetail());
+            stringBuilder.append("3. 時間 : "+propertyFromVO.getFixDateCode().getDetail()+propertyFromVO.getFixDateDetail());
 
 
             title.setText(titleString.toString());
             decribe.setText(stringBuilder.toString());
 
+
+            update.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Fragment fragment=null;
+                    bundle.putSerializable(Common.propertyFromVoId,propertyFromVO.getId());
+                    switch (propertyFromVO.getType())
+                    {
+                        case Negative:
+                          fragment=new PropertyUpdateConsume();
+                             break;
+                        case Positive:
+                           fragment=new PropertyUpdateMoney();
+                            break;
+                    }
+                    bundle.putSerializable(Common.fragment,Common.settingListFixPropertyString);
+                    fragment.setArguments(bundle);
+                    Common.switchFragment(fragment,Common.settingListFixPropertyString,getFragmentManager());
+                }
+            });
 
 
             deleteI.setOnClickListener(new View.OnClickListener() {
@@ -214,15 +238,5 @@ public class SettingListFixProperty extends Fragment {
     }
 
 
-    private void switchFragment(Fragment fragment) {
-        MainActivity.oldFramgent.add("SettingListFixCon");
-        MainActivity.bundles.add(fragment.getArguments());
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        for (Fragment fragment1 : getFragmentManager().getFragments()) {
-            fragmentTransaction.remove(fragment1);
-        }
-        fragmentTransaction.replace(R.id.body, fragment);
-        fragmentTransaction.commit();
-    }
 
 }

@@ -351,6 +351,7 @@ public class PropertyMoneyList extends Fragment {
                             break;
 
                     }
+                    bundle.putSerializable(Common.fragment,Common.PropertyMoneyListString);
                     bundle.putSerializable(Common.propertyFromVoId,propertyFromVO.getId());
                     fragment.setArguments(bundle);
                     Common.switchFragment(fragment,Common.PropertyMoneyListString,getFragmentManager());

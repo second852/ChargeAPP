@@ -35,6 +35,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixProperty;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
@@ -87,6 +88,9 @@ public class PropertyUpdateMoney extends Fragment {
     private PropertyFromVO propertyFromVO;
     private PropertyVO propertyVO;
     private Bundle bundle;
+    private String rFragment;
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -109,6 +113,7 @@ public class PropertyUpdateMoney extends Fragment {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
+        rFragment= (String) bundle.getSerializable(Common.fragment);
         setDataBase();
         findViewById();
         setDropDown();
@@ -509,6 +514,7 @@ public class PropertyUpdateMoney extends Fragment {
                 }
             }
             Double actuallyTotal=total/Double.valueOf(currencyVO.getMoney());
+
             if(actuallyTotal<(iMoney+fee))
             {
                 importMoney.setError(getString(R.string.error_overMoney));
@@ -562,8 +568,21 @@ public class PropertyUpdateMoney extends Fragment {
                 consumeDB.deleteById(propertyFromVO.getImportFeeId().intValue());
             }
 
+
+
             propertyFromDB.update(propertyFromVO);
-            Fragment fragment=new PropertyMoneyList();
+
+            Fragment fragment=null;
+            switch (rFragment)
+            {
+                case Common.PropertyMoneyListString:
+                    fragment=new PropertyMoneyList();
+                    break;
+                case Common.settingListFixPropertyString:
+                    fragment=new SettingListFixProperty();
+                    break;
+            }
+
             fragment.setArguments(bundle);
             Common.switchConfirmFragment(fragment,getFragmentManager());
             Common.showToast(activity,getString(R.string.update_success));

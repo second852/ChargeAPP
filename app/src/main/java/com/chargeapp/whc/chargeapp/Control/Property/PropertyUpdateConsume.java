@@ -33,6 +33,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixProperty;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
@@ -82,6 +83,7 @@ public class PropertyUpdateConsume extends Fragment {
     private LinearLayout showDate;
     private Bundle bundle;
     private PropertyFromVO propertyFromVO;
+    private String rFragment;
 
     @Override
     public void onAttach(Context context) {
@@ -104,7 +106,7 @@ public class PropertyUpdateConsume extends Fragment {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
-
+        rFragment= (String) bundle.getSerializable(Common.fragment);
         Object object=getArguments().getSerializable(Common.propertyFromVoId);
         PropertyFromDB propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
         propertyFromVO=propertyFromDB.findByPropertyFromId((Long) object);
@@ -129,6 +131,10 @@ public class PropertyUpdateConsume extends Fragment {
 
     private void setMainDropDown() {
 
+        BsTextDay=Common.DateChoiceSetBsTest(activity,Common.DaySetSpinnerBS());
+        BsTextWeek=Common.DateChoiceSetBsTest(activity,Common.WeekSetSpinnerBS);
+        BsTextMonth=Common.DateChoiceSetBsTest(activity,Common.MonthSetSpinnerBS());
+        BsTextStatue=Common.DateChoiceSetBsTest(activity,Common.DateStatueSetSpinner);
 
         //-------------------setProperty--------------------------------//
         choiceSource = propertyFromVO.getSourceMainType();
@@ -151,6 +157,7 @@ public class PropertyUpdateConsume extends Fragment {
 
         if(propertyFromVO.getFixImport())
         {
+            statueNumber=propertyFromVO.getFixDateCode().getCode();
             String choice;
             if(StringUtil.isBlank(propertyFromVO.getFixDateDetail()))
             {
@@ -168,7 +175,6 @@ public class PropertyUpdateConsume extends Fragment {
                     choiceDay.setExpandDirection(ExpandDirection.UP);
                     break;
                 case FixWeek:
-                    choiceStatue.setBootstrapText(BsTextStatue.get(1));
                     choiceStatue.setBootstrapText(BsTextStatue.get(1));
                     choiceDay.setDropdownData(Common.WeekSetSpinnerBS);
                     if(resultDay.equals("星期一"))
@@ -275,10 +281,7 @@ public class PropertyUpdateConsume extends Fragment {
         money.setFocusable(false);
         money.setFocusableInTouchMode(false);
 
-        BsTextDay=Common.DateChoiceSetBsTest(activity,Common.DaySetSpinnerBS());
-        BsTextWeek=Common.DateChoiceSetBsTest(activity,Common.WeekSetSpinnerBS);
-        BsTextMonth=Common.DateChoiceSetBsTest(activity,Common.MonthSetSpinnerBS());
-        BsTextStatue=Common.DateChoiceSetBsTest(activity,Common.DateStatueSetSpinner);
+
 
 
     }
@@ -574,7 +577,7 @@ public class PropertyUpdateConsume extends Fragment {
 
 
 
-            propertyFromVO=new PropertyFromVO();
+
             propertyFromVO.setType(PropertyType.Negative);
             propertyFromVO.setSourceCurrency(nowCurrency);
             propertyFromVO.setSourceMoney(iMoney.toString());
@@ -593,7 +596,7 @@ public class PropertyUpdateConsume extends Fragment {
             propertyFromVO.setFixImport(fixDate.isChecked());
             propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(resultStatue.trim()));
             propertyFromVO.setFixDateDetail(resultDay);
-            propertyFromDB.insert(propertyFromVO);
+            propertyFromDB.update(propertyFromVO);
 
             if(fee>0)
             {
@@ -610,12 +613,20 @@ public class PropertyUpdateConsume extends Fragment {
                 ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
                 consumeDB.insert(consumeVO);
             }
+            Fragment fragment=null;
+            switch (rFragment)
+            {
+                case Common.PropertyMoneyListString:
+                    fragment=new PropertyMoneyList();
+                    break;
+                case Common.settingListFixPropertyString:
+                    fragment=new SettingListFixProperty();
+                    break;
+            }
 
-
-            Fragment fragment=new PropertyMoneyList();
             fragment.setArguments(bundle);
             Common.switchConfirmFragment(fragment,getFragmentManager());
-            Common.showToast(activity,getString(R.string.insert_success));
+            Common.showToast(activity,getString(R.string.update_success));
         }
     }
 
