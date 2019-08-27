@@ -12,7 +12,6 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
@@ -114,9 +113,9 @@ public class PropertyList extends Fragment {
             Double consume=propertyFromDB.totalType(propertyVO.getId(), PropertyType.Negative);
             Double income=propertyFromDB.totalType(propertyVO.getId(), PropertyType.Positive);
             Double total=income-consume;
-            String title=propertyVO.getName()+" "+Common.CurrencyResult(total,currencyVO);
-            String detailE="收入 "+Common.CurrencyResult(income,currencyVO)+"\n" +
-                           "支出 "+Common.CurrencyResult(consume,currencyVO);
+            String title=propertyVO.getName()+" "+ Common.CurrencyResult(total,currencyVO);
+            String detailE="收入 "+ Common.CurrencyResult(income,currencyVO)+"\n" +
+                           "支出 "+ Common.CurrencyResult(consume,currencyVO);
             listTitle.setText(title);
             detail.setText(detailE);
             showD.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +125,7 @@ public class PropertyList extends Fragment {
                     Bundle bundle=new Bundle();
                     bundle.putSerializable(Common.propertyID,propertyVO.getId());
                     fragment.setArguments(bundle);
-                    Common.switchFragment(fragment,Common.propertyMain,getFragmentManager());
+                    Common.switchFragment(fragment, Common.propertyMain,getFragmentManager());
                 }
             });
             deleteI.setOnClickListener(new View.OnClickListener() {

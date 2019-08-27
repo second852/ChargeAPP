@@ -20,8 +20,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
-import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapSize;
 import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
@@ -30,17 +28,19 @@ import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
 
-import java.util.Calendar;
-import java.util.List;
-import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
-
 import org.jsoup.helper.StringUtil;
 
-import static com.chargeapp.whc.chargeapp.Control.Common.*;
+import java.util.Calendar;
+import java.util.List;
+
+import static com.chargeapp.whc.chargeapp.Control.Common.Currency;
+import static com.chargeapp.whc.chargeapp.Control.Common.CurrencyResult;
+import static com.chargeapp.whc.chargeapp.Control.Common.propertyCurrency;
 
 
 /**
@@ -121,6 +121,7 @@ public class PropertyMoneyList extends Fragment {
 
         switch (fragmentString)
         {
+            case Common.propertyInsertMoneyString:
             case Common.PropertyTotalString:
                 mainType= (String) bundle.getSerializable(Common.propertyMainType);
                 propertyFromVOS=propertyFromDB.findByPropertyMainType(mainType,propertyId);
@@ -224,7 +225,7 @@ public class PropertyMoneyList extends Fragment {
                 Bundle bundle=new Bundle();
                 bundle.putSerializable(Common.propertyID,propertyId);
                 fragment.setArguments(bundle);
-                Common.switchFragment(fragment,Common.PropertyMoneyListString,getFragmentManager());
+                Common.switchFragment(fragment, Common.PropertyMoneyListString,getFragmentManager());
             }
         });
 
@@ -242,7 +243,7 @@ public class PropertyMoneyList extends Fragment {
                 Bundle bundle=new Bundle();
                 bundle.putSerializable(Common.propertyID,propertyId);
                 fragment.setArguments(bundle);
-                Common.switchFragment(fragment,Common.PropertyMoneyListString,getFragmentManager());
+                Common.switchFragment(fragment, Common.PropertyMoneyListString,getFragmentManager());
             }
         });
 
@@ -250,7 +251,7 @@ public class PropertyMoneyList extends Fragment {
         returnMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment=Common.returnFragment();
+                Fragment fragment= Common.returnFragment();
                 Common.switchConfirmFragment(fragment,getFragmentManager());
             }
         });
@@ -321,11 +322,11 @@ public class PropertyMoneyList extends Fragment {
             }
 
 
-            title.append(" "+Common.getCurrency(propertyFromVO.getSourceCurrency()));
-            title.append(" "+Common.doubleRemoveZero(Double.valueOf(propertyFromVO.getSourceMoney())));
+            title.append(" "+ Common.getCurrency(propertyFromVO.getSourceCurrency()));
+            title.append(" "+ Common.doubleRemoveZero(Double.valueOf(propertyFromVO.getSourceMoney())));
             listTitle.setText(title.toString());
             StringBuilder detail=new StringBuilder();
-            detail.append("1. 日期 : "+Common.sTwo.format(propertyFromVO.getSourceTime())+" \n");
+            detail.append("1. 日期 : "+ Common.sTwo.format(propertyFromVO.getSourceTime())+" \n");
             detail.append("2. 手續費 : ");
             detail.append(Common.getCurrency(propertyFromVO.getSourceCurrency())).append(propertyFromVO.getImportFee()+"\n");
             if(propertyFromVO.getFixImport())
@@ -351,10 +352,10 @@ public class PropertyMoneyList extends Fragment {
                             break;
 
                     }
-                    bundle.putSerializable(Common.fragment,Common.PropertyMoneyListString);
+                    bundle.putSerializable(Common.fragment, Common.PropertyMoneyListString);
                     bundle.putSerializable(Common.propertyFromVoId,propertyFromVO.getId());
                     fragment.setArguments(bundle);
-                    Common.switchFragment(fragment,Common.PropertyMoneyListString,getFragmentManager());
+                    Common.switchFragment(fragment, Common.PropertyMoneyListString,getFragmentManager());
                 }
             });
 

@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -138,6 +137,7 @@ public class Common {
     public final static String propertySecondType="propertySecondType";
     public final static String propertyFromVoId="propertyFromVoId";
     public final static String propertyFragment="propertyFragment";
+    public final static String propertyInsertMoneyString="propertyInsertMoneyString";
     public final static String propertyInsertString="propertyInsertString";
     public final static String propertyConsumeShowString="propertyConsumeShowString";
 
@@ -454,9 +454,9 @@ public class Common {
     }
 
     public static void insertNewTableCol() {
-        tableExist("Currency",ChargeAPPDB.TABLE_Currency);
-        tableExist("Property",ChargeAPPDB.TABLE_Property);
-        tableExist("PropertyFrom",ChargeAPPDB.TABLE_PropertyFrom);
+        tableExist("Currency", ChargeAPPDB.TABLE_Currency);
+        tableExist("Property", ChargeAPPDB.TABLE_Property);
+        tableExist("PropertyFrom", ChargeAPPDB.TABLE_PropertyFrom);
         colExist("Consumer","rdNumber","text");
         colExist("Consumer","currency","text");
         colExist("Consumer","realMoney","text");
@@ -475,7 +475,7 @@ public class Common {
     //新增table
     public static void tableExist(String table,String sql) {
         Cursor cursor=null;
-        SQLiteDatabase db=MainActivity.chargeAPPDB.getReadableDatabase();
+        SQLiteDatabase db= MainActivity.chargeAPPDB.getReadableDatabase();
         //如果有就return
         try {
             String searchSql = "SELECT sql FROM sqlite_master where name = '"+table+"' ;";
@@ -505,7 +505,7 @@ public class Common {
     //新增欄位
     public static void colExist(String table,String col,String property) {
         Cursor cursor=null;
-        SQLiteDatabase db=MainActivity.chargeAPPDB.getReadableDatabase();
+        SQLiteDatabase db= MainActivity.chargeAPPDB.getReadableDatabase();
         //如果有就return
         try {
             String sql = "SELECT sql FROM sqlite_master where name = '"+table+"' ;";
@@ -833,7 +833,7 @@ public class Common {
         List<BootstrapText> bootstrapTexts = new ArrayList<>();
         for (String s : data)
         {
-            s=Common.showCurrency().get(s);
+            s= Common.showCurrency().get(s);
             BootstrapText text = new BootstrapText.Builder(activity)
                     .addText(s + " ")
                     .addFontAwesomeIcon(FA_MONEY)
@@ -1241,7 +1241,7 @@ public class Common {
     }
 
 
-    public static void switchFragment(Fragment fragment, String fragmentTag,FragmentManager fragmentManager) {
+    public static void switchFragment(Fragment fragment, String fragmentTag, FragmentManager fragmentManager) {
         MainActivity.oldFramgent.add(fragmentTag);
         MainActivity.bundles.add(fragment.getArguments());
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -1252,7 +1252,7 @@ public class Common {
         fragmentTransaction.commit();
     }
 
-    public static void switchConfirmFragment(Fragment fragment,FragmentManager fragmentManager) {
+    public static void switchConfirmFragment(Fragment fragment, FragmentManager fragmentManager) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         for (Fragment fragment1 : fragmentManager.getFragments()) {
             fragmentTransaction.remove(fragment1);
@@ -1265,7 +1265,7 @@ public class Common {
     }
 
 
-    public static void homePageFragment(FragmentManager fragmentManager,Activity activity) {
+    public static void homePageFragment(FragmentManager fragmentManager, Activity activity) {
         MainActivity.oldFramgent.clear();
         MainActivity.bundles.clear();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

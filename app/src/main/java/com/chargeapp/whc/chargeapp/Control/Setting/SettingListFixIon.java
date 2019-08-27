@@ -16,15 +16,13 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
+import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
-import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateIncome;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
-
 import com.chargeapp.whc.chargeapp.R;
-
 import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -142,19 +140,18 @@ public class SettingListFixIon extends Fragment {
             BootstrapButton update = itemView.findViewById(R.id.updateD);
             BootstrapButton deleteI = itemView.findViewById(R.id.deleteI);
             update.setText("修改");
-            StringBuffer stringBuffer = new StringBuffer();
+
             final BankVO bankVO = bankVOS.get(position);
             if (bankVO.isAuto()) {
                 fixL.setVisibility(View.VISIBLE);
-                fixT.setText("子體");
+                fixT.setText("自動");
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
-                remindL.setVisibility(View.VISIBLE);
-                remainT.setText("自動");
+                remindL.setVisibility(View.GONE);
                 remainT.setBootstrapBrand(DefaultBootstrapBrand.INFO);
             } else {
                 remindL.setVisibility(View.GONE);
                 fixL.setVisibility(View.VISIBLE);
-                fixT.setText("本體");
+                fixT.setText("設定檔");
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
             }
             //設定 title
@@ -162,7 +159,7 @@ public class SettingListFixIon extends Fragment {
 
 
             //設定 describe
-            stringBuffer = new StringBuffer();
+            StringBuffer stringBuffer = new StringBuffer();
             JsonObject js = gson.fromJson(bankVO.getFixDateDetail(), JsonObject.class);
             String daystatue = js.get("choicestatue").getAsString().trim();
             stringBuffer.append(daystatue);

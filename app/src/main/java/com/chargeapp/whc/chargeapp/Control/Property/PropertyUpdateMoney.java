@@ -28,6 +28,7 @@ import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
 import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListener;
+import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListenerTwo;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
@@ -44,9 +45,8 @@ import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 
-import org.jsoup.helper.StringUtil;
-
 import java.sql.Date;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -79,7 +79,7 @@ public class PropertyUpdateMoney extends Fragment {
     private LinearLayout showFixDate;
     private TextView fixDateT;
     private int statueNumber;
-    private Double total;
+    private Double total,rTotal;
     private PopupMenu popupMenu;
     private String nowCurrency,choiceSource;
     private DatePicker datePicker;
@@ -125,7 +125,7 @@ public class PropertyUpdateMoney extends Fragment {
         List<String> nameList=bankDB.getAllName();
         nameData=nameList.toArray(new String[nameList.size()]);
         choicePropertyFrom.setDropdownData(nameData);
-        propertyTypes=Common.propertyInsertMoneyData(activity,nameData);
+        propertyTypes= Common.propertyInsertMoneyData(activity,nameData);
 
         BootstrapText text = new BootstrapText.Builder(activity)
                 .addText(propertyFromVO.getSourceMainType() + " ")
@@ -140,7 +140,7 @@ public class PropertyUpdateMoney extends Fragment {
         nowCurrency=propertyFromVO.getSourceCurrency();
         currencyVO=currencyDB.getOneByType(nowCurrency);
 
-        String cResult=Common.Currency().get(currencyVO.getType());
+        String cResult= Common.Currency().get(currencyVO.getType());
         currency.setText(cResult);
         importCurrency.setText(cResult);
         feeCurrency.setText(cResult);
@@ -151,10 +151,18 @@ public class PropertyUpdateMoney extends Fragment {
         money.setFocusable(false);
         money.setFocusableInTouchMode(false);
 
-        BsTextDay=Common.DateChoiceSetBsTest(activity,Common.DaySetSpinnerBS());
-        BsTextWeek=Common.DateChoiceSetBsTest(activity,Common.WeekSetSpinnerBS);
-        BsTextMonth=Common.DateChoiceSetBsTest(activity,Common.MonthSetSpinnerBS());
-        BsTextStatue=Common.DateChoiceSetBsTest(activity,Common.DateStatueSetSpinner);
+
+        rTotal=(total/Double.valueOf(currencyVO.getMoney()))+Double.valueOf(propertyFromVO.getSourceMoney());
+        StringBuilder sb=new StringBuilder();
+        sb.append(propertyFromVO.getSourceMoney());
+        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListenerTwo(importCalculate,importMoney,activity,numberKeyBoard,sb,false,money,rTotal));
+
+
+
+        BsTextDay= Common.DateChoiceSetBsTest(activity, Common.DaySetSpinnerBS());
+        BsTextWeek= Common.DateChoiceSetBsTest(activity, Common.WeekSetSpinnerBS);
+        BsTextMonth= Common.DateChoiceSetBsTest(activity, Common.MonthSetSpinnerBS());
+        BsTextStatue= Common.DateChoiceSetBsTest(activity, Common.DateStatueSetSpinner);
 
         importMoney.setText(propertyFromVO.getSourceMoney());
         feeMoney.setText(propertyFromVO.getImportFee());
@@ -246,7 +254,7 @@ public class PropertyUpdateMoney extends Fragment {
 
 
         }else{
-            resultStatue=Common.DateStatueSetSpinner[0];
+            resultStatue= Common.DateStatueSetSpinner[0];
         }
         choiceSource=propertyFromVO.getSourceMainType();
 
@@ -315,9 +323,8 @@ public class PropertyUpdateMoney extends Fragment {
                 new int[]{R.id.cardview});
         numberKeyBoard.setAdapter(adapter);
         numberKeyBoard.setNumColumns(5);
-        StringBuilder sbOne=new StringBuilder();
-        sbOne.append(propertyFromVO.getSourceMoney());
-        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(importCalculate,importMoney,activity,numberKeyBoard,sbOne,false));
+
+
         importMoney.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -380,8 +387,23 @@ public class PropertyUpdateMoney extends Fragment {
             choiceSource=nameData[id];
             choicePropertyFrom.setBootstrapText(propertyTypes.get(id));
             total=bankDB.getTotalMoneyByName(choiceSource)-propertyFromDB.findBySourceMainType(choiceSource);
-            money.setText(Common.doubleRemoveZero(total/Double.valueOf(currencyVO.getMoney())));
+
+
+            if(choiceSource.equals(propertyFromVO.getSourceMainType()))
+            {
+                rTotal=(total/Double.valueOf(currencyVO.getMoney()))+Double.valueOf(propertyFromVO.getSourceMoney());
+            }else{
+                rTotal=total;
+            }
+            StringBuilder sb=new StringBuilder();
+            sb.append(propertyFromVO.getSourceMainType());
+            numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListenerTwo(importCalculate,importMoney,activity,numberKeyBoard,sb,false,money,rTotal));
+
+            Double nowMoney=rTotal-Double.valueOf(importMoney.getText().toString());
+            money.setText(Common.doubleRemoveZero(nowMoney));
             money.setBackgroundColor(Color.parseColor("#DDDDDD"));
+
+
         }
     }
 
@@ -392,7 +414,7 @@ public class PropertyUpdateMoney extends Fragment {
             if(b)
             {
                 choiceStatue.setBootstrapText(BsTextStatue.get(0));
-                resultStatue=Common.DateStatueSetSpinner[0];
+                resultStatue= Common.DateStatueSetSpinner[0];
                 fixDate.setX(showFixDate.getWidth()/10);
                 fixDateT.setX(showFixDate.getWidth()/10+fixDate.getWidth());
                 choiceStatue.setX(showFixDate.getWidth()/2+showFixDate.getWidth()/10);
@@ -411,7 +433,7 @@ public class PropertyUpdateMoney extends Fragment {
     private class choiceStateItemBS implements BootstrapDropDown.OnDropDownItemClickListener {
         @Override
         public void onItemClick(ViewGroup parent, View v, int id) {
-            resultStatue=Common.DateStatueSetSpinner[id];
+            resultStatue= Common.DateStatueSetSpinner[id];
             choiceStatue.setBootstrapText(BsTextStatue.get(id));
             statueNumber=id;
             choiceDay.setExpandDirection(ExpandDirection.UP);
@@ -427,19 +449,19 @@ public class PropertyUpdateMoney extends Fragment {
             }
             if(id==1)
             {
-                resultDay=Common.WeekSetSpinnerBS[0];
+                resultDay= Common.WeekSetSpinnerBS[0];
                 choiceDay.setBootstrapText(BsTextWeek.get(0));
                 choiceDay.setDropdownData(Common.WeekSetSpinnerBS);
             }
             if(id==2)
             {
-                resultDay=Common.DaySetSpinnerBS()[0];
+                resultDay= Common.DaySetSpinnerBS()[0];
                 choiceDay.setBootstrapText(BsTextDay.get(0));
                 choiceDay.setDropdownData(Common.DaySetSpinnerBS());
             }
             if(id==3)
             {
-                resultDay=Common.MonthSetSpinnerBS()[0];
+                resultDay= Common.MonthSetSpinnerBS()[0];
                 choiceDay.setBootstrapText(BsTextMonth.get(0));
                 choiceDay.setDropdownData(Common.MonthSetSpinnerBS());
             }
@@ -457,15 +479,15 @@ public class PropertyUpdateMoney extends Fragment {
             {
                 case 1:
                     choiceDay.setBootstrapText(BsTextWeek.get(id));
-                    resultDay=Common.WeekSetSpinnerBS[id];
+                    resultDay= Common.WeekSetSpinnerBS[id];
                     break;
                 case 2:
                     choiceDay.setBootstrapText(BsTextDay.get(id));
-                    resultDay=Common.DaySetSpinnerBS()[id];
+                    resultDay= Common.DaySetSpinnerBS()[id];
                     break;
                 case 3:
                     choiceDay.setBootstrapText(BsTextMonth.get(id));
-                    resultDay=Common.MonthSetSpinnerBS()[id];
+                    resultDay= Common.MonthSetSpinnerBS()[id];
                     break;
             }
         }
@@ -513,14 +535,18 @@ public class PropertyUpdateMoney extends Fragment {
                     return;
                 }
             }
-            Double actuallyTotal=total/Double.valueOf(currencyVO.getMoney());
 
-            if(actuallyTotal<(iMoney+fee))
+            Double actuallyTotal= null;
+            try {
+                actuallyTotal = Common.nf.parse(money.getText().toString()).doubleValue();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if(actuallyTotal<0)
             {
                 importMoney.setError(getString(R.string.error_overMoney));
                 return;
             }
-
 
 
 
@@ -532,7 +558,7 @@ public class PropertyUpdateMoney extends Fragment {
 
             String sourceDate=date.getText().toString();
             String[] dateArray=sourceDate.split("/");
-            Calendar sourceTime=new GregorianCalendar(Integer.valueOf(dateArray[0]),Integer.valueOf(dateArray[1]),Integer.valueOf(dateArray[2]));
+            Calendar sourceTime=new GregorianCalendar(Integer.valueOf(dateArray[0]),Integer.valueOf(dateArray[1])-1,Integer.valueOf(dateArray[2]));
             propertyFromVO.setSourceTime(sourceTime.getTime());
             propertyFromVO.setImportFee(fee.toString());
             propertyFromVO.setPropertyId(propertyVO.getId());
@@ -541,31 +567,53 @@ public class PropertyUpdateMoney extends Fragment {
             propertyFromVO.setFixDateDetail(resultDay);
 
 
-            if(fee>0)
+            //原本有手續費 手續費<0 情況
+            if(propertyFromVO.getImportFeeId()!=null)
             {
                 ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
-                ConsumeVO consumeVO=consumeDB.findConById(propertyFromVO.getImportFeeId().intValue());
-                if(consumeVO==null)
+                if(fee==0)
                 {
-                    consumeVO=new ConsumeVO();
+                    consumeDB.deleteById(propertyFromVO.getImportFeeId().intValue());
+                }
+
+
+                ConsumeVO consumeVO=consumeDB.findConById(propertyFromVO.getImportFeeId().intValue());
+                if(fee>0)
+                {
+
+                    if(consumeVO==null)
+                    {
+                        consumeVO=new ConsumeVO();
+                        consumeVO.setMaintype("銀行");
+                        consumeVO.setSecondType("轉帳");
+                        consumeVO.setCurrency(nowCurrency);
+                        consumeVO.setRealMoney(fee.toString());
+                        consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
+                        consumeVO.setDate(new Date(System.currentTimeMillis()));
+                        propertyFromVO.setImportFeeId(consumeDB.insert(consumeVO));
+
+                    }else {
+                        consumeVO.setCurrency(nowCurrency);
+                        consumeVO.setRealMoney(fee.toString());
+                        consumeDB.update(consumeVO);
+                    }
+
+                }
+
+            }else{
+
+                if(fee>0)
+                {
+                    ConsumeVO consumeVO=new ConsumeVO();
                     consumeVO.setMaintype("銀行");
                     consumeVO.setSecondType("轉帳");
                     consumeVO.setCurrency(nowCurrency);
                     consumeVO.setRealMoney(fee.toString());
-                    consumeVO.setDetailname("轉入"+propertyVO.getName()+"的費用");
+                    consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
                     consumeVO.setDate(new Date(System.currentTimeMillis()));
-                    propertyFromVO.setImportFeeId(consumeDB.insert(consumeVO));
-                }else{
-                    consumeVO.setRealMoney(fee.toString());
-                    consumeVO.setCurrency(nowCurrency);
-                    consumeDB.update(consumeVO);
+                    ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
+                    propertyFromVO.setImportFeeId( consumeDB.insert(consumeVO));
                 }
-            }
-
-            if(fee<=0&&propertyFromVO.getImportFeeId()!=null)
-            {
-                ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
-                consumeDB.deleteById(propertyFromVO.getImportFeeId().intValue());
             }
 
 
@@ -623,11 +671,28 @@ public class PropertyUpdateMoney extends Fragment {
                     break;
             }
 
-            String cResult=Common.Currency().get(currencyVO.getType());
+            String cResult= Common.Currency().get(currencyVO.getType());
             currency.setText(cResult);
             importCurrency.setText(cResult);
             feeCurrency.setText(cResult);
-            money.setText(Common.doubleRemoveZero(total/Double.valueOf(currencyVO.getMoney())));
+
+            if(choiceSource.equals(propertyFromVO.getSourceMainType()))
+            {
+                rTotal=(total/Double.valueOf(currencyVO.getMoney()))+Double.valueOf(propertyFromVO.getSourceMoney());
+            }else{
+                rTotal=total;
+            }
+            StringBuilder sb=new StringBuilder();
+            sb.append(propertyFromVO.getSourceMainType());
+            numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListenerTwo(importCalculate,importMoney,activity,numberKeyBoard,sb,false,money,rTotal));
+
+            Double nowMoney=rTotal-Double.valueOf(importMoney.getText().toString());
+            money.setText(Common.doubleRemoveZero(nowMoney));
+            money.setBackgroundColor(Color.parseColor("#DDDDDD"));
+
+
+
+
 
             return true;
         }

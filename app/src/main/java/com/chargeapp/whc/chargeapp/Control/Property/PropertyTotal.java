@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,7 +39,6 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.Utils;
-
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -120,8 +118,8 @@ public class PropertyTotal extends Fragment {
         setPopupMenu();
         consume=new ArrayList<>();
         income=new ArrayList<>();
-        setCircle(chartNegative,PropertyType.Negative);
-        setCircle(chartPositive,PropertyType.Positive);
+        setCircle(chartNegative, PropertyType.Negative);
+        setCircle(chartPositive, PropertyType.Positive);
         chartNegative.setOnChartValueSelectedListener(new choiceData(PropertyTotal.this.getString(R.string.string_export)));
         chartPositive.setOnChartValueSelectedListener(new choiceData(PropertyTotal.this.getString(R.string.string_import)));
         setTotal();
@@ -329,7 +327,7 @@ public class PropertyTotal extends Fragment {
                 Bundle bundle=new Bundle();
                 bundle.putSerializable(Common.propertyID,propertyId);
                 fragment.setArguments(bundle);
-                Common.switchFragment(fragment,Common.PropertyTotalString,getFragmentManager());
+                Common.switchFragment(fragment, Common.PropertyTotalString,getFragmentManager());
             }
         });
 
@@ -337,7 +335,7 @@ public class PropertyTotal extends Fragment {
         returnMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment=Common.returnFragment();
+                Fragment fragment= Common.returnFragment();
                 Common.switchConfirmFragment(fragment,getFragmentManager());
             }
         });
@@ -371,8 +369,8 @@ public class PropertyTotal extends Fragment {
 
     private void setTotal()
     {
-        nameNagative.setText("支出 "+Common.CurrencyResult(consumeTotal,currencyVO));
-        namePositive.setText("收入 "+Common.CurrencyResult(incomeTotal,currencyVO));
+        nameNagative.setText("支出 "+ Common.CurrencyResult(consumeTotal,currencyVO));
+        namePositive.setText("收入 "+ Common.CurrencyResult(incomeTotal,currencyVO));
         total=incomeTotal-consumeTotal;
         currency.setText(Common.CurrencyResult(total,currencyVO));
     }
@@ -455,7 +453,7 @@ public class PropertyTotal extends Fragment {
 
         @Override
         public void onValueSelected(Entry entry, Highlight highlight) {
-            String stringExport=PropertyTotal.this.getString(R.string.string_export);
+            String stringExport= PropertyTotal.this.getString(R.string.string_export);
             index= (int) highlight.getX();
             Bundle bundle=new Bundle();
             Fragment fragment;

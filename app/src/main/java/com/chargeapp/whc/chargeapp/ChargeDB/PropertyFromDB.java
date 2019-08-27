@@ -4,13 +4,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
-import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
-import com.github.mikephil.charting.data.PieEntry;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -132,6 +129,19 @@ public class PropertyFromDB {
     }
 
 
+    public PropertyFromVO findByImportFeeId(Long id) {
+        String sql = "SELECT * FROM PropertyFrom where importFeeId = ? order by id;";
+        String[] args = {String.valueOf(id)};
+        Cursor cursor = db.rawQuery(sql, args);
+        PropertyFromVO propertyFromVO=null;
+        if (cursor.moveToNext()) {
+            propertyFromVO=getPropertyFromVO(cursor);
+        }
+        cursor.close();
+        return propertyFromVO;
+    }
+
+
     public Double totalType(Long propertyId, PropertyType type) {
         String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where propertyId ='"+propertyId +"' and type = '"+type.getCode()+"' order by id;";
         String[] args = {};
@@ -170,7 +180,7 @@ public class PropertyFromDB {
     }
 
 
-    public List<PropertyFromVO> findByPropertyMainType(String sourceMainType,Long propertyId) {
+    public List<PropertyFromVO> findByPropertyMainType(String sourceMainType, Long propertyId) {
         String sql = "SELECT * FROM PropertyFrom where sourceMainType ='"+sourceMainType +"' and  propertyId = '"+propertyId+"' order by sourceDate desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
@@ -198,7 +208,7 @@ public class PropertyFromDB {
     }
 
 
-    public List<PropertyFromVO> findByPropertySecondType(String sourceSecondType,Long propertyId) {
+    public List<PropertyFromVO> findByPropertySecondType(String sourceSecondType, Long propertyId) {
         String sql = "SELECT * FROM PropertyFrom where sourceSecondType ='"+sourceSecondType +"' and  propertyId = '"+propertyId+"' order by sourceDate desc;";
         String[] args = {};
         Cursor cursor = db.rawQuery(sql, args);
@@ -301,7 +311,7 @@ public class PropertyFromDB {
         return map;
     }
 
-    public Map<String,Double> getPieDataSecondType(PropertyType propertyType,String sourceMainType,Long propertyId)
+    public Map<String,Double> getPieDataSecondType(PropertyType propertyType, String sourceMainType, Long propertyId)
     {
         String sql = "SELECT * FROM PropertyFrom where type ='"+propertyType.getCode() +"' and sourceMainType =  '"+sourceMainType+"' and propertyId = '"+propertyId+"' order by id;";
         String[] args = {};
@@ -349,6 +359,17 @@ public class PropertyFromDB {
     public int deleteByPropertyId(int propertyId) {
         String whereClause ="propertyId = ?;";
         String[] whereArgs = {String.valueOf(propertyId)};
+        String sql = "SELECT * FROM PropertyFrom where  propertyId = ? order by id;";
+        Cursor cursor = db.rawQuery(sql, whereArgs);
+        ConsumeDB consumeDB=new ConsumeDB(db);
+        while (cursor.moveToNext())
+        {
+            PropertyFromVO propertyFromVO=getPropertyFromVO(cursor);
+            if(propertyFromVO.getImportFeeId()!=null)
+            {
+                consumeDB.deleteById(propertyFromVO.getImportFeeId().intValue());
+            }
+        }
         return db.delete(TABLE_NAME, whereClause, whereArgs);
     }
 

@@ -106,7 +106,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String message=null;
         Common.setChargeDB(activity);
-        SQLiteDatabase database=MainActivity.chargeAPPDB.getWritableDatabase();
+        SQLiteDatabase database= MainActivity.chargeAPPDB.getWritableDatabase();
         consumeDB=new ConsumeDB(database);
         invoiceDB=new InvoiceDB(database);
         bankDB=new BankDB(database);
@@ -122,13 +122,13 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         if(object instanceof InvoiceVO)
         {
             InvoiceVO I= (InvoiceVO) object;
-            message=I.getSecondtype()+" "+Common.getCurrency(I.getCarrier()) + I.getRealAmount();
+            message=I.getSecondtype()+" "+ Common.getCurrency(I.getCarrier()) + I.getRealAmount();
         }else if(object instanceof ConsumeVO){
             ConsumeVO c= (ConsumeVO) object;
-            message=c.getSecondType()+" "+Common.getCurrency(c.getCurrency())+c.getRealMoney();
+            message=c.getSecondType()+" "+ Common.getCurrency(c.getCurrency())+c.getRealMoney();
         }else if(object instanceof BankVO){
             BankVO b= (BankVO) object;
-            message=b.getMaintype()+" "+Common.getCurrency(b.getCurrency())+b.getRealMoney();
+            message=b.getMaintype()+" "+ Common.getCurrency(b.getCurrency())+b.getRealMoney();
         }else if(object instanceof GoalVO){
             GoalVO b= (GoalVO) object;
             message=b.getName();
@@ -191,6 +191,13 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                     invoiceDB.deleteById(I.getId());
                 }else if(object instanceof ConsumeVO){
                     ConsumeVO c= (ConsumeVO) object;
+                    PropertyFromVO propertyFromVO=propertyFromDB.findByImportFeeId((long) c.getId());
+                    if(propertyFromVO!=null)
+                    {
+                       propertyFromVO.setImportFee("0");
+                       propertyFromVO.setImportFeeId(null);
+                       propertyFromDB.update(propertyFromVO);
+                    }
                     consumeDB.deleteById(c.getId());
                 }else if(object instanceof BankVO)
                 {
@@ -228,6 +235,10 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 {
                     PropertyFromVO propertyFromVO= (PropertyFromVO) object;
                     propertyFromDB.deleteById(propertyFromVO.getId());
+                    if(propertyFromVO.getImportFeeId()!=null)
+                    {
+                        consumeDB.deleteById(propertyFromVO.getImportFeeId().intValue());
+                    }
                 }
 
 

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,21 +16,16 @@ import android.widget.TextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
-import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateConsume;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateMoney;
-import com.chargeapp.whc.chargeapp.Control.Update.UpdateSpend;
-import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.android.gms.ads.AdView;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import java.util.List;
 
@@ -178,11 +172,11 @@ public class SettingListFixProperty extends Fragment {
             {
                 case Negative:
                     titleString.append(" "+propertyFromVO.getSourceSecondType());
-                    stringBuilder.append("2. 定期支出 : "+Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
+                    stringBuilder.append("2. 定期支出 : "+ Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
                     break;
                 case Positive:
                     titleString.append(" "+propertyFromVO.getSourceMainType());
-                    stringBuilder.append("2. 定期收入 : "+Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
+                    stringBuilder.append("2. 定期收入 : "+ Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
                     break;
             }
             stringBuilder.append("3. 時間 : "+propertyFromVO.getFixDateCode().getDetail()+propertyFromVO.getFixDateDetail());
@@ -206,9 +200,9 @@ public class SettingListFixProperty extends Fragment {
                            fragment=new PropertyUpdateMoney();
                             break;
                     }
-                    bundle.putSerializable(Common.fragment,Common.settingListFixPropertyString);
+                    bundle.putSerializable(Common.fragment, Common.settingListFixPropertyString);
                     fragment.setArguments(bundle);
-                    Common.switchFragment(fragment,Common.settingListFixPropertyString,getFragmentManager());
+                    Common.switchFragment(fragment, Common.settingListFixPropertyString,getFragmentManager());
                 }
             });
 

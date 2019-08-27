@@ -16,20 +16,16 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
-
-import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
-
-import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateSpend;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.R;
-
 import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
 
 import java.util.List;
 
@@ -146,10 +142,9 @@ public class SettingListFixCon extends Fragment {
             if(consumeVO.isAuto())
             {
                 fixL.setVisibility(View.VISIBLE);
-                fixT.setText("子體");
+                fixT.setText("自動");
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
-                remindL.setVisibility(View.VISIBLE);
-                remainT.setText("自動");
+                remindL.setVisibility(View.GONE);
                 remainT.setBootstrapBrand(DefaultBootstrapBrand.INFO);
             }else {
                 if(consumeVO.getNotify().equals("true"))
@@ -159,7 +154,7 @@ public class SettingListFixCon extends Fragment {
                 }else {
                     remindL.setVisibility(View.GONE);
                 }
-                fixT.setText("本體");
+                fixT.setText("設定檔");
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
                 fixL.setVisibility(View.VISIBLE);
             }

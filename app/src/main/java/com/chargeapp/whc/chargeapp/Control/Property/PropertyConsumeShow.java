@@ -121,7 +121,7 @@ public class PropertyConsumeShow extends Fragment {
         findViewById();
         setPopupMenu();
         setNowMoney();
-        setCircle(chartNegative,PropertyType.Negative);
+        setCircle(chartNegative, PropertyType.Negative);
         chartNegative.setOnChartValueSelectedListener(new choiceData(PropertyConsumeShow.this.getString(R.string.string_export)));
     }
 
@@ -304,7 +304,7 @@ public class PropertyConsumeShow extends Fragment {
                 }
                 Fragment fragment=new PropertyInsertMoney();
                 fragment.setArguments(bundle);
-                Common.switchFragment(fragment,Common.PropertyTotalString,getFragmentManager());
+                Common.switchFragment(fragment, Common.PropertyTotalString,getFragmentManager());
             }
         });
 
@@ -312,7 +312,7 @@ public class PropertyConsumeShow extends Fragment {
         returnMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment=Common.returnFragment();
+                Fragment fragment= Common.returnFragment();
                 Common.switchConfirmFragment(fragment,getFragmentManager());
             }
         });
@@ -425,9 +425,9 @@ public class PropertyConsumeShow extends Fragment {
             int index= (int) highlight.getX();
             Fragment fragment=new PropertyMoneyList();
             bundle.putSerializable(Common.propertySecondType,consume.get(index).getLabel());
-            bundle.putSerializable(Common.propertyFragment,Common.propertyConsumeShowString);
+            bundle.putSerializable(Common.propertyFragment, Common.propertyConsumeShowString);
             fragment.setArguments(bundle);
-            Common.switchFragment(fragment,Common.propertyConsumeShowString,getFragmentManager());
+            Common.switchFragment(fragment, Common.propertyConsumeShowString,getFragmentManager());
         }
 
         @Override
