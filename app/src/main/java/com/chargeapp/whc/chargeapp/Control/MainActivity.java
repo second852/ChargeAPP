@@ -737,13 +737,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 case 5:
-                    for (int i = fragments.size() - 1; i >= 0; i--) {
-                        if (fragments.get(i) instanceof SettingDownloadFile) {
-                            fragments.get(i).onActivityResult(requestCode, resultCode, data);
-                            break;
-                        }
-                    }
-                    break;
                 case 4:
                     for (int i = fragments.size() - 1; i >= 0; i--) {
                         if (fragments.get(i) instanceof SettingDownloadFile) {

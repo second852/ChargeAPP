@@ -136,7 +136,6 @@ public class SettingListFixProperty extends Fragment {
             TextView title=itemView.findViewById(R.id.listTitle);
             TextView decribe=itemView.findViewById(R.id.listDetail);
             BootstrapButton fixT=itemView.findViewById(R.id.fixT);
-            BootstrapButton remainT=itemView.findViewById(R.id.remainT);
             LinearLayout remindL=itemView.findViewById(R.id.remindL);
             final LinearLayout fixL=itemView.findViewById(R.id.fixL);
             BootstrapButton update=itemView.findViewById(R.id.updateD);

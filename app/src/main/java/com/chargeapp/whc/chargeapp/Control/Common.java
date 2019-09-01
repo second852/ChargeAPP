@@ -31,6 +31,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.Goal.GoalListAll;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
@@ -52,6 +53,7 @@ import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDeList;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFix;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixCon;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixIon;
+import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixProperty;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingListType;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingMain;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateIncome;
@@ -63,12 +65,17 @@ import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 import com.github.mikephil.charting.components.Description;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+
+
+import org.jsoup.helper.StringUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -713,6 +720,7 @@ public class Common {
         switch (action)
         {
             case "SelectActivity":
+            case "SelectConsume":
                 fragment = new SelectActivity();
                 break;
             case "SelectListPieIncome":
@@ -722,13 +730,8 @@ public class Common {
                 fragment = new SelectListBarIncome();
                 break;
             case "SelectListModelIM":
-                fragment = new SelectListModelActivity();
-                break;
             case "SelectListModelCom":
                 fragment = new SelectListModelActivity();
-                break;
-            case "SelectConsume":
-                fragment = new SelectActivity();
                 break;
             case "SelectOtherCircle":
                 fragment = new SelectOtherCircle();
@@ -796,6 +799,9 @@ public class Common {
                 break;
             case Common.propertyConsumeShowString:
                 fragment=new PropertyConsumeShow();
+                break;
+            case Common.settingListFixPropertyString:
+                fragment =new SettingListFixProperty();
                 break;
         }
         fragment.setArguments(bundle);
@@ -1276,4 +1282,39 @@ public class Common {
         fragmentTransaction.commit();
         showToast(activity,activity.getString(R.string.error_lostData));
     }
+
+
+    public static void insertAutoPropertyFromVo(PropertyFromDB propertyFromDB, PropertyFromVO propertyFromVO)
+    {
+          Double total;
+          if(StringUtil.isBlank(propertyFromVO.getSourceSecondType()))
+          {
+              total=propertyFromDB.findBySourceSecondType(propertyFromVO.getSourceMainType());
+          }else{
+              total=propertyFromDB.findBySourceSecondType(propertyFromVO.getSourceMainType());
+          }
+          CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+          Calendar findTime=Calendar.getInstance();
+          findTime.setTime(propertyFromVO.getSourceTime());
+          int year=findTime.get(Calendar.YEAR);
+          int month=findTime.get(Calendar.MONTH);
+          int day=findTime.get(Calendar.DAY_OF_MONTH);
+          Calendar start=new GregorianCalendar(year,month,day,0,0,0);
+          Calendar end=new GregorianCalendar(year,month,day,23,59,59);
+          CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getSourceCurrency());
+          total=total/Double.valueOf(currencyVO.getMoney());
+          Double remainT=total-Double.valueOf(propertyFromVO.getSourceMoney());
+          //金額小於0部新增
+          if(remainT<0)
+          {
+              return;
+          }
+
+         propertyFromVO.setFixImport(false);
+         propertyFromVO.setFixFromId(propertyFromVO.getId());
+         propertyFromVO.setSourceTime(new Date(System.currentTimeMillis()));
+         propertyFromDB.insert(propertyFromVO);
+
+    }
+
 }

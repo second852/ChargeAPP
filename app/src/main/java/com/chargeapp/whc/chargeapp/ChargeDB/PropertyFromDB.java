@@ -208,6 +208,20 @@ public class PropertyFromDB {
     }
 
 
+    public List<PropertyFromVO> findFixAllProperty() {
+        String sql = "SELECT * FROM PropertyFrom where fixImport = 'true' order by sourceDate ;";
+        String[] args = {};
+        Cursor cursor = db.rawQuery(sql, args);
+        List<PropertyFromVO> propertyFromVOList=new ArrayList<>();
+        while (cursor.moveToNext()) {
+            PropertyFromVO propertyFromVO=getPropertyFromVO(cursor);
+            propertyFromVOList.add(propertyFromVO);
+        }
+        cursor.close();
+        return propertyFromVOList;
+    }
+
+
     public List<PropertyFromVO> findByPropertySecondType(String sourceSecondType, Long propertyId) {
         String sql = "SELECT * FROM PropertyFrom where sourceSecondType ='"+sourceSecondType +"' and  propertyId = '"+propertyId+"' order by sourceDate desc;";
         String[] args = {};
@@ -237,6 +251,20 @@ public class PropertyFromDB {
         }
         cursor.close();
         return total;
+    }
+
+
+
+    public PropertyFromVO findAutoBySourceTimeAndAutoId(Long start,Long end,Long id) {
+        String sql = "SELECT * FROM PropertyFrom where sourceDate between ? and ? and  fixFromId = ? order by id;";
+        String[] args = {String.valueOf(start),String.valueOf(end),String.valueOf(id)};
+        Cursor cursor = db.rawQuery(sql, args);
+        PropertyFromVO propertyFromVO=null;
+        if (cursor.moveToNext()) {
+           propertyFromVO=getPropertyFromVO(cursor);
+        }
+        cursor.close();
+        return propertyFromVO;
     }
 
 

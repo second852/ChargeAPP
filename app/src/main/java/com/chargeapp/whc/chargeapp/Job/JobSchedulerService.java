@@ -18,10 +18,12 @@ import android.util.Log;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -47,6 +49,7 @@ public class JobSchedulerService extends JobService {
     private SimpleDateFormat sf;
     private Calendar setNewTime;
     private GoalDB goalDB;
+    private PropertyFromDB propertyFromDB;
 
 
 
@@ -83,9 +86,13 @@ public class JobSchedulerService extends JobService {
             consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
             bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
             goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
 
             List<BankVO> bankVOS = bankDB.getFixDate();
             List<ConsumeVO> consumerVOS = consumeDB.getFixdate();
+            List<PropertyFromVO> propertyFromVOS=propertyFromDB.findFixAllProperty();
+
+
             int hour, min;
             if (setTime.indexOf("p") == -1) {
                 hour = new Integer(setTime.substring(0, setTime.indexOf(":")));
@@ -319,6 +326,78 @@ public class JobSchedulerService extends JobService {
                 }
             }
 
+
+            for(PropertyFromVO propertyFromVO:propertyFromVOS)
+            {
+                if(sf.format(propertyFromVO.getSourceTime()).equals(sf.format(new Date(setNewTime.getTimeInMillis()))))
+                {
+                    continue;
+                }
+
+                Calendar start,end;
+                PropertyFromVO old;
+                String fixDate;
+                switch (propertyFromVO.getFixDateCode())
+                {
+                    case FixDay:
+                        start = new GregorianCalendar(year, month, day, 0, 0, 0);
+                        end = new GregorianCalendar(year, month, day, 23, 59, 0);
+                        old = propertyFromDB.findAutoBySourceTimeAndAutoId(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getId());
+                        if (old == null) {
+                            Common.insertAutoPropertyFromVo(propertyFromDB,propertyFromVO);
+                        }
+                        break;
+                    case FixWeek:
+                        String fixDetail = propertyFromVO.getFixDateDetail();
+                        HashMap<String, Integer> change = getStringtoInt();
+                        if (date.get(Calendar.DAY_OF_WEEK) == change.get(fixDetail)) {
+                            start = new GregorianCalendar(year, month, day, 0, 0, 0);
+                            end = new GregorianCalendar(year, month, day, 23, 59, 0);
+                            old = propertyFromDB.findAutoBySourceTimeAndAutoId(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getId());
+                            if (old == null) {
+                                Common.insertAutoPropertyFromVo(propertyFromDB,propertyFromVO);
+                            }
+                        }
+                        break;
+                    case FixMonth:
+                        int maxDay = date.getActualMaximum(Calendar.DAY_OF_MONTH);
+                        fixDate = propertyFromVO.getFixDateDetail().trim();
+                        fixDate = fixDate.substring(0, fixDate.indexOf("日"));
+                        if (fixDate.equals(String.valueOf(day))) {
+                            start = new GregorianCalendar(year, month, day, 0, 0, 0);
+                            end = new GregorianCalendar(year, month, day, 23, 59, 0);
+                            old = propertyFromDB.findAutoBySourceTimeAndAutoId(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getId());
+                            if (old == null) {
+                                Common.insertAutoPropertyFromVo(propertyFromDB,propertyFromVO);
+                            }
+                        }
+                        if (maxDay < Integer.valueOf(fixDate) && day == maxDay) {
+
+                            start = new GregorianCalendar(year, month, day, 0, 0, 0);
+                            end = new GregorianCalendar(year, month, day, 23, 59, 0);
+                            old = propertyFromDB.findAutoBySourceTimeAndAutoId(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getId());
+                            if (old == null) {
+                                Common.insertAutoPropertyFromVo(propertyFromDB,propertyFromVO);
+                            }
+
+                        }
+                        break;
+                    case FixYear:
+                        fixDate = propertyFromVO.getFixDateDetail();
+                        fixDate = fixDate.substring(0, fixDate.indexOf("月"));
+                        int d = Integer.valueOf(fixDate) - 1;
+                        if (d == month && day == 1) {
+                             start = new GregorianCalendar(year, month, day, 0, 0, 0);
+                             end = new GregorianCalendar(year, month, day, 23, 59, 0);
+                             old = propertyFromDB.findAutoBySourceTimeAndAutoId(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getId());
+                             if (old == null) {
+                                Common.insertAutoPropertyFromVo(propertyFromDB,propertyFromVO);
+                             }
+                        }
+                        break;
+                }
+            }
+
             //測試使用現在時間
 //        setNewTime=Calendar.getInstance();
 
@@ -332,6 +411,10 @@ public class JobSchedulerService extends JobService {
         }
 
     }
+
+
+
+
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
@@ -380,4 +463,7 @@ public class JobSchedulerService extends JobService {
         hashMap.put("星期日", 1);
         return hashMap;
     }
+
+
+
 }
