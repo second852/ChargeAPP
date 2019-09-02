@@ -288,6 +288,8 @@ public class PropertyUpdateConsume extends Fragment {
         sb.append(propertyFromVO.getSourceMoney());
         numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListenerTwo(importCalculate,importMoney,activity,numberKeyBoard,sb,false,money,rTotal));
 
+        date.setText(Common.sTwo.format(propertyFromVO.getSourceTime()));
+
     }
 
 
@@ -699,9 +701,11 @@ public class PropertyUpdateConsume extends Fragment {
                     break;
             }
 
+
             fragment.setArguments(bundle);
             Common.switchConfirmFragment(fragment,getFragmentManager());
             Common.showToast(activity,getString(R.string.update_success));
+
         }
     }
 

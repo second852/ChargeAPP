@@ -259,9 +259,7 @@ public class PropertyUpdateMoney extends Fragment {
         choiceSource=propertyFromVO.getSourceMainType();
 
 
-
-
-
+        date.setText(Common.sTwo.format(propertyFromVO.getSourceTime()));
 
 
     }

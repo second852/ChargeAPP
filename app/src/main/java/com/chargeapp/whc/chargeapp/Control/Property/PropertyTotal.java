@@ -76,6 +76,7 @@ public class PropertyTotal extends Fragment {
     private View fabBGLayout;
     private PieChart chartPositive,chartNegative;
     private List<PieEntry> consume,income;
+    private Bundle bundle;
 
 
 
@@ -95,12 +96,13 @@ public class PropertyTotal extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.property_total, container, false);
-        Object object=getArguments().getSerializable(Common.propertyID);
-        if(object==null)
+        bundle=getArguments();
+        if(bundle==null)
         {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
+        Object object=getArguments().getSerializable(Common.propertyID);
         propertyId= (Long) object;
         Common.setChargeDB(activity);
         currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -306,7 +308,6 @@ public class PropertyTotal extends Fragment {
                     return;
                 }
                 Fragment fragment=new PropertyInsertMoney();
-                Bundle bundle=new Bundle();
                 bundle.putSerializable(Common.propertyID,propertyId);
                 fragment.setArguments(bundle);
                 Common.switchFragment(fragment, PropertyTotalString,getFragmentManager());
@@ -324,7 +325,6 @@ public class PropertyTotal extends Fragment {
                     return;
                 }
                 Fragment fragment=new PropertyInsertConsume();
-                Bundle bundle=new Bundle();
                 bundle.putSerializable(Common.propertyID,propertyId);
                 fragment.setArguments(bundle);
                 Common.switchFragment(fragment, Common.PropertyTotalString,getFragmentManager());

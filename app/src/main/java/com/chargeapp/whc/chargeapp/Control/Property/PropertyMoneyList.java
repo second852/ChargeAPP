@@ -222,7 +222,6 @@ public class PropertyMoneyList extends Fragment {
                     return;
                 }
                 Fragment fragment=new PropertyInsertMoney();
-                Bundle bundle=new Bundle();
                 bundle.putSerializable(Common.propertyID,propertyId);
                 fragment.setArguments(bundle);
                 Common.switchFragment(fragment, Common.PropertyMoneyListString,getFragmentManager());
@@ -240,7 +239,6 @@ public class PropertyMoneyList extends Fragment {
                     return;
                 }
                 Fragment fragment=new PropertyInsertConsume();
-                Bundle bundle=new Bundle();
                 bundle.putSerializable(Common.propertyID,propertyId);
                 fragment.setArguments(bundle);
                 Common.switchFragment(fragment, Common.PropertyMoneyListString,getFragmentManager());
