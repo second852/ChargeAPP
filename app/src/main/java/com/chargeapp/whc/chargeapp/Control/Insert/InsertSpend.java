@@ -352,8 +352,8 @@ public class InsertSpend extends Fragment {
             popupMenu.setOnMenuItemClickListener(new choiceCurrency());
 
             //type
-            typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            typeDB = new TypeDB(MainActivity.chargeAPPDB);
+            consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
             firstG = view.findViewById(R.id.firstG);
             firstG.setOnItemClickListener(new firstGridOnClick());
             setFirstGrid();
@@ -404,7 +404,7 @@ public class InsertSpend extends Fragment {
     private void setSecondGrid() {
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
-        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
         List<TypeDetailVO> typeDetailVOS = typeDetailDB.findByGroupname(name.getText().toString().trim());
         for (TypeDetailVO t : typeDetailVOS) {
             item = new HashMap<String, Object>();

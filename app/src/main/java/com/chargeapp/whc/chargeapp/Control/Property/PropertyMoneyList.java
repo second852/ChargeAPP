@@ -99,9 +99,9 @@ public class PropertyMoneyList extends Fragment {
         propertyId= (Long) bundle.getSerializable(Common.propertyID);
         fragmentString= (String) bundle.getSerializable(Common.propertyFragment);
         Common.setChargeDB(activity);
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
+        propertyDB=new PropertyDB(MainActivity.chargeAPPDB);
+        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
         propertyVO=propertyDB.findById(propertyId);
         findViewById();
 
@@ -176,7 +176,7 @@ public class PropertyMoneyList extends Fragment {
                 popupMenu.show();
             }
         });
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         popupMenu.setOnMenuItemClickListener(new choiceCurrency());
     }
 
@@ -214,7 +214,7 @@ public class PropertyMoneyList extends Fragment {
         insertMoney.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BankDB bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+                BankDB bankDB=new BankDB(MainActivity.chargeAPPDB);
                 if(bankDB.getAllTotal()<=0)
                 {
                     Common.showToast(activity,"沒有資金，請增加收入!");
@@ -231,7 +231,7 @@ public class PropertyMoneyList extends Fragment {
         insertConsume.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+                ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
                 if(consumeDB.getAllMoney()<=0)
                 {
                     Common.showToast(activity,"沒有消費，無法歸類!");

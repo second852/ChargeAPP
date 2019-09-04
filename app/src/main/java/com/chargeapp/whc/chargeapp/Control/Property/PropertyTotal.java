@@ -105,9 +105,9 @@ public class PropertyTotal extends Fragment {
         Object object=getArguments().getSerializable(Common.propertyID);
         propertyId= (Long) object;
         Common.setChargeDB(activity);
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
+        propertyDB=new PropertyDB(MainActivity.chargeAPPDB);
+        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
         propertyVO=propertyDB.findById(propertyId);
         return view;
     }
@@ -260,7 +260,7 @@ public class PropertyTotal extends Fragment {
                 popupMenu.show();
             }
         });
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         popupMenu.setOnMenuItemClickListener(new choiceCurrency());
     }
 
@@ -297,8 +297,8 @@ public class PropertyTotal extends Fragment {
         insertMoney.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BankDB bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-                PropertyFromDB propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
+                BankDB bankDB=new BankDB(MainActivity.chargeAPPDB);
+                PropertyFromDB propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
 
                 Double remainMoney=(bankDB.getAllTotal()-propertyFromDB.getTotalAll());
                 if(remainMoney<=0)
@@ -317,7 +317,7 @@ public class PropertyTotal extends Fragment {
         insertConsume.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+                ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
                 if(consumeDB.getAllMoney()<=0)
                 {
                     Common.showToast(activity,"沒有消費，無法歸類!");

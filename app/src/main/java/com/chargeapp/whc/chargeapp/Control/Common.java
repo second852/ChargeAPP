@@ -104,6 +104,7 @@ import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_CHECK_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_MONEY;
+import static com.google.android.gms.internal.zzrw.If;
 
 /**
  * Created by Wang on 2017/11/19.
@@ -310,7 +311,7 @@ public class Common {
     public static void createCurrencyPopMenu(PopupMenu popupMenu,Activity context) {
         android.view.Menu menu_more = popupMenu.getMenu();
         ChargeAPPDB chargeAPPDB=new ChargeAPPDB(context);
-        CurrencyDB currencyDB=new CurrencyDB(chargeAPPDB.getReadableDatabase());
+        CurrencyDB currencyDB=new CurrencyDB(chargeAPPDB);
         HashMap<String,List<String>> types=currencyDB.getAllType();
         code=types.get("code");
         List<String> show=types.get("show");
@@ -1087,7 +1088,7 @@ public class Common {
     private String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
 
     public void AutoSetPrice() {
-        PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB);
         List<PriceVO> priceVOS = priceDB.getAll();
         int month;
         int year;
@@ -1105,8 +1106,8 @@ public class Common {
     }
 
     private void autoSetCRWin(long startTime, long endTime, PriceVO priceVO) {
-        ConsumeDB consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        BankDB bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        ConsumeDB consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
+        BankDB bankDB = new BankDB(MainActivity.chargeAPPDB);
         List<ConsumeVO> consumeVOS = consumeDB.getNoWinAll(startTime, endTime);
         for (ConsumeVO consumeVO : consumeVOS) {
             String nul = consumeVO.getNumber().trim();
@@ -1136,9 +1137,9 @@ public class Common {
     }
 
     private void autoSetInWin(long startTime, long endTime, PriceVO priceVO) {
-        CarrierDB carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        InvoiceDB invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        BankDB bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        CarrierDB carrierDB = new CarrierDB(MainActivity.chargeAPPDB);
+        InvoiceDB invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
+        BankDB bankDB = new BankDB(MainActivity.chargeAPPDB);
         List<CarrierVO> carrierVOS = carrierDB.getAll();
         for (CarrierVO c : carrierVOS) {
             List<InvoiceVO> invoiceVOS = invoiceDB.getNotSetWin(c.getCarNul(), startTime, endTime);
@@ -1289,11 +1290,11 @@ public class Common {
           Double total;
           if(StringUtil.isBlank(propertyFromVO.getSourceSecondType()))
           {
-              total=propertyFromDB.findBySourceSecondType(propertyFromVO.getSourceMainType());
+              total=propertyFromDB.findBySourceMainType(propertyFromVO.getSourceMainType());
           }else{
-              total=propertyFromDB.findBySourceSecondType(propertyFromVO.getSourceMainType());
+              total=propertyFromDB.findBySourceSecondType(propertyFromVO.getSourceSecondType());
           }
-          CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+          CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
           Calendar findTime=Calendar.getInstance();
           findTime.setTime(propertyFromVO.getSourceTime());
           int year=findTime.get(Calendar.YEAR);
@@ -1314,6 +1315,19 @@ public class Common {
          propertyFromVO.setFixFromId(propertyFromVO.getId());
          propertyFromVO.setSourceTime(new Date(System.currentTimeMillis()));
          propertyFromDB.insert(propertyFromVO);
+
+         ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
+         if(propertyFromVO.getFixFromId()!=null&&!StringUtil.isBlank(propertyFromVO.getImportFee()))
+         {
+             Double fee=Double.valueOf(propertyFromVO.getImportFee());
+             ConsumeVO consumeVO=consumeDB.findConById(propertyFromVO.getImportFeeId().intValue());
+             if(fee>0&&consumeVO!=null)
+             {
+                consumeVO.setDate(new Date(System.currentTimeMillis()));
+                propertyFromVO.setImportFeeId(consumeDB.insert(consumeVO));
+             }
+         }
+
 
     }
 

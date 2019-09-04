@@ -108,7 +108,7 @@ public class PropertyInsertMoney extends Fragment {
         }
         Object object=getArguments().getSerializable(Common.propertyID);
 
-        PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB);
         propertyVO=propertyDB.findById((long)object);
         nowCurrency="TWD";
         findViewById();
@@ -153,9 +153,9 @@ public class PropertyInsertMoney extends Fragment {
 
     private void setDataBase() {
         Common.setChargeDB(activity);
-        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB=new BankDB(MainActivity.chargeAPPDB);
+        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
     }
 
     private void findViewById() {
@@ -460,7 +460,7 @@ public class PropertyInsertMoney extends Fragment {
 
                 consumeVO.setDetailname("轉入"+propertyVO.getName()+"的費用");
                 consumeVO.setDate(new Date(System.currentTimeMillis()));
-                ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
+                ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
                 propertyFromVO.setImportFeeId(consumeDB.insert(consumeVO));
             }
 
@@ -488,7 +488,7 @@ public class PropertyInsertMoney extends Fragment {
                 popupMenu.show();
             }
         });
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         popupMenu.setOnMenuItemClickListener(new choiceCurrency());
     }
 

@@ -93,9 +93,9 @@ public class UpdateInvoice extends Fragment {
         setInvoice();
         context.setTitle("修改資料");
         Common.setChargeDB(context);
-        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDB = new TypeDB(MainActivity.chargeAPPDB);
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new saveInvoice());
         name.setOnClickListener(new showFirstG());

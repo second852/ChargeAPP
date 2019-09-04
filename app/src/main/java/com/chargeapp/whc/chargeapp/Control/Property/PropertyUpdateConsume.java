@@ -108,7 +108,7 @@ public class PropertyUpdateConsume extends Fragment {
         }
         rFragment= (String) bundle.getSerializable(Common.fragment);
         Object object=getArguments().getSerializable(Common.propertyFromVoId);
-        PropertyFromDB propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        PropertyFromDB propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
         propertyFromVO=propertyFromDB.findByPropertyFromId((Long) object);
         nowCurrency=propertyFromVO.getSourceCurrency();
         return view;
@@ -297,9 +297,9 @@ public class PropertyUpdateConsume extends Fragment {
 
     private void setDataBase() {
         Common.setChargeDB(activity);
-        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
+        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
     }
 
     private void findViewById() {
@@ -657,7 +657,7 @@ public class PropertyUpdateConsume extends Fragment {
                         consumeVO.setRealMoney(fee.toString());
                         consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
                         consumeVO.setDate(new Date(System.currentTimeMillis()));
-                        ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
+                        ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
                         propertyFromVO.setImportFeeId( consumeDB.insert(consumeVO));
 
                     }else {
@@ -679,7 +679,7 @@ public class PropertyUpdateConsume extends Fragment {
                     consumeVO.setRealMoney(fee.toString());
                     consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
                     consumeVO.setDate(new Date(System.currentTimeMillis()));
-                    ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
+                    ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
                     propertyFromVO.setImportFeeId( consumeDB.insert(consumeVO));
                 }
 
@@ -720,7 +720,7 @@ public class PropertyUpdateConsume extends Fragment {
                 popupMenu.show();
             }
         });
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         popupMenu.setOnMenuItemClickListener(new choiceCurrency());
     }
 

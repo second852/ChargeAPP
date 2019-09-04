@@ -207,10 +207,10 @@ public class SelectShowCircleDe extends Fragment {
 
     private void setDB() {
         Common.setChargeDB(activity);
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB);
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
     }
 
     private PieData addData() {

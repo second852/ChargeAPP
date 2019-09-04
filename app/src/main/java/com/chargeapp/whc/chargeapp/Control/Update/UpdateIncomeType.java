@@ -24,7 +24,7 @@ import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.BankTypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
@@ -58,7 +58,7 @@ public class UpdateIncomeType extends Fragment {
     private RelativeLayout choiceL;
     private GridView choiceG;
     private String action;
-    private BankTybeDB bankTybeDB;
+    private BankTypeDB bankTypeDB;
     private BankTypeVO bankTypeVO;
     private TypeDB typeDB;
     private TypeVO typeVO;
@@ -90,12 +90,12 @@ public class UpdateIncomeType extends Fragment {
         ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         action = (String) getArguments().getSerializable("action");
         Common.setChargeDB(context);
-        bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankTypeDB = new BankTypeDB(MainActivity.chargeAPPDB);
+        typeDB = new TypeDB(MainActivity.chargeAPPDB);
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
+        bankDB = new BankDB(MainActivity.chargeAPPDB);
         progressDialog = new ProgressDialog(context);
         handler = new Handler(Looper.getMainLooper());
         findViewById(view);
@@ -214,7 +214,7 @@ public class UpdateIncomeType extends Fragment {
 
             } else {
 
-                BankTypeVO old = bankTybeDB.findByName(mainType);
+                BankTypeVO old = bankTypeDB.findByName(mainType);
                 if ((old != null)&&(!oldname.trim().equals(mainType)))
                 {
                     mainName.setError("項目不能重複");
@@ -271,7 +271,7 @@ public class UpdateIncomeType extends Fragment {
                 }
                 bankTypeVO.setGroupNumber(mainType);
                 bankTypeVO.setName(mainType);
-                bankTybeDB.update(bankTypeVO);
+                bankTypeDB.update(bankTypeVO);
                 progressDialog.cancel();
                 Bundle bundle = new Bundle();
                 Fragment fragment = new SettingListType();

@@ -84,11 +84,11 @@ public class GoalListAll extends Fragment {
         firstShow = true;
         final View view = inflater.inflate(R.layout.goal_list, container, false);
         Common.setChargeDB(context);
-        goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        goalDB = new GoalDB(MainActivity.chargeAPPDB);
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
+        bankDB = new BankDB(MainActivity.chargeAPPDB);
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         try {
             p = (int) getArguments().getSerializable("position");
         } catch (Exception e) {

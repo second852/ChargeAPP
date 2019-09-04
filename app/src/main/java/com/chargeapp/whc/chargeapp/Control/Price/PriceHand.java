@@ -122,7 +122,7 @@ public class PriceHand extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.price_hand, container, false);
         Common.setChargeDB(context);
-        priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        priceDB = new PriceDB(MainActivity.chargeAPPDB);
         now = Calendar.getInstance();
         findViewById(view);
         String period = priceDB.findMaxPeriod();

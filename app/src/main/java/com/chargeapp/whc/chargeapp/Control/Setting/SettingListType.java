@@ -18,7 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.BankTypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
@@ -48,7 +48,7 @@ public class SettingListType extends Fragment {
     private ListView listView;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
-    private BankTybeDB bankTybeDB;
+    private BankTypeDB bankTypeDB;
     private int p;
     private Spinner typeH;
     private int spinnerC;
@@ -74,9 +74,9 @@ public class SettingListType extends Fragment {
         listView = view.findViewById(R.id.list);
         typeH = view.findViewById(R.id.typeH);
         Common.setChargeDB(context);
-        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDB = new TypeDB(MainActivity.chargeAPPDB);
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
+        bankTypeDB = new BankTypeDB(MainActivity.chargeAPPDB);
         p = (int) getArguments().getSerializable("position");
         spinnerC = (int) getArguments().getSerializable("spinnerC");
         typeH.setOnItemSelectedListener(new choiceType());
@@ -104,7 +104,7 @@ public class SettingListType extends Fragment {
         } else if (spinnerC == 1) {
             objects.addAll(typeDetailDB.getTypdAll());
         } else {
-            objects.addAll(bankTybeDB.getAll());
+            objects.addAll(bankTypeDB.getAll());
         }
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {

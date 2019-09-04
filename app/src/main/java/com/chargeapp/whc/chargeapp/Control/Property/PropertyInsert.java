@@ -65,7 +65,7 @@ public class PropertyInsert extends Fragment {
         setDropDown();
         save.setOnClickListener(new saveData());
         Common.setChargeDB(activity);
-        propertyDB=new PropertyDB( MainActivity.chargeAPPDB.getReadableDatabase());
+        propertyDB=new PropertyDB( MainActivity.chargeAPPDB);
         return view;
     }
 

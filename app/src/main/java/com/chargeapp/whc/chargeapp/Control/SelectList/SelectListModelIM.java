@@ -75,7 +75,7 @@ public class SelectListModelIM extends Fragment {
         gson = new Gson();
         findViewById(view);
         Common.setChargeDB(context);
-        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB = new BankDB(MainActivity.chargeAPPDB);
         setLayout();
         return view;
     }

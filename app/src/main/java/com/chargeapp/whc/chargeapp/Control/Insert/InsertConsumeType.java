@@ -83,8 +83,8 @@ public class InsertConsumeType extends Fragment {
         View view = inflater.inflate(R.layout.updae_con_type, container, false);
         ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         Common.setChargeDB(context);
-        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDB = new TypeDB(MainActivity.chargeAPPDB);
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
         object = getArguments().getSerializable("object");
         action = (String) getArguments().getSerializable("action");
         mainClick = false;
@@ -413,8 +413,8 @@ public class InsertConsumeType extends Fragment {
             insertNewType=false;
             context.setTitle("新增次項目類別");
             TypeVO typeVO=typeVOS.get(i);
-            ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
+            InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB);
             List<TypeDetailVO> typeDetailVOS = typeDetailDB.findByGroupname(typeVO.getName());
             for (TypeDetailVO t : typeDetailVOS) {
                 t.setGroupNumber(typeVO.getName().trim());

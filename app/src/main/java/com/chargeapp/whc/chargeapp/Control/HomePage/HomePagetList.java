@@ -203,8 +203,8 @@ public class HomePagetList extends Fragment {
 
     private void setDB() {
         Common.setChargeDB(context);
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
     }
 
     private class ListAdapter extends BaseAdapter {

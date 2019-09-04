@@ -83,10 +83,10 @@ public class JobSchedulerService extends JobService {
             }
             Common.setChargeDB(this);
             Common.insertNewTableCol();
-            consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
+            bankDB = new BankDB(MainActivity.chargeAPPDB);
+            goalDB = new GoalDB(MainActivity.chargeAPPDB);
+            propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
 
             List<BankVO> bankVOS = bankDB.getFixDate();
             List<ConsumeVO> consumerVOS = consumeDB.getFixdate();

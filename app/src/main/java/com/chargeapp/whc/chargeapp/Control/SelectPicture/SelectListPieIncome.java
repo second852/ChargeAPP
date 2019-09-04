@@ -83,7 +83,7 @@ public class SelectListPieIncome extends Fragment {
         findViewById(view);
         gson =new Gson();
         Common.setChargeDB(context);
-        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB = new BankDB(MainActivity.chargeAPPDB);
         year = (int) getArguments().getSerializable("year");
         month = (int) getArguments().getSerializable("month");
         key = (String) getArguments().getSerializable("type");

@@ -62,7 +62,7 @@ public class SettingListFixIon extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         gson = new Gson();
         Common.setChargeDB(context);
-        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB = new BankDB(MainActivity.chargeAPPDB);
         View view = inflater.inflate(R.layout.setting_main, container, false);
         bankVO = (BankVO) getArguments().getSerializable("bankVO");
         p = (int) getArguments().getSerializable("position");

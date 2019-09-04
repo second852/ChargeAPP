@@ -266,10 +266,10 @@ public class PropertyUpdateMoney extends Fragment {
 
     private void setDataBase() {
         Common.setChargeDB(activity);
-        PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getWritableDatabase());
-        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB);
+        bankDB=new BankDB(MainActivity.chargeAPPDB);
+        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         Long propertyId= (Long) bundle.getSerializable(Common.propertyFromVoId);
         propertyFromVO=propertyFromDB.findByPropertyFromId(propertyId);
         propertyVO=propertyDB.findById(propertyFromVO.getPropertyId());
@@ -568,7 +568,7 @@ public class PropertyUpdateMoney extends Fragment {
             //原本有手續費 手續費<0 情況
             if(propertyFromVO.getImportFeeId()!=null)
             {
-                ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
+                ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
                 if(fee==0)
                 {
                     consumeDB.deleteById(propertyFromVO.getImportFeeId().intValue());
@@ -609,7 +609,7 @@ public class PropertyUpdateMoney extends Fragment {
                     consumeVO.setRealMoney(fee.toString());
                     consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
                     consumeVO.setDate(new Date(System.currentTimeMillis()));
-                    ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
+                    ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
                     propertyFromVO.setImportFeeId( consumeDB.insert(consumeVO));
                 }
             }
@@ -646,7 +646,7 @@ public class PropertyUpdateMoney extends Fragment {
                 popupMenu.show();
             }
         });
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         popupMenu.setOnMenuItemClickListener(new choiceCurrency());
     }
 

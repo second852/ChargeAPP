@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.ChargeDB;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.Settings;
 
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
@@ -13,10 +14,10 @@ import java.util.List;
 
 
 public class GoalDB {
-    private SQLiteDatabase db;
+    private SQLiteOpenHelper db;
     private String TABLE_NAME="Goal";
     private String COL_id="id";
-    public GoalDB(SQLiteDatabase db)
+    public GoalDB(SQLiteOpenHelper db)
     {
         this.db=db;
     }
@@ -24,7 +25,7 @@ public class GoalDB {
     public List<GoalVO> getAll() {
         String sql = "SELECT * FROM goal order by statue,endTime desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<GoalVO> goalVOS = new ArrayList<>();
         GoalVO goalVO;
         while (cursor.moveToNext()) {
@@ -52,7 +53,7 @@ public class GoalDB {
     public List<GoalVO> getNotify() {
         String sql = "SELECT * FROM goal where notify ='true'and statue = '0' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<GoalVO> goalVOS = new ArrayList<>();
         GoalVO goalVO;
         while (cursor.moveToNext()) {
@@ -80,7 +81,7 @@ public class GoalDB {
     public List<GoalVO> getNoCompleteAll() {
         String sql = "SELECT * FROM goal where statue = '0' order by statue desc,endTime desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<GoalVO> goalVOS = new ArrayList<>();
         GoalVO goalVO;
         while (cursor.moveToNext()) {
@@ -108,7 +109,7 @@ public class GoalDB {
     public List<GoalVO> getRealMoneyIsNull() {
         String sql = "SELECT * FROM goal where realMoney isnull or trim(realMoney) = '' ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<GoalVO> goalVOS = new ArrayList<>();
         GoalVO goalVO;
         while (cursor.moveToNext()) {
@@ -136,7 +137,7 @@ public class GoalDB {
     public GoalVO getFindType(String type) {
         String sql = "SELECT * FROM goal where trim(type) = '"+type+"' and statue = 0 ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         GoalVO goalVO=null;
         if (cursor.moveToNext()) {
             goalVO=new GoalVO();
@@ -162,7 +163,7 @@ public class GoalDB {
     public GoalVO getFindType(String type,String name) {
         String sql = "SELECT * FROM goal where trim(type) = '"+type+"' and trim(name) = '"+name +"' ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         GoalVO goalVO=null;
         if (cursor.moveToNext()) {
             goalVO=new GoalVO();
@@ -188,7 +189,7 @@ public class GoalDB {
     public GoalVO getFindid(int id) {
         String sql = "SELECT * FROM goal where id = '"+id+"' and statue = 0 ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         GoalVO goalVO=null;
         if (cursor.moveToNext()) {
             goalVO=new GoalVO();
@@ -227,7 +228,7 @@ public class GoalDB {
         values.put("statue",0);
         values.put("currency",goalVO.getCurrency());
         values.put("realMoney",goalVO.getRealMoney());
-        return db.insert(TABLE_NAME, null, values);
+        return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
     public long insertHid(GoalVO goalVO) {
@@ -246,7 +247,7 @@ public class GoalDB {
         values.put("statue",0);
         values.put("currency",goalVO.getCurrency());
         values.put("realMoney",goalVO.getRealMoney());
-        return db.insert(TABLE_NAME, null, values);
+        return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
     public int update(GoalVO goalVO) {
@@ -266,12 +267,12 @@ public class GoalDB {
         values.put("realMoney",goalVO.getRealMoney());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(goalVO.getId())};
-        return db.update(TABLE_NAME, values, whereClause, whereArgs);
+        return db.getWritableDatabase().update(TABLE_NAME, values, whereClause, whereArgs);
     }
     public int deleteById(int id) {
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {String.valueOf(id)};
-        return db.delete(TABLE_NAME, whereClause, whereArgs);
+        return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
     }
 
 }

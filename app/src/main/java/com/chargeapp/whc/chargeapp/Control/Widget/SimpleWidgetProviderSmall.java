@@ -41,7 +41,7 @@ public class SimpleWidgetProviderSmall extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         int count = appWidgetIds.length;
         ChargeAPPDB chargeAPPDB=new ChargeAPPDB(context);
-        CarrierDB carrierDB=new CarrierDB(chargeAPPDB.getReadableDatabase());
+        CarrierDB carrierDB=new CarrierDB(chargeAPPDB);
         List<String> springItem=carrierDB.getAllNul();
         SharedPreferences sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         int b=sharedPreferences.getInt("carrier",0);

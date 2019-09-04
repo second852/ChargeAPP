@@ -98,7 +98,7 @@ public class Welcome extends AppCompatActivity {
    {
         Common.setChargeDB(this);
         Common.insertNewTableCol();
-        ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
         for(ConsumeVO consumeVO:consumeDB.getAll())
         {
             ConsumeVO c=consumeDB.findOldCon(consumeVO);
@@ -116,7 +116,7 @@ public class Welcome extends AppCompatActivity {
     {
 
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Currency;");
-          InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+          InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB);
           invoiceDB.deleteBytime(Timestamp.valueOf("2019-02-01 00:00:00"));
 
 //        ElePeriodDB ele=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
@@ -128,28 +128,28 @@ public class Welcome extends AppCompatActivity {
     private Runnable modifyMoneyFromIntegerToString=new Runnable() {
         @Override
         public void run() {
-            ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getWritableDatabase());
+            ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
             List<ConsumeVO> consumeVOS=consumeDB.getRealMoneyIsNull();
             for(ConsumeVO consumeVO:consumeVOS)
             {
                 consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
                 consumeDB.update(consumeVO);
             }
-            InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getWritableDatabase());
+            InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB);
             List<InvoiceVO> invoiceVOS=invoiceDB.getRealAmountIsNull();
             for(InvoiceVO invoiceVO:invoiceVOS)
             {
                 invoiceVO.setRealAmount(String.valueOf(invoiceVO.getAmount()));
                 invoiceDB.update(invoiceVO);
             }
-            BankDB bankDB=new BankDB(MainActivity.chargeAPPDB.getWritableDatabase());
+            BankDB bankDB=new BankDB(MainActivity.chargeAPPDB);
             List<BankVO> bankVOS=bankDB.getrealMoneyIsNullAll();
             for(BankVO bankVO:bankVOS)
             {
                 bankVO.setRealMoney(String.valueOf(bankVO.getMoney()));
                 bankDB.update(bankVO);
             }
-            GoalDB goalDB=new GoalDB(MainActivity.chargeAPPDB.getWritableDatabase());
+            GoalDB goalDB=new GoalDB(MainActivity.chargeAPPDB);
             List<GoalVO> goalVOS=goalDB.getRealMoneyIsNull();
             for(GoalVO goalVO:goalVOS)
             {
@@ -170,7 +170,7 @@ public class Welcome extends AppCompatActivity {
 
                 Common.setChargeDB(Welcome.this);
                 Common.insertNewTableCol();
-                CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+                CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
 
 //                if it  has downloaded today,not run;
                 Calendar nowTime=Calendar.getInstance();
@@ -408,10 +408,10 @@ public class Welcome extends AppCompatActivity {
         ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);
         JobInfo.Builder builder = new JobInfo.Builder(0, mServiceComponent);
 //        tm.cancelAll();
-        builder.setPeriodic(1000*60*60);
-        builder.setPersisted(true);
-//        builder.setMinimumLatency(1);
-//        builder.setOverrideDeadline(2);
+//        builder.setPeriodic(1000*60*60);
+//        builder.setPersisted(true);
+        builder.setMinimumLatency(1);
+        builder.setOverrideDeadline(2);
         builder.setRequiresCharging(false);
         builder.setRequiresDeviceIdle(false);
         tm.schedule(builder.build());
@@ -475,9 +475,9 @@ public class Welcome extends AppCompatActivity {
 
     private void permissionsOk() {
         MainActivity.chargeAPPDB = new ChargeAPPDB(Welcome.this);
-        TypeDB typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        TypeDB typeDB = new TypeDB(MainActivity.chargeAPPDB);
         List<TypeVO> typeVOS = typeDB.getAll();
-        PriceDB priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        PriceDB priceDB=new PriceDB(MainActivity.chargeAPPDB);
         if (typeVOS.size() <= 0||priceDB.getAll().size()<=0) {
             Fragment fragment=new Download();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();

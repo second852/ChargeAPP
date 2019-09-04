@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.ChargeDB;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
@@ -12,11 +13,11 @@ import java.util.List;
 
 
 public class PriceDB {
-    private SQLiteDatabase db;
+    private SQLiteOpenHelper db;
     private String TABLE_NAME = "PRICE";
     private String COL_id = "invoYm";
 
-    public PriceDB(SQLiteDatabase db) {
+    public PriceDB(SQLiteOpenHelper db) {
         this.db = db;
     }
 
@@ -24,7 +25,7 @@ public class PriceDB {
     public List<PriceVO> getAll() {
         String sql = "SELECT * FROM PRICE order by invoYm;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PriceVO> priceVOS = new ArrayList<>();
         PriceVO priceVO;
         while (cursor.moveToNext()) {
@@ -59,7 +60,7 @@ public class PriceDB {
     public PriceVO getPeriodAll(String period) {
         String sql = "SELECT * FROM PRICE where invoYm ='"+period+"'order by invoYm;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         PriceVO priceVO=null;
         if (cursor.moveToNext()) {
             priceVO = new PriceVO();
@@ -91,7 +92,7 @@ public class PriceDB {
     public String findMaxPeriod() {
         String sql = "SELECT MAX(invoYm) FROM PRICE ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         String max = null;
         if (cursor.moveToNext()) {
             max = cursor.getString(0);
@@ -123,7 +124,7 @@ public class PriceDB {
         values.put("sixthPrizeNo4", priceVO.getSixthPrizeNo4());
         values.put("sixthPrizeNo5", priceVO.getSixthPrizeNo5());
         values.put("sixthPrizeNo6", priceVO.getSixthPrizeNo6());
-        return db.insert(TABLE_NAME, null, values);
+        return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
     public int update(PriceVO priceVO) {
@@ -150,13 +151,13 @@ public class PriceDB {
         values.put("sixthPrizeNo6", priceVO.getSixthPrizeNo6());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {priceVO.getInvoYm()};
-        return db.update(TABLE_NAME, values, whereClause, whereArgs);
+        return db.getWritableDatabase().update(TABLE_NAME, values, whereClause, whereArgs);
     }
 
     public int deleteById(String id) {
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {id};
-        return db.delete(TABLE_NAME, whereClause, whereArgs);
+        return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
     }
 
 }

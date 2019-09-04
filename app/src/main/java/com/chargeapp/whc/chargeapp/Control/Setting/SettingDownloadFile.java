@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -28,7 +29,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.BankTypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ElePeriodDB;
@@ -93,7 +94,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     private BankDB bankDB;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
-    private BankTybeDB bankTybeDB;
+    private BankTypeDB bankTypeDB;
     private GoalDB goalDB;
     private CarrierDB carrierDB;
     private PriceDB priceDB;
@@ -122,16 +123,17 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         context.setTitle("匯入檔案");
         View view = inflater.inflate(R.layout.setting_main, container, false);
         Common.setChargeDB(context);
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        elePeriodDB=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        SQLiteOpenHelper sqLiteOpenHelper=MainActivity.chargeAPPDB;
+        consumeDB = new ConsumeDB(sqLiteOpenHelper);
+        invoiceDB = new InvoiceDB(sqLiteOpenHelper);
+        bankDB = new BankDB(sqLiteOpenHelper);
+        typeDB = new TypeDB(sqLiteOpenHelper);
+        bankTypeDB = new BankTypeDB(sqLiteOpenHelper);
+        typeDetailDB = new TypeDetailDB(sqLiteOpenHelper);
+        goalDB = new GoalDB(sqLiteOpenHelper);
+        carrierDB = new CarrierDB(sqLiteOpenHelper);
+        priceDB=new PriceDB(sqLiteOpenHelper);
+        elePeriodDB=new ElePeriodDB(sqLiteOpenHelper);
         List<EleMainItemVO> itemSon = getNewItem();
         listView = view.findViewById(R.id.list);
         progressL = view.findViewById(R.id.progressL);
@@ -352,10 +354,10 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         bankTypeVO.setGroupNumber(row.getCell(1).getStringCellValue());
                         bankTypeVO.setName(row.getCell(2).getStringCellValue());
                         bankTypeVO.setImage((int) row.getCell(3).getNumericCellValue());
-                        BankTypeVO oldBankTypeVO=bankTybeDB.findExist(bankTypeVO.getGroupNumber(),bankTypeVO.getName());
+                        BankTypeVO oldBankTypeVO= bankTypeDB.findExist(bankTypeVO.getGroupNumber(),bankTypeVO.getName());
                         if(oldBankTypeVO==null)
                         {
-                            bankTybeDB.insert(bankTypeVO);
+                            bankTypeDB.insert(bankTypeVO);
                         }
                     } else if (sheetTitle.equals("Goal")) {
                         GoalVO goalVO = new GoalVO();

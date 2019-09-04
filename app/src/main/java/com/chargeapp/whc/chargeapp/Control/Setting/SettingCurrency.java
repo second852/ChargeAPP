@@ -55,7 +55,7 @@ public class SettingCurrency extends Fragment {
         view = inflater.inflate(R.layout.update_currency, container, false);
         listCurrency=view.findViewById(R.id.listCurrency);
         Common.setChargeDB(context);
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
 
         return view;
     }
@@ -67,7 +67,7 @@ public class SettingCurrency extends Fragment {
     public void onStart() {
         super.onStart();
         Common.setChargeDB(context);
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         List<String> typeCurrency=currencyDB.getAllTypeName();
         listCurrency.setAdapter(new ListAdapter(context,typeCurrency));
     }

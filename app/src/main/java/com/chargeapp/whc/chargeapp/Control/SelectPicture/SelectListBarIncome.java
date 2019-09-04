@@ -78,7 +78,7 @@ public class SelectListBarIncome extends Fragment {
         gson=new Gson();
         findViewById(view);
         Common.setChargeDB(context);
-        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB=new BankDB(MainActivity.chargeAPPDB);
         year= (int) getArguments().getSerializable("year");
         month= (int) getArguments().getSerializable("month");
         day= (int) getArguments().getSerializable("day");

@@ -22,11 +22,15 @@ import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateConsume;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateMoney;
+import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.android.gms.ads.AdView;
 
+import org.jsoup.helper.StringUtil;
+
+import java.sql.Date;
 import java.util.List;
 
 
@@ -63,8 +67,8 @@ public class SettingListFixProperty extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Common.setChargeDB(context);
         View view = inflater.inflate(R.layout.setting_main, container, false);
-        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
+        propertyDB=new PropertyDB(MainActivity.chargeAPPDB);
         bundle=getArguments();
         Long id= (Long) getArguments().getSerializable(Common.propertyFromVoId);
         propertyFromVO=propertyFromDB.findByPropertyFromId(id);
@@ -79,6 +83,11 @@ public class SettingListFixProperty extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        setLayout();
+    }
+
+    public void setLayout() {
         if(propertyFromVO.getFixImport())
         {
             propertyFromVOS=propertyFromDB.findFixProperty(propertyFromVO.getId());
@@ -88,10 +97,6 @@ public class SettingListFixProperty extends Fragment {
             propertyFromVO=propertyFromDB.findByPropertyFromId(propertyFromVO.getFixFromId());
         }
         propertyFromVOS.add(0,propertyFromVO);
-        setLayout();
-    }
-
-    public void setLayout() {
         ListAdapter adapter = (ListAdapter) listView.getAdapter();
         if (adapter == null) {
             listView.setAdapter(new ListAdapter(context, propertyFromVOS));
@@ -165,20 +170,33 @@ public class SettingListFixProperty extends Fragment {
 
 
             //設定 describe
+            int index=1;
+            String currency=Common.Currency().get(propertyFromVO.getSourceCurrency());
             StringBuilder stringBuilder=new StringBuilder();
-            stringBuilder.append("1. 資產 : "+propertyVO.getName()+"\n");
+            stringBuilder.append((index++)+". 資產 : "+propertyVO.getName()+"\n");
             switch (propertyFromVO.getType())
             {
                 case Negative:
                     titleString.append(" "+propertyFromVO.getSourceSecondType());
-                    stringBuilder.append("2. 定期支出 : "+ Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
+                    stringBuilder.append((index++)+". 定期支出 : "+currency +" "+propertyFromVO.getSourceMoney()+"\n");
                     break;
                 case Positive:
                     titleString.append(" "+propertyFromVO.getSourceMainType());
-                    stringBuilder.append("2. 定期收入 : "+ Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
+                    stringBuilder.append((index++)+". 定期收入 : "+ currency+" "+propertyFromVO.getSourceMoney()+"\n");
                     break;
             }
-            stringBuilder.append("3. 時間 : "+propertyFromVO.getFixDateCode().getDetail()+propertyFromVO.getFixDateDetail());
+
+            if(propertyFromVO.getFixFromId()!=null&&!StringUtil.isBlank(propertyFromVO.getImportFee()))
+            {
+                Double fee=Double.valueOf(propertyFromVO.getImportFee());
+                if(fee>0)
+                {
+                    stringBuilder.append((index++)+". 手續費 : "+currency+propertyFromVO.getImportFee()+"\n");
+                }
+            }
+
+            stringBuilder.append((index++)+". 時間 : "+propertyFromVO.getFixDateCode().getDetail()+propertyFromVO.getFixDateDetail());
+
 
 
             title.setText(titleString.toString());

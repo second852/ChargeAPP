@@ -130,8 +130,8 @@ public class SelectIncome extends Fragment {
         year = end.get(Calendar.YEAR);
         day=end.get(Calendar.DAY_OF_MONTH);
         Common.setChargeDB(context);
-        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB = new BankDB(MainActivity.chargeAPPDB);
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());

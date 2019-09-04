@@ -92,7 +92,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         hashMap = new HashMap<>();
         this.context = context;
         Common.setChargeDB(context);
-        priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        priceDB = new PriceDB(MainActivity.chargeAPPDB);
         String sMax=priceDB.findMaxPeriod();
         if(sMax!=null)
         {
@@ -554,7 +554,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
 
     private ConsumeVO getType(ConsumeVO consumeVO) {
         Common.setChargeDB(context);
-        TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
         List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
         String main = "O", second = "O";
         int x = 0, total = 0;

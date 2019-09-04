@@ -38,7 +38,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
     private final static String appId="EINV3201711184648";
     private SimpleDateFormat sd=new SimpleDateFormat("yyyy/MM/dd");
     private Object object;
-    private InvoiceDB invoiceDB= new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+    private InvoiceDB invoiceDB= new InvoiceDB(MainActivity.chargeAPPDB);
     private ConsumeVO consumeVO;
 
     public SetupDateBase64(Object object)

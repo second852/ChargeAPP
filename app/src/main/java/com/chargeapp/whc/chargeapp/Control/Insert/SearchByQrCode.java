@@ -445,7 +445,7 @@ public class SearchByQrCode extends Fragment {
 
     private ConsumeVO getType(ConsumeVO consumeVO) {
 
-        TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
         List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
         String main = "O", second = "O";
         int x = 0, total = 0;

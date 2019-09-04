@@ -93,8 +93,8 @@ public class SelectListModelCom extends Fragment {
         }
 
         Common.setChargeDB(context);
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
         findViewById(view);
         progressDialog = new ProgressDialog(context);
         DRadd.setOnClickListener(new addOnClick());

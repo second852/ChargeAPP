@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.ChargeDB;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
@@ -17,11 +18,11 @@ import java.util.Map;
 
 
 public class PropertyFromDB {
-    private SQLiteDatabase db;
+    private SQLiteOpenHelper db;
     private String TABLE_NAME = "PropertyFrom";
     private String COL_id = "id";
 
-    public PropertyFromDB(SQLiteDatabase db) {
+    public PropertyFromDB(SQLiteOpenHelper db) {
         this.db = db;
     }
 
@@ -75,7 +76,7 @@ public class PropertyFromDB {
     public List<PropertyFromVO> getAll() {
         String sql = "SELECT * FROM PropertyFrom order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOS = new ArrayList<>();
         PropertyFromVO propertyFromVO;
         while (cursor.moveToNext()) {
@@ -89,7 +90,7 @@ public class PropertyFromDB {
     public List<PropertyFromVO> getFixAll(PropertyType propertyType) {
         String sql = "SELECT * FROM PropertyFrom where type = "+propertyType.getCode()+" and fixImport = 'true'  order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOS = new ArrayList<>();
         PropertyFromVO propertyFromVO;
         while (cursor.moveToNext()) {
@@ -104,7 +105,7 @@ public class PropertyFromDB {
     public List<PropertyFromVO> findByPropertyId(Long propertyId) {
         String sql = "SELECT * FROM PropertyFrom where propertyId ='"+propertyId +"' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOS = new ArrayList<>();
         PropertyFromVO propertyFromVO;
         while (cursor.moveToNext()) {
@@ -119,7 +120,7 @@ public class PropertyFromDB {
     public PropertyFromVO findByPropertyFromId(Long id) {
         String sql = "SELECT * FROM PropertyFrom where id ='"+id +"' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         PropertyFromVO propertyFromVO=null;
         if (cursor.moveToNext()) {
             propertyFromVO=getPropertyFromVO(cursor);
@@ -132,7 +133,7 @@ public class PropertyFromDB {
     public PropertyFromVO findByImportFeeId(Long id) {
         String sql = "SELECT * FROM PropertyFrom where importFeeId = ? order by id;";
         String[] args = {String.valueOf(id)};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         PropertyFromVO propertyFromVO=null;
         if (cursor.moveToNext()) {
             propertyFromVO=getPropertyFromVO(cursor);
@@ -145,7 +146,7 @@ public class PropertyFromDB {
     public Double totalType(Long propertyId, PropertyType type) {
         String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where propertyId ='"+propertyId +"' and type = '"+type.getCode()+"' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         Double total=0.0;
         CurrencyVO currencyVO;
         CurrencyDB currencyDB=new CurrencyDB(db);
@@ -164,7 +165,7 @@ public class PropertyFromDB {
     public Double findBySourceMainType(String sourceMainType) {
         String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where sourceMainType ='"+sourceMainType +"' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         CurrencyDB currencyDB=new CurrencyDB(db);
         Double total=0.0;
         CurrencyVO currencyVO;
@@ -183,7 +184,7 @@ public class PropertyFromDB {
     public List<PropertyFromVO> findByPropertyMainType(String sourceMainType, Long propertyId) {
         String sql = "SELECT * FROM PropertyFrom where sourceMainType ='"+sourceMainType +"' and  propertyId = '"+propertyId+"' order by sourceDate desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOList=new ArrayList<>();
         while (cursor.moveToNext()) {
             PropertyFromVO propertyFromVO=getPropertyFromVO(cursor);
@@ -197,7 +198,7 @@ public class PropertyFromDB {
     public List<PropertyFromVO> findFixProperty(Long propertyFromVoId) {
         String sql = "SELECT * FROM PropertyFrom where fixFromId = '"+propertyFromVoId +"'  order by sourceDate ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOList=new ArrayList<>();
         while (cursor.moveToNext()) {
             PropertyFromVO propertyFromVO=getPropertyFromVO(cursor);
@@ -211,7 +212,7 @@ public class PropertyFromDB {
     public List<PropertyFromVO> findFixAllProperty() {
         String sql = "SELECT * FROM PropertyFrom where fixImport = 'true' order by sourceDate ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOList=new ArrayList<>();
         while (cursor.moveToNext()) {
             PropertyFromVO propertyFromVO=getPropertyFromVO(cursor);
@@ -225,7 +226,7 @@ public class PropertyFromDB {
     public List<PropertyFromVO> findByPropertySecondType(String sourceSecondType, Long propertyId) {
         String sql = "SELECT * FROM PropertyFrom where sourceSecondType ='"+sourceSecondType +"' and  propertyId = '"+propertyId+"' order by sourceDate desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOList=new ArrayList<>();
         while (cursor.moveToNext()) {
             PropertyFromVO propertyFromVO=getPropertyFromVO(cursor);
@@ -238,7 +239,7 @@ public class PropertyFromDB {
     public Double findBySourceSecondType(String sourceSecondType) {
         String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where sourceSecondType ='"+sourceSecondType +"' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         CurrencyDB currencyDB=new CurrencyDB(db);
         Double total=0.0;
         CurrencyVO currencyVO;
@@ -258,7 +259,7 @@ public class PropertyFromDB {
     public PropertyFromVO findAutoBySourceTimeAndAutoId(Long start,Long end,Long id) {
         String sql = "SELECT * FROM PropertyFrom where sourceDate between ? and ? and  fixFromId = ? order by id;";
         String[] args = {String.valueOf(start),String.valueOf(end),String.valueOf(id)};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         PropertyFromVO propertyFromVO=null;
         if (cursor.moveToNext()) {
            propertyFromVO=getPropertyFromVO(cursor);
@@ -271,7 +272,7 @@ public class PropertyFromDB {
     public Double getTotalAll() {
         String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         CurrencyDB currencyDB=new CurrencyDB(db);
         Double total=0.0;
         CurrencyVO currencyVO;
@@ -290,7 +291,7 @@ public class PropertyFromDB {
     {
         String sql = "SELECT * FROM PropertyFrom where type ='"+propertyType.getCode() +"' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         CurrencyDB currencyDB=new CurrencyDB(db);
         PropertyFromVO propertyFromVO;
         Map<String,Double> map=new HashMap<>();
@@ -317,7 +318,7 @@ public class PropertyFromDB {
     {
         String sql = "SELECT * FROM PropertyFrom where type ='"+propertyType.getCode() +"' and propertyId = "+propertyId+" order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         CurrencyDB currencyDB=new CurrencyDB(db);
         PropertyFromVO propertyFromVO;
         Map<String,Double> map=new HashMap<>();
@@ -343,7 +344,7 @@ public class PropertyFromDB {
     {
         String sql = "SELECT * FROM PropertyFrom where type ='"+propertyType.getCode() +"' and sourceMainType =  '"+sourceMainType+"' and propertyId = '"+propertyId+"' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor =db.getReadableDatabase().rawQuery(sql, args);
         CurrencyDB currencyDB=new CurrencyDB(db);
         PropertyFromVO propertyFromVO;
         Map<String,Double> map=new HashMap<>();
@@ -367,7 +368,7 @@ public class PropertyFromDB {
 
     public long insert(PropertyFromVO propertyFromVO) {
         ContentValues values = getContentValues(propertyFromVO);
-        return db.insert(TABLE_NAME, null, values);
+        return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
 
@@ -375,20 +376,20 @@ public class PropertyFromDB {
         ContentValues values = getContentValues(propertyFromVO);
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {String.valueOf(propertyFromVO.getId())};
-        return db.update(TABLE_NAME, values, whereClause, whereArgs);
+        return db.getWritableDatabase().update(TABLE_NAME, values, whereClause, whereArgs);
     }
 
     public int deleteById(Long id) {
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {String.valueOf(id)};
-        return db.delete(TABLE_NAME, whereClause, whereArgs);
+        return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
     }
 
     public int deleteByPropertyId(int propertyId) {
         String whereClause ="propertyId = ?;";
         String[] whereArgs = {String.valueOf(propertyId)};
         String sql = "SELECT * FROM PropertyFrom where  propertyId = ? order by id;";
-        Cursor cursor = db.rawQuery(sql, whereArgs);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, whereArgs);
         ConsumeDB consumeDB=new ConsumeDB(db);
         while (cursor.moveToNext())
         {
@@ -398,7 +399,7 @@ public class PropertyFromDB {
                 consumeDB.deleteById(propertyFromVO.getImportFeeId().intValue());
             }
         }
-        return db.delete(TABLE_NAME, whereClause, whereArgs);
+        return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
     }
 
 }

@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.ChargeDB;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
@@ -20,10 +21,10 @@ import java.util.List;
 
 
 public class InvoiceDB {
-    private SQLiteDatabase db;
+    private SQLiteOpenHelper db;
     private String TABLE_NAME="INVOICE";
     private String COL_id="id";
-    public InvoiceDB(SQLiteDatabase db)
+    public InvoiceDB(SQLiteOpenHelper db)
     {
         this.db=db;
     }
@@ -31,7 +32,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getAll() {
         String sql = "SELECT * FROM INVOICE order by time desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -68,7 +69,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getRealAmountIsNull() {
         String sql = "SELECT * FROM INVOICE where realAmount isnull or trim(realAmount) = '';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -106,7 +107,7 @@ public class InvoiceDB {
         long showtime=getStartTime();
         String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and invDonatable = 'true' and donateMark = '0'  and time >='"+showtime+"' order by time desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -143,7 +144,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getErrorDonateMark(String carrrier) {
         String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"'and donateMark = 'true' or donateMark = 'false' order by time ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -181,7 +182,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getNoDetailAll() {
         String sql = "SELECT * FROM INVOICE  where detail = '0' order by time desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -219,7 +220,7 @@ public class InvoiceDB {
         long showtime=getStartTime();
         String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and time >='"+showtime+"'order by time desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -260,7 +261,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getWinIn(long startTime,long endTime) {
         String sql = "SELECT * FROM INVOICE  where iswin != 'N' and donateMark = '0' and time >= '"+startTime+"' and time <'"+endTime+"' order by time desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -298,7 +299,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getNotSetWin(String carrrier,long startTime,long endTime) {
         String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and iswin = '0' and heartyteam is null and time between '"+startTime+"' and '"+endTime+"' order by time desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -336,7 +337,7 @@ public class InvoiceDB {
         long minTime=0;
         String sql = "SELECT min(time) FROM INVOICE  where carrier = '"+carrrier+"' and donateMark = '1' ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         if(cursor.moveToNext())
         {
             minTime=cursor.getLong(0);
@@ -402,7 +403,7 @@ public class InvoiceDB {
 
         String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and donateMark='1' and invDonatable = 'false' order by donateTime desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -439,7 +440,7 @@ public class InvoiceDB {
     public long getMinTime() {
         String sql = "SELECT min(time) FROM INVOICE ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         long minTime=0;
         if (cursor.moveToNext()) {
             minTime=cursor.getLong(0);
@@ -452,7 +453,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getInvoiceBytime(Timestamp start,Timestamp end) {
         String sql = "SELECT * FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' order by time desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -489,11 +490,11 @@ public class InvoiceDB {
     public HashMap<String,Double> getInvoiceByTimeHashMap(long start, long end) {
         String sql = "SELECT maintype,realAmount,currency FROM INVOICE  where time between '"+start+"' and '"+end+"' order by realAmount desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         HashMap<String,Double> hashMap=new HashMap<>();
         String main;
         Double money,total=0.0;
-        CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         CurrencyVO currencyVO;
         while (cursor.moveToNext()) {
             main=cursor.getString(0);
@@ -515,7 +516,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getInvoiceBytimeMainType(Timestamp start,Timestamp end,String mainType) {
         String sql = "SELECT * FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' and maintype = '"+mainType+"' order by time desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -552,7 +553,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getInvoiceMainType(String mainType) {
         String sql = "SELECT * FROM INVOICE  where maintype = '"+mainType+"';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -589,7 +590,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getInvoiceSecondType(String mainType,String second) {
         String sql = "SELECT * FROM INVOICE  where maintype = '"+mainType+"' and secondtype = '"+second+"';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -626,7 +627,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getInvoiceBytimeSecondType(Timestamp start,Timestamp end,String secondtype) {
         String sql = "SELECT * FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' and secondtype = '"+secondtype+"' order by time desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -663,7 +664,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getInvoiceBytimeSecondType(Timestamp start,Timestamp end,String secondtype,String carrier) {
         String sql = "SELECT * FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' and secondtype = '"+secondtype+"' and carrier = '"+carrier+"' order by time desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -703,7 +704,7 @@ public class InvoiceDB {
                 "and  secondtype = '"+oldInvoiceVO.getSecondtype()+"' and " +
                 "time = '"+oldInvoiceVO.getTime().getTime()+"' and realAmount = '"+oldInvoiceVO.getRealAmount()+"';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         InvoiceVO invoiceVO=null;
         if (cursor.moveToNext()) {
             invoiceVO=new InvoiceVO();
@@ -739,7 +740,7 @@ public class InvoiceDB {
         String sql = "SELECT * FROM INVOICE  where "+
                 "invNum = '"+nul+"' and realAmount = '"+amount+"';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         InvoiceVO invoiceVO=null;
         if (cursor.moveToNext()) {
             invoiceVO=new InvoiceVO();
@@ -775,9 +776,9 @@ public class InvoiceDB {
     public HashMap<String,Double> getInvoiceByTimeMaxType(long start,long end) {
         String sql = "SELECT maintype,realAmount,currency FROM INVOICE  where time between '"+start+"' and '"+end+"';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         HashMap<String,Double> hashMap=new HashMap<>();
-        CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         CurrencyVO currencyVO;
         String mainType;
         Double realAmount,total=0.0;
@@ -801,7 +802,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getInvoiceBytimeMainType(Timestamp start,Timestamp end,String mainType,String user) {
         String sql = "SELECT * FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' and maintype = '"+mainType+"' and carrier = '"+user+"' order by time desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -839,7 +840,7 @@ public class InvoiceDB {
     public List<InvoiceVO> checkInvoiceRepeat(Calendar start,Calendar end,String nul) {
         String sql = "SELECT * FROM INVOICE  where time between '"+start.getTimeInMillis()+"' and '"+end.getTimeInMillis()+"' and invNum = '"+nul+"' order by time desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -876,7 +877,7 @@ public class InvoiceDB {
     public List<InvoiceVO> getInvoiceBytime(Timestamp start,Timestamp end,String user) {
         String sql = "SELECT * FROM INVOICE  where carrier ='"+user+"' and time between '"+start.getTime()+"' and '"+end.getTime()+"' order by time desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -913,7 +914,7 @@ public class InvoiceDB {
     public long findIVByMaxDate(String carrier) {
         String sql = "SELECT MAX(time) FROM INVOICE where carrier ='"+carrier+"';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         long time=0;
         if (cursor.moveToNext()) {
             time=cursor.getLong(0);
@@ -925,7 +926,7 @@ public class InvoiceDB {
     public List<InvoiceVO> findIVTypenull() {
         String sql = "SELECT * FROM INVOICE where maintype = '0';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
@@ -984,7 +985,7 @@ public class InvoiceDB {
         values.put("currency",invoiceVO.getCurrency());
         values.put("realAmount",invoiceVO.getRealAmount());
         values.put("propertyId",invoiceVO.getPropertyId());
-        return db.insert(TABLE_NAME, null, values);
+        return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
 
@@ -1015,7 +1016,7 @@ public class InvoiceDB {
         values.put("currency",invoiceVO.getCurrency());
         values.put("realAmount",invoiceVO.getRealAmount());
         values.put("propertyId",invoiceVO.getPropertyId());
-        return db.insert(TABLE_NAME, null, values);
+        return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
     public int update(InvoiceVO invoiceVO) {
@@ -1044,7 +1045,7 @@ public class InvoiceDB {
         values.put("propertyId",invoiceVO.getPropertyId());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(invoiceVO.getId())};
-        return db.update(TABLE_NAME, values, whereClause, whereArgs);
+        return db.getWritableDatabase().update(TABLE_NAME, values, whereClause, whereArgs);
     }
 
 
@@ -1055,30 +1056,30 @@ public class InvoiceDB {
         values.put("carrier",newCarrier.getCarNul());
         String whereClause = "carrier = ?;";
         String[] whereArgs = {oldCarrier.getCarNul()};
-        return db.update(TABLE_NAME, values, whereClause, whereArgs);
+        return db.getWritableDatabase().update(TABLE_NAME, values, whereClause, whereArgs);
     }
 
 
     public int deleteById(int id) {
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {String.valueOf(id)};
-        return db.delete(TABLE_NAME, whereClause, whereArgs);
+        return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
     }
     public int deleteById(String  carrier) {
         String whereClause = "carrier" + " = ?;";
         String[] whereArgs = {carrier};
-        return db.delete(TABLE_NAME, whereClause, whereArgs);
+        return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
     }
     public int deleteBytime(Timestamp  timestamp) {
         String whereClause = "time" + " > ?;";
         String[] whereArgs = {String.valueOf(timestamp.getTime())};
-        return db.delete(TABLE_NAME, whereClause, whereArgs);
+        return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
     }
     public void DeleteError() {
         String sql = "Delete from INVOICE where secondtype = '0' ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
-        db.execSQL(sql);
+        Cursor cursor = db.getWritableDatabase().rawQuery(sql, args);
+        db.getWritableDatabase().execSQL(sql);
     }
 
 }

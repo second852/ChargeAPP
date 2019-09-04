@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.ChargeDB;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
@@ -18,18 +19,18 @@ import java.util.Map;
 
 
 public class BankDB {
-    private SQLiteDatabase db;
+    private SQLiteOpenHelper db;
     private String TABLE_NAME = "BANK";
     private String COL_id = "id";
 
-    public BankDB(SQLiteDatabase db) {
+    public BankDB(SQLiteOpenHelper db) {
         this.db = db;
     }
 
     public List<BankVO> getAll() {
         String sql = "SELECT * FROM BANK order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();
         BankVO bankVO;
         while (cursor.moveToNext()) {
@@ -55,7 +56,7 @@ public class BankDB {
     public List<String> getAllName() {
         String sql = "SELECT distinct maintype FROM BANK order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<String> allName = new ArrayList<>();
         while (cursor.moveToNext()) {
             allName.add(cursor.getString(0));
@@ -67,7 +68,7 @@ public class BankDB {
     public Double getTotalMoneyByName(String mainType) {
         String sql = "SELECT realMoney,currency FROM BANK  where mainType = '"+mainType+"' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         CurrencyDB currencyDB=new CurrencyDB(db);
         Double total=0.0;
         CurrencyVO currencyVO;
@@ -85,7 +86,7 @@ public class BankDB {
     public List<BankVO> getrealMoneyIsNullAll() {
         String sql = "SELECT * FROM BANK where realMoney isnull or trim(realMoney) = '';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();
         BankVO bankVO;
         while (cursor.moveToNext()) {
@@ -110,7 +111,7 @@ public class BankDB {
     public List<BankVO> getFixDate() {
         String sql = "SELECT * FROM BANK where  fixdate = 'true' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();
         BankVO bankVO;
         while (cursor.moveToNext()) {
@@ -135,7 +136,7 @@ public class BankDB {
     public List<BankVO> getAutoSetting(int id) {
         String sql = "SELECT * FROM BANK where autoId = " + id + ";";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();
         BankVO bankVO;
         while (cursor.moveToNext()) {
@@ -160,7 +161,7 @@ public class BankDB {
     public List<BankVO> getTimeAll(Long start, Long end) {
         String sql = "SELECT * FROM BANK where date between '" + start + "' and '" + end + "' order by date desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();
         BankVO bankVO;
         while (cursor.moveToNext()) {
@@ -186,7 +187,7 @@ public class BankDB {
     public BankVO getAutoBank(Timestamp start, Timestamp end, int id) {
         String sql = "SELECT * FROM BANK where autoId = '" + id + "' and date between '" + start.getTime() + "' and '" + end.getTime() + "' order by date;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         BankVO bankVO = null;
         if (cursor.moveToNext()) {
             bankVO = new BankVO();
@@ -210,7 +211,7 @@ public class BankDB {
     public BankVO getFindOldBank(BankVO bankVO) {
         String sql = "SELECT * FROM BANK where maintype = '" + bankVO.getMaintype() + "' and realMoney = '" + bankVO.getRealMoney() + "' and date = '" + bankVO.getDate().getTime() + "';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         BankVO b = null;
         if (cursor.moveToNext()) {
             b = new BankVO();
@@ -235,9 +236,9 @@ public class BankDB {
     public Double getTimeTotal(long start, long end) {
         String sql = "SELECT realMoney,currency  FROM BANK where date between '" + start + "' and '" + end + "' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         Double total = 0.0;
-        CurrencyDB currencyDB = new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        CurrencyDB currencyDB = new CurrencyDB(MainActivity.chargeAPPDB);
         CurrencyVO currencyVO;
         while (cursor.moveToNext()) {
             currencyVO = currencyDB.getBytimeAndType(start, end, cursor.getString(1));
@@ -251,9 +252,9 @@ public class BankDB {
     public Double getAllTotal() {
         String sql = "SELECT realMoney,currency  FROM BANK where date;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         Double total = 0.0;
-        CurrencyDB currencyDB = new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        CurrencyDB currencyDB = new CurrencyDB(MainActivity.chargeAPPDB);
         CurrencyVO currencyVO;
         while (cursor.moveToNext()) {
             currencyVO = currencyDB.getOneByType(cursor.getString(1));
@@ -267,7 +268,7 @@ public class BankDB {
     public long getMinTime() {
         String sql = "SELECT min(date) FROM BANK ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         long minTime = 0;
         if (cursor.moveToNext()) {
             minTime = cursor.getLong(0);
@@ -279,7 +280,7 @@ public class BankDB {
     public List<BankVO> getTimeAll(Timestamp start, Timestamp end, String type) {
         String sql = "SELECT * FROM BANK where date between '" + start.getTime() + "' and '" + end.getTime() + "' and maintype = '" + type + "'order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();
         BankVO bankVO;
         while (cursor.moveToNext()) {
@@ -305,7 +306,7 @@ public class BankDB {
     public List<BankVO> getMainType(String mainType) {
         String sql = "SELECT * FROM BANK where maintype = '" + mainType + "';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();
         BankVO bankVO;
         while (cursor.moveToNext()) {
@@ -332,7 +333,7 @@ public class BankDB {
     public BankVO findById(int id) {
         String sql = "SELECT * FROM BANK where  id = '" + id + "' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         BankVO bankVO = null;
         if (cursor.moveToNext()) {
             bankVO = new BankVO();
@@ -366,7 +367,7 @@ public class BankDB {
         values.put("currency", bankVO.getCurrency());
         values.put("realMoney", bankVO.getRealMoney());
         values.put("propertyId", bankVO.getPropertyId());
-        return db.insert(TABLE_NAME, null, values);
+        return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
     public long insertHid(BankVO bankVO) {
@@ -383,7 +384,7 @@ public class BankDB {
         values.put("currency", bankVO.getCurrency());
         values.put("realMoney", bankVO.getRealMoney());
         values.put("propertyId", bankVO.getPropertyId());
-        return db.insert(TABLE_NAME, null, values);
+        return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
     public int update(BankVO bankVO) {
@@ -401,13 +402,13 @@ public class BankDB {
         values.put("propertyId", bankVO.getPropertyId());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(bankVO.getId())};
-        return db.update(TABLE_NAME, values, whereClause, whereArgs);
+        return db.getWritableDatabase().update(TABLE_NAME, values, whereClause, whereArgs);
     }
 
     public int deleteById(int id) {
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {String.valueOf(id)};
-        return db.delete(TABLE_NAME, whereClause, whereArgs);
+        return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
     }
 
 }

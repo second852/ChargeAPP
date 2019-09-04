@@ -65,8 +65,8 @@ public class EleDonateRecord extends Fragment {
         TypefaceProvider.registerDefaultIconSets();
         View view = inflater.inflate(R.layout.ele_setdenote_record, container, false);
         Common.setChargeDB(context);
-        invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB);
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB);
         findViewById(view);
         carrierVOS=carrierDB.getAll();
         if(carrierVOS==null||carrierVOS.size()<=0)

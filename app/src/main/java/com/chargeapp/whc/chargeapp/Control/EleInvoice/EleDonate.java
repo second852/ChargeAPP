@@ -94,8 +94,8 @@ public class EleDonate extends Fragment {
         View view = inflater.inflate(R.layout.ele_setdenote, container, false);
         progressDialog = new ProgressDialog(context);
         Common.setChargeDB(context);
-        carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB = new CarrierDB(MainActivity.chargeAPPDB);
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
         gson=new Gson();
         donateMap = new HashMap<>();
         findviewbyid(view);

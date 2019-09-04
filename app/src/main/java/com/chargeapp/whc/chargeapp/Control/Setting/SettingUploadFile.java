@@ -31,13 +31,15 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.BankTypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ElePeriodDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
@@ -102,7 +104,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private BankDB bankDB;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
-    private BankTybeDB bankTybeDB;
+    private BankTypeDB bankTypeDB;
     private GoalDB goalDB;
     private CarrierDB carrierDB;
     private PriceDB priceDB;
@@ -111,6 +113,8 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private GoogleApiClient mGoogleApiClient;
     private RelativeLayout progressL;
     private ElePeriodDB elePeriodDB;
+    private PropertyFromDB propertyFromDB;
+    private PropertyDB propertyDB;
     private Activity context;
     private Type cdType;
     private Gson gson;
@@ -165,16 +169,18 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         Common.setChargeDB(context);
         cdType = new TypeToken<List<JsonObject>>() {}.getType();
         gson=new Gson();
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        elePeriodDB=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        priceDB=new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
+        bankDB = new BankDB(MainActivity.chargeAPPDB);
+        typeDB = new TypeDB(MainActivity.chargeAPPDB);
+        bankTypeDB = new BankTypeDB(MainActivity.chargeAPPDB);
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB);
+        goalDB = new GoalDB(MainActivity.chargeAPPDB);
+        elePeriodDB=new ElePeriodDB(MainActivity.chargeAPPDB);
+        priceDB=new PriceDB(MainActivity.chargeAPPDB);
+        propertyDB=new PropertyDB(MainActivity.chargeAPPDB);
+        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
         List<EleMainItemVO> itemSon = getNewItem();
         listView = view.findViewById(R.id.list);
         fileChoice = view.findViewById(R.id.fileChoice);
@@ -734,7 +740,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
 
                 //BankDetail
                 Sheet sheetCon2 = workbook.createSheet("BankType");
-                List<BankTypeVO> bankTypeVOS = bankTybeDB.getExport();
+                List<BankTypeVO> bankTypeVOS = bankTypeDB.getExport();
                 for (int i = 0; i < bankTypeVOS.size(); i++) {
                     Row rowContent = sheetCon2.createRow(i);
                     BankTypeVO bankTypeVO = bankTypeVOS.get(i);
@@ -884,6 +890,13 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(3).setCellValue(elePeriod.getMonth());
                     rowContent.createCell(4).setCellValue(elePeriod.isDownload());
                 }
+
+                //Property
+                Sheet sheetCon10 = workbook.createSheet("Property");
+
+
+
+
             }
             workbook.write(outputStream);
             workbook.close();

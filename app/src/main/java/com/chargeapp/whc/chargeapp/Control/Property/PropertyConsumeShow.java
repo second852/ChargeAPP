@@ -106,9 +106,9 @@ public class PropertyConsumeShow extends Fragment {
         propertyId= (Long) bundle.getSerializable(Common.propertyID);
         mainType= (String) bundle.getSerializable(Common.propertyMainType);
         Common.setChargeDB(activity);
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
+        propertyDB=new PropertyDB(MainActivity.chargeAPPDB);
+        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
         propertyVO=propertyDB.findById(propertyId);
         return view;
     }
@@ -257,7 +257,7 @@ public class PropertyConsumeShow extends Fragment {
                 popupMenu.show();
             }
         });
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         popupMenu.setOnMenuItemClickListener(new choiceCurrency());
     }
 
@@ -292,8 +292,8 @@ public class PropertyConsumeShow extends Fragment {
         insertMoney.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BankDB bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-                PropertyFromDB propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
+                BankDB bankDB=new BankDB(MainActivity.chargeAPPDB);
+                PropertyFromDB propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
 
                 Double remainMoney=(bankDB.getAllTotal()-propertyFromDB.getTotalAll());
                 if(remainMoney<=0)

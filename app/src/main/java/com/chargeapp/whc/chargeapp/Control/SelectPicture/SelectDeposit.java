@@ -129,7 +129,7 @@ public class SelectDeposit extends Fragment {
         //DB
         Common.setChargeDB(context);
 
-        goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        goalDB = new GoalDB(MainActivity.chargeAPPDB);
         goalVO = goalDB.getFindType("儲蓄");
         //setTime
         end = Calendar.getInstance();
@@ -137,10 +137,10 @@ public class SelectDeposit extends Fragment {
         period = 11;
         month = 0;
 
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
+        bankDB = new BankDB(MainActivity.chargeAPPDB);
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
         findViewById(view);
 
 

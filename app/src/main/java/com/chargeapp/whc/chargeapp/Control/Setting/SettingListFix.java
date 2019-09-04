@@ -35,6 +35,8 @@ import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import org.jsoup.helper.StringUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,10 +80,10 @@ public class SettingListFix extends Fragment {
         context.setTitle("設定定期項目");
         View view = inflater.inflate(R.layout.setting_list, container, false);
         Common.setChargeDB(context);
-        bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        propertyDB=new PropertyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB=new BankDB(MainActivity.chargeAPPDB);
+        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
+        propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
+        propertyDB=new PropertyDB(MainActivity.chargeAPPDB);
         listView = view.findViewById(R.id.list);
         typeH = view.findViewById(R.id.typeH);
         message=view.findViewById(R.id.message);
@@ -252,19 +254,34 @@ public class SettingListFix extends Fragment {
                 final PropertyFromVO propertyFromVO= (PropertyFromVO) o;
                 PropertyVO propertyVO=propertyDB.findById(propertyFromVO.getPropertyId());
                 title.setText(propertyVO.getName());
+
+
                 StringBuilder stringBuilder=new StringBuilder();
+                int index=1;
+                String currency=Common.Currency().get(propertyFromVO.getSourceCurrency());
                 switch (propertyFromVO.getType())
                 {
                     case Negative:
-                        stringBuilder.append("1. 項目 : "+propertyFromVO.getSourceSecondType()+"\n");
-                        stringBuilder.append("2. 定期支出 : "+Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
+                        stringBuilder.append((index++)+". 項目 : "+propertyFromVO.getSourceSecondType()+"\n");
+                        stringBuilder.append((index++)+". 定期支出 : "+currency +" "+propertyFromVO.getSourceMoney()+"\n");
                         break;
                     case Positive:
-                        stringBuilder.append("1. 項目 : "+propertyFromVO.getSourceMainType()+"\n");
-                        stringBuilder.append("2. 定期收入 : "+Common.Currency().get(propertyFromVO.getSourceCurrency())+" "+propertyFromVO.getSourceMoney()+"\n");
+                        stringBuilder.append((index++)+". 項目 : "+propertyFromVO.getSourceMainType()+"\n");
+                        stringBuilder.append((index++)+". 定期收入 : "+ currency+" "+propertyFromVO.getSourceMoney()+"\n");
                         break;
                 }
-                stringBuilder.append("3. 時間 : "+propertyFromVO.getFixDateCode().getDetail()+propertyFromVO.getFixDateDetail());
+
+                if(propertyFromVO.getFixFromId()!=null&&!StringUtil.isBlank(propertyFromVO.getImportFee()))
+                {
+                    Double fee=Double.valueOf(propertyFromVO.getImportFee());
+                    if(fee>0)
+                    {
+                        stringBuilder.append((index++)+". 手續費 : "+currency+propertyFromVO.getImportFee()+"\n");
+                    }
+                }
+
+                stringBuilder.append((index++)+". 時間 : "+propertyFromVO.getFixDateCode().getDetail()+propertyFromVO.getFixDateDetail());
+
                 decribe.setText(stringBuilder.toString());
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override

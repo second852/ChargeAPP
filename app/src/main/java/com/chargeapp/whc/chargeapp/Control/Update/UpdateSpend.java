@@ -137,9 +137,9 @@ public class UpdateSpend extends Fragment {
         gson = new Gson();
         setSpinner();
         Common.setChargeDB(context);
-        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDB = new TypeDB(MainActivity.chargeAPPDB);
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
         date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
         date.setOnFocusChangeListener(new dateClickListener());
         date.setOnClickListener(new dateClickListener());

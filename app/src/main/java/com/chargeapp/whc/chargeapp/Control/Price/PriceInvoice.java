@@ -89,8 +89,8 @@ public class PriceInvoice extends Fragment {
         View view = inflater.inflate(R.layout.price_invoice, container, false);
         findViewById(view);
         Common.setChargeDB(context);
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
+        priceDB = new PriceDB(MainActivity.chargeAPPDB);
         progressDialog=new ProgressDialog(context);
         handler=new Handler();
         levelprice=Common.getPriceName();
@@ -232,7 +232,7 @@ public class PriceInvoice extends Fragment {
         donateRL=view.findViewById(R.id.donateRL);
         showRemain.setText("(雲端發票專屬獎中獎清單\n請到財政部網站確認)");
         Common.setChargeDB(context);
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
     }
 
 

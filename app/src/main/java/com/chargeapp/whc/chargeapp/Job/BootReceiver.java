@@ -50,9 +50,9 @@ public class BootReceiver extends BroadcastReceiver {
             id = 0;
             sf = new SimpleDateFormat("yyyy-MM-dd");
             chargeAPPDB = new ChargeAPPDB(context);
-            consumeDB = new ConsumeDB(chargeAPPDB.getReadableDatabase());
-            bankDB = new BankDB(chargeAPPDB.getReadableDatabase());
-            goalDB=new GoalDB(chargeAPPDB.getReadableDatabase());
+            consumeDB = new ConsumeDB(chargeAPPDB);
+            bankDB = new BankDB(chargeAPPDB);
+            goalDB=new GoalDB(chargeAPPDB);
             List<BankVO> bankVOS = bankDB.getFixDate();
             SharedPreferences sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
             boolean setNotify = sharedPreferences.getBoolean("notify", true);

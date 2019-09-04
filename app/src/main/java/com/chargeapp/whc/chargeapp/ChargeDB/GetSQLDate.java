@@ -85,19 +85,19 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             Common.setChargeDB(jobService);
         }
 //        Common.setChargeDB((Activity)object);
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        elePeriodDB = new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
+        carrierDB = new CarrierDB(MainActivity.chargeAPPDB);
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
+        elePeriodDB = new ElePeriodDB(MainActivity.chargeAPPDB);
 //        invoiceDB.deleteBytime(Timestamp.valueOf("2018-09-01 00:00:00"));
     }
 
     public GetSQLDate(Object object, InvoiceVO invoiceVO) {
         this.object = object;
         this.invoiceVO = invoiceVO;
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        carrierDB = new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
+        carrierDB = new CarrierDB(MainActivity.chargeAPPDB);
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
     }
 
 
@@ -158,7 +158,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     }
                 }
             } else if (action.equals("download")) {
-                PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+                PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB);
                 priceMonth = Common.getPriceMonth();
                 if (priceDB.getAll().size() <= 0) {
                     searchPriceNul();
@@ -421,7 +421,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
     private String searchNewPriceNul() {
         boolean end = true;
-        PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB);
         String url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp?";
         String jsonin = "";
         Calendar calendar = Calendar.getInstance();
@@ -465,7 +465,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
     private String searchPriceNul() {
         action = "price";
-        PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB);
         String url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp?";
         String jsonin = "";
         Calendar calendar = Calendar.getInstance();

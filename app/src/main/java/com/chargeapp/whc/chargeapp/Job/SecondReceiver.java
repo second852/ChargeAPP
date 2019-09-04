@@ -66,11 +66,11 @@ public class SecondReceiver extends BroadcastReceiver {
 
             Common.setChargeDB(context);
             Common.insertNewTableCol();
-            consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            goalDB=new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
-            currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
+            invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB);
+            bankDB=new BankDB(MainActivity.chargeAPPDB);
+            goalDB=new GoalDB(MainActivity.chargeAPPDB);
+            currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
             //Detail
             gson=new Gson();
             Calendar date = Calendar.getInstance();

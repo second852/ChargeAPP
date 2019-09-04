@@ -29,7 +29,7 @@ import android.widget.TextView;
 import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
 import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListener;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.BankTypeDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
@@ -62,7 +62,7 @@ public class InsertIncome extends Fragment {
     private String choicedate;
     private BootstrapDropDown choiceStatue,choiceday;
     private Gson gson;
-    private BankTybeDB bankTybeDB;
+    private BankTypeDB bankTypeDB;
     private BankDB bankDB;
     private LinearLayout firstL;
     private GridView firstG;
@@ -234,7 +234,7 @@ public class InsertIncome extends Fragment {
             BsTextMonth=Common.DateChoiceSetBsTest(context,Common.MonthSetSpinnerBS());
             BsTextStatue=Common.DateChoiceSetBsTest(context,Common.DateStatueSetSpinner);
             gson=new Gson();
-            bankDB=new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            bankDB=new BankDB(MainActivity.chargeAPPDB);
             findviewByid();
             setSetOnClickView();
             handlerPicture.sendEmptyMessage(1);
@@ -265,8 +265,8 @@ public class InsertIncome extends Fragment {
         firstG.setOnItemClickListener(new firstGridOnClick());
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
-        bankTybeDB=new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        List<BankTypeVO> bankTypeVOS=bankTybeDB.getAll();
+        bankTypeDB =new BankTypeDB(MainActivity.chargeAPPDB);
+        List<BankTypeVO> bankTypeVOS= bankTypeDB.getAll();
         for (BankTypeVO t : bankTypeVOS) {
             item = new HashMap<String, Object>();
             item.put("image", Download.imageAll[t.getImage()]);

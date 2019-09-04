@@ -229,7 +229,7 @@ public class EleAddBank extends Fragment {
 
     private void findViewById(View view) {
         Common.setChargeDB(context);
-        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB);
         webView = view.findViewById(R.id.webView);
         myProgressBar=view.findViewById(R.id.myProgressBar);
         showError=view.findViewById(R.id.showError);

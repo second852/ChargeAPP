@@ -1066,7 +1066,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ConsumeVO getType(ConsumeVO consumeVO) {
-        TypeDetailDB typeDetailDB = new TypeDetailDB(chargeAPPDB.getReadableDatabase());
+        TypeDetailDB typeDetailDB = new TypeDetailDB(chargeAPPDB);
         List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
         String main = "O", second = "O";
         int x = 0, total = 0;

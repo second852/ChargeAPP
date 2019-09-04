@@ -88,7 +88,7 @@ public class EleUpdateCarrier extends Fragment {
 
         confirm.setOnClickListener(new Confirmlisten());
         Common.setChargeDB(context);
-        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB);
         ViewTreeObserver vto = view.getViewTreeObserver();
         vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
@@ -169,7 +169,7 @@ public class EleUpdateCarrier extends Fragment {
         {
             carrierVO.setId(oldCarrierVO.getId());
             carrierDB.update(carrierVO);
-            InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+            InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB);
             invoiceDB.updateCarrier(oldCarrierVO,carrierVO);
             int i=0;
             if(Common.lostCarrier!=null)

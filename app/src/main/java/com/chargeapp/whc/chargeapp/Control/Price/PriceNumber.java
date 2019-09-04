@@ -63,7 +63,7 @@ public class PriceNumber extends Fragment {
         View view = inflater.inflate(R.layout.price_number, container, false);
         now = Calendar.getInstance();
         Common.setChargeDB(context);
-        priceDB = new PriceDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        priceDB = new PriceDB(MainActivity.chargeAPPDB);
         findViewById(view);
         String period=priceDB.findMaxPeriod();
         if(period==null)

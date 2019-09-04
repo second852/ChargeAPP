@@ -20,7 +20,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.BankTypeDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
@@ -43,7 +43,7 @@ public class InsertIncomeType extends Fragment {
     private RelativeLayout choiceL;
     private GridView choiceG;
     private String action;
-    private BankTybeDB bankTybeDB;
+    private BankTypeDB bankTypeDB;
     private BankTypeVO bankTypeVO;
     private boolean onClick;
     private Activity context;
@@ -66,7 +66,7 @@ public class InsertIncomeType extends Fragment {
         ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         action = (String) getArguments().getSerializable("action");
         Common.setChargeDB(context);
-        bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankTypeDB = new BankTypeDB(MainActivity.chargeAPPDB);
         bankTypeVO = new BankTypeVO();
         onClick=false;
         findViewById(view);
@@ -150,7 +150,7 @@ public class InsertIncomeType extends Fragment {
                 mainName.setError("項目種類不能有特殊符號");
                 return;
             }
-            BankTypeVO b = bankTybeDB.findByName(mainType);
+            BankTypeVO b = bankTypeDB.findByName(mainType);
             if (b != null) {
                 mainName.setError("項目種類名稱不能重複");
                 return;
@@ -161,7 +161,7 @@ public class InsertIncomeType extends Fragment {
             }
             bankTypeVO.setGroupNumber(mainType);
             bankTypeVO.setName(mainType);
-            bankTybeDB.insert(bankTypeVO);
+            bankTypeDB.insert(bankTypeVO);
             gotoFramgent();
 
             //關閉鍵盤

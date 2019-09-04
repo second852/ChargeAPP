@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -13,7 +14,7 @@ import android.support.v4.app.Fragment;
 import android.text.Html;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.BankTypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ElePeriodDB;
@@ -70,7 +71,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     private Fragment fragement;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
-    private BankTybeDB bankTybeDB;
+    private BankTypeDB bankTypeDB;
     private CarrierDB carrierDB;
     private ElePeriodDB elePeriodDB;
     private Activity activity;
@@ -106,14 +107,14 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String message=null;
         Common.setChargeDB(activity);
-        SQLiteDatabase database= MainActivity.chargeAPPDB.getWritableDatabase();
+        SQLiteOpenHelper database= MainActivity.chargeAPPDB;
         consumeDB=new ConsumeDB(database);
         invoiceDB=new InvoiceDB(database);
         bankDB=new BankDB(database);
         goalDB=new GoalDB(database);
         typeDB=new TypeDB(database);
         typeDetailDB=new TypeDetailDB(database);
-        bankTybeDB=new BankTybeDB(database);
+        bankTypeDB =new BankTypeDB(database);
         carrierDB=new CarrierDB(database);
         elePeriodDB=new ElePeriodDB(database);
         propertyDB=new PropertyDB(database);
@@ -219,7 +220,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 }else if(object instanceof BankTypeVO)
                 {
                     BankTypeVO bankTypeVO= (BankTypeVO) object;
-                    bankTybeDB.deleteById(bankTypeVO.getId());
+                    bankTypeDB.deleteById(bankTypeVO.getId());
                 }else if(object instanceof CarrierVO)
                 {
                     CarrierVO carrierVO= (CarrierVO) object;

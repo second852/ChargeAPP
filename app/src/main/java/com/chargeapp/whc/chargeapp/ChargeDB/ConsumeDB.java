@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.ChargeDB;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
@@ -21,11 +22,11 @@ import java.util.List;
 
 
 public class ConsumeDB {
-    private SQLiteDatabase db;
+    private SQLiteOpenHelper db;
     private String TABLE_NAME = "Consumer";
     private String COL_id = "id";
 
-    public ConsumeDB(SQLiteDatabase db) {
+    public ConsumeDB(SQLiteOpenHelper db) {
         this.db = db;
     }
 
@@ -37,7 +38,7 @@ public class ConsumeDB {
     {
         String sql = "SELECT realMoney FROM Consumer ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         Double total=0.0;
         while (cursor.moveToNext())
         {
@@ -53,7 +54,7 @@ public class ConsumeDB {
     {
         String sql = "SELECT maintype FROM Consumer group by maintype;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<String> type = new ArrayList<>();
         while (cursor.moveToNext())
         {
@@ -66,7 +67,7 @@ public class ConsumeDB {
     {
         String sql = "SELECT secondtype FROM Consumer where maintype = '"+mainType+"' group by secondtype;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<String> type = new ArrayList<>();
         while (cursor.moveToNext())
         {
@@ -80,7 +81,7 @@ public class ConsumeDB {
     {
         String sql = "SELECT currency,realMoney,date FROM Consumer where secondType = '"+secondType+"';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         Double total=0.0;
         CurrencyDB currencyDB=new CurrencyDB(db);
         CurrencyVO currencyVO;
@@ -96,7 +97,7 @@ public class ConsumeDB {
     public List<ConsumeVO> getMainTypeAllMoney(String mainType) {
         String sql = "SELECT maintype,realMoney,currency,date FROM Consumer where maintype = '"+mainType+"';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
@@ -130,7 +131,7 @@ public class ConsumeDB {
     public List<ConsumeVO> getRealMoneyIsNull() {
         String sql = "SELECT * FROM Consumer where realMoney isnull or trim(realMoney) = '';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
@@ -163,7 +164,7 @@ public class ConsumeDB {
     public List<ConsumeVO> getAll() {
         String sql = "SELECT * FROM Consumer order by id desc;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
@@ -195,7 +196,7 @@ public class ConsumeDB {
     public List<ConsumeVO> getWinAll(long startTime, long endTime) {
         String sql = "SELECT * FROM Consumer where iswin != 'N' and date between '" + startTime + "' and '" + endTime + "' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
@@ -227,7 +228,7 @@ public class ConsumeDB {
     public List<ConsumeVO> getNoWinAll(long startTime, long endTime) {
         String sql = "SELECT * FROM Consumer where iswin = '0' and date between '" + startTime + "' and '" + endTime + "' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
@@ -259,7 +260,7 @@ public class ConsumeDB {
     public List<ConsumeVO> getTimePeriod(Timestamp startTime, Timestamp endTime, String maintyppe) {
         String sql = "SELECT * FROM Consumer where  date between '" + startTime.getTime() + "' and '" + endTime.getTime() + "' and maintype ='" + maintyppe + "' order by date ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
@@ -291,7 +292,7 @@ public class ConsumeDB {
     public List<ConsumeVO> getMainTypePeriod(String maintyppe) {
         String sql = "SELECT * FROM Consumer where maintype ='" + maintyppe + "';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
@@ -323,7 +324,7 @@ public class ConsumeDB {
     public List<ConsumeVO> getSecondTypePeriod(String maintyppe, String second) {
         String sql = "SELECT * FROM Consumer where maintype ='" + maintyppe + "' and secondtype = '" + second + "';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
@@ -356,7 +357,7 @@ public class ConsumeDB {
     public List<ConsumeVO> getSecondTimePeriod(Timestamp startTime, Timestamp endTime, String secondtype) {
         String sql = "SELECT * FROM Consumer where  date between '" + startTime.getTime() + "' and '" + endTime.getTime() + "' and secondtype ='" + secondtype + "' order by date ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
@@ -390,9 +391,9 @@ public class ConsumeDB {
     public HashMap<String,Double> getTimeMaxType(long startTime, long endTime) {
         String sql = "SELECT maintype,realMoney,currency FROM Consumer where date between '" + startTime + "' and '" + endTime + "';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         HashMap<String,Double> hashMap=new HashMap<>();
-        CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         CurrencyVO currencyVO;
         String mainType;
         Double realAmount,total=0.0;
@@ -416,7 +417,7 @@ public class ConsumeDB {
     public long getMinTime() {
         String sql = "SELECT min(date) FROM Consumer ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         long minTime = 0;
         if (cursor.moveToNext()) {
             minTime = cursor.getLong(0);
@@ -428,7 +429,7 @@ public class ConsumeDB {
     public List<ConsumeVO> getTimePeriod(Timestamp startTime, Timestamp endTime) {
         String sql = "SELECT * FROM Consumer where  date between '" + startTime.getTime() + "' and '" + endTime.getTime() + "' order by date ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
@@ -460,10 +461,10 @@ public class ConsumeDB {
     public HashMap<String, Double> getTimePeriodHashMap(long startTime, long endTime) {
         String sql = "SELECT maintype,realMoney,currency FROM Consumer where  date between '" + startTime + "' and '" + endTime + "' order by realMoney desc ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         HashMap<String, Double> hashMap = new HashMap<>();
         String main,money,currency;
-        CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         CurrencyVO currencyVO;
         Double total = 0.0,twd=0.0;
         while (cursor.moveToNext()) {
@@ -488,7 +489,7 @@ public class ConsumeDB {
     public ConsumeVO getAutoTimePeriod(Timestamp startTime, Timestamp endTime, int id) {
         String sql = "SELECT * FROM Consumer where autoId = '" + id + "' and date between '" + startTime.getTime() + "' and '" + endTime.getTime() + "' order by date ;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         ConsumeVO consumeVO = null;
         if (cursor.moveToNext()) {
             consumeVO = new ConsumeVO();
@@ -519,7 +520,7 @@ public class ConsumeDB {
     public List<ConsumeVO> getFixdate() {
         String sql = "SELECT * FROM Consumer where fixdate = 'true' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
@@ -551,7 +552,7 @@ public class ConsumeDB {
     public List<ConsumeVO> getNotify() {
         String sql = "SELECT * FROM Consumer where notify = 'true' order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
@@ -584,7 +585,7 @@ public class ConsumeDB {
     public List<ConsumeVO> getAutoCreate(int id) {
         String sql = "SELECT * FROM Consumer where autoId = '" + id + "'order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
         while (cursor.moveToNext()) {
@@ -616,7 +617,7 @@ public class ConsumeDB {
     public ConsumeVO findConById(int id) {
         String sql = "SELECT * FROM Consumer where id = '" + id + "'order by id;";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         ConsumeVO consumeVO = null;
         if (cursor.moveToNext()) {
             consumeVO = new ConsumeVO();
@@ -649,7 +650,7 @@ public class ConsumeDB {
                 "and secondtype = '" + consumeVO.getSecondType() + "' and date = '" + consumeVO.getDate().getTime() + "'" +
                 "and realMoney = '" + consumeVO.getRealMoney() + "';";
         String[] args = {};
-        Cursor cursor = db.rawQuery(sql, args);
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         ConsumeVO c = null;
         if (cursor.moveToNext()) {
             c = new ConsumeVO();
@@ -694,7 +695,7 @@ public class ConsumeDB {
         values.put("rdNumber", consumeVO.getRdNumber());
         values.put("currency", consumeVO.getCurrency());
         values.put("propertyId", consumeVO.getPropertyId());
-        return db.insert(TABLE_NAME, null, values);
+        return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
     public long insertHid(ConsumeVO consumeVO) {
@@ -716,7 +717,7 @@ public class ConsumeDB {
         values.put("rdNumber", consumeVO.getRdNumber());
         values.put("currency", consumeVO.getCurrency());
         values.put("propertyId", consumeVO.getPropertyId());
-        return db.insert(TABLE_NAME, null, values);
+        return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
 
@@ -740,13 +741,13 @@ public class ConsumeDB {
         values.put("propertyId", consumeVO.getPropertyId());
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(consumeVO.getId())};
-        return db.update(TABLE_NAME, values, whereClause, whereArgs);
+        return db.getWritableDatabase().update(TABLE_NAME, values, whereClause, whereArgs);
     }
 
     public int deleteById(int id) {
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {String.valueOf(id)};
-        return db.delete(TABLE_NAME, whereClause, whereArgs);
+        return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
     }
 
 }

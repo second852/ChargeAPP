@@ -85,10 +85,10 @@ public class UpdateConsumeType extends Fragment {
         View view = inflater.inflate(R.layout.updae_con_type, container, false);
         ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         Common.setChargeDB(context);
-        typeDB = new TypeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        typeDB = new TypeDB(MainActivity.chargeAPPDB);
+        typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
+        invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB);
+        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
         progressDialog=new ProgressDialog(context);
         handler=new Handler();
         findViewById(view);

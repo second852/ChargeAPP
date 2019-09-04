@@ -32,7 +32,7 @@ import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.beardedhen.androidbootstrap.api.defaults.ExpandDirection;
 import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListener;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
-import com.chargeapp.whc.chargeapp.ChargeDB.BankTybeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.BankTypeDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertIncomeType;
@@ -72,7 +72,7 @@ public class UpdateIncome extends Fragment {
     private String action;
     private GridView firstG;
     private LinearLayout firstL;
-    private BankTybeDB bankTybeDB;
+    private BankTypeDB bankTypeDB;
     private BootstrapButton standard;
     private int year, month, day;
     private Map<String, String> g;
@@ -116,8 +116,8 @@ public class UpdateIncome extends Fragment {
         bankVO = (BankVO) getArguments().getSerializable("bankVO");
         gson = new Gson();
         Common.setChargeDB(context);
-        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankTybeDB = new BankTybeDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        bankDB = new BankDB(MainActivity.chargeAPPDB);
+        bankTypeDB = new BankTypeDB(MainActivity.chargeAPPDB);
         name.setOnClickListener(new showFirstG());
         name.setOnFocusChangeListener(new showFirstG());
         name.setInputType(InputType.TYPE_NULL);
@@ -587,7 +587,7 @@ public class UpdateIncome extends Fragment {
     private void setFirstGrid() {
         HashMap item;
         ArrayList items = new ArrayList<Map<String, Object>>();
-        List<BankTypeVO> bankTypeVOS = bankTybeDB.getAll();
+        List<BankTypeVO> bankTypeVOS = bankTypeDB.getAll();
         for (BankTypeVO t : bankTypeVOS) {
             item = new HashMap<String, Object>();
             item.put("image", Download.imageAll[t.getImage()]);

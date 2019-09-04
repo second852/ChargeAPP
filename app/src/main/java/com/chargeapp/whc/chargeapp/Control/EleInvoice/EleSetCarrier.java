@@ -98,7 +98,7 @@ public class EleSetCarrier extends Fragment {
         drawerLayout = this.context.findViewById(R.id.drawer_layout);
         confirm.setOnClickListener(new Confirmlisten());
         Common.setChargeDB(context);
-        carrierDB=new CarrierDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        carrierDB=new CarrierDB(MainActivity.chargeAPPDB);
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         ViewTreeObserver vto = view.getViewTreeObserver();
         vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {

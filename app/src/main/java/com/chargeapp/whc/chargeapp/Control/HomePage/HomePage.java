@@ -113,16 +113,16 @@ public class HomePage extends Fragment {
         //DB
         Common.setChargeDB(context);
         Common.setScreen(Common.screenSize, context);
-        goalDB = new GoalDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB.getReadableDatabase());
-        bankDB = new BankDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        goalDB = new GoalDB(MainActivity.chargeAPPDB);
+        invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
+        bankDB = new BankDB(MainActivity.chargeAPPDB);
 
 
         //找出現在選擇Currency
         sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
         nowCurrency = sharedPreferences.getString(choiceCurrency, "TWD");
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB.getReadableDatabase());
+        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         popupMenu=new PopupMenu(context,currency);
         Common.createCurrencyPopMenu(popupMenu, context);
         currency.setOnClickListener(new View.OnClickListener() {
