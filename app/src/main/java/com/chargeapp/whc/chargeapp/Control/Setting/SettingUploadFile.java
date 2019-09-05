@@ -53,6 +53,8 @@ import com.chargeapp.whc.chargeapp.Model.ElePeriod;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -893,9 +895,39 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
 
                 //Property
                 Sheet sheetCon10 = workbook.createSheet("Property");
+                List<PropertyVO> propertyVOS=propertyDB.getAll();
+                for(int i=0;i<propertyVOS.size();i++)
+                {
+                    Row rowContent=sheetCon10.createRow(i);
+                    PropertyVO propertyVO=propertyVOS.get(i);
+                    rowContent.createCell(0).setCellValue(propertyVO.getId());
+                    rowContent.createCell(1).setCellValue(propertyVO.getCurrency());
+                    rowContent.createCell(2).setCellValue(propertyVO.getName());
+                }
 
 
-
+                //PropertyFromVo
+                Sheet sheetCon11 = workbook.createSheet("PropertyFrom");
+                List<PropertyFromVO> propertyFromVOS=propertyFromDB.getAll();
+                for(int i=0;i<propertyFromVOS.size();i++)
+                {
+                    Row rowContent=sheetCon11.createRow(i);
+                    PropertyFromVO propertyFromVO=propertyFromVOS.get(i);
+                    rowContent.createCell(0).setCellValue(propertyFromVO.getId());
+                    rowContent.createCell(1).setCellValue(propertyFromVO.getType().getCode());
+                    rowContent.createCell(2).setCellValue(propertyFromVO.getSourceMoney());
+                    rowContent.createCell(3).setCellValue(propertyFromVO.getSourceCurrency());
+                    rowContent.createCell(4).setCellValue(propertyFromVO.getSourceMainType());
+                    rowContent.createCell(5).setCellValue(propertyFromVO.getSourceSecondType());
+                    rowContent.createCell(6).setCellValue(propertyFromVO.getSourceTime().getTime());
+                    rowContent.createCell(7).setCellValue(propertyFromVO.getImportFee());
+                    rowContent.createCell(8).setCellValue(propertyFromVO.getImportFeeId());
+                    rowContent.createCell(9).setCellValue(propertyFromVO.getFixImport());
+                    rowContent.createCell(10).setCellValue(propertyFromVO.getFixDateCode().getDetail());
+                    rowContent.createCell(11).setCellValue(propertyFromVO.getFixDateDetail());
+                    rowContent.createCell(12).setCellValue(propertyFromVO.getPropertyId());
+                    rowContent.createCell(13).setCellValue(propertyFromVO.getFixFromId());
+                }
 
             }
             workbook.write(outputStream);

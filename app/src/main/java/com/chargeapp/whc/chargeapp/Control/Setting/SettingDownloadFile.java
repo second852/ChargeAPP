@@ -36,6 +36,8 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ElePeriodDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
@@ -49,9 +51,13 @@ import com.chargeapp.whc.chargeapp.Model.ElePeriod;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
+import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -76,6 +82,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -104,6 +111,8 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     private RelativeLayout progressL;
     private Activity context;
     private boolean firstEnter;
+    private PropertyFromDB propertyFromDB;
+    private PropertyDB propertyDB;
 
     @Override
     public void onAttach(Context context) {
@@ -134,6 +143,8 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         carrierDB = new CarrierDB(sqLiteOpenHelper);
         priceDB=new PriceDB(sqLiteOpenHelper);
         elePeriodDB=new ElePeriodDB(sqLiteOpenHelper);
+        propertyDB=new PropertyDB(sqLiteOpenHelper);
+        propertyFromDB=new PropertyFromDB((sqLiteOpenHelper));
         List<EleMainItemVO> itemSon = getNewItem();
         listView = view.findViewById(R.id.list);
         progressL = view.findViewById(R.id.progressL);
@@ -534,6 +545,29 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         {
                             elePeriodDB.insert(elePeriod);
                         }
+                    }else if (sheetTitle.equals("Property")) {
+                        PropertyVO propertyVO=new PropertyVO();
+                        propertyVO.setId((long) row.getCell(0).getNumericCellValue());
+                        propertyVO.setCurrency(row.getCell(1).getStringCellValue());
+                        propertyVO.setName(row.getCell(2).getStringCellValue());
+                        propertyDB.insert(propertyVO);
+                    }else if (sheetTitle.equals("PropertyFrom")) {
+                        PropertyFromVO propertyFromVO=new PropertyFromVO();
+                        propertyFromVO.setId((long) row.getCell(0).getNumericCellValue());
+                        propertyFromVO.setType(PropertyType.codeToEnum((int) row.getCell(1).getNumericCellValue()));
+                        propertyFromVO.setSourceMoney(row.getCell(2).getStringCellValue());
+                        propertyFromVO.setSourceCurrency(row.getCell(3).getStringCellValue());
+                        propertyFromVO.setSourceMainType(row.getCell(4).getStringCellValue());
+                        propertyFromVO.setSourceSecondType(row.getCell(5).getStringCellValue());
+                        propertyFromVO.setSourceTime(new Date((long) row.getCell(6).getNumericCellValue()));
+                        propertyFromVO.setImportFee(row.getCell(7).getStringCellValue());
+                        propertyFromVO.setImportFeeId((long) row.getCell(8).getNumericCellValue());
+                        propertyFromVO.setFixImport(Boolean.valueOf(row.getCell(9).getStringCellValue()));
+                        propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(row.getCell(10).getStringCellValue()));
+                        propertyFromVO.setFixDateDetail(row.getCell(11).getStringCellValue());
+                        propertyFromVO.setPropertyId((long) row.getCell(12).getNumericCellValue());
+                        propertyFromVO.setFixFromId((long) row.getCell(13).getNumericCellValue());
+                        propertyFromDB.insert(propertyFromVO);
                     }
                 }
                 i++;
