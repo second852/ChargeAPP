@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 
 public class PropertyFromDB {
@@ -32,7 +34,7 @@ public class PropertyFromDB {
     public PropertyFromVO getPropertyFromVO(Cursor cursor)
     {
         PropertyFromVO propertyFromVO=new PropertyFromVO();
-        propertyFromVO.setId(cursor.getLong(0));
+        propertyFromVO.setId(cursor.getString(0));
         propertyFromVO.setType(PropertyType.codeToEnum(cursor.getInt(1)));
         propertyFromVO.setSourceMoney(cursor.getString(2));
         propertyFromVO.setSourceCurrency(cursor.getString(3));
@@ -40,12 +42,12 @@ public class PropertyFromDB {
         propertyFromVO.setSourceSecondType(cursor.getString(5));
         propertyFromVO.setSourceTime(new Date(cursor.getLong(6)));
         propertyFromVO.setImportFee(cursor.getString(7));
-        propertyFromVO.setImportFeeId(cursor.getLong(8));
+        propertyFromVO.setImportFeeId(cursor.getString(8));
         propertyFromVO.setFixImport(Boolean.valueOf(cursor.getString(9)));
         propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(cursor.getString(10)));
         propertyFromVO.setFixDateDetail(cursor.getString(11));
-        propertyFromVO.setPropertyId(cursor.getLong(12));
-        propertyFromVO.setFixFromId(cursor.getLong(13));
+        propertyFromVO.setPropertyId(cursor.getString(12));
+        propertyFromVO.setFixFromId(cursor.getString(13));
         return propertyFromVO;
     }
 
@@ -54,6 +56,7 @@ public class PropertyFromDB {
     public ContentValues getContentValues(PropertyFromVO propertyFromVO)
     {
         ContentValues values = new ContentValues();
+        values.put("id",propertyFromVO.getId());
         values.put("type",propertyFromVO.getType().getCode());
         values.put("sourceMoney",propertyFromVO.getSourceMoney());
         values.put("sourceCurrency",propertyFromVO.getSourceCurrency());
@@ -102,7 +105,7 @@ public class PropertyFromDB {
     }
 
 
-    public List<PropertyFromVO> findByPropertyId(Long propertyId) {
+    public List<PropertyFromVO> findByPropertyId(String propertyId) {
         String sql = "SELECT * FROM PropertyFrom where propertyId ='"+propertyId +"' order by id;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
@@ -117,7 +120,7 @@ public class PropertyFromDB {
     }
 
 
-    public PropertyFromVO findByPropertyFromId(Long id) {
+    public PropertyFromVO findByPropertyFromId(String id) {
         String sql = "SELECT * FROM PropertyFrom where id ='"+id +"' order by id;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
@@ -130,7 +133,7 @@ public class PropertyFromDB {
     }
 
 
-    public PropertyFromVO findByImportFeeId(Long id) {
+    public PropertyFromVO findByImportFeeId(String id) {
         String sql = "SELECT * FROM PropertyFrom where importFeeId = ? order by id;";
         String[] args = {String.valueOf(id)};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
@@ -143,7 +146,7 @@ public class PropertyFromDB {
     }
 
 
-    public Double totalType(Long propertyId, PropertyType type) {
+    public Double totalType(String propertyId, PropertyType type) {
         String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where propertyId ='"+propertyId +"' and type = '"+type.getCode()+"' order by id;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
@@ -181,7 +184,7 @@ public class PropertyFromDB {
     }
 
 
-    public List<PropertyFromVO> findByPropertyMainType(String sourceMainType, Long propertyId) {
+    public List<PropertyFromVO> findByPropertyMainType(String sourceMainType, String propertyId) {
         String sql = "SELECT * FROM PropertyFrom where sourceMainType ='"+sourceMainType +"' and  propertyId = '"+propertyId+"' order by sourceDate desc;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
@@ -195,7 +198,7 @@ public class PropertyFromDB {
     }
 
 
-    public List<PropertyFromVO> findFixProperty(Long propertyFromVoId) {
+    public List<PropertyFromVO> findFixProperty(String propertyFromVoId) {
         String sql = "SELECT * FROM PropertyFrom where fixFromId = '"+propertyFromVoId +"'  order by sourceDate ;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
@@ -223,7 +226,7 @@ public class PropertyFromDB {
     }
 
 
-    public List<PropertyFromVO> findByPropertySecondType(String sourceSecondType, Long propertyId) {
+    public List<PropertyFromVO> findByPropertySecondType(String sourceSecondType, String propertyId) {
         String sql = "SELECT * FROM PropertyFrom where sourceSecondType ='"+sourceSecondType +"' and  propertyId = '"+propertyId+"' order by sourceDate desc;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
@@ -314,7 +317,7 @@ public class PropertyFromDB {
     }
 
 
-    public Map<String,Double> getPieDataByPropertyId(PropertyType propertyType, Long propertyId)
+    public Map<String,Double> getPieDataByPropertyId(PropertyType propertyType, String propertyId)
     {
         String sql = "SELECT * FROM PropertyFrom where type ='"+propertyType.getCode() +"' and propertyId = "+propertyId+" order by id;";
         String[] args = {};
@@ -340,7 +343,7 @@ public class PropertyFromDB {
         return map;
     }
 
-    public Map<String,Double> getPieDataSecondType(PropertyType propertyType, String sourceMainType, Long propertyId)
+    public Map<String,Double> getPieDataSecondType(PropertyType propertyType, String sourceMainType, String propertyId)
     {
         String sql = "SELECT * FROM PropertyFrom where type ='"+propertyType.getCode() +"' and sourceMainType =  '"+sourceMainType+"' and propertyId = '"+propertyId+"' order by id;";
         String[] args = {};
@@ -367,6 +370,7 @@ public class PropertyFromDB {
     }
 
     public long insert(PropertyFromVO propertyFromVO) {
+        propertyFromVO.setId(UUID.randomUUID().toString());
         ContentValues values = getContentValues(propertyFromVO);
         return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }
@@ -375,19 +379,19 @@ public class PropertyFromDB {
     public long update(PropertyFromVO propertyFromVO) {
         ContentValues values = getContentValues(propertyFromVO);
         String whereClause = COL_id + " = ?;";
-        String[] whereArgs = {String.valueOf(propertyFromVO.getId())};
+        String[] whereArgs = {propertyFromVO.getId()};
         return db.getWritableDatabase().update(TABLE_NAME, values, whereClause, whereArgs);
     }
 
-    public int deleteById(Long id) {
+    public int deleteById(String id) {
         String whereClause = COL_id + " = ?;";
-        String[] whereArgs = {String.valueOf(id)};
+        String[] whereArgs = {id};
         return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
     }
 
-    public int deleteByPropertyId(int propertyId) {
+    public int deleteByPropertyId(String propertyId) {
         String whereClause ="propertyId = ?;";
-        String[] whereArgs = {String.valueOf(propertyId)};
+        String[] whereArgs = {propertyId};
         String sql = "SELECT * FROM PropertyFrom where  propertyId = ? order by id;";
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, whereArgs);
         ConsumeDB consumeDB=new ConsumeDB(db);
@@ -396,7 +400,7 @@ public class PropertyFromDB {
             PropertyFromVO propertyFromVO=getPropertyFromVO(cursor);
             if(propertyFromVO.getImportFeeId()!=null)
             {
-                consumeDB.deleteById(propertyFromVO.getImportFeeId().intValue());
+                consumeDB.deleteByFk(propertyFromVO.getImportFeeId());
             }
         }
         return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);

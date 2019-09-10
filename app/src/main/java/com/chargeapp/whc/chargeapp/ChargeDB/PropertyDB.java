@@ -9,6 +9,7 @@ import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 public class PropertyDB {
@@ -24,7 +25,7 @@ public class PropertyDB {
     private PropertyVO configPropertyVO(Cursor cursor)
     {
         PropertyVO propertyVO=new PropertyVO();
-        propertyVO.setId(cursor.getLong(0));
+        propertyVO.setId(cursor.getString(0));
         propertyVO.setName(cursor.getString(1));
         propertyVO.setCurrency(cursor.getString(2));
         return propertyVO;
@@ -46,7 +47,7 @@ public class PropertyDB {
         return propertyVOS;
     }
 
-    public PropertyVO findById(Long Id) {
+    public PropertyVO findById(String Id) {
         String sql = "SELECT * FROM Property where id ='"+Id +"' order by id;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
@@ -73,11 +74,14 @@ public class PropertyDB {
     }
 
 
-    public long insert(PropertyVO propertyVO) {
+    public String insert(PropertyVO propertyVO) {
         ContentValues values = new ContentValues();
+        String id=UUID.randomUUID().toString();
+        values.put("id",id);
         values.put("name", propertyVO.getName());
         values.put("currency", propertyVO.getCurrency());
-        return db.getWritableDatabase().insert(TABLE_NAME, null, values);
+        db.getWritableDatabase().insert(TABLE_NAME, null, values);
+        return id;
     }
 
 
@@ -86,13 +90,13 @@ public class PropertyDB {
         values.put("name", propertyVO.getName());
         values.put("currency", propertyVO.getCurrency());
         String whereClause = COL_id + " = ?;";
-        String[] whereArgs = {Long.toString(propertyVO.getId())};
+        String[] whereArgs = {propertyVO.getId()};
         return db.getWritableDatabase().update(TABLE_NAME, values, whereClause, whereArgs);
     }
 
-    public int deleteById(Long id) {
+    public int deleteById(String id) {
         String whereClause = COL_id + " = ?;";
-        String[] whereArgs = {String.valueOf(id)};
+        String[] whereArgs = {id};
         return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
     }
 

@@ -95,6 +95,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -468,10 +469,10 @@ public class Common {
         colExist("Consumer","rdNumber","text");
         colExist("Consumer","currency","text");
         colExist("Consumer","realMoney","text");
-        colExist("Consumer","propertyId","Integer");
+        colExist("Consumer","fkKey","text");
         colExist("INVOICE","currency","text");
         colExist("INVOICE","realAmount","text");
-        colExist("INVOICE","propertyId","Integer");
+        colExist("INVOICE","fkKey","text");
         colExist("BANK","currency","text");
         colExist("BANK","realMoney","text");
         colExist("BANK","propertyId","Integer");
@@ -1320,11 +1321,13 @@ public class Common {
          if(propertyFromVO.getFixFromId()!=null&&!StringUtil.isBlank(propertyFromVO.getImportFee()))
          {
              Double fee=Double.valueOf(propertyFromVO.getImportFee());
-             ConsumeVO consumeVO=consumeDB.findConById(propertyFromVO.getImportFeeId().intValue());
+             ConsumeVO consumeVO=consumeDB.findConByFk(propertyFromVO.getImportFeeId());
              if(fee>0&&consumeVO!=null)
              {
                 consumeVO.setDate(new Date(System.currentTimeMillis()));
-                propertyFromVO.setImportFeeId(consumeDB.insert(consumeVO));
+                consumeVO.setFkKey(UUID.randomUUID().toString());
+                consumeDB.insert(consumeVO);
+                propertyFromVO.setImportFeeId(consumeVO.getFkKey());
              }
          }
 

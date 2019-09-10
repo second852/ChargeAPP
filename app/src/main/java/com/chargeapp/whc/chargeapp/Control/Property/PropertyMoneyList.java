@@ -60,7 +60,7 @@ public class PropertyMoneyList extends Fragment {
     private CurrencyVO currencyVO;
     private Calendar start,end;
     private PropertyFromDB propertyFromDB;
-    private Long propertyId;
+    private String propertyId;
     private double total;
     private List<PropertyFromVO> propertyFromVOS;
     private TextView name;
@@ -96,7 +96,7 @@ public class PropertyMoneyList extends Fragment {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
-        propertyId= (Long) bundle.getSerializable(Common.propertyID);
+        propertyId= (String) bundle.getSerializable(Common.propertyID);
         fragmentString= (String) bundle.getSerializable(Common.propertyFragment);
         Common.setChargeDB(activity);
         currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);

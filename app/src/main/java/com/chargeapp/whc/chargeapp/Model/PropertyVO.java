@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 public class PropertyVO implements Serializable {
 
-    private Long id; //Id
+    private String id; //Id
     private String name; //名子
     private String currency;//幣別
 
@@ -23,11 +23,12 @@ public class PropertyVO implements Serializable {
         this.currency = currency;
     }
 
-    public Long getId() {
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
