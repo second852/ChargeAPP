@@ -133,7 +133,7 @@ public class PropertyList extends Fragment {
                 public void onClick(View view) {
                     DeleteDialogFragment deleteObject= new DeleteDialogFragment();
                     deleteObject.setObject(propertyVO);
-                    deleteObject.setFragement(PropertyList.this);
+                    deleteObject.setFragment(PropertyList.this);
                     deleteObject.show(getFragmentManager(),"show");
                 }
             });

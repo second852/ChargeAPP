@@ -27,6 +27,9 @@ import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+
+
+
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -34,6 +37,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+
 
 /**
  * Created by 1709008NB01 on 2018/3/29.
@@ -134,7 +138,8 @@ public class JobSchedulerService extends JobService {
                         }
                         Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                         Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
-                        ConsumeVO cccc = consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getId());
+
+                        ConsumeVO cccc=consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getFkKey());
                         if (cccc == null) {
                             consumeVO.setNotify("false");
                             consumeVO.setFixDate("false");
@@ -153,7 +158,7 @@ public class JobSchedulerService extends JobService {
                         if (date.get(Calendar.DAY_OF_WEEK) == change.get(fixdetail)) {
                             Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                             Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
-                            ConsumeVO cccc = consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getId());
+                            ConsumeVO cccc = consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getFkKey());
                             if (cccc == null) {
                                 consumeVO.setNotify("false");
                                 consumeVO.setFixDate("false");
@@ -174,7 +179,7 @@ public class JobSchedulerService extends JobService {
                         if (fixdate.equals(String.valueOf(day))) {
                             Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                             Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
-                            ConsumeVO cccc = consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getId());
+                            ConsumeVO cccc = consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getFkKey());
                             if (cccc == null) {
                                 consumeVO.setNotify("false");
                                 consumeVO.setFixDate("false");
@@ -192,7 +197,7 @@ public class JobSchedulerService extends JobService {
                         if (Maxday < Integer.valueOf(fixdate) && day == Maxday) {
                             Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                             Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
-                            ConsumeVO cccc = consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getId());
+                            ConsumeVO cccc = consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getFkKey());
                             if (cccc == null) {
                                 consumeVO.setNotify("false");
                                 consumeVO.setFixDate("false");
@@ -215,7 +220,7 @@ public class JobSchedulerService extends JobService {
                         if (month == d && day == 1) {
                             Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                             Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
-                            ConsumeVO cccc = consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getId());
+                            ConsumeVO cccc = consumeDB.getAutoTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), consumeVO.getFkKey());
                             if (cccc == null) {
                                 consumeVO.setNumber("");
                                 consumeVO.setNotify("false");
@@ -248,7 +253,7 @@ public class JobSchedulerService extends JobService {
                 if ("每天".equals(action)) {
                     Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                     Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
-                    BankVO bb = bankDB.getAutoBank(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), b.getId());
+                    BankVO bb = bankDB.getAutoBank(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), b.getFkKey());
                     if (bb == null) {
                         b.setFixDate("false");
                         b.setAuto(true);
@@ -263,7 +268,7 @@ public class JobSchedulerService extends JobService {
                     if (date.get(Calendar.DAY_OF_WEEK) == change.get(fixdetail)) {
                         Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                         Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
-                        BankVO bb = bankDB.getAutoBank(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), b.getId());
+                        BankVO bb = bankDB.getAutoBank(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), b.getFkKey());
                         if (bb == null) {
                             b.setFixDate("false");
                             b.setAuto(true);
@@ -281,7 +286,7 @@ public class JobSchedulerService extends JobService {
 
                         Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                         Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
-                        BankVO bb = bankDB.getAutoBank(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), b.getId());
+                        BankVO bb = bankDB.getAutoBank(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), b.getFkKey());
                         if (bb == null) {
                             b.setFixDate("false");
                             b.setAuto(true);
@@ -296,7 +301,7 @@ public class JobSchedulerService extends JobService {
 
                         Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                         Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
-                        BankVO bb = bankDB.getAutoBank(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), b.getId());
+                        BankVO bb = bankDB.getAutoBank(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), b.getFkKey());
                         if (bb == null) {
                             b.setFixDate("false");
                             b.setAuto(true);
@@ -314,7 +319,7 @@ public class JobSchedulerService extends JobService {
 
                         Calendar start = new GregorianCalendar(year, month, day, 0, 0, 0);
                         Calendar end = new GregorianCalendar(year, month, day, 23, 59, 0);
-                        BankVO bb = bankDB.getAutoBank(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), b.getId());
+                        BankVO bb = bankDB.getAutoBank(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), b.getFkKey());
                         if (bb == null) {
                             b.setFixDate("false");
                             b.setAuto(true);

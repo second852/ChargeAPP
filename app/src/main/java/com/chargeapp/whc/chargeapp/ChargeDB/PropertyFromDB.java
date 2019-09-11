@@ -259,7 +259,7 @@ public class PropertyFromDB {
 
 
 
-    public PropertyFromVO findAutoBySourceTimeAndAutoId(Long start,Long end,Long id) {
+    public PropertyFromVO findAutoBySourceTimeAndAutoId(Long start,Long end,String id) {
         String sql = "SELECT * FROM PropertyFrom where sourceDate between ? and ? and  fixFromId = ? order by id;";
         String[] args = {String.valueOf(start),String.valueOf(end),String.valueOf(id)};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);

@@ -51,6 +51,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.chargeapp.whc.chargeapp.Control.Common.propertyCurrency;
 
@@ -106,10 +107,10 @@ public class PropertyInsertMoney extends Fragment {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
-        Object object=getArguments().getSerializable(Common.propertyID);
+        String object= (String) getArguments().getSerializable(Common.propertyID);
 
         PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB);
-        propertyVO=propertyDB.findById((long)object);
+        propertyVO=propertyDB.findById(object);
         nowCurrency="TWD";
         findViewById();
         setDataBase();
@@ -461,7 +462,9 @@ public class PropertyInsertMoney extends Fragment {
                 consumeVO.setDetailname("轉入"+propertyVO.getName()+"的費用");
                 consumeVO.setDate(new Date(System.currentTimeMillis()));
                 ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
-                propertyFromVO.setImportFeeId(consumeDB.insert(consumeVO));
+                consumeVO.setFkKey(UUID.randomUUID().toString());
+                consumeDB.insert(consumeVO);
+                propertyFromVO.setImportFeeId(consumeVO.getFkKey());
             }
 
             propertyFromDB.insert(propertyFromVO);

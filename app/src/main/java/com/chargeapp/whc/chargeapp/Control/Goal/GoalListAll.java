@@ -449,7 +449,7 @@ public class GoalListAll extends Fragment {
                 public void onClick(View v) {
                     DeleteDialogFragment aa = new DeleteDialogFragment();
                     aa.setObject(goalVO);
-                    aa.setFragement(GoalListAll.this);
+                    aa.setFragment(GoalListAll.this);
                     aa.show(getFragmentManager(), "show");
                 }
             });

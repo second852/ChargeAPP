@@ -311,7 +311,7 @@ public class SettingMain extends Fragment {
                     @Override
                     public void onClick(View view) {
                         DeleteDialogFragment aa = new DeleteDialogFragment();
-                        aa.setFragement(SettingMain.this);
+                        aa.setFragment(SettingMain.this);
                         aa.show(getFragmentManager(), "show");
                     }
                 });

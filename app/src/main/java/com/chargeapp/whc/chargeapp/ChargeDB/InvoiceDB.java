@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
@@ -29,6 +30,65 @@ public class InvoiceDB {
         this.db=db;
     }
 
+
+    private InvoiceVO configInvoiceVO(Cursor cursor)
+    {
+        InvoiceVO invoiceVO=new InvoiceVO();
+        invoiceVO.setId(cursor.getInt(0));
+        invoiceVO.setInvNum(cursor.getString(1));
+        invoiceVO.setCardType(cursor.getString(2));
+        invoiceVO.setCardNo(cursor.getString(3));
+        invoiceVO.setCardEncrypt(cursor.getString(4));
+        invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
+        invoiceVO.setAmount(cursor.getInt(6));
+        invoiceVO.setDetail(cursor.getString(7));
+        invoiceVO.setSellerName(cursor.getString(8));
+        invoiceVO.setInvDonatable(cursor.getString(9));
+        invoiceVO.setDonateMark(cursor.getString(10));
+        invoiceVO.setCarrier(cursor.getString(11));
+        invoiceVO.setMaintype(cursor.getString(12));
+        invoiceVO.setSecondtype(cursor.getString(13));
+        invoiceVO.setHeartyteam(cursor.getString(14));
+        invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
+        invoiceVO.setIswin(cursor.getString(16));
+        invoiceVO.setSellerBan(cursor.getString(17));
+        invoiceVO.setSellerAddress(cursor.getString(18));
+        invoiceVO.setIsWinNul(cursor.getString(19));
+        invoiceVO.setCurrency(cursor.getString(20));
+        invoiceVO.setRealAmount(cursor.getString(21));
+        return invoiceVO;
+    }
+
+    private ContentValues configContentValues(InvoiceVO invoiceVO)
+    {
+        ContentValues values = new ContentValues();
+        values.put("invNum",invoiceVO.getInvNum());
+        values.put("cardType", invoiceVO.getCardType());
+        values.put("cardNo",invoiceVO.getCardNo());
+        values.put("cardEncrypt",invoiceVO.getCardEncrypt());
+        values.put("time",invoiceVO.getTime().getTime());
+        values.put("amount",invoiceVO.getAmount());
+        values.put("detail",invoiceVO.getDetail());
+        values.put("sellerName",invoiceVO.getSellerName());
+        values.put("invDonatable",invoiceVO.getInvDonatable());
+        values.put("donateMark",invoiceVO.getDonateMark());
+        values.put("carrier",invoiceVO.getCarrier());
+        values.put("maintype",invoiceVO.getMaintype());
+        values.put("secondtype",invoiceVO.getSecondtype());
+        values.put("heartyteam",invoiceVO.getHeartyteam());
+        values.put("donateTime",invoiceVO.getDonateTime().getTime());
+        values.put("iswin",invoiceVO.getIswin());
+        values.put("sellerBan",invoiceVO.getSellerBan());
+        values.put("sellerAddress",invoiceVO.getSellerAddress());
+        values.put("isWinNul",invoiceVO.getIsWinNul());
+        values.put("currency",invoiceVO.getCurrency());
+        values.put("realAmount",invoiceVO.getRealAmount());
+        return values;
+    }
+
+
+
+
     public List<InvoiceVO> getAll() {
         String sql = "SELECT * FROM INVOICE order by time desc;";
         String[] args = {};
@@ -36,30 +96,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -73,30 +110,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -111,30 +125,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -148,30 +139,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -186,30 +154,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -224,30 +169,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -265,30 +187,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -303,30 +202,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -407,30 +283,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -457,30 +310,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -520,30 +350,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -557,30 +364,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -594,30 +378,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -631,30 +392,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -668,30 +406,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -707,30 +422,7 @@ public class InvoiceDB {
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         InvoiceVO invoiceVO=null;
         if (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
         }
         cursor.close();
         return invoiceVO;
@@ -743,30 +435,7 @@ public class InvoiceDB {
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         InvoiceVO invoiceVO=null;
         if (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
         }
         cursor.close();
         return invoiceVO;
@@ -806,30 +475,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -844,30 +490,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -881,30 +504,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -930,30 +530,7 @@ public class InvoiceDB {
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
-            invoiceVO=new InvoiceVO();
-            invoiceVO.setId(cursor.getInt(0));
-            invoiceVO.setInvNum(cursor.getString(1));
-            invoiceVO.setCardType(cursor.getString(2));
-            invoiceVO.setCardNo(cursor.getString(3));
-            invoiceVO.setCardEncrypt(cursor.getString(4));
-            invoiceVO.setTime(new Timestamp(cursor.getLong(5)));
-            invoiceVO.setAmount(cursor.getInt(6));
-            invoiceVO.setDetail(cursor.getString(7));
-            invoiceVO.setSellerName(cursor.getString(8));
-            invoiceVO.setInvDonatable(cursor.getString(9));
-            invoiceVO.setDonateMark(cursor.getString(10));
-            invoiceVO.setCarrier(cursor.getString(11));
-            invoiceVO.setMaintype(cursor.getString(12));
-            invoiceVO.setSecondtype(cursor.getString(13));
-            invoiceVO.setHeartyteam(cursor.getString(14));
-            invoiceVO.setDonateTime(new Timestamp(cursor.getLong(15)));
-            invoiceVO.setIswin(cursor.getString(16));
-            invoiceVO.setSellerBan(cursor.getString(17));
-            invoiceVO.setSellerAddress(cursor.getString(18));
-            invoiceVO.setIsWinNul(cursor.getString(19));
-            invoiceVO.setCurrency(cursor.getString(20));
-            invoiceVO.setRealAmount(cursor.getString(21));
-            invoiceVO.setPropertyId(cursor.getInt(22));
+            invoiceVO=configInvoiceVO(cursor);
             invoiceVOSList.add(invoiceVO);
         }
         cursor.close();
@@ -961,30 +538,7 @@ public class InvoiceDB {
     }
 
     public long insertHid(InvoiceVO invoiceVO) {
-        ContentValues values = new ContentValues();
-        values.put("id",invoiceVO.getId());
-        values.put("invNum",invoiceVO.getInvNum());
-        values.put("cardType", invoiceVO.getCardType());
-        values.put("cardNo",invoiceVO.getCardNo());
-        values.put("cardEncrypt",invoiceVO.getCardEncrypt());
-        values.put("time",invoiceVO.getTime().getTime());
-        values.put("amount",invoiceVO.getAmount());
-        values.put("detail",invoiceVO.getDetail());
-        values.put("sellerName",invoiceVO.getSellerName());
-        values.put("invDonatable",invoiceVO.getInvDonatable());
-        values.put("donateMark",invoiceVO.getDonateMark());
-        values.put("carrier",invoiceVO.getCarrier());
-        values.put("maintype",invoiceVO.getMaintype());
-        values.put("secondtype",invoiceVO.getSecondtype());
-        values.put("heartyteam",invoiceVO.getHeartyteam());
-        values.put("donateTime",invoiceVO.getDonateTime().getTime());
-        values.put("iswin",invoiceVO.getIswin());
-        values.put("sellerBan",invoiceVO.getSellerBan());
-        values.put("sellerAddress",invoiceVO.getSellerAddress());
-        values.put("isWinNul",invoiceVO.getIsWinNul());
-        values.put("currency",invoiceVO.getCurrency());
-        values.put("realAmount",invoiceVO.getRealAmount());
-        values.put("propertyId",invoiceVO.getPropertyId());
+        ContentValues values = configContentValues(invoiceVO);
         return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
@@ -993,56 +547,12 @@ public class InvoiceDB {
 
 
     public long insert(InvoiceVO invoiceVO) {
-        ContentValues values = new ContentValues();
-        values.put("invNum",invoiceVO.getInvNum());
-        values.put("cardType", invoiceVO.getCardType());
-        values.put("cardNo",invoiceVO.getCardNo());
-        values.put("cardEncrypt",invoiceVO.getCardEncrypt());
-        values.put("time",invoiceVO.getTime().getTime());
-        values.put("amount",invoiceVO.getAmount());
-        values.put("detail",invoiceVO.getDetail());
-        values.put("sellerName",invoiceVO.getSellerName());
-        values.put("invDonatable",invoiceVO.getInvDonatable());
-        values.put("donateMark",invoiceVO.getDonateMark());
-        values.put("carrier",invoiceVO.getCarrier());
-        values.put("maintype",invoiceVO.getMaintype());
-        values.put("secondtype",invoiceVO.getSecondtype());
-        values.put("heartyteam",invoiceVO.getHeartyteam());
-        values.put("donateTime",invoiceVO.getDonateTime().getTime());
-        values.put("iswin",invoiceVO.getIswin());
-        values.put("sellerBan",invoiceVO.getSellerBan());
-        values.put("sellerAddress",invoiceVO.getSellerAddress());
-        values.put("isWinNul",invoiceVO.getIsWinNul());
-        values.put("currency",invoiceVO.getCurrency());
-        values.put("realAmount",invoiceVO.getRealAmount());
-        values.put("propertyId",invoiceVO.getPropertyId());
+        ContentValues values = configContentValues(invoiceVO);
         return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }
 
     public int update(InvoiceVO invoiceVO) {
-        ContentValues values = new ContentValues();
-        values.put("invNum",invoiceVO.getInvNum());
-        values.put("cardType", invoiceVO.getCardType());
-        values.put("cardNo",invoiceVO.getCardNo());
-        values.put("cardEncrypt",invoiceVO.getCardEncrypt());
-        values.put("time",invoiceVO.getTime().getTime());
-        values.put("amount",invoiceVO.getAmount());
-        values.put("detail",invoiceVO.getDetail());
-        values.put("sellerName",invoiceVO.getSellerName());
-        values.put("invDonatable",invoiceVO.getInvDonatable());
-        values.put("donateMark",invoiceVO.getDonateMark());
-        values.put("carrier",invoiceVO.getCarrier());
-        values.put("maintype",invoiceVO.getMaintype());
-        values.put("secondtype",invoiceVO.getSecondtype());
-        values.put("heartyteam",invoiceVO.getHeartyteam());
-        values.put("donateTime",invoiceVO.getDonateTime().getTime());
-        values.put("iswin",invoiceVO.getIswin());
-        values.put("sellerBan",invoiceVO.getSellerBan());
-        values.put("sellerAddress",invoiceVO.getSellerAddress());
-        values.put("isWinNul",invoiceVO.getIsWinNul());
-        values.put("currency",invoiceVO.getCurrency());
-        values.put("realAmount",invoiceVO.getRealAmount());
-        values.put("propertyId",invoiceVO.getPropertyId());
+        ContentValues values = configContentValues(invoiceVO);
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {Integer.toString(invoiceVO.getId())};
         return db.getWritableDatabase().update(TABLE_NAME, values, whereClause, whereArgs);

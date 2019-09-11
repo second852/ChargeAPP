@@ -423,7 +423,7 @@ public class SelectDetList extends Fragment {
                 public void onClick(View view) {
                     DeleteDialogFragment aa= new DeleteDialogFragment();
                     aa.setObject(o);
-                    aa.setFragement(SelectDetList.this);
+                    aa.setFragment(SelectDetList.this);
                     aa.show(getFragmentManager(),"show");
                 }
             });

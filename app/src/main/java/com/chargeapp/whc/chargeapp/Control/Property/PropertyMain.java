@@ -84,15 +84,7 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
                 second.setOnClickListener(new ChangePage(page));
                 third.setOnClickListener(new ChangePage(page + 1));
                 break;
-            case 1:
-                second.setOnClickListener(new ChangePage(page));
-                third.setOnClickListener(new ChangePage(page - 1));
-                break;
-            case 2:
-                second.setOnClickListener(new ChangePage(page));
-                third.setOnClickListener(new ChangePage(page - 1));
-                break;
-            case 3:
+           default:
                 second.setOnClickListener(new ChangePage(page));
                 third.setOnClickListener(new ChangePage(page - 1));
                 break;

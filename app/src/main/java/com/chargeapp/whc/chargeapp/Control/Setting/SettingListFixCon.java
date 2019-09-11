@@ -75,14 +75,7 @@ public class SettingListFixCon extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if(consumeVO.isAuto())
-        {
-            consumeVOS=consumeDB.getAutoCreate(consumeVO.getAutoId());
-            consumeVOS.add(0,consumeDB.findConById(consumeVO.getAutoId()));
-        }else{
-            consumeVOS=consumeDB.getAutoCreate(consumeVO.getId());
-            consumeVOS.add(0,consumeVO);
-        }
+        consumeVOS=consumeDB.getAutoCreateByFK(consumeVO.getFkKey());
         setLayout();
     }
 
@@ -191,7 +184,7 @@ public class SettingListFixCon extends Fragment {
                     DeleteDialogFragment aa= new DeleteDialogFragment();
                     p=position;
                     aa.setObject(consumeVO);
-                    aa.setFragement(SettingListFixCon.this);
+                    aa.setFragment(SettingListFixCon.this);
                     aa.show(getFragmentManager(),"show");
                 }
             });

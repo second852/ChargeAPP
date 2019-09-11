@@ -689,7 +689,7 @@ public class SelectShowCircleDe extends Fragment {
                 public void onClick(View view) {
                     DeleteDialogFragment aa= new DeleteDialogFragment();
                     aa.setObject(o);
-                    aa.setFragement(SelectShowCircleDe.this);
+                    aa.setFragment(SelectShowCircleDe.this);
                     aa.show(getFragmentManager(),"show");
                 }
             });

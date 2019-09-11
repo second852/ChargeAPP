@@ -65,9 +65,8 @@ public class PropertyTotal extends Fragment {
     private CurrencyVO currencyVO;
     private Calendar start,end;
     private PropertyFromDB propertyFromDB;
-    private Long propertyId;
+    private String propertyId;
     private double total,consumeTotal,incomeTotal;
-    private List<PropertyFromVO> propertyFromVOS;
     private TextView name,namePositive,nameNagative;
     private PropertyVO propertyVO;
     private FloatingActionButton fab;
@@ -102,8 +101,7 @@ public class PropertyTotal extends Fragment {
             Common.homePageFragment(getFragmentManager(),activity);
             return view;
         }
-        Object object=getArguments().getSerializable(Common.propertyID);
-        propertyId= (Long) object;
+        propertyId= (String) bundle.getSerializable(Common.propertyID);
         Common.setChargeDB(activity);
         currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
         propertyDB=new PropertyDB(MainActivity.chargeAPPDB);

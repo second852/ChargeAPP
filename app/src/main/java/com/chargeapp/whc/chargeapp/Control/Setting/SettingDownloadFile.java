@@ -547,13 +547,13 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         }
                     }else if (sheetTitle.equals("Property")) {
                         PropertyVO propertyVO=new PropertyVO();
-                        propertyVO.setId((long) row.getCell(0).getNumericCellValue());
+                        propertyVO.setId(row.getCell(0).getStringCellValue());
                         propertyVO.setCurrency(row.getCell(1).getStringCellValue());
                         propertyVO.setName(row.getCell(2).getStringCellValue());
                         propertyDB.insert(propertyVO);
                     }else if (sheetTitle.equals("PropertyFrom")) {
                         PropertyFromVO propertyFromVO=new PropertyFromVO();
-                        propertyFromVO.setId((long) row.getCell(0).getNumericCellValue());
+                        propertyFromVO.setId(row.getCell(0).getStringCellValue());
                         propertyFromVO.setType(PropertyType.codeToEnum((int) row.getCell(1).getNumericCellValue()));
                         propertyFromVO.setSourceMoney(row.getCell(2).getStringCellValue());
                         propertyFromVO.setSourceCurrency(row.getCell(3).getStringCellValue());
@@ -561,12 +561,12 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         propertyFromVO.setSourceSecondType(row.getCell(5).getStringCellValue());
                         propertyFromVO.setSourceTime(new Date((long) row.getCell(6).getNumericCellValue()));
                         propertyFromVO.setImportFee(row.getCell(7).getStringCellValue());
-                        propertyFromVO.setImportFeeId((long) row.getCell(8).getNumericCellValue());
+                        propertyFromVO.setImportFeeId(row.getCell(8).getStringCellValue());
                         propertyFromVO.setFixImport(Boolean.valueOf(row.getCell(9).getStringCellValue()));
                         propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(row.getCell(10).getStringCellValue()));
                         propertyFromVO.setFixDateDetail(row.getCell(11).getStringCellValue());
-                        propertyFromVO.setPropertyId((long) row.getCell(12).getNumericCellValue());
-                        propertyFromVO.setFixFromId((long) row.getCell(13).getNumericCellValue());
+                        propertyFromVO.setPropertyId( row.getCell(12).getStringCellValue());
+                        propertyFromVO.setFixFromId(row.getCell(13).getStringCellValue());
                         propertyFromDB.insert(propertyFromVO);
                     }
                 }

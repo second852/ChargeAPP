@@ -75,11 +75,10 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
         Common.setChargeDB(this);
-//        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Property;");
-//        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE PropertyFrom;");
+        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Property;");
+        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE PropertyFrom;");
         Common.insertNewTableCol();
         new Thread(runnable).start();
-        new Thread(modifyMoneyFromIntegerToString).start();
         new Thread(downloadCurrency).start();
     }
 
@@ -124,41 +123,7 @@ public class Welcome extends AppCompatActivity {
 //        new GetSQLDate(this).execute("download");
     }
 
-    //將conume and invoice to String
-    private Runnable modifyMoneyFromIntegerToString=new Runnable() {
-        @Override
-        public void run() {
-            ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
-            List<ConsumeVO> consumeVOS=consumeDB.getRealMoneyIsNull();
-            for(ConsumeVO consumeVO:consumeVOS)
-            {
-                consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
-                consumeDB.update(consumeVO);
-            }
-            InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB);
-            List<InvoiceVO> invoiceVOS=invoiceDB.getRealAmountIsNull();
-            for(InvoiceVO invoiceVO:invoiceVOS)
-            {
-                invoiceVO.setRealAmount(String.valueOf(invoiceVO.getAmount()));
-                invoiceDB.update(invoiceVO);
-            }
-            BankDB bankDB=new BankDB(MainActivity.chargeAPPDB);
-            List<BankVO> bankVOS=bankDB.getrealMoneyIsNullAll();
-            for(BankVO bankVO:bankVOS)
-            {
-                bankVO.setRealMoney(String.valueOf(bankVO.getMoney()));
-                bankDB.update(bankVO);
-            }
-            GoalDB goalDB=new GoalDB(MainActivity.chargeAPPDB);
-            List<GoalVO> goalVOS=goalDB.getRealMoneyIsNull();
-            for(GoalVO goalVO:goalVOS)
-            {
-                goalVO.setRealMoney(String.valueOf(goalVO.getMoney()));
-                goalDB.update(goalVO);
-            }
 
-        }
-    };
 
 
     //下載現在匯率資料

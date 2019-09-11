@@ -241,7 +241,7 @@ public class SelectListBarIncome extends Fragment {
                 public void onClick(View v) {
                     DeleteDialogFragment aa = new DeleteDialogFragment();
                     aa.setObject(bankVO);
-                    aa.setFragement(SelectListBarIncome.this);
+                    aa.setFragment(SelectListBarIncome.this);
                     aa.show(getFragmentManager(), "show");
                 }
             });

@@ -355,8 +355,8 @@ public class ConsumeDB {
     }
 
 
-    public ConsumeVO getAutoTimePeriod(Timestamp startTime, Timestamp endTime, int id) {
-        String sql = "SELECT * FROM Consumer where autoId = '" + id + "' and date between '" + startTime.getTime() + "' and '" + endTime.getTime() + "' order by date ;";
+    public ConsumeVO getAutoTimePeriod(Timestamp startTime, Timestamp endTime, String fkKey) {
+        String sql = "SELECT * FROM Consumer where fkKey = '" + fkKey + "' and date between '" + startTime.getTime() + "' and '" + endTime.getTime() + "' order by date ;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         ConsumeVO consumeVO = null;
@@ -365,6 +365,20 @@ public class ConsumeDB {
         }
         cursor.close();
         return consumeVO;
+    }
+
+    public List<ConsumeVO> getFixdateAndfkKeyIsNull() {
+        String sql = "SELECT * FROM Consumer where fixdate = 'true' and fkKey is null order by id;";
+        String[] args = {};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        List<ConsumeVO> consumeList = new ArrayList<>();
+        ConsumeVO consumeVO;
+        while (cursor.moveToNext()) {
+            consumeVO =configConsumeVO(cursor);
+            consumeList.add(consumeVO);
+        }
+        cursor.close();
+        return consumeList;
     }
 
 
@@ -406,6 +420,26 @@ public class ConsumeDB {
         while (cursor.moveToNext()) {
             consumeVO = configConsumeVO(cursor);
             consumeList.add(consumeVO);
+        }
+        cursor.close();
+        return consumeList;
+    }
+
+    public List<ConsumeVO> getAutoCreateByFK(String fkKey) {
+        String sql = "SELECT * FROM Consumer where fkKey = '" + fkKey + "'order by id;";
+        String[] args = {};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        List<ConsumeVO> consumeList = new ArrayList<>();
+        ConsumeVO consumeVO;
+        while (cursor.moveToNext()) {
+            consumeVO = configConsumeVO(cursor);
+            if(consumeVO.isAuto())
+            {
+                consumeList.add(0,consumeVO);
+            }else{
+                consumeList.add(consumeVO);
+            }
+
         }
         cursor.close();
         return consumeList;

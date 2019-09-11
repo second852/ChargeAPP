@@ -22,7 +22,6 @@ import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateConsume;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateMoney;
-import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -30,7 +29,6 @@ import com.google.android.gms.ads.AdView;
 
 import org.jsoup.helper.StringUtil;
 
-import java.sql.Date;
 import java.util.List;
 
 
@@ -70,7 +68,7 @@ public class SettingListFixProperty extends Fragment {
         propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
         propertyDB=new PropertyDB(MainActivity.chargeAPPDB);
         bundle=getArguments();
-        Long id= (Long) getArguments().getSerializable(Common.propertyFromVoId);
+        String id= (String) getArguments().getSerializable(Common.propertyFromVoId);
         propertyFromVO=propertyFromDB.findByPropertyFromId(id);
         p= (int) getArguments().getSerializable("position");
         listView=view.findViewById(R.id.list);
@@ -230,7 +228,7 @@ public class SettingListFixProperty extends Fragment {
                     DeleteDialogFragment aa= new DeleteDialogFragment();
                     p=position;
                     aa.setObject(propertyFromVO);
-                    aa.setFragement(SettingListFixProperty.this);
+                    aa.setFragment(SettingListFixProperty.this);
                     aa.show(getFragmentManager(),"show");
                 }
             });

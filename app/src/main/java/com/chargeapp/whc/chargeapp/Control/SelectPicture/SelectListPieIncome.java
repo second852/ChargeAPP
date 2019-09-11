@@ -257,7 +257,7 @@ public class SelectListPieIncome extends Fragment {
                 public void onClick(View v) {
                     DeleteDialogFragment aa = new DeleteDialogFragment();
                     aa.setObject(bankVO);
-                    aa.setFragement(SelectListPieIncome.this);
+                    aa.setFragment(SelectListPieIncome.this);
                     aa.show(getFragmentManager(), "show");
                 }
             });

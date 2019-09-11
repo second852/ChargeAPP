@@ -38,7 +38,6 @@ import org.jsoup.helper.StringUtil;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.chargeapp.whc.chargeapp.Control.Common.Currency;
 import static com.chargeapp.whc.chargeapp.Control.Common.CurrencyResult;
 import static com.chargeapp.whc.chargeapp.Control.Common.propertyCurrency;
 
@@ -362,7 +361,7 @@ public class PropertyMoneyList extends Fragment {
                 public void onClick(View view) {
                     DeleteDialogFragment deleteObject= new DeleteDialogFragment();
                     deleteObject.setObject(propertyFromVO);
-                    deleteObject.setFragement(PropertyMoneyList.this);
+                    deleteObject.setFragment(PropertyMoneyList.this);
                     deleteObject.show(getFragmentManager(),"show");
                 }
             });

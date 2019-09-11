@@ -29,6 +29,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
@@ -63,6 +64,7 @@ import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
+import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
@@ -472,12 +474,77 @@ public class Common {
         colExist("Consumer","fkKey","text");
         colExist("INVOICE","currency","text");
         colExist("INVOICE","realAmount","text");
-        colExist("INVOICE","fkKey","text");
         colExist("BANK","currency","text");
         colExist("BANK","realMoney","text");
-        colExist("BANK","propertyId","Integer");
+        colExist("BANK","fkKey","text");
         colExist("Goal","currency","text");
         colExist("Goal","realMoney","text");
+
+        ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
+
+        //改用UUID FK consume
+        List<ConsumeVO> cFatherList = consumeDB.getFixdateAndfkKeyIsNull();
+        for(ConsumeVO father:cFatherList)
+        {
+            Log.d("XXXXXX", father.getFixDate());
+            Log.d("XXXXXX",father.getFkKey()+" ");
+//            father.setFkKey(UUID.randomUUID().toString());
+//            consumeDB.update(father);
+//            List<ConsumeVO> sonList=consumeDB.getAutoCreate(father.getId());
+//            for (ConsumeVO son:sonList)
+//            {
+//                son.setFkKey(father.getFkKey());
+//                consumeDB.update(son);
+//            }
+        }
+
+        //改用double
+        List<ConsumeVO> consumeVOS=consumeDB.getRealMoneyIsNull();
+        for(ConsumeVO consumeVO:consumeVOS)
+        {
+            consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
+            consumeDB.update(consumeVO);
+        }
+
+        BankDB bankDB=new BankDB(MainActivity.chargeAPPDB);
+        //改用UUID FK bank
+        List<BankVO> bFatherList=bankDB.getFixDateAndfkKeyIsNull();
+        for(BankVO father:bFatherList)
+        {
+            father.setFkKey(UUID.randomUUID().toString());
+            bankDB.update(father);
+            List<BankVO> sonList =bankDB.getAutoSetting(father.getId());
+            for(BankVO son:sonList)
+            {
+                son.setFkKey(father.getFkKey());
+                bankDB.update(son);
+            }
+        }
+
+
+        //改用double
+        List<BankVO> bankVOS=bankDB.getrealMoneyIsNullAll();
+        for(BankVO bankVO:bankVOS)
+        {
+            bankVO.setRealMoney(String.valueOf(bankVO.getMoney()));
+            bankDB.update(bankVO);
+        }
+
+        InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB);
+        List<InvoiceVO> invoiceVOS=invoiceDB.getRealAmountIsNull();
+        for(InvoiceVO invoiceVO:invoiceVOS)
+        {
+            invoiceVO.setRealAmount(String.valueOf(invoiceVO.getAmount()));
+            invoiceDB.update(invoiceVO);
+        }
+
+        GoalDB goalDB=new GoalDB(MainActivity.chargeAPPDB);
+        List<GoalVO> goalVOS=goalDB.getRealMoneyIsNull();
+        for(GoalVO goalVO:goalVOS)
+        {
+            goalVO.setRealMoney(String.valueOf(goalVO.getMoney()));
+            goalDB.update(goalVO);
+        }
     }
 
 
@@ -1315,7 +1382,7 @@ public class Common {
          propertyFromVO.setFixImport(false);
          propertyFromVO.setFixFromId(propertyFromVO.getId());
          propertyFromVO.setSourceTime(new Date(System.currentTimeMillis()));
-         propertyFromDB.insert(propertyFromVO);
+
 
          ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
          if(propertyFromVO.getFixFromId()!=null&&!StringUtil.isBlank(propertyFromVO.getImportFee()))
@@ -1331,6 +1398,7 @@ public class Common {
              }
          }
 
+         propertyFromDB.insert(propertyFromVO);
 
     }
 

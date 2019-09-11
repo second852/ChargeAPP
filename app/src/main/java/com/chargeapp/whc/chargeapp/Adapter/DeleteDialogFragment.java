@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -68,7 +67,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     private BankDB bankDB;
     private GoalDB goalDB;
     private Object object;
-    private Fragment fragement;
+    private Fragment fragment;
     private TypeDB typeDB;
     private TypeDetailDB typeDetailDB;
     private BankTypeDB bankTypeDB;
@@ -87,8 +86,8 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
     }
 
 
-    public void setFragement(Fragment fragement) {
-        this.fragement = fragement;
+    public void setFragment(Fragment fragment) {
+        this.fragment = fragment;
     }
 
     @Override
@@ -133,7 +132,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
         }else if(object instanceof GoalVO){
             GoalVO b= (GoalVO) object;
             message=b.getName();
-        }else if(fragement instanceof SettingMain)
+        }else if(fragment instanceof SettingMain)
         {
             title="確定重設資料庫?";
             message="重設後，紀錄資料會消失!";
@@ -192,7 +191,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                     invoiceDB.deleteById(I.getId());
                 }else if(object instanceof ConsumeVO){
                     ConsumeVO c= (ConsumeVO) object;
-                    PropertyFromVO propertyFromVO=propertyFromDB.findByImportFeeId((long) c.getId());
+                    PropertyFromVO propertyFromVO=propertyFromDB.findByImportFeeId(c.getFkKey());
                     if(propertyFromVO!=null)
                     {
                        propertyFromVO.setImportFee("0");
@@ -230,7 +229,7 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 }else if(object instanceof PropertyVO)
                 {
                     PropertyVO propertyVO= (PropertyVO) object;
-                    propertyFromDB.deleteByPropertyId(propertyVO.getId().intValue());
+                    propertyFromDB.deleteByPropertyId(propertyVO.getId());
                     propertyDB.deleteById(propertyVO.getId());
                 }else  if(object instanceof PropertyFromVO)
                 {
@@ -238,77 +237,77 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                     propertyFromDB.deleteById(propertyFromVO.getId());
                     if(propertyFromVO.getImportFeeId()!=null)
                     {
-                        consumeDB.deleteById(propertyFromVO.getImportFeeId().intValue());
+                        consumeDB.deleteByFk(propertyFromVO.getImportFeeId());
                     }
                 }
 
 
-                if(fragement instanceof SelectShowCircleDe)
+                if(fragment instanceof SelectShowCircleDe)
                 {
-                    SelectShowCircleDe selectShowCircleDe= (SelectShowCircleDe) fragement;
+                    SelectShowCircleDe selectShowCircleDe= (SelectShowCircleDe) fragment;
                     selectShowCircleDe.setLayout();
-                }else if(fragement instanceof SelectDetList){
-                    SelectDetList selectDetList= (SelectDetList) fragement;
+                }else if(fragment instanceof SelectDetList){
+                    SelectDetList selectDetList= (SelectDetList) fragment;
                     selectDetList.setLayout();
-                }else if(fragement instanceof SelectListModelCom){
-                    SelectListModelCom selectListModelCom= (SelectListModelCom) fragement;
+                }else if(fragment instanceof SelectListModelCom){
+                    SelectListModelCom selectListModelCom= (SelectListModelCom) fragment;
                     selectListModelCom.setLayout();
-                }else if(fragement instanceof SelectListModelIM){
-                    SelectListModelIM selectListModelIM= (SelectListModelIM) fragement;
+                }else if(fragment instanceof SelectListModelIM){
+                    SelectListModelIM selectListModelIM= (SelectListModelIM) fragment;
                     selectListModelIM.setLayout();
-                }else if(fragement instanceof GoalListAll){
-                    GoalListAll goalListAll= (GoalListAll) fragement;
+                }else if(fragment instanceof GoalListAll){
+                    GoalListAll goalListAll= (GoalListAll) fragment;
                     goalListAll.setLayout();
-                }else if(fragement instanceof SettingMain)
+                }else if(fragment instanceof SettingMain)
                 {
-                    SettingMain settingMain= (SettingMain) fragement;
+                    SettingMain settingMain= (SettingMain) fragment;
                     settingMain.deleteAll();
                     Common.showToast(getActivity(),"重置成功!");
-                }else if(fragement instanceof SettingListType)
+                }else if(fragment instanceof SettingListType)
                 {
-                   SettingListType settingListType= (SettingListType) fragement;
+                   SettingListType settingListType= (SettingListType) fragment;
                    settingListType.setLayout();
-                }else if(fragement instanceof SettingListFixCon)
+                }else if(fragment instanceof SettingListFixCon)
                 {
-                    SettingListFixCon settingListFixCon= (SettingListFixCon) fragement;
+                    SettingListFixCon settingListFixCon= (SettingListFixCon) fragment;
                     settingListFixCon.consumeVOS.remove(settingListFixCon.p);
                     settingListFixCon.setLayout();
-                }else if(fragement instanceof SettingListFixIon)
+                }else if(fragment instanceof SettingListFixIon)
                 {
-                    SettingListFixIon settingListFixIon= (SettingListFixIon) fragement;
+                    SettingListFixIon settingListFixIon= (SettingListFixIon) fragment;
                     settingListFixIon.bankVOS.remove(settingListFixIon.p);
                     settingListFixIon.setLayout();
-                }else if(fragement instanceof EleSetCarrier)
+                }else if(fragment instanceof EleSetCarrier)
                 {
-                    EleSetCarrier eleSetCarrier= (EleSetCarrier) fragement;
+                    EleSetCarrier eleSetCarrier= (EleSetCarrier) fragment;
                     eleSetCarrier.setListAdapt();
-                }else if(fragement instanceof SelectListBarIncome)
+                }else if(fragment instanceof SelectListBarIncome)
                 {
-                    SelectListBarIncome selectListBarIncome= (SelectListBarIncome) fragement;
+                    SelectListBarIncome selectListBarIncome= (SelectListBarIncome) fragment;
                     selectListBarIncome.setLayout();
-                }else if(fragement instanceof SelectListPieIncome)
+                }else if(fragment instanceof SelectListPieIncome)
                 {
-                    SelectListPieIncome selectListPieIncome= (SelectListPieIncome) fragement;
+                    SelectListPieIncome selectListPieIncome= (SelectListPieIncome) fragment;
                     selectListPieIncome.setLayout();
-                }else if(fragement instanceof HomePagetList)
+                }else if(fragment instanceof HomePagetList)
                 {
-                    HomePagetList homePagetList= (HomePagetList) fragement;
+                    HomePagetList homePagetList= (HomePagetList) fragment;
                     homePagetList.setChoiceLayout();
-                }else if(fragement instanceof SelectShowCircleDeList)
+                }else if(fragment instanceof SelectShowCircleDeList)
                 {
-                    SelectShowCircleDeList selectShowCircleDeList= (SelectShowCircleDeList) fragement;
+                    SelectShowCircleDeList selectShowCircleDeList= (SelectShowCircleDeList) fragment;
                     selectShowCircleDeList.choiceLayout();
-                }else if(fragement instanceof PropertyList)
+                }else if(fragment instanceof PropertyList)
                 {
-                    PropertyList propertyList= (PropertyList) fragement;
+                    PropertyList propertyList= (PropertyList) fragment;
                     propertyList.setAdapt();
-                }else if(fragement instanceof PropertyMoneyList)
+                }else if(fragment instanceof PropertyMoneyList)
                 {
-                    PropertyMoneyList propertyMoneyList= (PropertyMoneyList) fragement;
+                    PropertyMoneyList propertyMoneyList= (PropertyMoneyList) fragment;
                     propertyMoneyList.setListView();
-                }else if(fragement instanceof SettingListFixProperty)
+                }else if(fragment instanceof SettingListFixProperty)
                 {
-                    SettingListFixProperty settingListFixProperty= (SettingListFixProperty) fragement;
+                    SettingListFixProperty settingListFixProperty= (SettingListFixProperty) fragment;
                     settingListFixProperty.setLayout();
                 }
                 break;

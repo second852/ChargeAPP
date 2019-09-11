@@ -152,7 +152,7 @@ public class SettingListType extends Fragment {
                 public void onClick(View view) {
                     DeleteDialogFragment aa = new DeleteDialogFragment();
                     aa.setObject(o);
-                    aa.setFragement(SettingListType.this);
+                    aa.setFragment(SettingListType.this);
                     aa.show(getFragmentManager(), "show");
                 }
             });

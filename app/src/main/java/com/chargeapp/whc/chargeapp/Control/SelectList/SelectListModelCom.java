@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -141,6 +142,12 @@ public class SelectListModelCom extends Fragment {
         Calendar end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
         List<ConsumeVO> consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
         List<InvoiceVO> invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
+
+         for(InvoiceVO i:invoiceVOS)
+         {
+             Log.d("XXXXXXX",i.getMaintype()+" "+i.getSecondtype());
+         }
+
         objects.addAll(consumeVOS);
         objects.addAll(invoiceVOS);
         Collections.sort(objects, new Comparator<Object>() {
@@ -404,7 +411,7 @@ public class SelectListModelCom extends Fragment {
                 public void onClick(View view) {
                     DeleteDialogFragment aa = new DeleteDialogFragment();
                     aa.setObject(o);
-                    aa.setFragement(SelectListModelCom.this);
+                    aa.setFragment(SelectListModelCom.this);
                     aa.show(getFragmentManager(), "show");
                 }
             });

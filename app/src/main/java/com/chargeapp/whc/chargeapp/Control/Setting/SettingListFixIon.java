@@ -75,16 +75,7 @@ public class SettingListFixIon extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (bankVO.isAuto()) {
-            bankVOS = bankDB.getAutoSetting(bankVO.getAutoId());
-            BankVO bankVO1 = bankDB.findById(bankVO.getAutoId());
-            if (bankVO1 != null) {
-                bankVOS.add(0, bankVO1);
-            }
-        } else {
-            bankVOS = bankDB.getAutoSetting(bankVO.getId());
-            bankVOS.add(0, bankVO);
-        }
+        bankVOS = bankDB.getAutoByFk(bankVO.getFkKey());
         setLayout();
     }
 
@@ -186,7 +177,7 @@ public class SettingListFixIon extends Fragment {
                     p=position;
                     DeleteDialogFragment aa = new DeleteDialogFragment();
                     aa.setObject(bankVO);
-                    aa.setFragement(SettingListFixIon.this);
+                    aa.setFragment(SettingListFixIon.this);
                     aa.show(getFragmentManager(), "show");
                 }
             });

@@ -51,6 +51,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_MONEY;
 
@@ -107,9 +108,9 @@ public class PropertyUpdateConsume extends Fragment {
             return view;
         }
         rFragment= (String) bundle.getSerializable(Common.fragment);
-        Object object=getArguments().getSerializable(Common.propertyFromVoId);
+        String object= (String) getArguments().getSerializable(Common.propertyFromVoId);
         PropertyFromDB propertyFromDB=new PropertyFromDB(MainActivity.chargeAPPDB);
-        propertyFromVO=propertyFromDB.findByPropertyFromId((Long) object);
+        propertyFromVO=propertyFromDB.findByPropertyFromId(object);
         nowCurrency=propertyFromVO.getSourceCurrency();
         return view;
     }
@@ -640,11 +641,11 @@ public class PropertyUpdateConsume extends Fragment {
             {
                 if(fee==0)
                 {
-                    consumeDB.deleteById(propertyFromVO.getImportFeeId().intValue());
+                    consumeDB.deleteByFk(propertyFromVO.getImportFeeId());
                 }
 
 
-                ConsumeVO consumeVO=consumeDB.findConById(propertyFromVO.getImportFeeId().intValue());
+                ConsumeVO consumeVO=consumeDB.findConByFk(propertyFromVO.getImportFeeId());
                 if(fee>0)
                 {
 
@@ -657,8 +658,10 @@ public class PropertyUpdateConsume extends Fragment {
                         consumeVO.setRealMoney(fee.toString());
                         consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
                         consumeVO.setDate(new Date(System.currentTimeMillis()));
+                        consumeVO.setFkKey(UUID.randomUUID().toString());
                         ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
-                        propertyFromVO.setImportFeeId( consumeDB.insert(consumeVO));
+                        consumeDB.insert(consumeVO);
+                        propertyFromVO.setImportFeeId(consumeVO.getFkKey());
 
                     }else {
                         consumeVO.setCurrency(nowCurrency);
@@ -679,8 +682,10 @@ public class PropertyUpdateConsume extends Fragment {
                     consumeVO.setRealMoney(fee.toString());
                     consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
                     consumeVO.setDate(new Date(System.currentTimeMillis()));
+                    consumeVO.setFkKey(UUID.randomUUID().toString());
                     ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
-                    propertyFromVO.setImportFeeId( consumeDB.insert(consumeVO));
+                    consumeDB.insert(consumeVO);
+                    propertyFromVO.setImportFeeId(consumeVO.getFkKey());
                 }
 
 

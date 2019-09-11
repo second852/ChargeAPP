@@ -138,6 +138,21 @@ public class BankDB {
         return BankVOList;
     }
 
+
+    public List<BankVO> getFixDateAndfkKeyIsNull() {
+        String sql = "SELECT * FROM BANK where  fixdate = 'true' and fkKey is null order by id;";
+        String[] args = {};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        List<BankVO> BankVOList = new ArrayList<>();
+        BankVO bankVO;
+        while (cursor.moveToNext()) {
+            bankVO = configBankVO(cursor);
+            BankVOList.add(bankVO);
+        }
+        cursor.close();
+        return BankVOList;
+    }
+
     public List<BankVO> getAutoSetting(int id) {
         String sql = "SELECT * FROM BANK where autoId = " + id + ";";
         String[] args = {};
@@ -147,6 +162,26 @@ public class BankDB {
         while (cursor.moveToNext()) {
             bankVO = configBankVO(cursor);
             BankVOList.add(bankVO);
+        }
+        cursor.close();
+        return BankVOList;
+    }
+
+    public List<BankVO> getAutoByFk(String fkKey) {
+        String sql = "SELECT * FROM BANK where fkKey = " + fkKey + ";";
+        String[] args = {};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        List<BankVO> BankVOList = new ArrayList<>();
+        BankVO bankVO;
+        while (cursor.moveToNext()) {
+            bankVO = configBankVO(cursor);
+            if(bankVO.isAuto())
+            {
+                BankVOList.add(0,bankVO);
+            }else {
+                BankVOList.add(bankVO);
+            }
+
         }
         cursor.close();
         return BankVOList;
@@ -166,8 +201,8 @@ public class BankDB {
         return BankVOList;
     }
 
-    public BankVO getAutoBank(Timestamp start, Timestamp end, int id) {
-        String sql = "SELECT * FROM BANK where autoId = '" + id + "' and date between '" + start.getTime() + "' and '" + end.getTime() + "' order by date;";
+    public BankVO getAutoBank(Timestamp start, Timestamp end, String fkKey) {
+        String sql = "SELECT * FROM BANK where fkKey = '" + fkKey + "' and date between '" + start.getTime() + "' and '" + end.getTime() + "' order by date;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         BankVO bankVO = null;

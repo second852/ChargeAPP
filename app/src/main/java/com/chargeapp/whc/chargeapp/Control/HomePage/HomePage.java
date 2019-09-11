@@ -263,10 +263,6 @@ public class HomePage extends Fragment {
 
         switch (Common.screenSize) {
             case xLarge:
-                dataSet.setSelectionShift(30f);
-                dataSet.setValueTextSize(25f);
-                pieChart.setEntryLabelTextSize(25f);
-                break;
             case large:
                 dataSet.setSelectionShift(30f);
                 dataSet.setValueTextSize(25f);

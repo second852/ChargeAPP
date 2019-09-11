@@ -249,7 +249,7 @@ public class SelectListModelIM extends Fragment {
                 public void onClick(View v) {
                     DeleteDialogFragment aa = new DeleteDialogFragment();
                     aa.setObject(bankVO);
-                    aa.setFragement(SelectListModelIM.this);
+                    aa.setFragment(SelectListModelIM.this);
                     aa.show(getFragmentManager(), "show");
                 }
             });

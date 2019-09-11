@@ -264,7 +264,7 @@ public class EleSetCarrier extends Fragment {
 
                     DeleteDialogFragment aa= new DeleteDialogFragment();
                     aa.setObject(carrierVO);
-                    aa.setFragement(EleSetCarrier.this);
+                    aa.setFragment(EleSetCarrier.this);
                     aa.show(getFragmentManager(),"show");
 
                 }
