@@ -319,8 +319,8 @@ public class PropertyFromDB {
 
     public Map<String,Double> getPieDataByPropertyId(PropertyType propertyType, String propertyId)
     {
-        String sql = "SELECT * FROM PropertyFrom where type ='"+propertyType.getCode() +"' and propertyId = "+propertyId+" order by id;";
-        String[] args = {};
+        String sql = "SELECT * FROM PropertyFrom where type = ? and propertyId = ? order by id;";
+        String[] args = {String.valueOf(propertyType.getCode()),propertyId};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         CurrencyDB currencyDB=new CurrencyDB(db);
         PropertyFromVO propertyFromVO;
