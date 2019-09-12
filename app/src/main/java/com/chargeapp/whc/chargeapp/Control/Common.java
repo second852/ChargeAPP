@@ -488,14 +488,14 @@ public class Common {
         {
             Log.d("XXXXXX", father.getFixDate());
             Log.d("XXXXXX",father.getFkKey()+" ");
-//            father.setFkKey(UUID.randomUUID().toString());
-//            consumeDB.update(father);
-//            List<ConsumeVO> sonList=consumeDB.getAutoCreate(father.getId());
-//            for (ConsumeVO son:sonList)
-//            {
-//                son.setFkKey(father.getFkKey());
-//                consumeDB.update(son);
-//            }
+            father.setFkKey(UUID.randomUUID().toString());
+            consumeDB.update(father);
+            List<ConsumeVO> sonList=consumeDB.getAutoCreate(father.getId());
+            for (ConsumeVO son:sonList)
+            {
+                son.setFkKey(father.getFkKey());
+                consumeDB.update(son);
+            }
         }
 
         //改用double

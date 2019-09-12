@@ -80,6 +80,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -113,7 +115,9 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     private boolean firstEnter;
     private PropertyFromDB propertyFromDB;
     private PropertyDB propertyDB;
-
+    private TextView percent;
+    private BigDecimal hundred=new BigDecimal(100);
+    private BigDecimal t,c;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -147,6 +151,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         propertyFromDB=new PropertyFromDB((sqLiteOpenHelper));
         List<EleMainItemVO> itemSon = getNewItem();
         listView = view.findViewById(R.id.list);
+        percent=view.findViewById(R.id.percent);
         progressL = view.findViewById(R.id.progressL);
         listView.setAdapter(new ListAdapter(context, itemSon));
         progressL.setVisibility(View.GONE);
@@ -324,9 +329,17 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
 
     private void inputExcel(InputStream inp) {
         int i = 0;
-        Message msg = handler.obtainMessage();
+        Message msg = new Message();
         try {
             Workbook workbook = new HSSFWorkbook(inp);
+
+            //count
+            int total=0,count=0;
+            setMessage(1,1);
+            for (Sheet sheet : workbook) {
+                total=sheet.getLastRowNum()+total;
+            }
+
             for (Sheet sheet : workbook) {
                 String sheetTitle = sheet.getSheetName();
                 if ((!sheetTitle.equals("Type") && i == 0)) {
@@ -335,6 +348,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                     inp.close();
                     return;
                 }
+
                 for (Row row : sheet) {
                     if (sheetTitle.equals("Type")) {
                         TypeVO typeVO = new TypeVO();
@@ -346,6 +360,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         if(oldTypeVO==null)
                         {
                             typeDB.insert(typeVO);
+                            setMessage(count++,total);
                         }
                     } else if (sheetTitle.equals("TypeDetail")) {
                         TypeDetailVO typeDetailVO = new TypeDetailVO();
@@ -358,6 +373,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         if(oldTypeDetail==null)
                         {
                             typeDetailDB.insert(typeDetailVO);
+                            setMessage(count++,total);
                         }
                     } else if (sheetTitle.equals("BankType")) {
                         BankTypeVO bankTypeVO = new BankTypeVO();
@@ -369,6 +385,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         if(oldBankTypeVO==null)
                         {
                             bankTypeDB.insert(bankTypeVO);
+                            setMessage(count++,total);
                         }
                     } else if (sheetTitle.equals("Goal")) {
                         GoalVO goalVO = new GoalVO();
@@ -396,6 +413,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         if(oldGoalVO==null)
                         {
                             goalDB.insert(goalVO);
+                            setMessage(count++,total);
                         }
                     } else if (sheetTitle.equals("Bank")) {
                         BankVO bankVO = new BankVO();
@@ -419,6 +437,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         if(oldBankVO==null)
                         {
                             bankDB.insert(bankVO);
+                            setMessage(count++,total);
                         }
                     } else if (sheetTitle.equals("Consume")) {
                         ConsumeVO consumeVO = new ConsumeVO();
@@ -454,6 +473,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         if(oldConsume==null)
                         {
                             consumeDB.insert(consumeVO);
+                            setMessage(count++,total);
                         }
                     } else if (sheetTitle.equals("Invoice")) {
                         InvoiceVO invoiceVO = new InvoiceVO();
@@ -489,12 +509,14 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         }catch (Exception e)
                         {
                             invoiceVO.setCurrency("TWD");
+
                         }
 
                         InvoiceVO oldInvoiceVO=invoiceDB.findOldInvoiceVO(invoiceVO);
                         if(oldInvoiceVO==null)
                         {
                             invoiceDB.insert(invoiceVO);
+                            setMessage(count++,total);
                         }
                     } else if (sheetTitle.equals("Carrier")) {
                         CarrierVO carrierVO = new CarrierVO();
@@ -505,6 +527,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         if(oldCarrierVO==null)
                         {
                             carrierDB.insert(carrierVO);
+                            setMessage(count++,total);
                         }
                     }else if (sheetTitle.equals("Price")) {
                         PriceVO priceVO = new PriceVO();
@@ -532,6 +555,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         if(oldPriceVO==null)
                         {
                             priceDB.insert(priceVO);
+                            setMessage(count++,total);
                         }
                     }else if (sheetTitle.equals("ElePeriod")) {
                         ElePeriod elePeriod = new ElePeriod();
@@ -544,6 +568,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         if(oldElePeriod==null)
                         {
                             elePeriodDB.insert(elePeriod);
+                            setMessage(count++,total);
                         }
                     }else if (sheetTitle.equals("Property")) {
                         PropertyVO propertyVO=new PropertyVO();
@@ -551,6 +576,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         propertyVO.setCurrency(row.getCell(1).getStringCellValue());
                         propertyVO.setName(row.getCell(2).getStringCellValue());
                         propertyDB.insert(propertyVO);
+                        setMessage(count++,total);
                     }else if (sheetTitle.equals("PropertyFrom")) {
                         PropertyFromVO propertyFromVO=new PropertyFromVO();
                         propertyFromVO.setId(row.getCell(0).getStringCellValue());
@@ -568,19 +594,22 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         propertyFromVO.setPropertyId( row.getCell(12).getStringCellValue());
                         propertyFromVO.setFixFromId(row.getCell(13).getStringCellValue());
                         propertyFromDB.insert(propertyFromVO);
+                        setMessage(count++,total);
                     }
                 }
                 i++;
             }
             msg.what=0;
+            setMessage(total,total);
             workbook.close();
             inp.close();
+            Common.insertNewTableCol();
         } catch (Exception e) {
             msg.what=1;
-            Log.d("xxxxxxxx", e.getMessage());
+            Log.d("xxxxxxxx", e.toString());
             e.printStackTrace();
         }finally {
-            msg.sendToTarget();
+            handler.sendMessage(msg);
         }
     }
 
@@ -600,9 +629,15 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                 case 3:
                     Common.showToast(context, "請將檔案放置在/Download，檔名為記帳小助手.xls");
                     break;
+                case 4:
+                    percent.setText((String) msg.obj);
+                    break;
             }
-            progressL.setVisibility(View.GONE);
-            super.handleMessage(msg);
+            if(msg.what!=4)
+            {
+                progressL.setVisibility(View.GONE);
+            }
+
         }
     };
 
@@ -663,5 +698,18 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
 
                 }
             };
+
+
+
+    private void setMessage(int count,int total)
+    {
+        Message message=new Message();
+        message.what=4;
+        c=new BigDecimal(count);
+        t=new BigDecimal(total);
+        message.obj= c.divide(t,4,RoundingMode.HALF_UP).multiply(hundred).setScale(1,BigDecimal.ROUND_HALF_UP)+"%";
+        handler.sendMessage(message);
+    }
+
 
 }

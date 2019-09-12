@@ -424,7 +424,7 @@ public class SelectConsume extends Fragment {
             for (InvoiceVO I : invoiceVOS) {
                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
                 Double invoiceVOMoney=Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney());
-                if (I.getMaintype().equals("0") || I.getMaintype().equals("O")) {
+                if (I.getMaintype().equals("0") || I.getMaintype().equals("O")|| I.getMaintype().equals("其他")) {
                     other.setValue(other.getValue() + invoiceVOMoney);
                     OKey.add(I.getMaintype());
                     continue;

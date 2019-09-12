@@ -125,10 +125,6 @@ public class HomePagetList extends Fragment {
         objects=new ArrayList<>();
         for(String s:Okey)
         {
-            if(s.equals("其他"))
-            {
-                s="o";
-            }
             consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),s);
             objects.addAll(consumeVOS);
             invoiceVOS=invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),s);

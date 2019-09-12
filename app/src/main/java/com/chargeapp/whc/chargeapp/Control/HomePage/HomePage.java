@@ -232,7 +232,7 @@ public class HomePage extends Fragment {
                 ShowZero = false;
                 part = (consumeVOS.get(key) * 100 / total);
             }
-            if (i < 4 && part > 2 && (!key.equals("O")) && (!key.equals("0"))) {
+            if (i < 4 && part > 2 && (!key.equals("O")) && (!key.equals("0"))&&(!key.equals("其他"))) {
                 yVals1.add(new PieEntry(consumeVOS.get(key).floatValue(), key));
                 i++;
             } else {

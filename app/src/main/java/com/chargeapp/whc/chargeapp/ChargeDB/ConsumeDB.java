@@ -435,9 +435,9 @@ public class ConsumeDB {
             consumeVO = configConsumeVO(cursor);
             if(consumeVO.isAuto())
             {
-                consumeList.add(0,consumeVO);
-            }else{
                 consumeList.add(consumeVO);
+            }else{
+                consumeList.add(0,consumeVO);
             }
 
         }

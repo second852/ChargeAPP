@@ -168,8 +168,8 @@ public class BankDB {
     }
 
     public List<BankVO> getAutoByFk(String fkKey) {
-        String sql = "SELECT * FROM BANK where fkKey = " + fkKey + ";";
-        String[] args = {};
+        String sql = "SELECT * FROM BANK where fkKey = ? order by date desc;";
+        String[] args = {fkKey};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();
         BankVO bankVO;
@@ -177,11 +177,11 @@ public class BankDB {
             bankVO = configBankVO(cursor);
             if(bankVO.isAuto())
             {
-                BankVOList.add(0,bankVO);
-            }else {
                 BankVOList.add(bankVO);
-            }
+            }else{
 
+                BankVOList.add(0,bankVO);
+            }
         }
         cursor.close();
         return BankVOList;
