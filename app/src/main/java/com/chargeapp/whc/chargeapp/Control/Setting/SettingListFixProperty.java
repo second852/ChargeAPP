@@ -193,7 +193,12 @@ public class SettingListFixProperty extends Fragment {
                 }
             }
 
-            stringBuilder.append((index++)+". 時間 : "+propertyFromVO.getFixDateCode().getDetail()+propertyFromVO.getFixDateDetail());
+            stringBuilder.append((index++)+". 時間 : "+propertyFromVO.getFixDateCode().getDetail());
+
+            if(!StringUtil.isBlank(propertyFromVO.getFixDateDetail()))
+            {
+                stringBuilder.append(propertyFromVO.getFixDateDetail());
+            }
 
 
 

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -289,6 +290,22 @@ public class PropertyInsertConsume extends Fragment {
         showDate=view.findViewById(R.id.showDate);
         showDate.setOnClickListener(new choiceDateClick());
 
+        final ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                    resultStatue = "";
+                    resultDay = "";
+                    choiceStatue.setVisibility(View.GONE);
+                    choiceDay.setVisibility(View.GONE);
+                    fixDate.setX(showFixDate.getWidth() / 3);
+                    fixDateT.setX(showFixDate.getWidth() / 3 + fixDate.getWidth());
+
+            }
+        });
+
     }
 
 
@@ -531,7 +548,7 @@ public class PropertyInsertConsume extends Fragment {
                 consumeVO.setSecondType("轉帳");
                 consumeVO.setCurrency(nowCurrency);
                 consumeVO.setRealMoney(fee.toString());
-
+                consumeVO.setFixDate("false");
                 consumeVO.setDetailname("轉入"+propertyVO.getName()+"的費用");
                 consumeVO.setDate(new Date(System.currentTimeMillis()));
                 consumeVO.setFkKey(UUID.randomUUID().toString());

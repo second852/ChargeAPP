@@ -1,5 +1,7 @@
 package com.chargeapp.whc.chargeapp.TypeCode;
 
+import org.jsoup.helper.StringUtil;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,7 +46,13 @@ public enum FixDateCode {
 
     public static FixDateCode detailToEnum(String detail)
     {
-        return mapString.get(detail);
+        if(StringUtil.isBlank(detail))
+        {
+            return null;
+        }else {
+            return mapString.get(detail);
+        }
+
     }
 
 }

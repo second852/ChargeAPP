@@ -225,20 +225,32 @@ public class PropertyUpdateConsume extends Fragment {
                 @Override
                 public void onGlobalLayout() {
                     view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    if(propertyFromVO.getFixDateCode().equals(FixDateCode.FixDay))
+                    if(!propertyFromVO.getFixImport())
                     {
+                        resultStatue="";
+                        resultDay="";
+                        choiceStatue.setVisibility(View.GONE);
                         choiceDay.setVisibility(View.GONE);
-                        fixDate.setX(showFixDate.getWidth()/10);
-                        fixDateT.setX(showFixDate.getWidth()/10+fixDate.getWidth());
-                        choiceStatue.setX(showFixDate.getWidth()/2+showFixDate.getWidth()/10);
-                        choiceStatue.setVisibility(View.VISIBLE);
+                        fixDate.setX(showFixDate.getWidth()/3);
+                        fixDateT.setX(showFixDate.getWidth()/3+fixDate.getWidth());
                     }else {
-                        choiceDay.setVisibility(View.VISIBLE);
-                        fixDate.setX(showFixDate.getWidth()/20);
-                        fixDateT.setX(showFixDate.getWidth()/20+fixDate.getWidth());
-                        choiceStatue.setX(showFixDate.getWidth()/3+showFixDate.getWidth()/10);
-                        choiceDay.setX((showFixDate.getWidth()*2/3)+showFixDate.getWidth()/20);
+                        if(propertyFromVO.getFixDateCode().equals(FixDateCode.FixDay))
+                        {
+                            choiceDay.setVisibility(View.GONE);
+                            fixDate.setX(showFixDate.getWidth()/10);
+                            fixDateT.setX(showFixDate.getWidth()/10+fixDate.getWidth());
+                            choiceStatue.setX(showFixDate.getWidth()/2+showFixDate.getWidth()/10);
+                            choiceStatue.setVisibility(View.VISIBLE);
+                        }else {
+                            choiceDay.setVisibility(View.VISIBLE);
+                            fixDate.setX(showFixDate.getWidth()/20);
+                            fixDateT.setX(showFixDate.getWidth()/20+fixDate.getWidth());
+                            choiceStatue.setX(showFixDate.getWidth()/3+showFixDate.getWidth()/10);
+                            choiceDay.setX((showFixDate.getWidth()*2/3)+showFixDate.getWidth()/20);
+                        }
                     }
+
+
                 }
             });
 
@@ -659,6 +671,7 @@ public class PropertyUpdateConsume extends Fragment {
                         consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
                         consumeVO.setDate(new Date(System.currentTimeMillis()));
                         consumeVO.setFkKey(UUID.randomUUID().toString());
+                        consumeVO.setFixDate("false");
                         ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
                         consumeDB.insert(consumeVO);
                         propertyFromVO.setImportFeeId(consumeVO.getFkKey());
@@ -683,6 +696,7 @@ public class PropertyUpdateConsume extends Fragment {
                     consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
                     consumeVO.setDate(new Date(System.currentTimeMillis()));
                     consumeVO.setFkKey(UUID.randomUUID().toString());
+                    consumeVO.setFixDate("false");
                     ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
                     consumeDB.insert(consumeVO);
                     propertyFromVO.setImportFeeId(consumeVO.getFkKey());

@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -36,6 +37,7 @@ import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -246,7 +248,7 @@ public class InsertIncome extends Fragment {
         date.setOnFocusChangeListener(new dateClickListener());
         date.setOnClickListener(new dateClickListener());
         name.setOnClickListener(new showFirstG());
-        name.setOnFocusChangeListener(new showFirstG());
+//        name.setOnFocusChangeListener(new showFirstG());
         name.setInputType(InputType.TYPE_NULL);
         showdate.setOnClickListener(new choicedateClick());
         choiceStatue.setOnDropDownItemClickListener(new choiceStateItemBS());
@@ -465,6 +467,21 @@ public class InsertIncome extends Fragment {
         fixDateT=view.findViewById(R.id.fixDateT);
         firstL = view.findViewById(R.id.firstL);
         standard=view.findViewById(R.id.standard);
+        final ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                resultStatue="";
+                resultDay="";
+                choiceStatue.setVisibility(View.GONE);
+                choiceday.setVisibility(View.GONE);
+                fixDate.setX(showfixdate.getWidth()/3);
+                fixDateT.setX(showfixdate.getWidth()/3+fixDate.getWidth());
+            }
+        });
+
+
     }
 
 

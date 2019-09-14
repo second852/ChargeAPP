@@ -227,7 +227,7 @@ public class PropertyConsumeShow extends Fragment {
     private void setNowMoney() {
         totalString.setText(mainType+"總支出");
         total=0.0;
-        propertyFromVOS=propertyFromDB.findByPropertyId(propertyId);
+        propertyFromVOS=propertyFromDB.findByPropertyMainType(mainType,propertyId);
         for(PropertyFromVO propertyFromVO:propertyFromVOS)
         {
             CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getSourceCurrency());

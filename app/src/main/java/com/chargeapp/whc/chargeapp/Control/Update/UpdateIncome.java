@@ -85,6 +85,7 @@ public class UpdateIncome extends Fragment {
     private GridView numberKeyBoard;
     private BootstrapButton currency, calculate;
     private View view;
+    private boolean isEveryDay=false;
 
     @Override
     public void onAttach(Context context) {
@@ -119,7 +120,7 @@ public class UpdateIncome extends Fragment {
         bankDB = new BankDB(MainActivity.chargeAPPDB);
         bankTypeDB = new BankTypeDB(MainActivity.chargeAPPDB);
         name.setOnClickListener(new showFirstG());
-        name.setOnFocusChangeListener(new showFirstG());
+//        name.setOnFocusChangeListener(new showFirstG());
         name.setInputType(InputType.TYPE_NULL);
 
         firstG.setOnItemClickListener(new firstGridOnClick());
@@ -304,6 +305,7 @@ public class UpdateIncome extends Fragment {
         date.setText(Common.sTwo.format(bankVO.getDate()));
         detailname.setText(bankVO.getDetailname());
         fixdate.setChecked(Boolean.valueOf(bankVO.getFixDate()));
+
         if(bankVO.getFixDate().equals("true"))
         {
 
@@ -312,6 +314,7 @@ public class UpdateIncome extends Fragment {
             String choicedate=js.get("choicedate").getAsString().trim();
             if(choicestatue.trim().equals("每天"))
             {
+                isEveryDay=true;
                 statueNumber=0;
                 resultStatue=BsTextStatue.get(0).toString();
                 resultDay="";
@@ -367,12 +370,18 @@ public class UpdateIncome extends Fragment {
                 choiceday.setDropdownData(Common.MonthSetSpinnerBS());
                 choiceday.setExpandDirection(ExpandDirection.UP);
             }
-            final ViewTreeObserver vto = showfixdate.getViewTreeObserver();
-            vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    showfixdate.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    if(choicestatue.trim().equals("每天"))
+
+        }
+
+
+        final ViewTreeObserver vto = view.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                showfixdate.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                if(bankVO.getFixDate().equals("true"))
+                {
+                    if(isEveryDay)
                     {
                         choiceday.setVisibility(View.GONE);
                         fixdate.setX(showfixdate.getWidth()/10);
@@ -384,9 +393,22 @@ public class UpdateIncome extends Fragment {
                         choiceStatue.setX(showfixdate.getWidth()/3+showfixdate.getWidth()/10);
                         choiceday.setX((showfixdate.getWidth()*2/3)+showfixdate.getWidth()/20);
                     }
+                }else{
+
+
+                    resultStatue="";
+                    resultDay="";
+                    choiceStatue.setVisibility(View.GONE);
+                    choiceday.setVisibility(View.GONE);
+                    fixdate.setX(showfixdate.getWidth()/3);
+                    fixDateT.setX(showfixdate.getWidth()/3+fixdate.getWidth());
+
+
                 }
-            });
-        }
+
+
+            }
+        });
     }
 
 
@@ -399,7 +421,7 @@ public class UpdateIncome extends Fragment {
         date = view.findViewById(R.id.date);
         date.setShowSoftInputOnFocus(false);
 
-        fixdate = view.findViewById(R.id.fixdate);
+        fixdate = view.findViewById(R.id.fixDate);
         save = view.findViewById(R.id.save);
         clear = view.findViewById(R.id.clear);
         showdate = view.findViewById(R.id.showdate);

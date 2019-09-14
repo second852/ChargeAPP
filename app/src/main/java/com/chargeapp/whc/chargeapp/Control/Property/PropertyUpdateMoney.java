@@ -172,9 +172,7 @@ public class PropertyUpdateMoney extends Fragment {
         if(propertyFromVO.getFixImport())
         {
             int updateChoice;
-            choiceDate=propertyFromVO.getFixDateDetail().trim();
             resultStatue=propertyFromVO.getFixDateCode().getDetail();
-            resultDay=propertyFromVO.getFixDateDetail().trim();
             statueNumber=propertyFromVO.getFixDateCode().getCode();
             switch (propertyFromVO.getFixDateCode())
             {
@@ -186,6 +184,8 @@ public class PropertyUpdateMoney extends Fragment {
                     choiceDay.setExpandDirection(ExpandDirection.UP);
                     break;
                 case FixWeek:
+                    resultDay=propertyFromVO.getFixDateDetail().trim();
+                    choiceDate=propertyFromVO.getFixDateDetail().trim();
                     choiceStatue.setBootstrapText(BsTextStatue.get(1));
                     choiceStatue.setBootstrapText(BsTextStatue.get(1));
                     choiceDay.setDropdownData(Common.WeekSetSpinnerBS);
@@ -212,21 +212,28 @@ public class PropertyUpdateMoney extends Fragment {
                     }
                     choiceDay.setBootstrapText(BsTextWeek.get(updateChoice));
                     choiceDay.setExpandDirection(ExpandDirection.UP);
+
                     break;
                 case FixMonth:
+                    resultDay=propertyFromVO.getFixDateDetail().trim();
+                    choiceDate=propertyFromVO.getFixDateDetail().trim();
                     choiceStatue.setBootstrapText(BsTextStatue.get(2));
                     choiceDate=choiceDate.substring(0,choiceDate.indexOf("日"));
                     updateChoice= Integer.valueOf(choiceDate)-1;
                     choiceDay.setBootstrapText(BsTextDay.get(updateChoice));
                     choiceDay.setDropdownData(Common.DaySetSpinnerBS());
                     choiceDay.setExpandDirection(ExpandDirection.UP);
+
                     break;
                 case FixYear:
+                    resultDay=propertyFromVO.getFixDateDetail().trim();
+                    choiceDate=propertyFromVO.getFixDateDetail().trim();
                     choiceStatue.setBootstrapText(BsTextStatue.get(3));
                     updateChoice=Integer.valueOf(choiceDate.substring(0,choiceDate.indexOf("月")))-1;
                     choiceDay.setBootstrapText(BsTextMonth.get(updateChoice));
                     choiceDay.setDropdownData(Common.MonthSetSpinnerBS());
                     choiceDay.setExpandDirection(ExpandDirection.UP);
+
                     break;
             }
 
@@ -236,20 +243,34 @@ public class PropertyUpdateMoney extends Fragment {
                 @Override
                 public void onGlobalLayout() {
                     view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    if(propertyFromVO.getFixDateCode().equals(FixDateCode.FixDay))
+
+                    if(!propertyFromVO.getFixImport())
                     {
+                        resultStatue="";
+                        resultDay="";
+                        choiceStatue.setVisibility(View.GONE);
                         choiceDay.setVisibility(View.GONE);
-                        fixDate.setX(showFixDate.getWidth()/10);
-                        fixDateT.setX(showFixDate.getWidth()/10+fixDate.getWidth());
-                        choiceStatue.setX(showFixDate.getWidth()/2+showFixDate.getWidth()/10);
-                        choiceStatue.setVisibility(View.VISIBLE);
+                        fixDate.setX(showFixDate.getWidth()/3);
+                        fixDateT.setX(showFixDate.getWidth()/3+fixDate.getWidth());
                     }else {
-                        choiceDay.setVisibility(View.VISIBLE);
-                        fixDate.setX(showFixDate.getWidth()/20);
-                        fixDateT.setX(showFixDate.getWidth()/20+fixDate.getWidth());
-                        choiceStatue.setX(showFixDate.getWidth()/3+showFixDate.getWidth()/10);
-                        choiceDay.setX((showFixDate.getWidth()*2/3)+showFixDate.getWidth()/20);
+                        if(propertyFromVO.getFixDateCode().equals(FixDateCode.FixDay))
+                        {
+                            choiceDay.setVisibility(View.GONE);
+                            fixDate.setX(showFixDate.getWidth()/10);
+                            fixDateT.setX(showFixDate.getWidth()/10+fixDate.getWidth());
+                            choiceStatue.setX(showFixDate.getWidth()/2+showFixDate.getWidth()/10);
+                            choiceStatue.setVisibility(View.VISIBLE);
+                        }else {
+                            choiceDay.setVisibility(View.VISIBLE);
+                            fixDate.setX(showFixDate.getWidth()/20);
+                            fixDateT.setX(showFixDate.getWidth()/20+fixDate.getWidth());
+                            choiceStatue.setX(showFixDate.getWidth()/3+showFixDate.getWidth()/10);
+                            choiceDay.setX((showFixDate.getWidth()*2/3)+showFixDate.getWidth()/20);
+                        }
                     }
+
+
+
                 }
             });
 
@@ -590,6 +611,7 @@ public class PropertyUpdateMoney extends Fragment {
                         consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
                         consumeVO.setDate(new Date(System.currentTimeMillis()));
                         consumeVO.setFkKey(UUID.randomUUID().toString());
+                        consumeVO.setFixDate("false");
                         consumeDB.insert(consumeVO);
                         propertyFromVO.setImportFeeId(consumeVO.getFkKey());
 
@@ -613,6 +635,7 @@ public class PropertyUpdateMoney extends Fragment {
                     consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
                     consumeVO.setDate(new Date(System.currentTimeMillis()));
                     consumeVO.setFkKey(UUID.randomUUID().toString());
+                    consumeVO.setFixDate("false");
                     ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
                     consumeDB.insert(consumeVO);
                     propertyFromVO.setImportFeeId(consumeVO.getFkKey());

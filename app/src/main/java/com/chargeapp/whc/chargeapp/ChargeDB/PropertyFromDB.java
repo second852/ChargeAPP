@@ -66,7 +66,7 @@ public class PropertyFromDB {
         values.put("importFee",propertyFromVO.getImportFee());
         values.put("importFeeId",propertyFromVO.getImportFeeId());
         values.put("fixImport", propertyFromVO.getFixImport().toString());
-        values.put("fixDateCode", propertyFromVO.getFixDateCode().getDetail());
+        values.put("fixDateCode", propertyFromVO.getFixDateCode()==null?null:propertyFromVO.getFixDateCode().getDetail());
         values.put("fixDateDetail", propertyFromVO.getFixDateDetail());
         values.put("propertyId", propertyFromVO.getPropertyId());
         values.put("fixFromId", propertyFromVO.getFixFromId());
