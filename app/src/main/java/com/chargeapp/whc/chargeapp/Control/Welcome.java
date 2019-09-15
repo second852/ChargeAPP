@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -28,9 +29,11 @@ import com.beardedhen.androidbootstrap.BootstrapThumbnail;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.Adapter.PermissionFragment;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
@@ -41,6 +44,7 @@ import com.chargeapp.whc.chargeapp.Job.DownloadNewDataJob;
 import com.chargeapp.whc.chargeapp.Job.JobSchedulerService;
 import com.chargeapp.whc.chargeapp.Job.ThirdReceiver;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
+import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
@@ -78,8 +82,13 @@ public class Welcome extends AppCompatActivity {
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Property;");
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE PropertyFrom;");
         Common.insertNewTableCol();
-        new Thread(runnable).start();
-        new Thread(downloadCurrency).start();
+        CarrierDB carrierDB=new CarrierDB(MainActivity.chargeAPPDB);
+        CarrierVO carrierVO=carrierDB.getAll().get(0);
+        new GetSQLDate(this).execute("getWinInvoice",carrierVO.getCarNul(),carrierVO.getPassword());
+
+
+//        new Thread(runnable).start();
+//        new Thread(downloadCurrency).start();
     }
 
 

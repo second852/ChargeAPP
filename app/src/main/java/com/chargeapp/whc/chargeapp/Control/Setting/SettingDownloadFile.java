@@ -531,7 +531,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         }
                     }else if (sheetTitle.equals("Price")) {
                         PriceVO priceVO = new PriceVO();
-                        priceVO.setInvoYm(row.getCell(0).getStringCellValue());
+                        priceVO.setInVoYm(row.getCell(0).getStringCellValue());
                         priceVO.setSuperPrizeNo(row.getCell(1).getStringCellValue());
                         priceVO.setSpcPrizeNo(row.getCell(2).getStringCellValue());
                         priceVO.setFirstPrizeNo1(row.getCell(3).getStringCellValue());
@@ -551,7 +551,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         priceVO.setSixthPrizeNo4(row.getCell(17).getStringCellValue());
                         priceVO.setSixthPrizeNo5(row.getCell(18).getStringCellValue());
                         priceVO.setSixthPrizeNo6(row.getCell(19).getStringCellValue());
-                        PriceVO oldPriceVO=priceDB.getPeriodAll(priceVO.getInvoYm());
+                        PriceVO oldPriceVO=priceDB.getPeriodAll(priceVO.getInVoYm());
                         if(oldPriceVO==null)
                         {
                             priceDB.insert(priceVO);
@@ -588,7 +588,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         propertyFromVO.setSourceTime(new Date((long) row.getCell(6).getNumericCellValue()));
                         propertyFromVO.setImportFee(row.getCell(7).getStringCellValue());
                         propertyFromVO.setImportFeeId(row.getCell(8).getStringCellValue());
-                        propertyFromVO.setFixImport(Boolean.valueOf(row.getCell(9).getStringCellValue()));
+                        propertyFromVO.setFixImport(row.getCell(9).getBooleanCellValue());
                         propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(row.getCell(10).getStringCellValue()));
                         propertyFromVO.setFixDateDetail(row.getCell(11).getStringCellValue());
                         propertyFromVO.setPropertyId( row.getCell(12).getStringCellValue());

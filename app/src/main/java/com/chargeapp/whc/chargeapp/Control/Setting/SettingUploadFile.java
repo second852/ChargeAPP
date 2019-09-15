@@ -858,7 +858,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 for (int i = 0; i < priceVOS.size(); i++) {
                     Row rowContent = sheetCon8.createRow(i);
                     PriceVO priceVO=priceVOS.get(i);
-                    rowContent.createCell(0).setCellValue(priceVO.getInvoYm());
+                    rowContent.createCell(0).setCellValue(priceVO.getInVoYm());
                     rowContent.createCell(1).setCellValue(priceVO.getSuperPrizeNo());
                     rowContent.createCell(2).setCellValue(priceVO.getSpcPrizeNo());
                     rowContent.createCell(3).setCellValue(priceVO.getFirstPrizeNo1());

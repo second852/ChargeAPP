@@ -5,7 +5,7 @@ package com.chargeapp.whc.chargeapp.Model;
  */
 
 public class PriceVO {
-    private String invoYm;
+    private String inVoYm;
     private String superPrizeNo;
     private String spcPrizeNo;
     private String firstPrizeNo1;
@@ -25,13 +25,22 @@ public class PriceVO {
     private String sixthPrizeNo4;
     private String sixthPrizeNo5;
     private String sixthPrizeNo6;
+    private Boolean isCheck;
 
-    public String getInvoYm() {
-        return invoYm;
+    public Boolean getCheck() {
+        return isCheck;
     }
 
-    public void setInvoYm(String invoYm) {
-        this.invoYm = invoYm;
+    public void setCheck(Boolean check) {
+        isCheck = check;
+    }
+
+    public String getInVoYm() {
+        return inVoYm;
+    }
+
+    public void setInVoYm(String inVoYm) {
+        this.inVoYm = inVoYm;
     }
 
     public String getSuperPrizeNo() {

@@ -428,7 +428,7 @@ public class InvoiceDB {
         return invoiceVO;
     }
 
-    public InvoiceVO findOldByNulAmount(String nul,int amount) {
+    public InvoiceVO findOldByNulAmount(String nul,String amount) {
         String sql = "SELECT * FROM INVOICE  where "+
                 "invNum = '"+nul+"' and realAmount = '"+amount+"';";
         String[] args = {};

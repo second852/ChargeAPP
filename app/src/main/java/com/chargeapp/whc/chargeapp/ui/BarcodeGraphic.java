@@ -25,14 +25,12 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.View;
 
 import com.beardedhen.androidbootstrap.BootstrapText;
@@ -388,7 +386,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             } else {
                 if(priceVO!=null)
                 {
-                    String peroid = getPeriod(priceVO.getInvoYm());
+                    String peroid = getPeriod(priceVO.getInVoYm());
                     StringBuffer sb=new StringBuffer();
                     sb.append(peroid).append(levelprice.get("win")).append("\n中獎號碼").append(MultiTrackerActivity.oldElu);
                     Spannable content = new SpannableString(sb.toString());

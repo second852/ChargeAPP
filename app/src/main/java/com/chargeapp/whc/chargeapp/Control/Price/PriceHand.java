@@ -331,18 +331,18 @@ public class PriceHand extends Fragment {
                 }
                 switch (key) {
                     case 0:
-                        month = priceVO.getInvoYm().substring(priceVO.getInvoYm().length() - 2);
-                        year = priceVO.getInvoYm().substring(0, priceVO.getInvoYm().length() - 2);
+                        month = priceVO.getInVoYm().substring(priceVO.getInVoYm().length() - 2);
+                        year = priceVO.getInVoYm().substring(0, priceVO.getInVoYm().length() - 2);
                         sb.append(year + "年" + levelPrice.get(month));
                         break;
                     case 1:
-                        month = oldPriceVO.getInvoYm().substring(oldPriceVO.getInvoYm().length() - 2);
-                        year = priceVO.getInvoYm().substring(0, oldPriceVO.getInvoYm().length() - 2);
+                        month = oldPriceVO.getInVoYm().substring(oldPriceVO.getInVoYm().length() - 2);
+                        year = priceVO.getInVoYm().substring(0, oldPriceVO.getInVoYm().length() - 2);
                         sb.append(year + "年" + levelPrice.get(month));
                         break;
                     case 2:
-                        month = grandPriceVO.getInvoYm().substring(grandPriceVO.getInvoYm().length() - 2);
-                        year = grandPriceVO.getInvoYm().substring(0, grandPriceVO.getInvoYm().length() - 2);
+                        month = grandPriceVO.getInVoYm().substring(grandPriceVO.getInVoYm().length() - 2);
+                        year = grandPriceVO.getInVoYm().substring(0, grandPriceVO.getInVoYm().length() - 2);
                         sb.append(year + "年" + levelPrice.get(month));
                         break;
                 }
@@ -374,7 +374,7 @@ public class PriceHand extends Fragment {
         if (messageHMO.get(0) != null) {
             //獎項
             answerText=new StringBuilder();
-            month = priceVO.getInvoYm().substring(priceVO.getInvoYm().length() - 2);
+            month = priceVO.getInVoYm().substring(priceVO.getInVoYm().length() - 2);
             answerText.append(levelPrice.get(month)).append(messageHMO.get(0));
             BootstrapText text = new BootstrapText.Builder(context)
                     .addFontAwesomeIcon(FA_STAR)
@@ -403,7 +403,7 @@ public class PriceHand extends Fragment {
         if (messageHMO.get(1) != null) {
             //獎項
             answerText=new StringBuilder();
-            month = oldPriceVO.getInvoYm().substring(oldPriceVO.getInvoYm().length() - 2);
+            month = oldPriceVO.getInVoYm().substring(oldPriceVO.getInVoYm().length() - 2);
             answerText.append(levelPrice.get(month)).append( messageHMO.get(1));
             BootstrapText text = new BootstrapText.Builder(context)
                     .addFontAwesomeIcon(FA_STAR_O)
@@ -434,7 +434,7 @@ public class PriceHand extends Fragment {
         if (messageHMO.get(2) != null) {
             //獎項
             answerText=new StringBuilder();
-            month = grandPriceVO.getInvoYm().substring(grandPriceVO.getInvoYm().length() - 2);
+            month = grandPriceVO.getInVoYm().substring(grandPriceVO.getInVoYm().length() - 2);
             answerText.append(levelPrice.get(month)).append( messageHMO.get(2));
             BootstrapText text = new BootstrapText.Builder(context)
                     .addFontAwesomeIcon(FA_STAR_O)

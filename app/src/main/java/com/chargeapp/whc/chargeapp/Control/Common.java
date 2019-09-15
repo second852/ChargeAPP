@@ -69,7 +69,6 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 import com.github.mikephil.charting.components.Description;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -107,7 +106,6 @@ import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_CHECK_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_ID_CARD_O;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_MONEY;
-import static com.google.android.gms.internal.zzrw.If;
 
 /**
  * Created by Wang on 2017/11/19.
@@ -479,6 +477,7 @@ public class Common {
         colExist("BANK","fkKey","text");
         colExist("Goal","currency","text");
         colExist("Goal","realMoney","text");
+        colExist("PRICE","isCheck","text");
 
         ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
 
@@ -1153,7 +1152,7 @@ public class Common {
     }
 
     //自動對獎
-    private String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
+    private static String[] level = {"first", "second", "third", "fourth", "fifth", "sixth"};
 
     public void AutoSetPrice() {
         PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB);
@@ -1162,7 +1161,7 @@ public class Common {
         int year;
         for (PriceVO priceVO : priceVOS) {
             long startTime, endTime;
-            String invoYM = priceVO.getInvoYm();
+            String invoYM = priceVO.getInVoYm();
             month = Integer.valueOf(invoYM.substring(invoYM.length() - 2));
             year = Integer.valueOf(invoYM.substring(0, invoYM.length() - 2)) + 1911;
             startTime = (new GregorianCalendar(year, month - 2, 1, 0, 0, 0)).getTimeInMillis();
@@ -1183,7 +1182,7 @@ public class Common {
             consumeVO.setIsWinNul("N");
             if (nul != null && nul.trim().length() == 10) {
                 nul = nul.substring(2);
-                List<String> result = anwswer(nul, priceVO);
+                List<String> result = answer(nul, priceVO);
                 consumeVO.setIsWin(result.get(0));
                 consumeVO.setIsWinNul(result.get(1));
                 if (!consumeVO.getIsWin().trim().equals("N")) {
@@ -1192,8 +1191,8 @@ public class Common {
                     bankVO.setDate(new Date(System.currentTimeMillis()));
                     bankVO.setMaintype("中獎");
                     bankVO.setFixDate("false");
-                    int month = Integer.parseInt(priceVO.getInvoYm().substring(3));
-                    String detail = priceVO.getInvoYm().substring(0, 3) + "年" + getPriceMonth().get(month)
+                    int month = Integer.parseInt(priceVO.getInVoYm().substring(3));
+                    String detail = priceVO.getInVoYm().substring(0, 3) + "年" + getPriceMonth().get(month)
                             + getPriceName().get(consumeVO.getIsWin()) + " : " + getPrice().get(consumeVO.getIsWin());
                     bankVO.setDetailname(detail);
                     bankDB.insert(bankVO);
@@ -1217,7 +1216,7 @@ public class Common {
                 i.setIsWinNul("N");
                 if (nul != null && nul.trim().length() == 10) {
                     nul = nul.substring(2);
-                    List<String> inWin = anwswer(nul, priceVO);
+                    List<String> inWin = answer(nul, priceVO);
                     i.setIswin(inWin.get(0));
                     i.setIsWinNul(inWin.get(1));
                     invoiceDB.update(i);
@@ -1227,8 +1226,8 @@ public class Common {
                         bankVO.setMoney(getIntPrice().get(i.getIswin()));
                         bankVO.setDate(new Date(System.currentTimeMillis()));
                         bankVO.setMaintype("中獎");
-                        int month = Integer.parseInt(priceVO.getInvoYm().substring(3));
-                        String detail = priceVO.getInvoYm().substring(0, 3) + "年" + getPriceMonth().get(month)
+                        int month = Integer.parseInt(priceVO.getInVoYm().substring(3));
+                        String detail = priceVO.getInVoYm().substring(0, 3) + "年" + getPriceMonth().get(month)
                                 + getPriceName().get(i.getIswin()) + " : " + getPrice().get(i.getIswin());
                         bankVO.setDetailname(detail);
                         bankDB.insert(bankVO);
@@ -1239,7 +1238,7 @@ public class Common {
     }
 
 
-    private String firsttofourprice(String nul, String pricenul) {
+    private static String firsttofourprice(String nul, String pricenul) {
         for (int i = 0; i < 6; i++) {
             if (nul.substring(i).equals(pricenul.substring(i))) {
                 return level[i];
@@ -1248,7 +1247,7 @@ public class Common {
         return "N";
     }
 
-    private List<String> anwswer(String nul, PriceVO priceVO) {
+    public static List<String> answer(String nul, PriceVO priceVO) {
         String threenul = nul.substring(5);
         String s;
         List<String> stringList = new ArrayList<>();
