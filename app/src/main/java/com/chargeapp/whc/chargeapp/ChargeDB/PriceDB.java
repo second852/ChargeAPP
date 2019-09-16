@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
+import com.chargeapp.whc.chargeapp.TypeCode.PriceNotify;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ public class PriceDB {
         priceVO.setSixthPrizeNo5(cursor.getString(18));
         priceVO.setSixthPrizeNo6(cursor.getString(19));
         priceVO.setCheck(Boolean.valueOf(cursor.getString(20)));
+        priceVO.setNeedNotify(PriceNotify.codeToEnum(cursor.getInt(21)));
         return priceVO;
     }
 
@@ -73,6 +75,7 @@ public class PriceDB {
         values.put("sixthPrizeNo5", priceVO.getSixthPrizeNo5());
         values.put("sixthPrizeNo6", priceVO.getSixthPrizeNo6());
         values.put("isCheck", priceVO.getCheck().toString());
+        values.put("priceNotify", priceVO.getNeedNotify()==null?null:priceVO.getNeedNotify().getCode());
         return values;
     }
 

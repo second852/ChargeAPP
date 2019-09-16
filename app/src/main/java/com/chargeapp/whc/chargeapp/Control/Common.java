@@ -478,7 +478,7 @@ public class Common {
         colExist("Goal","currency","text");
         colExist("Goal","realMoney","text");
         colExist("PRICE","isCheck","text");
-
+        colExist("PRICE","priceNotify","Integer");
         ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
 
         //改用UUID FK consume
@@ -1135,6 +1135,7 @@ public class Common {
         hashMap.put("fourth", "4千元");
         hashMap.put("fifth", "1千元");
         hashMap.put("sixth", "200元");
+        hashMap.put("other", "雲端發票專屬獎");
         return hashMap;
     }
 

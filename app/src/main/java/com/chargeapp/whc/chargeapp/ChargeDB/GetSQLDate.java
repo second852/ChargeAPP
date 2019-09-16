@@ -28,6 +28,7 @@ import com.chargeapp.whc.chargeapp.Model.ElePeriod;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
+import com.chargeapp.whc.chargeapp.TypeCode.PriceNotify;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -187,22 +188,37 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
                 List<CarrierVO> carrierVOS=carrierDB.getAll();
                 List<PriceVO> priceVOS=priceDB.getNotCheckAll();
+                List<PriceVO> notifyPriceVOS=new ArrayList<>();
                 int year,oneM,twoM,length;
                 String period;
                 for (PriceVO priceVO:priceVOS)
                 {
-                    period=priceVO.getInVoYm();
-                    length=period.length();
-                    year=Integer.valueOf(period.substring(0,length-2))+1911;
-                    twoM=Integer.valueOf(period.substring(length-2,length));
-                    oneM=twoM-1;
+                    for(CarrierVO carrierVO:carrierVOS)
+                    {
+                        period=priceVO.getInVoYm();
+                        length=period.length();
+                        year=Integer.valueOf(period.substring(0,length-2))+1911;
 
-//                    jsonIn = findMonthHead(year, twoM, user, password,"Y");
+                        twoM=Integer.valueOf(period.substring(length-2,length));
+                        jsonIn = findMonthHead(year, twoM, user, password,"Y");
+                        checkWinInvoice(jsonIn,priceVO,carrierVO.getCarNul(),carrierVO.getPassword());
+
+                        oneM=twoM-1;
+                        jsonIn = findMonthHead(year, oneM, user, password,"Y");
+                        checkWinInvoice(jsonIn,priceVO,carrierVO.getCarNul(),carrierVO.getPassword());
+
+                    }
+                    priceVO.setCheck(true);
+                    if(PriceNotify.Special.equals(priceVO.getNeedNotify()))
+                    {
+                        notifyPriceVOS.add(priceVO);
+                    }
+                    priceDB.update(priceVO);
                 }
+                if(!notifyPriceVOS.isEmpty())
+                {
 
-                jsonIn = findMonthHead(2019, 2, carrierVOS.get(0).getCarNul(), carrierVOS.get(0).getPassword(),"Y");
-
-
+                }
 
             }
         } catch (Exception e) {
@@ -214,7 +230,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
 
 
-    private boolean checkWinInvoice(String jsonIn,PriceVO priceVO)
+    private boolean checkWinInvoice(String jsonIn,PriceVO priceVO,String user,String password)
     {
         JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
 
@@ -230,6 +246,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             return true;
         }
 
+        priceVO.setNeedNotify(PriceNotify.Normal);
         for(JsonObject jsonObject:b)
         {
 
@@ -239,18 +256,27 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             if(invoiceVO==null)
             {
 
+                 invoiceVO=jsonToInVoice(jsonObject,user,password);
+                 getInvoiceDetail(invoiceVO);
+                 invoiceVO=invoiceDB.findOldByNulAmount(invNum,amount);
+                 List<String> inWin = Common.answer(invNum, priceVO);
+                 invoiceVO.setIswin(inWin.get(0));
+                 invoiceVO.setIsWinNul(inWin.get(1));
+                 invoiceDB.update(invoiceVO);
             }else {
                 List<String> inWin = Common.answer(invNum, priceVO);
                 invoiceVO.setIswin(inWin.get(0));
                 invoiceVO.setIsWinNul(inWin.get(1));
-                //可能為特別獎
+                //專屬特別獎
                 if(invoiceVO.getIswin().equals("N"))
                 {
-
+                    invoiceVO.setIswin("other");
+                    invoiceVO.setIsWinNul(invNum);
+                    priceVO.setNeedNotify(PriceNotify.Special);
+                    invoiceDB.update(invoiceVO);
                 }
-
-
             }
+
 
         }
 

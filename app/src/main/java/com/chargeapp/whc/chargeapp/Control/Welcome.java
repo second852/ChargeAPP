@@ -82,13 +82,13 @@ public class Welcome extends AppCompatActivity {
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Property;");
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE PropertyFrom;");
         Common.insertNewTableCol();
-        CarrierDB carrierDB=new CarrierDB(MainActivity.chargeAPPDB);
-        CarrierVO carrierVO=carrierDB.getAll().get(0);
-        new GetSQLDate(this).execute("getWinInvoice",carrierVO.getCarNul(),carrierVO.getPassword());
+//        CarrierDB carrierDB=new CarrierDB(MainActivity.chargeAPPDB);
+//        CarrierVO carrierVO=carrierDB.getAll().get(0);
+//        new GetSQLDate(this).execute("getWinInvoice",carrierVO.getCarNul(),carrierVO.getPassword());
 
 
-//        new Thread(runnable).start();
-//        new Thread(downloadCurrency).start();
+        new Thread(runnable).start();
+        new Thread(downloadCurrency).start();
     }
 
 

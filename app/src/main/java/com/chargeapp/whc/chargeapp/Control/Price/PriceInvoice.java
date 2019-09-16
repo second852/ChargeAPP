@@ -332,23 +332,25 @@ public class PriceInvoice extends Fragment {
                 String pIF="\n獎金 : ";
                 String detail=firstAll+secondAll+pIF+levelMoney.get(invoiceVO.getIswin());
                 int correctLength=-2;
+
                 try {
-                    if(invoiceVO.getIsWinNul().trim().length()<5)
-                    {
-                        correctLength=-7;
-                    }
-                    SpannableString detailC = new SpannableString(detail);
-                    detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstH.length()+levellength.get(invoiceVO.getIswin().trim()),
-                            firstAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstAll.length()+firstL.length()+levellength.get(invoiceVO.getIswin().trim())+correctLength,
-                            firstAll.length()+secondAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstAll.length()+secondAll.length()+pIF.length(),
-                            detail.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    describe.setText(detailC);
+                        if(invoiceVO.getIsWinNul().trim().length()<5)
+                        {
+                            correctLength=-7;
+                        }
+                        SpannableString detailC = new SpannableString(detail);
+                        detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstH.length()+levellength.get(invoiceVO.getIswin().trim()),
+                                firstAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstAll.length()+firstL.length()+levellength.get(invoiceVO.getIswin().trim())+correctLength,
+                                firstAll.length()+secondAll.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),firstAll.length()+secondAll.length()+pIF.length(),
+                                detail.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        describe.setText(detailC);
                 }catch (Exception e)
                 {
-                    describe.setText("");
+                        describe.setText("");
                 }
+
             }else{
                 //紙本發票
                 ConsumeVO consumeVO= (ConsumeVO) o;

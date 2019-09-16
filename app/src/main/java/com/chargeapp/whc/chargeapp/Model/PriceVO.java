@@ -1,5 +1,7 @@
 package com.chargeapp.whc.chargeapp.Model;
 
+import com.chargeapp.whc.chargeapp.TypeCode.PriceNotify;
+
 /**
  * Created by Wang on 2018/1/7.
  */
@@ -26,6 +28,15 @@ public class PriceVO {
     private String sixthPrizeNo5;
     private String sixthPrizeNo6;
     private Boolean isCheck;
+    private PriceNotify needNotify;
+
+    public PriceNotify getNeedNotify() {
+        return needNotify;
+    }
+
+    public void setNeedNotify(PriceNotify needNotify) {
+        this.needNotify = needNotify;
+    }
 
     public Boolean getCheck() {
         return isCheck;
