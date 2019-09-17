@@ -371,7 +371,7 @@ public class ThirdReceiver extends BroadcastReceiver {
         manager.createNotificationChannel(chan1);
     }
 
-    private void showNotification(String title, String message, Context context, int NOTIFICATION_ID, Intent intent) {
+    public void showNotification(String title, String message, Context context, int NOTIFICATION_ID, Intent intent) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 
             if (manager == null) {

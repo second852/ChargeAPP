@@ -3,7 +3,9 @@ package com.chargeapp.whc.chargeapp.Control.Price;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -13,6 +15,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -308,6 +311,7 @@ public class PriceInvoice extends Fragment {
             BootstrapButton fixT=itemView.findViewById(R.id.fixT);
             String title,day;
             Object o=objects.get(position);
+            fixT.setOnClickListener(null);
             //區別電子發票
             if(o instanceof InvoiceVO)
             {
@@ -322,7 +326,6 @@ public class PriceInvoice extends Fragment {
                 Title.setText(title);
                 //中獎顯示
                 fixL.setVisibility(View.VISIBLE);
-                fixT.setText(levelprice.get(invoiceVO.getIswin()));
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                 //detail
                 String firstH="發票號碼 : ";
@@ -332,6 +335,24 @@ public class PriceInvoice extends Fragment {
                 String pIF="\n獎金 : ";
                 String detail=firstAll+secondAll+pIF+levelMoney.get(invoiceVO.getIswin());
                 int correctLength=-2;
+
+
+                if(invoiceVO.getIswin().equals("other"))
+                {
+                    fixT.setText("中獎清單");
+                    fixT.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            Intent intent = new Intent();
+                            intent.setAction(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("http://invoice.etax.nat.gov.tw/nowNumber.html"));
+                            startActivity(intent);
+                        }
+                    });
+                }else{
+                    fixT.setText(levelprice.get(invoiceVO.getIswin()));
+                }
 
                 try {
                         if(invoiceVO.getIsWinNul().trim().length()<5)
@@ -348,6 +369,7 @@ public class PriceInvoice extends Fragment {
                         describe.setText(detailC);
                 }catch (Exception e)
                 {
+                    Log.d("XXXXX",e.toString());
                         describe.setText("");
                 }
 

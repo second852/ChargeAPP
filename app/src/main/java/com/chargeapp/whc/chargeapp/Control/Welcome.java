@@ -82,9 +82,15 @@ public class Welcome extends AppCompatActivity {
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Property;");
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE PropertyFrom;");
         Common.insertNewTableCol();
-//        CarrierDB carrierDB=new CarrierDB(MainActivity.chargeAPPDB);
-//        CarrierVO carrierVO=carrierDB.getAll().get(0);
-//        new GetSQLDate(this).execute("getWinInvoice",carrierVO.getCarNul(),carrierVO.getPassword());
+
+//        new GetSQLDate(Welcome.this).execute("getWinInvoice");
+
+//        InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB);
+//        InvoiceVO InvoiceVO=invoiceDB.findOldByNulAmount("QK40811010","178");
+//
+//        InvoiceVO.setIswin("other");
+//        InvoiceVO.setIsWinNul(InvoiceVO.getInvNum());
+//        invoiceDB.update(InvoiceVO);
 
 
         new Thread(runnable).start();
@@ -105,7 +111,6 @@ public class Welcome extends AppCompatActivity {
    private void testConsume()
    {
         Common.setChargeDB(this);
-        Common.insertNewTableCol();
         ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
         for(ConsumeVO consumeVO:consumeDB.getAll())
         {
@@ -390,12 +395,12 @@ public class Welcome extends AppCompatActivity {
         builder.setRequiresDeviceIdle(false);
         tm.schedule(builder.build());
 
-        ComponentName DowloadComponet = new ComponentName(this, DownloadNewDataJob.class);
-        JobInfo.Builder DownloadBuilder = new JobInfo.Builder(1, DowloadComponet);
-        DownloadBuilder.setPersisted(true);
-        DownloadBuilder.setPeriodic(1000*60*60);
-//        DownloadBuilder.setMinimumLatency(1);
-//        DownloadBuilder.setOverrideDeadline(2);
+        ComponentName DownloadComponent = new ComponentName(this, DownloadNewDataJob.class);
+        JobInfo.Builder DownloadBuilder = new JobInfo.Builder(1, DownloadComponent);
+//        DownloadBuilder.setPersisted(true);
+//        DownloadBuilder.setPeriodic(1000*60*60);
+        DownloadBuilder.setMinimumLatency(1);
+        DownloadBuilder.setOverrideDeadline(2);
         DownloadBuilder.setRequiresCharging(false);
         DownloadBuilder.setRequiresDeviceIdle(false);
         tm.schedule(DownloadBuilder.build());

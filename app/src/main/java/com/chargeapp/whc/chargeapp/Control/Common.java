@@ -1,14 +1,21 @@
 package com.chargeapp.whc.chargeapp.Control;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -101,6 +108,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
+import static android.content.Context.NOTIFICATION_SERVICE;
 import static android.content.Context.WINDOW_SERVICE;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALCULATOR;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_CALENDAR_CHECK_O;
@@ -1092,6 +1100,7 @@ public class Common {
         hashMap.put("fourth", 5);
         hashMap.put("fifth", 6);
         hashMap.put("sixth", 7);
+        hashMap.put("other", 0);
         return hashMap;
     }
 
@@ -1105,6 +1114,7 @@ public class Common {
         hashMap.put("fourth", "四獎");
         hashMap.put("fifth", "五獎");
         hashMap.put("sixth", "六獎");
+        hashMap.put("other", "雲端發票專屬獎");
         return hashMap;
     }
 
@@ -1401,5 +1411,57 @@ public class Common {
          propertyFromDB.insert(propertyFromVO);
 
     }
+
+
+
+    public static void showNotification(String title, String message, Context context, int NOTIFICATION_ID, Intent intent) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+
+            String PRIMARY_CHANNEL = "記帳小助手";
+            NotificationChannel chan1 = new NotificationChannel(PRIMARY_CHANNEL,
+                    PRIMARY_CHANNEL, NotificationManager.IMPORTANCE_DEFAULT);
+            chan1.setLightColor(Color.GREEN);
+            chan1.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(chan1);
+
+
+            PendingIntent appIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            Notification.Builder nb = new Notification.Builder(context.getApplicationContext(), PRIMARY_CHANNEL)
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setSmallIcon(R.drawable.ic_stat_name)
+                    .setAutoCancel(true)
+                    .setWhen(System.currentTimeMillis())
+                    .setContentIntent(appIntent);
+            manager.notify(NOTIFICATION_ID, nb.build());
+        }else{
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+                    intent, 0);
+            Notification notification = new Notification.Builder(context)
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setSmallIcon(R.drawable.ic_stat_name)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent)
+                    .setWhen(System.currentTimeMillis())
+                    .build();
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.notify(NOTIFICATION_ID, notification);
+        }
+    }
+
+    public static HashMap<String,String> priceMonth()
+    {
+        HashMap<String,String> price=new HashMap<>();
+        price.put("02","1-2月");
+        price.put("04","3-4月");
+        price.put("06","5-6月");
+        price.put("08","7-8月");
+        price.put("10","9-10月");
+        price.put("12","11-12月");
+        return price;
+    }
+
 
 }

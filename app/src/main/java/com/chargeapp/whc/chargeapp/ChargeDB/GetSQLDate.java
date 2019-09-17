@@ -1,8 +1,9 @@
 package com.chargeapp.whc.chargeapp.ChargeDB;
 
 
-
 import android.app.job.JobService;
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 
 
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 
 import com.chargeapp.whc.chargeapp.Control.Common;
+import com.chargeapp.whc.chargeapp.Control.Welcome;
 import com.chargeapp.whc.chargeapp.Job.DownloadNewDataJob;
 import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleDonate;
@@ -23,6 +25,7 @@ import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelCom;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDe;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDeList;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateInvoice;
+import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ElePeriod;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
@@ -32,7 +35,6 @@ import com.chargeapp.whc.chargeapp.TypeCode.PriceNotify;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-
 
 
 import java.io.BufferedReader;
@@ -81,9 +83,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     public GetSQLDate(Object object) {
         total = 0;
         this.object = object;
-        if(object instanceof JobService)
-        {
-            JobService jobService= (JobService) object;
+        if (object instanceof JobService) {
+            JobService jobService = (JobService) object;
             Common.setChargeDB(jobService);
         }
 //        Common.setChargeDB((Activity)object);
@@ -91,7 +92,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB);
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
         elePeriodDB = new ElePeriodDB(MainActivity.chargeAPPDB);
-        priceDB=new PriceDB(MainActivity.chargeAPPDB);
+        priceDB = new PriceDB(MainActivity.chargeAPPDB);
 
 //        invoiceDB.deleteBytime(Timestamp.valueOf("2018-09-01 00:00:00"));
     }
@@ -135,12 +136,11 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         carrierVO.setPassword(password);
                         carrierDB.insert(carrierVO);
                         //insert 最新的月發票
-                        jsonIn=getjsonIn(jsonIn, password, user);
+                        jsonIn = getjsonIn(jsonIn, password, user);
                         //最新的月
-                        if(jsonIn.equals("error"))
-                        {
+                        if (jsonIn.equals("error")) {
                             elePeriodDB.insert(new ElePeriod(year, month, user, false));
-                        }else {
+                        } else {
                             elePeriodDB.insert(new ElePeriod(year, month, user, true));
                         }
                         //insert 6 month
@@ -169,7 +169,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 } else {
                     searchNewPriceNul();
                 }
-                jsonIn=updateInvoice();
+                jsonIn = updateInvoice();
                 return jsonIn;
             } else if (action.equals("searchHeartyTeam")) {
                 String keyworld = params[1].toString();
@@ -177,47 +177,63 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 return jsonIn;
             } else if (action.equals("reDownload")) {
                 jsonIn = getInvoiceDetail(invoiceVO);
-            }else if (action.equals("checkCarrier")) {
+            } else if (action.equals("checkCarrier")) {
                 user = params[1].toString();
                 password = params[2].toString();
                 Calendar cal = Calendar.getInstance();
                 year = cal.get(Calendar.YEAR);
                 month = cal.get(Calendar.MONTH);
                 jsonIn = findMonthHead(year, month, user, password);
-            }else if (action.equals("getWinInvoice")) {
+            } else if (action.equals("getWinInvoice")) {
 
-                List<CarrierVO> carrierVOS=carrierDB.getAll();
-                List<PriceVO> priceVOS=priceDB.getNotCheckAll();
-                List<PriceVO> notifyPriceVOS=new ArrayList<>();
-                int year,oneM,twoM,length;
+                Context downloadNewDataJob = (Context) object;
+                List<CarrierVO> carrierVOS = carrierDB.getAll();
+                List<PriceVO> priceVOS = priceDB.getNotCheckAll();
+                List<PriceVO> notifyPriceVOS = new ArrayList<>();
+                int year, oneM, twoM, length;
                 String period;
-                for (PriceVO priceVO:priceVOS)
-                {
-                    for(CarrierVO carrierVO:carrierVOS)
-                    {
-                        period=priceVO.getInVoYm();
-                        length=period.length();
-                        year=Integer.valueOf(period.substring(0,length-2))+1911;
+                boolean checkOne = true, checkTwo = true;
+                for (PriceVO priceVO : priceVOS) {
+                    for (CarrierVO carrierVO : carrierVOS) {
+                        period = priceVO.getInVoYm();
+                        length = period.length();
+                        year = Integer.valueOf(period.substring(0, length - 2)) + 1911;
 
-                        twoM=Integer.valueOf(period.substring(length-2,length));
-                        jsonIn = findMonthHead(year, twoM, user, password,"Y");
-                        checkWinInvoice(jsonIn,priceVO,carrierVO.getCarNul(),carrierVO.getPassword());
+                        twoM = Integer.valueOf(period.substring(length - 2, length));
+                        jsonIn = findMonthHead(year, twoM, carrierVO.getCarNul(), carrierVO.getPassword(), "Y");
+                        checkOne = checkWinInvoice(jsonIn, priceVO, carrierVO.getCarNul(), carrierVO.getPassword());
 
-                        oneM=twoM-1;
-                        jsonIn = findMonthHead(year, oneM, user, password,"Y");
-                        checkWinInvoice(jsonIn,priceVO,carrierVO.getCarNul(),carrierVO.getPassword());
+                        oneM = twoM - 1;
+                        jsonIn = findMonthHead(year, oneM, carrierVO.getCarNul(), carrierVO.getPassword(), "Y");
+                        checkTwo = checkWinInvoice(jsonIn, priceVO, carrierVO.getCarNul(), carrierVO.getPassword());
 
                     }
-                    priceVO.setCheck(true);
-                    if(PriceNotify.Special.equals(priceVO.getNeedNotify()))
-                    {
+
+                    if (checkOne && checkTwo) {
+                        priceVO.setCheck(true);
+                    }
+
+                    if (PriceNotify.Special.equals(priceVO.getNeedNotify())) {
                         notifyPriceVOS.add(priceVO);
                     }
                     priceDB.update(priceVO);
                 }
-                if(!notifyPriceVOS.isEmpty())
-                {
 
+
+                if (!notifyPriceVOS.isEmpty()) {
+                    String nYear, nMonth;
+                    StringBuilder sb = new StringBuilder();
+                    for (PriceVO priceVO : notifyPriceVOS) {
+                        period = priceVO.getInVoYm();
+                        length = period.length();
+                        nYear = period.substring(0, length - 2);
+                        nMonth = Common.priceMonth().get(period.substring(length - 2, length));
+                        sb.append(nYear + "年" + nMonth + " ");
+                    }
+                    sb.append("期別中獎!");
+                    Intent activeI = new Intent(downloadNewDataJob, Welcome.class);
+                    activeI.setAction("nulPriceNotify");
+                    Common.showNotification("恭喜發票中獎!", sb.toString(), downloadNewDataJob, 999, activeI);
                 }
 
             }
@@ -229,47 +245,60 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     }
 
 
-
-    private boolean checkWinInvoice(String jsonIn,PriceVO priceVO,String user,String password)
-    {
+    private boolean checkWinInvoice(String jsonIn, PriceVO priceVO, String user, String password) {
+        if (jsonIn.indexOf("200") == -1) {
+            return false;
+        }
         JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
 
-        if(js.get("code").isJsonNull()||(!js.get("code").getAsString().equals("200"))) {
+        if (js.get("code").isJsonNull() || (!js.get("code").getAsString().equals("200"))) {
             return false;
         }
 
-        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
+        Type cdType = new TypeToken<List<JsonObject>>() {
+        }.getType();
         String s = js.get("details").toString();
         List<JsonObject> b = gson.fromJson(s, cdType);
-        if(b.isEmpty())
-        {
+        if (b.isEmpty()) {
             return true;
         }
 
         priceVO.setNeedNotify(PriceNotify.Normal);
-        for(JsonObject jsonObject:b)
-        {
+        for (JsonObject jsonObject : b) {
 
-            String invNum=jsonObject.get("invNum").getAsString();
-            String amount=jsonObject.get("amount").getAsString();
-            InvoiceVO invoiceVO=invoiceDB.findOldByNulAmount(invNum,amount);
-            if(invoiceVO==null)
-            {
+            String invNum = jsonObject.get("invNum").getAsString();
+            String amount = jsonObject.get("amount").getAsString();
+            InvoiceVO invoiceVO = invoiceDB.findOldByNulAmount(invNum, amount);
+            if (invoiceVO == null) {
 
-                 invoiceVO=jsonToInVoice(jsonObject,user,password);
-                 getInvoiceDetail(invoiceVO);
-                 invoiceVO=invoiceDB.findOldByNulAmount(invNum,amount);
-                 List<String> inWin = Common.answer(invNum, priceVO);
-                 invoiceVO.setIswin(inWin.get(0));
-                 invoiceVO.setIsWinNul(inWin.get(1));
-                 invoiceDB.update(invoiceVO);
-            }else {
+                invoiceVO = jsonToInVoice(jsonObject, user, password);
+                getInvoiceDetail(invoiceVO);
+                invoiceVO = invoiceDB.findOldByNulAmount(invNum, amount);
                 List<String> inWin = Common.answer(invNum, priceVO);
                 invoiceVO.setIswin(inWin.get(0));
                 invoiceVO.setIsWinNul(inWin.get(1));
+                invoiceDB.update(invoiceVO);
+
+
+                BankDB bankDB = new BankDB(MainActivity.chargeAPPDB);
+                BankVO bankVO = new BankVO();
+                bankVO.setFixDate("false");
+                bankVO.setMoney(Common.getIntPrice().get(invoiceVO.getIswin()));
+                bankVO.setDate(new java.sql.Date(System.currentTimeMillis()));
+                bankVO.setMaintype("中獎");
+                int month = Integer.parseInt(priceVO.getInVoYm().substring(3));
+                String detail = priceVO.getInVoYm().substring(0, 3) + "年" + Common.getPriceMonth().get(month)
+                        + Common.getPriceName().get(invoiceVO.getIswin()) + " : " + Common.getPrice().get(invoiceVO.getIswin());
+                bankVO.setDetailname(detail);
+                bankDB.insert(bankVO);
+
+
+            } else {
+                List<String> inWin = Common.answer(invNum.substring(2), priceVO);
+                invoiceVO.setIswin(inWin.get(0));
+                invoiceVO.setIsWinNul(inWin.get(1));
                 //專屬特別獎
-                if(invoiceVO.getIswin().equals("N"))
-                {
+                if (invoiceVO.getIswin().equals("N")) {
                     invoiceVO.setIswin("other");
                     invoiceVO.setIsWinNul(invNum);
                     priceVO.setNeedNotify(PriceNotify.Special);
@@ -280,49 +309,44 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
         }
 
-          return true;
+        return true;
     }
 
 
-
-    private void updateErrorDonateMarK(Set<ElePeriod> elePeriods,CarrierVO carrierVO) {
+    private void updateErrorDonateMarK(Set<ElePeriod> elePeriods, CarrierVO carrierVO) {
         String jsonIn;
-        for(ElePeriod elePeriod:elePeriods)
-        {
-           try {
-               jsonIn=findMonthHead(elePeriod.getYear(),elePeriod.getMonth(),carrierVO.getCarNul(),carrierVO.getPassword());
-               JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
-               String code = js.get("code").getAsString().trim();
-               if(code.equals("200"))
-               {
-                   Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
-                   String s = js.get("details").toString();
-                   if(s!=null&&s.length()>0)
-                   {
-                       List<JsonObject> jsonObjects = gson.fromJson(s, cdType);
-                       String inNul,donateMark;
-                       String amount;
-                       for(JsonObject jsonObject:jsonObjects)
-                       {
-                            donateMark=jsonObject.get("donateMark").getAsString();
-                            inNul=jsonObject.get("invNum").getAsString();
-                            amount=jsonObject.get("amount").getAsString();
-                            InvoiceVO invoiceVO=invoiceDB.findOldByNulAmount(inNul,amount);
+        for (ElePeriod elePeriod : elePeriods) {
+            try {
+                jsonIn = findMonthHead(elePeriod.getYear(), elePeriod.getMonth(), carrierVO.getCarNul(), carrierVO.getPassword());
+                JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
+                String code = js.get("code").getAsString().trim();
+                if (code.equals("200")) {
+                    Type cdType = new TypeToken<List<JsonObject>>() {
+                    }.getType();
+                    String s = js.get("details").toString();
+                    if (s != null && s.length() > 0) {
+                        List<JsonObject> jsonObjects = gson.fromJson(s, cdType);
+                        String inNul, donateMark;
+                        String amount;
+                        for (JsonObject jsonObject : jsonObjects) {
+                            donateMark = jsonObject.get("donateMark").getAsString();
+                            inNul = jsonObject.get("invNum").getAsString();
+                            amount = jsonObject.get("amount").getAsString();
+                            InvoiceVO invoiceVO = invoiceDB.findOldByNulAmount(inNul, amount);
                             invoiceVO.setDonateMark(donateMark);
                             invoiceDB.update(invoiceVO);
-                       }
-                   }
-               }
-           }catch (Exception e)
-           {
+                        }
+                    }
+                }
+            } catch (Exception e) {
 
-           }
+            }
         }
     }
 
     private String updateInvoice() throws IOException {
         downloadS = "invoice";
-        String jsonIn=null;
+        String jsonIn = null;
         List<CarrierVO> carrierVOS = carrierDB.getAll();
         //沒有載具不用更新
         if (carrierVOS.size() <= 0) {
@@ -337,42 +361,37 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             month = cal.get(Calendar.MONTH);
             jsonIn = findMonthHead(year, month, user, password);
             JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
-            if(js.get("code").getAsString().equals("919"))
-            {
-                if(Common.lostCarrier==null)
-                {
-                    Common.lostCarrier=new ArrayList<>();
+            if (js.get("code").getAsString().equals("919")) {
+                if (Common.lostCarrier == null) {
+                    Common.lostCarrier = new ArrayList<>();
                 }
                 Common.lostCarrier.add(carrierVO);
                 continue;
             }
 
             //更新errorDonateMark
-            List<InvoiceVO> invoiceVOS=invoiceDB.getErrorDonateMark(carrierVO.getCarNul());
-            if(invoiceVOS.size()>0)
-            {
+            List<InvoiceVO> invoiceVOS = invoiceDB.getErrorDonateMark(carrierVO.getCarNul());
+            if (invoiceVOS.size() > 0) {
                 //大於6個月發票 DonateMark=1
-                Calendar nowCal=Calendar.getInstance();
-                nowCal.add(Calendar.MONTH,-6);
-                nowCal.set(Calendar.DAY_OF_WEEK,1);
-                nowCal.set(Calendar.SECOND,0);
-                nowCal.set(Calendar.HOUR_OF_DAY,0);
-                nowCal.set(Calendar.MINUTE,0);
+                Calendar nowCal = Calendar.getInstance();
+                nowCal.add(Calendar.MONTH, -6);
+                nowCal.set(Calendar.DAY_OF_WEEK, 1);
+                nowCal.set(Calendar.SECOND, 0);
+                nowCal.set(Calendar.HOUR_OF_DAY, 0);
+                nowCal.set(Calendar.MINUTE, 0);
 
-                Set<ElePeriod> elePeriods=new HashSet<>();
-                Calendar period=new GregorianCalendar();
-                for (InvoiceVO invoiceVO:invoiceVOS)
-                {
-                    if(invoiceVO.getTime().getTime()<nowCal.getTimeInMillis())
-                    {
+                Set<ElePeriod> elePeriods = new HashSet<>();
+                Calendar period = new GregorianCalendar();
+                for (InvoiceVO invoiceVO : invoiceVOS) {
+                    if (invoiceVO.getTime().getTime() < nowCal.getTimeInMillis()) {
                         invoiceVO.setDonateMark("99");
                         invoiceDB.update(invoiceVO);
-                    }else {
+                    } else {
                         period.setTime(new Date(invoiceVO.getTime().getTime()));
-                        elePeriods.add(new ElePeriod(period.get(Calendar.YEAR),period.get(Calendar.MONTH)));
+                        elePeriods.add(new ElePeriod(period.get(Calendar.YEAR), period.get(Calendar.MONTH)));
                     }
                 }
-                updateErrorDonateMarK(elePeriods,carrierVO);
+                updateErrorDonateMarK(elePeriods, carrierVO);
             }
 
             //更新載具-找載具最新的月
@@ -382,10 +401,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             differCal.setTime(new Date(differTime));
             if (differCal.get(Calendar.MONTH) >= 6 && differTime > 0) {
                 //超過6個月
-                jsonIn=searchNewInvoice(carrierVO);
+                jsonIn = searchNewInvoice(carrierVO);
             } else {
                 //未超過6個月
-                jsonIn=searchToMonth(carrierVO, maxTime);
+                jsonIn = searchToMonth(carrierVO, maxTime);
             }
         }
         return jsonIn;
@@ -452,20 +471,20 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             jsonIn = getjsonIn(jsonIn, password, user);
             if (jsonIn.equals("error")) {
                 elePeriodDB.insert(new ElePeriod(year, month, user, false));
-            }else{
+            } else {
                 elePeriodDB.insert(new ElePeriod(year, month, user, true));
             }
             //insert 6 month
             for (int i = 1; i <= 6; i++) {
-                    int year = this.year;
-                    int month = this.month - i;
-                    if (month < 0) {
-                        month = 12 + month;
-                        year = this.year - 1;
-                    }
-                    elePeriodDB.insert(new ElePeriod(year, month, user, false));
+                int year = this.year;
+                int month = this.month - i;
+                if (month < 0) {
+                    month = 12 + month;
+                    year = this.year - 1;
+                }
+                elePeriodDB.insert(new ElePeriod(year, month, user, false));
             }
-                jsonIn = downLoadOtherMon(carrierVO);
+            jsonIn = downLoadOtherMon(carrierVO);
             return jsonIn;
         } else {
             //失敗
@@ -481,7 +500,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         startDate = Common.sTwo.format(new Date(cal.getTimeInMillis()));
         cal.set(year, month, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
         endDate = Common.sTwo.format(new Date(cal.getTimeInMillis()));
-        Log.d(TAG,"startDay"+startDate+"endDate"+endDate);
+        Log.d(TAG, "startDay" + startDate + "endDate" + endDate);
         //設定傳遞參數
         data = getInvoice(user, password, startDate, endDate, "N");
         url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
@@ -490,14 +509,14 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     }
 
 
-    private String findMonthHead(int year, int month, String user, String password,String isWin) {
+    private String findMonthHead(int year, int month, String user, String password, String isWin) {
         String startDate, endDate, url, jsonIn;
         HashMap<String, String> data;
-        Calendar cal = new GregorianCalendar(year, month, 1);
+        Calendar cal = new GregorianCalendar(year, month - 1, 1);
         startDate = Common.sTwo.format(new Date(cal.getTimeInMillis()));
-        cal.set(year, month, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        cal.set(year, month - 1, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
         endDate = Common.sTwo.format(new Date(cal.getTimeInMillis()));
-        Log.d(TAG,"startDay"+startDate+"endDate"+endDate);
+        Log.d(TAG, "startDay" + startDate + "endDate" + endDate);
         //設定傳遞參數
         data = getInvoice(user, password, startDate, endDate, isWin);
         url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invServ/InvServ?";
@@ -693,18 +712,16 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             return jsonIn;
         } else {
             //先insert ElePeriod 在一次找尋 false
-            int max=6,i=0;//超過6個月不下載
+            int max = 6, i = 0;//超過6個月不下載
             while (true) {
                 //如果有舊的
-                ElePeriod elePeriod=elePeriodDB.OldElePeriod(new ElePeriod(todayYear, todayMonth, carrierVO.getCarNul(),false));
-                if(elePeriod!=null)
-                {
+                ElePeriod elePeriod = elePeriodDB.OldElePeriod(new ElePeriod(todayYear, todayMonth, carrierVO.getCarNul(), false));
+                if (elePeriod != null) {
                     elePeriod.setDownload(false);
                     elePeriodDB.update(elePeriod);
-                }else{
+                } else {
                     elePeriodDB.insert(new ElePeriod(todayYear, todayMonth, carrierVO.getCarNul(), false));
                 }
-
 
 
                 todayMonth = todayMonth - 1;
@@ -713,7 +730,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     todayYear = todayYear - 1;
                 }
                 //到最大個月為止
-                if ((todayMonth < lastMonth && todayYear <= lastYear)||i>=max) {
+                if ((todayMonth < lastMonth && todayYear <= lastYear) || i >= max) {
                     break;
                 }
                 i++;
@@ -730,44 +747,43 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
 
     public String searchTodayDate(Calendar last, Calendar today, String user, String password) throws IOException {
-       String jsonIn;
-       int finalDay=last.get(Calendar.DAY_OF_MONTH);
-        Calendar searchStart=new GregorianCalendar(last.get(Calendar.YEAR),last.get(Calendar.MONTH)-1,1);
-        Calendar searchEnd=new GregorianCalendar(last.get(Calendar.YEAR),last.get(Calendar.MONTH)-1,searchStart.getActualMaximum(Calendar.DAY_OF_MONTH));
-       switch (finalDay)
-       {
-           case 1:
+        String jsonIn;
+        int finalDay = last.get(Calendar.DAY_OF_MONTH);
+        Calendar searchStart = new GregorianCalendar(last.get(Calendar.YEAR), last.get(Calendar.MONTH) - 1, 1);
+        Calendar searchEnd = new GregorianCalendar(last.get(Calendar.YEAR), last.get(Calendar.MONTH) - 1, searchStart.getActualMaximum(Calendar.DAY_OF_MONTH));
+        switch (finalDay) {
+            case 1:
 
-               //前三天
-               searchStart.set(Calendar.DAY_OF_MONTH,searchEnd.get(Calendar.DAY_OF_MONTH)-3);
-               searchInvoiceData(searchStart, searchEnd,user,password);
-               //更新
-               jsonIn=searchInvoiceData(last, today,user,password);
-               break;
-           case 2:
-               //前三天
-               searchStart.set(Calendar.DAY_OF_MONTH,searchEnd.get(Calendar.DAY_OF_MONTH)-2);
-               searchInvoiceData(searchStart, searchEnd,user,password);
-               last.set(Calendar.DAY_OF_MONTH,1);
-               //更新
-               jsonIn=searchInvoiceData(last, today,user,password);
-               break;
-           case 3:
-               //前三天
-               searchStart.set(Calendar.DAY_OF_MONTH,searchEnd.get(Calendar.DAY_OF_MONTH)-1);
-               searchInvoiceData(searchStart, searchEnd,user,password);
-               last.set(Calendar.DAY_OF_MONTH,1);
-               //更新
-               jsonIn=searchInvoiceData(last, today,user,password);
-               Log.d(TAG,"startDay"+finalDay);
-               break;
-           default:
-               last.add(Calendar.DAY_OF_MONTH,-3);
-               //更新
-               jsonIn=searchInvoiceData(last, today,user,password);
-               Log.d(TAG,"startDay default"+finalDay);
-               break;
-       }
+                //前三天
+                searchStart.set(Calendar.DAY_OF_MONTH, searchEnd.get(Calendar.DAY_OF_MONTH) - 3);
+                searchInvoiceData(searchStart, searchEnd, user, password);
+                //更新
+                jsonIn = searchInvoiceData(last, today, user, password);
+                break;
+            case 2:
+                //前三天
+                searchStart.set(Calendar.DAY_OF_MONTH, searchEnd.get(Calendar.DAY_OF_MONTH) - 2);
+                searchInvoiceData(searchStart, searchEnd, user, password);
+                last.set(Calendar.DAY_OF_MONTH, 1);
+                //更新
+                jsonIn = searchInvoiceData(last, today, user, password);
+                break;
+            case 3:
+                //前三天
+                searchStart.set(Calendar.DAY_OF_MONTH, searchEnd.get(Calendar.DAY_OF_MONTH) - 1);
+                searchInvoiceData(searchStart, searchEnd, user, password);
+                last.set(Calendar.DAY_OF_MONTH, 1);
+                //更新
+                jsonIn = searchInvoiceData(last, today, user, password);
+                Log.d(TAG, "startDay" + finalDay);
+                break;
+            default:
+                last.add(Calendar.DAY_OF_MONTH, -3);
+                //更新
+                jsonIn = searchInvoiceData(last, today, user, password);
+                Log.d(TAG, "startDay default" + finalDay);
+                break;
+        }
         return jsonIn;
     }
 
@@ -815,7 +831,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             Calendar start = Calendar.getInstance();
             Calendar end = Calendar.getInstance();
             JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
-            Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
+            Type cdType = new TypeToken<List<JsonObject>>() {
+            }.getType();
             String s = js.get("details").toString();
             List<JsonObject> b = gson.fromJson(s, cdType);
             //設定processBar process
@@ -823,7 +840,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             if (b.size() != 0) {
                 divide = 16 / b.size();
             }
-            String result="";
+            String result = "";
             for (JsonObject j : b) {
                 invoiceVO = jsonToInVoice(j, password, user);
                 if (invoiceVO != null) {
@@ -902,8 +919,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         StringBuilder jsonIn = new StringBuilder();
         HttpURLConnection conn = null;
         try {
-            byte[] postData = getPostDataString(data).getBytes(StandardCharsets.UTF_8 );
-            conn= (HttpURLConnection) new URL( url ).openConnection();
+            byte[] postData = getPostDataString(data).getBytes(StandardCharsets.UTF_8);
+            conn = (HttpURLConnection) new URL(url).openConnection();
             conn.setDoOutput(true);
             conn.setInstanceFollowRedirects(false);
             conn.setRequestMethod("POST");
@@ -921,8 +938,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 while ((line = br.readLine()) != null) {
                     jsonIn.append(line);
                 }
-                Log.d("jsonIn",jsonIn.toString());
-            }else{
+                Log.d("jsonIn", jsonIn.toString());
+            } else {
                 jsonIn = new StringBuilder();
                 jsonIn.append("timeout");
             }
@@ -930,13 +947,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             jsonIn = new StringBuilder();
             jsonIn.append("timeout");
         } catch (Exception e) {
-            Log.d(TAG, "error" + e.getMessage());
+            Log.d(TAG, "error" + e.toString());
             jsonIn = new StringBuilder();
             jsonIn.append("error");
         } finally {
 
-            if(conn!=null)
-            {
+            if (conn != null) {
                 conn.disconnect();
             }
 
@@ -994,17 +1010,14 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 Download download = (Download) object;
                 percentage.setText("100%");
                 progressT.setText("下載完成!\n更新中");
-                if(Common.lostCarrier!=null)
-                {
-                    if(Common.lostCarrier.size()>0)
-                    {
-                        StringBuffer sb=new StringBuffer();
-                        for(CarrierVO c:Common.lostCarrier)
-                        {
-                            sb.append(c.getCarNul()+" ");
+                if (Common.lostCarrier != null) {
+                    if (Common.lostCarrier.size() > 0) {
+                        StringBuffer sb = new StringBuffer();
+                        for (CarrierVO c : Common.lostCarrier) {
+                            sb.append(c.getCarNul() + " ");
                         }
                         sb.append("驗證碼錯誤，請到雲端發票 : \n\"綁定/取消載具修改\"");
-                        Common.showToast(download.activity,sb.toString());
+                        Common.showToast(download.activity, sb.toString());
                     }
                 }
                 download.tonNewActivity();
@@ -1050,15 +1063,15 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 } else {
                     homePagetList.setChoiceLayout();
                 }
-            }else if (object instanceof EleUpdateCarrier) {
+            } else if (object instanceof EleUpdateCarrier) {
                 EleUpdateCarrier eleUpdateCarrier = (EleUpdateCarrier) object;
                 eleUpdateCarrier.check(s);
-            }else if (object instanceof DownloadNewDataJob) {
+            } else if (object instanceof DownloadNewDataJob) {
                 new Common().AutoSetPrice();
             }
         } catch (Exception e) {
-           Log.d(TAG,"onPostExecute"+e.getMessage());
-        }finally {
+            Log.d(TAG, "onPostExecute" + e.getMessage());
+        } finally {
             this.cancel(true);
         }
     }
@@ -1134,7 +1147,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             invoiceVO.setDetail(jsonObject.get("details").toString());
             InvoiceVO type = getType(invoiceVO);
             invoiceDB.insert(type);
-            Log.d("total :", Common.sDay.format(new Date(invoiceVO.getTime().getTime())) + " : " + invoiceVO.getRealAmount()+" : "+invoiceVO.getAmount());
+            Log.d("total :", Common.sDay.format(new Date(invoiceVO.getTime().getTime())) + " : " + invoiceVO.getRealAmount() + " : " + invoiceVO.getAmount());
             detailjs = "success";
         }
         return detailjs;
@@ -1261,8 +1274,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
 
         //避免job null
-        if(progressT==null||percentage==null)
-        {
+        if (progressT == null || percentage == null) {
             return;
         }
 

@@ -2,8 +2,8 @@ package com.chargeapp.whc.chargeapp.TypeCode;
 
 public enum  PriceNotify {
 
-    Special(0,"專屬獎通知"),
-    Normal(1,"無特別獎"),
+    Normal(0,"無特別獎"),
+    Special(1,"專屬獎通知"),
     Notified(2,"已通知")
     ;
 
@@ -31,9 +31,9 @@ public enum  PriceNotify {
         switch (code)
         {
             case 0:
-                return PriceNotify.Special;
-            case 1:
                 return PriceNotify.Normal;
+            case 1:
+                return PriceNotify.Special;
             case 2:
                 return PriceNotify.Notified;
             default:

@@ -74,7 +74,7 @@ public class PriceDB {
         values.put("sixthPrizeNo4", priceVO.getSixthPrizeNo4());
         values.put("sixthPrizeNo5", priceVO.getSixthPrizeNo5());
         values.put("sixthPrizeNo6", priceVO.getSixthPrizeNo6());
-        values.put("isCheck", priceVO.getCheck().toString());
+        values.put("isCheck", priceVO.getCheck()==null?null:priceVO.getCheck().toString());
         values.put("priceNotify", priceVO.getNeedNotify()==null?null:priceVO.getNeedNotify().getCode());
         return values;
     }
