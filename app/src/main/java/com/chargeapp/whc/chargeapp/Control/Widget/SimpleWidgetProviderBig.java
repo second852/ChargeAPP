@@ -70,7 +70,7 @@ public class SimpleWidgetProviderBig extends AppWidgetProvider {
             }
         }catch (Exception e)
         {
-           Log.d("XXX",e.getMessage());
+           Log.d("XXX",e.toString());
         }
     }
 
