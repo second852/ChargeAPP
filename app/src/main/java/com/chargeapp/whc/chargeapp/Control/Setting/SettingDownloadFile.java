@@ -432,7 +432,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         {
                             bankVO.setCurrency("TWD");
                         }
-
+                        bankVO.setFkKey(row.getCell(10).getStringCellValue());
                         BankVO oldBankVO=bankDB.getFindOldBank(bankVO);
                         if(oldBankVO==null)
                         {
@@ -468,6 +468,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         {
                             consumeVO.setCurrency("TWD");
                         }
+                        consumeVO.setFkKey(row.getCell(16).getStringCellValue());
 
                         ConsumeVO oldConsume=consumeDB.findOldCon(consumeVO);
                         if(oldConsume==null)

@@ -64,6 +64,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 import static com.chargeapp.whc.chargeapp.Control.Common.insertCurrency;
@@ -976,6 +977,7 @@ public class InsertSpend extends Fragment {
         consumeVO.setFixDate(String.valueOf(fixDate.isChecked()));
         consumeVO.setFixDateDetail(fixdatedetail);
         consumeVO.setNotify(String.valueOf(notify.isChecked()));
+        consumeVO.setFkKey(UUID.randomUUID().toString());
         consumeVO.setAuto(false);
         consumeVO.setAutoId(-1);
         consumeVO.setIsWin("0");

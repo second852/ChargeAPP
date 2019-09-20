@@ -22,6 +22,7 @@ import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
 
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -111,9 +112,11 @@ public class PropertyInsert extends Fragment {
                 return;
             }
             PropertyVO propertyVO=new PropertyVO();
+            String id= UUID.randomUUID().toString();
+            propertyVO.setId(id);
             propertyVO.setName(nameP);
             propertyVO.setCurrency(currencyName);
-            String id=propertyDB.insert(propertyVO);
+            propertyDB.insert(propertyVO);
             Fragment fragment=new PropertyTotal();
             Bundle bundle=new Bundle();
             bundle.putSerializable(Common.propertyID,id);

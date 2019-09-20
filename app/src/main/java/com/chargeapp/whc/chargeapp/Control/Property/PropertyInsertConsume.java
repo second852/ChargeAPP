@@ -521,6 +521,7 @@ public class PropertyInsertConsume extends Fragment {
 
 
             PropertyFromVO propertyFromVO=new PropertyFromVO();
+            propertyFromVO.setId(UUID.randomUUID().toString());
             propertyFromVO.setType(PropertyType.Negative);
             propertyFromVO.setSourceCurrency(nowCurrency);
             propertyFromVO.setSourceMoney(iMoney.toString());

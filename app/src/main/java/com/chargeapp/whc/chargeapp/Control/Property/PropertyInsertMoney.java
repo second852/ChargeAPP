@@ -449,6 +449,7 @@ public class PropertyInsertMoney extends Fragment {
 
 
             PropertyFromVO propertyFromVO=new PropertyFromVO();
+            propertyFromVO.setId(UUID.randomUUID().toString());
             propertyFromVO.setType(PropertyType.Positive);
             propertyFromVO.setSourceCurrency(nowCurrency);
             propertyFromVO.setSourceMoney(iMoney.toString());
@@ -458,6 +459,7 @@ public class PropertyInsertMoney extends Fragment {
             String sourceDate=date.getText().toString();
             String[] dateArray=sourceDate.split("/");
             Calendar sourceTime=new GregorianCalendar(Integer.valueOf(dateArray[0]),Integer.valueOf(dateArray[1])-1,Integer.valueOf(dateArray[2]));
+
             propertyFromVO.setSourceTime(sourceTime.getTime());
             propertyFromVO.setImportFee(fee.toString());
             propertyFromVO.setPropertyId(propertyVO.getId());

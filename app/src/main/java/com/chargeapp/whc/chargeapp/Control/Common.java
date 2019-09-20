@@ -1388,7 +1388,7 @@ public class Common {
           {
               return;
           }
-
+         propertyFromVO.setId(UUID.randomUUID().toString());
          propertyFromVO.setFixImport(false);
          propertyFromVO.setFixFromId(propertyFromVO.getId());
          propertyFromVO.setSourceTime(new Date(System.currentTimeMillis()));

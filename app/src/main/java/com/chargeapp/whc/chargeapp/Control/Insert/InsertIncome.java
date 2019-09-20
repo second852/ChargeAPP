@@ -47,6 +47,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.beardedhen.androidbootstrap.*;
 
@@ -650,6 +651,7 @@ public class InsertIncome extends Fragment {
         bankVO.setFixDateDetail(fixdatedetail);
         bankVO.setDetailname(detailname.getText().toString().trim());
         bankVO.setAuto(false);
+        bankVO.setFkKey(UUID.randomUUID().toString());
         bankVO.setAutoId(-1);
         needSet=false;
     }

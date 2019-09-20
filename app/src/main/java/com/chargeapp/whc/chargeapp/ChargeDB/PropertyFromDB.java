@@ -370,7 +370,7 @@ public class PropertyFromDB {
     }
 
     public long insert(PropertyFromVO propertyFromVO) {
-        propertyFromVO.setId(UUID.randomUUID().toString());
+
         ContentValues values = getContentValues(propertyFromVO);
         return db.getWritableDatabase().insert(TABLE_NAME, null, values);
     }

@@ -76,12 +76,11 @@ public class PropertyDB {
 
     public String insert(PropertyVO propertyVO) {
         ContentValues values = new ContentValues();
-        String id=UUID.randomUUID().toString();
-        values.put("id",id);
+        values.put("id",propertyVO.getId());
         values.put("name", propertyVO.getName());
         values.put("currency", propertyVO.getCurrency());
         db.getWritableDatabase().insert(TABLE_NAME, null, values);
-        return id;
+        return propertyVO.getId();
     }
 
 

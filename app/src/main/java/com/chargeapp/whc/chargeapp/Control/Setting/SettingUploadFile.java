@@ -788,6 +788,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(7).setCellValue(bankVO.isAuto());
                     rowContent.createCell(8).setCellValue(bankVO.getAutoId());
                     rowContent.createCell(9).setCellValue(bankVO.getCurrency());
+                    rowContent.createCell(10).setCellValue(bankVO.getFkKey());
                 }
 
                 //Consume
@@ -812,6 +813,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(13).setCellValue(consumeVO.getIsWinNul());
                     rowContent.createCell(14).setCellValue(consumeVO.getRdNumber());
                     rowContent.createCell(15).setCellValue(consumeVO.getCurrency());
+                    rowContent.createCell(16).setCellValue(consumeVO.getFkKey());
                 }
 
                 //Invoice
