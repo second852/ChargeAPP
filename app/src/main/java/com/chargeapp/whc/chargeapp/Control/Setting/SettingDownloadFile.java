@@ -174,6 +174,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                 open();
                 progressL.setVisibility(View.VISIBLE);
                 Common.showToast(context, "下載成功");
+                percent.setText("0%");
             } else {
                 if(mGoogleApiClient!=null)
                 {
