@@ -374,9 +374,8 @@ public class JobSchedulerService extends JobService {
                         start = new GregorianCalendar(year, month, day, 0, 0, 0);
                         end = new GregorianCalendar(year, month, day, 23, 59, 0);
                         old = propertyFromDB.findAutoBySourceTimeAndAutoId(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getId());
-                        Common.insertAutoPropertyFromVo(propertyFromDB,propertyFromVO);
-
                         if (old == null) {
+                            Common.insertAutoPropertyFromVo(propertyFromDB,propertyFromVO);
                         }
                         break;
                     case FixWeek:
