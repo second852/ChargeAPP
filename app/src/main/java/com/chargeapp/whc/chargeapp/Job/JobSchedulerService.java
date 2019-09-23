@@ -28,7 +28,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 
-
+import org.jsoup.helper.StringUtil;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -37,6 +37,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -99,11 +100,11 @@ public class JobSchedulerService extends JobService {
 
             int hour, min;
             if (setTime.indexOf("p") == -1) {
-                hour = new Integer(setTime.substring(0, setTime.indexOf(":")));
-                min = new Integer(setTime.substring(setTime.indexOf(":") + 1, setTime.indexOf("a")).trim());
+                hour = Integer.valueOf(setTime.substring(0, setTime.indexOf(":")));
+                min = Integer.valueOf(setTime.substring(setTime.indexOf(":") + 1, setTime.indexOf("a")).trim());
             } else {
-                hour = new Integer(setTime.substring(0, setTime.indexOf(":"))) + 12;
-                min = new Integer(setTime.substring(setTime.indexOf(":") + 1, setTime.indexOf("p")).trim());
+                hour = Integer.valueOf(setTime.substring(0, setTime.indexOf(":"))) + 12;
+                min = Integer.valueOf(setTime.substring(setTime.indexOf(":") + 1, setTime.indexOf("p")).trim());
             }
 
             JsonObject jsonObject;
@@ -122,6 +123,18 @@ public class JobSchedulerService extends JobService {
                     {
                         continue;
                     }
+
+                    if(StringUtil.isBlank(consumeVO.getFkKey())) {
+                        consumeVO.setFkKey(UUID.randomUUID().toString());
+                        consumeDB.update(consumeVO);
+                        List<ConsumeVO> sonList=consumeDB.getAutoCreate(consumeVO.getId());
+                        for (ConsumeVO son:sonList)
+                        {
+                            son.setFkKey(consumeVO.getFkKey());
+                            consumeDB.update(son);
+                        }
+                    }
+
 
                     String detail = consumeVO.getFixDateDetail();
                     jsonObject = gson.fromJson(detail, JsonObject.class);
@@ -247,6 +260,19 @@ public class JobSchedulerService extends JobService {
                     continue;
                 }
 
+                if(StringUtil.isBlank(b.getFkKey()))
+                {
+                    b.setFkKey(UUID.randomUUID().toString());
+                    bankDB.update(b);
+                    List<BankVO> sonList =bankDB.getAutoSetting(b.getId());
+                    for(BankVO son:sonList)
+                    {
+                        son.setFkKey(b.getFkKey());
+                        bankDB.update(son);
+                    }
+                }
+
+
                 String detail = b.getFixDateDetail();
                 jsonObject = gson.fromJson(detail, JsonObject.class);
                 String action = jsonObject.get("choicestatue").getAsString().trim();
@@ -348,8 +374,9 @@ public class JobSchedulerService extends JobService {
                         start = new GregorianCalendar(year, month, day, 0, 0, 0);
                         end = new GregorianCalendar(year, month, day, 23, 59, 0);
                         old = propertyFromDB.findAutoBySourceTimeAndAutoId(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getId());
+                        Common.insertAutoPropertyFromVo(propertyFromDB,propertyFromVO);
+
                         if (old == null) {
-                            Common.insertAutoPropertyFromVo(propertyFromDB,propertyFromVO);
                         }
                         break;
                     case FixWeek:

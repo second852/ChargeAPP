@@ -1388,9 +1388,10 @@ public class Common {
           {
               return;
           }
-         propertyFromVO.setId(UUID.randomUUID().toString());
+
+         String mainId= propertyFromVO.getId();
          propertyFromVO.setFixImport(false);
-         propertyFromVO.setFixFromId(propertyFromVO.getId());
+         propertyFromVO.setFixFromId(mainId);
          propertyFromVO.setSourceTime(new Date(System.currentTimeMillis()));
 
 
@@ -1408,6 +1409,8 @@ public class Common {
              }
          }
 
+         //產生新Id
+         propertyFromVO.setId(UUID.randomUUID().toString());
          propertyFromDB.insert(propertyFromVO);
 
     }

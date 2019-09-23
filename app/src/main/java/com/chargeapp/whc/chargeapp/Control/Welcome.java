@@ -387,20 +387,20 @@ public class Welcome extends AppCompatActivity {
         ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);
         JobInfo.Builder builder = new JobInfo.Builder(0, mServiceComponent);
 //        tm.cancelAll();
-//        builder.setPeriodic(1000*60*60);
-//        builder.setPersisted(true);
-        builder.setMinimumLatency(1);
-        builder.setOverrideDeadline(2);
+        builder.setPeriodic(1000*60*60);
+        builder.setPersisted(true);
+//        builder.setMinimumLatency(1);
+//        builder.setOverrideDeadline(2);
         builder.setRequiresCharging(false);
         builder.setRequiresDeviceIdle(false);
         tm.schedule(builder.build());
 
         ComponentName DownloadComponent = new ComponentName(this, DownloadNewDataJob.class);
         JobInfo.Builder DownloadBuilder = new JobInfo.Builder(1, DownloadComponent);
-//        DownloadBuilder.setPersisted(true);
-//        DownloadBuilder.setPeriodic(1000*60*60);
-        DownloadBuilder.setMinimumLatency(1);
-        DownloadBuilder.setOverrideDeadline(2);
+        DownloadBuilder.setPersisted(true);
+        DownloadBuilder.setPeriodic(1000*60*60);
+//        DownloadBuilder.setMinimumLatency(1);
+//        DownloadBuilder.setOverrideDeadline(2);
         DownloadBuilder.setRequiresCharging(false);
         DownloadBuilder.setRequiresDeviceIdle(false);
         tm.schedule(DownloadBuilder.build());

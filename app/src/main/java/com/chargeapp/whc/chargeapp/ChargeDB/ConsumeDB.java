@@ -426,7 +426,7 @@ public class ConsumeDB {
     }
 
     public List<ConsumeVO> getAutoCreateByFK(String fkKey) {
-        String sql = "SELECT * FROM Consumer where fkKey = '" + fkKey + "'order by id;";
+        String sql = "SELECT * FROM Consumer where fkKey = '" + fkKey + "'order by date desc;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
