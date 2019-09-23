@@ -91,7 +91,7 @@ public class PropertyFromDB {
     }
 
     public List<PropertyFromVO> getFixAll(PropertyType propertyType) {
-        String sql = "SELECT * FROM PropertyFrom where type = "+propertyType.getCode()+" and fixImport = 'true'  order by id;";
+        String sql = "SELECT * FROM PropertyFrom where type = "+propertyType.getCode()+" and fixImport = 'true'  order by sourceDate desc;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOS = new ArrayList<>();
@@ -199,8 +199,8 @@ public class PropertyFromDB {
 
 
     public List<PropertyFromVO> findFixProperty(String propertyFromVoId) {
-        String sql = "SELECT * FROM PropertyFrom where fixFromId = '"+propertyFromVoId +"'  order by sourceDate ;";
-        String[] args = {};
+        String sql = "SELECT * FROM PropertyFrom where fixFromId = ?  order by sourceDate desc;";
+        String[] args = {propertyFromVoId};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOList=new ArrayList<>();
         while (cursor.moveToNext()) {
@@ -213,7 +213,7 @@ public class PropertyFromDB {
 
 
     public List<PropertyFromVO> findFixAllProperty() {
-        String sql = "SELECT * FROM PropertyFrom where fixImport = 'true' order by sourceDate ;";
+        String sql = "SELECT * FROM PropertyFrom where fixImport = 'true' order by sourceDate desc ;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOList=new ArrayList<>();
