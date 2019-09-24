@@ -10,6 +10,8 @@ import android.widget.GridView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.Control.Common;
 
+import java.text.ParseException;
+
 import static com.chargeapp.whc.chargeapp.Control.Common.doubleRemoveZero;
 import static com.chargeapp.whc.chargeapp.Control.Common.onlyNumberToDouble;
 
@@ -370,7 +372,11 @@ public class KeyBoardInputNumberOnItemClickListenerTwo implements AdapterView.On
         {
             totalMoney.setText(Common.doubleRemoveZero(originT));
         }else{
-            showTotal=originT-Double.valueOf(showSb.toString());
+            try {
+                showTotal=originT-Common.nf.parse(showSb.toString());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             totalMoney.setText(String.valueOf(showTotal));
         }
 

@@ -716,7 +716,7 @@ public class InsertSpend extends Fragment {
             }
 
             try {
-                if (Double.valueOf(money.getText().toString().trim()) == 0) {
+                if (Common.nf.parse(money.getText().toString().trim()) == 0) {
                     money.setError("金額不能為0");
                     return;
                 }
