@@ -10,8 +10,6 @@ import android.widget.GridView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.Control.Common;
 
-import java.text.ParseException;
-
 import static com.chargeapp.whc.chargeapp.Control.Common.doubleRemoveZero;
 import static com.chargeapp.whc.chargeapp.Control.Common.onlyNumberToDouble;
 
@@ -85,7 +83,7 @@ public class KeyBoardInputNumberOnItemClickListenerTwo implements AdapterView.On
             {
                 totalMoney.setText(Common.doubleRemoveZero(originT));
             }else{
-                showTotal=originT-Double.valueOf(showSb.toString());
+                showTotal=originT-onlyNumberToDouble(showSb.toString());
                 totalMoney.setText(Common.doubleRemoveZero(showTotal));
             }
 
@@ -101,21 +99,29 @@ public class KeyBoardInputNumberOnItemClickListenerTwo implements AdapterView.On
                     Common.showToast(context,"計算中的數值，不能倒退");
                     break;
                 }
+
+                int focus=money.getSelectionEnd();
                 if(showSb.length()<=1)
                 {
                     showSb=new StringBuilder();
                     showSb.append("0");
                 }else {
-                    showSb.delete(showSb.length()-1,showSb.length());
+                    if(focus>=1)
+                    {
+                        showSb.delete(focus-1,focus);
+                        focus=focus-1;
+                    }else{
+                        focus=0;
+                    }
                 }
                 money.setText(showSb.toString());
-                money.setSelection(showSb.length());
+                money.setSelection(focus);
 
                 if(showSb.length()==0)
                 {
                     totalMoney.setText(Common.doubleRemoveZero(originT));
                 }else{
-                    showTotal=originT-Double.valueOf(showSb.toString());
+                    showTotal=originT-onlyNumberToDouble(showSb.toString());
                     totalMoney.setText(Common.doubleRemoveZero(showTotal));
                 }
 
@@ -271,7 +277,7 @@ public class KeyBoardInputNumberOnItemClickListenerTwo implements AdapterView.On
                 {
                     totalMoney.setText(String.valueOf(originT));
                 }else{
-                    showTotal=originT-Double.valueOf(showSb.toString());
+                    showTotal=originT-onlyNumberToDouble(showSb.toString());
                     totalMoney.setText(Common.doubleRemoveZero(showTotal));
                 }
 
@@ -326,7 +332,7 @@ public class KeyBoardInputNumberOnItemClickListenerTwo implements AdapterView.On
                     totalMoney.setText(Common.doubleRemoveZero(originT));
                 }else{
                     Log.d("XXXXXX",showSb.toString());
-                    showTotal=originT-Double.valueOf(showSb.toString());
+                    showTotal=originT-onlyNumberToDouble(showSb.toString());
                     totalMoney.setText(Common.doubleRemoveZero(showTotal));
                 }
 
@@ -346,7 +352,7 @@ public class KeyBoardInputNumberOnItemClickListenerTwo implements AdapterView.On
                 answer = oldNumber * nowNumber;
                 break;
             case "÷":
-                if(Double.valueOf(showSb.toString().trim())==0.0)
+                if(onlyNumberToDouble(showSb.toString().trim())==0.0)
                 {
                     answer=oldNumber;
                     Common.showToast(context,"除數不能為零");
@@ -372,11 +378,7 @@ public class KeyBoardInputNumberOnItemClickListenerTwo implements AdapterView.On
         {
             totalMoney.setText(Common.doubleRemoveZero(originT));
         }else{
-            try {
-                showTotal=originT-Common.nf.parse(showSb.toString());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            showTotal=originT-onlyNumberToDouble(showSb.toString());
             totalMoney.setText(String.valueOf(showTotal));
         }
 

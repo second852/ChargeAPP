@@ -586,9 +586,9 @@ public class PropertyUpdateConsume extends Fragment {
                 importMoney.setError(getString(R.string.error_Zero));
                 return;
             }
-            Integer iMoney;
+            Double iMoney;
             try {
-                  iMoney=Integer.valueOf(stringMoney);
+                  iMoney=Common.nf.parse(stringMoney).doubleValue();
                   if(iMoney<0)
                   {
                       importMoney.setError(getString(R.string.error_negative_Integer));
@@ -598,12 +598,12 @@ public class PropertyUpdateConsume extends Fragment {
                 importMoney.setError(getString(R.string.error_Integer));
                 return;
             }
-            Integer fee=0;
+            Double fee=0.0;
             if(feeMoney.getText()!=null)
             {
 
                 try {
-                    fee=Integer.valueOf(feeMoney.getText().toString().trim());
+                    fee=Common.nf.parse(feeMoney.getText().toString().trim()).doubleValue();
                     if(fee<0)
                     {
                         feeMoney.setError(getString(R.string.error_negative_Integer));

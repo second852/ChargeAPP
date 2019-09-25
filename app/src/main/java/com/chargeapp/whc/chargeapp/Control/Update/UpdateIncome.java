@@ -592,8 +592,9 @@ public class UpdateIncome extends Fragment {
         c.set(year, month, day, 12, 0, 0);
         Date d = new Date(c.getTimeInMillis());
 
+
         //設定幣別
-        bankVO.setRealMoney(money.getText().toString().trim());
+        bankVO.setRealMoney(Common.onlyNumber(money.getText().toString().trim()));
         bankVO.setCurrency(nowCurrency);
 
         bankVO.setMaintype(name.getText().toString().trim());
@@ -655,7 +656,7 @@ public class UpdateIncome extends Fragment {
 
 
             try {
-                if (Double.valueOf(money.getText().toString().trim()) == 0) {
+                if (Common.nf.parse(money.getText().toString().trim()).doubleValue() == 0) {
                     money.setError("金額不能為0");
                     return;
                 }
@@ -735,7 +736,7 @@ public class UpdateIncome extends Fragment {
             }
 
             try {
-                if (Integer.valueOf(money.getText().toString().trim()) == 0) {
+                if (Common.nf.parse(money.getText().toString().trim()).doubleValue() == 0) {
                     money.setError("金額不能為0");
                     return;
                 }

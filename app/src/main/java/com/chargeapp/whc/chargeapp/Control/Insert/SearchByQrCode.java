@@ -264,7 +264,7 @@ public class SearchByQrCode extends Fragment {
                 return;
             }
             try {
-                new Integer(CheckNul.substring(2));
+                Integer.valueOf(CheckNul.substring(2));
             } catch (NumberFormatException e) {
                 number.setError("統一發票後8碼為數字");
                 return;
@@ -282,7 +282,7 @@ public class SearchByQrCode extends Fragment {
                 return;
             }
             try {
-                new Integer(rdNumber.getText().toString().trim());
+                Integer.valueOf(rdNumber.getText().toString().trim());
             } catch (Exception e) {
                 rdNumber.setError("只能輸入數字");
                 return;

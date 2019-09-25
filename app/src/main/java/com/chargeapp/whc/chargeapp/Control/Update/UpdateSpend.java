@@ -808,7 +808,7 @@ public class UpdateSpend extends Fragment {
             }
 
             try {
-                if (Double.valueOf(money.getText().toString().trim()) == 0) {
+                if (Common.nf.parse(money.getText().toString().trim()).doubleValue() == 0) {
                     money.setError("金額不能空白");
                     return;
                 }
@@ -830,7 +830,7 @@ public class UpdateSpend extends Fragment {
                     return;
                 }
                 try {
-                    new Integer(CheckNul.substring(2));
+                    Integer.valueOf(CheckNul.substring(2));
                 } catch (NumberFormatException e) {
                     number.setError("統一發票後8碼為數字");
                     return;
@@ -1104,7 +1104,7 @@ public class UpdateSpend extends Fragment {
             }
 
             try {
-                if (Double.valueOf(money.getText().toString().trim()) == 0) {
+                if (Common.nf.parse(money.getText().toString().trim()).doubleValue() == 0) {
                     money.setError("金額不能為0");
                     return;
                 }
@@ -1125,7 +1125,7 @@ public class UpdateSpend extends Fragment {
                     return;
                 }
                 try {
-                    new Integer(CheckNul.substring(2));
+                    Integer.valueOf(CheckNul.substring(2));
                 } catch (NumberFormatException e) {
                     number.setError("統一發票後8碼為數字");
                     return;

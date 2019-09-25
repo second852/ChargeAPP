@@ -460,7 +460,7 @@ public class GoalUpdate extends Fragment {
             String reMa = (remindD.getSelectedItem() == null) ? "" : remindD.getSelectedItem().toString().trim();
             goalVO.setName(goalName);
 
-            goalVO.setRealMoney(goalMoney);
+            goalVO.setRealMoney(Common.onlyNumber(goalMoney));
             goalVO.setCurrency(nowCurrency);
 
             goalVO.setNoWeekend(noWeekend.isChecked());

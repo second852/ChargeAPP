@@ -5,10 +5,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.TextView;
+
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.chargeapp.whc.chargeapp.Control.Common;
 
 import static com.chargeapp.whc.chargeapp.Control.Common.doubleRemoveZero;
@@ -88,15 +87,24 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
                     Common.showToast(context,"計算中的數值，不能倒退");
                     break;
                 }
+                int focus=money.getSelectionEnd();
+
                 if(showSb.length()<=1)
                 {
                     showSb=new StringBuilder();
                     showSb.append("0");
                 }else {
-                    showSb.delete(showSb.length()-1,showSb.length());
+
+                    if(focus>=1)
+                    {
+                        showSb.delete(focus-1,focus);
+                        focus=focus-1;
+                    }else{
+                        focus=0;
+                    }
                 }
                 money.setText(showSb.toString());
-                money.setSelection(showSb.length());
+                money.setSelection(focus);
                 break;
             case "歸零":
                 zeroMark=true;
@@ -299,7 +307,7 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
                 answer = oldNumber * nowNumber;
                 break;
             case "÷":
-                if(Double.valueOf(showSb.toString().trim())==0.0)
+                if(onlyNumberToDouble(showSb.toString().trim())==0.0)
                 {
                     answer=oldNumber;
                     Common.showToast(context,"除數不能為零");

@@ -66,7 +66,7 @@ public class InsertIncome extends Fragment {
     private BootstrapDropDown choiceStatue,choiceday;
     private Gson gson;
     private BankTypeDB bankTypeDB;
-    private BankDB bankDB;
+    private BankDB  bankDB;
     private LinearLayout firstL;
     private GridView firstG;
     private int updateChoice;
@@ -685,7 +685,7 @@ public class InsertIncome extends Fragment {
 
 
             try {
-                if (Common.nf.parse(money.getText().toString().trim()) == 0) {
+                if (Common.nf.parse(money.getText().toString().trim()).doubleValue() == 0) {
                     money.setError("金額不能為0");
                     return;
                 }
