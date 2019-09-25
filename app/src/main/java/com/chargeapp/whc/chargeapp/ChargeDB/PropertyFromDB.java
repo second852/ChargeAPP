@@ -154,7 +154,7 @@ public class PropertyFromDB {
         CurrencyVO currencyVO;
         CurrencyDB currencyDB=new CurrencyDB(db);
         String money,currencyMoney;
-        if (cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
             money=cursor.getString(0);
             currencyVO=currencyDB.getOneByType(cursor.getString(1));
             currencyMoney=(currencyVO==null)?"1":currencyVO.getMoney();

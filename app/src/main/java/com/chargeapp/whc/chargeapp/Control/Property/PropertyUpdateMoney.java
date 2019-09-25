@@ -62,7 +62,7 @@ import static com.chargeapp.whc.chargeapp.Control.Common.propertyCurrency;
 public class PropertyUpdateMoney extends Fragment {
 
     private BootstrapDropDown choicePropertyFrom,choiceStatue,choiceDay;
-    private BootstrapButton currency,importCalculate,importCurrency,feeCalculate,feeCurrency,save;
+    private BootstrapButton currency,importCalculate,importCurrency,feeCalculate,feeCurrency,save,clear;
     private BootstrapEditText money,importMoney,feeMoney,date;
     private BankDB bankDB;
     private Activity activity;
@@ -398,6 +398,18 @@ public class PropertyUpdateMoney extends Fragment {
         date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
         showDate=view.findViewById(R.id.showDate);
         showDate.setOnClickListener(new choiceDateClick());
+        clear=view.findViewById(R.id.clear);
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                importMoney.setText("0");
+                feeMoney.setText("0");
+                money.setText(Common.doubleRemoveZero(rTotal));
+                fixDate.setChecked(false);
+                numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListenerTwo(importCalculate,importMoney,activity,numberKeyBoard,new StringBuilder(),false,money,rTotal));
+                numberKeyBoard1.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(feeCalculate,feeMoney,activity,numberKeyBoard1,new StringBuilder(),false));
+            }
+        });
     }
 
 
@@ -530,9 +542,10 @@ public class PropertyUpdateMoney extends Fragment {
             Integer iMoney;
             try {
                   iMoney=Integer.valueOf(stringMoney);
-                  if(iMoney<0)
+                  if(iMoney<=0)
                   {
                       importMoney.setError(getString(R.string.error_negative_Integer));
+                      return;
                   }
             }catch (Exception e)
             {
@@ -548,6 +561,7 @@ public class PropertyUpdateMoney extends Fragment {
                     if(fee<0)
                     {
                         feeMoney.setError(getString(R.string.error_negative_Integer));
+                        return;
                     }
                 }catch (Exception e)
                 {

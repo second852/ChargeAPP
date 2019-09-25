@@ -120,6 +120,8 @@ public class KeyBoardInputNumberOnItemClickListenerTwo implements AdapterView.On
                 if(showSb.length()==0)
                 {
                     totalMoney.setText(Common.doubleRemoveZero(originT));
+                }if(showSb.indexOf("-")!=-1&&showSb.length()==1) {
+                    totalMoney.setText(Common.doubleRemoveZero(originT));
                 }else{
                     showTotal=originT-onlyNumberToDouble(showSb.toString());
                     totalMoney.setText(Common.doubleRemoveZero(showTotal));

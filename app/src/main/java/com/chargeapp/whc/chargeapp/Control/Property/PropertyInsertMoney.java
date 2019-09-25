@@ -60,7 +60,7 @@ import static com.chargeapp.whc.chargeapp.Control.Common.propertyCurrency;
 public class PropertyInsertMoney extends Fragment {
 
     private BootstrapDropDown choicePropertyFrom,choiceStatue,choiceDay;
-    private BootstrapButton currency,importCalculate,importCurrency,feeCalculate,feeCurrency,save;
+    private BootstrapButton currency,importCalculate,importCurrency,feeCalculate,feeCurrency,save,clear;
     private BootstrapEditText money,importMoney,feeMoney,date;
     private BankDB bankDB;
     private Activity activity;
@@ -273,6 +273,20 @@ public class PropertyInsertMoney extends Fragment {
 
             }
         });
+
+        clear=view.findViewById(R.id.clear);
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                importMoney.setText("0");
+                feeMoney.setText("0");
+                fixDate.setChecked(false);
+                Double d=total/Double.valueOf(currencyVO.getMoney());
+                money.setText(Common.doubleRemoveZero(d));
+                numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListenerTwo(importCalculate,importMoney,activity,numberKeyBoard,new StringBuilder(),false,money,d));
+                numberKeyBoard1.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(feeCalculate,feeMoney,activity,numberKeyBoard1,new StringBuilder(),false));
+            }
+        });
     }
 
 
@@ -407,9 +421,10 @@ public class PropertyInsertMoney extends Fragment {
             Integer iMoney;
             try {
                   iMoney=Integer.valueOf(stringMoney);
-                  if(iMoney<0)
+                  if(iMoney<=0)
                   {
                       importMoney.setError(getString(R.string.error_negative_Integer));
+                      return;
                   }
             }catch (Exception e)
             {
@@ -425,6 +440,7 @@ public class PropertyInsertMoney extends Fragment {
                     if(fee<0)
                     {
                         feeMoney.setError(getString(R.string.error_negative_Integer));
+                        return;
                     }
                 }catch (Exception e)
                 {

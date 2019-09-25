@@ -59,7 +59,7 @@ import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_MONEY;
 public class PropertyUpdateConsume extends Fragment {
 
     private BootstrapDropDown choiceMain,choiceStatue,choiceDay,choiceSecond;
-    private BootstrapButton currency,importCalculate,importCurrency,feeCalculate,feeCurrency,save;
+    private BootstrapButton currency,importCalculate,importCurrency,feeCalculate,feeCurrency,save,clear;
     private BootstrapEditText money,importMoney,feeMoney,date;
     private ConsumeDB consumeDB;
     private Activity activity;
@@ -318,6 +318,7 @@ public class PropertyUpdateConsume extends Fragment {
     private void findViewById() {
 
         //fixDate
+        clear=view.findViewById(R.id.clear);
         fixDateT=view.findViewById(R.id.fixDateT);
         showFixDate=view.findViewById(R.id.showFixDate);
         fixDate=view.findViewById(R.id.fixDate);
@@ -422,6 +423,17 @@ public class PropertyUpdateConsume extends Fragment {
         date.setShowSoftInputOnFocus(false);
         showDate=view.findViewById(R.id.showDate);
         showDate.setOnClickListener(new choiceDateClick());
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                money.setText(Common.doubleRemoveZero(rTotal));
+                importMoney.setText("0");
+                feeMoney.setText("0");
+                fixDate.setChecked(false);
+                numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListenerTwo(importCalculate,importMoney,activity,numberKeyBoard,new StringBuilder(),false,money,rTotal));
+                numberKeyBoard1.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(feeCalculate,feeMoney,activity,numberKeyBoard1,new StringBuilder(),false));
+            }
+        });
 
     }
 
@@ -589,9 +601,10 @@ public class PropertyUpdateConsume extends Fragment {
             Double iMoney;
             try {
                   iMoney=Common.nf.parse(stringMoney).doubleValue();
-                  if(iMoney<0)
+                  if(iMoney<=0)
                   {
                       importMoney.setError(getString(R.string.error_negative_Integer));
+                      return;
                   }
             }catch (Exception e)
             {
@@ -607,6 +620,7 @@ public class PropertyUpdateConsume extends Fragment {
                     if(fee<0)
                     {
                         feeMoney.setError(getString(R.string.error_negative_Integer));
+                        return;
                     }
                 }catch (Exception e)
                 {
