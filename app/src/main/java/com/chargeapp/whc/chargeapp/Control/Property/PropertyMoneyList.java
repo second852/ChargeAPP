@@ -20,6 +20,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
@@ -308,6 +309,27 @@ public class PropertyMoneyList extends Fragment {
             TextView listDetail=itemView.findViewById(R.id.listDetail);
             BootstrapButton showD=itemView.findViewById(R.id.showD);
             BootstrapButton deleteI=itemView.findViewById(R.id.deleteI);
+
+            LinearLayout fixL=itemView.findViewById(R.id.fixL);
+            BootstrapButton fixT=itemView.findViewById(R.id.fixT);
+            fixL.setVisibility(View.GONE);
+            if (!StringUtil.isBlank(propertyFromVO.getFixFromId())) {
+                fixT.setText("自動");
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.INFO);
+                fixL.setVisibility(View.VISIBLE);
+            }
+
+            if(propertyFromVO.getFixImport())
+            {
+                fixT.setText("固定");
+                fixT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
+                fixL.setVisibility(View.VISIBLE);
+            }
+
+
+
+
+
             StringBuilder title=new StringBuilder();
 
 
@@ -328,7 +350,12 @@ public class PropertyMoneyList extends Fragment {
             detail.append(Common.getCurrency(propertyFromVO.getSourceCurrency())).append(propertyFromVO.getImportFee()+"\n");
             if(propertyFromVO.getFixImport())
             {
-                detail.append("3. 定期匯入 : ").append(propertyFromVO.getFixDateCode().getDetail());
+                if(StringUtil.isBlank(propertyFromVO.getSourceSecondType()))
+                {
+                    detail.append("3. 定期匯入 : ").append(propertyFromVO.getFixDateCode().getDetail());
+                }else{
+                    detail.append("3. 定期支出 : ").append(propertyFromVO.getFixDateCode().getDetail());
+                }
                 if(propertyFromVO.getFixDateDetail()!=null)
                 {
                     detail.append(" "+propertyFromVO.getFixDateDetail());

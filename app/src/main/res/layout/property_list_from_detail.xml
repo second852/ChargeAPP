@@ -33,12 +33,37 @@
         android:padding="2dp"
         />
 
+    <LinearLayout
+        android:id="@+id/fixL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/listTitle"
+        android:layout_marginLeft="5dp"
+        android:visibility="gone"
+        >
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/fixT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="固定"
+            android:gravity="center"
+            android:padding="2dp"
+            android:layout_margin="1dp"
+            android:layout_gravity="center"
+            app:bootstrapBrand="primary"
+            app:buttonMode="regular"
+            app:bootstrapSize="md"
+            app:roundedCorners="true"
+            app:showOutline="true"
+            />
+    </LinearLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#AAAAAA"
         android:layout_margin="8dp"
-        android:layout_below="@+id/listTitle"
+        android:layout_below="@+id/fixL"
         android:layout_toLeftOf="@+id/deleteI"
         >
         <TextView

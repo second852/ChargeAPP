@@ -42,6 +42,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.sql.Date;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -644,7 +645,14 @@ public class InsertIncome extends Fragment {
         Date d = new Date(c.getTimeInMillis());
 
         bankVO.setMaintype(name.getText().toString().trim());
-        bankVO.setRealMoney(onlyNumber(money.getText().toString().trim()));
+        Double inputMoney;
+        try {
+            inputMoney=Common.nf.parse(money.getText().toString().trim()).doubleValue();
+        } catch (ParseException e) {
+            money.setError("不是數值!");
+            return;
+        }
+        bankVO.setRealMoney(onlyNumber(Common.doubleRemoveZero(inputMoney)));
         bankVO.setCurrency(nowCurrency);
         bankVO.setDate(d);
         bankVO.setFixDate(String.valueOf(fixDate.isChecked()));

@@ -57,6 +57,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.Calendar;
@@ -969,8 +970,14 @@ public class InsertSpend extends Fragment {
         consumeVO.setMaintype(name.getText().toString().trim());
         consumeVO.setSecondType(secondName.getText().toString().trim());
 
-
-        consumeVO.setRealMoney(onlyNumber(money.getText().toString().trim()));
+        Double inputMoney;
+        try {
+            inputMoney=Common.nf.parse(money.getText().toString().trim()).doubleValue();
+        } catch (ParseException e) {
+            money.setError("不是數值!");
+            return;
+        }
+        consumeVO.setRealMoney(onlyNumber(Common.doubleRemoveZero(inputMoney)));
 
         consumeVO.setDate(d);
         consumeVO.setNumber(number.getText().toString().trim());

@@ -58,6 +58,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.sql.Date;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -868,7 +869,14 @@ public class UpdateSpend extends Fragment {
         consumeVO.setMaintype(name.getText().toString().trim());
         consumeVO.setSecondType(secondname.getText().toString().trim());
         consumeVO.setDate(d);
-        consumeVO.setRealMoney(onlyNumber(money.getText().toString().trim()));
+        Double inputMoney;
+        try {
+            inputMoney=Common.nf.parse(money.getText().toString().trim()).doubleValue();
+        } catch (ParseException e) {
+            money.setError("不是數值!");
+            return;
+        }
+        consumeVO.setRealMoney(onlyNumber(Common.doubleRemoveZero(inputMoney)));
         consumeVO.setCurrency(nowCurrency);
         consumeVO.setNumber(number.getText().toString().trim());
 

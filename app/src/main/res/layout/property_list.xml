@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/message"
-        android:textSize="35sp"
+        android:textSize="30sp"
         android:textColor="#FF7744"
         android:visibility="gone"
         android:layout_centerHorizontal="true"

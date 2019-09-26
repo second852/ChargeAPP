@@ -1127,7 +1127,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         hashMap.put("invDate", sf.format(new Date(invoiceVO.getTime().getTime())));
         hashMap.put("uuid", "second");
         hashMap.put("sellerName", invoiceVO.getSellerName());
-        hashMap.put("amount", String.valueOf(invoiceVO.getRealAmount()));
+        hashMap.put("amount", invoiceVO.getRealAmount());
         hashMap.put("appID", "EINV3201711184648");
         hashMap.put("cardEncrypt", invoiceVO.getCardEncrypt());
         String detailjs = getRemoteData(urldetail, hashMap);

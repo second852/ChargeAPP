@@ -95,8 +95,8 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
     private String getNeTDatei1() throws IOException {
         String date=Common.sTwo.format(consumeVO.getDate());
         String[] dateS=date.split("/");
-        int year=new Integer(dateS[0])-1911;
-        int day=new Integer(dateS[1]);
+        int year=Integer.valueOf(dateS[0])-1911;
+        int day=Integer.valueOf(dateS[1]);
         StringBuilder period=new StringBuilder();
         period.append(year);
         if(day%2!=0)

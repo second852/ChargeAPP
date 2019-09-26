@@ -45,6 +45,7 @@ import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -379,7 +380,16 @@ public class UpdateInvoice extends Fragment {
             c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
             invoiceVO.setMaintype(name.getText().toString().trim());
             invoiceVO.setSecondtype(secondname.getText().toString().trim());
-            invoiceVO.setAmount(Integer.valueOf(money.getText().toString().trim()));
+
+            Double inputMoney;
+            try {
+                inputMoney=Common.nf.parse(money.getText().toString().trim()).doubleValue();
+            } catch (ParseException e) {
+                money.setError("不是數值!");
+                return;
+            }
+            invoiceVO.setRealAmount(Common.onlyNumber(Common.doubleRemoveZero(inputMoney)));
+            invoiceVO.setAmount(inputMoney.intValue());
             invoiceVO.setTime(new Timestamp(c.getTimeInMillis()));
             invoiceVO.setInvNum(number.getText().toString().trim());
             invoiceDB.update(invoiceVO);

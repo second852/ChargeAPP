@@ -106,8 +106,8 @@ public class PropertyFromDB {
 
 
     public List<PropertyFromVO> findByPropertyId(String propertyId) {
-        String sql = "SELECT * FROM PropertyFrom where propertyId ='"+propertyId +"' order by id;";
-        String[] args = {};
+        String sql = "SELECT * FROM PropertyFrom where propertyId = ? order by id;";
+        String[] args = {propertyId};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOS = new ArrayList<>();
         PropertyFromVO propertyFromVO;

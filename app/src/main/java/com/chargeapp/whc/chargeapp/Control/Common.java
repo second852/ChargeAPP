@@ -173,9 +173,9 @@ public class Common {
     public static String doubleRemoveZero(double d) {
         int a = (int) d;
         if (a == d) {
-            return String.valueOf(Common.nf.format(a));
+            return Common.nf.format(d);
         } else {
-            return String.valueOf(Common.nf.format(d));
+            return Common.nf.format(a);
         }
     }
 
@@ -1365,13 +1365,19 @@ public class Common {
 
     public static void insertAutoPropertyFromVo(PropertyFromDB propertyFromDB, PropertyFromVO propertyFromVO)
     {
-          Double total;
+          Double pTotal,sTotal;
+          ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
+          BankDB bankDB=new BankDB(MainActivity.chargeAPPDB);
           if(StringUtil.isBlank(propertyFromVO.getSourceSecondType()))
           {
-              total=propertyFromDB.findBySourceMainType(propertyFromVO.getSourceMainType());
+              pTotal=propertyFromDB.findBySourceMainType(propertyFromVO.getSourceMainType());
+              sTotal=bankDB.getTotalMoneyByName(propertyFromVO.getSourceMainType());
+
           }else{
-              total=propertyFromDB.findBySourceSecondType(propertyFromVO.getSourceSecondType());
+              pTotal=propertyFromDB.findBySourceSecondType(propertyFromVO.getSourceSecondType());
+              sTotal=consumeDB.getAllSecondTypeMoney(propertyFromVO.getSourceSecondType());
           }
+          sTotal=sTotal-pTotal;
           CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
           Calendar findTime=Calendar.getInstance();
           findTime.setTime(propertyFromVO.getSourceTime());
@@ -1381,10 +1387,9 @@ public class Common {
           Calendar start=new GregorianCalendar(year,month,day,0,0,0);
           Calendar end=new GregorianCalendar(year,month,day,23,59,59);
           CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getSourceCurrency());
-          total=total/Double.valueOf(currencyVO.getMoney());
-          Double remainT=total-Double.valueOf(propertyFromVO.getSourceMoney());
+          sTotal=sTotal/Double.valueOf(currencyVO.getMoney());
           //金額小於0部新增
-          if(remainT<0)
+          if(sTotal<0)
           {
               return;
           }
@@ -1395,7 +1400,7 @@ public class Common {
          propertyFromVO.setSourceTime(new Date(System.currentTimeMillis()));
 
 
-         ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
+
          if(propertyFromVO.getFixFromId()!=null&&!StringUtil.isBlank(propertyFromVO.getImportFee()))
          {
              Double fee=Double.valueOf(propertyFromVO.getImportFee());

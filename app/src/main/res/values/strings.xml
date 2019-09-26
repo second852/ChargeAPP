@@ -50,6 +50,6 @@
     <string name="error_negative_Integer">不能為負值!</string>
     <string name="error_overMoney">超過金額上限!</string>
     <string name="error_lostData">資料遺失!</string>
-    <string name="error_noHaveData">沒有資料!</string>
+    <string name="error_noHaveData">請新增資料!</string>
 
 </resources>

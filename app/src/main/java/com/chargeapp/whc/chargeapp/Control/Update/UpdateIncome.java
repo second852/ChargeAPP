@@ -48,6 +48,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.sql.Date;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -594,9 +595,15 @@ public class UpdateIncome extends Fragment {
 
 
         //設定幣別
-        bankVO.setRealMoney(Common.onlyNumber(money.getText().toString().trim()));
+        Double inputMoney;
+        try {
+            inputMoney=Common.nf.parse(money.getText().toString().trim()).doubleValue();
+        } catch (ParseException e) {
+            money.setError("不是數值!");
+            return;
+        }
+        bankVO.setRealMoney(Common.onlyNumber(Common.doubleRemoveZero(inputMoney)));
         bankVO.setCurrency(nowCurrency);
-
         bankVO.setMaintype(name.getText().toString().trim());
         bankVO.setDate(d);
         if(!bankVO.isAuto())

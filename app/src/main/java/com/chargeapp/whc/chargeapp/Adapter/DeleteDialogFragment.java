@@ -56,6 +56,8 @@ import com.chargeapp.whc.chargeapp.R;
 
 import org.jsoup.helper.StringUtil;
 
+import java.util.List;
+
 /**
  * Created by Wang on 2018/1/3.
  */
@@ -229,8 +231,17 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 }else if(object instanceof PropertyVO)
                 {
                     PropertyVO propertyVO= (PropertyVO) object;
-                    propertyFromDB.deleteByPropertyId(propertyVO.getId());
+                    List<PropertyFromVO> propertyFromVOS=propertyFromDB.findByPropertyId(propertyVO.getId());
+                    for(PropertyFromVO propertyFromVO:propertyFromVOS)
+                    {
+                        propertyFromDB.deleteById(propertyFromVO.getId());
+                        if(propertyFromVO.getImportFeeId()!=null)
+                        {
+                            consumeDB.deleteByFk(propertyFromVO.getImportFeeId());
+                        }
+                    }
                     propertyDB.deleteById(propertyVO.getId());
+
                 }else  if(object instanceof PropertyFromVO)
                 {
                     PropertyFromVO propertyFromVO= (PropertyFromVO) object;

@@ -156,8 +156,8 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             try {
                 stringOne=barcode.rawValue;
                 String nul=stringOne.substring(0,10);
-                new Integer(nul.substring(2));
-                new Integer(stringOne.substring(10, 17));
+                Integer.valueOf(nul.substring(2));
+                Integer.valueOf(stringOne.substring(10, 17));
                 stringOne.substring(45,53);
                 stringOne.substring(17,21);
             }catch (Exception e)
@@ -188,8 +188,8 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             try {
                 stringOne=barcode.rawValue;
                 String nul=stringOne.substring(0,10);
-                new Integer(nul.substring(2));
-                new Integer(stringOne.substring(10, 17));
+                Integer.valueOf(nul.substring(2));
+                Integer.valueOf(stringOne.substring(10, 17));
                 stringOne.substring(45,53);
                 stringOne.substring(17,21);
             }catch (Exception e)

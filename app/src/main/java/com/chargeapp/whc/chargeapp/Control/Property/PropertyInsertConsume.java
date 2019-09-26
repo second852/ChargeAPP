@@ -341,7 +341,7 @@ public class PropertyInsertConsume extends Fragment {
 
             Double nowMoney;
             try {
-                nowMoney= new Double(importMoney.getText().toString().trim());
+                nowMoney= Common.onlyNumberToDouble(importMoney.getText().toString().trim());
             }catch (Exception e)
             {
                 nowMoney=0.0;
@@ -374,7 +374,7 @@ public class PropertyInsertConsume extends Fragment {
 
             Double nowMoney;
             try {
-                nowMoney= new Double(importMoney.getText().toString().trim());
+                nowMoney= Common.onlyNumberToDouble(importMoney.getText().toString().trim());
             }catch (Exception e)
             {
                 nowMoney=0.0;
@@ -540,7 +540,7 @@ public class PropertyInsertConsume extends Fragment {
             propertyFromVO.setId(UUID.randomUUID().toString());
             propertyFromVO.setType(PropertyType.Negative);
             propertyFromVO.setSourceCurrency(nowCurrency);
-            propertyFromVO.setSourceMoney(iMoney.toString());
+            propertyFromVO.setSourceMoney(Common.onlyNumber(Common.doubleRemoveZero(iMoney)));
             propertyFromVO.setSourceMainType(choiceSource);
             propertyFromVO.setSourceSecondType(choiceSecSource);
 
@@ -551,7 +551,7 @@ public class PropertyInsertConsume extends Fragment {
 
 
 
-            propertyFromVO.setImportFee(fee.toString());
+            propertyFromVO.setImportFee(Common.onlyNumber(Common.doubleRemoveZero(fee)));
             propertyFromVO.setPropertyId(propertyVO.getId());
             propertyFromVO.setFixImport(fixDate.isChecked());
             propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(resultStatue.trim()));
@@ -564,9 +564,9 @@ public class PropertyInsertConsume extends Fragment {
                 consumeVO.setMaintype("銀行");
                 consumeVO.setSecondType("轉帳");
                 consumeVO.setCurrency(nowCurrency);
-                consumeVO.setRealMoney(Common.onlyNumber(fee.toString()));
+                consumeVO.setRealMoney(Common.onlyNumber(Common.doubleRemoveZero(fee)));
                 consumeVO.setFixDate("false");
-                consumeVO.setDetailname("轉入"+propertyVO.getName()+"的費用");
+                consumeVO.setDetailname(propertyVO.getName()+"資產支出"+choiceSecSource+"的手續費");
                 consumeVO.setDate(new Date(System.currentTimeMillis()));
                 consumeVO.setFkKey(UUID.randomUUID().toString());
 

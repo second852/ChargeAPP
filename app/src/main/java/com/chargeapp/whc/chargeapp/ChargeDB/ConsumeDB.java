@@ -510,7 +510,7 @@ public class ConsumeDB {
     }
 
     public int deleteByFk(String fkKey) {
-        String whereClause = COL_id + " = ?;";
+        String whereClause = "fkKey = ?;";
         String[] whereArgs = {fkKey};
         return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
     }

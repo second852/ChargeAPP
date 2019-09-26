@@ -30,6 +30,7 @@ import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListene
 import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListenerTwo;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
@@ -37,6 +38,7 @@ import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixProperty;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
+import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
@@ -647,7 +649,7 @@ public class PropertyUpdateConsume extends Fragment {
 
             propertyFromVO.setType(PropertyType.Negative);
             propertyFromVO.setSourceCurrency(nowCurrency);
-            propertyFromVO.setSourceMoney(iMoney.toString());
+            propertyFromVO.setSourceMoney(Common.onlyNumber(Common.doubleRemoveZero(iMoney)));
             propertyFromVO.setSourceMainType(choiceSource);
             propertyFromVO.setSourceSecondType(choiceSecSource);
 
@@ -656,12 +658,15 @@ public class PropertyUpdateConsume extends Fragment {
             Calendar sourceTime=new GregorianCalendar(Integer.valueOf(dateArray[0]),Integer.valueOf(dateArray[1])-1,Integer.valueOf(dateArray[2]));
             propertyFromVO.setSourceTime(sourceTime.getTime());
 
-            propertyFromVO.setImportFee(fee.toString());
+            propertyFromVO.setImportFee(Common.onlyNumber(Common.doubleRemoveZero(fee)));
             propertyFromVO.setPropertyId(propertyFromVO.getPropertyId());
             propertyFromVO.setFixImport(fixDate.isChecked());
             propertyFromVO.setFixDateCode(FixDateCode.detailToEnum(resultStatue.trim()));
             propertyFromVO.setFixDateDetail(resultDay);
 
+
+            PropertyDB propertyDB=new PropertyDB(MainActivity.chargeAPPDB);
+            PropertyVO propertyVO=propertyDB.findById(propertyFromVO.getPropertyId());
             //原本有手續費 手續費<0 情況
             if(propertyFromVO.getImportFeeId()!=null)
             {
@@ -669,7 +674,6 @@ public class PropertyUpdateConsume extends Fragment {
                 {
                     consumeDB.deleteByFk(propertyFromVO.getImportFeeId());
                 }
-
 
                 ConsumeVO consumeVO=consumeDB.findConByFk(propertyFromVO.getImportFeeId());
                 if(fee>0)
@@ -681,9 +685,8 @@ public class PropertyUpdateConsume extends Fragment {
                         consumeVO.setMaintype("銀行");
                         consumeVO.setSecondType("轉帳");
                         consumeVO.setCurrency(nowCurrency);
-                        consumeVO.setRealMoney(fee.toString());
-                        consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
-                        consumeVO.setDate(new Date(System.currentTimeMillis()));
+                        consumeVO.setRealMoney(Common.onlyNumber(Common.doubleRemoveZero(fee)));
+                        consumeVO.setDetailname(propertyVO.getName()+"資產支出"+choiceSecSource+"的手續費");                        consumeVO.setDate(new Date(System.currentTimeMillis()));
                         consumeVO.setFkKey(UUID.randomUUID().toString());
                         consumeVO.setFixDate("false");
                         ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
@@ -706,9 +709,8 @@ public class PropertyUpdateConsume extends Fragment {
                     consumeVO.setMaintype("銀行");
                     consumeVO.setSecondType("轉帳");
                     consumeVO.setCurrency(nowCurrency);
-                    consumeVO.setRealMoney(fee.toString());
-                    consumeVO.setDetailname("轉入"+propertyFromVO.getSourceSecondType()+"的費用");
-                    consumeVO.setDate(new Date(System.currentTimeMillis()));
+                    consumeVO.setRealMoney(Common.onlyNumber(Common.doubleRemoveZero(fee)));
+                    consumeVO.setDetailname(propertyVO.getName()+"資產支出"+choiceSecSource+"的手續費");                    consumeVO.setDate(new Date(System.currentTimeMillis()));
                     consumeVO.setFkKey(UUID.randomUUID().toString());
                     consumeVO.setFixDate("false");
                     ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);

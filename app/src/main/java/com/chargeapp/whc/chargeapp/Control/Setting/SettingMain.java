@@ -168,11 +168,11 @@ public class SettingMain extends Fragment {
                             String setTime = sharedPreferences.getString("userTime", "6:00 p.m.").trim();
                             int hour, min;
                             if (setTime.indexOf("p") == -1) {
-                                hour = new Integer(setTime.substring(0, setTime.indexOf(":")));
-                                min = new Integer(setTime.substring(setTime.indexOf(":") + 1, setTime.indexOf("a")).trim());
+                                hour = Integer.valueOf(setTime.substring(0, setTime.indexOf(":")));
+                                min = Integer.valueOf(setTime.substring(setTime.indexOf(":") + 1, setTime.indexOf("a")).trim());
                             } else {
-                                hour = new Integer(setTime.substring(0, setTime.indexOf(":"))) + 12;
-                                min = new Integer(setTime.substring(setTime.indexOf(":") + 1, setTime.indexOf("p")).trim());
+                                hour = Integer.valueOf(setTime.substring(0, setTime.indexOf(":"))) + 12;
+                                min = Integer.valueOf(setTime.substring(setTime.indexOf(":") + 1, setTime.indexOf("p")).trim());
                             }
                             Calendar date = Calendar.getInstance();
                             int year = date.get(Calendar.YEAR);
