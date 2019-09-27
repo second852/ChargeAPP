@@ -29,6 +29,9 @@ public class ConsumeVO implements Serializable{
     private String currency;//15 幣別
     private String realMoney;//16 小數點金額
     private String fkKey;//對應的FK
+    private String buyerBan;//掃描的統篇
+    private String sellerName;//賣方名稱
+    private String sellerAddress;//賣方的地址
 
 
     public String getFkKey() {
@@ -173,5 +176,29 @@ public class ConsumeVO implements Serializable{
 
     public void setFixDateDetail(String fixDateDetail) {
         this.fixDateDetail = fixDateDetail;
+    }
+
+    public String getBuyerBan() {
+        return buyerBan;
+    }
+
+    public void setBuyerBan(String buyerBan) {
+        this.buyerBan = buyerBan;
+    }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
+    }
+
+    public String getSellerAddress() {
+        return sellerAddress;
+    }
+
+    public void setSellerAddress(String sellerAddress) {
+        this.sellerAddress = sellerAddress;
     }
 }

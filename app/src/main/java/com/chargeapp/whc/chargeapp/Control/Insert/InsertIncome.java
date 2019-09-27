@@ -112,6 +112,8 @@ public class InsertIncome extends Fragment {
         {
             bankVO=new BankVO();
         }
+        findviewByid();
+        setSetOnClickView();
         new Thread(runnable).start();
         new Thread(setOnClick).start();
         new Thread(setKeyboard).start();
@@ -239,8 +241,7 @@ public class InsertIncome extends Fragment {
             BsTextStatue=Common.DateChoiceSetBsTest(context,Common.DateStatueSetSpinner);
             gson=new Gson();
             bankDB=new BankDB(MainActivity.chargeAPPDB);
-            findviewByid();
-            setSetOnClickView();
+
             handlerPicture.sendEmptyMessage(1);
         }
     };

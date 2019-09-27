@@ -53,6 +53,9 @@ public class ConsumeDB {
         consumeVO.setCurrency(cursor.getString(15));
         consumeVO.setRealMoney(cursor.getString(16));
         consumeVO.setFkKey(cursor.getString(17));
+        consumeVO.setBuyerBan(cursor.getString(18));
+        consumeVO.setSellerName(cursor.getString(19));
+        consumeVO.setSellerAddress(cursor.getString(20));
         return consumeVO;
     }
 
@@ -76,6 +79,9 @@ public class ConsumeDB {
         values.put("rdNumber", consumeVO.getRdNumber());
         values.put("currency", consumeVO.getCurrency());
         values.put("fkKey", consumeVO.getFkKey());
+        values.put("buyerBan",consumeVO.getBuyerBan());
+        values.put("sellerName",consumeVO.getSellerName());
+        values.put("sellerAddress",consumeVO.getSellerAddress());
         return values;
     }
 

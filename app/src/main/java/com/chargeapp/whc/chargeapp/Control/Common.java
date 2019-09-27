@@ -478,6 +478,9 @@ public class Common {
         colExist("Consumer","currency","text");
         colExist("Consumer","realMoney","text");
         colExist("Consumer","fkKey","text");
+        colExist("Consumer","buyerBan","text");
+        colExist("Consumer","sellerName","text");
+        colExist("Consumer","sellerAddress","text");
         colExist("INVOICE","currency","text");
         colExist("INVOICE","realAmount","text");
         colExist("BANK","currency","text");

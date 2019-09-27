@@ -132,6 +132,9 @@ public class InsertSpend extends Fragment {
         if (consumeVO == null) {
             consumeVO = new ConsumeVO();
         }
+        findViewById();
+        gson = new Gson();
+        setSetOnClickView();
         new Thread(runnable).start();
         new Thread(setOnClick).start();
         new Thread(setKeyboard).start();
@@ -369,9 +372,7 @@ public class InsertSpend extends Fragment {
             BsTextWeek = Common.DateChoiceSetBsTest(context, Common.WeekSetSpinnerBS);
             BsTextMonth = Common.DateChoiceSetBsTest(context, Common.MonthSetSpinnerBS());
             BsTextStatue = Common.DateChoiceSetBsTest(context, Common.DateStatueSetSpinner);
-            findViewById();
-            gson = new Gson();
-            setSetOnClickView();
+
 
             handlerPicture.sendEmptyMessage(5);
             if (needSet) {

@@ -810,6 +810,7 @@ public class MainActivity extends AppCompatActivity {
                 InsertSpend.consumeVO.setNumber(EleNul);
                 InsertSpend.consumeVO.setDate(new Date(calendar.getTimeInMillis()));
                 InsertSpend.consumeVO.setRdNumber(rdNumber);
+                getType(InsertSpend.consumeVO);
                 fragment = new InsertActivity();
                 switchFragment();
                 return;
@@ -988,6 +989,7 @@ public class MainActivity extends AppCompatActivity {
                 bundle.putSerializable("consumeVO", consumeVO);
                 fragment = new UpdateSpend();
                 fragment.setArguments(bundle);
+                getType(consumeVO);
                 switchFragment();
                 return;
             }
@@ -1116,6 +1118,10 @@ public class MainActivity extends AppCompatActivity {
             currency="TWD";
         }
         consumeVO.setCurrency(currency);
+        consumeVO.setBuyerBan(js.get("sellerBan").getAsString());
+        consumeVO.setSellerName(js.get("sellerName").getAsString());
+        consumeVO.setSellerAddress(js.get("sellerAddress").getAsString());
+
         Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
         String result = js.get("details").toString();
         List<JsonObject> b = gson.fromJson(result, cdType);
@@ -1160,7 +1166,7 @@ public class MainActivity extends AppCompatActivity {
         }
         consumeVO.setRealMoney(String.valueOf(Common.DoubleToInt(total)));
         consumeVO.setDetailname(sb.toString());
-        consumeVO = getType(consumeVO);
+
         return consumeVO;
     }
 
