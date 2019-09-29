@@ -974,11 +974,11 @@ public class InsertSpend extends Fragment {
         Double inputMoney;
         try {
             inputMoney=Common.nf.parse(money.getText().toString().trim()).doubleValue();
+            consumeVO.setRealMoney(onlyNumber(Common.doubleRemoveZero(inputMoney)));
         } catch (ParseException e) {
-            money.setError("不是數值!");
-            return;
+            consumeVO.setRealMoney("0");
         }
-        consumeVO.setRealMoney(onlyNumber(Common.doubleRemoveZero(inputMoney)));
+
 
         consumeVO.setDate(d);
         consumeVO.setNumber(number.getText().toString().trim());
