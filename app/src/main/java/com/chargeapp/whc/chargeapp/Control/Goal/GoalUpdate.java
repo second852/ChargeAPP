@@ -34,6 +34,8 @@ import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
 
+import org.jsoup.helper.StringUtil;
+
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,9 +90,12 @@ public class GoalUpdate extends Fragment {
         Common.setChargeDB(context);
         goalDB = new GoalDB(MainActivity.chargeAPPDB);
         goalVO = (GoalVO) getArguments().getSerializable("goalVO");
+        if(StringUtil.isBlank(goalVO.getRealMoney()))
+        {
+            goalVO.setRealMoney(String.valueOf(goalVO.getMoney()));
+            goalDB.update(goalVO);
+        }
         findViewById(view);
-
-
         limitP.setOnClickListener(new showDate());
         limitP.setOnFocusChangeListener(new showDate());
         limitP.setShowSoftInputOnFocus(false);

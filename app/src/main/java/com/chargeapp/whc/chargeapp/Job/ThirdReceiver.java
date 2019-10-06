@@ -29,6 +29,8 @@ import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import org.jsoup.helper.StringUtil;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -128,6 +130,12 @@ public class ThirdReceiver extends BroadcastReceiver {
                         if (!(month == d && day == 1)) {
                             continue;
                         }
+                    }
+
+                    if(StringUtil.isBlank(consumeVO.getRealMoney()))
+                    {
+                        consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
+                        consumeDB.update(consumeVO);
                     }
 
                     message = " 繳納" + consumeVO.getSecondType() + "費用:" + Common.getCurrency(consumeVO.getCurrency())+consumeVO.getRealMoney();
@@ -235,6 +243,13 @@ public class ThirdReceiver extends BroadcastReceiver {
 
         if(goalVO.getType().trim().equals("支出"))
         {
+            if(StringUtil.isBlank(goalVO.getRealMoney()))
+            {
+                goalVO.setRealMoney(String.valueOf(goalVO.getMoney()));
+                goalDB.update(goalVO);
+            }
+
+
             if(timeStatue.equals("每天"))
             {
 

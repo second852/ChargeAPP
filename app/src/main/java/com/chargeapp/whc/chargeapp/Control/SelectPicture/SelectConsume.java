@@ -80,6 +80,8 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.Utils;
 
 
+import org.jsoup.helper.StringUtil;
+
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_FLAG;
 import static com.chargeapp.whc.chargeapp.Control.Common.choiceCurrency;
 
@@ -264,6 +266,15 @@ public class SelectConsume extends Fragment {
         choicePeriod.setShowOutline(false);
         if (goalVO != null) {
             String goalTimeStatue = goalVO.getTimeStatue().trim();
+
+            if(StringUtil.isBlank(goalVO.getRealMoney()))
+            {
+                goalVO.setRealMoney(String.valueOf(goalVO.getMoney()));
+                goalDB.update(goalVO);
+            }
+
+
+
             if (goalTimeStatue.equals("每天") && Statue == 0) {
                 CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
                 Max = (Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney()))/Double.valueOf(this.currencyVO.getMoney());
@@ -444,6 +455,14 @@ public class SelectConsume extends Fragment {
             List<ConsumeVO> consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
             for (ConsumeVO c : consumeVOS) {
                 CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
+
+                if(StringUtil.isBlank(c.getRealMoney()))
+                {
+                    c.setRealMoney(String.valueOf(c.getCurrency()));
+                    consumeDB.update(c);
+                }
+
+
                 Double consumeVOMoney=Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney());
                 if (hashMap.get(c.getMaintype()) == null) {
                     hashMap.put(c.getMaintype(), consumeVOMoney);
@@ -615,6 +634,13 @@ public class SelectConsume extends Fragment {
             for (ConsumeVO c : periodConsume) {
                 isOther = true;
                 CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
+
+                if(StringUtil.isBlank(c.getRealMoney()))
+                {
+                   c.setRealMoney(String.valueOf(c.getRealMoney()));
+                   consumeDB.update(c);
+                }
+
                 double consumeVOMoney=Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney());
                 consumeVOMoney=consumeVOMoney/Double.valueOf(this.currencyVO.getMoney());
                 for (Map.Entry e : list_Data) {

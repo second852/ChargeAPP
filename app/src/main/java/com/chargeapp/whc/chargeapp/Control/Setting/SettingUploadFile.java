@@ -73,6 +73,7 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.jsoup.helper.StringUtil;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -483,6 +484,13 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         bw.write("\r\n");
                     } else {
                         ConsumeVO consumeVO = (ConsumeVO) o;
+
+                        if(StringUtil.isBlank(consumeVO.getRealMoney()))
+                        {
+                            consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
+                            consumeDB.update(consumeVO);
+                        }
+
                         bw.append(Common.sTwo.format(new Date(consumeVO.getDate().getTime())) + " ");
                         bw.append(consumeVO.getMaintype() + " ");
                         bw.append(consumeVO.getSecondType() + " ");
@@ -532,6 +540,11 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     bw.append(bankVO.getMaintype() + " ");
                     bw.append(Common.getCurrency(bankVO.getCurrency())+" ");
 
+                    if(StringUtil.isBlank(bankVO.getRealMoney()))
+                    {
+                        bankDB.update(bankVO);
+                        bw.append(bankVO.getRealMoney() + " ");
+                    }
                     bw.append(bankVO.getRealMoney() + " ");
                     bw.append(bankVO.getDetailname() + " ");
                     bw.newLine();
@@ -663,6 +676,11 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         rowContent.createCell(8).setCellValue(sb.toString());
                     } else {
                         ConsumeVO consumeVO = (ConsumeVO) o;
+                        if(StringUtil.isBlank(consumeVO.getRealMoney()))
+                        {
+                            consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
+                            consumeDB.update(consumeVO);
+                        }
                         rowContent.createCell(0).setCellValue(Common.sTwo.format(new Date(consumeVO.getDate().getTime())));
                         rowContent.createCell(1).setCellValue(consumeVO.getNumber());
                         rowContent.createCell(2).setCellValue(Common.getCurrency(consumeVO.getCurrency()));
@@ -711,6 +729,11 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(0).setCellValue(Common.sTwo.format(new Date(bankVO.getDate().getTime())));
                     rowContent.createCell(1).setCellValue(bankVO.getMaintype());
                     rowContent.createCell(2).setCellValue(Common.getCurrency(bankVO.getCurrency()));
+                    if(StringUtil.isBlank(bankVO.getRealMoney()))
+                    {
+                        bankVO.setRealMoney(String.valueOf(bankVO.getMoney()));
+                        bankDB.update(bankVO);
+                    }
                     rowContent.createCell(3).setCellValue(bankVO.getRealMoney());
                     rowContent.createCell(4).setCellValue(bankVO.getDetailname());
                 }
@@ -780,6 +803,11 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     BankVO bankVO = bankVOS.get(i);
                     rowContent.createCell(0).setCellValue(bankVO.getId());
                     rowContent.createCell(1).setCellValue(bankVO.getMaintype());
+                    if(StringUtil.isBlank(bankVO.getRealMoney()))
+                    {
+                        bankVO.setRealMoney(String.valueOf(bankVO.getMoney()));
+                        bankDB.update(bankVO);
+                    }
                     rowContent.createCell(2).setCellValue(bankVO.getRealMoney());
                     rowContent.createCell(3).setCellValue(bankVO.getDate().getTime());
                     rowContent.createCell(4).setCellValue(bankVO.getFixDate());
@@ -797,6 +825,13 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 for (int i = 0; i < consumeVOS.size(); i++) {
                     Row rowContent = sheetCon5.createRow(i);
                     ConsumeVO consumeVO = consumeVOS.get(i);
+                    if(StringUtil.isBlank(consumeVO.getRealMoney()))
+                    {
+                        consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
+                        consumeDB.update(consumeVO);
+                    }
+
+
                     rowContent.createCell(0).setCellValue(consumeVO.getId());
                     rowContent.createCell(1).setCellValue(consumeVO.getMaintype());
                     rowContent.createCell(2).setCellValue(consumeVO.getSecondType());

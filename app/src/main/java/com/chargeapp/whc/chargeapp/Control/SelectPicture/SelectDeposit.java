@@ -53,6 +53,8 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.Utils;
 
+import org.jsoup.helper.StringUtil;
+
 import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -425,6 +427,13 @@ public class SelectDeposit extends Fragment {
             YAxis yAxis = chart_line.getAxisLeft();
             yAxis.removeAllLimitLines();
             CurrencyVO currencyVO=currencyDB.getBytimeAndType(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime(),goalVO.getCurrency());
+
+            if(StringUtil.isBlank(goalVO.getRealMoney()))
+            {
+                goalVO.setRealMoney(String.valueOf(goalVO.getMoney()));
+                goalDB.update(goalVO);
+            }
+
             Double goalMoney=Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney());
 
             if (Statue == 0 && goalVO.getTimeStatue().trim().equals("每月")) {

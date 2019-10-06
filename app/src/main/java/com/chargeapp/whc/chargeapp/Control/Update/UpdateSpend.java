@@ -57,6 +57,8 @@ import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import org.jsoup.helper.StringUtil;
+
 import java.sql.Date;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -129,6 +131,14 @@ public class UpdateSpend extends Fragment {
         findViewByid(view);
         action = (String) getArguments().getSerializable("action");
         consumeVO = (ConsumeVO) getArguments().getSerializable("consumeVO");
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
+        if(StringUtil.isBlank(consumeVO.getRealMoney()))
+        {
+            consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
+            consumeDB.update(consumeVO);
+        }
+
+
         ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         BsTextDay= Common.DateChoiceSetBsTest(context,Common.DaySetSpinnerBS());
         BsTextWeek=Common.DateChoiceSetBsTest(context,Common.WeekSetSpinnerBS);
@@ -140,7 +150,10 @@ public class UpdateSpend extends Fragment {
         Common.setChargeDB(context);
         typeDB = new TypeDB(MainActivity.chargeAPPDB);
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
+
+
+
+
         date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
         date.setOnFocusChangeListener(new dateClickListener());
         date.setOnClickListener(new dateClickListener());

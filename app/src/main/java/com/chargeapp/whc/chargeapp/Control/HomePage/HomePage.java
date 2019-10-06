@@ -48,6 +48,8 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.Utils;
 
 
+import org.jsoup.helper.StringUtil;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -339,6 +341,13 @@ public class HomePage extends Fragment {
                 StringBuffer describeContent = new StringBuffer();
                 Double transFormCurrency;
 
+                if(StringUtil.isBlank(goalVO.getRealMoney()))
+                {
+                    goalVO.setRealMoney(String.valueOf(goalVO.getMoney()));
+                    goalDB.update(goalVO);
+                }
+
+
                 if (goalVO.getType().trim().equals("支出")) {
 
                     if (timeStatue.equals("每天")) {
@@ -380,7 +389,10 @@ public class HomePage extends Fragment {
                     }
 
                     //設定Title
+
+
                     double goalVOMoney=(Double.valueOf(goalVO.getRealMoney())*Double.valueOf(goalCurrencyVO.getMoney()))/Double.valueOf(currencyVO.getMoney());
+
                     consumeCount=consumeCount/Double.valueOf(currencyVO.getMoney());
                     sbResult.append("目標 : " + goalVO.getName().trim()+"\n");
                     sbResult.append(goalVO.getTimeStatue().trim() + "支出" +getCurrency(nowCurrency)+" "+doubleRemoveZero(goalVOMoney));

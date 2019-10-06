@@ -47,6 +47,8 @@ import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import org.jsoup.helper.StringUtil;
+
 import java.sql.Date;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -116,9 +118,17 @@ public class UpdateIncome extends Fragment {
         context.setTitle("修改資料");
         action = (String) getArguments().getSerializable("action");
         bankVO = (BankVO) getArguments().getSerializable("bankVO");
+        bankDB = new BankDB(MainActivity.chargeAPPDB);
+        if(StringUtil.isBlank(bankVO.getRealMoney()))
+        {
+            bankVO.setRealMoney(String.valueOf(bankVO.getMoney()));
+            bankDB.update(bankVO);
+        }
+
+
         gson = new Gson();
         Common.setChargeDB(context);
-        bankDB = new BankDB(MainActivity.chargeAPPDB);
+
         bankTypeDB = new BankTypeDB(MainActivity.chargeAPPDB);
         name.setOnClickListener(new showFirstG());
 //        name.setOnFocusChangeListener(new showFirstG());
@@ -302,7 +312,7 @@ public class UpdateIncome extends Fragment {
 
     private void setUpdate() {
         name.setText(bankVO.getMaintype());
-        money.setText(String.valueOf(bankVO.getRealMoney()));
+        money.setText(bankVO.getRealMoney());
         date.setText(Common.sTwo.format(bankVO.getDate()));
         detailname.setText(bankVO.getDetailname());
         fixdate.setChecked(Boolean.valueOf(bankVO.getFixDate()));

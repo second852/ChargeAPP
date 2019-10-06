@@ -57,6 +57,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 
+import org.jsoup.helper.StringUtil;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.sql.Date;
@@ -155,6 +157,14 @@ public class InsertSpend extends Fragment {
         }
 
         number.setText(consumeVO.getNumber());
+
+        if(StringUtil.isBlank(consumeVO.getRealMoney()))
+        {
+            consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
+            consumeDB.update(consumeVO);
+        }
+
+
         money.setText(String.valueOf(consumeVO.getRealMoney()));
         nowCurrency=consumeVO.getCurrency();
         currency.setText(Common.getCurrency(nowCurrency));

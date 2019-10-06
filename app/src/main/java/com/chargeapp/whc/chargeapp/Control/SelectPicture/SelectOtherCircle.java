@@ -42,6 +42,8 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.Utils;
 
 
+import org.jsoup.helper.StringUtil;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -178,7 +180,14 @@ public class SelectOtherCircle extends Fragment {
                 consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key);
                 for (ConsumeVO c : consumeVOS) {
                  CurrencyVO  currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
-                    if (mapHashMap.get(c.getMaintype()) == null) {
+
+                 if(StringUtil.isBlank(c.getRealMoney()))
+                 {
+                     c.setRealMoney(String.valueOf(c.getRealMoney()));
+                     consumeDB.update(c);
+                 }
+
+                 if (mapHashMap.get(c.getMaintype()) == null) {
                         second = new HashMap<>();
                         second.put(c.getSecondType(), Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney()));
                     } else {

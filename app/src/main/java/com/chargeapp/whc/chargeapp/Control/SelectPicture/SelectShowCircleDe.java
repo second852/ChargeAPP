@@ -55,6 +55,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
+import org.jsoup.helper.StringUtil;
+
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -338,6 +340,13 @@ public class SelectShowCircleDe extends Fragment {
             for(ConsumeVO c:consumeVOS)
             {
                 CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
+                if(StringUtil.isBlank(c.getRealMoney()))
+                {
+                    c.setRealMoney(String.valueOf(c.getMoney()));
+                    consumeDB.update(c);
+                }
+
+
                 if(hashMap.get(c.getSecondType())==null)
                 {
                     hashMap.put(c.getSecondType(),Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney()));

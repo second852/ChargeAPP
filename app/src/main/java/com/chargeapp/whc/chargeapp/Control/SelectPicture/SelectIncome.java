@@ -52,6 +52,8 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.Utils;
 
+import org.jsoup.helper.StringUtil;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -351,6 +353,13 @@ public class SelectIncome extends Fragment {
         for (BankVO b : bankVOS) {
             isOtherExist = true;
             CurrencyVO currencyVO =currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),b.getCurrency());
+
+            if(StringUtil.isBlank(b.getRealMoney()))
+            {
+                b.setRealMoney(String.valueOf(b.getMoney()));
+                bankDB.update(b);
+            }
+
             Double bankAmount=Double.valueOf(b.getRealMoney())*Double.valueOf(currencyVO.getMoney());
             bankAmount=bankAmount/Double.valueOf(this.currencyVO.getMoney());
             for (int i = 0; i < list_Data.size(); i++) {

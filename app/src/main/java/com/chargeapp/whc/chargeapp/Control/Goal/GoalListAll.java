@@ -37,6 +37,8 @@ import com.chargeapp.whc.chargeapp.R;
 import com.google.android.gms.ads.AdView;
 
 
+import org.jsoup.helper.StringUtil;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -183,6 +185,13 @@ public class GoalListAll extends Fragment {
             String timeDec = goalVO.getTimeStatue().trim();
 
             CurrencyVO currencyVO=currencyDB.getBytimeAndType(goalVO.getStartTime().getTime(),goalVO.getEndTime().getTime(),goalVO.getCurrency());
+            if(StringUtil.isBlank(goalVO.getRealMoney()))
+            {
+                goalVO.setRealMoney(String.valueOf(goalVO.getMoney()));
+                goalDB.update(goalVO);
+            }
+
+
             Double goalMoney=Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney());
 
             if (timeDec.equals("今日")) {

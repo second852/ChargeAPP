@@ -229,7 +229,12 @@ public class Common {
         sbTitle.append(" " +consumeVO.getMaintype()+" ");
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(consumeVO.getCurrency()));
-        sbTitle.append(" "+consumeVO.getRealMoney());
+        if(StringUtil.isBlank(consumeVO.getRealMoney()))
+        {
+            sbTitle.append(" "+consumeVO.getMoney());
+        }else {
+            sbTitle.append(" "+consumeVO.getRealMoney());
+        }
         return  sbTitle.toString();
     }
 
@@ -240,6 +245,10 @@ public class Common {
         sbTitle.append(" " +consumeVO.getSecondType()+" ");
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(consumeVO.getCurrency()));
+        if(StringUtil.isBlank(consumeVO.getRealMoney()))
+        {
+            consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
+        }
         sbTitle.append(" "+consumeVO.getRealMoney());
         return  sbTitle.toString();
     }
@@ -251,6 +260,10 @@ public class Common {
         sbTitle.append(" " +consumeVO.getSecondType()+" ");
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(consumeVO.getCurrency()));
+        if(StringUtil.isBlank(consumeVO.getRealMoney()))
+        {
+            consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
+        }
         sbTitle.append(" "+consumeVO.getRealMoney());
         return  sbTitle.toString();
     }
@@ -262,7 +275,13 @@ public class Common {
         sbTitle.append(" " +bankVO.getMaintype()+" ");
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(bankVO.getCurrency()));
-        sbTitle.append(" "+bankVO.getRealMoney());
+        if(StringUtil.isBlank(bankVO.getRealMoney()))
+        {
+            sbTitle.append(" "+bankVO.getMoney());
+        }else{
+            sbTitle.append(" "+bankVO.getRealMoney());
+        }
+
         return  sbTitle.toString();
     }
 
@@ -273,7 +292,13 @@ public class Common {
         sbTitle.append(" " +bankVO.getMaintype()+" ");
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(bankVO.getCurrency()));
-        sbTitle.append(" "+bankVO.getRealMoney());
+        if(StringUtil.isBlank(bankVO.getRealMoney()))
+        {
+            sbTitle.append(" "+bankVO.getMoney());
+        }else{
+            sbTitle.append(" "+bankVO.getRealMoney());
+        }
+
         return  sbTitle.toString();
     }
 
@@ -454,7 +479,7 @@ public class Common {
     public static String getCurrency(String dollor)
     {
         String currency= Currency().get(dollor);
-        if(currency==null)
+        if(StringUtil.isBlank(currency))
         {
             return "NT$";
         }
