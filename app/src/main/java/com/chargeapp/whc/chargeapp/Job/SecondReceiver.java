@@ -26,7 +26,8 @@ import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import org.jsoup.helper.StringUtil;
+
+import org.jsoup.internal.StringUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

@@ -59,11 +59,11 @@
                 android:text="存款" />
         </LinearLayout>
     </HorizontalScrollView>
-    <android.support.v4.view.ViewPager
+    <androidx.core.view.ViewPager
         android:id="@+id/seleViewPager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/choiceitem"
         >
-    </android.support.v4.view.ViewPager>
+    </androidx.core.view.ViewPager>
 </RelativeLayout>

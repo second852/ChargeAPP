@@ -13,15 +13,18 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -50,7 +53,6 @@ import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleShowCarrier;
 import com.chargeapp.whc.chargeapp.Control.Goal.GoalListAll;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
-import com.chargeapp.whc.chargeapp.Control.HomePage.HomePagetList;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertActivity;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertIncome;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertSpend;
@@ -59,28 +61,13 @@ import com.chargeapp.whc.chargeapp.Control.Price.HowGetPrice;
 import com.chargeapp.whc.chargeapp.Control.Price.PriceActivity;
 import com.chargeapp.whc.chargeapp.Control.Price.PriceHand;
 import com.chargeapp.whc.chargeapp.Control.Price.PriceInvoice;
-import com.chargeapp.whc.chargeapp.Control.Property.PropertyConsumeShow;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyMain;
-import com.chargeapp.whc.chargeapp.Control.Property.PropertyMoneyList;
-import com.chargeapp.whc.chargeapp.Control.Property.PropertyTotal;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectActivity;
-import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetCircle;
-import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetList;
-import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectListBarIncome;
-import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectListPieIncome;
-import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectOtherCircle;
-import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDe;
-import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDeList;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingDownloadFile;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFix;
-import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixCon;
-import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixIon;
-import com.chargeapp.whc.chargeapp.Control.Setting.SettingListType;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingMain;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingUploadFile;
-import com.chargeapp.whc.chargeapp.Control.Update.UpdateIncome;
-import com.chargeapp.whc.chargeapp.Control.Update.UpdateInvoice;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateSpend;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
@@ -100,9 +87,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
-
-
-import static com.chargeapp.whc.chargeapp.Control.Common.*;
 
 
 public class MainActivity extends AppCompatActivity {

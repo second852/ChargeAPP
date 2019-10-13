@@ -11,8 +11,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
@@ -29,7 +31,8 @@ import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import org.jsoup.helper.StringUtil;
+
+import org.jsoup.internal.StringUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

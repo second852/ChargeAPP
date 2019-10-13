@@ -9,9 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+
 
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -30,6 +28,10 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
@@ -57,7 +59,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 
-import org.jsoup.helper.StringUtil;
+import org.jsoup.internal.StringUtil;
 
 import java.text.ParseException;
 import java.util.ArrayList;

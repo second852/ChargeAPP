@@ -11,7 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 
 
@@ -28,7 +28,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 
-import org.jsoup.helper.StringUtil;
+import org.jsoup.internal.StringUtil;
 
 import java.sql.Date;
 import java.sql.Timestamp;

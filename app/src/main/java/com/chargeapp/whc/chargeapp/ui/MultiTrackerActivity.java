@@ -26,9 +26,11 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -419,51 +421,49 @@ public final class MultiTrackerActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         int result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         if (result != PackageManager.PERMISSION_GRANTED) {
 
             String remain;
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.RECORD_AUDIO)) {
-                remain="沒有相機權限，無法使用。\n要使用此功能請按\"YES\"，並允許相機權限!\n不使用請按\"NO\"!";
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
+                remain = "沒有相機權限，無法使用。\n要使用此功能請按\"YES\"，並允許相機權限!\n不使用請按\"NO\"!";
             } else {
-                remain="沒有相機權限!\n如果要使用此功能按\"YES\"。\n並到權限，打開相機權限!\n不使用此功能請按\"NO\"。";
+                remain = "沒有相機權限!\n如果要使用此功能按\"YES\"。\n並到權限，打開相機權限!\n不使用此功能請按\"NO\"。";
             }
 
             DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
 
-                    if(ActivityCompat.shouldShowRequestPermissionRationale(MultiTrackerActivity.this,Manifest.permission.CAMERA))
-                    {
-                        Common.askPermissions(Manifest.permission.CAMERA, MultiTrackerActivity.this,0);
-                    }else {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(MultiTrackerActivity.this, Manifest.permission.CAMERA)) {
+                        Common.askPermissions(Manifest.permission.CAMERA, MultiTrackerActivity.this, 0);
+                    } else {
                         Intent intent = new Intent();
                         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                         Uri uri = Uri.fromParts("package", MultiTrackerActivity.this.getPackageName(), null);
                         intent.setData(uri);
-                        startActivityForResult(intent,6);
+                        startActivityForResult(intent, 6);
                     }
                 }
             };
 
             DialogInterface.OnClickListener nolistener = new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    if(action.equals("setConsume"))
-                    {
-                        Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
-                        intent.putExtra("action",MultiTrackerActivity.action);
-                        MultiTrackerActivity.this.setResult(0,intent);
+                    if (action.equals("setConsume")) {
+                        Intent intent = new Intent(MultiTrackerActivity.this, MainActivity.class);
+                        intent.putExtra("action", MultiTrackerActivity.action);
+                        MultiTrackerActivity.this.setResult(0, intent);
                         MultiTrackerActivity.this.finish();
-                    }else if(action.equals("UpdateSpend")){
-                        Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
-                        intent.putExtra("action",MultiTrackerActivity.action);
-                        intent.putExtra("bundle",getIntent().getBundleExtra("bundle"));
-                        MultiTrackerActivity.this.setResult(0,intent);
+                    } else if (action.equals("UpdateSpend")) {
+                        Intent intent = new Intent(MultiTrackerActivity.this, MainActivity.class);
+                        intent.putExtra("action", MultiTrackerActivity.action);
+                        intent.putExtra("bundle", getIntent().getBundleExtra("bundle"));
+                        MultiTrackerActivity.this.setResult(0, intent);
                         MultiTrackerActivity.this.finish();
-                    }else if(action.equals("PriceHand"))
-                    {
-                        Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
-                        intent.putExtra("action",MultiTrackerActivity.action);
-                        MultiTrackerActivity.this.setResult(0,intent);
+                    } else if (action.equals("PriceHand")) {
+                        Intent intent = new Intent(MultiTrackerActivity.this, MainActivity.class);
+                        intent.putExtra("action", MultiTrackerActivity.action);
+                        MultiTrackerActivity.this.setResult(0, intent);
                         MultiTrackerActivity.this.finish();
                     }
                 }
@@ -473,13 +473,13 @@ public final class MultiTrackerActivity extends AppCompatActivity {
             builder.setTitle("無法使用相機!")
                     .setMessage(remain)
                     .setPositiveButton("YES", listener)
-                    .setNegativeButton("NO",nolistener)
+                    .setNegativeButton("NO", nolistener)
                     .show();
 
 
-        }else {
+        } else {
             createCameraSource();
-            Common.showToast(this,"開始QRCode掃描!");
+            Common.showToast(this, "開始QRCode掃描!");
         }
 
     }

@@ -1,6 +1,8 @@
 package com.chargeapp.whc.chargeapp.TypeCode;
 
-import org.jsoup.helper.StringUtil;
+
+
+import org.jsoup.internal.StringUtil;
 
 import java.util.Collections;
 import java.util.Map;

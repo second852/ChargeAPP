@@ -7,11 +7,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ForegroundColorSpan;
+
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,12 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
@@ -49,14 +47,12 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.Utils;
 
-import org.jsoup.helper.StringUtil;
 
-import java.sql.Timestamp;
-import java.text.NumberFormat;
+import org.jsoup.internal.StringUtil;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -67,8 +63,6 @@ import java.util.List;
 
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_FLAG;
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_THUMBS_O_UP;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_THUMBS_UP;
-import static com.chargeapp.whc.chargeapp.Control.Common.Currency;
 import static com.chargeapp.whc.chargeapp.Control.Common.choiceCurrency;
 import static com.chargeapp.whc.chargeapp.Control.Common.getCurrency;
 
