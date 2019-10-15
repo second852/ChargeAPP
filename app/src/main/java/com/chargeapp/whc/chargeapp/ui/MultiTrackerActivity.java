@@ -42,6 +42,7 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.MyContextWrapper;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -82,7 +83,10 @@ public final class MultiTrackerActivity extends AppCompatActivity {
      * Initializes the UI and creates the detector pipeline.
      */
 
-
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(MyContextWrapper.wrap(newBase));
+    }
 
     @Override
     public void onCreate(Bundle icicle) {

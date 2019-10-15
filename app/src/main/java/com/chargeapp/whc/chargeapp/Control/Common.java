@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -81,7 +82,7 @@ import com.github.mikephil.charting.components.Description;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
+
 
 
 import org.jsoup.internal.StringUtil;
@@ -132,6 +133,8 @@ public class Common {
     public static SimpleDateFormat sTwo = new SimpleDateFormat("yyyy/MM/dd");
     public static SimpleDateFormat sThree = new SimpleDateFormat("yyyy 年 MM 月");
     public static SimpleDateFormat sFour = new SimpleDateFormat("yyyy 年");
+    public static SimpleDateFormat sFive = new SimpleDateFormat("yyyyMMdd-HHmm");
+
     public static SimpleDateFormat sDay = new SimpleDateFormat("MM/dd");
     public static SimpleDateFormat sHour = new SimpleDateFormat("hh");
     public static SimpleDateFormat sYear = new SimpleDateFormat("yyy 年 MM 月");
@@ -648,11 +651,12 @@ public class Common {
     }
 
 
-    public static void setAdView(final AdView adView, Context activity) {
+    public static void setAdView(AdView adView, Context activity) {
         try {
-            MobileAds.initialize(activity, "ca-app-pub-5169620543343332~2865524734");
-            AdRequest adRequest = new AdRequest.Builder().build();
-            adView.loadAd(adRequest);
+            if(MainActivity.adRequest==null) {
+                MainActivity.adRequest = new AdRequest.Builder().build();
+            }
+            adView.loadAd(MainActivity.adRequest);
             adView.setAdListener(new AdListener() {
                 @Override
                 public void onAdFailedToLoad(int i) {
@@ -660,6 +664,7 @@ public class Common {
                     adView.loadAd(adRequest);
                 }
             });
+
         } catch (Exception e) {
             Log.d("adError", e.toString());
         }
@@ -816,7 +821,7 @@ public class Common {
     public static String[] DateStatueSetSpinner = {"每天", "每周", "每月", "每年"};
 
 
-    public static Fragment returnFragment()
+    public static Fragment returnFragment(View view)
     {
         Fragment fragment=null;
         String action = MainActivity.oldFramgent.getLast();
@@ -866,6 +871,14 @@ public class Common {
                 fragment = new UpdateInvoice();
                 break;
             case "UpdateSpend":
+                EditText detail=view.findViewById(R.id.detail);
+                if(detail!=null)
+                {
+                    ConsumeVO consumeVO= (ConsumeVO) bundle.getSerializable("consumeVO");
+                    consumeVO.setDetailname(detail.getText().toString());
+                    bundle.putSerializable("consumeVO",consumeVO);
+                    bundle.putSerializable("object", consumeVO);
+                }
                 fragment = new UpdateSpend();
                 break;
             case "UpdateIncome":

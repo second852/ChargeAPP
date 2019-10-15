@@ -334,7 +334,7 @@ public class PropertyTotal extends Fragment {
         returnMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment= Common.returnFragment();
+                Fragment fragment= Common.returnFragment(view);
                 Common.switchConfirmFragment(fragment,getFragmentManager());
             }
         });

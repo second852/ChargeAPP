@@ -37,6 +37,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.BankTypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ElePeriodDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
@@ -46,6 +47,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelCom;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
@@ -91,6 +93,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -126,6 +129,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private Gson gson;
     private StringBuffer sb;
     private boolean firstEnter;
+    private String fileName;
 
     Handler handler=new Handler(Looper.getMainLooper()){
         @Override
@@ -140,7 +144,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     break;
                 case 2:
                     progressL.setVisibility(View.GONE);
-                    Common.showToast(context, "匯出成功，檔名為記帳小助手.txt，路徑為" + "/Download/記帳小助手.txt");
+                    Common.showToast(context, "匯出成功，檔名為"+fileName+".txt，路徑為" + "/Download/"+fileName+".txt");
                     break;
                 case 3:
                     progressL.setVisibility(View.GONE);
@@ -148,7 +152,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     break;
                 case 4:
                     progressL.setVisibility(View.GONE);
-                    Common.showToast(context,"匯出成功，檔名為記帳小助手.xls，路徑為" + "/Download/記帳小助手.xls");
+                    Common.showToast(context,"匯出成功，檔名為"+fileName+"xls，路徑為" + "/Download/"+fileName+".xls");
                     break;
             }
             super.handleMessage(msg);
@@ -200,6 +204,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         txtFile.setOnClickListener(new txtOnClick());
         cancelF.setOnClickListener(new cancelOnClick());
         listView.setAdapter(new ListAdapter(context, itemSon));
+
         setSpinner();
         return view;
     }
@@ -385,7 +390,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     if (!dir.exists()) {
                         dir.mkdirs();
                     }
-                    File file = new File(dir, "記帳小助手.txt");
+                    File file = new File(dir, fileName+".txt");
                     FileOutputStream fs = new FileOutputStream(file);
                     OutPutTxt(fs);
                 } catch (Exception e) {
@@ -502,24 +507,26 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         bw.append(consumeVO.getNumber() + " ");
                         bw.append((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()) + " ");
                         //中獎訊息
-                        try {
-                            if(consumeVO.getIsWin().equals("0"))
-                            {
-                                bw.append("尚未對獎 ");
-                            }else if(consumeVO.getIsWin().equals("N")){
-                                bw.append("無中獎 ");
-                            }else {
-                                bw.append(Common.getPriceName().get(consumeVO.getIsWin()));
-                            }
-                        }catch (Exception e)
-                        {
-                            bw.append("尚未對獎 ");
-                        }
-                        if(consumeVO.getNumber()==null||consumeVO.getNumber().trim().length()>0)
+
+                        if(StringUtil.isBlank(consumeVO.getNumber()))
                         {
                             bw.append("無發票 ");
+                            bw.append(" ");
                         }else{
                             bw.append("紙本發票 ");
+                            try {
+                                if(consumeVO.getIsWin().equals("0"))
+                                {
+                                    bw.append("尚未對獎 ");
+                                }else if(consumeVO.getIsWin().equals("N")){
+                                    bw.append("無中獎 ");
+                                }else {
+                                    bw.append(Common.getPriceName().get(consumeVO.getIsWin()));
+                                }
+                            }catch (Exception e)
+                            {
+                                bw.append("尚未對獎 ");
+                            }
                         }
                         bw.newLine();
                         bw.write("\r\n");
@@ -576,7 +583,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     if (!dir.exists()) {
                         dir.mkdirs();
                     }
-                    File file = new File(dir, "記帳小助手.xls");
+                    File file = new File(dir, fileName);
                     OutputStream outputStream = new FileOutputStream(file);
                     outputExcel(outputStream);
                 } catch (Exception e) {
@@ -658,7 +665,24 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         }
                         rowContent.createCell(7).setCellValue("雲端發票");
                         //電子發票細節
-                        List<JsonObject> js = gson.fromJson(invoiceVO.getDetail(), cdType);
+                        List<JsonObject> js=new ArrayList<>();
+                        if(invoiceVO.getDetail().equals("0"))
+                        {
+                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingUploadFile.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+                            if (mNetworkInfo != null) {
+                                try {
+                                    new GetSQLDate(SettingUploadFile.this, invoiceVO).execute("reDownload").get();
+                                    js = gson.fromJson(invoiceVO.getDetail(), cdType);
+                                } catch (Exception e) {
+                                    js = new ArrayList<>();
+                                }
+                            }
+                        }else{
+                            js = gson.fromJson(invoiceVO.getDetail(), cdType);
+                        }
+
+
                         sb=new StringBuffer();
                         float price,amout,n;
                         for (JsonObject j : js) {
@@ -668,15 +692,17 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                                 price = j.get("unitPrice").getAsFloat();
                                 if(price==0)
                                 {
-                                    sb.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
+                                    sb.append(j.get("description").getAsString() + " : " + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元  ");
                                 }else{
-                                    sb.append(j.get("description").getAsString() + " : \n" + (int)price + "X" + (int)n + "=" + (int)amout + "元\n");
+                                    sb.append(j.get("description").getAsString() + " : " + (int)price + "X" + (int)n + "=" + (int)amout + "元  ");
                                 }
                             } catch (Exception e) {
-                                sb.append(j.get("description").getAsString() + " : \n" + 0 + "X" + 0 + "=" + 0 + "元\n");
+                                sb.append(j.get("description").getAsString() + " : " + 0 + "X" + 0 + "=" + 0 + "元 ");
                             }
                         }
+
                         rowContent.createCell(8).setCellValue(sb.toString());
+
                     } else {
                         ConsumeVO consumeVO = (ConsumeVO) o;
                         if(StringUtil.isBlank(consumeVO.getRealMoney()))
@@ -690,25 +716,27 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         rowContent.createCell(3).setCellValue(consumeVO.getRealMoney());
                         rowContent.createCell(4).setCellValue(consumeVO.getMaintype());
                         rowContent.createCell(5).setCellValue(consumeVO.getSecondType());
-                        //中獎訊息
-                        try {
-                            if(consumeVO.getIsWin().equals("0"))
-                            {
-                                rowContent.createCell(6).setCellValue("尚未對獎");
-                            }else if(consumeVO.getIsWin().equals("N")){
-                                rowContent.createCell(6).setCellValue("無中獎");
-                            }else {
-                                rowContent.createCell(6).setCellValue(Common.getPriceName().get(consumeVO.getIsWin()));
-                            }
-                        }catch (Exception e)
-                        {
-                            rowContent.createCell(6).setCellValue("尚未對獎");
-                        }
-                        if(consumeVO.getNumber()==null||consumeVO.getNumber().length()>0)
+
+                        if(StringUtil.isBlank(consumeVO.getNumber()))
                         {
                             rowContent.createCell(7).setCellValue("無發票");
+                            rowContent.createCell(6).setCellValue(" ");
                         }else{
                             rowContent.createCell(7).setCellValue("紙本發票");
+                            //中獎訊息
+                            try {
+                                if(consumeVO.getIsWin().equals("0"))
+                                {
+                                    rowContent.createCell(6).setCellValue("尚未對獎");
+                                }else if(consumeVO.getIsWin().equals("N")){
+                                    rowContent.createCell(6).setCellValue("無中獎");
+                                }else {
+                                    rowContent.createCell(6).setCellValue(Common.getPriceName().get(consumeVO.getIsWin()));
+                                }
+                            }catch (Exception e)
+                            {
+                                rowContent.createCell(6).setCellValue("尚未對獎");
+                            }
                         }
                         rowContent.createCell(8).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
                     }
@@ -1031,18 +1059,22 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 all = true;
                 income = false;
                 consume = false;
+                fileName="記帳小助手(備份資料)"+Common.sFive.format(new Date());
             } else if (position == 1) {
                 all = false;
                 income = true;
                 consume = true;
+                fileName="記帳小助手(支出+收入)"+Common.sFive.format(new Date());
             } else if (position == 2) {
                 all = false;
                 income = false;
                 consume = true;
+                fileName="記帳小助手(支出)"+Common.sFive.format(new Date());
             } else {
                 all = false;
                 income = true;
                 consume = false;
+                fileName="記帳小助手(收入)"+Common.sFive.format(new Date());
             }
         }
 
@@ -1113,13 +1145,13 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                                 OutputStream outputStream = result.getDriveContents().getOutputStream();
                                 // Write the bitmap data from it.
                                 ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
-                                String fileName, fileType;
+                                String fileType;
                                 if (txt) {
-                                    fileName = "記帳小助手.txt";
+                                    fileName = fileName+".txt";
                                     fileType = "File/txt";
                                     OutPutTxt(bitmapStream);
                                 } else {
-                                    fileName = "記帳小助手.xls";
+                                    fileName = fileName+".xls";
                                     fileType = "File/xls";
                                     outputExcel(bitmapStream);
                                 }

@@ -44,6 +44,7 @@ import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.github.mikephil.charting.utils.Utils;
 
 
 import org.jsoup.Jsoup;
@@ -69,6 +70,7 @@ public class Welcome extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.init(this);
         setContentView(R.layout.welcome);
         Common.setChargeDB(this);
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Property;");

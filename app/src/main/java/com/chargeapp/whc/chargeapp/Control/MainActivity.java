@@ -75,6 +75,10 @@ import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -105,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean firstShowF;
     public static boolean firstShowInsertActivity;
     public static GridView numberKeyBoard;
-
+    public static AdRequest adRequest;
 
 
     @Override
@@ -115,21 +119,31 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         firstShowF = true;
         firstShowInsertActivity = true;
+
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
     }
 
 
     @Override
-    public Resources getResources() {
-        Resources res = super.getResources();
-        if (res.getConfiguration().fontScale > 1) {
-
-            Configuration config = new Configuration();
-            config.setToDefaults();
-            res.updateConfiguration(config, res.getDisplayMetrics());
-
-        }
-        return res;
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(MyContextWrapper.wrap(newBase));
     }
+
+//    @Override
+//    public Resources getResources() {
+//        Resources res = super.getResources();
+//        if (res.getConfiguration().fontScale > 1) {
+//            Configuration config = new Configuration();
+//            config.setToDefaults();
+////            res.updateConfiguration(config, res.getDisplayMetrics());
+//            getApplicationContext().createConfigurationContext(config);
+//        }
+//        return res;
+//    }
 
 
     public Fragment[] fragments = {new HomePage(), new HomePage(), new InsertActivity(), new PriceActivity(), new PropertyMain(),new SelectActivity(), new SelectListModelActivity(), new GoalListAll(), new SettingMain()};
@@ -1185,11 +1199,11 @@ public class MainActivity extends AppCompatActivity {
                 OutDialogFragment out = new OutDialogFragment();
                 out.show(this.getSupportFragmentManager(), "show");
             } else {
-
-                fragment=Common.returnFragment();
+                View v = MainActivity.this.getCurrentFocus();
+                fragment=Common.returnFragment(v);
 
                 //------關閉keyboard-----//
-                View v = MainActivity.this.getCurrentFocus();
+
                 if (v != null) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
