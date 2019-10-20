@@ -6,8 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 
-import android.content.res.Configuration;
-import android.content.res.Resources;
+
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
@@ -62,6 +61,7 @@ import com.chargeapp.whc.chargeapp.Control.Price.PriceActivity;
 import com.chargeapp.whc.chargeapp.Control.Price.PriceHand;
 import com.chargeapp.whc.chargeapp.Control.Price.PriceInvoice;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyMain;
+import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectActivity;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingDownloadFile;
@@ -146,8 +146,8 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
 
-    public Fragment[] fragments = {new HomePage(), new HomePage(), new InsertActivity(), new PriceActivity(), new PropertyMain(),new SelectActivity(), new SelectListModelActivity(), new GoalListAll(), new SettingMain()};
-    public String[] fragmentTags = {"firstFragment", "HomePage", "InserActivity", "PriceActivity", "PropertyMain","SelectActivity", "SelectListModelActivity", "GoalListAll", "SettingMain"};
+    public Fragment[] fragments = {new HomePage(), new HomePage(), new InsertActivity(), new PriceActivity(), new PropertyMain(),new SelectActivity(), new SelectListModelActivity(), new GoalListAll(),new SearchMain(), new SettingMain()};
+    public String[] fragmentTags = {"firstFragment", "HomePage", "InserActivity", "PriceActivity", "PropertyMain","SelectActivity", "SelectListModelActivity", "GoalListAll","SearchMain","SettingMain"};
 
     private void initFragment() {
         FragmentManager fManager = getSupportFragmentManager();
@@ -247,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_DataPicture, R.drawable.chart));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_DataList, R.drawable.invent));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Goal, R.drawable.goal));
+        eleMainItemVOList.add(new EleMainItemVO(R.string.text_Search, R.drawable.search));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Setting, R.drawable.settings));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Home, R.drawable.home));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Teach, R.drawable.teach));
@@ -583,16 +584,29 @@ public class MainActivity extends AppCompatActivity {
                                 if (firstShowInsertActivity) {
                                     showFragment2(8);
                                     firstShowInsertActivity = false;
+                                } else {
 
+                                    fragment = new SearchMain();
+                                    switchFragment();
+                                }
+                                Message message=new Message();
+                                message.obj= getResources().getString(R.string.text_Search);
+                                setTittle.sendMessage(message);
+
+                            } else if (i == 8) {
+
+                                if (firstShowInsertActivity) {
+                                    showFragment2(9);
+                                    firstShowInsertActivity = false;
                                 } else {
                                     fragment = new SettingMain();
                                     switchFragment();
                                 }
-
                                 Message message=new Message();
                                 message.obj= getResources().getString(R.string.text_Setting);
                                 setTittle.sendMessage(message);
-                            } else if (i == 8) {
+
+                            } else if (i == 9) {
                                 if (firstShowInsertActivity) {
                                     showFragment2(1);
                                     firstShowInsertActivity = false;

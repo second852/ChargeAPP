@@ -22,6 +22,28 @@ public class GoalDB {
         this.db=db;
     }
 
+
+    private GoalVO configGoalVO(Cursor cursor)
+    {
+        GoalVO goalVO=new GoalVO();
+        goalVO.setId(cursor.getInt(0));
+        goalVO.setType(cursor.getString(1));
+        goalVO.setName(cursor.getString(2));
+        goalVO.setMoney(cursor.getInt(3));
+        goalVO.setTimeStatue(cursor.getString(4));
+        goalVO.setStartTime(new Date(cursor.getLong(5)));
+        goalVO.setEndTime(new Date(cursor.getLong(6)));
+        goalVO.setNotify(Boolean.valueOf(cursor.getString(7)));
+        goalVO.setNotifyStatue(cursor.getString(8));
+        goalVO.setNotifyDate(cursor.getString(9));
+        goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
+        goalVO.setStatue(cursor.getInt(11));
+        goalVO.setCurrency(cursor.getString(12));
+        goalVO.setRealMoney(cursor.getString(13));
+        return goalVO;
+    }
+
+
     public List<GoalVO> getAll() {
         String sql = "SELECT * FROM goal order by statue,endTime desc;";
         String[] args = {};
@@ -29,26 +51,29 @@ public class GoalDB {
         List<GoalVO> goalVOS = new ArrayList<>();
         GoalVO goalVO;
         while (cursor.moveToNext()) {
-           goalVO=new GoalVO();
-           goalVO.setId(cursor.getInt(0));
-           goalVO.setType(cursor.getString(1));
-           goalVO.setName(cursor.getString(2));
-           goalVO.setMoney(cursor.getInt(3));
-           goalVO.setTimeStatue(cursor.getString(4));
-           goalVO.setStartTime(new Date(cursor.getLong(5)));
-           goalVO.setEndTime(new Date(cursor.getLong(6)));
-           goalVO.setNotify(Boolean.valueOf(cursor.getString(7)));
-           goalVO.setNotifyStatue(cursor.getString(8));
-           goalVO.setNotifyDate(cursor.getString(9));
-           goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
-           goalVO.setStatue(cursor.getInt(11));
-           goalVO.setCurrency(cursor.getString(12));
-           goalVO.setRealMoney(cursor.getString(13));
+           goalVO=configGoalVO(cursor);
            goalVOS.add(goalVO);
         }
         cursor.close();
         return goalVOS;
     }
+
+
+
+    public List<GoalVO> findSearchKey(String searchKey) {
+        String sql = "SELECT * FROM goal where type = ? and name like ? order by id;";
+        String[] args = {searchKey,"%"+searchKey+"%"};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        List<GoalVO> goalVOS = new ArrayList<>();
+        GoalVO goalVO;
+        while (cursor.moveToNext()) {
+            goalVO=configGoalVO(cursor);
+            goalVOS.add(goalVO);
+        }
+        cursor.close();
+        return goalVOS;
+    }
+
 
     public List<GoalVO> getNotify() {
         String sql = "SELECT * FROM goal where notify ='true'and statue = '0' order by id;";
@@ -57,21 +82,7 @@ public class GoalDB {
         List<GoalVO> goalVOS = new ArrayList<>();
         GoalVO goalVO;
         while (cursor.moveToNext()) {
-            goalVO=new GoalVO();
-            goalVO.setId(cursor.getInt(0));
-            goalVO.setType(cursor.getString(1));
-            goalVO.setName(cursor.getString(2));
-            goalVO.setMoney(cursor.getInt(3));
-            goalVO.setTimeStatue(cursor.getString(4));
-            goalVO.setStartTime(new Date(cursor.getLong(5)));
-            goalVO.setEndTime(new Date(cursor.getLong(6)));
-            goalVO.setNotify(Boolean.valueOf(cursor.getString(7)));
-            goalVO.setNotifyStatue(cursor.getString(8));
-            goalVO.setNotifyDate(cursor.getString(9));
-            goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
-            goalVO.setStatue(cursor.getInt(11));
-            goalVO.setCurrency(cursor.getString(12));
-            goalVO.setRealMoney(cursor.getString(13));
+            goalVO=configGoalVO(cursor);
             goalVOS.add(goalVO);
         }
         cursor.close();
@@ -85,21 +96,7 @@ public class GoalDB {
         List<GoalVO> goalVOS = new ArrayList<>();
         GoalVO goalVO;
         while (cursor.moveToNext()) {
-            goalVO=new GoalVO();
-            goalVO.setId(cursor.getInt(0));
-            goalVO.setType(cursor.getString(1));
-            goalVO.setName(cursor.getString(2));
-            goalVO.setMoney(cursor.getInt(3));
-            goalVO.setTimeStatue(cursor.getString(4));
-            goalVO.setStartTime(new Date(cursor.getLong(5)));
-            goalVO.setEndTime(new Date(cursor.getLong(6)));
-            goalVO.setNotify(Boolean.valueOf(cursor.getString(7)));
-            goalVO.setNotifyStatue(cursor.getString(8));
-            goalVO.setNotifyDate(cursor.getString(9));
-            goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
-            goalVO.setStatue(cursor.getInt(11));
-            goalVO.setCurrency(cursor.getString(12));
-            goalVO.setRealMoney(cursor.getString(13));
+            goalVO=configGoalVO(cursor);
             goalVOS.add(goalVO);
         }
         cursor.close();
@@ -113,21 +110,7 @@ public class GoalDB {
         List<GoalVO> goalVOS = new ArrayList<>();
         GoalVO goalVO;
         while (cursor.moveToNext()) {
-            goalVO=new GoalVO();
-            goalVO.setId(cursor.getInt(0));
-            goalVO.setType(cursor.getString(1));
-            goalVO.setName(cursor.getString(2));
-            goalVO.setMoney(cursor.getInt(3));
-            goalVO.setTimeStatue(cursor.getString(4));
-            goalVO.setStartTime(new Date(cursor.getLong(5)));
-            goalVO.setEndTime(new Date(cursor.getLong(6)));
-            goalVO.setNotify(Boolean.valueOf(cursor.getString(7)));
-            goalVO.setNotifyStatue(cursor.getString(8));
-            goalVO.setNotifyDate(cursor.getString(9));
-            goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
-            goalVO.setStatue(cursor.getInt(11));
-            goalVO.setCurrency(cursor.getString(12));
-            goalVO.setRealMoney(cursor.getString(13));
+            goalVO=configGoalVO(cursor);
             goalVOS.add(goalVO);
         }
         cursor.close();
@@ -140,21 +123,7 @@ public class GoalDB {
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         GoalVO goalVO=null;
         if (cursor.moveToNext()) {
-            goalVO=new GoalVO();
-            goalVO.setId(cursor.getInt(0));
-            goalVO.setType(cursor.getString(1));
-            goalVO.setName(cursor.getString(2));
-            goalVO.setMoney(cursor.getInt(3));
-            goalVO.setTimeStatue(cursor.getString(4));
-            goalVO.setStartTime(new Date(cursor.getLong(5)));
-            goalVO.setEndTime(new Date(cursor.getLong(6)));
-            goalVO.setNotify(Boolean.valueOf(cursor.getString(7)));
-            goalVO.setNotifyStatue(cursor.getString(8));
-            goalVO.setNotifyDate(cursor.getString(9));
-            goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
-            goalVO.setStatue(cursor.getInt(11));
-            goalVO.setCurrency(cursor.getString(12));
-            goalVO.setRealMoney(cursor.getString(13));
+            goalVO=configGoalVO(cursor);
         }
         cursor.close();
         return goalVO;
@@ -166,21 +135,7 @@ public class GoalDB {
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         GoalVO goalVO=null;
         if (cursor.moveToNext()) {
-            goalVO=new GoalVO();
-            goalVO.setId(cursor.getInt(0));
-            goalVO.setType(cursor.getString(1));
-            goalVO.setName(cursor.getString(2));
-            goalVO.setMoney(cursor.getInt(3));
-            goalVO.setTimeStatue(cursor.getString(4));
-            goalVO.setStartTime(new Date(cursor.getLong(5)));
-            goalVO.setEndTime(new Date(cursor.getLong(6)));
-            goalVO.setNotify(Boolean.valueOf(cursor.getString(7)));
-            goalVO.setNotifyStatue(cursor.getString(8));
-            goalVO.setNotifyDate(cursor.getString(9));
-            goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
-            goalVO.setStatue(cursor.getInt(11));
-            goalVO.setCurrency(cursor.getString(12));
-            goalVO.setRealMoney(cursor.getString(13));
+            goalVO=configGoalVO(cursor);
         }
         cursor.close();
         return goalVO;
@@ -192,21 +147,7 @@ public class GoalDB {
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         GoalVO goalVO=null;
         if (cursor.moveToNext()) {
-            goalVO=new GoalVO();
-            goalVO.setId(cursor.getInt(0));
-            goalVO.setType(cursor.getString(1));
-            goalVO.setName(cursor.getString(2));
-            goalVO.setMoney(cursor.getInt(3));
-            goalVO.setTimeStatue(cursor.getString(4));
-            goalVO.setStartTime(new Date(cursor.getLong(5)));
-            goalVO.setEndTime(new Date(cursor.getLong(6)));
-            goalVO.setNotify(Boolean.valueOf(cursor.getString(7)));
-            goalVO.setNotifyStatue(cursor.getString(8));
-            goalVO.setNotifyDate(cursor.getString(9));
-            goalVO.setNoWeekend(Boolean.valueOf(cursor.getString(10)));
-            goalVO.setStatue(cursor.getInt(11));
-            goalVO.setCurrency(cursor.getString(12));
-            goalVO.setRealMoney(cursor.getString(13));
+            goalVO=configGoalVO(cursor);
         }
         cursor.close();
         return goalVO;

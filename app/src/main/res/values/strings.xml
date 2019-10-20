@@ -7,7 +7,13 @@
         <item>每年</item>
     </string-array>
 
-
+    <string-array name="searchScope">
+        <item>全部</item>
+        <item>收入</item>
+        <item>支出</item>
+        <item>資產</item>
+        <item>目標</item>
+    </string-array>
 
 
     <string name="text_Open">open</string>
@@ -19,6 +25,7 @@
     <string name="text_DataPicture">資料(圖表)</string>
     <string name="text_DataList">資料(列表)</string>
     <string name="text_Goal">目標</string>
+    <string name="text_Search">搜尋</string>
     <string name="text_Setting">設定</string>
     <string name="text_SetCarrier">綁定/取消載具</string>
     <string name="text_ShowCal">顯示手機載具</string>

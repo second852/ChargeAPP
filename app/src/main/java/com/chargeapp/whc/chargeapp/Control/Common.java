@@ -161,6 +161,7 @@ public class Common {
     public final static String propertyInsertMoneyString="propertyInsertMoneyString";
     public final static String propertyInsertString="propertyInsertString";
     public final static String propertyConsumeShowString="propertyConsumeShowString";
+    public final static String searchMainString="searchMainString";
 
 
     public static NumberFormat nf = NumberFormat.getNumberInstance();

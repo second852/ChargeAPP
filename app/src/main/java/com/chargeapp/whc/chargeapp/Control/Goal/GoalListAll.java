@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Control.Goal;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -106,6 +108,7 @@ public class GoalListAll extends Fragment {
     }
 
 
+
     public void setLayout() {
         goalSaveComplete = 0;
         goalConsumeComplete = true;
@@ -113,7 +116,7 @@ public class GoalListAll extends Fragment {
         if (goalVOS.size() <= 0) {
             message.setText("無目標紀錄!\n 請按右下角圖片新增!");
             message.setVisibility(View.VISIBLE);
-            addGoal.setVisibility(View.VISIBLE);
+            addGoal.show();
             addGoal.setOnClickListener(new addNewGoalClick());
         } else {
             message.setVisibility(View.GONE);
@@ -157,6 +160,7 @@ public class GoalListAll extends Fragment {
         public int getCount() {
             return goalVOS.size();
         }
+
 
         @Override
         public View getView(final int position, View itemView, final ViewGroup parent) {
@@ -468,13 +472,13 @@ public class GoalListAll extends Fragment {
             if(position==(goalVOS.size()-1))
             {
                 if (goalConsumeComplete) {
-                    addGoal.setVisibility(View.VISIBLE);
+                    addGoal.show();
                     addGoal.setOnClickListener(new addNewGoalClick());
                 } else if (goalSaveComplete == 0) {
-                    addGoal.setVisibility(View.VISIBLE);
+                    addGoal.show();
                     addGoal.setOnClickListener(new addNewGoalClick());
                 } else {
-                    addGoal.setVisibility(View.GONE);
+                    addGoal.hide();
                     addGoal.setOnClickListener(null);
                 }
             }

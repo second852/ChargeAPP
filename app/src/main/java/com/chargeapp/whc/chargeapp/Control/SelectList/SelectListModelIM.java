@@ -246,6 +246,8 @@ public class SelectListModelIM extends Fragment {
                     switchFragment(fragment);
                 }
             });
+
+
             deleteI.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
