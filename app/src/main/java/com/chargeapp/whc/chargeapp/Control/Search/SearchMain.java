@@ -8,15 +8,21 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -79,6 +85,8 @@ public class SearchMain extends Fragment {
     private ProgressDialog progressDialog;
     private Gson gson;
     private CurrencyDB currencyDB;
+    private RelativeLayout settingR;
+    private BootstrapButton searchSetting;
 
 
     @Override
@@ -91,6 +99,8 @@ public class SearchMain extends Fragment {
             this.context=getActivity();
         }
         gson=new Gson();
+        ((AppCompatActivity)context).getSupportActionBar().show();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -119,8 +129,17 @@ public class SearchMain extends Fragment {
         search=view.findViewById(R.id.search);
         listView=view.findViewById(R.id.list);
         searchSettingShow=view.findViewById(R.id.searchSettingShow);
+        settingR=view.findViewById(R.id.settingR);
+        searchSetting=view.findViewById(R.id.searchSetting);
+        searchSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                settingR.setVisibility(View.GONE);
+            }
+        });
         search.setOnClickListener(new showSearch());
     }
+
 
 
     private class showSearch implements View.OnClickListener {
@@ -145,9 +164,31 @@ public class SearchMain extends Fragment {
             searchObject.addAll(propertyDB.findBySearchKey(key));
             //propertyFromDB
             searchObject.addAll(propertyFromDB.findBySearchKey(key));
+
+            listView.setAdapter(new ListAdapter(context,searchObject));
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+         inflater = context.getMenuInflater();
+         inflater.inflate(R.menu.search_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.setting:
+                settingR.setVisibility(View.VISIBLE);
+                break;
+            case R.id.excel:
+                break;
+            default:
+        }
+        return true;
+    }
 
     private class ListAdapter extends BaseAdapter {
         private Context context;

@@ -140,7 +140,7 @@ public class BankDB {
 
 
     public List<BankVO> findBySearchKey(String searchKey) {
-        String sql = "SELECT * FROM BANK where  maintype = ? or detailname like ? order by id;";
+        String sql = "SELECT * FROM BANK where  maintype = ? or detailname like ? order by date desc;";
         String[] args = {searchKey,"%"+searchKey+"%"};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();

@@ -185,7 +185,7 @@ public class PropertyFromDB {
 
 
     public List<PropertyFromVO> findBySearchKey(String searchKey) {
-        String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where type = ? or sourceMainType = ? or sourceSecondType = ? ;";
+        String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where type = ? or sourceMainType = ? or sourceSecondType = ? order by sourceDate desc;";
         String[] args = {searchKey,searchKey,searchKey};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOS = new ArrayList<>();

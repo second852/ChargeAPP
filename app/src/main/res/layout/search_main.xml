@@ -22,9 +22,10 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:textSize="25sp"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_vertical"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:singleLine="true"
+            android:inputType="text"
             android:textColor="#000000"
             android:textColorHint="#AAAAAA"
             app:bootstrapBrand="primary"
@@ -32,7 +33,8 @@
             app:bootstrapSize="lg"
             />
         <ImageView
-            android:layout_marginLeft="20dp"
+            android:id="@+id/search"
+            android:layout_marginStart="10dp"
             android:src="@drawable/search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_below="@+id/searchL"
         app:bootstrapBrand="primary"
         app:bootstrapSize="lg"
@@ -61,10 +63,10 @@
 
     <ListView
         android:id="@+id/list"
-        android:layout_below="@id/searchSettingShow"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/searchL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_above="@+id/adView"
        />
 
@@ -86,6 +88,7 @@
 
 
    <RelativeLayout
+       android:id="@+id/settingR"
        android:layout_width="250dp"
        android:layout_height="wrap_content"
        android:layout_centerHorizontal="true"
@@ -94,7 +97,7 @@
        android:background="#dddddd"
        >
        <LinearLayout
-           android:layout_marginTop="20dp"
+           android:layout_marginTop="10dp"
            android:id="@+id/timeCheckL"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
@@ -120,6 +123,7 @@
        </LinearLayout>
 
        <LinearLayout
+           android:visibility="gone"
            android:id="@+id/beginL"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
@@ -154,7 +158,7 @@
        </LinearLayout>
 
        <LinearLayout
-
+           android:visibility="gone"
            android:id="@+id/endL"
            android:layout_marginStart="20dp"
            android:layout_marginEnd="20dp"
@@ -191,7 +195,7 @@
        <com.beardedhen.androidbootstrap.BootstrapDropDown
            android:layout_marginTop="10dp"
            android:id="@+id/scope"
-           android:layout_marginBottom="20dp"
+
            android:layout_below="@+id/endL"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
@@ -199,135 +203,28 @@
            app:bootstrapBrand="regular"
            app:bootstrapExpandDirection="up"
            app:bootstrapSize="sm"
-           app:bootstrapText="全部 {fa_calendar}"
+           app:bootstrapText="範圍 {fa_tag}"
            app:dropdownResource="@array/searchScope"
            app:roundedCorners="true"
            app:showOutline="true"
            />
+       <com.beardedhen.androidbootstrap.BootstrapButton
+           android:layout_marginTop="10dp"
+           android:id="@+id/searchSetting"
+           android:layout_below="@+id/scope"
+           android:layout_centerHorizontal="true"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:textColor="#000000"
+           app:bootstrapBrand="warning"
+           app:bootstrapSize="lg"
+           app:buttonMode="regular"
+           app:showOutline="false"
+           app:roundedCorners="true"
+           app:bootstrapText="設定 {fa_search_plus}"
+           android:layout_marginBottom="10dp"
+           />
    </RelativeLayout>
-
-
-
-
-
-
-
-
-
-    <View
-        android:id="@+id/fabBGLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorTransBg"
-        android:visibility="gone"/>
-
-    <LinearLayout
-        android:id="@+id/insertMoney"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:clipToPadding="false"
-        android:layout_marginEnd="23dp"
-        android:gravity="center"
-        android:layout_above="@+id/adView"
-        android:layout_marginBottom="23dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="新增收入"/>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            app:backgroundTint="@color/bootstrap_brand_primary"
-            app:srcCompat="@drawable/property_add"
-            app:fabSize="mini"/>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/insertConsume"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:clipToPadding="false"
-        android:layout_marginEnd="23dp"
-        android:gravity="center"
-        android:layout_marginBottom="23dp"
-        android:layout_above="@+id/adView"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="新增支出"/>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            app:backgroundTint="@color/bootstrap_brand_primary"
-            app:srcCompat="@drawable/property_cut"
-            app:fabSize="mini"/>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/returnMain"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:clipToPadding="false"
-        android:layout_marginEnd="23dp"
-        android:gravity="center"
-        android:layout_marginBottom="23dp"
-        android:layout_above="@+id/adView"
-        android:visibility="gone"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="返回"/>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            app:srcCompat="@drawable/property_back"
-            app:backgroundTint="@color/bootstrap_brand_primary"
-            app:fabSize="mini"/>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:gravity="center"
-        android:clipToPadding="false"
-        android:padding="12dp"
-        android:layout_marginBottom="80dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true">
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:gravity="center_vertical"
-            app:srcCompat="@drawable/ic_toys"
-            app:backgroundTint="@color/bootstrap_brand_primary"
-            app:fabSize="normal"/>
-    </LinearLayout>
 
 
     <com.google.android.gms.ads.AdView

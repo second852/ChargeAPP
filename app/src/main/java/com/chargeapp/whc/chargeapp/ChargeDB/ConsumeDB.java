@@ -251,7 +251,7 @@ public class ConsumeDB {
     }
 
     public List<ConsumeVO> findByKeyWord(String searchKey) {
-        String sql = "SELECT * FROM Consumer where maintype = ? or secondtype = ? or detailname like ? ;";
+        String sql = "SELECT * FROM Consumer where maintype = ? or secondtype = ? or detailname like ? order by date desc;";
         String[] args = {searchKey,searchKey,"%"+searchKey+"%"};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();

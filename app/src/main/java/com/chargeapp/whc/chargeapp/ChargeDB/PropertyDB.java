@@ -60,7 +60,7 @@ public class PropertyDB {
     }
 
     public List<PropertyVO> findBySearchKey(String searchKey) {
-        String sql = "SELECT * FROM Property where name like ? order by id;";
+        String sql = "SELECT * FROM Property where name like ? order by id desc;";
         String[] args = {"%"+searchKey+"%"};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyVO> propertyVOS=new ArrayList<>();
