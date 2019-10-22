@@ -185,8 +185,22 @@ public class PropertyFromDB {
 
 
     public List<PropertyFromVO> findBySearchKey(String searchKey) {
-        String sql = "SELECT sourceMoney,sourceCurrency FROM PropertyFrom where type = ? or sourceMainType = ? or sourceSecondType = ? order by sourceDate desc;";
+        String sql = "SELECT * FROM PropertyFrom where type = ? or sourceMainType = ? or sourceSecondType = ? order by sourceDate desc;";
         String[] args = {searchKey,searchKey,searchKey};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        List<PropertyFromVO> propertyFromVOS = new ArrayList<>();
+        PropertyFromVO propertyFromVO;
+        while (cursor.moveToNext()) {
+            propertyFromVO=getPropertyFromVO(cursor);
+            propertyFromVOS.add(propertyFromVO);
+        }
+        cursor.close();
+        return propertyFromVOS;
+    }
+
+    public List<PropertyFromVO> findBySearchKey(String searchKey,Long start,Long end) {
+        String sql = "SELECT * FROM PropertyFrom where type = ? or sourceMainType = ? or sourceSecondType = ? and sourceDate between ? and ? order by sourceDate desc;";
+        String[] args = {searchKey,searchKey,searchKey,start.toString(),end.toString()};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOS = new ArrayList<>();
         PropertyFromVO propertyFromVO;

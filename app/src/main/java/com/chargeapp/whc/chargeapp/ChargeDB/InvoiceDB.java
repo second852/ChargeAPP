@@ -317,6 +317,20 @@ public class InvoiceDB {
         return invoiceVOSList;
     }
 
+    public List<InvoiceVO> findBySearchKeyAndTime(String searchKey,long start,long end) {
+        String sql = "SELECT * FROM INVOICE  where maintype = ? or secondtype = ? or detail like ? and time between ? and ? order by time desc;";
+        String[] args = {searchKey,searchKey,"%"+searchKey+"%",String.valueOf(start),String.valueOf(end)};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        List<InvoiceVO> invoiceVOSList = new ArrayList<>();
+        InvoiceVO invoiceVO;
+        while (cursor.moveToNext()) {
+            invoiceVO=configInvoiceVO(cursor);
+            invoiceVOSList.add(invoiceVO);
+        }
+        cursor.close();
+        return invoiceVOSList;
+    }
+
     public List<InvoiceVO> getInvoiceBytime(Timestamp start,Timestamp end) {
         String sql = "SELECT * FROM INVOICE  where time between '"+start.getTime()+"' and '"+end.getTime()+"' order by time desc;";
         String[] args = {};

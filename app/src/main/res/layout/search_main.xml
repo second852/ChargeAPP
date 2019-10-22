@@ -151,6 +151,7 @@
                android:gravity="center_vertical"
                android:singleLine="true"
                android:textColor="#000000"
+               android:inputType="date"
                app:bootstrapBrand="primary"
                app:roundedCorners="true"
                app:bootstrapSize="lg"
@@ -186,6 +187,7 @@
                android:gravity="center_vertical"
                android:singleLine="true"
                android:textColor="#000000"
+               android:inputType="date"
                app:bootstrapBrand="primary"
                app:roundedCorners="true"
                app:bootstrapSize="lg"
@@ -225,6 +227,40 @@
            android:layout_marginBottom="10dp"
            />
    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/showDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:background="#ffffff"
+        android:visibility="gone"
+        >
+        <DatePicker
+            android:id="@+id/datePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner"
+            android:theme="@style/spinner_normal"
+            android:spinnersShown="true">
+        </DatePicker>
+        <TextView
+            android:id="@+id/dateSave"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="5dp"
+            android:background="#BDBDBD"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="5dp"
+            android:text="確認"
+            android:textColor="#000000"
+            android:textSize="20sp" />
+    </LinearLayout>
 
 
     <com.google.android.gms.ads.AdView

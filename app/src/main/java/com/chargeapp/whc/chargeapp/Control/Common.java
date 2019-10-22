@@ -954,6 +954,20 @@ public class Common {
         return bootstrapTexts;
     }
 
+
+    public static List<BootstrapText> searchScopeSetBsTest(Activity activity, String[] data,String style) {
+        List<BootstrapText> bootstrapTexts = new ArrayList<>();
+        for (String s : data) {
+            BootstrapText text = new BootstrapText.Builder(activity)
+                    .addText(s + " ")
+                    .addFontAwesomeIcon(style)
+                    .build();
+            bootstrapTexts.add(text);
+        }
+        return bootstrapTexts;
+    }
+
+
     public static List<BootstrapText> currecyData(Activity activity, String[] data) {
         List<BootstrapText> bootstrapTexts = new ArrayList<>();
         for (String s : data)

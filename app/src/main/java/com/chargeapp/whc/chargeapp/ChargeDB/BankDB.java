@@ -153,6 +153,20 @@ public class BankDB {
         return BankVOList;
     }
 
+    public List<BankVO> findBySearchKeyAndTime(String searchKey,Long start,Long end) {
+        String sql = "SELECT * FROM BANK where  maintype = ? or detailname like ? and date between ? and ? order by date desc;";
+        String[] args = {searchKey,"%"+searchKey+"%",start.toString(),end.toString()};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        List<BankVO> BankVOList = new ArrayList<>();
+        BankVO bankVO;
+        while (cursor.moveToNext()) {
+            bankVO = configBankVO(cursor);
+            BankVOList.add(bankVO);
+        }
+        cursor.close();
+        return BankVOList;
+    }
+
 
     public List<BankVO> getFixDateAndfkKeyIsNull() {
         String sql = "SELECT * FROM BANK where  fixdate = 'true' and fkKey is null order by id;";

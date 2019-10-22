@@ -14,6 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -27,8 +31,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.BootstrapDropDown;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
+import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
+import com.beardedhen.androidbootstrap.font.FontAwesome;
 import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
@@ -63,14 +70,16 @@ import com.google.gson.reflect.TypeToken;
 import org.jsoup.internal.StringUtil;
 
 import java.lang.reflect.Type;
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class SearchMain extends Fragment {
 
     private Activity context;
     private View view;
-    private BootstrapEditText keyName;
+    private BootstrapEditText keyName,beginD,endD;
     private ImageView search;
     private ListView listView;
     private BootstrapButton searchSettingShow;
@@ -87,6 +96,18 @@ public class SearchMain extends Fragment {
     private CurrencyDB currencyDB;
     private RelativeLayout settingR;
     private BootstrapButton searchSetting;
+    private CheckBox timeCheck;
+    private LinearLayout beginL,endL,showDate;
+    private BootstrapDropDown scope;
+    private List<BootstrapText> scopeTest;
+    private String[] searchScopeArray;
+    private String nowScope;
+    private boolean needTime,needConsume,needIncome,needGoal,needProperty;
+    private View dateView;
+    private DatePicker datePicker;
+    private TextView dateSave;
+    private Date start,end;
+
 
 
     @Override
@@ -107,6 +128,9 @@ public class SearchMain extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.search_main, container, false);
         AdView adView=view.findViewById(R.id.adView);
+        searchScopeArray=getResources().getStringArray(R.array.searchScope);
+        scopeTest=Common.searchScopeSetBsTest(context,searchScopeArray, FontAwesome.FA_TAG);
+        nowScope=searchScopeArray[0];
         Common.setAdView(adView,context);
         findViewById();
         setDB();
@@ -125,6 +149,7 @@ public class SearchMain extends Fragment {
     }
 
     private void findViewById() {
+        timeCheck=view.findViewById(R.id.timeCheck);
         keyName=view.findViewById(R.id.keyName);
         search=view.findViewById(R.id.search);
         listView=view.findViewById(R.id.list);
@@ -138,6 +163,26 @@ public class SearchMain extends Fragment {
             }
         });
         search.setOnClickListener(new showSearch());
+        timeCheck.setOnCheckedChangeListener(new checkChoice());
+        beginL=view.findViewById(R.id.beginL);
+        endL=view.findViewById(R.id.endL);
+        scope=view.findViewById(R.id.scope);
+        scope.setDropdownData(searchScopeArray);
+        scope.setOnDropDownItemClickListener(new choiceScope());
+        Calendar calendar=Calendar.getInstance();
+        beginD=view.findViewById(R.id.beginD);
+        beginD.setShowSoftInputOnFocus(false);
+        beginD.setText(Common.sTwo.format(calendar.getTime()));
+        beginD.setOnClickListener(new choiceDay());
+        calendar.add(Calendar.MONTH,-1);
+        endD=view.findViewById(R.id.endD);
+        endD.setShowSoftInputOnFocus(false);
+        endD.setText(Common.sTwo.format(calendar.getTime()));
+        endD.setOnClickListener(new choiceDay());
+        showDate=view.findViewById(R.id.showDate);
+        datePicker=view.findViewById(R.id.datePicker);
+        dateSave=view.findViewById(R.id.dateSave);
+        dateSave.setOnClickListener(new choiceDate());
     }
 
 
@@ -152,18 +197,66 @@ public class SearchMain extends Fragment {
                 return;
             }
             searchObject=new ArrayList<>();
+
+            if(needTime)
+            {
+                start=stringToDate(beginD.getText().toString());
+                end=stringToDate(endD.getText().toString());
+            }
+
             //consume main/second/detail
-            searchObject.addAll(consumeDB.findByKeyWord(key));
             //invoice main/second/detail
-            searchObject.addAll(invoiceDB.findBySearchKey(key));
+            if(needConsume)
+            {
+                if(needTime)
+                {
+                    searchObject.addAll(consumeDB.findByKeyWordAndTime(key,start.getTime(),end.getTime()));
+                    searchObject.addAll(invoiceDB.findBySearchKeyAndTime(key,start.getTime(),end.getTime()));
+
+                }else {
+                    searchObject.addAll(consumeDB.findByKeyWord(key));
+                    searchObject.addAll(invoiceDB.findBySearchKey(key));
+
+                }
+            }
+
+
             //bank
-            searchObject.addAll(bankDB.findBySearchKey(key));
+            if(needIncome)
+            {
+                if(needTime)
+                {
+                    searchObject.addAll(bankDB.findBySearchKeyAndTime(key,start.getTime(),end.getTime()));
+                }else {
+                    searchObject.addAll(bankDB.findBySearchKey(key));
+                }
+            }
+
             //goal
-            searchObject.addAll(goalDB.findSearchKey(key));
-            //property
-            searchObject.addAll(propertyDB.findBySearchKey(key));
-            //propertyFromDB
-            searchObject.addAll(propertyFromDB.findBySearchKey(key));
+            if(needGoal)
+            {
+                if(needTime)
+                {
+                  searchObject.addAll(goalDB.findSearchKey(key,start.getTime(),end.getTime()));
+                }else {
+                  searchObject.addAll(goalDB.findSearchKey(key));
+                }
+            }
+
+
+
+            //property   //propertyFromDB
+            if(needProperty)
+            {
+                searchObject.addAll(propertyDB.findBySearchKey(key));
+                if(needTime)
+                {
+                    searchObject.addAll(propertyFromDB.findBySearchKey(key,start.getTime(),end.getTime()));
+                }else{
+                    searchObject.addAll(propertyFromDB.findBySearchKey(key));
+                }
+            }
+
 
             listView.setAdapter(new ListAdapter(context,searchObject));
         }
@@ -215,7 +308,7 @@ public class SearchMain extends Fragment {
                 itemView = layoutInflater.inflate(R.layout.select_con_detail_list_item, parent, false);
             }
             TextView title = itemView.findViewById(R.id.listTitle);
-            TextView decribe = itemView.findViewById(R.id.listDetail);
+            TextView describe = itemView.findViewById(R.id.listDetail);
             BootstrapButton update = itemView.findViewById(R.id.updateD);
             BootstrapButton deleteI = itemView.findViewById(R.id.deleteI);
             LinearLayout fixL = itemView.findViewById(R.id.fixL);
@@ -310,7 +403,7 @@ public class SearchMain extends Fragment {
 
 
                 title.setText(Common.setSecInvoiceTittle(I));
-                decribe.setText(sbDecribe.toString());
+                describe.setText(sbDecribe.toString());
             } else if (o instanceof ConsumeVO) {
                 update.setText("修改");
                 final ConsumeVO c = (ConsumeVO) o;
@@ -390,7 +483,7 @@ public class SearchMain extends Fragment {
                 {
                     stringBuffer.append("\n");
                 }
-                decribe.setText(stringBuffer.toString());
+                describe.setText(stringBuffer.toString());
 
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -453,7 +546,7 @@ public class SearchMain extends Fragment {
                 {
                     stringBuffer.append("\n");
                 }
-                decribe.setText(stringBuffer.toString());
+                describe.setText(stringBuffer.toString());
 
                 update.setText("修改");
                 update.setOnClickListener(new View.OnClickListener() {
@@ -490,7 +583,7 @@ public class SearchMain extends Fragment {
                 }
 
                 title.setText(goalVO.getName());
-                decribe.setText(sb.toString());
+                describe.setText(sb.toString());
 
                 boolean updateGoal;
                 if (goalVO.getStatue() == 1) {
@@ -547,7 +640,7 @@ public class SearchMain extends Fragment {
                 String detailE="收入 "+ Common.CurrencyResult(income,currencyVO)+"\n" +
                         "支出 "+ Common.CurrencyResult(consume,currencyVO);
                 title.setText(titleP);
-                decribe.setText(detailE);
+                describe.setText(detailE);
             }else if(o instanceof PropertyFromVO)
             {
                 PropertyFromVO propertyFromVO= (PropertyFromVO) o;
@@ -600,7 +693,7 @@ public class SearchMain extends Fragment {
                         detail.append(" "+propertyFromVO.getFixDateDetail());
                     }
                 }
-                decribe.setText(detail.toString());
+                describe.setText(detail.toString());
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -661,5 +754,88 @@ public class SearchMain extends Fragment {
     }
 
 
+    private class checkChoice implements CompoundButton.OnCheckedChangeListener {
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            needTime=b;
+            if(b)
+            {
+                beginL.setVisibility(View.VISIBLE);
+                endL.setVisibility(View.VISIBLE);
+            }else{
+                beginL.setVisibility(View.GONE);
+                endL.setVisibility(View.GONE);
+            }
+        }
+    }
 
+    private class choiceScope implements BootstrapDropDown.OnDropDownItemClickListener {
+        @Override
+        public void onItemClick(ViewGroup parent, View v, int id) {
+            scope.setBootstrapText(scopeTest.get(id));
+            nowScope=searchScopeArray[id];
+            switch (id)
+            {
+                case 0:
+                    needConsume=true;
+                    needGoal=true;
+                    needIncome=true;
+                    needProperty=true;
+                    break;
+                case 1:
+                    needConsume=true;
+                    needGoal=false;
+                    needIncome=false;
+                    needProperty=false;
+                    break;
+                case 2:
+                    needConsume=false;
+                    needIncome=true;
+                    needGoal=false;
+                    needProperty=false;
+                    break;
+                case 3:
+                    needConsume=false;
+                    needIncome=false;
+                    needGoal=true;
+                    needProperty=false;
+                    break;
+                case 4:
+                    needConsume=false;
+                    needIncome=false;
+                    needGoal=false;
+                    needProperty=true;
+                    break;
+                    default:
+            }
+        }
+    }
+
+    private class choiceDay implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            showDate.setVisibility(View.VISIBLE);
+            dateView=view;
+        }
+    }
+
+    private class choiceDate implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            String choiceDate=datePicker.getYear()+"/"+String.valueOf(datePicker.getMonth()+1)+"/"+datePicker.getDayOfMonth();
+            EditText showView= (EditText) dateView;
+            showView.setText(choiceDate);
+            showView.setSelection(choiceDate.length());
+            showDate.setVisibility(View.GONE);
+        }
+    }
+
+    private Date stringToDate(String s)
+    {
+        String[] dates = s.split("/");
+        Calendar c = Calendar.getInstance();
+        c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
+        Date d = new Date(c.getTimeInMillis());
+        return d;
+    }
 }

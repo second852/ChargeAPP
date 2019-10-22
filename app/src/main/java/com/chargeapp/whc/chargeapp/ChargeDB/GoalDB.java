@@ -75,6 +75,21 @@ public class GoalDB {
     }
 
 
+    public List<GoalVO> findSearchKey(String searchKey,Long start,Long end) {
+        String sql = "SELECT * FROM goal where type = ? and name like ? and startTime between ? and ? order by id desc;";
+        String[] args = {searchKey,"%"+searchKey+"%",start.toString(),end.toString()};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        List<GoalVO> goalVOS = new ArrayList<>();
+        GoalVO goalVO;
+        while (cursor.moveToNext()) {
+            goalVO=configGoalVO(cursor);
+            goalVOS.add(goalVO);
+        }
+        cursor.close();
+        return goalVOS;
+    }
+
+
     public List<GoalVO> getNotify() {
         String sql = "SELECT * FROM goal where notify ='true'and statue = '0' order by id;";
         String[] args = {};

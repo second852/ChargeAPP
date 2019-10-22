@@ -264,6 +264,20 @@ public class ConsumeDB {
         return consumeList;
     }
 
+    public List<ConsumeVO> findByKeyWordAndTime(String searchKey,long start,long end) {
+        String sql = "SELECT * FROM Consumer where maintype = ? or secondtype = ? or detailname like ? and date between ? and ? order by date desc;";
+        String[] args = {searchKey,searchKey,"%"+searchKey+"%",String.valueOf(start),String.valueOf(end)};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        List<ConsumeVO> consumeList = new ArrayList<>();
+        ConsumeVO consumeVO;
+        while (cursor.moveToNext()) {
+            consumeVO = configConsumeVO(cursor);
+            consumeList.add(consumeVO);
+        }
+        cursor.close();
+        return consumeList;
+    }
+
     public List<ConsumeVO> getSecondTypePeriod(String maintyppe, String second) {
         String sql = "SELECT * FROM Consumer where maintype ='" + maintyppe + "' and secondtype = '" + second + "';";
         String[] args = {};
