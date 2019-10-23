@@ -54,7 +54,7 @@
         android:gravity="center"
         android:visibility="gone"
         android:layout_below="@+id/searchL"
-        app:bootstrapBrand="primary"
+        app:bootstrapBrand="info"
         app:bootstrapSize="lg"
         app:buttonMode="regular"
         app:showOutline="true"
@@ -64,7 +64,7 @@
     <ListView
         android:id="@+id/list"
         android:layout_marginTop="10dp"
-        android:layout_below="@id/searchL"
+        android:layout_below="@id/searchSettingShow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/adView"
@@ -85,7 +85,12 @@
         android:textColor="#FF7744"
         android:textSize="26sp"
         android:visibility="gone" />
-
+    <View
+        android:id="@+id/fabBGLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorTransBg"
+        android:visibility="gone"/>
 
    <RelativeLayout
        android:id="@+id/settingR"
@@ -194,26 +199,99 @@
                />
        </LinearLayout>
 
-       <com.beardedhen.androidbootstrap.BootstrapDropDown
-           android:layout_marginTop="10dp"
-           android:id="@+id/scope"
-
+       <LinearLayout
            android:layout_below="@+id/endL"
+           android:layout_marginTop="10dp"
+           android:id="@+id/scopeOne"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_centerHorizontal="true"
-           app:bootstrapBrand="regular"
-           app:bootstrapExpandDirection="up"
-           app:bootstrapSize="sm"
-           app:bootstrapText="範圍 {fa_tag}"
-           app:dropdownResource="@array/searchScope"
-           app:roundedCorners="true"
-           app:showOutline="true"
-           />
+           >
+           <CheckBox
+               android:id="@+id/consumeCheck"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:buttonTint="#0275d8"
+               android:visibility="visible"
+               android:textColor="#000000"
+               android:textSize="20sp" />
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textSize="20sp"
+               android:text="支出"
+               android:textColor="#000000"
+               android:gravity="center"
+               />
+
+           <CheckBox
+               android:layout_marginStart="20dp"
+               android:id="@+id/incomeCheck"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:buttonTint="#0275d8"
+               android:visibility="visible"
+               android:textColor="#000000"
+               android:textSize="20sp" />
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textSize="20sp"
+               android:text="收入"
+               android:textColor="#000000"
+               android:gravity="center"
+               />
+       </LinearLayout>
+
+       <LinearLayout
+           android:layout_below="@+id/scopeOne"
+           android:layout_marginTop="10dp"
+           android:id="@+id/scopeTwo"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_centerHorizontal="true"
+           >
+           <CheckBox
+               android:id="@+id/goalCheck"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:buttonTint="#0275d8"
+               android:visibility="visible"
+               android:textColor="#000000"
+               android:textSize="20sp" />
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textSize="20sp"
+               android:text="目標"
+               android:textColor="#000000"
+               android:gravity="center"
+               />
+
+           <CheckBox
+               android:layout_marginStart="20dp"
+               android:id="@+id/propertyCheck"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:buttonTint="#0275d8"
+               android:visibility="visible"
+               android:textColor="#000000"
+               android:textSize="20sp" />
+           <TextView
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:textSize="20sp"
+               android:text="資產"
+               android:textColor="#000000"
+               android:gravity="center"
+               />
+       </LinearLayout>
+
+
        <com.beardedhen.androidbootstrap.BootstrapButton
            android:layout_marginTop="10dp"
            android:id="@+id/searchSetting"
-           android:layout_below="@+id/scope"
+           android:layout_below="@+id/scopeTwo"
            android:layout_centerHorizontal="true"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"

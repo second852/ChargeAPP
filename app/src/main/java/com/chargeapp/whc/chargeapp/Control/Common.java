@@ -1528,5 +1528,12 @@ public class Common {
         return price;
     }
 
+   public static String KeyToRed(String s,String key)
+   {
+       String fontS="<font color=\"red\">"+key+"</font>";
+       s=s.replace(key,fontS);
+       return s.replace("\n","<br>");
+   }
+
 
 }

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -96,17 +97,19 @@ public class SearchMain extends Fragment {
     private CurrencyDB currencyDB;
     private RelativeLayout settingR;
     private BootstrapButton searchSetting;
-    private CheckBox timeCheck;
+    private CheckBox timeCheck,consumeCheck,incomeCheck,goalCheck,propertyCheck;
     private LinearLayout beginL,endL,showDate;
-    private BootstrapDropDown scope;
     private List<BootstrapText> scopeTest;
     private String[] searchScopeArray;
     private String nowScope;
     private boolean needTime,needConsume,needIncome,needGoal,needProperty;
     private View dateView;
     private DatePicker datePicker;
-    private TextView dateSave;
+    private TextView dateSave,message;
     private Date start,end;
+    private View fabBGLayout;
+    private StringBuilder showStringTime=new StringBuilder();
+    private String keyNameString;
 
 
 
@@ -131,6 +134,11 @@ public class SearchMain extends Fragment {
         searchScopeArray=getResources().getStringArray(R.array.searchScope);
         scopeTest=Common.searchScopeSetBsTest(context,searchScopeArray, FontAwesome.FA_TAG);
         nowScope=searchScopeArray[0];
+        needTime=false;
+        needConsume=true;
+        needGoal=true;
+        needIncome=true;
+        needProperty=true;
         Common.setAdView(adView,context);
         findViewById();
         setDB();
@@ -160,29 +168,63 @@ public class SearchMain extends Fragment {
             @Override
             public void onClick(View view) {
                 settingR.setVisibility(View.GONE);
+                fabBGLayout.setVisibility(View.GONE);
+                searchSettingShow.setVisibility(View.VISIBLE);
+                searchSettingShow.setText(showScope());
             }
         });
         search.setOnClickListener(new showSearch());
         timeCheck.setOnCheckedChangeListener(new checkChoice());
         beginL=view.findViewById(R.id.beginL);
         endL=view.findViewById(R.id.endL);
-        scope=view.findViewById(R.id.scope);
-        scope.setDropdownData(searchScopeArray);
-        scope.setOnDropDownItemClickListener(new choiceScope());
         Calendar calendar=Calendar.getInstance();
-        beginD=view.findViewById(R.id.beginD);
-        beginD.setShowSoftInputOnFocus(false);
-        beginD.setText(Common.sTwo.format(calendar.getTime()));
-        beginD.setOnClickListener(new choiceDay());
-        calendar.add(Calendar.MONTH,-1);
         endD=view.findViewById(R.id.endD);
         endD.setShowSoftInputOnFocus(false);
         endD.setText(Common.sTwo.format(calendar.getTime()));
         endD.setOnClickListener(new choiceDay());
+        calendar.add(Calendar.MONTH,-1);
+        beginD=view.findViewById(R.id.beginD);
+        beginD.setShowSoftInputOnFocus(false);
+        beginD.setText(Common.sTwo.format(calendar.getTime()));
+        beginD.setOnClickListener(new choiceDay());
         showDate=view.findViewById(R.id.showDate);
         datePicker=view.findViewById(R.id.datePicker);
         dateSave=view.findViewById(R.id.dateSave);
         dateSave.setOnClickListener(new choiceDate());
+        fabBGLayout=view.findViewById(R.id.fabBGLayout);
+        consumeCheck=view.findViewById(R.id.consumeCheck);
+        consumeCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                needConsume=b;
+            }
+        });
+        incomeCheck=view.findViewById(R.id.incomeCheck);
+        incomeCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                needIncome=b;
+            }
+        });
+        goalCheck=view.findViewById(R.id.goalCheck);
+        goalCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                needGoal=b;
+            }
+        });
+        propertyCheck=view.findViewById(R.id.propertyCheck);
+        propertyCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                needProperty=b;
+            }
+        });
+        consumeCheck.setChecked(true);
+        propertyCheck.setChecked(true);
+        goalCheck.setChecked(true);
+        incomeCheck.setChecked(true);
+        message=view.findViewById(R.id.message);
     }
 
 
@@ -190,13 +232,16 @@ public class SearchMain extends Fragment {
     private class showSearch implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            String key=keyName.getText().toString();
-            if(StringUtil.isBlank(key))
+            keyNameString=keyName.getText().toString();
+
+            if(StringUtil.isBlank(keyNameString))
             {
                 keyName.setError("不能空白!");
                 return;
             }
+
             searchObject=new ArrayList<>();
+
 
             if(needTime)
             {
@@ -210,12 +255,12 @@ public class SearchMain extends Fragment {
             {
                 if(needTime)
                 {
-                    searchObject.addAll(consumeDB.findByKeyWordAndTime(key,start.getTime(),end.getTime()));
-                    searchObject.addAll(invoiceDB.findBySearchKeyAndTime(key,start.getTime(),end.getTime()));
+                    searchObject.addAll(consumeDB.findByKeyWordAndTime(keyNameString,start.getTime(),end.getTime()));
+                    searchObject.addAll(invoiceDB.findBySearchKeyAndTime(keyNameString,start.getTime(),end.getTime()));
 
                 }else {
-                    searchObject.addAll(consumeDB.findByKeyWord(key));
-                    searchObject.addAll(invoiceDB.findBySearchKey(key));
+                    searchObject.addAll(consumeDB.findByKeyWord(keyNameString));
+                    searchObject.addAll(invoiceDB.findBySearchKey(keyNameString));
 
                 }
             }
@@ -226,9 +271,9 @@ public class SearchMain extends Fragment {
             {
                 if(needTime)
                 {
-                    searchObject.addAll(bankDB.findBySearchKeyAndTime(key,start.getTime(),end.getTime()));
+                    searchObject.addAll(bankDB.findBySearchKeyAndTime(keyNameString,start.getTime(),end.getTime()));
                 }else {
-                    searchObject.addAll(bankDB.findBySearchKey(key));
+                    searchObject.addAll(bankDB.findBySearchKey(keyNameString));
                 }
             }
 
@@ -237,9 +282,9 @@ public class SearchMain extends Fragment {
             {
                 if(needTime)
                 {
-                  searchObject.addAll(goalDB.findSearchKey(key,start.getTime(),end.getTime()));
+                  searchObject.addAll(goalDB.findSearchKey(keyNameString,start.getTime(),end.getTime()));
                 }else {
-                  searchObject.addAll(goalDB.findSearchKey(key));
+                  searchObject.addAll(goalDB.findSearchKey(keyNameString));
                 }
             }
 
@@ -248,17 +293,30 @@ public class SearchMain extends Fragment {
             //property   //propertyFromDB
             if(needProperty)
             {
-                searchObject.addAll(propertyDB.findBySearchKey(key));
+                searchObject.addAll(propertyDB.findBySearchKey(keyNameString));
                 if(needTime)
                 {
-                    searchObject.addAll(propertyFromDB.findBySearchKey(key,start.getTime(),end.getTime()));
+                    searchObject.addAll(propertyFromDB.findBySearchKey(keyNameString,start.getTime(),end.getTime()));
                 }else{
-                    searchObject.addAll(propertyFromDB.findBySearchKey(key));
+                    searchObject.addAll(propertyFromDB.findBySearchKey(keyNameString));
                 }
             }
 
 
+            if(searchObject.isEmpty())
+            {
+                Common.showToast(context,"查無資料!");
+                message.setVisibility(View.VISIBLE);
+                message.setText("查無資料! ");
+            }else{
+                Common.showToast(context,"搜尋成功!");
+                message.setVisibility(View.GONE);
+            }
+
+
             listView.setAdapter(new ListAdapter(context,searchObject));
+            searchSettingShow.setVisibility(View.VISIBLE);
+            searchSettingShow.setText(showScope());
         }
     }
 
@@ -275,6 +333,7 @@ public class SearchMain extends Fragment {
         {
             case R.id.setting:
                 settingR.setVisibility(View.VISIBLE);
+                fabBGLayout.setVisibility(View.VISIBLE);
                 break;
             case R.id.excel:
                 break;
@@ -401,9 +460,8 @@ public class SearchMain extends Fragment {
                     });
                 }
 
-
-                title.setText(Common.setSecInvoiceTittle(I));
-                describe.setText(sbDecribe.toString());
+                title.setText(Html.fromHtml(Common.KeyToRed(Common.setSecInvoiceTittle(I),keyNameString)), TextView.BufferType.SPANNABLE);
+                describe.setText(Html.fromHtml(Common.KeyToRed(sbDecribe.toString(),keyNameString)), TextView.BufferType.SPANNABLE);
             } else if (o instanceof ConsumeVO) {
                 update.setText("修改");
                 final ConsumeVO c = (ConsumeVO) o;
@@ -430,9 +488,10 @@ public class SearchMain extends Fragment {
                     remindL.setVisibility(View.GONE);
                 }
 
-
                 //設定 title
-                title.setText(Common.setSecConsumerTittlesDay(c));
+                title.setText(Html.fromHtml(Common.KeyToRed(Common.setSecConsumerTittlesDay(c),keyNameString)), TextView.BufferType.SPANNABLE);
+
+
 
                 //設定 describe
                 StringBuffer stringBuffer = new StringBuffer();
@@ -483,7 +542,8 @@ public class SearchMain extends Fragment {
                 {
                     stringBuffer.append("\n");
                 }
-                describe.setText(stringBuffer.toString());
+
+                describe.setText(Html.fromHtml(Common.KeyToRed(stringBuffer.toString(),keyNameString)), TextView.BufferType.SPANNABLE);
 
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -758,58 +818,23 @@ public class SearchMain extends Fragment {
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             needTime=b;
+            showStringTime=new StringBuilder();
+            showStringTime.append("時間 :");
             if(b)
             {
                 beginL.setVisibility(View.VISIBLE);
                 endL.setVisibility(View.VISIBLE);
+                showStringTime.append(beginD.getText().toString()+" ~ "+endD.getText().toString());
+
             }else{
                 beginL.setVisibility(View.GONE);
                 endL.setVisibility(View.GONE);
+                showStringTime.append("全部");
             }
         }
     }
 
-    private class choiceScope implements BootstrapDropDown.OnDropDownItemClickListener {
-        @Override
-        public void onItemClick(ViewGroup parent, View v, int id) {
-            scope.setBootstrapText(scopeTest.get(id));
-            nowScope=searchScopeArray[id];
-            switch (id)
-            {
-                case 0:
-                    needConsume=true;
-                    needGoal=true;
-                    needIncome=true;
-                    needProperty=true;
-                    break;
-                case 1:
-                    needConsume=true;
-                    needGoal=false;
-                    needIncome=false;
-                    needProperty=false;
-                    break;
-                case 2:
-                    needConsume=false;
-                    needIncome=true;
-                    needGoal=false;
-                    needProperty=false;
-                    break;
-                case 3:
-                    needConsume=false;
-                    needIncome=false;
-                    needGoal=true;
-                    needProperty=false;
-                    break;
-                case 4:
-                    needConsume=false;
-                    needIncome=false;
-                    needGoal=false;
-                    needProperty=true;
-                    break;
-                    default:
-            }
-        }
-    }
+
 
     private class choiceDay implements View.OnClickListener {
         @Override
@@ -838,4 +863,52 @@ public class SearchMain extends Fragment {
         Date d = new Date(c.getTimeInMillis());
         return d;
     }
+
+    private String showScope()
+    {
+        StringBuilder sb=new StringBuilder();
+
+
+        int searchCount=0;
+        if(needConsume)
+        {
+            sb.append("支出 ");
+            searchCount++;
+        }
+        if(needIncome)
+        {
+            sb.append("收入 ");
+            searchCount++;
+        }
+        if(needGoal)
+        {
+            sb.append("目標 ");
+            searchCount++;
+        }
+        if(needProperty)
+        {
+            sb.append("資產 ");
+            searchCount++;
+        }
+
+        if(searchCount>=4)
+        {
+            sb=new StringBuilder();
+            sb.append("範圍 : 全部");
+        }else{
+            sb.insert(0,"範圍 : ");
+        }
+
+
+        sb.append("\n時間 : ");
+
+        if(needTime)
+        {
+            sb.append(beginD.getText().toString()+"~"+endD.getText().toString());
+        }else {
+            sb.append("全部");
+        }
+        return sb.toString();
+    }
+
 }
