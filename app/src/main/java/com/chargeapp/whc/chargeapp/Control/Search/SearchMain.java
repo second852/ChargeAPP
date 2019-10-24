@@ -99,9 +99,6 @@ public class SearchMain extends Fragment {
     private BootstrapButton searchSetting;
     private CheckBox timeCheck,consumeCheck,incomeCheck,goalCheck,propertyCheck;
     private LinearLayout beginL,endL,showDate;
-    private List<BootstrapText> scopeTest;
-    private String[] searchScopeArray;
-    private String nowScope;
     private boolean needTime,needConsume,needIncome,needGoal,needProperty;
     private View dateView;
     private DatePicker datePicker;
@@ -110,6 +107,7 @@ public class SearchMain extends Fragment {
     private View fabBGLayout;
     private StringBuilder showStringTime=new StringBuilder();
     private String keyNameString;
+    private String searchMainAction;
 
 
 
@@ -130,19 +128,65 @@ public class SearchMain extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.search_main, container, false);
+        searchMainAction=getArguments().getString("searchMainAction");
         AdView adView=view.findViewById(R.id.adView);
-        searchScopeArray=getResources().getStringArray(R.array.searchScope);
-        scopeTest=Common.searchScopeSetBsTest(context,searchScopeArray, FontAwesome.FA_TAG);
-        nowScope=searchScopeArray[0];
-        needTime=false;
-        needConsume=true;
-        needGoal=true;
-        needIncome=true;
-        needProperty=true;
         Common.setAdView(adView,context);
         findViewById();
         setDB();
+
+        if(searchMainAction.equals("new"))
+        {
+            setNew();
+        }else {
+            setOld();
+        }
         return view;
+    }
+
+    private void setOld() {
+        needTime=getArguments().getBoolean("needTime");
+        needConsume=getArguments().getBoolean("needConsume");
+        needIncome=getArguments().getBoolean("needIncome");
+        needProperty=getArguments().getBoolean("needProperty");
+        needGoal=getArguments().getBoolean("needGoal");
+        timeCheck.setChecked(needTime);
+        consumeCheck.setChecked(needConsume);
+        propertyCheck.setChecked(needProperty);
+        goalCheck.setChecked(needIncome);
+        incomeCheck.setChecked(needGoal);
+
+        beginD.setText(getArguments().getString("beginD"));
+        endD.setText(getArguments().getString("endD"));
+        keyName.setText(getArguments().getString("keyName"));
+        p=getArguments().getInt("p");
+        setListView();
+    }
+
+
+    private Bundle getOldBundle()
+    {
+        Bundle bundle=new Bundle();
+        bundle.putSerializable("searchMainAction","old");
+        bundle.putSerializable("needTime",needTime);
+        bundle.putSerializable("needConsume",needConsume);
+        bundle.putSerializable("needIncome",needIncome);
+        bundle.putSerializable("needProperty",needProperty);
+        bundle.putSerializable("needGoal",needGoal);
+        bundle.putSerializable("beginD",beginD.getText().toString().trim());
+        bundle.putSerializable("endD",endD.getText().toString().trim());
+        bundle.putSerializable("keyName",keyNameString);
+        bundle.putSerializable("p",p);
+        return bundle;
+    }
+
+
+    private void setNew() {
+        timeCheck.setChecked(false);
+        consumeCheck.setChecked(true);
+        propertyCheck.setChecked(true);
+        goalCheck.setChecked(true);
+        incomeCheck.setChecked(true);
+        p=0;
     }
 
     private void setDB() {
@@ -220,103 +264,105 @@ public class SearchMain extends Fragment {
                 needProperty=b;
             }
         });
-        consumeCheck.setChecked(true);
-        propertyCheck.setChecked(true);
-        goalCheck.setChecked(true);
-        incomeCheck.setChecked(true);
         message=view.findViewById(R.id.message);
     }
 
+
+    private void setListView()
+    {
+        keyNameString=keyName.getText().toString();
+
+        if(StringUtil.isBlank(keyNameString))
+        {
+            keyName.setError("不能空白!");
+            return;
+        }
+
+        searchObject=new ArrayList<>();
+
+
+        if(needTime)
+        {
+            start=stringToDate(beginD.getText().toString());
+            end=stringToDate(endD.getText().toString());
+        }
+
+        //consume main/second/detail
+        //invoice main/second/detail
+        if(needConsume)
+        {
+            if(needTime)
+            {
+                searchObject.addAll(consumeDB.findByKeyWordAndTime(keyNameString,start.getTime(),end.getTime()));
+                searchObject.addAll(invoiceDB.findBySearchKeyAndTime(keyNameString,start.getTime(),end.getTime()));
+
+            }else {
+                searchObject.addAll(consumeDB.findByKeyWord(keyNameString));
+                searchObject.addAll(invoiceDB.findBySearchKey(keyNameString));
+
+            }
+        }
+
+
+        //bank
+        if(needIncome)
+        {
+            if(needTime)
+            {
+                searchObject.addAll(bankDB.findBySearchKeyAndTime(keyNameString,start.getTime(),end.getTime()));
+            }else {
+                searchObject.addAll(bankDB.findBySearchKey(keyNameString));
+            }
+        }
+
+        //goal
+        if(needGoal)
+        {
+            if(needTime)
+            {
+                searchObject.addAll(goalDB.findSearchKey(keyNameString,start.getTime(),end.getTime()));
+            }else {
+                searchObject.addAll(goalDB.findSearchKey(keyNameString));
+            }
+        }
+
+
+
+        //property   //propertyFromDB
+        if(needProperty)
+        {
+            searchObject.addAll(propertyDB.findBySearchKey(keyNameString));
+            if(needTime)
+            {
+                searchObject.addAll(propertyFromDB.findBySearchKey(keyNameString,start.getTime(),end.getTime()));
+            }else{
+                searchObject.addAll(propertyFromDB.findBySearchKey(keyNameString));
+            }
+        }
+
+
+        if(searchObject.isEmpty())
+        {
+            Common.showToast(context,"查無資料!");
+            message.setVisibility(View.VISIBLE);
+            message.setText("查無資料! ");
+        }else{
+            Common.showToast(context,"搜尋成功!");
+            message.setVisibility(View.GONE);
+        }
+
+
+        listView.setAdapter(new ListAdapter(context,searchObject));
+        listView.setSelection(p);
+        searchSettingShow.setVisibility(View.VISIBLE);
+        searchSettingShow.setText(showScope());
+    }
 
 
     private class showSearch implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            keyNameString=keyName.getText().toString();
-
-            if(StringUtil.isBlank(keyNameString))
-            {
-                keyName.setError("不能空白!");
-                return;
-            }
-
-            searchObject=new ArrayList<>();
-
-
-            if(needTime)
-            {
-                start=stringToDate(beginD.getText().toString());
-                end=stringToDate(endD.getText().toString());
-            }
-
-            //consume main/second/detail
-            //invoice main/second/detail
-            if(needConsume)
-            {
-                if(needTime)
-                {
-                    searchObject.addAll(consumeDB.findByKeyWordAndTime(keyNameString,start.getTime(),end.getTime()));
-                    searchObject.addAll(invoiceDB.findBySearchKeyAndTime(keyNameString,start.getTime(),end.getTime()));
-
-                }else {
-                    searchObject.addAll(consumeDB.findByKeyWord(keyNameString));
-                    searchObject.addAll(invoiceDB.findBySearchKey(keyNameString));
-
-                }
-            }
-
-
-            //bank
-            if(needIncome)
-            {
-                if(needTime)
-                {
-                    searchObject.addAll(bankDB.findBySearchKeyAndTime(keyNameString,start.getTime(),end.getTime()));
-                }else {
-                    searchObject.addAll(bankDB.findBySearchKey(keyNameString));
-                }
-            }
-
-            //goal
-            if(needGoal)
-            {
-                if(needTime)
-                {
-                  searchObject.addAll(goalDB.findSearchKey(keyNameString,start.getTime(),end.getTime()));
-                }else {
-                  searchObject.addAll(goalDB.findSearchKey(keyNameString));
-                }
-            }
-
-
-
-            //property   //propertyFromDB
-            if(needProperty)
-            {
-                searchObject.addAll(propertyDB.findBySearchKey(keyNameString));
-                if(needTime)
-                {
-                    searchObject.addAll(propertyFromDB.findBySearchKey(keyNameString,start.getTime(),end.getTime()));
-                }else{
-                    searchObject.addAll(propertyFromDB.findBySearchKey(keyNameString));
-                }
-            }
-
-
-            if(searchObject.isEmpty())
-            {
-                Common.showToast(context,"查無資料!");
-                message.setVisibility(View.VISIBLE);
-                message.setText("查無資料! ");
-            }else{
-                Common.showToast(context,"搜尋成功!");
-                message.setVisibility(View.GONE);
-            }
-
-
-            listView.setAdapter(new ListAdapter(context,searchObject));
-            searchSettingShow.setVisibility(View.VISIBLE);
-            searchSettingShow.setText(showScope());
+            setListView();
         }
     }
 
@@ -364,7 +410,7 @@ public class SearchMain extends Fragment {
         public View getView(final int position, View itemView, final ViewGroup parent) {
             if (itemView == null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
-                itemView = layoutInflater.inflate(R.layout.select_con_detail_list_item, parent, false);
+                itemView = layoutInflater.inflate(R.layout.search_main_list_item, parent, false);
             }
             TextView title = itemView.findViewById(R.id.listTitle);
             TextView describe = itemView.findViewById(R.id.listDetail);
@@ -381,11 +427,15 @@ public class SearchMain extends Fragment {
             BootstrapButton eleTypeT=itemView.findViewById(R.id.eleTypeT);
 
 
+            BootstrapButton scopeT=itemView.findViewById(R.id.scopeT);
+
+
             final Object o = objects.get(position);
-            StringBuffer sbDecribe = new StringBuffer();
+            StringBuffer sbDescribe = new StringBuffer();
             if (o instanceof InvoiceVO) {
                 final InvoiceVO I = (InvoiceVO) o;
 
+                scopeT.setText("支出");
                 //設定標籤
                 remindL.setVisibility(View.GONE);
                 fixL.setVisibility(View.GONE);
@@ -406,7 +456,7 @@ public class SearchMain extends Fragment {
                 //set detail
                 if (I.getDetail().equals("0")) {
                     update.setText("下載");
-                    sbDecribe.append("無資料，請按下載\n  \n ");
+                    sbDescribe.append("無資料，請按下載\n  \n ");
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -415,6 +465,7 @@ public class SearchMain extends Fragment {
                             if (mNetworkInfo != null) {
                                 p = position;
                                 new GetSQLDate(SearchMain.this, I).execute("reDownload");
+                                progressDialog=new ProgressDialog(context);
                                 progressDialog.setMessage("正在下傳資料,請稍候...");
                                 progressDialog.show();
                             } else {
@@ -440,9 +491,9 @@ public class SearchMain extends Fragment {
                         }
                         if(n!=0)
                         {
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
+                            sbDescribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
                         }else{
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)amout + "X" + 1 + "=" + (int)amout + "元\n");
+                            sbDescribe.append(j.get("description").getAsString() + " : \n" + (int)amout + "X" + 1 + "=" + (int)amout + "元\n");
                         }
                     }
 
@@ -451,9 +502,10 @@ public class SearchMain extends Fragment {
                         public void onClick(View v) {
                             p = position;
                             Fragment fragment = new UpdateInvoice();
-                            Bundle bundle = new Bundle();
+                            Bundle bundle = getOldBundle();
                             bundle.putSerializable("invoiceVO", I);
                             bundle.putSerializable("action", "SelectListModelCom");
+
                             fragment.setArguments(bundle);
                             switchFragment(fragment);
                         }
@@ -461,11 +513,12 @@ public class SearchMain extends Fragment {
                 }
 
                 title.setText(Html.fromHtml(Common.KeyToRed(Common.setSecInvoiceTittle(I),keyNameString)), TextView.BufferType.SPANNABLE);
-                describe.setText(Html.fromHtml(Common.KeyToRed(sbDecribe.toString(),keyNameString)), TextView.BufferType.SPANNABLE);
+                describe.setText(Html.fromHtml(Common.KeyToRed(sbDescribe.toString(),keyNameString)), TextView.BufferType.SPANNABLE);
             } else if (o instanceof ConsumeVO) {
                 update.setText("修改");
                 final ConsumeVO c = (ConsumeVO) o;
 
+                scopeT.setText("支出");
                 //紙本發票種類
                 eleTypeL.setVisibility(View.GONE);
 
@@ -550,7 +603,7 @@ public class SearchMain extends Fragment {
                     public void onClick(View v) {
                         p = position;
                         Fragment fragment = new UpdateSpend();
-                        Bundle bundle = new Bundle();
+                        Bundle bundle = getOldBundle();
                         bundle.putSerializable("consumeVO", c);
                         bundle.putSerializable("action", "SelectListModelCom");
                         bundle.putSerializable("position", position);
@@ -561,8 +614,7 @@ public class SearchMain extends Fragment {
             }else if(o instanceof BankVO)
             {
                 BankVO bankVO= (BankVO) o;
-                //設定 title
-                title.setText(Common.setBankTittlesDay(bankVO));
+                scopeT.setText("收入");
 
                 //設定 describe
                 StringBuffer stringBuffer = new StringBuffer();
@@ -606,7 +658,12 @@ public class SearchMain extends Fragment {
                 {
                     stringBuffer.append("\n");
                 }
-                describe.setText(stringBuffer.toString());
+
+                //設定 title
+                title.setText(Html.fromHtml(Common.KeyToRed(Common.setBankTittlesDay(bankVO),keyNameString)), TextView.BufferType.SPANNABLE);
+                describe.setText(Html.fromHtml(Common.KeyToRed(sbDescribe.toString(),keyNameString)), TextView.BufferType.SPANNABLE);
+
+
 
                 update.setText("修改");
                 update.setOnClickListener(new View.OnClickListener() {
@@ -624,6 +681,7 @@ public class SearchMain extends Fragment {
 
             }else if(o instanceof GoalVO)
             {
+                scopeT.setText("目標");
                 GoalVO goalVO= (GoalVO) o;
                 String timeDec = goalVO.getTimeStatue().trim();
                 int serial = 1 ;
@@ -642,7 +700,9 @@ public class SearchMain extends Fragment {
                     serial++;
                 }
 
-                title.setText(goalVO.getName());
+                title.setText(Html.fromHtml(Common.KeyToRed(goalVO.getName(),keyNameString)), TextView.BufferType.SPANNABLE);
+
+
                 describe.setText(sb.toString());
 
                 boolean updateGoal;
@@ -678,7 +738,7 @@ public class SearchMain extends Fragment {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Bundle bundle = new Bundle();
+                            Bundle bundle =getOldBundle();
                             Fragment fragment = new GoalUpdate();
                             bundle.putSerializable("goalVO", goalVO);
                             bundle.putSerializable("position", position);
@@ -691,6 +751,7 @@ public class SearchMain extends Fragment {
                 }
             }else if(o instanceof PropertyVO)
             {
+                scopeT.setText("資產");
                 PropertyVO propertyVO= (PropertyVO) o;
                 CurrencyVO currencyVO=currencyDB.getOneByType(propertyVO.getCurrency());
                 Double consume=propertyFromDB.totalType(propertyVO.getId(), PropertyType.Negative);
@@ -699,11 +760,20 @@ public class SearchMain extends Fragment {
                 String titleP=propertyVO.getName()+" "+ Common.CurrencyResult(total,currencyVO);
                 String detailE="收入 "+ Common.CurrencyResult(income,currencyVO)+"\n" +
                         "支出 "+ Common.CurrencyResult(consume,currencyVO);
-                title.setText(titleP);
+
+                title.setText(Html.fromHtml(Common.KeyToRed(titleP,keyNameString)), TextView.BufferType.SPANNABLE);
+
                 describe.setText(detailE);
             }else if(o instanceof PropertyFromVO)
             {
+
                 PropertyFromVO propertyFromVO= (PropertyFromVO) o;
+                PropertyVO propertyVO=propertyDB.findById(propertyFromVO.getPropertyId());
+                scopeT.setText("資產來源");
+
+                typeL.setVisibility(View.VISIBLE);
+                typeT.setText(propertyVO.getName());
+
                 fixL.setVisibility(View.GONE);
                 if (!StringUtil.isBlank(propertyFromVO.getFixFromId())) {
                     fixT.setText("自動");
@@ -735,7 +805,11 @@ public class SearchMain extends Fragment {
 
                 titleProperty.append(" "+ Common.getCurrency(propertyFromVO.getSourceCurrency()));
                 titleProperty.append(" "+ Common.doubleRemoveZero(Double.valueOf(propertyFromVO.getSourceMoney())));
-                title.setText(titleProperty.toString());
+
+
+                title.setText(Html.fromHtml(Common.KeyToRed(titleProperty.toString(),keyNameString)), TextView.BufferType.SPANNABLE);
+
+
                 StringBuilder detail=new StringBuilder();
                 detail.append("1. 日期 : "+ Common.sTwo.format(propertyFromVO.getSourceTime())+" \n");
                 detail.append("2. 手續費 : ");
@@ -753,7 +827,11 @@ public class SearchMain extends Fragment {
                         detail.append(" "+propertyFromVO.getFixDateDetail());
                     }
                 }
-                describe.setText(detail.toString());
+
+
+                describe.setText(Html.fromHtml(Common.KeyToRed(detail.toString(),keyNameString)), TextView.BufferType.SPANNABLE);
+
+
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -768,6 +846,7 @@ public class SearchMain extends Fragment {
                                 break;
 
                         }
+                       fragment.setArguments(getOldBundle());
                       switchFragment(fragment);
                     }
                 });

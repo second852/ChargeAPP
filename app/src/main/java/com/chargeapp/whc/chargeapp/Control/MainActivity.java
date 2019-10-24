@@ -153,6 +153,14 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fManager = getSupportFragmentManager();
         FragmentTransaction fTransaction = fManager.beginTransaction();
         for (int i = 0; i < fragments.length; i++) {
+
+            if(fragments[i] instanceof SearchMain)
+            {
+                Bundle bundle=new Bundle();
+                bundle.putSerializable("searchMainAction","new");
+                fragments[i].setArguments(bundle);
+            }
+
             fTransaction.add(R.id.body, fragments[i], fragmentTags[i]);
         }
         fTransaction.commit();
@@ -167,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fManager = getSupportFragmentManager();
         FragmentTransaction fTransaction = fManager.beginTransaction();
         for (int i = 0; i < fragments.length; i++) {
+
             fTransaction.hide(fManager.findFragmentByTag(fragmentTags[i]));
         }
         fTransaction.commit();
@@ -587,6 +596,9 @@ public class MainActivity extends AppCompatActivity {
                                 } else {
 
                                     fragment = new SearchMain();
+                                    Bundle bundle=new Bundle();
+                                    bundle.putSerializable("searchMainAction","new");
+                                    fragment.setArguments(bundle);
                                     switchFragment();
                                 }
                                 Message message=new Message();

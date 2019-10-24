@@ -51,6 +51,7 @@ import com.chargeapp.whc.chargeapp.Control.Property.PropertyConsumeShow;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyMain;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyMoneyList;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyTotal;
+import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetCircle;
@@ -921,6 +922,9 @@ public class Common {
                 break;
             case Common.settingListFixPropertyString:
                 fragment =new SettingListFixProperty();
+                break;
+            case Common.searchMainString:
+                fragment=new SearchMain();
                 break;
         }
         fragment.setArguments(bundle);
