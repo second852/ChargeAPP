@@ -237,6 +237,13 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
         search=view.findViewById(R.id.search);
         listView=view.findViewById(R.id.list);
         searchSettingShow=view.findViewById(R.id.searchSettingShow);
+        searchSettingShow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                settingR.setVisibility(View.VISIBLE);
+                fabBGLayout.setVisibility(View.VISIBLE);
+            }
+        });
         settingR=view.findViewById(R.id.settingR);
         searchSetting=view.findViewById(R.id.searchSetting);
         searchSetting.setOnClickListener(new View.OnClickListener() {
@@ -501,6 +508,12 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                                 ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
                                 String fileType;
 
+
+                                if(fileName ==null)
+                                {
+                                    Common.showToast(context,"資料遺失! 請重新搜尋!");
+                                    return;
+                                }
                                 fileName.append(".xls");
                                 fileType = "File/xls";
                                 outPutExcel(bitmapStream);
@@ -576,6 +589,7 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
         {
             mGoogleApiClient.disconnect();
         }
+        mGoogleApiClient=null;
     }
 
     private class showSearch implements View.OnClickListener {
@@ -626,6 +640,7 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
         }
 
 
+
         switch (item.getItemId())
         {
             case R.id.setting:
@@ -633,6 +648,12 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                 fabBGLayout.setVisibility(View.VISIBLE);
                 break;
             case R.id.excelToGoogle:
+                if(fileName==null||fileName.length()<=0)
+                {
+                    fileName=new StringBuffer();
+                    Common.showToast(context,"資料已遺失! 請重新搜尋!");
+                    return true;
+                }
                 if(searchObject==null||searchObject.isEmpty())
                 {
                     Common.showToast(context,"沒有資料!");
@@ -642,6 +663,12 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                 openCloud();
                 break;
             case R.id.excelToLocal:
+                if(fileName==null||fileName.length()<=0)
+                {
+                    fileName=new StringBuffer();
+                    Common.showToast(context,"資料已遺失! 請重新搜尋!");
+                    return true;
+                }
                 if(searchObject==null||searchObject.isEmpty())
                 {
                     Common.showToast(context,"沒有資料!");
