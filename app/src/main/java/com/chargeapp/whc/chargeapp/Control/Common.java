@@ -135,6 +135,7 @@ public class Common {
     public static SimpleDateFormat sThree = new SimpleDateFormat("yyyy 年 MM 月");
     public static SimpleDateFormat sFour = new SimpleDateFormat("yyyy 年");
     public static SimpleDateFormat sFive = new SimpleDateFormat("yyyyMMdd-HHmm");
+    public static SimpleDateFormat sSix = new SimpleDateFormat("yyyyMMdd");
 
     public static SimpleDateFormat sDay = new SimpleDateFormat("MM/dd");
     public static SimpleDateFormat sHour = new SimpleDateFormat("hh");

@@ -38,6 +38,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixProperty;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
@@ -671,6 +672,9 @@ public class PropertyUpdateMoney extends Fragment {
                     break;
                 case Common.settingListFixPropertyString:
                     fragment=new SettingListFixProperty();
+                    break;
+                case Common.searchMainString:
+                    fragment=new SearchMain();
                     break;
             }
 

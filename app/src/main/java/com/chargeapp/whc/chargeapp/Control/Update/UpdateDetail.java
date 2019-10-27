@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
@@ -133,6 +134,9 @@ public class UpdateDetail extends Fragment {
                     bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
                     bundle.putSerializable("position",getArguments().getSerializable("position"));
                     bundle.putSerializable("key", getArguments().getSerializable("key"));
+                }else if(action.equals(Common.searchMainString))
+                {
+                    bundle.putAll(getArguments());
                 }
                 fragment.setArguments(bundle);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

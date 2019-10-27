@@ -47,7 +47,6 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
-import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelCom;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
@@ -88,12 +87,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -118,7 +118,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private CarrierDB carrierDB;
     private PriceDB priceDB;
     public static int position;
-    private boolean local, consume, income, all, show = true, txt;
+    private boolean local, consume, income, all, show = true, txt,needGoal,needProperty;
     private GoogleApiClient mGoogleApiClient;
     private RelativeLayout progressL;
     private ElePeriodDB elePeriodDB;
@@ -130,6 +130,15 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private StringBuffer sb;
     private boolean firstEnter;
     private String fileName;
+    private List<ConsumeVO> consumeVOList;
+    private List<InvoiceVO> invoiceVOS;
+    private List<BankVO> bankVOS;
+    private List<GoalVO> goalVOS;
+    private List<PropertyVO> propertyVOS;
+    private List<PropertyFromVO> propertyFromVOS;
+    private TextView percent;
+    private int totalDataCount;
+    private  BigDecimal hundred=new BigDecimal(100),c,t;
 
     Handler handler=new Handler(Looper.getMainLooper()){
         @Override
@@ -137,12 +146,14 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             switch (msg.what)
             {
                 case 0:
+                    percent.setText("0%");
                     progressL.setVisibility(View.VISIBLE);
                     break;
                 case 1:
                     progressL.setVisibility(View.GONE);
                     break;
                 case 2:
+                    percent.setText("100%");
                     progressL.setVisibility(View.GONE);
                     Common.showToast(context, "匯出成功，檔名為"+fileName+".txt，路徑為" + "/Download/"+fileName+".txt");
                     break;
@@ -151,8 +162,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     Common.showToast(context,"輸出失敗");
                     break;
                 case 4:
+                    percent.setText("100%");
                     progressL.setVisibility(View.GONE);
                     Common.showToast(context,"匯出成功，檔名為"+fileName+"xls，路徑為" + "/Download/"+fileName+".xls");
+                    break;
+                case 5:
+                    percent.setText(String.valueOf(msg.obj));
                     break;
             }
             super.handleMessage(msg);
@@ -199,6 +214,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         cancelF = view.findViewById(R.id.cancelF);
         choiceT = view.findViewById(R.id.choiceT);
         progressL=view.findViewById(R.id.progressL);
+        percent =view.findViewById(R.id.percent);
 
         excel.setOnClickListener(new excelOnClick());
         txtFile.setOnClickListener(new txtOnClick());
@@ -239,6 +255,8 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         spinnerItem.add("全部");
         spinnerItem.add("支出");
         spinnerItem.add("收入");
+        spinnerItem.add("目標");
+        spinnerItem.add("資產");
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, spinnerItem);
         arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
         choiceT.setAdapter(arrayAdapter);
@@ -405,6 +423,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
 
     private void OutPutTxt(OutputStream outputStream) {
         try {
+            int count=0;
             OutputStreamWriter ow = new OutputStreamWriter(outputStream);
             BufferedWriter bw = new BufferedWriter(ow);
             if (consume) {
@@ -418,13 +437,14 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 bw.append("發票號碼 ");
                 bw.append("細節 ");
                 bw.append("中獎 ");
+                bw.append("是否定期 ");
+                bw.append("定期頻率 ");
                 bw.append("類別 ");
                 bw.newLine();
                 bw.write("\r\n");
-                List<ConsumeVO> consumeVOS = consumeDB.getAll();
-                List<InvoiceVO> invoiceVOS = invoiceDB.getAll();
+
                 List<Object> objects = new ArrayList<>();
-                objects.addAll(consumeVOS);
+                objects.addAll(consumeVOList);
                 objects.addAll(invoiceVOS);
                 //照時間排列
                 Collections.sort(objects, new Comparator<Object>() {
@@ -464,12 +484,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                                 price = j.get("unitPrice").getAsFloat();
                                 if(price==0)
                                 {
-                                    sb.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
+                                    sb.append(j.get("description").getAsString() + " : " + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元 ");
                                 }else{
-                                    sb.append(j.get("description").getAsString() + " : \n" + (int)price + "X" + (int)n + "=" + (int)amout + "元\n");
+                                    sb.append(j.get("description").getAsString() + " : " + (int)price + "X" + (int)n + "=" + (int)amout + "元 ");
                                 }
                             } catch (Exception e) {
-                                sb.append(j.get("description").getAsString() + " : \n" + 0 + "X" + 0 + "=" + 0 + "元\n");
+                                sb.append(j.get("description").getAsString() + " : " + 0 + "X" + 0 + "=" + 0 + "元 ");
                             }
                         }
                         bw.append(sb.toString());
@@ -477,19 +497,22 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         try {
                             if(invoiceVO.getIswin().equals("0"))
                             {
-                                bw.append("尚未對獎");
+                                bw.append("尚未對獎 ");
                             }else if(invoiceVO.getIswin().equals("N")){
-                                bw.append("無中獎");
+                                bw.append("無中獎 ");
                             }else {
                                 bw.append(Common.getPriceName().get(invoiceVO.getIswin()));
                             }
                         }catch (Exception e)
                         {
-                            bw.append("尚未對獎");
+                            bw.append("尚未對獎 ");
                         }
+                        bw.append("否 ");
+                        bw.append(" ");
                         bw.append("雲端發票" + " ");
                         bw.newLine();
                         bw.write("\r\n");
+                        setMessage(count++);
                     } else {
                         ConsumeVO consumeVO = (ConsumeVO) o;
 
@@ -507,6 +530,25 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         bw.append(consumeVO.getNumber() + " ");
                         bw.append((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()) + " ");
                         //中獎訊息
+
+                        boolean fixData=Boolean.valueOf(consumeVO.getFixDate());
+                        boolean auto=Boolean.valueOf(consumeVO.isAuto());
+
+                        if(auto||fixData)
+                        {
+                            bw.append("是 ");
+
+                            JsonObject js = gson.fromJson(consumeVO.getFixDateDetail(), JsonObject.class);
+                            String choicestatue = js.get("choicestatue").getAsString().trim();
+                            String choicedate = js.get("choicedate").getAsString().trim();
+                            String s=choicestatue+" "+choicedate;
+                            bw.append(s);
+                        }else {
+                            bw.append("否 ");
+                            bw.append("  ");
+                        }
+
+
 
                         if(StringUtil.isBlank(consumeVO.getNumber()))
                         {
@@ -541,9 +583,11 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 bw.append("主項目 ");
                 bw.append("幣別" );
                 bw.append("金額 ");
+                bw.append("是否定期 ");
+                bw.append("定期頻率 ");
                 bw.append("細節 ");
                 bw.newLine();
-                List<BankVO> bankVOS = bankDB.getAll();
+
                 for (int i = 0; i < bankVOS.size(); i++) {
                     BankVO bankVO = bankVOS.get(i);
                     bw.append(Common.sTwo.format(new Date(bankVO.getDate().getTime())) + " ");
@@ -557,10 +601,193 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     }
                     bw.append(bankVO.getRealMoney() + " ");
                     bw.append(bankVO.getDetailname() + " ");
+
+                    boolean fixdate=Boolean.valueOf(bankVO.getFixDate());
+                    boolean isAuto=Boolean.valueOf(bankVO.isAuto());
+                    if(fixdate||isAuto)
+                    {
+                        bw.append("是 ");
+                        JsonObject js = gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
+                        String choicestatue= js.get("choicestatue").getAsString().trim();
+                        String choicedate=js.get("choicedate").getAsString().trim();
+                        String s=choicestatue+" "+choicedate;
+                        bw.append(s);
+
+                    }else{
+                        bw.append("否 ");
+                        bw.append(" ");
+                    }
+
+
                     bw.newLine();
                     bw.write("\r\n");
+                    setMessage(count++);
                 }
             }
+
+            if(needGoal)
+            {
+
+                //依種類排序
+                Collections.sort(goalVOS, new Comparator<GoalVO>() {
+                    @Override
+                    public int compare(GoalVO goalVO, GoalVO t1) {
+                        if(goalVO.getType().equals("支出"))
+                        {
+                            return 1;
+                        }else {
+                            return -1;
+                        }
+                    }
+                });
+
+
+                bw.write("\r\n");
+                bw.write("目標資料");
+                bw.write("\r\n");
+
+
+                bw.append("種類 ");
+                bw.append("名稱 ");
+                bw.append("幣別 ");
+                bw.append("金額 ");
+                bw.append("狀態 ");
+                bw.append("目標期限 ");
+                bw.newLine();
+
+                for(int i=0;i<goalVOS.size();i++) {
+
+                    GoalVO goalVO = goalVOS.get(i);
+                    bw.append(goalVO.getType()+" ");
+                    bw.append(goalVO.getName()+" ");
+                    bw.append(Common.getCurrency(goalVO.getCurrency())+" ");
+                    bw.append(goalVO.getRealMoney()+" ");
+                    String status;
+                    switch (goalVO.getStatue()) {
+
+                        case 1:
+                            status = "完成";
+                            break;
+                        case 2:
+                            status = "失敗";
+                            break;
+                        default:
+                            status = "進行中";
+                            break;
+                    }
+                    bw.append(status+" ");
+
+                    switch (goalVO.getTimeStatue()) {
+                        case "每天":
+                        case "每周":
+                        case "每月":
+                        case "每年":
+                            bw.append(goalVO.getTimeStatue()+" ");
+                            break;
+                        default:
+                            bw.append(Common.sTwo.format(goalVO.getStartTime()) + " ~ " + Common.sTwo.format(goalVO.getEndTime())+" ");
+                            break;
+                    }
+                    bw.newLine();
+                    setMessage(count++);
+                }
+            }
+
+
+
+            if(needProperty) {
+
+                bw.write("\r\n");
+                bw.write("資產資料");
+                bw.write("\r\n");
+
+
+                bw.append("名稱 ");
+                bw.append("幣別 ");
+                bw.append("總金額 ");
+                bw.append("總支出 ");
+                bw.append("總收入 ");
+                bw.newLine();
+
+
+                for (int i = 0; i < propertyVOS.size(); i++) {
+                    PropertyVO propertyVO = propertyVOS.get(i);
+                    bw.append(propertyVO.getName()+" ");
+                    bw.append(Common.getCurrency(propertyVO.getCurrency())+" ");
+                    bw.append(propertyVO.getConsumeAll()+" ");
+                    bw.append(propertyVO.getIncomeAll()+" ");
+                    bw.newLine();
+                    setMessage(count++);
+                }
+
+
+
+                Collections.sort(propertyFromVOS, new Comparator<PropertyFromVO>() {
+                    @Override
+                    public int compare(PropertyFromVO propertyFromVO, PropertyFromVO t1) {
+
+                        int answer = propertyFromVO.getPropertyId().compareTo(t1.getPropertyId());
+                        if (answer == 0) {
+                            answer = propertyFromVO.getType().compareTo(propertyFromVO.getType());
+                        }
+                        return answer;
+                    }
+                });
+
+                bw.write("\r\n");
+                bw.write("資產來源");
+                bw.write("\r\n");
+
+
+                bw.append("隸屬資產 ");
+                bw.append("來源時間 ");
+                bw.append("來源類別 ");
+                bw.append("來源幣別 ");
+                bw.append("來源金額 ");
+                bw.append("來源主類別 ");
+                bw.append("來源次類別 ");
+                bw.append("手續費 ");
+                bw.append("是否定期 ");
+                bw.append("定期頻率 ");
+                bw.newLine();
+                for (int i = 0; i < propertyFromVOS.size(); i++) {
+
+                    PropertyFromVO propertyFromVO = propertyFromVOS.get(i);
+                    PropertyVO propertyVO = propertyDB.findById(propertyFromVO.getPropertyId());
+                    bw.append(propertyVO.getName()+" ");
+                    bw.append(Common.sTwo.format(propertyFromVO.getSourceTime())+" ");
+                    bw.append(propertyFromVO.getType().getNarrative()+" ");
+                    bw.append(Common.getCurrency(propertyFromVO.getSourceCurrency())+" ");
+                    bw.append(propertyFromVO.getSourceMoney()+" ");
+                    bw.append(propertyFromVO.getSourceMainType()+" ");
+                    bw.append(propertyFromVO.getSourceSecondType() == null ? " " : propertyFromVO.getSourceSecondType()+" ");
+                    bw.append(propertyFromVO.getImportFee() == null ? "0" : propertyFromVO.getImportFee()+" ");
+
+                    if (propertyFromVO.getFixImport()) {
+                        bw.append("是 ");
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append(propertyFromVO.getFixDateCode().getDetail());
+                        if (!StringUtil.isBlank(propertyFromVO.getFixDateDetail())) {
+                            stringBuilder.append(" " + propertyFromVO.getFixDateDetail());
+                        }
+                        bw.append(stringBuilder.toString()+" ");
+                    } else {
+                        bw.append("否 ");
+                        bw.append("  ");
+                    }
+                    setMessage(count++);
+                }
+            }
+
+
+
+
+
+
+
+
+
+
             bw.close();
             if(local)
             {
@@ -583,7 +810,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     if (!dir.exists()) {
                         dir.mkdirs();
                     }
-                    File file = new File(dir, fileName);
+                    File file = new File(dir, fileName+".xls");
                     OutputStream outputStream = new FileOutputStream(file);
                     outputExcel(outputStream);
                 } catch (Exception e) {
@@ -600,11 +827,14 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private void outputExcel(OutputStream outputStream) {
         try {
             HSSFWorkbook workbook = new HSSFWorkbook();
+            int count=0;
             if (consume) {
                 Sheet sheetCon = workbook.createSheet("消費");
                 sheetCon.setColumnWidth(0, 11 * 256);// 調整欄位寬度
                 sheetCon.setColumnWidth(1, 13 * 256);// 調整欄位寬度
-                sheetCon.setColumnWidth(8, 100 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(8, 12 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(9, 12 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(10, 100 * 256);// 調整欄位寬度
                 Row rowTitle = sheetCon.createRow(0);
                 rowTitle.createCell(0).setCellValue("日期");
                 rowTitle.createCell(1).setCellValue("發票號碼");
@@ -614,11 +844,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 rowTitle.createCell(5).setCellValue("次項目");
                 rowTitle.createCell(6).setCellValue("中獎");
                 rowTitle.createCell(7).setCellValue("類別");
-                rowTitle.createCell(8).setCellValue("細節");
-                List<ConsumeVO> consumeVOS = consumeDB.getAll();
-                List<InvoiceVO> invoiceVOS = invoiceDB.getAll();
+                rowTitle.createCell(8).setCellValue("是否定期");
+                rowTitle.createCell(9).setCellValue("定期頻率");
+                rowTitle.createCell(10).setCellValue("細節");
+
                 List<Object> objects = new ArrayList<>();
-                objects.addAll(consumeVOS);
+                objects.addAll(consumeVOList);
                 objects.addAll(invoiceVOS);
                 //照時間排列
                 Collections.sort(objects, new Comparator<Object>() {
@@ -701,7 +932,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                             }
                         }
 
-                        rowContent.createCell(8).setCellValue(sb.toString());
+
+                        rowContent.createCell(8).setCellValue("否");
+                        rowContent.createCell(9).setCellValue(" ");
+                        rowContent.createCell(10).setCellValue(sb.toString());
+
+                        setMessage(count++);
 
                     } else {
                         ConsumeVO consumeVO = (ConsumeVO) o;
@@ -738,7 +974,27 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                                 rowContent.createCell(6).setCellValue("尚未對獎");
                             }
                         }
-                        rowContent.createCell(8).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
+
+
+                        boolean fixData=Boolean.valueOf(consumeVO.getFixDate());
+                        boolean auto=Boolean.valueOf(consumeVO.isAuto());
+
+                        if(auto||fixData)
+                        {
+                            rowContent.createCell(8).setCellValue("是");
+
+                            JsonObject js = gson.fromJson(consumeVO.getFixDateDetail(), JsonObject.class);
+                            String choicestatue = js.get("choicestatue").getAsString().trim();
+                            String choicedate = js.get("choicedate").getAsString().trim();
+                            String s=choicestatue+" "+choicedate;
+                            rowContent.createCell(9).setCellValue(s);
+                        }else {
+                            rowContent.createCell(8).setCellValue("否");
+                            rowContent.createCell(9).setCellValue(" ");
+                        }
+
+                        rowContent.createCell(10).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
+                        setMessage(count++);
                     }
                 }
             }
@@ -746,14 +1002,18 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 Sheet sheetCon = workbook.createSheet("收入");
                 sheetCon.setColumnWidth(0, 12*256);// 調整欄位寬度
                 sheetCon.setColumnWidth(2, 12*256);// 調整欄位寬度
-                sheetCon.setColumnWidth(4, 100*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(4, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(5, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(6, 100*256);// 調整欄位寬度
                 Row rowTitle = sheetCon.createRow(0);
                 rowTitle.createCell(0).setCellValue("日期");
                 rowTitle.createCell(1).setCellValue("主項目");
                 rowTitle.createCell(2).setCellValue("幣別");
                 rowTitle.createCell(3).setCellValue("金額");
-                rowTitle.createCell(4).setCellValue("細節");
-                List<BankVO> bankVOS = bankDB.getAll();
+                rowTitle.createCell(4).setCellValue("是否定期");
+                rowTitle.createCell(5).setCellValue("定期頻率");
+                rowTitle.createCell(6).setCellValue("細節");
+
                 for (int i = 0; i < bankVOS.size(); i++) {
                     Row rowContent = sheetCon.createRow(i + 1); // 建立儲存格
                     BankVO bankVO = bankVOS.get(i);
@@ -766,13 +1026,207 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         bankDB.update(bankVO);
                     }
                     rowContent.createCell(3).setCellValue(bankVO.getRealMoney());
-                    rowContent.createCell(4).setCellValue(bankVO.getDetailname());
+
+
+                    boolean fixdate=Boolean.valueOf(bankVO.getFixDate());
+                    boolean isAuto=Boolean.valueOf(bankVO.isAuto());
+                    if(fixdate||isAuto)
+                    {
+                        rowContent.createCell(4).setCellValue("是");
+                        JsonObject js = gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
+                        String choicestatue= js.get("choicestatue").getAsString().trim();
+                        String choicedate=js.get("choicedate").getAsString().trim();
+                        String s=choicestatue+" "+choicedate;
+                        rowContent.createCell(5).setCellValue(s);
+
+                    }else{
+                        rowContent.createCell(4).setCellValue("否");
+                        rowContent.createCell(5).setCellValue(" ");
+
+                    }
+                    rowContent.createCell(6).setCellValue(bankVO.getDetailname());
+                    setMessage(count++);
                 }
             }
+
+            if(needGoal)
+            {
+
+                //依種類排序
+                Collections.sort(goalVOS, new Comparator<GoalVO>() {
+                    @Override
+                    public int compare(GoalVO goalVO, GoalVO t1) {
+                        if(goalVO.getType().equals("支出"))
+                        {
+                            return 1;
+                        }else {
+                            return -1;
+                        }
+                    }
+                });
+
+
+                Sheet sheetCon = workbook.createSheet("目標");
+                sheetCon.setColumnWidth(0, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(2, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(4, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(5, 36*256);// 調整欄位寬度
+                Row rowTitle = sheetCon.createRow(0);
+                rowTitle.createCell(0).setCellValue("種類");
+                rowTitle.createCell(1).setCellValue("名稱");
+                rowTitle.createCell(2).setCellValue("幣別");
+                rowTitle.createCell(3).setCellValue("金額");
+                rowTitle.createCell(4).setCellValue("狀態");
+                rowTitle.createCell(5).setCellValue("目標期限");
+                for(int i=0;i<goalVOS.size();i++) {
+                    Row rowContent = sheetCon.createRow(i + 1); // 建立儲存格3
+                    GoalVO goalVO = goalVOS.get(i);
+                    rowContent.createCell(0).setCellValue(goalVO.getType());
+                    rowContent.createCell(1).setCellValue(goalVO.getName());
+                    rowContent.createCell(2).setCellValue(Common.getCurrency(goalVO.getCurrency()));
+                    rowContent.createCell(3).setCellValue(goalVO.getRealMoney());
+                    String status;
+                    switch (goalVO.getStatue()) {
+
+                        case 1:
+                            status = "完成";
+                            break;
+                        case 2:
+                            status = "失敗";
+                            break;
+                        default:
+                            status = "進行中";
+                            break;
+                    }
+                    rowContent.createCell(4).setCellValue(status);
+
+                    switch (goalVO.getTimeStatue()) {
+                        case "每天":
+                        case "每周":
+                        case "每月":
+                        case "每年":
+                            rowContent.createCell(5).setCellValue(goalVO.getTimeStatue());
+                            break;
+                        default:
+                            rowContent.createCell(5).setCellValue(Common.sTwo.format(goalVO.getStartTime()) + " ~ " + Common.sTwo.format(goalVO.getEndTime()));
+                            break;
+                    }
+                    setMessage(count++);
+                }
+            }
+
+
+
+            if(needProperty) {
+                Sheet sheetCon = workbook.createSheet("財產");
+                sheetCon.setColumnWidth(0, 12 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(2, 12 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(3, 12 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(4, 12 * 256);// 調整欄位寬度
+                Row rowTitle = sheetCon.createRow(0);
+                rowTitle.createCell(0).setCellValue("名稱");
+                rowTitle.createCell(1).setCellValue("幣別");
+                rowTitle.createCell(2).setCellValue("總金額");
+                rowTitle.createCell(3).setCellValue("總支出");
+                rowTitle.createCell(4).setCellValue("總收入");
+
+
+                for (int i = 0; i < propertyVOS.size(); i++) {
+                    Row rowContent = sheetCon.createRow(i + 1); // 建立儲存格3
+                    PropertyVO propertyVO = propertyVOS.get(i);
+                    rowContent.createCell(0).setCellValue(propertyVO.getName());
+                    rowContent.createCell(1).setCellValue(Common.getCurrency(propertyVO.getCurrency()));
+                    rowContent.createCell(2).setCellValue(propertyVO.getConsumeAll());
+                    rowContent.createCell(3).setCellValue(propertyVO.getIncomeAll());
+                    setMessage(i);
+                }
+
+                List<PropertyFromVO> propertyFromVOS=propertyFromDB.getAll();
+
+                Collections.sort(propertyFromVOS, new Comparator<PropertyFromVO>() {
+                    @Override
+                    public int compare(PropertyFromVO propertyFromVO, PropertyFromVO t1) {
+
+                        int answer = propertyFromVO.getPropertyId().compareTo(t1.getPropertyId());
+                        if (answer == 0) {
+                            answer = propertyFromVO.getType().compareTo(propertyFromVO.getType());
+                        }
+                        return answer;
+                    }
+                });
+                sheetCon = workbook.createSheet("財產來源");
+                sheetCon.setColumnWidth(0, 12 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(1, 12 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(5, 12 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(6, 12 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(8, 12 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(9, 12 * 256);// 調整欄位寬度
+                rowTitle = sheetCon.createRow(0);
+                rowTitle.createCell(0).setCellValue("隸屬資產");
+                rowTitle.createCell(1).setCellValue("來源時間");
+                rowTitle.createCell(2).setCellValue("來源類別");
+                rowTitle.createCell(3).setCellValue("來源幣別");
+                rowTitle.createCell(4).setCellValue("來源金額");
+                rowTitle.createCell(5).setCellValue("來源主類別");
+                rowTitle.createCell(6).setCellValue("來源次類別");
+                rowTitle.createCell(7).setCellValue("手續費");
+                rowTitle.createCell(8).setCellValue("是否定期");
+                rowTitle.createCell(9).setCellValue("定期頻率");
+                for (int i = 0; i < propertyFromVOS.size(); i++) {
+                    Row rowContent = sheetCon.createRow(i + 1); // 建立儲存格3
+                    PropertyFromVO propertyFromVO = propertyFromVOS.get(i);
+                    PropertyVO propertyVO = propertyDB.findById(propertyFromVO.getPropertyId());
+                    rowContent.createCell(0).setCellValue(propertyVO.getName());
+                    rowContent.createCell(1).setCellValue(Common.sTwo.format(propertyFromVO.getSourceTime()));
+                    rowContent.createCell(2).setCellValue(propertyFromVO.getType().getNarrative());
+                    rowContent.createCell(3).setCellValue(Common.getCurrency(propertyFromVO.getSourceCurrency()));
+                    rowContent.createCell(4).setCellValue(propertyFromVO.getSourceMoney());
+                    rowContent.createCell(5).setCellValue(propertyFromVO.getSourceMainType());
+                    rowContent.createCell(6).setCellValue(propertyFromVO.getSourceSecondType() == null ? " " : propertyFromVO.getSourceSecondType());
+                    rowContent.createCell(7).setCellValue(propertyFromVO.getImportFee() == null ? "0" : propertyFromVO.getImportFee());
+
+                    if (propertyFromVO.getFixImport()) {
+                        rowContent.createCell(8).setCellValue("是");
+                        StringBuilder stringBuilder = new StringBuilder();
+                        stringBuilder.append(propertyFromVO.getFixDateCode().getDetail());
+                        if (!StringUtil.isBlank(propertyFromVO.getFixDateDetail())) {
+                            stringBuilder.append(" " + propertyFromVO.getFixDateDetail());
+                        }
+                        rowContent.createCell(9).setCellValue(stringBuilder.toString());
+                    } else {
+                        rowContent.createCell(8).setCellValue("否");
+                        rowContent.createCell(9).setCellValue(" ");
+                    }
+                    setMessage(count++);
+                }
+            }
+
+
+
+
+
+
             if (all) {
                 //Type
                 Sheet sheetCon = workbook.createSheet("Type");
                 List<TypeVO> typeVOS = typeDB.getExport();
+                List<BankTypeVO> bankTypeVOS = bankTypeDB.getExport();
+                List<GoalVO> goalVOS = goalDB.getAll();
+                List<BankVO> bankVOS = bankDB.getAll();
+                List<ConsumeVO> consumeVOS = consumeDB.getAll();
+                List<InvoiceVO> invoiceVOS = invoiceDB.getAll();
+                List<CarrierVO> carrierVOS = carrierDB.getAll();
+                List<PriceVO> priceVOS =priceDB.getAll();
+                List<ElePeriod> elePeriods = elePeriodDB.getAll();
+                List<PropertyVO> propertyVOS=propertyDB.getAll();
+                List<PropertyFromVO> propertyFromVOS=propertyFromDB.getAll();
+
+                totalDataCount=typeVOS.size()+bankTypeVOS.size()+goalVOS.size()+
+                        consumeVOS.size()+invoiceVOS.size()+carrierVOS.size()+
+                        priceVOS.size()+elePeriods.size()+priceVOS.size()+propertyFromVOS.size();
+
+
+
                 for (int i = 0; i < typeVOS.size(); i++) {
                     Row rowContent = sheetCon.createRow(i); // 建立儲存格
                     TypeVO typeVO = typeVOS.get(i);
@@ -780,6 +1234,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(1).setCellValue(typeVO.getGroupNumber());
                     rowContent.createCell(2).setCellValue(typeVO.getName());
                     rowContent.createCell(3).setCellValue(typeVO.getImage());
+                    setMessage(count++);
                 }
                 //TypeDetail
                 Sheet sheetCon1 = workbook.createSheet("TypeDetail");
@@ -792,11 +1247,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(2).setCellValue(typeDetailVO.getName());
                     rowContent.createCell(3).setCellValue(typeDetailVO.getImage());
                     rowContent.createCell(4).setCellValue(typeDetailVO.getKeyword());
+                    setMessage(count++);
                 }
 
                 //BankDetail
                 Sheet sheetCon2 = workbook.createSheet("BankType");
-                List<BankTypeVO> bankTypeVOS = bankTypeDB.getExport();
+
                 for (int i = 0; i < bankTypeVOS.size(); i++) {
                     Row rowContent = sheetCon2.createRow(i);
                     BankTypeVO bankTypeVO = bankTypeVOS.get(i);
@@ -804,10 +1260,11 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(1).setCellValue(bankTypeVO.getGroupNumber());
                     rowContent.createCell(2).setCellValue(bankTypeVO.getName());
                     rowContent.createCell(3).setCellValue(bankTypeVO.getImage());
+                    setMessage(count++);
                 }
                 //goal
                 Sheet sheetCon3 = workbook.createSheet("Goal");
-                List<GoalVO> goalVOS = goalDB.getAll();
+
                 for (int i = 0; i < goalVOS.size(); i++) {
                     Row rowContent = sheetCon3.createRow(i);
                     GoalVO goalVO = goalVOS.get(i);
@@ -824,11 +1281,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(10).setCellValue(goalVO.isNoWeekend());
                     rowContent.createCell(11).setCellValue(goalVO.getStatue());
                     rowContent.createCell(12).setCellValue(goalVO.getCurrency());
+                    setMessage(count++);
                 }
 
                 //bank
                 Sheet sheetCon4 = workbook.createSheet("Bank");
-                List<BankVO> bankVOS = bankDB.getAll();
+
                 for (int i = 0; i < bankVOS.size(); i++) {
                     Row rowContent = sheetCon4.createRow(i);
                     BankVO bankVO = bankVOS.get(i);
@@ -848,11 +1306,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(8).setCellValue(bankVO.getAutoId());
                     rowContent.createCell(9).setCellValue(bankVO.getCurrency());
                     rowContent.createCell(10).setCellValue(bankVO.getFkKey());
+                    setMessage(count++);
                 }
 
                 //Consume
                 Sheet sheetCon5 = workbook.createSheet("Consume");
-                List<ConsumeVO> consumeVOS = consumeDB.getAll();
+
                 for (int i = 0; i < consumeVOS.size(); i++) {
                     Row rowContent = sheetCon5.createRow(i);
                     ConsumeVO consumeVO = consumeVOS.get(i);
@@ -880,11 +1339,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(14).setCellValue(consumeVO.getRdNumber());
                     rowContent.createCell(15).setCellValue(consumeVO.getCurrency());
                     rowContent.createCell(16).setCellValue(consumeVO.getFkKey());
+                    setMessage(count++);
                 }
 
                 //Invoice
                 Sheet sheetCon6 = workbook.createSheet("Invoice");
-                List<InvoiceVO> invoiceVOS = invoiceDB.getAll();
+
                 for (int i = 0; i < invoiceVOS.size(); i++) {
                     Row rowContent = sheetCon6.createRow(i);
                     InvoiceVO invoiceVO = invoiceVOS.get(i);
@@ -909,20 +1369,22 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(18).setCellValue(invoiceVO.getIswin());
                     rowContent.createCell(19).setCellValue(invoiceVO.getIsWinNul());
                     rowContent.createCell(20).setCellValue(invoiceVO.getCurrency());
+                    setMessage(count++);
                 }
                 //Carrier
                 Sheet sheetCon7 = workbook.createSheet("Carrier");
-                List<CarrierVO> carrierVOS = carrierDB.getAll();
+
                 for (int i = 0; i < carrierVOS.size(); i++) {
                     Row rowContent = sheetCon7.createRow(i);
                     CarrierVO carrierVO = carrierVOS.get(i);
                     rowContent.createCell(0).setCellValue(carrierVO.getId());
                     rowContent.createCell(1).setCellValue(carrierVO.getCarNul());
                     rowContent.createCell(2).setCellValue(carrierVO.getPassword());
+                    setMessage(count++);
                 }
                 //Price
                 Sheet sheetCon8 = workbook.createSheet("Price");
-                List<PriceVO> priceVOS =priceDB.getAll();
+
                 for (int i = 0; i < priceVOS.size(); i++) {
                     Row rowContent = sheetCon8.createRow(i);
                     PriceVO priceVO=priceVOS.get(i);
@@ -946,11 +1408,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(17).setCellValue( priceVO.getSixthPrizeNo4());
                     rowContent.createCell(18).setCellValue( priceVO.getSixthPrizeNo5());
                     rowContent.createCell(19).setCellValue( priceVO.getSixthPrizeNo6());
+                    setMessage(count++);
                 }
 
                 //ElePeriod
                 Sheet sheetCon9 = workbook.createSheet("ElePeriod");
-                List<ElePeriod> elePeriods = elePeriodDB.getAll();
+
                 for (int i = 0; i < elePeriods.size(); i++) {
                     Row rowContent = sheetCon9.createRow(i);
                     ElePeriod elePeriod = elePeriods.get(i);
@@ -959,11 +1422,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(2).setCellValue(elePeriod.getYear());
                     rowContent.createCell(3).setCellValue(elePeriod.getMonth());
                     rowContent.createCell(4).setCellValue(elePeriod.isDownload());
+                    setMessage(count++);
                 }
 
                 //Property
                 Sheet sheetCon10 = workbook.createSheet("Property");
-                List<PropertyVO> propertyVOS=propertyDB.getAll();
+
                 for(int i=0;i<propertyVOS.size();i++)
                 {
                     Row rowContent=sheetCon10.createRow(i);
@@ -971,12 +1435,13 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(0).setCellValue(propertyVO.getId());
                     rowContent.createCell(1).setCellValue(propertyVO.getCurrency());
                     rowContent.createCell(2).setCellValue(propertyVO.getName());
+                    setMessage(count++);
                 }
 
 
                 //PropertyFromVo
                 Sheet sheetCon11 = workbook.createSheet("PropertyFrom");
-                List<PropertyFromVO> propertyFromVOS=propertyFromDB.getAll();
+
                 for(int i=0;i<propertyFromVOS.size();i++)
                 {
                     Row rowContent=sheetCon11.createRow(i);
@@ -995,6 +1460,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     rowContent.createCell(11).setCellValue(propertyFromVO.getFixDateDetail());
                     rowContent.createCell(12).setCellValue(propertyFromVO.getPropertyId());
                     rowContent.createCell(13).setCellValue(propertyFromVO.getFixFromId());
+                    setMessage(count++);
                 }
 
             }
@@ -1059,22 +1525,76 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 all = true;
                 income = false;
                 consume = false;
+                needGoal=false;
+                needProperty=false;
                 fileName="記帳小助手(備份資料)"+Common.sFive.format(new Date());
             } else if (position == 1) {
                 all = false;
                 income = true;
                 consume = true;
-                fileName="記帳小助手(支出+收入)"+Common.sFive.format(new Date());
+                needGoal=true;
+                needProperty=true;
+                fileName="記帳小助手(全部)"+Common.sFive.format(new Date());
+                consumeVOList=consumeDB.getAll();
+                invoiceVOS=invoiceDB.getAll();
+                bankVOS=bankDB.getAll();
+                goalVOS=goalDB.getAll();
+                propertyVOS=propertyDB.getAll();
+                propertyFromVOS=propertyFromDB.getAll();
+
+                totalDataCount=consumeVOList.size()+invoiceVOS.size()+bankVOS.size()+goalVOS.size()+propertyVOS.size()+propertyFromVOS.size();
+
+
             } else if (position == 2) {
                 all = false;
                 income = false;
                 consume = true;
+                needGoal=false;
+                needProperty=false;
                 fileName="記帳小助手(支出)"+Common.sFive.format(new Date());
-            } else {
+
+
+                consumeVOList=consumeDB.getAll();
+                invoiceVOS=invoiceDB.getAll();
+                totalDataCount=consumeVOList.size()+invoiceVOS.size();
+
+
+            } else if(position==3){
                 all = false;
                 income = true;
                 consume = false;
+                needGoal=false;
+                needProperty=false;
                 fileName="記帳小助手(收入)"+Common.sFive.format(new Date());
+
+
+
+                bankVOS=bankDB.getAll();
+                totalDataCount=bankVOS.size();
+
+
+            }else if(position==4){
+                all = false;
+                income = false;
+                consume = false;
+                needGoal=true;
+                needProperty=false;
+                fileName="記帳小助手(目標)"+Common.sFive.format(new Date());
+                goalVOS=goalDB.getAll();
+                totalDataCount=goalVOS.size();
+
+            }else if(position==5){
+                all = false;
+                income = false;
+                consume = false;
+                needGoal=false;
+                needProperty=true;
+                fileName="記帳小助手(資產)"+Common.sFive.format(new Date());
+
+                propertyVOS=propertyDB.getAll();
+                propertyFromVOS=propertyFromDB.getAll();
+
+                totalDataCount=propertyVOS.size()+propertyFromVOS.size();
             }
         }
 
@@ -1185,7 +1705,19 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 });
     }
 
-
+    private void setMessage(int count)
+    {
+        if(count>=totalDataCount)
+        {
+            count=totalDataCount;
+        }
+        Message message=new Message();
+        message.what=5;
+        c=new BigDecimal(count);
+        t=new BigDecimal(totalDataCount);
+        message.obj= c.divide(t,4, RoundingMode.HALF_UP).multiply(hundred).setScale(1,BigDecimal.ROUND_HALF_UP)+"%";
+        handler.sendMessage(message);
+    }
 
 
 }

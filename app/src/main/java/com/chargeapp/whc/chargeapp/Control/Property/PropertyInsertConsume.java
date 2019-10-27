@@ -44,6 +44,8 @@ import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 
+import org.jsoup.internal.StringUtil;
+
 import java.sql.Date;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -625,7 +627,13 @@ public class PropertyInsertConsume extends Fragment {
             importCurrency.setText(cResult);
             feeCurrency.setText(cResult);
 
-            Double nowTotal=(total/Double.valueOf(currencyVO.getMoney()))-Double.valueOf(importMoney.getText().toString());
+            String nowMoney=importMoney.getText().toString();
+            if(StringUtil.isBlank(nowMoney))
+            {
+                nowMoney="0";
+            }
+
+            Double nowTotal=(total/Double.valueOf(currencyVO.getMoney()))-Double.valueOf(nowMoney);
             money.setText(Common.doubleRemoveZero(nowTotal));
             Double d=total/Double.valueOf(currencyVO.getMoney());
             StringBuilder stringBuilder=new StringBuilder();

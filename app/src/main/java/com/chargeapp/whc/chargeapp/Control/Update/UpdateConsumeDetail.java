@@ -18,8 +18,11 @@ import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertActivity;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertSpend;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.R;
+
+import static com.chargeapp.whc.chargeapp.Control.Common.searchMainString;
 
 /**
  * Created by 1709008NB01 on 2018/1/29.
@@ -157,6 +160,9 @@ public class UpdateConsumeDetail extends Fragment {
             bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
             bundle.putSerializable("position",0);
             bundle.putSerializable("key", getArguments().getSerializable("key"));
+        }else if(action.equals(searchMainString))
+        {
+            bundle.putAll(getArguments());
         }
         fragment.setArguments(bundle);
         switchFragment(fragment);

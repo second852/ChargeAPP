@@ -61,8 +61,8 @@ public class GoalDB {
 
 
     public List<GoalVO> findSearchKey(String searchKey) {
-        String sql = "SELECT * FROM goal where type = ? or name like ? order by id desc;";
-        String[] args = {searchKey,"%"+searchKey+"%"};
+        String sql = "SELECT * FROM goal where type like ? or name like ? order by id desc;";
+        String[] args = {"%"+searchKey+"%","%"+searchKey+"%"};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<GoalVO> goalVOS = new ArrayList<>();
         GoalVO goalVO;
@@ -76,8 +76,8 @@ public class GoalDB {
 
 
     public List<GoalVO> findSearchKey(String searchKey,Long start,Long end) {
-        String sql = "SELECT * FROM goal where type = ? or name like ? and startTime between ? and ? order by id desc;";
-        String[] args = {searchKey,"%"+searchKey+"%",start.toString(),end.toString()};
+        String sql = "SELECT * FROM goal where type like ? or name like ? and startTime between ? and ? order by id desc;";
+        String[] args = {"%"+searchKey+"%","%"+searchKey+"%",start.toString(),end.toString()};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<GoalVO> goalVOS = new ArrayList<>();
         GoalVO goalVO;

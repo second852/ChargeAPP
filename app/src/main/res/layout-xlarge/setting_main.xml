@@ -47,7 +47,7 @@
             android:layout_centerHorizontal="true"
             android:textColor="#000000"
             android:text="0%"
-            android:textSize="45dp" />
+            android:textSize="45sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -56,7 +56,7 @@
             android:layout_centerHorizontal="true"
             android:text="匯入資料中…"
             android:textColor="#000000"
-            android:textSize="45dp" />
+            android:textSize="45sp" />
     </RelativeLayout>
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"

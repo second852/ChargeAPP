@@ -36,6 +36,7 @@ import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePagetList;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertConsumeType;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelCom;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetList;
@@ -453,6 +454,9 @@ public class UpdateInvoice extends Fragment {
             bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
             bundle.putSerializable("position",getArguments().getSerializable("position"));
             bundle.putSerializable("key", getArguments().getSerializable("key"));
+        }else if(action.equals(Common.searchMainString))
+        {
+            bundle.putAll(getArguments());
         }
         fragment.setArguments(bundle);
         MainActivity.bundles.add(bundle);
@@ -525,6 +529,10 @@ public class UpdateInvoice extends Fragment {
             bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
             bundle.putSerializable("position",getArguments().getSerializable("position"));
             bundle.putSerializable("key", getArguments().getSerializable("key"));
+        }else if(action.equals(Common.searchMainString))
+        {
+            fragment=new SearchMain();
+            bundle.putAll(getArguments());
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);

@@ -140,8 +140,8 @@ public class BankDB {
 
 
     public List<BankVO> findBySearchKey(String searchKey) {
-        String sql = "SELECT * FROM BANK where  maintype = ? or detailname like ? order by date desc;";
-        String[] args = {searchKey,"%"+searchKey+"%"};
+        String sql = "SELECT * FROM BANK where  maintype like ? or detailname like ? order by date desc;";
+        String[] args = {"%"+searchKey+"%","%"+searchKey+"%"};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();
         BankVO bankVO;
@@ -154,8 +154,8 @@ public class BankDB {
     }
 
     public List<BankVO> findBySearchKeyAndTime(String searchKey,Long start,Long end) {
-        String sql = "SELECT * FROM BANK where  maintype = ? or detailname like ? and date between ? and ? order by date desc;";
-        String[] args = {searchKey,"%"+searchKey+"%",start.toString(),end.toString()};
+        String sql = "SELECT * FROM BANK where  maintype like ? or detailname like ? and date between ? and ? order by date desc;";
+        String[] args = {"%"+searchKey+"%","%"+searchKey+"%",start.toString(),end.toString()};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();
         BankVO bankVO;

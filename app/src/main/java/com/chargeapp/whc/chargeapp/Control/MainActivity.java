@@ -771,7 +771,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 3:
                     for (int i = fragments.size() - 1; i >= 0; i--) {
-                        if (fragments.get(i) instanceof SettingUploadFile) {
+                        if (fragments.get(i) instanceof SettingUploadFile || fragments.get(i) instanceof SearchMain) {
                             fragments.get(i).onActivityResult(requestCode, resultCode, data);
                             break;
                         }
@@ -1199,7 +1199,18 @@ public class MainActivity extends AppCompatActivity {
         Log.d("MainActivity", String.valueOf(oldFramgent.size()) + ":" + String.valueOf(bundles.size()));
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
+
+
             //close KeyBoard
+
+            View v = MainActivity.this.getCurrentFocus();
+
+            //------關閉內建keyboard-----//
+            if (v != null) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+            }
+            //------關閉自製keyboard-----//
             View numberKeyBoard;
             List<Fragment> fragments=getSupportFragmentManager().getFragments();
             for(Fragment fragment:fragments)
@@ -1225,15 +1236,7 @@ public class MainActivity extends AppCompatActivity {
                 OutDialogFragment out = new OutDialogFragment();
                 out.show(this.getSupportFragmentManager(), "show");
             } else {
-                View v = MainActivity.this.getCurrentFocus();
                 fragment=Common.returnFragment(v);
-
-                //------關閉keyboard-----//
-
-                if (v != null) {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
                 //------- 切換-----------//
                 switchFragment();
                 MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size() - 1);

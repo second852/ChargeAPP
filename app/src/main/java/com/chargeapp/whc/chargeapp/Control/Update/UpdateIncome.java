@@ -39,6 +39,7 @@ import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertIncomeType;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectListBarIncome;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectListPieIncome;
@@ -274,6 +275,11 @@ public class UpdateIncome extends Fragment {
                     switchFragment(fragment);
                 }else if(action.equals("SelectListBarIncome"))
                 {
+                    gotoFramgent(fragment, bundle);
+                }else if(action.equals(Common.searchMainString))
+                {
+                    bundle=getArguments();
+                    bundle.putSerializable("bankVO", bankVO);
                     gotoFramgent(fragment, bundle);
                 }
                 MainActivity.oldFramgent.add("UpdateIncome");
@@ -713,6 +719,11 @@ public class UpdateIncome extends Fragment {
             }else if(action.equals("SelectListModelIM"))
             {
                 fragment=new SelectListModelActivity();
+                switchFragment(fragment);
+            }else if(action.equals(Common.searchMainString))
+            {
+                fragment=new SearchMain();
+                fragment.setArguments(getArguments());
                 switchFragment(fragment);
             }
             Common.showToast(context, "修改成功");

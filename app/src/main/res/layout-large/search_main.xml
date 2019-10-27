@@ -28,7 +28,7 @@
             android:singleLine="true"
             android:textColor="#000000"
             android:textColorHint="#AAAAAA"
-            android:textSize="25sp"
+            android:textSize="30sp"
             app:bootstrapBrand="primary"
             app:bootstrapSize="lg"
             app:roundedCorners="true" />
@@ -83,7 +83,7 @@
         android:layout_centerVertical="true"
         android:gravity="center"
         android:textColor="#FF7744"
-        android:textSize="26sp"
+        android:textSize="35sp"
         android:visibility="gone" />
     <View
         android:id="@+id/fabBGLayout"
@@ -115,12 +115,12 @@
                android:buttonTint="#00BBFF"
                android:visibility="visible"
                android:textColor="#000000"
-               android:textSize="20sp" />
+               android:textSize="30sp" />
            <TextView
                android:id="@+id/fixDateT"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:textSize="20sp"
+               android:textSize="30sp"
                android:text="時間"
                android:textColor="#000000"
                android:gravity="center"
@@ -145,7 +145,7 @@
                android:gravity="center_vertical"
                android:text="起日"
                android:textColor="#000000"
-               android:textSize="20sp" />
+               android:textSize="30sp" />
 
            <com.beardedhen.androidbootstrap.BootstrapEditText
                android:id="@+id/beginD"
@@ -181,7 +181,7 @@
                android:gravity="center_vertical"
                android:text="迄日"
                android:textColor="#000000"
-               android:textSize="20sp" />
+               android:textSize="30sp" />
 
            <com.beardedhen.androidbootstrap.BootstrapEditText
                android:id="@+id/endD"
@@ -337,7 +337,7 @@
             android:padding="5dp"
             android:text="確認"
             android:textColor="#000000"
-            android:textSize="20sp" />
+            android:textSize="30sp" />
     </LinearLayout>
 
     <RelativeLayout
@@ -350,8 +350,8 @@
         <ProgressBar
             android:id="@+id/progress"
             style="?android:attr/progressBarStyleLarge"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
             android:indeterminateBehavior="repeat"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
@@ -366,7 +366,7 @@
             android:layout_centerHorizontal="true"
             android:textColor="#000000"
             android:text="0%"
-            android:textSize="25sp" />
+            android:textSize="35sp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -374,7 +374,7 @@
             android:layout_centerHorizontal="true"
             android:text="執行中…"
             android:textColor="#000000"
-            android:textSize="25sp" />
+            android:textSize="35sp" />
     </RelativeLayout>
 
     <com.google.android.gms.ads.AdView

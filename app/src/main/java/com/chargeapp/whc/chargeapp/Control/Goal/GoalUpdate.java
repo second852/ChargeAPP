@@ -33,6 +33,7 @@ import com.chargeapp.whc.chargeapp.Adapter.KeyBoardInputNumberOnItemClickListene
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
 import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.R;
 
@@ -482,8 +483,20 @@ public class GoalUpdate extends Fragment {
                 goalVO.setTimeStatue(choiceStatue.getSelectedItem().toString().trim());
             }
             goalDB.update(goalVO);
-            Fragment fragment = new GoalListAll();
-            Bundle bundle = new Bundle();
+
+
+
+            String action=getArguments().getString("action");
+            Fragment fragment;
+            Bundle bundle =new Bundle();
+            bundle.putAll(getArguments());
+            if(Common.searchMainString.equals(action))
+            {
+                fragment = new SearchMain();
+            }else{
+                fragment = new GoalListAll();
+            }
+
             bundle.putSerializable("position", getArguments().getSerializable("position"));
             fragment.setArguments(bundle);
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

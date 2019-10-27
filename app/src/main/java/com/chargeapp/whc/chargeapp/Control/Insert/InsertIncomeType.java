@@ -215,6 +215,10 @@ public class InsertIncomeType extends Fragment {
         {
             fragment=new InsertActivity();
             bundle=MainActivity.bundles.getLast();
+        }else if(action.equals(Common.searchMainString))
+        {
+            fragment = new UpdateIncome();
+            bundle.putAll(getArguments());
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);

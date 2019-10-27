@@ -3,10 +3,16 @@ package com.chargeapp.whc.chargeapp.Control.Search;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -32,11 +39,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
-import com.beardedhen.androidbootstrap.BootstrapDropDown;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
-import com.beardedhen.androidbootstrap.BootstrapText;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
-import com.beardedhen.androidbootstrap.font.FontAwesome;
 import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
@@ -49,6 +53,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.Goal.GoalUpdate;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdate;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateConsume;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateMoney;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateIncome;
@@ -64,19 +69,39 @@ import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.jsoup.internal.StringUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class SearchMain extends Fragment {
+public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener{
 
     private Activity context;
     private View view;
@@ -102,12 +127,17 @@ public class SearchMain extends Fragment {
     private boolean needTime,needConsume,needIncome,needGoal,needProperty;
     private View dateView;
     private DatePicker datePicker;
-    private TextView dateSave,message;
+    private TextView dateSave,message, percent;
     private Date start,end;
     private View fabBGLayout;
     private StringBuilder showStringTime=new StringBuilder();
     private String keyNameString;
     private String searchMainAction;
+    private boolean firstEnter;
+    private RelativeLayout progressL;
+    private GoogleApiClient mGoogleApiClient;
+    private StringBuffer fileName;
+    private BigDecimal c,t,hundred=new BigDecimal(100);
 
 
 
@@ -166,6 +196,7 @@ public class SearchMain extends Fragment {
     private Bundle getOldBundle()
     {
         Bundle bundle=new Bundle();
+        bundle.putSerializable("action",Common.searchMainString);
         bundle.putSerializable("searchMainAction","old");
         bundle.putSerializable("needTime",needTime);
         bundle.putSerializable("needConsume",needConsume);
@@ -236,6 +267,15 @@ public class SearchMain extends Fragment {
         dateSave=view.findViewById(R.id.dateSave);
         dateSave.setOnClickListener(new choiceDate());
         fabBGLayout=view.findViewById(R.id.fabBGLayout);
+        fabBGLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                settingR.setVisibility(View.GONE);
+                fabBGLayout.setVisibility(View.GONE);
+                searchSettingShow.setVisibility(View.VISIBLE);
+                searchSettingShow.setText(showScope());
+            }
+        });
         consumeCheck=view.findViewById(R.id.consumeCheck);
         consumeCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -265,6 +305,8 @@ public class SearchMain extends Fragment {
             }
         });
         message=view.findViewById(R.id.message);
+        progressL=view.findViewById(R.id.progressL);
+        percent =view.findViewById(R.id.percent);
     }
 
 
@@ -347,6 +389,7 @@ public class SearchMain extends Fragment {
             message.setVisibility(View.VISIBLE);
             message.setText("查無資料! ");
         }else{
+
             Common.showToast(context,"搜尋成功!");
             message.setVisibility(View.GONE);
         }
@@ -358,11 +401,212 @@ public class SearchMain extends Fragment {
         searchSettingShow.setText(showScope());
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+         saveFileToDrive();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
+        if (!result.hasResolution()) {
+            // show the localized error dialog.
+            GoogleApiAvailability.getInstance().getErrorDialog(context, result.getErrorCode(), 0).show();
+            return;
+        }
+        // Called typically when the app is not yet authorized, and authorization dialog is displayed to the user.
+        if(!firstEnter)
+        {
+            Common.showToast(context, "登入失敗");
+            progressL.setVisibility(View.GONE);
+            return;
+        }
+        firstEnter=false;
+        try {
+            result.startResolutionForResult(context, 0);
+        } catch (IntentSender.SendIntentException e) {
+
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode==0)
+        {
+            openCloud();
+        } else{
+            progressL.setVisibility(View.GONE);
+            if (resultCode == -1) {
+                Common.showToast(context, "上傳成功");
+            } else {
+                Common.showToast(context, "上傳失敗");
+            }
+        }
+    }
+
+    public void openCloud() {
+        ConnectivityManager mConnectivityManager = (ConnectivityManager) SearchMain.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+        if(mNetworkInfo==null)
+        {
+            Common.showToast(SearchMain.this.context,"網路沒有開啟，無法下載!");
+            return;
+        }
+        Message message=handler.obtainMessage();
+        message.what=0;
+        message.sendToTarget();
+        if (mGoogleApiClient == null) {
+            // Create the API client and bind it to an instance variable.
+            // We use this instance as the callback for connection and connection
+            // failures.
+            // Since no account name is passed, the user is prompted to choose.
+            mGoogleApiClient = new GoogleApiClient.Builder(context)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+        // Connect the client. Once connected, the camera is launched.
+        mGoogleApiClient.connect();
+    }
+
+
+    private void saveFileToDrive() {
+        // Start by creating a new contents, and setting a callback.
+
+        Drive.DriveApi.newDriveContents(mGoogleApiClient)
+                .setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
+
+                    @Override
+                    public void onResult(final DriveApi.DriveContentsResult result) {
+                        // If the operation was not successful, we cannot do anything
+                        // and must
+                        // fail.
+                        if (!result.getStatus().isSuccess()) {
+                            Common.showToast(context,"連線失敗!");
+                            return;
+                        }
+                        Runnable runnable=new Runnable() {
+                            @Override
+                            public void run() {
+                                // Otherwise, we can write our data to the new contents.
+                                // Get an output stream for the contents.
+                                OutputStream outputStream = result.getDriveContents().getOutputStream();
+                                // Write the bitmap data from it.
+                                ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
+                                String fileType;
+
+                                fileName.append(".xls");
+                                fileType = "File/xls";
+                                outPutExcel(bitmapStream);
+
+
+
+                                try {
+                                    outputStream.write(bitmapStream.toByteArray());
+                                } catch (IOException e1) {
+
+                                }
+                                // Create the initial metadata - MIME type and title.
+                                // Note that the user will be able to change the title later.
+                                MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                                        .setMimeType(fileType).setTitle(fileName.toString()).build();
+                                // Create an intent for the file chooser, and start it.
+                                IntentSender intentSender = Drive.DriveApi
+                                        .newCreateFileActivityBuilder()
+                                        .setInitialMetadata(metadataChangeSet)
+                                        .setInitialDriveContents(result.getDriveContents())
+                                        .build(mGoogleApiClient);
+                                try {
+                                    context.startIntentSenderForResult(
+                                            intentSender, 3, null, 0, 0, 0);
+                                } catch (IntentSender.SendIntentException e) {
+
+                                }
+                            }
+                        };
+                        new Thread(runnable).start();
+                    }
+                });
+    }
+
+
+    Handler handler=new Handler(Looper.getMainLooper()){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what)
+            {
+                case 0:
+                    percent.setText("0%");
+                    progressL.setVisibility(View.VISIBLE);
+                    break;
+                case 1:
+                    progressL.setVisibility(View.GONE);
+                    break;
+                case 2:
+                    percent.setText("100%");
+                    progressL.setVisibility(View.GONE);
+                    Common.showToast(context, "匯出成功，檔名為"+fileName.toString()+".xls，路徑為" + "/Download/"+fileName.toString()+".txt");
+                    break;
+                case 3:
+                    progressL.setVisibility(View.GONE);
+                    Common.showToast(context,"輸出失敗");
+                    break;
+                case 4:
+                    percent.setText("100%");
+                    progressL.setVisibility(View.GONE);
+                    Common.showToast(context,"匯出成功，檔名為"+fileName.toString()+".xls，路徑為" + "/Download/"+fileName.toString()+".xls");
+                    break;
+                case 5:
+                    percent.setText(String.valueOf(msg.obj));
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mGoogleApiClient!=null)
+        {
+            mGoogleApiClient.disconnect();
+        }
+    }
 
     private class showSearch implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             setListView();
+            fileName=new StringBuffer();
+            if(needTime)
+            {
+                fileName.append(Common.sSix.format(start)+"-"+Common.sSix.format(end));
+            }else{
+                fileName.append(Common.sFive.format(new Date(System.currentTimeMillis())));
+            }
+            fileName.append(" "+keyNameString);
+            if(needConsume&&needProperty&&needGoal&&needProperty)
+            {
+                fileName.append(" 全部");
+            }else if(needConsume){
+
+                fileName.append(" 支出");
+            }else if(needIncome){
+
+                fileName.append(" 收入");
+            }else if(needGoal){
+
+                fileName.append(" 目標");
+            }else if(needProperty){
+                fileName.append("資產的資料");
+            }
+
+
         }
     }
 
@@ -375,18 +619,523 @@ public class SearchMain extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        View v = context.getCurrentFocus();
+        if (v != null) {
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+
+
         switch (item.getItemId())
         {
             case R.id.setting:
                 settingR.setVisibility(View.VISIBLE);
                 fabBGLayout.setVisibility(View.VISIBLE);
                 break;
-            case R.id.excel:
+            case R.id.excelToGoogle:
+                if(searchObject==null||searchObject.isEmpty())
+                {
+                    Common.showToast(context,"沒有資料!");
+                    break;
+                }
+                firstEnter=true;
+                openCloud();
+                break;
+            case R.id.excelToLocal:
+                if(searchObject==null||searchObject.isEmpty())
+                {
+                    Common.showToast(context,"沒有資料!");
+                    break;
+                }
+                TxtToLocal();
                 break;
             default:
         }
         return true;
     }
+
+
+
+    private void outPutExcel(OutputStream outputStream) {
+
+        int count=0;
+        t=new BigDecimal(searchObject.size());
+        HSSFWorkbook workbook=null;
+
+        try {
+
+            //分類搜尋
+
+            List<Object> consumeList=new ArrayList<>();
+            List<BankVO> incomeList=new ArrayList<>();
+            List<GoalVO> goalList=new ArrayList<>();
+            List<PropertyVO> propertyVOS=new ArrayList<>();
+            List<PropertyFromVO> propertyFromVOS=new ArrayList<>();
+
+            for(Object object:searchObject)
+            {
+                if(object instanceof ConsumeVO || object instanceof InvoiceVO)
+                {
+                    consumeList.add(object);
+                } else if(object instanceof BankVO)
+                {
+                    incomeList.add((BankVO) object);
+                }else if(object instanceof GoalVO)
+                {
+                    goalList.add((GoalVO) object);
+                }else if(object instanceof PropertyVO)
+                {
+                    propertyVOS.add((PropertyVO) object);
+                }else if(object instanceof PropertyFromVO)
+                {
+                    propertyFromVOS.add((PropertyFromVO) object);
+                }
+            }
+
+
+
+            workbook = new HSSFWorkbook();
+
+            if (!consumeList.isEmpty()) {
+
+                Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
+                Sheet sheetCon = workbook.createSheet("消費");
+                sheetCon.setColumnWidth(0, 11 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(1, 13 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(8, 12 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(9, 12 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(10, 100 * 256);// 調整欄位寬度
+                Row rowTitle = sheetCon.createRow(0);
+                rowTitle.createCell(0).setCellValue("日期");
+                rowTitle.createCell(1).setCellValue("發票號碼");
+                rowTitle.createCell(2).setCellValue("幣別");
+                rowTitle.createCell(3).setCellValue("金額");
+                rowTitle.createCell(4).setCellValue("主項目");
+                rowTitle.createCell(5).setCellValue("次項目");
+                rowTitle.createCell(6).setCellValue("中獎");
+                rowTitle.createCell(7).setCellValue("類別");
+                rowTitle.createCell(8).setCellValue("是否定期");
+                rowTitle.createCell(9).setCellValue("定期頻率");
+                rowTitle.createCell(10).setCellValue("細節");
+
+                //照時間排列
+                Collections.sort(consumeList, new Comparator<Object>() {
+                    @Override
+                    public int compare(Object o1, Object o2) {
+                        long t1 = (o1 instanceof InvoiceVO) ? ((InvoiceVO) o1).getTime().getTime() : ((ConsumeVO) o1).getDate().getTime();
+                        long t2 = (o2 instanceof InvoiceVO) ? ((InvoiceVO) o2).getTime().getTime() : ((ConsumeVO) o2).getDate().getTime();
+                        if (t1 > t2) {
+                            return -1;
+                        } else if (t1 == t2) {
+                            return 0;
+                        } else {
+                            return 1;
+                        }
+                    }
+                });
+
+
+                //塞資料
+                for (int i = 0; i < consumeList.size(); i++) {
+                    Row rowContent = sheetCon.createRow(i + 1); // 建立儲存格
+                    Object o = consumeList.get(i);
+                    if (o instanceof InvoiceVO) {
+                        InvoiceVO invoiceVO = (InvoiceVO) o;
+                        rowContent.createCell(0).setCellValue(Common.sTwo.format(new java.util.Date(invoiceVO.getTime().getTime())));
+                        rowContent.createCell(1).setCellValue(invoiceVO.getInvNum());
+                        rowContent.createCell(2).setCellValue(Common.getCurrency(invoiceVO.getCurrency()));
+                        rowContent.createCell(3).setCellValue(invoiceVO.getRealAmount());
+                        rowContent.createCell(4).setCellValue(Common.getType(invoiceVO.getMaintype()));
+                        rowContent.createCell(5).setCellValue(Common.getType(invoiceVO.getSecondtype()));
+                        //中獎訊息
+                        try {
+                            if(invoiceVO.getIswin().equals("0"))
+                            {
+                                rowContent.createCell(6).setCellValue("尚未對獎");
+                            }else if(invoiceVO.getIswin().equals("N")){
+                                rowContent.createCell(6).setCellValue("無中獎");
+                            }else {
+                                rowContent.createCell(6).setCellValue(Common.getPriceName().get(invoiceVO.getIswin()));
+                            }
+                        }catch (Exception e)
+                        {
+                            rowContent.createCell(6).setCellValue("尚未對獎");
+                        }
+                        rowContent.createCell(7).setCellValue("雲端發票");
+
+                        rowContent.createCell(8).setCellValue("否");
+                        rowContent.createCell(9).setCellValue(" ");
+                        //電子發票細節
+                        List<JsonObject> js=new ArrayList<>();
+                        if(invoiceVO.getDetail().equals("0"))
+                        {
+                            ConnectivityManager mConnectivityManager = (ConnectivityManager) SearchMain.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                            NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+                            if (mNetworkInfo != null) {
+                                try {
+                                    new GetSQLDate(SearchMain.this, invoiceVO).execute("reDownload").get();
+                                    js = gson.fromJson(invoiceVO.getDetail(), cdType);
+                                } catch (Exception e) {
+                                    js = new ArrayList<>();
+                                }
+                            }
+                        }else{
+                            js = gson.fromJson(invoiceVO.getDetail(), cdType);
+                        }
+
+
+                        StringBuilder sb=new StringBuilder();
+                        float price,amout,n;
+                        for (JsonObject j : js) {
+                            try {
+                                amout=j.get("amount").getAsFloat();
+                                n = j.get("quantity").getAsFloat();
+                                price = j.get("unitPrice").getAsFloat();
+                                if(price==0)
+                                {
+                                    sb.append(j.get("description").getAsString() + " : " + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元  ");
+                                }else{
+                                    sb.append(j.get("description").getAsString() + " : " + (int)price + "X" + (int)n + "=" + (int)amout + "元  ");
+                                }
+                            } catch (Exception e) {
+                                sb.append(j.get("description").getAsString() + " : " + 0 + "X" + 0 + "=" + 0 + "元 ");
+                            }
+                        }
+
+                        rowContent.createCell(10).setCellValue(sb.toString());
+                         setMessage(count++);
+                    } else {
+                        ConsumeVO consumeVO = (ConsumeVO) o;
+                        if(StringUtil.isBlank(consumeVO.getRealMoney()))
+                        {
+                            consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
+                            consumeDB.update(consumeVO);
+                        }
+                        rowContent.createCell(0).setCellValue(Common.sTwo.format(new java.util.Date(consumeVO.getDate().getTime())));
+                        rowContent.createCell(1).setCellValue(consumeVO.getNumber());
+                        rowContent.createCell(2).setCellValue(Common.getCurrency(consumeVO.getCurrency()));
+                        rowContent.createCell(3).setCellValue(consumeVO.getRealMoney());
+                        rowContent.createCell(4).setCellValue(consumeVO.getMaintype());
+                        rowContent.createCell(5).setCellValue(consumeVO.getSecondType());
+
+                        if(StringUtil.isBlank(consumeVO.getNumber()))
+                        {
+                            rowContent.createCell(7).setCellValue("無發票");
+                            rowContent.createCell(6).setCellValue(" ");
+                        }else{
+                            rowContent.createCell(7).setCellValue("紙本發票");
+                            //中獎訊息
+                            try {
+                                if(consumeVO.getIsWin().equals("0"))
+                                {
+                                    rowContent.createCell(6).setCellValue("尚未對獎");
+                                }else if(consumeVO.getIsWin().equals("N")){
+                                    rowContent.createCell(6).setCellValue("無中獎");
+                                }else {
+                                    rowContent.createCell(6).setCellValue(Common.getPriceName().get(consumeVO.getIsWin()));
+                                }
+                            }catch (Exception e)
+                            {
+                                rowContent.createCell(6).setCellValue("尚未對獎");
+                            }
+                        }
+                        boolean fixData=Boolean.valueOf(consumeVO.getFixDate());
+                        boolean auto=Boolean.valueOf(consumeVO.isAuto());
+
+                        if(auto||fixData)
+                        {
+                            rowContent.createCell(8).setCellValue("是");
+
+                            JsonObject js = gson.fromJson(consumeVO.getFixDateDetail(), JsonObject.class);
+                            String choicestatue = js.get("choicestatue").getAsString().trim();
+                            String choicedate = js.get("choicedate").getAsString().trim();
+                            String s=choicestatue+" "+choicedate;
+                            rowContent.createCell(9).setCellValue(s);
+                        }else {
+                            rowContent.createCell(8).setCellValue("否");
+                            rowContent.createCell(9).setCellValue(" ");
+                        }
+
+
+                        rowContent.createCell(10).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
+                        setMessage(count++);
+                    }
+                }
+            }
+            if (!incomeList.isEmpty()) {
+                Sheet sheetCon = workbook.createSheet("收入");
+                sheetCon.setColumnWidth(0, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(2, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(4, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(5, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(6, 100*256);// 調整欄位寬度
+                Row rowTitle = sheetCon.createRow(0);
+                rowTitle.createCell(0).setCellValue("日期");
+                rowTitle.createCell(1).setCellValue("主項目");
+                rowTitle.createCell(2).setCellValue("幣別");
+                rowTitle.createCell(3).setCellValue("金額");
+                rowTitle.createCell(4).setCellValue("是否定期");
+                rowTitle.createCell(5).setCellValue("定期頻率");
+                rowTitle.createCell(6).setCellValue("細節");
+                for (int i = 0; i < incomeList.size(); i++) {
+                    Row rowContent = sheetCon.createRow(i + 1); // 建立儲存格
+                    BankVO bankVO = incomeList.get(i);
+                    rowContent.createCell(0).setCellValue(Common.sTwo.format(new java.util.Date(bankVO.getDate().getTime())));
+                    rowContent.createCell(1).setCellValue(bankVO.getMaintype());
+                    rowContent.createCell(2).setCellValue(Common.getCurrency(bankVO.getCurrency()));
+                    if(StringUtil.isBlank(bankVO.getRealMoney()))
+                    {
+                        bankVO.setRealMoney(String.valueOf(bankVO.getMoney()));
+                        bankDB.update(bankVO);
+                    }
+                    rowContent.createCell(3).setCellValue(bankVO.getRealMoney());
+
+                    boolean fixdate=Boolean.valueOf(bankVO.getFixDate());
+                    boolean isAuto=Boolean.valueOf(bankVO.isAuto());
+                    if(fixdate||isAuto)
+                    {
+                        rowContent.createCell(4).setCellValue("是");
+                        JsonObject js = gson.fromJson(bankVO.getFixDateDetail(),JsonObject.class);
+                        String choicestatue= js.get("choicestatue").getAsString().trim();
+                        String choicedate=js.get("choicedate").getAsString().trim();
+                        String s=choicestatue+" "+choicedate;
+                        rowContent.createCell(5).setCellValue(s);
+
+                    }else{
+                        rowContent.createCell(4).setCellValue("否");
+                        rowContent.createCell(5).setCellValue(" ");
+
+                    }
+                    rowContent.createCell(6).setCellValue(bankVO.getDetailname());
+                    setMessage(count++);
+                }
+            }
+
+            if(!goalList.isEmpty())
+            {
+                //依種類排序
+                Collections.sort(goalList, new Comparator<GoalVO>() {
+                    @Override
+                    public int compare(GoalVO goalVO, GoalVO t1) {
+                        if(goalVO.getType().equals("支出"))
+                        {
+                            return 1;
+                        }else {
+                            return -1;
+                        }
+                    }
+                });
+
+
+                Sheet sheetCon = workbook.createSheet("目標");
+                sheetCon.setColumnWidth(0, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(2, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(4, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(5, 36*256);// 調整欄位寬度
+                Row rowTitle = sheetCon.createRow(0);
+                rowTitle.createCell(0).setCellValue("種類");
+                rowTitle.createCell(1).setCellValue("名稱");
+                rowTitle.createCell(2).setCellValue("幣別");
+                rowTitle.createCell(3).setCellValue("金額");
+                rowTitle.createCell(4).setCellValue("狀態");
+                rowTitle.createCell(5).setCellValue("目標期限");
+                for(int i=0;i<goalList.size();i++) {
+                    Row rowContent = sheetCon.createRow(i + 1); // 建立儲存格3
+                    GoalVO goalVO = goalList.get(i);
+                    rowContent.createCell(0).setCellValue(goalVO.getType());
+                    rowContent.createCell(1).setCellValue(goalVO.getName());
+                    rowContent.createCell(2).setCellValue(Common.getCurrency(goalVO.getCurrency()));
+                    rowContent.createCell(3).setCellValue(goalVO.getRealMoney());
+                    String status;
+                    switch (goalVO.getStatue()) {
+
+                        case 1:
+                            status = "完成";
+                            break;
+                        case 2:
+                            status = "失敗";
+                            break;
+                        default:
+                            status = "進行中";
+                            break;
+                    }
+                    rowContent.createCell(4).setCellValue(status);
+
+                    switch (goalVO.getTimeStatue()) {
+                        case "每天":
+                        case "每周":
+                        case "每月":
+                        case "每年":
+                            rowContent.createCell(5).setCellValue(goalVO.getTimeStatue());
+                            break;
+                        default:
+                            rowContent.createCell(5).setCellValue(Common.sTwo.format(goalVO.getStartTime()) + " ~ " + Common.sTwo.format(goalVO.getEndTime()));
+                            break;
+                    }
+                    setMessage(count++);
+                }
+            }
+
+            if(!propertyVOS.isEmpty())
+            {
+                Sheet sheetCon = workbook.createSheet("財產");
+                sheetCon.setColumnWidth(0, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(2, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(3, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(4, 12*256);// 調整欄位寬度
+                Row rowTitle = sheetCon.createRow(0);
+                rowTitle.createCell(0).setCellValue("名稱");
+                rowTitle.createCell(1).setCellValue("幣別");
+                rowTitle.createCell(2).setCellValue("總金額");
+                rowTitle.createCell(3).setCellValue("總支出");
+                rowTitle.createCell(4).setCellValue("總收入");
+                for(int i=0;i<propertyVOS.size();i++)
+                {
+                    Row rowContent = sheetCon.createRow(i + 1); // 建立儲存格3
+                    PropertyVO propertyVO=propertyVOS.get(i);
+                    rowContent.createCell(0).setCellValue(propertyVO.getName());
+                    rowContent.createCell(1).setCellValue(Common.getCurrency(propertyVO.getCurrency()));
+                    rowContent.createCell(2).setCellValue(propertyVO.getConsumeAll());
+                    rowContent.createCell(3).setCellValue(propertyVO.getIncomeAll());
+                    setMessage(count++);
+                }
+
+            }
+
+
+            if(!propertyFromVOS.isEmpty())
+            {
+                Collections.sort(propertyFromVOS, new Comparator<PropertyFromVO>() {
+                    @Override
+                    public int compare(PropertyFromVO propertyFromVO, PropertyFromVO t1) {
+
+                        int answer=propertyFromVO.getPropertyId().compareTo(t1.getPropertyId());
+                        if(answer==0)
+                        {
+                            answer=propertyFromVO.getType().compareTo(propertyFromVO.getType());
+                        }
+                        return answer;
+                    }
+                });
+                Sheet sheetCon = workbook.createSheet("財產來源");
+                sheetCon.setColumnWidth(0, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(1, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(5, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(6, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(8, 12*256);// 調整欄位寬度
+                sheetCon.setColumnWidth(9, 12*256);// 調整欄位寬度
+                Row rowTitle = sheetCon.createRow(0);
+                rowTitle.createCell(0).setCellValue("隸屬資產");
+                rowTitle.createCell(1).setCellValue("來源時間");
+                rowTitle.createCell(2).setCellValue("來源類別");
+                rowTitle.createCell(3).setCellValue("來源幣別");
+                rowTitle.createCell(4).setCellValue("來源金額");
+                rowTitle.createCell(5).setCellValue("來源主類別");
+                rowTitle.createCell(6).setCellValue("來源次類別");
+                rowTitle.createCell(7).setCellValue("手續費");
+                rowTitle.createCell(8).setCellValue("是否定期");
+                rowTitle.createCell(9).setCellValue("定期頻率");
+                for (int i=0;i<propertyFromVOS.size();i++)
+                {
+                    Row rowContent = sheetCon.createRow(i + 1); // 建立儲存格3
+                    PropertyFromVO propertyFromVO=propertyFromVOS.get(i);
+                    PropertyVO propertyVO=propertyDB.findById(propertyFromVO.getPropertyId());
+                    rowContent.createCell(0).setCellValue(propertyVO.getName());
+                    rowContent.createCell(1).setCellValue(Common.sTwo.format(propertyFromVO.getSourceTime()));
+                    rowContent.createCell(2).setCellValue(propertyFromVO.getType().getNarrative());
+                    rowContent.createCell(3).setCellValue(Common.getCurrency(propertyFromVO.getSourceCurrency()));
+                    rowContent.createCell(4).setCellValue(propertyFromVO.getSourceMoney());
+                    rowContent.createCell(5).setCellValue(propertyFromVO.getSourceMainType());
+                    rowContent.createCell(6).setCellValue(propertyFromVO.getSourceSecondType()==null?" ":propertyFromVO.getSourceSecondType());
+                    rowContent.createCell(7).setCellValue(propertyFromVO.getImportFee()==null?"0":propertyFromVO.getImportFee());
+
+                    if(propertyFromVO.getFixImport())
+                    {
+                        rowContent.createCell(8).setCellValue("是");
+                        StringBuilder stringBuilder=new StringBuilder();
+                        stringBuilder.append(propertyFromVO.getFixDateCode().getDetail());
+                        if(!StringUtil.isBlank(propertyFromVO.getFixDateDetail()))
+                        {
+                            stringBuilder.append(" "+propertyFromVO.getFixDateDetail());
+                        }
+                        rowContent.createCell(9).setCellValue(stringBuilder.toString());
+                    }else {
+                        rowContent.createCell(8).setCellValue("否");
+                        rowContent.createCell(9).setCellValue(" ");
+                    }
+                    setMessage(count++);
+                }
+
+
+            }
+            workbook.write(outputStream);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if(workbook!=null)
+            {
+                try {
+                    workbook.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(outputStream!=null)
+            {
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+
+    private void TxtToLocal() {
+        progressL.setVisibility(View.VISIBLE);
+        Runnable runnable=new Runnable() {
+            @Override
+            public void run() {
+                FileOutputStream fs=null;
+                File file=null;
+                try {
+                    File dir = Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_DOWNLOADS);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+                    file = new File(dir, fileName.toString()+".xls");
+                    fs = new FileOutputStream(file);
+                    outPutExcel(fs);
+                    Message message=handler.obtainMessage();
+                    message.what=4;
+                    message.sendToTarget();
+
+                } catch (Exception e) {
+                    Message message=handler.obtainMessage();
+                    message.what=3;
+                    message.sendToTarget();
+                }finally {
+                    if(fs!=null)
+                    {
+                        try {
+                            fs.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        };
+        new Thread(runnable).start();
+    }
+
+
+
+
 
     private class ListAdapter extends BaseAdapter {
         private Context context;
@@ -431,10 +1180,10 @@ public class SearchMain extends Fragment {
 
 
             final Object o = objects.get(position);
-            StringBuffer sbDescribe = new StringBuffer();
+
             if (o instanceof InvoiceVO) {
                 final InvoiceVO I = (InvoiceVO) o;
-
+                StringBuffer sbDescribe = new StringBuffer();
                 scopeT.setText("支出");
                 //設定標籤
                 remindL.setVisibility(View.GONE);
@@ -504,7 +1253,6 @@ public class SearchMain extends Fragment {
                             Fragment fragment = new UpdateInvoice();
                             Bundle bundle = getOldBundle();
                             bundle.putSerializable("invoiceVO", I);
-                            bundle.putSerializable("action", "SelectListModelCom");
 
                             fragment.setArguments(bundle);
                             switchFragment(fragment);
@@ -605,7 +1353,6 @@ public class SearchMain extends Fragment {
                         Fragment fragment = new UpdateSpend();
                         Bundle bundle = getOldBundle();
                         bundle.putSerializable("consumeVO", c);
-                        bundle.putSerializable("action", "SelectListModelCom");
                         bundle.putSerializable("position", position);
                         fragment.setArguments(bundle);
                         switchFragment(fragment);
@@ -661,7 +1408,7 @@ public class SearchMain extends Fragment {
 
                 //設定 title
                 title.setText(Html.fromHtml(Common.KeyToRed(Common.setBankTittlesDay(bankVO),keyNameString)), TextView.BufferType.SPANNABLE);
-                describe.setText(Html.fromHtml(Common.KeyToRed(sbDescribe.toString(),keyNameString)), TextView.BufferType.SPANNABLE);
+                describe.setText(Html.fromHtml(Common.KeyToRed(stringBuffer.toString(),keyNameString)), TextView.BufferType.SPANNABLE);
 
 
 
@@ -670,9 +1417,8 @@ public class SearchMain extends Fragment {
                     @Override
                     public void onClick(View v) {
                         p = position;
-                        Bundle bundle = new Bundle();
+                        Bundle bundle =getOldBundle();
                         bundle.putSerializable("bankVO", bankVO);
-                        bundle.putSerializable("action", "SelectListModelIM");
                         Fragment fragment = new UpdateIncome();
                         fragment.setArguments(bundle);
                         switchFragment(fragment);
@@ -702,7 +1448,7 @@ public class SearchMain extends Fragment {
 
                 title.setText(Html.fromHtml(Common.KeyToRed(goalVO.getName(),keyNameString)), TextView.BufferType.SPANNABLE);
 
-
+                sb.append("\n");
                 describe.setText(sb.toString());
 
                 boolean updateGoal;
@@ -738,6 +1484,7 @@ public class SearchMain extends Fragment {
                     update.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            p=position;
                             Bundle bundle =getOldBundle();
                             Fragment fragment = new GoalUpdate();
                             bundle.putSerializable("goalVO", goalVO);
@@ -761,9 +1508,23 @@ public class SearchMain extends Fragment {
                 String detailE="收入 "+ Common.CurrencyResult(income,currencyVO)+"\n" +
                         "支出 "+ Common.CurrencyResult(consume,currencyVO);
 
+                propertyVO.setConsumeAll(Common.CurrencyResult(consume,currencyVO));
+                propertyVO.setIncomeAll(Common.CurrencyResult(income,currencyVO));
                 title.setText(Html.fromHtml(Common.KeyToRed(titleP,keyNameString)), TextView.BufferType.SPANNABLE);
-
                 describe.setText(detailE);
+                update.setText("修改");
+                update.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        p=position;
+                        Bundle bundle =getOldBundle();
+                        Fragment fragment = new PropertyUpdate();
+                        bundle.putSerializable(Common.propertyID, propertyVO.getId());
+                        bundle.putSerializable("position", position);
+                        fragment.setArguments(bundle);
+                        switchFragment(fragment);
+                    }
+                });
             }else if(o instanceof PropertyFromVO)
             {
 
@@ -831,7 +1592,7 @@ public class SearchMain extends Fragment {
 
                 describe.setText(Html.fromHtml(Common.KeyToRed(detail.toString(),keyNameString)), TextView.BufferType.SPANNABLE);
 
-
+                update.setText("修改");
                 update.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -846,8 +1607,13 @@ public class SearchMain extends Fragment {
                                 break;
 
                         }
-                       fragment.setArguments(getOldBundle());
-                      switchFragment(fragment);
+                        p=position;
+                        Bundle bundle=getOldBundle();
+                        bundle.putSerializable(Common.propertyFromVoId,propertyFromVO.getId());
+                        bundle.putSerializable(Common.fragment,Common.searchMainString);
+
+                        fragment.setArguments(bundle);
+                        switchFragment(fragment);
                     }
                 });
             }
@@ -988,6 +1754,21 @@ public class SearchMain extends Fragment {
             sb.append("全部");
         }
         return sb.toString();
+    }
+
+
+    private void setMessage(int count)
+    {
+
+        Message message=new Message();
+        message.what=5;
+        c=new BigDecimal(count);
+        if(c.compareTo(t)>=1)
+        {
+            c=t;
+        }
+        message.obj= c.divide(t,4, RoundingMode.HALF_UP).multiply(hundred).setScale(1,BigDecimal.ROUND_HALF_UP)+"%";
+        handler.sendMessage(message);
     }
 
 }

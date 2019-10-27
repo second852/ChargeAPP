@@ -722,6 +722,10 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
 
     private void setMessage(int count,int total)
     {
+        if(count>=total)
+        {
+            count=total;
+        }
         Message message=new Message();
         message.what=4;
         c=new BigDecimal(count);

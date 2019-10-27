@@ -29,6 +29,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateInvoice;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateSpend;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
@@ -42,6 +43,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.chargeapp.whc.chargeapp.Control.Common.searchMainString;
 
 /**
  * Created by 1709008NB01 on 2018/2/22.
@@ -388,6 +391,9 @@ public class InsertConsumeType extends Fragment {
             bundle.putStringArrayList("OKey", getArguments().getStringArrayList("OKey"));
             bundle.putSerializable("position", 0);
             bundle.putSerializable("key", getArguments().getSerializable("key"));
+        }else if(action.equals(searchMainString))
+        {
+            bundle.putAll(getArguments());
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);

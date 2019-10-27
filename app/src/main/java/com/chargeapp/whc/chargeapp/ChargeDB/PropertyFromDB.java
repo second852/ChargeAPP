@@ -185,8 +185,8 @@ public class PropertyFromDB {
 
 
     public List<PropertyFromVO> findBySearchKey(String searchKey) {
-        String sql = "SELECT * FROM PropertyFrom where type = ? or sourceMainType = ? or sourceSecondType = ? order by sourceDate desc;";
-        String[] args = {searchKey,searchKey,searchKey};
+        String sql = "SELECT * FROM PropertyFrom where type like ? or sourceMainType like ? or sourceSecondType like ? order by sourceDate desc;";
+        String[] args = {"%"+searchKey+"%","%"+searchKey+"%","%"+searchKey+"%"};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOS = new ArrayList<>();
         PropertyFromVO propertyFromVO;
@@ -199,8 +199,8 @@ public class PropertyFromDB {
     }
 
     public List<PropertyFromVO> findBySearchKey(String searchKey,Long start,Long end) {
-        String sql = "SELECT * FROM PropertyFrom where type = ? or sourceMainType = ? or sourceSecondType = ? and sourceDate between ? and ? order by sourceDate desc;";
-        String[] args = {searchKey,searchKey,searchKey,start.toString(),end.toString()};
+        String sql = "SELECT * FROM PropertyFrom where type like ? or sourceMainType like ? or sourceSecondType like ? and sourceDate between ? and ? order by sourceDate desc;";
+        String[] args = {"%"+searchKey+"%","%"+searchKey+"%","%"+searchKey+"%",start.toString(),end.toString()};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PropertyFromVO> propertyFromVOS = new ArrayList<>();
         PropertyFromVO propertyFromVO;

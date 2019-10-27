@@ -45,6 +45,7 @@ import com.chargeapp.whc.chargeapp.Control.HomePage.HomePagetList;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertConsumeType;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Insert.SearchByQrCode;
+import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetList;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDe;
@@ -435,6 +436,10 @@ public class UpdateSpend extends Fragment {
             bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
             bundle.putSerializable("position",0);
             bundle.putSerializable("key", getArguments().getSerializable("key"));
+        }else if(action.equals(searchMainString))
+        {
+            fragment=new SearchMain();
+            bundle.putAll(getArguments());
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);
@@ -496,6 +501,9 @@ public class UpdateSpend extends Fragment {
             bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
             bundle.putSerializable("position",0);
             bundle.putSerializable("key", getArguments().getSerializable("key"));
+        }else if(action.equals(searchMainString))
+        {
+            bundle.putAll(getArguments());
         }
         fragment.setArguments(bundle);
         MainActivity.bundles.add(bundle);

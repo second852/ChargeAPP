@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
@@ -291,6 +292,27 @@ public class PropertyConsumeShow extends Fragment {
                 closeFABMenu();
             }
         });
+
+
+        insertConsume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
+                if(consumeDB.getAllMoney()<=0)
+                {
+                    Common.showToast(activity,"沒有消費，無法歸類!");
+                    closeFABMenu();
+                    return;
+                }
+                Fragment fragment=new PropertyInsertConsume();
+                fragment.setArguments(bundle);
+                Common.switchFragment(fragment, Common.PropertyTotalString,getFragmentManager());
+            }
+        });
+
+
+
+
         insertMoney.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

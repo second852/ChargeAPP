@@ -37,6 +37,7 @@ public class PropertyList extends Fragment {
     private PropertyFromDB propertyFromDB;
     private Activity activity;
     private TextView message;
+    private int position;
 
 
     @Override
@@ -81,7 +82,14 @@ public class PropertyList extends Fragment {
         }else {
             message.setVisibility(View.GONE);
         }
+        try {
+            position=getArguments().getInt("position");
+        }catch (Exception e)
+        {
+            position=0;
+        }
         list.setAdapter(new ListAdapter(activity,propertyVOS));
+        list.setSelection(position);
     }
 
 
@@ -104,9 +112,10 @@ public class PropertyList extends Fragment {
         public View getView(final int position, View itemView, final ViewGroup parent) {
             if (itemView == null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
-                itemView = layoutInflater.inflate(R.layout.property_list_from_detail, parent, false);
+                itemView = layoutInflater.inflate(R.layout.property_list_main_detail, parent, false);
             }
-            BootstrapButton showD=itemView.findViewById(R.id.showD);
+            BootstrapButton managerD=itemView.findViewById(R.id.managerD);
+            BootstrapButton updateD=itemView.findViewById(R.id.updateD);
             BootstrapButton deleteI=itemView.findViewById(R.id.deleteI);
             TextView listTitle=itemView.findViewById(R.id.listTitle);
             TextView detail=itemView.findViewById(R.id.listDetail);
@@ -120,7 +129,22 @@ public class PropertyList extends Fragment {
                            "支出 "+ Common.CurrencyResult(consume,currencyVO);
             listTitle.setText(title);
             detail.setText(detailE);
-            showD.setOnClickListener(new View.OnClickListener() {
+
+            updateD.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Fragment fragment=new PropertyUpdate();
+                    Bundle bundle=new Bundle();
+                    bundle.putSerializable("action",Common.propertyMain);
+                    bundle.putSerializable(Common.propertyID,propertyVO.getId());
+                    bundle.putSerializable("position",position);
+                    fragment.setArguments(bundle);
+                    Common.switchFragment(fragment, Common.propertyMain,getFragmentManager());
+                }
+            });
+
+
+            managerD.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Fragment fragment=new PropertyTotal();
