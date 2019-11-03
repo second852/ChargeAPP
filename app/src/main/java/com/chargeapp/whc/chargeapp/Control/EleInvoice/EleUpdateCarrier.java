@@ -3,6 +3,7 @@ package com.chargeapp.whc.chargeapp.Control.EleInvoice;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -18,6 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.BaseAdapter;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,6 +32,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
+import com.chargeapp.whc.chargeapp.Control.Goal.GoalListAll;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.R;
@@ -193,6 +198,14 @@ public class EleUpdateCarrier extends Fragment {
         }else{
             Common.showToast(context,"帳號密碼錯誤，修改失敗");
         }
+
+        if(Common.lostCarrier.isEmpty())
+        {
+            ListView listView= view.findViewById(R.id.list_menu);
+            BaseExpandableListAdapter adapter = (BaseExpandableListAdapter) listView.getAdapter();
+            adapter.getGroupView(1,true,null,null);
+        }
+
         progressbarL.setVisibility(View.GONE);
 
     }

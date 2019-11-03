@@ -47,6 +47,7 @@ import com.chargeapp.whc.chargeapp.Control.Goal.GoalListAll;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePagetList;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertActivity;
+import com.chargeapp.whc.chargeapp.Control.Insert.InsertSpend;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyConsumeShow;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyMain;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyMoneyList;
@@ -107,6 +108,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -167,7 +169,7 @@ public class Common {
 
 
     public static NumberFormat nf = NumberFormat.getNumberInstance();
-    public static List<CarrierVO> lostCarrier;
+    public static Vector<CarrierVO> lostCarrier;
     public static Screen screenSize;
 
 
@@ -663,8 +665,8 @@ public class Common {
             adView.setAdListener(new AdListener() {
                 @Override
                 public void onAdFailedToLoad(int i) {
-                    AdRequest adRequest = new AdRequest.Builder().build();
-                    adView.loadAd(adRequest);
+//                    AdRequest adRequest = new AdRequest.Builder().build();
+//                    adView.loadAd(adRequest);
                 }
             });
 
@@ -894,6 +896,13 @@ public class Common {
                 fragment = new HomePagetList();
                 break;
             case "InsertSpend":
+                EditText detailI=view.findViewById(R.id.detail);
+                if(detailI!=null)
+                {
+                    InsertSpend.consumeVO.setDetailname(detailI.getText().toString());
+                }
+                fragment = new InsertActivity();
+                break;
             case "InsertIncome":
                 fragment = new InsertActivity();
                 break;

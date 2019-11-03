@@ -462,8 +462,9 @@ public class MainActivity extends AppCompatActivity {
             if (i == 1) {
                 indicator.setVisibility(View.VISIBLE);
                 if (Common.lostCarrier != null) {
-                    if (Common.lostCarrier.size() > 0) {
+                    if (!Common.lostCarrier.isEmpty()) {
                         view.setBackgroundColor(Color.RED);
+                        Common.showToast(MainActivity.this,"電子發票密碼錯誤!");
                     }
                 }
                 if (b) {
@@ -672,7 +673,7 @@ public class MainActivity extends AppCompatActivity {
             tvId.setText(mystring);
 
             if (Common.lostCarrier != null) {
-                if (i1 == 0 && Common.lostCarrier.size() > 0) {
+                if (i1 == 0 && !Common.lostCarrier.isEmpty()) {
                     view.setBackgroundColor(Color.RED);
                 }
             }
@@ -1202,8 +1203,13 @@ public class MainActivity extends AppCompatActivity {
 
 
             //close KeyBoard
-
+            List<Fragment> fragments=getSupportFragmentManager().getFragments();
             View v = MainActivity.this.getCurrentFocus();
+
+            if(v==null)
+            {
+                v=fragments.get(fragments.size()-1).getView();
+            }
 
             //------關閉內建keyboard-----//
             if (v != null) {
@@ -1212,7 +1218,7 @@ public class MainActivity extends AppCompatActivity {
             }
             //------關閉自製keyboard-----//
             View numberKeyBoard;
-            List<Fragment> fragments=getSupportFragmentManager().getFragments();
+
             for(Fragment fragment:fragments)
             {
                 numberKeyBoard= fragment.getView().findViewById(R.id.numberKeyBoard);

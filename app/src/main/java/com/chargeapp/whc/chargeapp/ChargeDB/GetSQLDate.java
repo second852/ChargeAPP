@@ -59,6 +59,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private final static String TAG = "GetSQLDate";
@@ -235,7 +236,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     activeI.setAction("nulPriceNotify");
                     Common.showNotification("恭喜發票中獎!", sb.toString(), downloadNewDataJob, 999, activeI);
                 }
-
+            }else if(action.equals("checkId"))
+            {
+                checkId();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -344,6 +347,27 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         }
     }
 
+
+    private void checkId()
+    {
+        List<CarrierVO> carrierVOS = carrierDB.getAll();
+        Calendar cal = Calendar.getInstance();
+        year = cal.get(Calendar.YEAR);
+        month = cal.get(Calendar.MONTH);
+        for (CarrierVO carrierVO : carrierVOS) {
+            String jsonIn = findMonthHead(year, month, carrierVO.getCarNul(), carrierVO.getPassword());
+            JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
+            if (js.get("code").getAsString().equals("919")) {
+                if (Common.lostCarrier == null) {
+                    Common.lostCarrier = new Vector<>();
+                }
+                Common.lostCarrier.add(carrierVO);
+            }
+        }
+    }
+
+
+
     private String updateInvoice() throws IOException {
         downloadS = "invoice";
         String jsonIn = null;
@@ -359,15 +383,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             Calendar cal = Calendar.getInstance();
             year = cal.get(Calendar.YEAR);
             month = cal.get(Calendar.MONTH);
-            jsonIn = findMonthHead(year, month, user, password);
-            JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
-            if (js.get("code").getAsString().equals("919")) {
-                if (Common.lostCarrier == null) {
-                    Common.lostCarrier = new ArrayList<>();
-                }
-                Common.lostCarrier.add(carrierVO);
-                continue;
-            }
+
 
             //更新errorDonateMark
             List<InvoiceVO> invoiceVOS = invoiceDB.getErrorDonateMark(carrierVO.getCarNul());
@@ -1011,7 +1027,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 percentage.setText("100%");
                 progressT.setText("下載完成!\n更新中");
                 if (Common.lostCarrier != null) {
-                    if (Common.lostCarrier.size() > 0) {
+                    if (!Common.lostCarrier.isEmpty()) {
                         StringBuffer sb = new StringBuffer();
                         for (CarrierVO c : Common.lostCarrier) {
                             sb.append(c.getCarNul() + " ");
@@ -1068,6 +1084,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 eleUpdateCarrier.check(s);
             } else if (object instanceof DownloadNewDataJob) {
                 new Common().AutoSetPrice();
+            }else if(object instanceof MainActivity)
+            {
+
             }
         } catch (Exception e) {
             Log.d(TAG, "onPostExecute" + e.getMessage());

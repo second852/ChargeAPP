@@ -54,7 +54,6 @@ public class SearchByQrCode extends Fragment {
     private Activity context;
     private LinearLayout showdate;
     private ConsumeVO consumeVO;
-    private TextView datesave;
     private String choicedate;
     private RelativeLayout progressL;
     private SetupDateBase64 setupDateBase64;
@@ -215,7 +214,6 @@ public class SearchByQrCode extends Fragment {
         back = view.findViewById(R.id.back);
         showdate = view.findViewById(R.id.showdate);
         datePicker = view.findViewById(R.id.datePicker);
-        datesave = view.findViewById(R.id.datesave);
         progressL = view.findViewById(R.id.progressL);
         flashL = view.findViewById(R.id.flashL);
         flashR = view.findViewById(R.id.flashR);

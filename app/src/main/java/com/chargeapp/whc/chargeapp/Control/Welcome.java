@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -31,6 +32,7 @@ import com.chargeapp.whc.chargeapp.Adapter.PermissionFragment;
 import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
@@ -61,6 +63,7 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 public class Welcome extends AppCompatActivity {
 
@@ -69,13 +72,17 @@ public class Welcome extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Utils.init(this);
         setContentView(R.layout.welcome);
+        super.onCreate(savedInstanceState);
         Common.setChargeDB(this);
+        Common.insertNewTableCol();
+        Utils.init(this);
+        new GetSQLDate(this).execute("checkId");
+        new Thread(runnable).start();
+        new Thread(downloadCurrency).start();
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Property;");
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE PropertyFrom;");
-        Common.insertNewTableCol();
+
 
 //        new GetSQLDate(Welcome.this).execute("getWinInvoice");
 
@@ -87,10 +94,14 @@ public class Welcome extends AppCompatActivity {
 //        invoiceDB.update(InvoiceVO);
 
 
-        new Thread(runnable).start();
-        new Thread(downloadCurrency).start();
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull String name, @NonNull Context context, @NonNull AttributeSet attrs) {
+
+        return super.onCreateView(name, context, attrs);
+    }
 
     private void testNotify()
     {
@@ -418,7 +429,6 @@ public class Welcome extends AppCompatActivity {
                     } else {
                         Common.screenSize = Common.Screen.normal;
                     }
-                    Common.lostCarrier = new ArrayList<>();
                     askPermissions();
                     break;
             }
@@ -452,6 +462,8 @@ public class Welcome extends AppCompatActivity {
         List<TypeVO> typeVOS = typeDB.getAll();
         PriceDB priceDB=new PriceDB(MainActivity.chargeAPPDB);
         if (typeVOS.size() <= 0||priceDB.getAll().size()<=0) {
+            View welcomeFrame=findViewById(R.id.welcomeFrame);
+            welcomeFrame.setVisibility(View.VISIBLE);
             Fragment fragment=new Download();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.welcomeFrame, fragment);
