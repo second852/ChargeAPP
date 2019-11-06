@@ -32,7 +32,7 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
     public TextView mainTitle;
     public static int page;
     private Activity context;
-    private AdView adview;
+
 
 
     @Override
@@ -53,8 +53,8 @@ public class SelectListModelActivity extends Fragment implements ViewPager.OnPag
         goneMoney = view.findViewById(R.id.goneD);
         exportMoney = view.findViewById(R.id.exportD);
         importMoney = view.findViewById(R.id.showD);
-        adview=view.findViewById(R.id.adView);
-        Common.setAdView(adview,context);
+
+
 
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         SelAllviewPager.setAdapter(mAdapterViewPager);

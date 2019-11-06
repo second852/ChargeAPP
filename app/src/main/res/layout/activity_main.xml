@@ -8,10 +8,28 @@
     android:background="#F5f5f5"
     android:orientation="vertical"
     tools:context="com.chargeapp.whc.chargeapp.Control.MainActivity">
-    <FrameLayout
-        android:id="@+id/body"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent">
+        <FrameLayout
+            android:id="@+id/body"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/adView"
+            android:layout_marginBottom="10dp"
+            />
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            ads:adSize="SMART_BANNER"
+            ads:adUnitId="ca-app-pub-5169620543343332/1666779669" />
+    </RelativeLayout>
+
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation"
         android:layout_width="match_parent"

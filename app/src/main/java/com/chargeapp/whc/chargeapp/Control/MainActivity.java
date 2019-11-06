@@ -75,7 +75,9 @@ import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
+import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean firstShowF;
     public static boolean firstShowInsertActivity;
     public static GridView numberKeyBoard;
-    public static AdRequest adRequest;
+    public AdView adView;
 
 
     @Override
@@ -125,6 +127,10 @@ public class MainActivity extends AppCompatActivity {
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
         });
+        adView=findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
     }
 
 
@@ -250,6 +256,7 @@ public class MainActivity extends AppCompatActivity {
     private List<EleMainItemVO> getNewItem() {
         List<EleMainItemVO> eleMainItemVOList = new ArrayList<>();
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Com, R.drawable.book));
+        eleMainItemVOList.add(new EleMainItemVO(R.string.text_QRcode, R.drawable.qrcode));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Ele, R.drawable.barcode));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Price, R.drawable.bouns));
         eleMainItemVOList.add(new EleMainItemVO(R.string.text_Property, R.drawable.property));
@@ -459,7 +466,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             indicator.setVisibility(View.GONE);
-            if (i == 1) {
+            if (i == 2) {
                 indicator.setVisibility(View.VISIBLE);
                 if (Common.lostCarrier != null) {
                     if (!Common.lostCarrier.isEmpty()) {
@@ -519,8 +526,14 @@ public class MainActivity extends AppCompatActivity {
 
                             } else if (i == 1) {
                                 firstShowInsertActivity = false;
+                                Intent intent = new Intent(MainActivity.this, MultiTrackerActivity.class);
+                                intent.putExtra("action", "moreQRcode");
+                                startActivityForResult(intent, 10);
                                 return;
-                            } else if (i == 2) {
+                            }else if (i == 2) {
+                                firstShowInsertActivity = false;
+                                return;
+                            } else if (i == 3) {
                                 PriceInvoice.first = true;
                                 firstShowInsertActivity=false;
                                 fragment = new PriceActivity();
@@ -529,7 +542,7 @@ public class MainActivity extends AppCompatActivity {
                                 message.obj= getResources().getString(R.string.text_Price);
                                 setTittle.sendMessage(message);
 
-                            }else if(i== 3) {
+                            }else if(i== 4) {
 
 
                                 if (firstShowInsertActivity) {
@@ -545,7 +558,7 @@ public class MainActivity extends AppCompatActivity {
                                 message.obj= getResources().getString(R.string.text_Property);
                                 setTittle.sendMessage(message);
 
-                            } else if (i == 4) {
+                            } else if (i == 5) {
 
                                 if (firstShowInsertActivity) {
                                     showFragment2(5);
@@ -560,7 +573,7 @@ public class MainActivity extends AppCompatActivity {
                                 message.obj= getResources().getString(R.string.text_DataPicture);
                                 setTittle.sendMessage(message);
 
-                            } else if (i == 5) {
+                            } else if (i == 6) {
 
                                 if (firstShowInsertActivity) {
                                     showFragment2(6);
@@ -575,7 +588,7 @@ public class MainActivity extends AppCompatActivity {
                                 Message message=new Message();
                                 message.obj= getResources().getString(R.string.text_DataList);
                                 setTittle.sendMessage(message);
-                            } else if (i == 6) {
+                            } else if (i ==7) {
 
                                 if (firstShowInsertActivity) {
                                     showFragment2(7);
@@ -589,7 +602,7 @@ public class MainActivity extends AppCompatActivity {
                                 message.obj= getResources().getString(R.string.text_Goal);
                                 setTittle.sendMessage(message);
 
-                            } else if (i == 7) {
+                            } else if (i ==8) {
 
                                 if (firstShowInsertActivity) {
                                     showFragment2(8);
@@ -606,7 +619,7 @@ public class MainActivity extends AppCompatActivity {
                                 message.obj= getResources().getString(R.string.text_Search);
                                 setTittle.sendMessage(message);
 
-                            } else if (i == 8) {
+                            } else if (i == 9) {
 
                                 if (firstShowInsertActivity) {
                                     showFragment2(9);
@@ -619,7 +632,7 @@ public class MainActivity extends AppCompatActivity {
                                 message.obj= getResources().getString(R.string.text_Setting);
                                 setTittle.sendMessage(message);
 
-                            } else if (i == 9) {
+                            } else if (i == 10) {
                                 if (firstShowInsertActivity) {
                                     showFragment2(1);
                                     firstShowInsertActivity = false;
@@ -642,13 +655,13 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }).start();
 
-                    if (i == 1) {
+                    if (i == 2) {
                         setTitle(R.string.text_Ele);
                         if (doubleClick) {
-                            listView.collapseGroup(1);
+                            listView.collapseGroup(2);
                             doubleClick = false;
                         } else {
-                            listView.expandGroup(1);
+                            listView.expandGroup(2);
                             doubleClick = true;
                         }
                     } else {

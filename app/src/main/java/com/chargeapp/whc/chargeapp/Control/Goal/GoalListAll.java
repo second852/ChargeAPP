@@ -71,7 +71,7 @@ public class GoalListAll extends Fragment {
     private Activity context;
     private boolean firstShow;
     private CurrencyDB currencyDB;
-    private AdView adview;
+
 
 
     @Override
@@ -101,8 +101,8 @@ public class GoalListAll extends Fragment {
             p = 0;
         }
         findViewById(view);
-        adview=view.findViewById(R.id.adView);
-        Common.setAdView(adview,context);
+
+
         setLayout();
         return view;
     }

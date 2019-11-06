@@ -656,24 +656,24 @@ public class Common {
     }
 
 
-    public static void setAdView(AdView adView, Context activity) {
-        try {
-            if(MainActivity.adRequest==null) {
-                MainActivity.adRequest = new AdRequest.Builder().build();
-            }
-            adView.loadAd(MainActivity.adRequest);
-            adView.setAdListener(new AdListener() {
-                @Override
-                public void onAdFailedToLoad(int i) {
-//                    AdRequest adRequest = new AdRequest.Builder().build();
-//                    adView.loadAd(adRequest);
-                }
-            });
-
-        } catch (Exception e) {
-            Log.d("adError", e.toString());
-        }
-    }
+//    public static void setAdView(AdView adView, Context activity) {
+//        try {
+//            if(MainActivity.adRequest==null) {
+//                MainActivity.adRequest = new AdRequest.Builder().build();
+//            }
+//            adView.loadAd(MainActivity.adRequest);
+//            adView.setAdListener(new AdListener() {
+//                @Override
+//                public void onAdFailedToLoad(int i) {
+////                    AdRequest adRequest = new AdRequest.Builder().build();
+////                    adView.loadAd(adRequest);
+//                }
+//            });
+//
+//        } catch (Exception e) {
+//            Log.d("adError", e.toString());
+//        }
+//    }
 
 
     public static int[] colorlist = {

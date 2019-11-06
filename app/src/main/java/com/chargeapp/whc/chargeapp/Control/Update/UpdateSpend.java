@@ -935,7 +935,6 @@ public class UpdateSpend extends Fragment {
                 public boolean onMenuItemClick(MenuItem menuItem) {
                     switch (menuItem.getItemId()) {
                         case R.id.camera:
-                            MultiTrackerActivity.refresh = true;
                             BarcodeGraphic.hashMap = new HashMap<>();
                             setConsume();
                             Intent intent = new Intent(UpdateSpend.this.context, MultiTrackerActivity.class);

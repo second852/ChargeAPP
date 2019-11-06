@@ -802,7 +802,6 @@ public class InsertSpend extends Fragment {
                     switch (menuItem.getItemId()) {
                         case R.id.camera:
                             setConsume();
-                            MultiTrackerActivity.refresh = true;
                             BarcodeGraphic.hashMap = new HashMap<>();
                             Intent intent = new Intent(InsertSpend.this.context, MultiTrackerActivity.class);
                             intent.putExtra("action", "setConsume");

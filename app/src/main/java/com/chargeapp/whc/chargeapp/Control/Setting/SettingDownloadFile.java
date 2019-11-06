@@ -157,7 +157,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         progressL = view.findViewById(R.id.progressL);
         listView.setAdapter(new ListAdapter(context, itemSon));
         progressL.setVisibility(View.GONE);
-        Common.setAdView((AdView) view.findViewById(R.id.adView),context);
+
 
         return view;
     }

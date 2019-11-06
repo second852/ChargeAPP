@@ -44,6 +44,11 @@ import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.MyContextWrapper;
 import com.chargeapp.whc.chargeapp.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
@@ -65,7 +70,6 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     private static final int RC_HANDLE_GMS = 9001;
     // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
-    public static boolean refresh;
     private CameraSource mCameraSource = null;
     private CameraSourcePreview mPreview;
     private GraphicOverlay mGraphicOverlay;
@@ -76,9 +80,11 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     public static boolean isold;
     public static int colorChange;
     public static String action;
-    public RelativeLayout buttonR;
+    public RelativeLayout buttonR,scanR;
     public BootstrapButton search,back,backP;
     public static AwesomeTextView awardTitle;
+
+
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -101,87 +107,108 @@ public final class MultiTrackerActivity extends AppCompatActivity {
         search=findViewById(R.id.search);
         buttonR=findViewById(R.id.buttonR);
         backP=findViewById(R.id.backP);
+        AdView adView=findViewById(R.id.adView);
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
+
+
         oldPeriod=null;
         oldElu=null;
-        if(refresh)
+        action=getIntent().getStringExtra("action");
+
+        switch (action)
         {
-            buttonR.setVisibility(View.VISIBLE);
-            answer.setVisibility(View.GONE);
-            backP.setVisibility(View.GONE);
-            action=getIntent().getStringExtra("action");
-            search.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(action.equals("setConsume"))
-                    {
-                        MainActivity.oldFramgent.add("InsertSpend");
-                        Bundle bundle=new Bundle();
-                        bundle.putSerializable("action", "InsertSpend");
-                        bundle.putSerializable("needSet", true);
-                        MainActivity.bundles.add(bundle);
-                        Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
-                        intent.putExtra("action",MultiTrackerActivity.action);
-                        MultiTrackerActivity.this.setResult(9,intent);
-                        MultiTrackerActivity.this.finish();
-                    }else{
-                        Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
-                        intent.putExtra("action",MultiTrackerActivity.action);
-                        intent.putExtra("bundle",getIntent().getBundleExtra("bundle"));
-                        MainActivity.bundles.add(getIntent().getBundleExtra("bundle"));
-                        MainActivity.oldFramgent.add("UpdateSpend");
-                        MultiTrackerActivity.this.setResult(9,intent);
-                        MultiTrackerActivity.this.finish();
+            case "setConsume":
+            case "UpdateSpend":
+                buttonR.setVisibility(View.VISIBLE);
+                answer.setVisibility(View.GONE);
+                backP.setVisibility(View.GONE);
+                search.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(action.equals("setConsume"))
+                        {
+                            MainActivity.oldFramgent.add("InsertSpend");
+                            Bundle bundle=new Bundle();
+                            bundle.putSerializable("action", "InsertSpend");
+                            bundle.putSerializable("needSet", true);
+                            MainActivity.bundles.add(bundle);
+                            Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
+                            intent.putExtra("action",MultiTrackerActivity.action);
+                            MultiTrackerActivity.this.setResult(9,intent);
+                            MultiTrackerActivity.this.finish();
+                        }else{
+                            Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
+                            intent.putExtra("action",MultiTrackerActivity.action);
+                            intent.putExtra("bundle",getIntent().getBundleExtra("bundle"));
+                            MainActivity.bundles.add(getIntent().getBundleExtra("bundle"));
+                            MainActivity.oldFramgent.add("UpdateSpend");
+                            MultiTrackerActivity.this.setResult(9,intent);
+                            MultiTrackerActivity.this.finish();
+                        }
                     }
-                }
-            });
-            back.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(action.equals("setConsume"))
-                    {
+                });
+                back.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(action.equals("setConsume"))
+                        {
 //                        if(BarcodeGraphic.hashMap!=null&&BarcodeGraphic.hashMap.size()==1)
 //                        {
 //                            InsertSpend.returnCM=true;
 //                        }
-                        Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
-                        intent.putExtra("action",MultiTrackerActivity.action);
-                        MultiTrackerActivity.this.setResult(0,intent);
-                        MultiTrackerActivity.this.finish();
-                    }else{
-                        Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
-                        intent.putExtra("action",MultiTrackerActivity.action);
-                        Bundle bundle=getIntent().getBundleExtra("bundle");
+                            Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
+                            intent.putExtra("action",MultiTrackerActivity.action);
+                            MultiTrackerActivity.this.setResult(0,intent);
+                            MultiTrackerActivity.this.finish();
+                        }else{
+                            Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
+                            intent.putExtra("action",MultiTrackerActivity.action);
+                            Bundle bundle=getIntent().getBundleExtra("bundle");
 //                        if(BarcodeGraphic.hashMap!=null&&BarcodeGraphic.hashMap.size()==1)
 //                        {
 //                            bundle.putSerializable("returnCM",true);
 //                        }
-                        intent.putExtra("bundle",bundle);
+                            intent.putExtra("bundle",bundle);
+                            MultiTrackerActivity.this.setResult(0,intent);
+                            MultiTrackerActivity.this.finish();
+                        }
+                    }
+                });
+                break;
+            case "PriceHand":
+                try {
+                    action=getIntent().getStringExtra("action");
+                }catch (Exception e)
+                {
+                    action=" ";
+                }
+                backP.setVisibility(View.VISIBLE);
+                backP.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
+                        intent.putExtra("action",MultiTrackerActivity.action);
                         MultiTrackerActivity.this.setResult(0,intent);
                         MultiTrackerActivity.this.finish();
                     }
-                }
-            });
-        }else {
-
-            try {
-                action=getIntent().getStringExtra("action");
-            }catch (Exception e)
-            {
-                action=" ";
-            }
-            backP.setVisibility(View.VISIBLE);
-            backP.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
-                    intent.putExtra("action",MultiTrackerActivity.action);
-                    MultiTrackerActivity.this.setResult(0,intent);
-                    MultiTrackerActivity.this.finish();
-                }
-            });
-            buttonR.setVisibility(View.GONE);
-            answer.setVisibility(View.VISIBLE);
+                });
+                buttonR.setVisibility(View.GONE);
+                answer.setVisibility(View.VISIBLE);
+                break;
+            case "moreQRcode":
+                scanR=findViewById(R.id.scanR);
+                scanR.setVisibility(View.VISIBLE);
+                break;
         }
+
+
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.

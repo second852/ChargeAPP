@@ -59,7 +59,7 @@ public class SettingMain extends Fragment {
     private ListView listView;
     private SharedPreferences sharedPreferences;
     private Activity context;
-    private AdView adView;
+
 
 
     @Override
@@ -80,8 +80,6 @@ public class SettingMain extends Fragment {
         final View view = inflater.inflate(R.layout.setting_main, container, false);
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
         listView = view.findViewById(R.id.list);
-        adView=view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
         List<EleMainItemVO> itemSon = getNewItem();
         listView.setAdapter(new ListAdapter(context, itemSon));
         return view;

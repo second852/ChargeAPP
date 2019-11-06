@@ -70,7 +70,6 @@ public class SettingListFixCon extends Fragment {
         p= (int) getArguments().getSerializable("position");
         listView=view.findViewById(R.id.list);
         message=view.findViewById(R.id.message);
-        Common.setAdView((AdView) view.findViewById(R.id.adView),context);
         return view;
     }
 

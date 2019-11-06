@@ -151,99 +151,106 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             postInvalidate();
             return;
         }
-        if (MultiTrackerActivity.refresh) {
-            String stringOne;
-            try {
-                stringOne=barcode.rawValue;
-                String nul=stringOne.substring(0,10);
-                Integer.valueOf(nul.substring(2));
-                Integer.valueOf(stringOne.substring(10, 17));
-                stringOne.substring(45,53);
-                stringOne.substring(17,21);
-            }catch (Exception e)
-            {
-                stringOne=null;
-            }
-            if (stringOne!=null) {
-                hashMap.put(1, barcode.rawValue);
+        String stringOne;
+        switch (MultiTrackerActivity.action)
+        {
+            case "setConsume":
+            case "UpdateSpend":
+
                 try {
-                    ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                    NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-                    if (mNetworkInfo != null) {
-                        result=new SetupDateBase64(this).execute("getNetDetail").get();
-                    }else {
+                    stringOne=barcode.rawValue;
+                    String nul=stringOne.substring(0,10);
+                    Integer.valueOf(nul.substring(2));
+                    Integer.valueOf(stringOne.substring(10, 17));
+                    stringOne.substring(45,53);
+                    stringOne.substring(17,21);
+                }catch (Exception e)
+                {
+                    stringOne=null;
+                }
+                if (stringOne!=null) {
+                    hashMap.put(1, barcode.rawValue);
+                    try {
+                        ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+                        if (mNetworkInfo != null) {
+                            result=new SetupDateBase64(this).execute("getNetDetail").get();
+                        }else {
+                            result=null;
+                        }
+                    } catch (Exception e) {
                         result=null;
                     }
-                } catch (Exception e) {
-                    result=null;
                 }
-            }
-            if (mBarcode.rawValue.indexOf("**") == 0) {
-                hashMap.put(2, barcode.rawValue.substring(2));
-            }
-            QrCodeResultFinish();
-        } else {
+                if (mBarcode.rawValue.indexOf("**") == 0) {
+                    hashMap.put(2, barcode.rawValue.substring(2));
+                }
+                QrCodeResultFinish();
+                break;
+            case "PriceHand":
 
-            String stringOne;
-            try {
-                stringOne=barcode.rawValue;
-                String nul=stringOne.substring(0,10);
-                Integer.valueOf(nul.substring(2));
-                Integer.valueOf(stringOne.substring(10, 17));
-                stringOne.substring(45,53);
-                stringOne.substring(17,21);
-            }catch (Exception e)
-            {
-                stringOne=null;
-            }
-            if (stringOne!=null) {
-                EleNul = mBarcode.rawValue.substring(0, 10);
-                periodNow= mBarcode.rawValue.substring(10, 17);
-                if(MultiTrackerActivity.oldElu==null||(!MultiTrackerActivity.oldElu.equals(EleNul))||MultiTrackerActivity.oldPeriod==null||(!MultiTrackerActivity.oldPeriod.equals(periodNow)))
+                try {
+                    stringOne=barcode.rawValue;
+                    String nul=stringOne.substring(0,10);
+                    Integer.valueOf(nul.substring(2));
+                    Integer.valueOf(stringOne.substring(10, 17));
+                    stringOne.substring(45,53);
+                    stringOne.substring(17,21);
+                }catch (Exception e)
                 {
-                    MultiTrackerActivity.oldPeriod=periodNow;
-                    MultiTrackerActivity.oldElu=EleNul;
-                    MultiTrackerActivity.isold=false;
-                    MultiTrackerActivity.colorChange++;
-                }else{
-                    MultiTrackerActivity.isold=true;
-                    postInvalidate();
-                    return;
+                    stringOne=null;
                 }
-                String day = mBarcode.rawValue.substring(10, 17);
-                int mon = Integer.parseInt(day.substring(3, 5));
-                if (mon % 2 == 1) {
-                    if (mon == 11) {
-                        day = day.substring(0, 4) + "2";
-                    } else if (mon == 10) {
-                        day = day.substring(0, 4) + "1";
-                    }  else if (mon == 9) {
-                        day = day.substring(0, 3) + "10";
-                    }else {
-                        mon = mon + 1;
-                        day = day.substring(0, 4) + String.valueOf(mon);
+                if (stringOne!=null) {
+                    EleNul = mBarcode.rawValue.substring(0, 10);
+                    periodNow= mBarcode.rawValue.substring(10, 17);
+                    if(MultiTrackerActivity.oldElu==null||(!MultiTrackerActivity.oldElu.equals(EleNul))||MultiTrackerActivity.oldPeriod==null||(!MultiTrackerActivity.oldPeriod.equals(periodNow)))
+                    {
+                        MultiTrackerActivity.oldPeriod=periodNow;
+                        MultiTrackerActivity.oldElu=EleNul;
+                        MultiTrackerActivity.isold=false;
+                        MultiTrackerActivity.colorChange++;
+                    }else{
+                        MultiTrackerActivity.isold=true;
+                        postInvalidate();
+                        return;
                     }
-                } else {
-                    day = day.substring(0, 5);
-                }
-                MultiTrackerActivity.p=getPeriod(day);
-                if(Integer.valueOf(day)>max)
-                {
+                    String day = mBarcode.rawValue.substring(10, 17);
+                    int mon = Integer.parseInt(day.substring(3, 5));
+                    if (mon % 2 == 1) {
+                        if (mon == 11) {
+                            day = day.substring(0, 4) + "2";
+                        } else if (mon == 10) {
+                            day = day.substring(0, 4) + "1";
+                        }  else if (mon == 9) {
+                            day = day.substring(0, 3) + "10";
+                        }else {
+                            mon = mon + 1;
+                            day = day.substring(0, 4) + String.valueOf(mon);
+                        }
+                    } else {
+                        day = day.substring(0, 5);
+                    }
+                    MultiTrackerActivity.p=getPeriod(day);
+                    if(Integer.valueOf(day)>max)
+                    {
 
-                    MultiTrackerActivity.result="over";
-                    postInvalidate();
-                    return;
+                        MultiTrackerActivity.result="over";
+                        postInvalidate();
+                        return;
+                    }
+                    priceVO=priceDB.getPeriodAll(day);
+                    if(priceVO==null)
+                    {
+                        MultiTrackerActivity.result="no";
+                        postInvalidate();
+                        return;
+                    }
+                    MultiTrackerActivity.result=anwswer(EleNul.substring(2),priceVO);
                 }
-                priceVO=priceDB.getPeriodAll(day);
-                if(priceVO==null)
-                {
-                    MultiTrackerActivity.result="no";
-                    postInvalidate();
-                    return;
-                }
-                MultiTrackerActivity.result=anwswer(EleNul.substring(2),priceVO);
-            }
+                break;
         }
+
+
         postInvalidate();
     }
 
@@ -317,6 +324,12 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
     @Override
     public void draw(Canvas canvas) {
         Barcode barcode = mBarcode;
+        if(barcode==null)
+        {
+            return;
+        }
+
+
         if (barcode != null) {
             // Draws the bounding box around the barcode.
             RectF rect = new RectF(barcode.getBoundingBox());
@@ -326,7 +339,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             rect.bottom = translateY(rect.bottom);
             canvas.drawRect(rect, mRectPaint);
         }
-        if(MultiTrackerActivity.refresh)
+        if(MultiTrackerActivity.action.equals("setConsume")||MultiTrackerActivity.action.equals("UpdateSpend"))
         {
             return;
         }
@@ -337,6 +350,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         }
 
         if (!MultiTrackerActivity.isold) {
+            Common.showToast(context,"掃描成功!");
             int textColor;
             switch (MultiTrackerActivity.colorChange%2)
             {
@@ -405,7 +419,19 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                     myVibrator.vibrate(500);
                 }
             }
+        }else{
+            Common.showToast(context,"這張發票已掃描過!");
         }
+
+
+        try {
+            Thread.sleep(1000);
+        }catch (Exception e)
+        {
+
+        }
+
+
     }
 
 

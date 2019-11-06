@@ -34,7 +34,7 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
     private float movefirst;
     private Activity context;
     private DrawerLayout drawerLayout;
-    private AdView adView;
+
 
     @Override
     public void onAttach(Context context) {
@@ -56,8 +56,6 @@ public class EleDonateMain extends Fragment implements ViewPager.OnPageChangeLis
         exportMoney=view.findViewById(R.id.exportD);
         importMoney=view.findViewById(R.id.showD);
         goneMoney=view.findViewById(R.id.goneD);
-        adView=view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         DonateViewPager.setAdapter(mAdapterViewPager);
         DonateViewPager.addOnPageChangeListener(this);

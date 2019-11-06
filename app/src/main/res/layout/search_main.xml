@@ -66,9 +66,7 @@
         android:layout_marginTop="10dp"
         android:layout_below="@id/searchSettingShow"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/adView"
-       />
+        android:layout_height="wrap_content" />
 
 
 
@@ -377,15 +375,6 @@
             android:textSize="25sp" />
     </RelativeLayout>
 
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        ads:adSize="SMART_BANNER"
-        ads:adUnitId="ca-app-pub-5169620543343332/7840595330" />
 
 
 </RelativeLayout>

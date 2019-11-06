@@ -159,11 +159,8 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.search_main, container, false);
         searchMainAction=getArguments().getString("searchMainAction");
-        AdView adView=view.findViewById(R.id.adView);
-        Common.setAdView(adView,context);
         findViewById();
         setDB();
-
         if(searchMainAction.equals("new"))
         {
             setNew();

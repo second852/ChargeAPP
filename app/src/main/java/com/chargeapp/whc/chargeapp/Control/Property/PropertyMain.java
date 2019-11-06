@@ -19,7 +19,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdView;
+
 
 
 /**
@@ -36,7 +36,7 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
     private Button first,second,third;
     private float moveD;
     private int nowPage;
-    private AdView adView;
+
 
     @Override
     public void onAttach(Context context) {
@@ -61,7 +61,6 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
         mAdapterViewPager = new MainPagerAdapter(getFragmentManager());
         propertyViewPager.setAdapter(mAdapterViewPager);
         propertyViewPager.addOnPageChangeListener(this);
-        Common.setAdView(adView,activity);
         return view;
     }
 
@@ -70,7 +69,6 @@ public class PropertyMain extends Fragment implements ViewPager.OnPageChangeList
 
     private void findViewById(View view)
     {
-        adView=view.findViewById(R.id.adView);
         choiceItem=view.findViewById(R.id.choiceItem);
         propertyViewPager=view.findViewById(R.id.propertyViewPager);
         first=view.findViewById(R.id.first);
