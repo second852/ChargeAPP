@@ -37,6 +37,7 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.ui.ScanFragment;
 
 
 import java.util.ArrayList;
@@ -90,8 +91,11 @@ public class InsertConsumeType extends Fragment {
         Common.setChargeDB(context);
         typeDB = new TypeDB(MainActivity.chargeAPPDB);
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
-        object = getArguments().getSerializable("object");
         action = (String) getArguments().getSerializable("action");
+
+
+        object = getArguments().getSerializable("object");
+
         mainClick = false;
         secondClick = false;
         findViewById(view);
@@ -116,10 +120,10 @@ public class InsertConsumeType extends Fragment {
 
 
     private void setType() {
-        type = (object instanceof InvoiceVO) ? ((InvoiceVO) object).getMaintype() : ((ConsumeVO) object).getMaintype();
         typeVO = (TypeVO) getArguments().getSerializable("typeVO");
         if(typeVO==null)
         {
+            type = (object instanceof InvoiceVO) ? ((InvoiceVO) object).getMaintype() : ((ConsumeVO) object).getMaintype();
             typeVO = typeDB.findTypeName(type);
         }
 
@@ -143,6 +147,9 @@ public class InsertConsumeType extends Fragment {
             context.setTitle("新增次項目類別");
             setGridPicture();
         }else{
+
+            typeVO = typeDB.findTypeName(type);
+
             typeVOS = typeDB.findLikeTypeName(type.trim());
             if(typeVOS.size()>0)
             {
@@ -314,21 +321,31 @@ public class InsertConsumeType extends Fragment {
             }
 
             typeDetailDB.insert(typeDetailVO);
-            if (object instanceof InvoiceVO) {
+
+            if(object==null)
+            {
                 Bundle bundle = new Bundle();
-                InvoiceVO invoiceVO= (InvoiceVO) object;
-                invoiceVO.setMaintype(mainType);
-                invoiceVO.setSecondtype(secondTitle);
-                bundle.putSerializable("invoiceVO",invoiceVO);
-                returnThisFramgent(new UpdateInvoice(), bundle);
-            } else {
-                Bundle bundle = new Bundle();
-                ConsumeVO consumeVO= (ConsumeVO) object;
-                consumeVO.setMaintype(mainType);
-                consumeVO.setSecondType(secondTitle);
-                bundle.putSerializable("consumeVO",consumeVO);
-                returnThisFramgent(new UpdateSpend(), bundle);
+                returnThisFramgent(new ScanFragment(), bundle);
+            }else {
+                if (object instanceof InvoiceVO) {
+                    Bundle bundle = new Bundle();
+                    InvoiceVO invoiceVO= (InvoiceVO) object;
+                    invoiceVO.setMaintype(mainType);
+                    invoiceVO.setSecondtype(secondTitle);
+                    bundle.putSerializable("invoiceVO",invoiceVO);
+                    returnThisFramgent(new UpdateInvoice(), bundle);
+                } else {
+                    Bundle bundle = new Bundle();
+                    ConsumeVO consumeVO= (ConsumeVO) object;
+                    consumeVO.setMaintype(mainType);
+                    consumeVO.setSecondType(secondTitle);
+                    bundle.putSerializable("consumeVO",consumeVO);
+                    returnThisFramgent(new UpdateSpend(), bundle);
+                }
             }
+
+
+
             MainActivity.bundles.remove(MainActivity.bundles.size() - 1);
             MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size() - 1);
             Common.showToast(context, "新增成功");
@@ -394,6 +411,10 @@ public class InsertConsumeType extends Fragment {
         }else if(action.equals(searchMainString))
         {
             bundle.putAll(getArguments());
+        }else if(action.equals(Common.scanFragment))
+        {
+            bundle=getArguments();
+            bundle.putSerializable("action",bundle.getSerializable(Common.multiTrackerActivityWork));
         }
         fragment.setArguments(bundle);
         switchFramgent(fragment);

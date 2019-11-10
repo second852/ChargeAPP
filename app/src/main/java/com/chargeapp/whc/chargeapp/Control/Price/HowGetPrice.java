@@ -13,6 +13,9 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import android.text.Html;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +42,7 @@ public class HowGetPrice extends Fragment {
     private Activity context;
     private DrawerLayout drawerLayout;
     private TextView needCarrier;
-    private BootstrapButton button;
+
 
     @Override
     public void onAttach(Context context) {
@@ -56,15 +59,6 @@ public class HowGetPrice extends Fragment {
         context.setTitle(R.string.text_HowGet);;
         final View view = inflater.inflate(R.layout.how_get_price, container, false);
         needCarrier=view.findViewById(R.id.needCarrier);
-        button=view.findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=tw.gov.invoice"));
-                startActivity(intent);
-            }
-        });
         needCarrier.setText("1.需攜帶中獎發票和身分證，到下列地點兌換。\n2.無實體發票需列印出來，並攜帶此中獎發票和身分證到到下列地點兌換。如果手機載具有綁定帳戶，不需要上述步驟，會自動匯到該戶頭。");
         list = view.findViewById(R.id.list);
         List<String> title = new ArrayList<>();
@@ -155,8 +149,18 @@ public class HowGetPrice extends Fragment {
                     time.setText("9~23點(兌換現金、等值商品、儲值金)\n其餘時間(等值商品、儲值金)");
                     break;
                 case 4:
+
+                    String html = "<a href=\"https://play.google.com/store/apps/details?id=tw.gov.invoice\">"+strings.get(4)+"</a>";
+                    Spanned result;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                        result = Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY);
+                    } else {
+                        result = Html.fromHtml(html);
+                    }
+                    port.setText(result);
+                    port.setMovementMethod(LinkMovementMethod.getInstance());
+
                     drawable=context.getResources().getDrawable(R.drawable.show_date_model_2);
-                    port.setText(strings.get(4));
                     price.setText("五獎、六獎(需要實體中獎發票，用此APP上傳)");
                     time.setText("24小時皆可兌換");
                     break;

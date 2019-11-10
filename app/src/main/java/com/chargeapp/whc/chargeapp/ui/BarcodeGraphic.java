@@ -147,7 +147,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         mBarcode = barcode;
         if(barcode==null)
         {
-            MultiTrackerActivity.result=null;
+            ScanFragment.result=null;
             postInvalidate();
             return;
         }
@@ -203,14 +203,14 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 if (stringOne!=null) {
                     EleNul = mBarcode.rawValue.substring(0, 10);
                     periodNow= mBarcode.rawValue.substring(10, 17);
-                    if(MultiTrackerActivity.oldElu==null||(!MultiTrackerActivity.oldElu.equals(EleNul))||MultiTrackerActivity.oldPeriod==null||(!MultiTrackerActivity.oldPeriod.equals(periodNow)))
+                    if(ScanFragment.oldElu==null||(!ScanFragment.oldElu.equals(EleNul))||ScanFragment.oldPeriod==null||(!ScanFragment.oldPeriod.equals(periodNow)))
                     {
-                        MultiTrackerActivity.oldPeriod=periodNow;
-                        MultiTrackerActivity.oldElu=EleNul;
-                        MultiTrackerActivity.isold=false;
-                        MultiTrackerActivity.colorChange++;
+                        ScanFragment.oldPeriod=periodNow;
+                        ScanFragment.oldElu=EleNul;
+                        ScanFragment.isold=false;
+                        ScanFragment.colorChange++;
                     }else{
-                        MultiTrackerActivity.isold=true;
+                        ScanFragment.isold=true;
                         postInvalidate();
                         return;
                     }
@@ -230,22 +230,22 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                     } else {
                         day = day.substring(0, 5);
                     }
-                    MultiTrackerActivity.p=getPeriod(day);
+                    ScanFragment.p=getPeriod(day);
                     if(Integer.valueOf(day)>max)
                     {
 
-                        MultiTrackerActivity.result="over";
+                        ScanFragment.result="over";
                         postInvalidate();
                         return;
                     }
                     priceVO=priceDB.getPeriodAll(day);
                     if(priceVO==null)
                     {
-                        MultiTrackerActivity.result="no";
+                        ScanFragment.result="no";
                         postInvalidate();
                         return;
                     }
-                    MultiTrackerActivity.result=anwswer(EleNul.substring(2),priceVO);
+                    ScanFragment.result=anwswer(EleNul.substring(2),priceVO);
                 }
                 break;
         }
@@ -343,51 +343,51 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         {
             return;
         }
-        if(MultiTrackerActivity.result==null&&MultiTrackerActivity.answer.getVisibility()== View.VISIBLE)
+        if(ScanFragment.result==null&&ScanFragment.answer.getVisibility()== View.VISIBLE)
         {
-            MultiTrackerActivity.answer.setText("1.請對準左邊QRCode~\n2.如果無法辨識，請手動兌獎!");
+            ScanFragment.answer.setText("1.請對準左邊QRCode~\n2.如果無法辨識，請手動兌獎!");
             return;
         }
 
-        if (!MultiTrackerActivity.isold) {
+        if (!ScanFragment.isold) {
             Common.showToast(context,"掃描成功!");
             int textColor;
-            switch (MultiTrackerActivity.colorChange%2)
+            switch (ScanFragment.colorChange%2)
             {
                 case 0:
                     textColor=Color.BLUE;
-                    MultiTrackerActivity.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.INFO);
+                    ScanFragment.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.INFO);
                     break;
                 default:
                     textColor=Color.parseColor("#00AA55");
-                    MultiTrackerActivity.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.WARNING);
+                    ScanFragment.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.WARNING);
                     break;
             }
-            if(MultiTrackerActivity.result.equals("over"))
+            if(ScanFragment.result.equals("over"))
             {
-                String total=MultiTrackerActivity.p+"尚未開獎\n 發票號碼 : "+MultiTrackerActivity.oldElu;
+                String total=ScanFragment.p+"尚未開獎\n 發票號碼 : "+ScanFragment.oldElu;
                 Spannable content = new SpannableString(total);
                 content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":")+1, total.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                MultiTrackerActivity.answer.setText(content);
-                MultiTrackerActivity.awardTitle.setText(null);
+                ScanFragment.answer.setText(content);
+                ScanFragment.awardTitle.setText(null);
                 return;
             }
-            if(MultiTrackerActivity.result.equals("no"))
+            if(ScanFragment.result.equals("no"))
             {
-                String total=MultiTrackerActivity.p+"已過兌獎期限\n 發票號碼 : " + MultiTrackerActivity.oldElu;
+                String total=ScanFragment.p+"已過兌獎期限\n 發票號碼 : " + ScanFragment.oldElu;
                 Spannable content = new SpannableString(total);
                 content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":")+1, total.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                MultiTrackerActivity.answer.setText(content);
-                MultiTrackerActivity.answer.setText(content);
-                MultiTrackerActivity.awardTitle.setText(null);
+                ScanFragment.answer.setText(content);
+                ScanFragment.answer.setText(content);
+                ScanFragment.awardTitle.setText(null);
                 return;
             }
-            if (MultiTrackerActivity.result.equals("N")) {
-                String total=MultiTrackerActivity.p+"\n發票號碼:"+MultiTrackerActivity.oldElu;
+            if (ScanFragment.result.equals("N")) {
+                String total=ScanFragment.p+"\n發票號碼:"+ScanFragment.oldElu;
                 Spannable content = new SpannableString(total);
                 content.setSpan(new ForegroundColorSpan(textColor), 0,total.indexOf("發") , Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":")+1, total.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                MultiTrackerActivity.answer.setText(content);
+                ScanFragment.answer.setText(content);
 
                 BootstrapText text = new BootstrapText.Builder(context)
                         .addText(" " + "沒有中獎" + " ")
@@ -395,26 +395,26 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                         .addText(" " + "再接再厲" + " ")
                         .addFontAwesomeIcon(FA_FLAG)
                         .build();
-                MultiTrackerActivity.awardTitle.setText(text);
+                ScanFragment.awardTitle.setText(text);
 
             } else {
                 if(priceVO!=null)
                 {
                     String peroid = getPeriod(priceVO.getInVoYm());
                     StringBuffer sb=new StringBuffer();
-                    sb.append(peroid).append(levelprice.get("win")).append("\n中獎號碼").append(MultiTrackerActivity.oldElu);
+                    sb.append(peroid).append(levelprice.get("win")).append("\n中獎號碼").append(ScanFragment.oldElu);
                     Spannable content = new SpannableString(sb.toString());
-                    content.setSpan(new ForegroundColorSpan(Color.RED), peroid.length()+levelprice.get("win").length()-levellength.get(MultiTrackerActivity.result),peroid.length()+levelprice.get("win").length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    content.setSpan(new ForegroundColorSpan(Color.MAGENTA), sb.length()-(levellength.get(MultiTrackerActivity.result)), sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    MultiTrackerActivity.answer.setText(content);
+                    content.setSpan(new ForegroundColorSpan(Color.RED), peroid.length()+levelprice.get("win").length()-levellength.get(ScanFragment.result),peroid.length()+levelprice.get("win").length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    content.setSpan(new ForegroundColorSpan(Color.MAGENTA), sb.length()-(levellength.get(ScanFragment.result)), sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    ScanFragment.answer.setText(content);
 
                     BootstrapText text = new BootstrapText.Builder(context)
                             .addFontAwesomeIcon(FA_STAR)
-                            .addText(" " + levelprice.get(MultiTrackerActivity.result) + " ")
+                            .addText(" " + levelprice.get(ScanFragment.result) + " ")
                             .addFontAwesomeIcon(FA_STAR)
                             .build();
-                    MultiTrackerActivity.awardTitle.setText(text);
-                    MultiTrackerActivity.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
+                    ScanFragment.awardTitle.setText(text);
+                    ScanFragment.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                     Vibrator myVibrator = (Vibrator) this.context.getSystemService(Service.VIBRATOR_SERVICE);
                     myVibrator.vibrate(500);
                 }

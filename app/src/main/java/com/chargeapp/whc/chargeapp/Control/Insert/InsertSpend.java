@@ -165,7 +165,9 @@ public class InsertSpend extends Fragment {
             consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
             consumeDB.update(consumeVO);
         }
-
+        StringBuilder sb= new StringBuilder();
+        sb.append(consumeVO.getRealMoney());
+        numberKeyBoard.setOnItemClickListener(new KeyBoardInputNumberOnItemClickListener(calculate, money, context, numberKeyBoard, sb, false));
 
         money.setText(String.valueOf(consumeVO.getRealMoney()));
         nowCurrency=consumeVO.getCurrency();

@@ -132,36 +132,19 @@
           android:textSize="20sp"
           app:bootstrapBrand="regular"
           app:bootstrapSize="md"
-          app:bootstrapText="種類 : 自動"
+          app:bootstrapText="@string/text_autoSetting"
           app:buttonMode="regular"
           app:roundedCorners="true"
           app:showOutline="false" />
 
-      <com.beardedhen.androidbootstrap.BootstrapButton
-          android:id="@+id/searchTwo"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="10dp"
-          android:layout_marginTop="10dp"
-          android:layout_marginStart="20dp"
-          android:layout_toRightOf="@+id/typeSetting"
-          android:textColor="#000000"
-          android:textSize="20sp"
-          app:bootstrapBrand="info"
-          app:bootstrapSize="md"
-          app:bootstrapText="查詢 {fa_search}"
-          app:buttonMode="regular"
-          app:roundedCorners="true"
-          app:showOutline="false" />
 
       <com.beardedhen.androidbootstrap.BootstrapButton
           android:id="@+id/recordTwo"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginBottom="10dp"
-          android:layout_marginTop="10dp"
+          android:layout_centerVertical="true"
           android:layout_marginStart="20dp"
-          android:layout_toRightOf="@+id/searchTwo"
+          android:layout_toRightOf="@+id/typeSetting"
           android:textColor="#000000"
           android:textSize="20sp"
           app:bootstrapBrand="primary"
@@ -177,7 +160,7 @@
 
     <com.beardedhen.androidbootstrap.BootstrapButton
         android:id="@+id/backP"
-        android:layout_above="@+id/adView"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"
         android:layout_width="wrap_content"
@@ -188,13 +171,75 @@
         app:roundedCorners="true"
         app:bootstrapText="{fa_reply_all}"
         />
-  <com.google.android.gms.ads.AdView
-      xmlns:ads="http://schemas.android.com/apk/res-auto"
-      android:id="@+id/adView"
-      android:layout_width="wrap_content"
+
+  <LinearLayout
+      android:id="@+id/firstL"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true"
       android:layout_centerHorizontal="true"
-      ads:adSize="SMART_BANNER"
-      ads:adUnitId="ca-app-pub-5169620543343332/1666779669" />
+      android:layout_centerVertical="true"
+      android:layout_marginBottom="5dp"
+      android:layout_marginLeft="20dp"
+      android:layout_marginRight="20dp"
+      android:background="#000000"
+      android:orientation="vertical"
+      android:visibility="gone">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#ffffff"
+        android:gravity="center"
+        android:text="主項目種類"
+        android:textColor="#000000"
+        android:textSize="25dp" />
+
+    <GridView
+        android:id="@+id/firstG"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:background="#ffffff" />
+  </LinearLayout>
+
+  <LinearLayout
+      android:id="@+id/secondL"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_centerVertical="true"
+      android:layout_marginBottom="5dp"
+      android:layout_marginLeft="20dp"
+      android:layout_marginRight="20dp"
+      android:background="#000000"
+      android:orientation="vertical"
+      android:visibility="gone">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginTop="1dp"
+        android:background="#ffffff"
+        android:gravity="center"
+        android:text="次要項目種類"
+        android:textColor="#000000"
+        android:textSize="30sp" />
+
+    <GridView
+        android:id="@+id/secondG"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:background="#ffffff" />
+  </LinearLayout>
+
 </RelativeLayout>

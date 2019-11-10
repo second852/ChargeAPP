@@ -47,6 +47,8 @@
     <string name="text_delete">刪除</string>
     <string name="text_show">檢視</string>
 
+    <string name="text_autoSetting">種類 : 自動</string>
+
     <string name="insert_success">新增成功!</string>
     <string name="update_success">修改成功!</string>
 

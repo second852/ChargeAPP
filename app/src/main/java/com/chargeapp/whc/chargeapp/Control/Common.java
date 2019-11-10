@@ -168,6 +168,11 @@ public class Common {
     public final static String searchMainString="searchMainString";
 
 
+    public final static String multiTrackerActivityWork="multiTrackerActivityWork";
+    public final static String scanFragment="scanFragment";
+
+
+
     public static NumberFormat nf = NumberFormat.getNumberInstance();
     public static Vector<CarrierVO> lostCarrier;
     public static Screen screenSize;
@@ -1397,6 +1402,18 @@ public class Common {
     }
 
 
+    public static void switchFragment(Fragment fragment, String fragmentTag, FragmentManager fragmentManager,Integer layout) {
+        MainActivity.oldFramgent.add(fragmentTag);
+        MainActivity.bundles.add(fragment.getArguments());
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        for (Fragment fragment1 : fragmentManager.getFragments()) {
+            fragmentTransaction.remove(fragment1);
+        }
+        fragmentTransaction.replace(layout, fragment);
+        fragmentTransaction.commit();
+    }
+
+
     public static void switchFragment(Fragment fragment, String fragmentTag, FragmentManager fragmentManager) {
         MainActivity.oldFramgent.add(fragmentTag);
         MainActivity.bundles.add(fragment.getArguments());
@@ -1417,7 +1434,6 @@ public class Common {
         fragmentTransaction.commit();
         MainActivity.oldFramgent.removeLast();
         MainActivity.bundles.removeLast();
-
     }
 
 
