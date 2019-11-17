@@ -242,6 +242,18 @@ public class BankDB {
         return bankVO;
     }
 
+    public BankVO getIsExist(String period,String number) {
+        String sql = "SELECT * FROM BANK where detailname like ? order by date;";
+        String[] args = {"%"+period+"%"+number};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        BankVO bankVO = null;
+        if (cursor.moveToNext()) {
+            bankVO =configBankVO(cursor);
+        }
+        cursor.close();
+        return bankVO;
+    }
+
     public BankVO getFindOldBank(BankVO bankVO) {
         String sql = "SELECT * FROM BANK where maintype = '" + bankVO.getMaintype() + "' and realMoney = '" + bankVO.getRealMoney() + "' and date = '" + bankVO.getDate().getTime() + "';";
         String[] args = {};

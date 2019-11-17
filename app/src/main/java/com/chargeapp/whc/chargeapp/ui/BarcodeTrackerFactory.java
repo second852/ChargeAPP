@@ -28,19 +28,21 @@ import com.google.android.gms.vision.barcode.Barcode;
 public class BarcodeTrackerFactory implements MultiProcessor.Factory<Barcode> {
     private GraphicOverlay mGraphicOverlay;
     public Activity context;
+    public String action;
 
     public BarcodeTrackerFactory(GraphicOverlay graphicOverlay) {
         mGraphicOverlay = graphicOverlay;
     }
 
-    BarcodeTrackerFactory(GraphicOverlay graphicOverlay ,Activity ctx) {
+    BarcodeTrackerFactory(GraphicOverlay graphicOverlay ,Activity ctx,String action) {
         mGraphicOverlay = graphicOverlay;
         this.context =ctx;
+        this.action=action;
     }
 
     @Override
     public Tracker<Barcode> create(Barcode barcode) {
-        BarcodeGraphic graphic = new BarcodeGraphic(mGraphicOverlay,context);
+        BarcodeGraphic graphic = new BarcodeGraphic(mGraphicOverlay,context,action);
         return new GraphicTracker<>(mGraphicOverlay, graphic);
     }
 }

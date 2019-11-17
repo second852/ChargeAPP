@@ -99,11 +99,11 @@ public class SearchByQrCode extends Fragment {
         } else if (action.equals("setConsume")) {
             InsertSpend.needSet=true;
             consumeVO = InsertSpend.consumeVO;
-            setQRcodCon();
+//            setQRcodCon();
         } else if (action.equals("UpdateSpend")) {
-            bundle=getArguments().getBundle("bundle");
+            bundle=getArguments();
             consumeVO= (ConsumeVO) bundle.getSerializable("consumeVO");
-            setQRcodCon();
+//            setQRcodCon();
         }else {
             consumeVO = (ConsumeVO) getArguments().getSerializable("consumeVO");
         }
@@ -113,19 +113,19 @@ public class SearchByQrCode extends Fragment {
         return view;
     }
 
-    private void setQRcodCon() {
-        if (BarcodeGraphic.hashMap.get(1) != null&&scan!=null) {
-            String[] EleNulAll = BarcodeGraphic.hashMap.get(1).split(":");
-            String EleNul = EleNulAll[0].substring(0, 10);
-            String day = EleNulAll[0].substring(10, 17);
-            String m = EleNulAll[0].substring(29, 37);
-            String rdNumber = EleNulAll[0].substring(17, 21);
-            Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
-            consumeVO.setMoney(Integer.parseInt(m, 16));
-            consumeVO.setNumber(EleNul);
-            consumeVO.setDate(new Date(calendar.getTimeInMillis()));
-            consumeVO.setRdNumber(rdNumber);
-        }
+//    private void setQRcodCon() {
+//        if (BarcodeGraphic.hashMap.get(1) != null&&scan!=null) {
+//            String[] EleNulAll = BarcodeGraphic.hashMap.get(1).split(":");
+//            String EleNul = EleNulAll[0].substring(0, 10);
+//            String day = EleNulAll[0].substring(10, 17);
+//            String m = EleNulAll[0].substring(29, 37);
+//            String rdNumber = EleNulAll[0].substring(17, 21);
+//            Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
+//            consumeVO.setMoney(Integer.parseInt(m, 16));
+//            consumeVO.setNumber(EleNul);
+//            consumeVO.setDate(new Date(calendar.getTimeInMillis()));
+//            consumeVO.setRdNumber(rdNumber);
+//        }
 //        if (BarcodeGraphic.hashMap.get(2) != null) {
 //            String s = BarcodeGraphic.hashMap.get(2);
 //            String result = "";
@@ -169,11 +169,11 @@ public class SearchByQrCode extends Fragment {
 //                consumeVO.setDetailname(sb.toString());
 //            }
 //        }
-        if(consumeVO!=null)
-        {
-            MainActivity.bundles.getLast().putSerializable("consumeVO",consumeVO);
-        }
-    }
+//        if(consumeVO!=null)
+//        {
+//            MainActivity.bundles.getLast().putSerializable("consumeVO",consumeVO);
+//        }
+//    }
 
 
 

@@ -62,5 +62,7 @@
     <string name="error_overMoney">超過金額上限!</string>
     <string name="error_lostData">資料遺失!</string>
     <string name="error_noHaveData">請新增資料!</string>
+    <string name="mainType">主項目種類</string>
+    <string name="secondType">次要項目種類</string>
 
 </resources>

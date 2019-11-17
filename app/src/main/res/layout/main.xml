@@ -9,30 +9,11 @@
     android:layout_height="match_parent"
     android:background="#ffffff"
     android:keepScreenOn="true">
-  <TextView
-      android:layout_marginTop="10dp"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/answer"
-      android:background="#ffffff"
-      android:textColor="#000000"
-      android:gravity="center"
-      android:textSize="25sp"
-      android:text="中獎資訊"
-      android:visibility="gone"
-      />
-  <com.beardedhen.androidbootstrap.AwesomeTextView
-      android:id="@+id/awardTitle"
-      android:layout_width="wrap_content"
-      android:layout_below="@+id/answer"
-      android:layout_height="wrap_content"
-      android:layout_centerHorizontal="true"
-      android:textSize="25sp"
-      app:bootstrapBrand="danger" />
+
+
   <com.chargeapp.whc.chargeapp.ui.CameraSourcePreview
       android:id="@+id/preview"
       android:layout_below="@+id/functionR"
-      android:layout_above="@+id/adView"
       android:layout_width="match_parent"
       android:layout_height="match_parent">
 
@@ -41,6 +22,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
   </com.chargeapp.whc.chargeapp.ui.CameraSourcePreview>
+
+  <com.beardedhen.androidbootstrap.AwesomeTextView
+      android:visibility="visible"
+      android:layout_marginTop="10dp"
+      android:id="@+id/answer"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textSize="25sp"
+      android:background="@drawable/price_button"
+      android:layout_centerHorizontal="true"
+      android:padding="5dp"
+      app:bootstrapBrand="regular"
+      />
+
+
+
   <RelativeLayout
       android:layout_centerHorizontal="true"
       android:layout_alignParentTop="true"
@@ -52,7 +49,7 @@
       >
     <RelativeLayout
         android:id="@+id/buttonR"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
       <com.beardedhen.androidbootstrap.AwesomeTextView
@@ -83,10 +80,10 @@
           android:layout_below="@+id/remainT"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginRight="25dp"
+          android:layout_marginStart="25dp"
           android:layout_marginBottom="10dp"
           android:layout_marginTop="10dp"
-          android:layout_toLeftOf="@+id/standard"
+          android:layout_toStartOf="@+id/standard"
           android:textColor="#000000"
           android:textSize="20sp"
           app:bootstrapBrand="success"
@@ -101,10 +98,10 @@
           android:layout_below="@+id/remainT"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_marginLeft="25dp"
+          android:layout_marginStart="25dp"
           android:layout_marginBottom="20dp"
           android:layout_marginTop="10dp"
-          android:layout_toRightOf="@+id/standard"
+          android:layout_toEndOf="@+id/standard"
           android:textColor="#000000"
           app:bootstrapBrand="danger"
           app:bootstrapSize="lg"
@@ -137,6 +134,21 @@
           app:roundedCorners="true"
           app:showOutline="false" />
 
+      <com.beardedhen.androidbootstrap.BootstrapButton
+          android:id="@+id/searchTwo"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_centerVertical="true"
+          android:layout_marginStart="20dp"
+          android:layout_toStartOf="@+id/typeSetting"
+          android:textColor="#000000"
+          android:textSize="20sp"
+          app:bootstrapBrand="info"
+          app:bootstrapSize="md"
+          app:bootstrapText="查詢 {fa_search}"
+          app:buttonMode="regular"
+          app:roundedCorners="true"
+          app:showOutline="false" />
 
       <com.beardedhen.androidbootstrap.BootstrapButton
           android:id="@+id/recordTwo"
@@ -144,7 +156,7 @@
           android:layout_height="wrap_content"
           android:layout_centerVertical="true"
           android:layout_marginStart="20dp"
-          android:layout_toRightOf="@+id/typeSetting"
+          android:layout_toEndOf="@+id/searchTwo"
           android:textColor="#000000"
           android:textSize="20sp"
           app:bootstrapBrand="primary"
@@ -161,7 +173,7 @@
     <com.beardedhen.androidbootstrap.BootstrapButton
         android:id="@+id/backP"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_margin="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -193,9 +205,9 @@
         android:layout_marginTop="1dp"
         android:background="#ffffff"
         android:gravity="center"
-        android:text="主項目種類"
+        android:text="@string/mainType"
         android:textColor="#000000"
-        android:textSize="25dp" />
+        android:textSize="25sp" />
 
     <GridView
         android:id="@+id/firstG"
@@ -228,7 +240,7 @@
         android:layout_marginTop="1dp"
         android:background="#ffffff"
         android:gravity="center"
-        android:text="次要項目種類"
+        android:text="@string/secondType"
         android:textColor="#000000"
         android:textSize="30sp" />
 

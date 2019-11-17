@@ -27,6 +27,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.PopupMenu;
@@ -1566,4 +1568,92 @@ public class Common {
    }
 
 
+    /**
+     * View渐隐动画效果
+     */
+    public static void setHideAnimation(View view, int duration)
+    {
+        if (null == view || duration < 0)
+        {
+            return;
+        }
+        AlphaAnimation mHideAnimation= (AlphaAnimation) view.getAnimation();
+        if (null != mHideAnimation)
+        {
+            mHideAnimation.cancel();
+        }
+        // 监听动画结束的操作
+        mHideAnimation = new AlphaAnimation(1.0f, 0.0f);
+        mHideAnimation.setDuration(duration);
+        mHideAnimation.setFillAfter(true);
+        mHideAnimation.setAnimationListener(new Animation.AnimationListener()
+        {
+
+            @Override
+            public void onAnimationStart(Animation arg0)
+            {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation arg0)
+            {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation arg0)
+            {
+                view.setVisibility(View.GONE);
+            }
+        });
+        view.startAnimation(mHideAnimation);
+    }
+
+
+    /**
+     * View渐现动画效果
+     */
+    public static void setShowAnimation( final View view, int duration)
+    {
+        if (null == view || duration < 0)
+        {
+            return;
+        }
+        AlphaAnimation mShowAnimation= (AlphaAnimation) view.getAnimation();
+        if (null != mShowAnimation)
+        {
+            mShowAnimation.cancel();
+        }
+        mShowAnimation = new AlphaAnimation(0.0f, 1.0f);
+        mShowAnimation.setDuration(duration);
+        mShowAnimation.setFillAfter(true);
+        mShowAnimation.setAnimationListener(new Animation.AnimationListener()
+        {
+
+            @Override
+            public void onAnimationStart(Animation arg0)
+            {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation arg0)
+            {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation arg0)
+            {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                setHideAnimation(view,1);
+            }
+        });
+        view.startAnimation(mShowAnimation);
+    }
 }

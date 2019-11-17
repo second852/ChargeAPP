@@ -16,6 +16,7 @@ import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
@@ -290,6 +291,36 @@ public class ConsumeDB {
         }
         cursor.close();
         return consumeList;
+    }
+
+
+
+    public ConsumeVO findByNulAndAmountAndRd(String Nul, String rdNumber,Date cTime) {
+        String sql = "SELECT * FROM Consumer where number = ? and rdNumber = ?";
+        String[] args = {Nul,rdNumber};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        ConsumeVO consumeVO=null ;
+        if (cursor.moveToNext()) {
+            consumeVO = configConsumeVO(cursor);
+            Calendar dbTime= Calendar.getInstance();
+            Calendar nowTime=Calendar.getInstance();
+            dbTime.setTime(consumeVO.getDate());
+            dbTime.set(Calendar.HOUR_OF_DAY,0);
+            dbTime.set(Calendar.MINUTE,0);
+            dbTime.set(Calendar.SECOND,0);
+            dbTime.set(Calendar.MILLISECOND,0);
+            nowTime.setTime(cTime);
+            nowTime.set(Calendar.HOUR_OF_DAY,0);
+            nowTime.set(Calendar.MINUTE,0);
+            nowTime.set(Calendar.SECOND,0);
+            nowTime.set(Calendar.MILLISECOND,0);
+            if(!nowTime.getTime().equals(dbTime.getTime()))
+            {
+                consumeVO=null;
+            }
+        }
+        cursor.close();
+        return consumeVO;
     }
 
 

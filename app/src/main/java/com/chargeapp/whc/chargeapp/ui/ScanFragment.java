@@ -24,9 +24,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
+import android.util.ArraySet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -79,8 +89,10 @@ import org.jsoup.internal.StringUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Activity for the multi-tracker app.  This app detects faces and barcodes with the rear facing
@@ -95,23 +107,24 @@ public final class ScanFragment extends Fragment {
     private CameraSource mCameraSource = null;
     private CameraSourcePreview mPreview;
     private GraphicOverlay mGraphicOverlay;
-    public static TextView answer;
+    public static AwesomeTextView answer;
     public static String result;
     //避免重複對獎
-    public static String oldElu,p,oldPeriod;
-    public static boolean isold;
-    public static int colorChange;
+
     public static String action;
     public RelativeLayout buttonR,scanR;
     public BootstrapButton search,back,backP,typeSetting;
-    public static AwesomeTextView awardTitle;
     public PopupMenu popupMenu;
     private LinearLayout firstL, secondL;
     private GridView firstG, secondG;
-    private String mainType,secondType;
+
     private TypeVO typeVO;
     private List<TypeVO> typeVOS;
     private Activity activity;
+    public static boolean isAutoSetType=true;
+    public static String mainType,secondType;
+    public static Set<String> nulName;
+    public static Map<String,String> hashMap;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -127,15 +140,15 @@ public final class ScanFragment extends Fragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main, container, false);
-        oldPeriod=null;
-        oldElu=null;
+        nulName=new HashSet<>();
+        hashMap=new HashMap<>();
         action=getArguments().getString("action");
         answer=view.findViewById(R.id.answer);
         back=view.findViewById(R.id.back);
-        awardTitle=view.findViewById(R.id.awardTitle);
         mPreview =view.findViewById(R.id.preview);
         mGraphicOverlay =view.findViewById(R.id.faceOverlay);
         search=view.findViewById(R.id.search);
@@ -148,6 +161,7 @@ public final class ScanFragment extends Fragment {
             case "setConsume":
             case "UpdateSpend":
                 buttonR.setVisibility(View.VISIBLE);
+                search.setVisibility(View.VISIBLE);
                 answer.setVisibility(View.GONE);
                 backP.setVisibility(View.GONE);
                 search.setOnClickListener(new View.OnClickListener() {
@@ -215,7 +229,7 @@ public final class ScanFragment extends Fragment {
                     }
                 });
                 buttonR.setVisibility(View.GONE);
-                answer.setVisibility(View.VISIBLE);
+                answer.setVisibility(View.GONE);
                 break;
             case "moreQRcode":
                 scanR=view.findViewById(R.id.scanR);
@@ -238,10 +252,12 @@ public final class ScanFragment extends Fragment {
                         switch (menuItem.getItemId())
                         {
                             case 2:
+                                isAutoSetType=false;
                                 firstL.setVisibility(View.VISIBLE);
                                 secondL.setVisibility(View.GONE);
                                 break;
                             default:
+                                isAutoSetType=true;
                                 firstL.setVisibility(View.GONE);
                                 typeSetting.setText(R.string.text_autoSetting);
                                 break;
@@ -344,7 +360,6 @@ public final class ScanFragment extends Fragment {
     private void createCameraSource() {
 
         Context context = activity.getApplicationContext();
-        BarcodeGraphic.hashMap=new HashMap<>();
         // A face detector is created to track faces.  An associated multi-processor instance
         // is set to receive the face detection results, track the faces, and maintain graphics for
         // each face on screen.  The factory is used by the multi-processor to create a separate
@@ -355,8 +370,8 @@ public final class ScanFragment extends Fragment {
         // create a separate tracker instance for each barcode.
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context)
                 .setBarcodeFormats(Barcode.QR_CODE).
-                build();
-        BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay,activity);
+                        build();
+        BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay,activity,action);
         barcodeDetector.setProcessor(
                 new MultiProcessor.Builder<>(barcodeFactory).build());
         // A multi-detector groups the two detectors together as one detector.  All images received
@@ -393,7 +408,7 @@ public final class ScanFragment extends Fragment {
         // Creates and starts the camera.  Note that this uses a higher resolution in comparison
         // to other detection examples to enable the barcode detector to detect small barcodes
         // at long distances.
-        mCameraSource = new CameraSource.Builder(activity.getApplicationContext(), multiDetector)
+        mCameraSource = new CameraSource.Builder(activity.getApplicationContext(), barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setRequestedPreviewSize(1600, 1024)
                 .setAutoFocusEnabled(true)

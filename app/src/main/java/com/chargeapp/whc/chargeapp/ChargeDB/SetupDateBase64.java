@@ -41,6 +41,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
     private InvoiceDB invoiceDB= new InvoiceDB(MainActivity.chargeAPPDB);
     private ConsumeVO consumeVO;
 
+
     public SetupDateBase64(Object object)
     {
           this.object=object;
@@ -79,10 +80,11 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                }
             }else if("getThisDetail".equals(action))
             {
-                jsonIn=getNeTDatei1();
+                jsonIn=getNetDetail();
             }else if("getNetDetail".equals(action))
             {
-                jsonIn=getThisData();
+                consumeVO= (ConsumeVO) object;
+                jsonIn=getNetDetail();
             }
         } catch (Exception e) {
             Log.e(TAG, e.toString());
@@ -92,7 +94,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
     }
 
 
-    private String getNeTDatei1() throws IOException {
+    private String getNetDetail() throws IOException {
         String date=Common.sTwo.format(consumeVO.getDate());
         String[] dateS=date.split("/");
         int year=Integer.valueOf(dateS[0])-1911;
@@ -109,7 +111,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
         }
         period.append(day);
         HashMap<String,String> data=new HashMap<>();
-        data.put("version","0.4");
+        data.put("version","0.5");
         data.put("type","Barcode");
         data.put("invNum",consumeVO.getNumber());
         data.put("action","qryInvDetail");
@@ -127,43 +129,6 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
     }
 
 
-    //QRCode 讀不到掃描
-    private String getThisData() throws IOException {
-        HashMap<String,String> data=new HashMap<>();
-        String imformation= BarcodeGraphic.hashMap.get(1);
-        String period=imformation.substring(10, 17);
-        String date=(Integer.valueOf(period.substring(0,3))+1911)+"/"+period.substring(3,5)+"/"+period.substring(5);
-        int mon = Integer.parseInt(period.substring(3, 5));
-        if (mon % 2 == 1) {
-            if (mon == 11) {
-                period = period.substring(0, 4) + "2";
-            } else if (mon == 10) {
-                period = period.substring(0, 4) + "1";
-            }  else if (mon == 9) {
-                period = period.substring(0, 3) + "10";
-            }else {
-                mon = mon + 1;
-                period = period.substring(0, 4) + String.valueOf(mon);
-            }
-        } else {
-            period = period.substring(0, 5);
-        }
-        data.put("version","0.5");
-        data.put("type","Barcode");
-        data.put("invNum",imformation.substring(0,10));
-        data.put("action","qryInvDetail");
-        data.put("generation","V2");
-        data.put("invTerm",period);
-        data.put("invDate",date);
-        data.put("encrypt"," ");
-        data.put("sellerID",imformation.substring(45,53));
-        data.put("UUID","second");
-        data.put("randomNumber",imformation.substring(17,21));
-        data.put("appID",appId);
-        String url="https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp?";
-        String j=getRemoteData(url,data);
-       return j;
-    }
 
 
     private HashMap<String,String> getupdateHeartyTeam(int seriel,InvoiceVO invoiceVO) throws Exception {
