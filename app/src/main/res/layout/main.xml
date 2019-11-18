@@ -26,7 +26,7 @@
   <com.beardedhen.androidbootstrap.AwesomeTextView
       android:visibility="visible"
       android:layout_marginTop="10dp"
-      android:id="@+id/answer"
+      android:id="@+id/answer1"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:textSize="25sp"
@@ -36,7 +36,18 @@
       app:bootstrapBrand="regular"
       />
 
-
+  <com.beardedhen.androidbootstrap.AwesomeTextView
+      android:visibility="visible"
+      android:id="@+id/answer2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textSize="25sp"
+      android:background="@drawable/price_button"
+      android:layout_centerHorizontal="true"
+      android:layout_centerVertical="true"
+      android:padding="5dp"
+      app:bootstrapBrand="regular"
+      />
 
   <RelativeLayout
       android:layout_centerHorizontal="true"
@@ -140,7 +151,7 @@
           android:layout_height="wrap_content"
           android:layout_centerVertical="true"
           android:layout_marginStart="20dp"
-          android:layout_toStartOf="@+id/typeSetting"
+          android:layout_toEndOf="@+id/typeSetting"
           android:textColor="#000000"
           android:textSize="20sp"
           app:bootstrapBrand="info"

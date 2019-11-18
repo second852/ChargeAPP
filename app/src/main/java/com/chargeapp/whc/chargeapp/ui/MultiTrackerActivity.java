@@ -170,19 +170,24 @@ public final class MultiTrackerActivity extends AppCompatActivity {
                 MultiTrackerActivity.this.finish();
             }else if(action.equals("moreQRcode"))
             {
-                Bundle bundle= MainActivity.bundles.getLast();
-                String action= (String) bundle.getSerializable("action");
-                switch (action)
+
+                if(MainActivity.bundles!=null&&MainActivity.bundles.isEmpty())
                 {
-                    case Common.scanFragment:
-                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        Fragment fragment=new ScanFragment();
-                        bundle.putSerializable("action",bundle.getSerializable(Common.multiTrackerActivityWork));
-                        fragment.setArguments(bundle);
-                        fragmentTransaction.replace(R.id.body, fragment);
-                        fragmentTransaction.commit();
-                        return true;
+                    Bundle bundle= MainActivity.bundles.getLast();
+                    String action= (String) bundle.getSerializable("action");
+                    switch (action) {
+                        case Common.scanFragment:
+                            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                            Fragment fragment = new ScanFragment();
+                            bundle.putSerializable("action", bundle.getSerializable(Common.multiTrackerActivityWork));
+                            fragment.setArguments(bundle);
+                            fragmentTransaction.replace(R.id.body, fragment);
+                            fragmentTransaction.commit();
+                            return true;
+                    }
                 }
+
+
 
             }
         }

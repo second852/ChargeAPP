@@ -534,6 +534,18 @@ public class ConsumeDB {
         return consumeVO;
     }
 
+    public ConsumeVO findConByNul(String number) {
+        String sql = "SELECT * FROM Consumer where number = ? order by id desc;";
+        String[] args = {number};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        ConsumeVO consumeVO = null;
+        if (cursor.moveToNext()) {
+            consumeVO = configConsumeVO(cursor);
+        }
+        cursor.close();
+        return consumeVO;
+    }
+
 
     public ConsumeVO findOldCon(ConsumeVO consumeVO) {
         String sql = "SELECT * FROM Consumer where maintype = '" + consumeVO.getMaintype() + "' " +

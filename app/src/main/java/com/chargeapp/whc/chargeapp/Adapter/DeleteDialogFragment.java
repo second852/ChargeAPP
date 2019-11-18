@@ -54,6 +54,8 @@ import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.ui.ScanFragment;
+import com.chargeapp.whc.chargeapp.ui.ScanListFragment;
 
 
 import org.jsoup.internal.StringUtil;
@@ -335,6 +337,13 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                 {
                     SettingListFixProperty settingListFixProperty= (SettingListFixProperty) fragment;
                     settingListFixProperty.setLayout();
+                }else if(fragment instanceof ScanListFragment)
+                {
+                    ConsumeVO consumeVO= (ConsumeVO) object;
+                    ScanFragment.nulName.remove(consumeVO.getNumber());
+                    ScanListFragment scanListFragment= (ScanListFragment) fragment;
+                    scanListFragment.setAdapt();
+
                 }
                 break;
             default:

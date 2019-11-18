@@ -93,6 +93,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Activity for the multi-tracker app.  This app detects faces and barcodes with the rear facing
@@ -113,7 +114,7 @@ public final class ScanFragment extends Fragment {
 
     public static String action;
     public RelativeLayout buttonR,scanR;
-    public BootstrapButton search,back,backP,typeSetting;
+    public BootstrapButton search,back,backP,typeSetting,recordTwo;
     public PopupMenu popupMenu;
     private LinearLayout firstL, secondL;
     private GridView firstG, secondG;
@@ -124,7 +125,7 @@ public final class ScanFragment extends Fragment {
     public static boolean isAutoSetType=true;
     public static String mainType,secondType;
     public static Set<String> nulName;
-    public static Map<String,String> hashMap;
+    public static Set<String> qrCode;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -145,9 +146,9 @@ public final class ScanFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main, container, false);
         nulName=new HashSet<>();
-        hashMap=new HashMap<>();
+        qrCode=new CopyOnWriteArraySet<>();
         action=getArguments().getString("action");
-        answer=view.findViewById(R.id.answer);
+
         back=view.findViewById(R.id.back);
         mPreview =view.findViewById(R.id.preview);
         mGraphicOverlay =view.findViewById(R.id.faceOverlay);
@@ -160,6 +161,7 @@ public final class ScanFragment extends Fragment {
         {
             case "setConsume":
             case "UpdateSpend":
+                answer=view.findViewById(R.id.answer2);
                 buttonR.setVisibility(View.VISIBLE);
                 search.setVisibility(View.VISIBLE);
                 answer.setVisibility(View.GONE);
@@ -217,7 +219,7 @@ public final class ScanFragment extends Fragment {
                 });
                 break;
             case "PriceHand":
-
+                answer=view.findViewById(R.id.answer1);
                 backP.setVisibility(View.VISIBLE);
                 backP.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -232,6 +234,8 @@ public final class ScanFragment extends Fragment {
                 answer.setVisibility(View.GONE);
                 break;
             case "moreQRcode":
+                buttonR.setVisibility(View.GONE);
+                answer=view.findViewById(R.id.answer2);
                 scanR=view.findViewById(R.id.scanR);
                 scanR.setVisibility(View.VISIBLE);
                 typeSetting=view.findViewById(R.id.typeSetting);
@@ -309,6 +313,15 @@ public final class ScanFragment extends Fragment {
                     }
                 });
 
+                recordTwo=view.findViewById(R.id.recordTwo);
+                recordTwo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Fragment fragment=new ScanListFragment();
+                        fragment.setArguments(getArguments());
+                        Common.switchFragment(fragment,Common.scanFragment,getFragmentManager());
+                    }
+                });
 
                 break;
         }
@@ -433,17 +446,25 @@ public final class ScanFragment extends Fragment {
         mPreview.stop();
     }
 
-    /**
-     * Releases the resources associated with the camera source, the associated detectors, and the
-     * rest of the processing pipeline.
-     */
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDetach() {
+        super.onDetach();
         if (mCameraSource != null) {
             mCameraSource.release();
         }
     }
+
+    /**
+     * Releases the resources associated with the camera source, the associated detectors, and the
+     * rest of the processing pipeline.
+     */
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        if (mCameraSource != null) {
+//            mCameraSource.release();
+//        }
+//    }
 
 
     /**

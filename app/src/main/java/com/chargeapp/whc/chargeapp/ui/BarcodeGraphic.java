@@ -65,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -106,6 +107,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
     public String action;
     public boolean isExist;
     public BankDB bankDB;
+
 
 
 
@@ -169,6 +171,11 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
      */
     void updateItem(Barcode barcode) {
         mBarcode = barcode;
+        if(mBarcode!=null)
+        {
+            Log.d("BarcodeGraphic",mBarcode.rawValue+""+ScanFragment.qrCode.size());
+            ScanFragment.qrCode.add(mBarcode.rawValue);
+        }
     }
 
 
@@ -275,7 +282,40 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 animation.cancel();
             }
             ScanFragment.answer.setVisibility(View.GONE);
+            Log.d("BarcodeGraphic","NULL");
             return;
+        }
+
+
+        if(ScanFragment.qrCode.size()>=2)
+        {
+            boolean qrcodeTrue=false;
+            for(String qq:ScanFragment.qrCode)
+            {
+                if(qq.indexOf("**********")!=-1)
+                {
+                    qrcodeTrue=true;
+                }
+
+            }
+            ScanFragment.qrCode.clear();
+            if(!qrcodeTrue)
+            {
+                switch (action) {
+                    case "setConsume":
+                    case "UpdateSpend":
+                    case "moreQRcode":
+                        ScanFragment.answer.setText("QRCode格式有誤! 請用線上查詢!");
+                        break;
+                    case "PriceHand":
+                        ScanFragment.answer.setText("QRCode格式有誤! 請手動兌獎");
+                        Log.d("BarcodeGraphic", stringOne);
+                        Log.d("BarcodeGraphic", "QRCode格式有誤! 請手動兌獎");
+                        break;
+                }
+                Common.setShowAnimation(ScanFragment.answer, 1);
+                return;
+            }
         }
 
         stringOne=barcode.rawValue;
@@ -344,16 +384,15 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 case "setConsume":
                 case "UpdateSpend":
                 case "moreQRcode":
-                    Common.showToast(context, "QRCode格式有誤! 請用線上查詢!");
+                    ScanFragment.answer.setText("QRCode格式有誤!\n請用線上查詢!");
                     break;
                 case "PriceHand":
-                    ScanFragment.answer.setText("QRCode格式有誤! 請手動兌獎");
+                    ScanFragment.answer.setText("QRCode格式有誤!\n請手動兌獎!");
                     Log.d("BarcodeGraphic", stringOne);
                     Log.d("BarcodeGraphic", "QRCode格式有誤! 請手動兌獎");
-                    Common.setShowAnimation(ScanFragment.answer, 1);
                     break;
             }
-
+            Common.setShowAnimation(ScanFragment.answer, 1);
             return;
         }
 
@@ -438,129 +477,37 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             case "PriceHand":
                 priceAnswer();
                 break;
+            case "moreQRcode":
+                QrCodeResultMultiScan();
+                break;
         }
-
-
-//        if (MultiTrackerActivity.action.equals("setConsume") || MultiTrackerActivity.action.equals("UpdateSpend")) {
-//            return;
-//        }
-//        if (ScanFragment.result == null && ScanFragment.answer.getVisibility() == View.VISIBLE) {
-//            ScanFragment.answer.setText("1.請對準左邊QRCode~\n2.如果無法辨識，請手動兌獎!");
-//            return;
-//        }
-//
-//        if (!ScanFragment.isold) {
-//            Common.showToast(context, "掃描成功!");
-//            int textColor;
-//            switch (ScanFragment.colorChange % 2) {
-//                case 0:
-//                    textColor = Color.BLUE;
-//                    ScanFragment.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.INFO);
-//                    break;
-//                default:
-//                    textColor = Color.parseColor("#00AA55");
-//                    ScanFragment.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.WARNING);
-//                    break;
-//            }
-//            if (ScanFragment.result.equals("over")) {
-//                String total = ScanFragment.p + "尚未開獎\n 發票號碼 : " + ScanFragment.oldElu;
-//                Spannable content = new SpannableString(total);
-//                content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":") + 1, total.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                ScanFragment.answer.setText(content);
-//                ScanFragment.awardTitle.setText(null);
-//                return;
-//            }
-//            if (ScanFragment.result.equals("no")) {
-//                String total = ScanFragment.p + "已過兌獎期限\n 發票號碼 : " + ScanFragment.oldElu;
-//                Spannable content = new SpannableString(total);
-//                content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":") + 1, total.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                ScanFragment.answer.setText(content);
-//                ScanFragment.answer.setText(content);
-//                ScanFragment.awardTitle.setText(null);
-//                return;
-//            }
-//            if (ScanFragment.result.equals("N")) {
-//                String total = ScanFragment.p + "\n發票號碼:" + ScanFragment.oldElu;
-//                Spannable content = new SpannableString(total);
-//                content.setSpan(new ForegroundColorSpan(textColor), 0, total.indexOf("發"), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                content.setSpan(new ForegroundColorSpan(textColor), total.indexOf(":") + 1, total.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                ScanFragment.answer.setText(content);
-//
-//                BootstrapText text = new BootstrapText.Builder(context)
-//                        .addText(" " + "沒有中獎" + " ")
-//                        .addFontAwesomeIcon(FA_EXCLAMATION)
-//                        .addText(" " + "再接再厲" + " ")
-//                        .addFontAwesomeIcon(FA_FLAG)
-//                        .build();
-//                ScanFragment.awardTitle.setText(text);
-//
-//            } else {
-//                if (priceVO != null) {
-//                    String peroid = getPeriod(priceVO.getInVoYm());
-//                    StringBuffer sb = new StringBuffer();
-//                    sb.append(peroid).append(levelPrice.get("win")).append("\n中獎號碼").append(ScanFragment.oldElu);
-//                    Spannable content = new SpannableString(sb.toString());
-//                    content.setSpan(new ForegroundColorSpan(Color.RED), peroid.length() + levelPrice.get("win").length() - levelLength.get(ScanFragment.result), peroid.length() + levelPrice.get("win").length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                    content.setSpan(new ForegroundColorSpan(Color.MAGENTA), sb.length() - (levelLength.get(ScanFragment.result)), sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//                    ScanFragment.answer.setText(content);
-//
-//                    BootstrapText text = new BootstrapText.Builder(context)
-//                            .addFontAwesomeIcon(FA_STAR)
-//                            .addText(" " + levelPrice.get(ScanFragment.result) + " ")
-//                            .addFontAwesomeIcon(FA_STAR)
-//                            .build();
-//                    ScanFragment.awardTitle.setText(text);
-//                    ScanFragment.awardTitle.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
-//                    Vibrator myVibrator = (Vibrator) this.context.getSystemService(Service.VIBRATOR_SERVICE);
-//                    myVibrator.vibrate(500);
-//                }
-//            }
-//        } else {
-//            Common.showToast(context, "這張發票已掃描過!");
-//        }
-
-
-//        try {
-//            Thread.sleep(3000);
-//        } catch (
-//                Exception e) {
-//
-//        }
-
     }
 
-
-    private String getPeriod(String inYm) {
-        String day = inYm.substring(3, 5);
-        String period;
-        if (day.equals("02")) {
-            period = inYm.substring(0, 3) + "年01-02月";
-        } else if (day.equals("04")) {
-            period = inYm.substring(0, 3) + "年03-04月";
-        } else if (day.equals("06")) {
-            period = inYm.substring(0, 3) + "年05-06月";
-        } else if (day.equals("08")) {
-            period = inYm.substring(0, 3) + "年07-08月";
-        } else if (day.equals("10")) {
-            period = inYm.substring(0, 3) + "年09-10月";
-        } else {
-            period = inYm.substring(0, 3) + "年11-12月";
-        }
-        return period;
-    }
 
     public void QrCodeResultFinishForInsert() {
 
         if (consumeVO != null) {
+            StringBuilder resultShow=new StringBuilder();
+            resultShow.append("發票號碼 :"+ consumeVO.getNumber());
             if (isExist) {
-                Common.showToast(context, "此筆資料已存檔 請換另一張發票!");
+                resultShow.append("\n資料庫已有檔案\n請換另一張發票!");
+                int start=resultShow.indexOf(":") + 1;
+                int end=start+consumeVO.getNumber().length();
+                SpannableString content = new SpannableString(resultShow.toString());
+                content.setSpan(new ForegroundColorSpan(Color.BLUE), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                ScanFragment.answer.setText(content);
+                Common.setShowAnimation(ScanFragment.answer,1);
+
             } else {
                 if (StringUtil.isBlank(consumeVO.getDetailname())) {
-                    Common.showToast(context, "雲端發票尚未建檔 系統會自動更新!");
+                    resultShow.append("\n雲端發票目前尚無資料\n系統會自動更新!");
                 } else {
-                    Common.showToast(context, "查詢成功!");
+                    resultShow.append("\n查詢成功!");
                     consumeVO = getType(consumeVO);
                 }
+
+                Common.showToast(context,resultShow.toString());
+
                 Intent intent = new Intent(context, MainActivity.class);
                 InsertSpend.consumeVO = consumeVO;
                 InsertSpend.needSet = true;
@@ -574,14 +521,18 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
     public void QrCodeResultFinishForUpdate() {
 
         if (consumeVO != null) {
+            StringBuilder resultShow=new StringBuilder();
+            resultShow.append("發票號碼 :"+ consumeVO.getNumber());
+
             if (StringUtil.isBlank(consumeVO.getDetailname())) {
-                Common.showToast(context, "雲端發票尚未建檔 系統會自動更新!");
+                resultShow.append("\n雲端發票尚無檔案\n系統會自動更新!");
             } else {
-                Common.showToast(context, "查詢成功!");
+                resultShow.append("\n查詢成功!");
                 if (StringUtil.isBlank(consumeVO.getMaintype()) || consumeVO.getMaintype().equals("未知")) {
                     consumeVO = getType(consumeVO);
                 }
             }
+            Common.showToast(context,resultShow.toString());
             Intent intent = new Intent(context, MainActivity.class);
             Bundle bundle = context.getIntent().getBundleExtra("bundle");
             bundle.putSerializable("consumeVO", consumeVO);
@@ -589,227 +540,261 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             intent.putExtra("action", MultiTrackerActivity.action);
             context.setResult(10, intent);
             context.finish();
+
         }
+
     }
 
 
-    public void priceAnswer() {
+
+    public void QrCodeResultMultiScan() {
 
         if (consumeVO != null) {
-
-            StringBuilder periodString = new StringBuilder();
-            boolean repeat = ScanFragment.nulName.contains(consumeVO.getNumber());
-            if (repeat) {
-                periodString.append("此張發票已兌獎過!\n");
-            }
-            ScanFragment.nulName.add(consumeVO.getNumber());
-
-            StringBuilder sPeriod = new StringBuilder();
-            StringBuilder bPeriod = new StringBuilder();
-            sPeriod.append((year - 1911));
-            bPeriod.append((year - 1911));
-            periodString.append((year - 1911));
-
-            int realMonth = month + 1;
-            switch (realMonth) {
-                case 1:
-                case 2:
-                    sPeriod.append("02");
-                    periodString.append("年01-02月");
-                    bPeriod.append("年01-02月");
-                    break;
-                case 3:
-                case 4:
-                    sPeriod.append("04");
-                    periodString.append("年03-04月");
-                    bPeriod.append("年03-04月");
-                    break;
-                case 5:
-                case 6:
-                    sPeriod.append("06");
-                    periodString.append("年05-06月");
-                    bPeriod.append("年05-06月");
-                    break;
-                case 7:
-                case 8:
-                    sPeriod.append("08");
-                    periodString.append("年07-08月");
-                    bPeriod.append("年07-08月");
-                    break;
-                case 9:
-                case 10:
-                    sPeriod.append("10");
-                    periodString.append("年09-10月");
-                    bPeriod.append("年09-10月");
-                    break;
-                case 11:
-                case 12:
-                    sPeriod.append("12");
-                    periodString.append("年11-12月");
-                    bPeriod.append("年11-12月");
-                    break;
-            }
-
-            if (Integer.valueOf(sPeriod.toString()) > max) {
-                result = "over";
+            StringBuilder resultShow=new StringBuilder();
+            resultShow.append("發票號碼 :"+ consumeVO.getNumber());
+            if (isExist) {
+                resultShow.append("\n資料庫已有檔案\n請換另一張發票!");
             } else {
-
-                priceVO = priceDB.getPeriodAll(sPeriod.toString());
-                if (priceVO == null) {
-                    result = "no";
+                if (StringUtil.isBlank(consumeVO.getDetailname())) {
+                    resultShow.append("\n雲端發票尚無檔案\n系統會自動更新!");
                 } else {
-                    List<String> answer= answer(consumeVO.getNumber().substring(2), priceVO);
-                    result=answer.get(0);
-                    consumeVO.setIsWin(answer.get(0));
-                    consumeVO.setIsWinNul(answer.get(1));
+                    if (ScanFragment.isAutoSetType) {
+                        consumeVO = getType(consumeVO);
+                    } else {
+                         consumeVO.setMaintype(ScanFragment.mainType);
+                         consumeVO.setSecondType(ScanFragment.secondType);
+                    }
+                    resultShow.append("\n存進資料庫!");
                 }
-            }
-
-            if (!StringUtil.isBlank(consumeVO.getDetailname())) {
-                consumeVO = getType(consumeVO);
-            }
-
-            if (!isExist) {
                 consumeDB.insert(consumeVO);
-            } else {
-                consumeDB.update(consumeVO);
             }
+            int start=resultShow.indexOf(":") + 1;
+            int end=start+consumeVO.getNumber().length();
+            SpannableString content = new SpannableString(resultShow.toString());
+            content.setSpan(new ForegroundColorSpan(Color.BLUE), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ScanFragment.answer.setText(content);
+            Common.setShowAnimation(ScanFragment.answer,1);
+        }
+    }
 
 
-            Spannable content;
-            int textColor = Color.BLUE;
-            int remainColor = Color.parseColor("#5bc0de");
-            switch (result) {
-                case "no":
-                    periodString.append("已過兌獎期限\n 發票號碼 : " + consumeVO.getNumber());
-                    content = new SpannableString(periodString.toString());
-                    content.setSpan(new ForegroundColorSpan(textColor), periodString.indexOf(":") + 1, periodString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    break;
-                case "over":
-                    periodString.append("尚未開獎\n 發票號碼 : " + consumeVO.getNumber());
-                    content = new BootstrapText.Builder(context)
-                            .addText(periodString.toString())
-                            .build();
-                    content.setSpan(new ForegroundColorSpan(textColor), periodString.indexOf(":") + 1, periodString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        public void priceAnswer () {
+
+            if (consumeVO != null) {
+
+                StringBuilder periodString = new StringBuilder();
+                boolean repeat = ScanFragment.nulName.contains(consumeVO.getNumber());
+                if (repeat) {
+                    periodString.append("此張發票已兌獎過!\n");
+                }
+                ScanFragment.nulName.add(consumeVO.getNumber());
+
+                StringBuilder sPeriod = new StringBuilder();
+                StringBuilder bPeriod = new StringBuilder();
+                sPeriod.append((year - 1911));
+                bPeriod.append((year - 1911));
+                periodString.append((year - 1911));
+
+                int realMonth = month + 1;
+                switch (realMonth) {
+                    case 1:
+                    case 2:
+                        sPeriod.append("02");
+                        periodString.append("年01-02月");
+                        bPeriod.append("年01-02月");
+                        break;
+                    case 3:
+                    case 4:
+                        sPeriod.append("04");
+                        periodString.append("年03-04月");
+                        bPeriod.append("年03-04月");
+                        break;
+                    case 5:
+                    case 6:
+                        sPeriod.append("06");
+                        periodString.append("年05-06月");
+                        bPeriod.append("年05-06月");
+                        break;
+                    case 7:
+                    case 8:
+                        sPeriod.append("08");
+                        periodString.append("年07-08月");
+                        bPeriod.append("年07-08月");
+                        break;
+                    case 9:
+                    case 10:
+                        sPeriod.append("10");
+                        periodString.append("年09-10月");
+                        bPeriod.append("年09-10月");
+                        break;
+                    case 11:
+                    case 12:
+                        sPeriod.append("12");
+                        periodString.append("年11-12月");
+                        bPeriod.append("年11-12月");
+                        break;
+                }
+
+                if (Integer.valueOf(sPeriod.toString()) > max) {
+                    result = "over";
+                } else {
+
+                    priceVO = priceDB.getPeriodAll(sPeriod.toString());
+                    if (priceVO == null) {
+                        result = "no";
+                    } else {
+                        List<String> answer = answer(consumeVO.getNumber().substring(2), priceVO);
+                        result = answer.get(0);
+                        consumeVO.setIsWin(answer.get(0));
+                        consumeVO.setIsWinNul(answer.get(1));
+                    }
+                }
+
+                if (!StringUtil.isBlank(consumeVO.getDetailname())) {
+                    consumeVO = getType(consumeVO);
+                }
+
+                if (!isExist) {
+                    consumeDB.insert(consumeVO);
+                } else {
+                    consumeDB.update(consumeVO);
+                }
 
 
-                    break;
-                case "N":
+                Spannable content;
+                int textColor = Color.BLUE;
+                int remainColor = Color.parseColor("#5bc0de");
+                switch (result) {
+                    case "no":
+                        periodString.append("已過兌獎期限\n 發票號碼 : " + consumeVO.getNumber());
+                        content = new SpannableString(periodString.toString());
+                        content.setSpan(new ForegroundColorSpan(textColor), periodString.indexOf(":") + 1, periodString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        break;
+                    case "over":
+                        periodString.append("尚未開獎\n 發票號碼 : " + consumeVO.getNumber());
+                        content = new BootstrapText.Builder(context)
+                                .addText(periodString.toString())
+                                .build();
+                        content.setSpan(new ForegroundColorSpan(textColor), periodString.indexOf(":") + 1, periodString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 
-                    periodString.append("\n發票號碼:" + consumeVO.getNumber()).append("\n");
-                    content = new BootstrapText.Builder(context)
-                            .addText(periodString.toString())
-                            .addText(" " + "沒有中獎" + " ")
-                            .addFontAwesomeIcon(FA_EXCLAMATION)
-                            .addText(" " + "再接再厲" + " ")
-                            .addFontAwesomeIcon(FA_FLAG).addText(" ")
-                            .build();
-                    content.setSpan(new ForegroundColorSpan(textColor), 0, periodString.indexOf("發"), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    content.setSpan(new ForegroundColorSpan(textColor), periodString.indexOf(":") + 1, periodString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        break;
+                    case "N":
+
+
+                        periodString.append("\n發票號碼:" + consumeVO.getNumber()).append("\n");
+                        content = new BootstrapText.Builder(context)
+                                .addText(periodString.toString())
+                                .addText(" " + "沒有中獎" + " ")
+                                .addFontAwesomeIcon(FA_EXCLAMATION)
+                                .addText(" " + "再接再厲" + " ")
+                                .addFontAwesomeIcon(FA_FLAG).addText(" ")
+                                .build();
+                        content.setSpan(new ForegroundColorSpan(textColor), 0, periodString.indexOf("發"), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        content.setSpan(new ForegroundColorSpan(textColor), periodString.indexOf(":") + 1, periodString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 //
-                    break;
-                default:
+                        break;
+                    default:
 
-                    String winNumber=levelPrice.get("win");
-                    periodString.append(winNumber).append("\n中獎號碼").append(consumeVO.getNumber()).append("\n");
+                        String winNumber = levelPrice.get("win");
+                        periodString.append(winNumber).append("\n中獎號碼").append(consumeVO.getNumber()).append("\n");
 
-                    content = new BootstrapText.Builder(context)
-                            .addText(periodString.toString())
-                            .addFontAwesomeIcon(FA_STAR)
-                            .addText(" "+ levelPrice.get(result) + " ")
-                            .addFontAwesomeIcon(FA_STAR)
-                            .build();
-
-
-                    String showPrice=" "+ levelPrice.get(result) +" ";
-                    String showString=content.toString();
-
-                    int priceStart=showString.indexOf(showPrice)-1;
-                    int priceEnd=showString.length();
+                        content = new BootstrapText.Builder(context)
+                                .addText(periodString.toString())
+                                .addFontAwesomeIcon(FA_STAR)
+                                .addText(" " + levelPrice.get(result) + " ")
+                                .addFontAwesomeIcon(FA_STAR)
+                                .build();
 
 
-                    int winNumberEnd=showString.indexOf(winNumber)+winNumber.length();
-                    int winNumberStart=winNumberEnd-levelLength.get(result);
-                    int nowNumberEnd=showString.indexOf(consumeVO.getNumber())+consumeVO.getNumber().length();
-                    int nowNumberStart=nowNumberEnd-levelLength.get(result);
+                        String showPrice = " " + levelPrice.get(result) + " ";
+                        String showString = content.toString();
 
-                    content.setSpan(new ForegroundColorSpan(Color.RED), winNumberStart, winNumberEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    content.setSpan(new ForegroundColorSpan(Color.MAGENTA), nowNumberStart, nowNumberEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    content.setSpan(new ForegroundColorSpan(Color.RED),priceStart , priceEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        int priceStart = showString.indexOf(showPrice) - 1;
+                        int priceEnd = showString.length();
 
 
-                    Vibrator myVibrator = (Vibrator) this.context.getSystemService(Service.VIBRATOR_SERVICE);
-                    myVibrator.vibrate(500);
+                        int winNumberEnd = showString.indexOf(winNumber) + winNumber.length();
+                        int winNumberStart = winNumberEnd - levelLength.get(result);
+                        int nowNumberEnd = showString.indexOf(consumeVO.getNumber()) + consumeVO.getNumber().length();
+                        int nowNumberStart = nowNumberEnd - levelLength.get(result);
+
+                        content.setSpan(new ForegroundColorSpan(Color.RED), winNumberStart, winNumberEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        content.setSpan(new ForegroundColorSpan(Color.MAGENTA), nowNumberStart, nowNumberEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        content.setSpan(new ForegroundColorSpan(Color.RED), priceStart, priceEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 
-                    BankVO bankVO=bankDB.getIsExist(bPeriod.toString(),consumeVO.getNumber());
-                    if (bankVO==null) {
-                        bankVO = new BankVO();
-                        bankVO.setFixDate("false");
-                        bankVO.setMoney(Common.getIntPrice().get(consumeVO.getIsWin()));
-                        bankVO.setDate(new Date(System.currentTimeMillis()));
-                        bankVO.setMaintype("中獎");
-                        bPeriod.append("\n"+Common.getPriceName().get(consumeVO.getIsWin()) + " : " + Common.getPrice().get(consumeVO.getIsWin())+"\n中獎號碼 : "+consumeVO.getNumber());
-                        bankVO.setDetailname(bPeriod.toString());
-                        bankDB.insert(bankVO);
-                    }
+                        Vibrator myVibrator = (Vibrator) this.context.getSystemService(Service.VIBRATOR_SERVICE);
+                        myVibrator.vibrate(500);
 
 
-                    break;
+                        BankVO bankVO = bankDB.getIsExist(bPeriod.toString(), consumeVO.getNumber());
+                        if (bankVO == null) {
+                            bankVO = new BankVO();
+                            bankVO.setFixDate("false");
+                            bankVO.setMoney(Common.getIntPrice().get(consumeVO.getIsWin()));
+                            bankVO.setDate(new Date(System.currentTimeMillis()));
+                            bankVO.setMaintype("中獎");
+                            bPeriod.append("\n" + Common.getPriceName().get(consumeVO.getIsWin()) + " : " + Common.getPrice().get(consumeVO.getIsWin()) + "\n中獎號碼 : " + consumeVO.getNumber());
+                            bankVO.setDetailname(bPeriod.toString());
+                            bankDB.insert(bankVO);
+                        }
+
+
+                        break;
+                }
+
+                if (repeat) {
+                    content.setSpan(new ForegroundColorSpan(remainColor), periodString.indexOf("此"), periodString.indexOf("!") + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+
+
+                ScanFragment.answer.setText(content);
+                Log.d("BarcodeGraphic", mBarcode.rawValue);
+                Log.d("BarcodeGraphic", content.toString());
+                Log.d("BarcodeGraphic", result);
+                Common.setShowAnimation(ScanFragment.answer, 2);
+            } else {
+                ScanFragment.answer.setVisibility(View.GONE);
             }
 
-            if (repeat) {
-                content.setSpan(new ForegroundColorSpan(remainColor), periodString.indexOf("此"), periodString.indexOf("!")+1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-
-
-            ScanFragment.answer.setText(content);
-            Log.d("BarcodeGraphic", mBarcode.rawValue);
-            Log.d("BarcodeGraphic", content.toString());
-            Log.d("BarcodeGraphic",result);
-            Common.setShowAnimation(ScanFragment.answer, 2);
-        } else {
-            ScanFragment.answer.setVisibility(View.GONE);
         }
 
-    }
 
-
-    private ConsumeVO getType(ConsumeVO consumeVO) {
-        Common.setChargeDB(context);
-        TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
-        List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
-        String main = "O", second = "O";
-        int x = 0, total = 0;
-        for (TypeDetailVO t : typeDetailVOS) {
-            x = 0;
-            String[] key = t.getKeyword().split(" ");
-            for (int i = 0; i < key.length; i++) {
-                if (consumeVO.getDetailname().indexOf(key[i].trim()) != -1) {
-                    x = x + key[i].length();
+        private ConsumeVO getType (ConsumeVO consumeVO){
+            Common.setChargeDB(context);
+            TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
+            List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
+            String main = "O", second = "O";
+            int x = 0, total = 0;
+            for (TypeDetailVO t : typeDetailVOS) {
+                x = 0;
+                String[] key = t.getKeyword().split(" ");
+                for (int i = 0; i < key.length; i++) {
+                    if (consumeVO.getDetailname().indexOf(key[i].trim()) != -1) {
+                        x = x + key[i].length();
+                    }
+                }
+                if (x > total) {
+                    total = x;
+                    main = t.getGroupNumber();
+                    second = t.getName();
                 }
             }
-            if (x > total) {
-                total = x;
-                main = t.getGroupNumber();
-                second = t.getName();
+            if (second.indexOf("餐") != -1) {
+                int hour = Integer.valueOf(Common.sHour.format(consumeVO.getDate()));
+                if (hour > 0 && hour < 11) {
+                    second = "早餐";
+                } else if (hour >= 11 && hour < 18) {
+                    second = "午餐";
+                } else {
+                    second = "晚餐";
+                }
             }
+            consumeVO.setMaintype(main);
+            consumeVO.setSecondType(second);
+            return consumeVO;
         }
-        if (second.indexOf("餐") != -1) {
-            int hour = Integer.valueOf(Common.sHour.format(consumeVO.getDate()));
-            if (hour > 0 && hour < 11) {
-                second = "早餐";
-            } else if (hour >= 11 && hour < 18) {
-                second = "午餐";
-            } else {
-                second = "晚餐";
-            }
-        }
-        consumeVO.setMaintype(main);
-        consumeVO.setSecondType(second);
-        return consumeVO;
-    }
 
 }
