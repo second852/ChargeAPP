@@ -66,9 +66,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -388,7 +386,6 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                     break;
                 case "PriceHand":
                     ScanFragment.answer.setText("QRCode格式有誤!\n請手動兌獎!");
-                    Log.d("BarcodeGraphic", stringOne);
                     Log.d("BarcodeGraphic", "QRCode格式有誤! 請手動兌獎");
                     break;
             }
@@ -422,7 +419,6 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 }catch (Exception e)
                 {
                     Log.d("BarcodeGraphic",e.toString());
-                    Log.d("BarcodeGraphic",result);
                     jsonObject=null;
 
                 }
