@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -38,6 +39,7 @@ import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.ScanFragment;
+import com.chargeapp.whc.chargeapp.ui.ScanUpdateSpend;
 
 
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.chargeapp.whc.chargeapp.Control.Common.fragment;
 import static com.chargeapp.whc.chargeapp.Control.Common.searchMainString;
 
 /**
@@ -70,6 +73,7 @@ public class InsertConsumeType extends Fragment {
     private boolean insertNewType;
     private boolean isTypeVO;
     private String type;
+    private View view;
 
 
     @Override
@@ -86,7 +90,7 @@ public class InsertConsumeType extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         context.setTitle("新增主/次項目類別");
-        View view = inflater.inflate(R.layout.updae_con_type, container, false);
+         view = inflater.inflate(R.layout.updae_con_type, container, false);
         ((AppCompatActivity) context).getSupportActionBar().setDisplayShowCustomEnabled(false);
         Common.setChargeDB(context);
         typeDB = new TypeDB(MainActivity.chargeAPPDB);
@@ -225,6 +229,8 @@ public class InsertConsumeType extends Fragment {
         public void onClick(View view) {
             choiceL.setVisibility(View.VISIBLE);
             resultI = (ImageView) view;
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
@@ -324,8 +330,22 @@ public class InsertConsumeType extends Fragment {
 
             if(object==null)
             {
-                Bundle bundle = new Bundle();
-                returnThisFramgent(new ScanFragment(), bundle);
+                switch (action)
+                {
+                    case Common.scanUpdateSpend:
+                        Fragment fragment=new ScanUpdateSpend();
+                        fragment.setArguments(getArguments());
+                        switchFramgent(fragment);
+                        MainActivity.bundles.removeLast();
+                        MainActivity.oldFramgent.removeLast();
+                        break;
+                    case Common.scanFragment:
+                        fragment=new ScanFragment();
+                        fragment.setArguments(getArguments());
+                        switchFramgent(fragment);
+                    break;
+                }
+
             }else {
                 if (object instanceof InvoiceVO) {
                     Bundle bundle = new Bundle();
@@ -344,10 +364,8 @@ public class InsertConsumeType extends Fragment {
                 }
             }
 
-
-
-            MainActivity.bundles.remove(MainActivity.bundles.size() - 1);
-            MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size() - 1);
+            MainActivity.bundles.removeLast();
+            MainActivity.oldFramgent.removeLast();
             Common.showToast(context, "新增成功");
             Common.clossKeyword(context);
         }

@@ -63,7 +63,9 @@ import com.chargeapp.whc.chargeapp.Control.Price.PriceInvoice;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyMain;
 import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelActivity;
+import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelCom;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectActivity;
+import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectConsume;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingDownloadFile;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFix;
 import com.chargeapp.whc.chargeapp.Control.Setting.SettingMain;
@@ -791,6 +793,18 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     break;
+                case 10:
+                    for (int i = fragments.size() - 1; i >= 0; i--) {
+                        if (fragments.get(i) instanceof SelectListModelActivity) {
+                          fragment=new SelectListModelActivity();
+                          switchFragment();
+                        }else if(fragments.get(i) instanceof SelectActivity)
+                        {
+                           fragment=new SelectActivity();
+                           switchFragment();
+                        }
+                    }
+                 break;
             }
 
         } else {

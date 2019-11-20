@@ -57,6 +57,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONObject;
 import org.jsoup.internal.StringUtil;
 
 import java.lang.reflect.Type;
@@ -292,7 +293,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             boolean qrcodeTrue=false;
             for(String qq:ScanFragment.qrCode)
             {
-                if(qq.indexOf("**********")!=-1)
+                if(!qq.contains("**********"))
                 {
                     qrcodeTrue=true;
                 }
@@ -304,11 +305,11 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 switch (action) {
                     case "setConsume":
                     case "UpdateSpend":
-                    case "moreQRcode":
-                        ScanFragment.answer.setText("QRCode格式有誤! 請用線上查詢!");
+                    case Common.scanFragment:
+                        ScanFragment.answer.setText("QR Code格式有誤! 請用線上查詢!");
                         break;
                     case "PriceHand":
-                        ScanFragment.answer.setText("QRCode格式有誤! 請手動兌獎");
+                        ScanFragment.answer.setText("QR Code格式有誤! 請手動兌獎");
                         Log.d("BarcodeGraphic", stringOne);
                         Log.d("BarcodeGraphic", "QRCode格式有誤! 請手動兌獎");
                         break;
@@ -320,7 +321,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
 
         stringOne=barcode.rawValue;
 
-        if(StringUtil.isBlank(stringOne)||stringOne.indexOf("**********")==-1)
+        if(StringUtil.isBlank(stringOne)||!stringOne.contains("**********"))
         {
             return;
         }
@@ -383,7 +384,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             switch (action) {
                 case "setConsume":
                 case "UpdateSpend":
-                case "moreQRcode":
+                case  Common.scanFragment:
                     ScanFragment.answer.setText("QRCode格式有誤!\n請用線上查詢!");
                     break;
                 case "PriceHand":
@@ -411,57 +412,69 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 e.printStackTrace();
             }
 
-            if (!StringUtil.isBlank(result)) {
 
+            if ((!StringUtil.isBlank(result))&&(result.contains("200"))) {
                 Gson gson = new Gson();
-                JsonObject jsonObject = gson.fromJson(result, JsonObject.class);
-                String code = jsonObject.get("code").getAsString();
-                if ("200".equals(code)) {
 
-                    String invStatus = jsonObject.get("invStatus").getAsString();
-                    if (invStatus.equals("已確認")) {
-                        consumeVO.setSellerName(jsonObject.get("sellerName").getAsString());
-                        consumeVO.setSellerAddress(jsonObject.get("sellerAddress").getAsString());
-                        consumeVO.setBuyerBan(jsonObject.get("sellerBan").getAsString());
-                        consumeVO.setCurrency(jsonObject.get("currency").getAsString());
-                        Type cdType = new TypeToken<List<JsonObject>>() {
-                        }.getType();
-                        String detail = jsonObject.get("details").toString();
-                        List<JsonObject> jDetailList = gson.fromJson(detail, cdType);
-                        StringBuilder sb = new StringBuilder();
-                        double unitPrice, quantity;
-                        for (JsonObject jDetail : jDetailList) {
-                            try {
-                                sb.append(jDetail.get("description").getAsString());
-                            } catch (Exception e) {
-                                sb.append(jDetail.get("錯誤").getAsString());
-                            }
-                            sb.append(":\n");
-                            try {
-                                sb.append(jDetail.get("unitPrice").getAsString());
-                                unitPrice = jDetail.get("unitPrice").getAsDouble();
-                            } catch (Exception e) {
-                                sb.append("0");
-                                unitPrice = 0;
-                            }
-                            sb.append("X");
-                            try {
-                                sb.append(jDetail.get("quantity").getAsString());
-                                quantity = jDetail.get("quantity").getAsDouble();
-                            } catch (Exception e) {
-                                sb.append("1");
-                                quantity = 1;
-                            }
-                            sb.append("=");
+                JsonObject jsonObject;
+                try {
+                    jsonObject = gson.fromJson(result, JsonObject.class);
+                }catch (Exception e)
+                {
+                    Log.d("BarcodeGraphic",e.toString());
+                    Log.d("BarcodeGraphic",result);
+                    jsonObject=null;
 
-                            try {
-                                sb.append(jsonObject.get("amount").getAsDouble());
-                            } catch (Exception e) {
-                                sb.append(Common.doubleRemoveZero(unitPrice * quantity));
+                }
+
+                if(jsonObject!=null) {
+                    String code = jsonObject.get("code").getAsString();
+                    if ("200".equals(code)) {
+                        String invStatus = jsonObject.get("invStatus").getAsString();
+                        if (invStatus.equals("已確認")) {
+                            consumeVO.setSellerName(jsonObject.get("sellerName").getAsString());
+                            consumeVO.setSellerAddress(jsonObject.get("sellerAddress").getAsString());
+                            consumeVO.setBuyerBan(jsonObject.get("sellerBan").getAsString());
+                            consumeVO.setCurrency(jsonObject.get("currency").getAsString());
+                            Type cdType = new TypeToken<List<JsonObject>>() {
+                            }.getType();
+                            String detail = jsonObject.get("details").toString();
+                            List<JsonObject> jDetailList = gson.fromJson(detail, cdType);
+                            StringBuilder sb = new StringBuilder();
+                            double unitPrice, quantity;
+                            for (JsonObject jDetail : jDetailList) {
+                                try {
+                                    sb.append(jDetail.get("description").getAsString());
+                                } catch (Exception e) {
+                                    sb.append(jDetail.get("錯誤").getAsString());
+                                }
+                                sb.append(":\n");
+                                try {
+                                    sb.append(jDetail.get("unitPrice").getAsString());
+                                    unitPrice = jDetail.get("unitPrice").getAsDouble();
+                                } catch (Exception e) {
+                                    sb.append("0");
+                                    unitPrice = 0;
+                                }
+                                sb.append("X");
+                                try {
+                                    sb.append(jDetail.get("quantity").getAsString());
+                                    quantity = jDetail.get("quantity").getAsDouble();
+                                } catch (Exception e) {
+                                    sb.append("1");
+                                    quantity = 1;
+                                }
+                                sb.append("=");
+
+                                try {
+                                    sb.append(jsonObject.get("amount").getAsDouble());
+                                } catch (Exception e) {
+                                    sb.append(Common.doubleRemoveZero(unitPrice * quantity));
+                                }
+                                sb.append("\n");
                             }
-                            sb.append("\n");
+                            consumeVO.setDetailname(sb.toString());
                         }
-                        consumeVO.setDetailname(sb.toString());
                     }
                 }
             }
@@ -477,7 +490,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             case "PriceHand":
                 priceAnswer();
                 break;
-            case "moreQRcode":
+            case Common.scanFragment:
                 QrCodeResultMultiScan();
                 break;
         }
@@ -567,6 +580,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                     resultShow.append("\n存進資料庫!");
                 }
                 consumeDB.insert(consumeVO);
+                ScanFragment.nulName.add(consumeVO.getNumber());
             }
             int start=resultShow.indexOf(":") + 1;
             int end=start+consumeVO.getNumber().length();

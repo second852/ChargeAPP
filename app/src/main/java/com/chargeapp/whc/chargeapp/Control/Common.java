@@ -82,10 +82,9 @@ import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.ui.ScanUpdateSpend;
 import com.github.mikephil.charting.components.Description;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+
 
 
 
@@ -172,6 +171,9 @@ public class Common {
 
     public final static String multiTrackerActivityWork="multiTrackerActivityWork";
     public final static String scanFragment="scanFragment";
+    public final static String scanUpdateSpend="scanUpdateSpend";
+    public final static String scanListFragment="scanListFragment";
+    public final static String scanByOnline="scanByOnline";
 
 
 
@@ -942,6 +944,9 @@ public class Common {
                 break;
             case Common.searchMainString:
                 fragment=new SearchMain();
+                break;
+            case Common.scanUpdateSpend:
+                fragment=new ScanUpdateSpend();
                 break;
         }
         fragment.setArguments(bundle);

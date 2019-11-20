@@ -195,6 +195,20 @@ public class ConsumeDB {
         return consumeList;
     }
 
+    public List<ConsumeVO> getQRcode() {
+        String sql = "SELECT * FROM Consumer where detailname is null and rdNumber is not null and date is not null and number is not null order by id desc;";
+        String[] args = {};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        List<ConsumeVO> consumeList = new ArrayList<>();
+        ConsumeVO consumeVO;
+        while (cursor.moveToNext()) {
+            consumeVO = configConsumeVO(cursor);
+            consumeList.add(consumeVO);
+        }
+        cursor.close();
+        return consumeList;
+    }
+
     public List<ConsumeVO> getWinAll(long startTime, long endTime) {
         String sql = "SELECT * FROM Consumer where iswin != 'N' and date between '" + startTime + "' and '" + endTime + "' order by id;";
         String[] args = {};

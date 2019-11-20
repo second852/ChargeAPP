@@ -1,12 +1,10 @@
-package com.chargeapp.whc.chargeapp.Control.Update;
+package com.chargeapp.whc.chargeapp.ui;
 
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,25 +39,16 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.Download;
-import com.chargeapp.whc.chargeapp.Control.HomePage.HomePagetList;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertConsumeType;
-import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Insert.SearchByQrCode;
-import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
-import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelActivity;
-import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetList;
-import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDe;
-import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDeList;
-import com.chargeapp.whc.chargeapp.Control.Setting.SettingListFixCon;
+import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.Update.UpdateConsumeDetail;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
-import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
 
 import org.jsoup.internal.StringUtil;
 
@@ -67,16 +56,17 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.chargeapp.whc.chargeapp.Control.Common.*;
-import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_SAVE;
+
+import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_QRCODE;
+import static com.chargeapp.whc.chargeapp.Control.Common.onlyNumber;
 
 
-public class UpdateSpend extends Fragment {
+
+public class ScanUpdateSpend extends Fragment {
 
     private BootstrapEditText number, name, money, secondname, date;
     private BootstrapButton save, clear,standard;
@@ -95,7 +85,6 @@ public class UpdateSpend extends Fragment {
     private AwesomeTextView qrcode;
     private ConsumeVO consumeVO;
     private int updateChoice;
-    private String action;
     private LinearLayout firstL, secondL;
     private GridView firstG, secondG;
     private int year,month,day;
@@ -130,10 +119,8 @@ public class UpdateSpend extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         TypefaceProvider.registerDefaultIconSets();
-
         View view = inflater.inflate(R.layout.insert_spend, container, false);
         findViewByid(view);
-        action = (String) getArguments().getSerializable("action");
         consumeVO = (ConsumeVO) getArguments().getSerializable("consumeVO");
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
         if(StringUtil.isBlank(consumeVO.getRealMoney()))
@@ -168,7 +155,6 @@ public class UpdateSpend extends Fragment {
         clear.setOnClickListener(new clearAllInput());
         save.setOnClickListener(new savecomsumer());
         noWek.setOnCheckedChangeListener(new nowWekchange());
-        qrcode.setOnClickListener(new QrCodeClick());
         number.setOnClickListener(new closeAllGridView());
         number.setOnFocusChangeListener(new closeAllGridView());
         name.setOnClickListener(new showFirstG());
@@ -178,18 +164,28 @@ public class UpdateSpend extends Fragment {
         firstG.setOnItemClickListener(new firstGridOnClick());
         secondG.setOnItemClickListener(new secondGridOnClick());
         detailname.setOnClickListener(new showDetail());
-        if (action.equals("SettingListFixCon") && (!consumeVO.isAuto())) {
-            BootstrapText text = new BootstrapText.Builder(context)
-                    .addText("全部"+"  ")
-                    .addFontAwesomeIcon(FA_SAVE)
-                    .build();
-            standard.setText(text);
-            standard.setVisibility(View.VISIBLE);
-            standard.setOnClickListener(new saveAllConsume());
-        }else{
-            standard.setVisibility(View.INVISIBLE);
-        }
-//        showOnlyQRCodeToast();
+
+        BootstrapText qRtext = new BootstrapText.Builder(context)
+                .addFontAwesomeIcon(FA_QRCODE)
+                .addText("QR Code線上查詢")
+                .build();
+        qrcode.setText(qRtext);
+        qrcode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    setConsume();
+                    Fragment fragment=new SearchByQrCode();
+                    Bundle bundle=getArguments();
+                    bundle.putSerializable("action",Common.scanUpdateSpend);
+                    bundle.putSerializable("consumeVO",consumeVO);
+                    fragment.setArguments(getArguments());
+                    MainActivity.bundles.add(bundle);
+                    MainActivity.oldFramgent.add(Common.scanUpdateSpend);
+                    switchFramgent(fragment);
+
+            }
+        });
+
         setUpdate();
         setPopupMenu();
         return view;
@@ -246,20 +242,7 @@ public class UpdateSpend extends Fragment {
         });
     }
 
-//    private void showOnlyQRCodeToast() {
-//        try {
-//            returnCM = (boolean) getArguments().getSerializable("returnCM");
-//        } catch (Exception e) {
-//            returnCM = false;
-//        }
-//        if (returnCM) {
-//            if (BarcodeGraphic.hashMap.get(1) != null) {
-//                Common.showToast(context,"明細無法辨識，需要自行輸入!");
-//            } else if (BarcodeGraphic.hashMap.get(2) != null) {
-//                Common.showToast(context,"部分明細可辨識，其他項目需要自行輸入!");
-//            }
-//        }
-//    }
+
 
     private void setSpinner() {
         choiceStatue.setDropdownData(Common.DateStatueSetSpinner);
@@ -376,140 +359,7 @@ public class UpdateSpend extends Fragment {
 
     }
 
-    private void goBackFramgent() {
-        Fragment fragment = null;
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("consumeVO ", consumeVO);
-        if (action.equals("SelectShowCircleDe")) {
-            fragment = new SelectShowCircleDe();
-            bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
-            bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
-            bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
-            bundle.putSerializable("year", getArguments().getSerializable("year"));
-            bundle.putSerializable("month", getArguments().getSerializable("month"));
-            bundle.putSerializable("day", getArguments().getSerializable("day"));
-            bundle.putSerializable("index", getArguments().getSerializable("index"));
-            bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
-            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
-            bundle.putSerializable("period", getArguments().getSerializable("period"));
-            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
-            bundle.putSerializable("position", getArguments().getSerializable("position"));
-        } else if (action.equals("SelectDetList")) {
-            fragment = new SelectDetList();
-            bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
-            bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
-            bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
-            bundle.putSerializable("year", getArguments().getSerializable("year"));
-            bundle.putSerializable("month", getArguments().getSerializable("month"));
-            bundle.putSerializable("day", getArguments().getSerializable("day"));
-            bundle.putSerializable("key", getArguments().getSerializable("key"));
-            bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
-            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
-            bundle.putSerializable("position", getArguments().getSerializable("position"));
-            bundle.putSerializable("period", getArguments().getSerializable("period"));
-            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
-        } else if (action.equals("SelectListModelCom")) {
-            fragment = new SelectListModelActivity();
-        }else if (action.equals("SettingListFixCon")) {
-            fragment = new SettingListFixCon();
-            bundle.putSerializable("position", getArguments().getSerializable("position"));
-            bundle.putSerializable("consumeVO",consumeVO);
-        }else if (action.equals("SelectShowCircleDeList")) {
-            fragment = new SelectShowCircleDeList();
-            bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
-            bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
-            bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
-            bundle.putSerializable("year", getArguments().getSerializable("year"));
-            bundle.putSerializable("month", getArguments().getSerializable("month"));
-            bundle.putSerializable("day", getArguments().getSerializable("day"));
-            bundle.putSerializable("key", getArguments().getSerializable("key"));
-            bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
-            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
-            bundle.putSerializable("position", getArguments().getSerializable("position"));
-            bundle.putSerializable("period", getArguments().getSerializable("period"));
-            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
-            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
-        }else if(action.equals("HomePagetList"))
-        {
-            fragment=new HomePagetList();
-            bundle.putSerializable("action","HomePagetList");
-            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
-            bundle.putSerializable("position",0);
-            bundle.putSerializable("key", getArguments().getSerializable("key"));
-        }else if(action.equals(searchMainString))
-        {
-            fragment=new SearchMain();
-            bundle.putAll(getArguments());
-        }
-        fragment.setArguments(bundle);
-        switchFramgent(fragment);
-    }
 
-
-    private void returnThisFragment(Fragment fragment) {
-        setConsume();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("object", consumeVO);
-        bundle.putSerializable("consumeVO",consumeVO);
-        bundle.putSerializable("action", action);
-        bundle.putSerializable("typeVO",typeVO);
-        if (action.equals("SelectDetList")) {
-            bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
-            bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
-            bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
-            bundle.putSerializable("year", getArguments().getSerializable("year"));
-            bundle.putSerializable("month", getArguments().getSerializable("month"));
-            bundle.putSerializable("day", getArguments().getSerializable("day"));
-            bundle.putSerializable("key", getArguments().getSerializable("key"));
-            bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
-            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
-            bundle.putSerializable("position", getArguments().getSerializable("position"));
-            bundle.putSerializable("period", getArguments().getSerializable("period"));
-            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
-        } else if (action.equals("SelectShowCircleDe")) {
-            bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
-            bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
-            bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
-            bundle.putSerializable("year", getArguments().getSerializable("year"));
-            bundle.putSerializable("month", getArguments().getSerializable("month"));
-            bundle.putSerializable("day", getArguments().getSerializable("day"));
-            bundle.putSerializable("index", getArguments().getSerializable("index"));
-            bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
-            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
-            bundle.putSerializable("period", getArguments().getSerializable("period"));
-            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
-            bundle.putSerializable("position", getArguments().getSerializable("position"));
-        }else if (action.equals("SettingListFixCon")) {
-            bundle.putSerializable("position", getArguments().getSerializable("position"));
-        }else  if (action.equals("SelectShowCircleDeList")) {
-            bundle.putSerializable("ShowConsume", getArguments().getSerializable("ShowConsume"));
-            bundle.putSerializable("ShowAllCarrier", getArguments().getSerializable("ShowAllCarrier"));
-            bundle.putSerializable("noShowCarrier", getArguments().getSerializable("noShowCarrier"));
-            bundle.putSerializable("year", getArguments().getSerializable("year"));
-            bundle.putSerializable("month", getArguments().getSerializable("month"));
-            bundle.putSerializable("day", getArguments().getSerializable("day"));
-            bundle.putSerializable("key", getArguments().getSerializable("key"));
-            bundle.putSerializable("carrier", getArguments().getSerializable("carrier"));
-            bundle.putSerializable("statue", getArguments().getSerializable("statue"));
-            bundle.putSerializable("position", getArguments().getSerializable("position"));
-            bundle.putSerializable("period", getArguments().getSerializable("period"));
-            bundle.putSerializable("dweek", getArguments().getSerializable("dweek"));
-            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
-        }else if(action.equals("HomePagetList"))
-        {
-            bundle.putSerializable("action","HomePagetList");
-            bundle.putStringArrayList("OKey",getArguments().getStringArrayList("OKey"));
-            bundle.putSerializable("position",0);
-            bundle.putSerializable("key", getArguments().getSerializable("key"));
-        }else if(action.equals(searchMainString))
-        {
-            bundle.putAll(getArguments());
-        }
-        fragment.setArguments(bundle);
-        MainActivity.bundles.add(bundle);
-        MainActivity.oldFramgent.add("UpdateSpend");
-        switchFramgent(fragment);
-    }
 
     public void findViewByid(View view) {
         firstG = view.findViewById(R.id.firstG);
@@ -688,56 +538,7 @@ public class UpdateSpend extends Fragment {
         }
     }
 
-//    private class choiceStateItem implements AdapterView.OnItemSelectedListener {
-//        @Override
-//        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-//            ArrayList<String> spinneritem = new ArrayList<>();
-//            if (position == 0) {
-//                choiceday.setVisibility(View.GONE);
-//                noWek.setVisibility(View.VISIBLE);
-//                choiceStatue.setVisibility(View.VISIBLE);
-//                notifyT.setVisibility(View.VISIBLE);
-//                noWekT.setVisibility(View.VISIBLE);
-//                return;
-//            }
-//            if (position == 1) {
-//                spinneritem.add("星期一");
-//                spinneritem.add("星期二");
-//                spinneritem.add("星期三");
-//                spinneritem.add("星期四");
-//                spinneritem.add("星期五");
-//                spinneritem.add("星期六");
-//                spinneritem.add("星期日");
-//            }
-//            if (position == 2) {
-//                for (int i = 1; i <= 31; i++) {
-//                    spinneritem.add(" " + String.valueOf(i) + "日");
-//                }
-//            }
-//            if (position == 3) {
-//                for (int i = 1; i <= 12; i++) {
-//                    spinneritem.add(" " + String.valueOf(i) + "月");
-//                }
-//            }
-//            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.spinneritem, spinneritem);
-//            arrayAdapter.setDropDownViewResource(R.layout.spinneritem);
-//            choiceday.setAdapter(arrayAdapter);
-//            choiceday.setVisibility(View.VISIBLE);
-//            notifyT.setVisibility(View.VISIBLE);
-//            noWek.setVisibility(View.GONE);
-//            noWekT.setVisibility(View.GONE);
-//            noWek.setChecked(false);
-//            if (first) {
-//                choiceday.setSelection(updateChoice);
-//                first = false;
-//            }
-//        }
-//
-//        @Override
-//        public void onNothingSelected(AdapterView<?> adapterView) {
-//
-//        }
-//    }
+
 
     private class clearAllInput implements View.OnClickListener {
         @Override
@@ -871,9 +672,12 @@ public class UpdateSpend extends Fragment {
             MainActivity.bundles.remove(MainActivity.bundles.size()-1);
             setConsume();
             consumeDB.update(consumeVO);
-            goBackFramgent();
             Common.showToast(context, "修改成功");
-
+            ScanListFragment scanListFragment=new ScanListFragment();
+            scanListFragment.setArguments(getArguments());
+            MainActivity.oldFramgent.removeLast();
+            MainActivity.bundles.removeLast();
+            switchFramgent(scanListFragment);
         }
     }
 
@@ -922,37 +726,6 @@ public class UpdateSpend extends Fragment {
             } else {
                 noweek = false;
             }
-        }
-    }
-
-    private class QrCodeClick implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            final PopupMenu popupMenu=new PopupMenu(context,v);
-            popupMenu.inflate(R.menu.menu);
-            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem menuItem) {
-                    switch (menuItem.getItemId()) {
-                        case R.id.camera:
-                            setConsume();
-                            Intent intent = new Intent(UpdateSpend.this.context, MultiTrackerActivity.class);
-                            intent.putExtra("action","UpdateSpend");
-                            intent.putExtra("bundle",UpdateSpend.this.getArguments());
-                            startActivityForResult(intent, 6);
-                            break;
-                        case R.id.searchInternet:
-                            Fragment fragment=new SearchByQrCode();
-                            returnThisFragment(fragment);
-                            break;
-                        default:
-                            popupMenu.dismiss();
-                            break;
-                    }
-                    return true;
-                }
-            });
-            popupMenu.show();
         }
     }
 
@@ -1035,7 +808,15 @@ public class UpdateSpend extends Fragment {
                 return;
             }
             if (type.equals("新增")) {
+                setConsume();
                 Common.showsecondgrid = true;
+                if(typeVO==null)
+                {
+                   typeVO=typeDB.findTypeName(consumeVO.getMaintype());
+                }
+                Bundle bundle=getArguments();
+                bundle.putSerializable("typeVO",typeVO);
+                bundle.putSerializable("consumeVO",consumeVO);
                 returnThisFragment(new InsertConsumeType());
                 return;
             }
@@ -1051,10 +832,26 @@ public class UpdateSpend extends Fragment {
         }
     }
 
+    private void returnThisFragment(Fragment fragment) {
+        Bundle bundle=getArguments();
+        bundle.putSerializable("action",Common.scanUpdateSpend);
+        MainActivity.oldFramgent.add(Common.scanUpdateSpend);
+        MainActivity.bundles.add(getArguments());
+        fragment.setArguments(getArguments());
+        switchFramgent(fragment);
+    }
+
 
     private class showSecondG implements View.OnClickListener, View.OnFocusChangeListener {
         @Override
         public void onClick(View view) {
+
+            if(consumeVO.equals("未知"))
+            {
+                Common.showToast(context,"主項目未選擇!");
+                return;
+            }
+
             firstL.setVisibility(View.GONE);
             showdate.setVisibility(View.GONE);
             numberKeyBoard.setVisibility(View.GONE);
@@ -1080,178 +877,15 @@ public class UpdateSpend extends Fragment {
     }
 
 
-    private class saveAllConsume implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            //設定種類時 不能儲存
-            if(firstL.getVisibility()==View.VISIBLE)
-            {
-                return;
-            }
-            if(secondL.getVisibility()==View.VISIBLE)
-            {
-                return;
-            }
-
-            //date show not save
-            if(showdate.getVisibility()==View.VISIBLE)
-            {
-                return;
-            }
-            if (name.getText()== null || name.getText().toString().trim().length() == 0) {
-                name.setError("主項目不能空白");
-                return;
-            }
-
-            if (name.getText().toString().trim().equals("O") || name.getText().toString().trim().equals("0")) {
-                name.setError("主項目不能為其他");
-                return;
-            }
-
-
-            if (secondname.getText() == null || secondname.getText().toString().trim().length() == 0) {
-                secondname.setError("次項目不能空白");
-                return;
-            }
-
-            if (secondname.getText().toString().trim().equals("O") || secondname.getText().toString().trim().equals("0")) {
-                secondname.setError("次項目不能為其他");
-                return;
-            }
-           try {
-               if(!oldMainType.equals(name.getText().toString().trim()))
-               {
-                   secondname.setError("次項目不屬於主項目種類");
-                   return;
-               }
-           }catch (Exception e)
-           {
-
-           }
-            if (money.getText()== null || money.getText().toString().trim().length() == 0) {
-                money.setError("金額不能空白");
-                return;
-            }
-
-            try {
-                if (Common.nf.parse(money.getText().toString().trim()).doubleValue() == 0) {
-                    money.setError("金額不能為0");
-                    return;
-                }
-            } catch (Exception e) {
-                money.setError("只能輸入數字");
-                return;
-            }
-
-            if (date.getText() == null || date.getText().toString().trim().length() == 0) {
-                name.setError("日期不能空白");
-                return;
-            }
-
-            String CheckNul = number.getText().toString();
-            if (CheckNul.trim().length() > 0) {
-                if (CheckNul.length() != 10) {
-                    number.setError("統一發票中英文10個號碼");
-                    return;
-                }
-                try {
-                    Integer.valueOf(CheckNul.substring(2));
-                } catch (NumberFormatException e) {
-                    number.setError("統一發票後8碼為數字");
-                    return;
-                }
-                int sN = (int) CheckNul.charAt(0);
-                int eN = (int) CheckNul.charAt(1);
-                if (sN < 65 || sN > 90 || eN < 65 || eN > 90) {
-                    number.setError("統一發票號前2碼為大寫英文字母");
-                    return;
-                }
-            }
-            setConsume();
-            consumeDB.update(consumeVO);
-            List<ConsumeVO> consumeVOS=consumeDB.getAutoCreate(consumeVO.getId());
-            String statue=resultStatue;
-            String dateSpinner= g.get("choicedate").trim();
-            Calendar cd = new GregorianCalendar(year,month,day,12,0,0);
-            int dweek=cd.get(Calendar.WEEK_OF_MONTH);
-            int i=0;
-            for(ConsumeVO c:consumeVOS)
-            {
-                c.setMaintype(consumeVO.getMaintype());
-                c.setSecondType(consumeVO.getSecondType());
-                c.setDetailname((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
-                c.setMoney(consumeVO.getMoney());
-                c.setNumber(consumeVO.getNumber());
-                c.setFixDateDetail(consumeVO.getFixDateDetail());
-                if(statue.equals("每天"))
-                {
-                    i++;
-                    Calendar calendar = new GregorianCalendar(year,month,day+i,12,0,0);
-                    c.setDate(new Date(calendar.getTimeInMillis()));
-
-                }else if(statue.equals("每周"))
-                {
-                    i++;
-                    if (dateSpinner.equals("星期一")) {
-                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
-                        cd.set(Calendar.DAY_OF_WEEK,2);
-                    } else if (dateSpinner.equals("星期二")) {
-                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
-                        cd.set(Calendar.DAY_OF_WEEK,3);
-                    } else if (dateSpinner.equals("星期三")) {
-                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
-                        cd.set(Calendar.DAY_OF_WEEK,4);
-                    } else if (dateSpinner.equals("星期四")) {
-                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
-                        cd.set(Calendar.DAY_OF_WEEK,5);
-                    } else if (dateSpinner.equals("星期五")) {
-                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
-                        cd.set(Calendar.DAY_OF_WEEK,6);
-                    } else if (dateSpinner.equals("星期六")) {
-                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
-                        cd.set(Calendar.DAY_OF_WEEK,7);
-                    } else {
-                        cd.set(Calendar.WEEK_OF_MONTH,dweek+i);
-                        cd.set(Calendar.DAY_OF_WEEK,1);
-                    }
-                    c.setDate(new Date(cd.getTimeInMillis()));
-                }else if(statue.equals("每月"))
-                {
-                    i++;
-                    String string=dateSpinner.substring(0,dateSpinner.indexOf("日"));
-                    int  choiceD=Integer.valueOf(string.trim());
-                    Calendar calendar = new GregorianCalendar(year,month+i,1,12,0,0);
-                    int monMax=calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-                    if(choiceD>monMax)
-                    {
-                        calendar = new GregorianCalendar(year,month+i,monMax,12,0,0);
-                    }else{
-                        calendar = new GregorianCalendar(year,month+i,choiceD,12,0,0);
-                    }
-                    c.setDate(new Date(calendar.getTimeInMillis()));
-
-                }else if(statue.equals("每年"))
-                {
-                    i++;
-                    int choiceD=Integer.valueOf(dateSpinner.substring(0, dateSpinner.indexOf("月"))) - 1;
-                    Calendar calendar = new GregorianCalendar(year+i,choiceD,1,12,0,0);
-                    c.setDate(new Date(calendar.getTimeInMillis()));
-                }
-                consumeDB.update(c);
-            }
-            MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
-            MainActivity.bundles.remove(MainActivity.bundles.size()-1);
-            goBackFramgent();
-            Common.showToast(context, "修改成功");
-        }
-    }
-
     private class showDetail implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             returnThisFragment(new UpdateConsumeDetail());
+
         }
     }
+
+
     private class choiceStateItemBS implements BootstrapDropDown.OnDropDownItemClickListener {
         @Override
         public void onItemClick(ViewGroup parent, View v, int id) {

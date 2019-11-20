@@ -1,10 +1,9 @@
-package com.chargeapp.whc.chargeapp.Control.Insert;
+package com.chargeapp.whc.chargeapp.ui;
 
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -23,46 +21,44 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.beardedhen.androidbootstrap.BootstrapLabel;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
+import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
-import com.chargeapp.whc.chargeapp.Control.Update.UpdateSpend;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
-import com.chargeapp.whc.chargeapp.ui.ScanUpdateSpend;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
+import org.jsoup.internal.StringUtil;
+
 import java.lang.reflect.Type;
 import java.sql.Date;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 
-
-public class SearchByQrCode extends Fragment {
+public class ScanByOnline extends Fragment {
     private BootstrapEditText number, date, rdNumber;
     private AwesomeTextView flashL, flashR;
-    private BootstrapButton search, back;
+    private BootstrapButton search,recordTwo,backP;
     private BootstrapLabel qrcodeP;
     private DatePicker datePicker;
     private Gson gson;
     private Activity context;
-    private LinearLayout showdate;
+    private LinearLayout showDate;
     private ConsumeVO consumeVO;
-    private String choicedate;
+    private String choiceDate;
     private RelativeLayout progressL;
     private SetupDateBase64 setupDateBase64;
-    private String action;
     private ImageView rdNumberP;
     private View view;
-    private Bundle bundle;
-    private String scan;
+    private ConsumeDB consumeDB;
+
+
 
 
     @Override
@@ -81,115 +77,14 @@ public class SearchByQrCode extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         TypefaceProvider.registerDefaultIconSets();
         gson = new Gson();
-        context.setTitle("QRCode線上查詢");
-        view = inflater.inflate(R.layout.update_qrcode, container, false);
+        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
+        context.setTitle("QR Code線上查詢");
+        view = inflater.inflate(R.layout.scan_update_qrcode, container, false);
         Common.setChargeDB(context);
-
-        findviewByid(view);
-        action = (String) getArguments().getSerializable("action");
-
-        try {
-            scan=(String) getArguments().getSerializable("scan");
-        }catch (Exception e)
-        {
-            scan=null;
-        }
-        if (action.equals("InsertSpend")) {
-            InsertSpend.needSet=true;
-            consumeVO = InsertSpend.consumeVO;
-        } else if (action.equals("setConsume")) {
-            InsertSpend.needSet=true;
-            consumeVO = InsertSpend.consumeVO;
-//            setQRcodCon();
-        } else if (action.equals("UpdateSpend")) {
-            bundle=getArguments();
-            consumeVO= (ConsumeVO) bundle.getSerializable("consumeVO");
-//            setQRcodCon();
-        }else {
-            consumeVO = (ConsumeVO) getArguments().getSerializable("consumeVO");
-        }
-        setConsume();
+        findViewById(view);
         setSetOnClickView();
         view.setOnClickListener(new closeImage());
         return view;
-    }
-
-//    private void setQRcodCon() {
-//        if (BarcodeGraphic.hashMap.get(1) != null&&scan!=null) {
-//            String[] EleNulAll = BarcodeGraphic.hashMap.get(1).split(":");
-//            String EleNul = EleNulAll[0].substring(0, 10);
-//            String day = EleNulAll[0].substring(10, 17);
-//            String m = EleNulAll[0].substring(29, 37);
-//            String rdNumber = EleNulAll[0].substring(17, 21);
-//            Calendar calendar = new GregorianCalendar((Integer.valueOf(day.substring(0, 3)) + 1911), (Integer.valueOf(day.substring(3, 5)) - 1), Integer.valueOf(day.substring(5)), 12, 0, 0);
-//            consumeVO.setMoney(Integer.parseInt(m, 16));
-//            consumeVO.setNumber(EleNul);
-//            consumeVO.setDate(new Date(calendar.getTimeInMillis()));
-//            consumeVO.setRdNumber(rdNumber);
-//        }
-//        if (BarcodeGraphic.hashMap.get(2) != null) {
-//            String s = BarcodeGraphic.hashMap.get(2);
-//            String result = "";
-//            if (s.indexOf(":") == -1) {
-//                try {
-//                    byte[] bytes = Base64.decode(s, Base64.DEFAULT);
-//                    result = new String(bytes, "UTF-8");
-//                } catch (Exception e) {
-//                    result = "";
-//                }
-//            } else {
-//                try {
-//                    int codeNumber=Common.identify(s.getBytes("ISO-8859-1"));
-//                    switch (codeNumber){
-//                        case 1:
-//                            result= new String(s.getBytes("ISO-8859-1"), "Big5");
-//                            break;
-//                        case 2:
-//                            result=s;
-//                            break;
-//                    }
-//                } catch (Exception e1) {
-//                    result = "";
-//                }
-//            }
-//            StringBuffer sb = new StringBuffer();
-//            if (result.trim().length() > 0) {
-//                String[] ddd = result.trim().split(":");
-//                ArrayList<String> answer = new ArrayList<>();
-//                Double total, price, amount;
-//                for (String string : ddd) {
-//                    answer.add(string.replaceAll("\\s+", ""));
-//                    if (answer.size() == 3) {
-//                        price = Double.valueOf(Common.onlyNumber(answer.get(2)));
-//                        amount = Double.valueOf(Common.onlyNumber(answer.get(1)));
-//                        total = price * amount;
-//                        sb.append(answer.get(0) + " :\n").append(answer.get(2) + " X ").append(answer.get(1) + " = ").append(Common.DoubleToInt(total) + "\n");
-//                        answer.clear();
-//                    }
-//                }
-//                consumeVO.setDetailname(sb.toString());
-//            }
-//        }
-//        if(consumeVO!=null)
-//        {
-//            MainActivity.bundles.getLast().putSerializable("consumeVO",consumeVO);
-//        }
-//    }
-
-
-
-
-    private void setConsume() {
-        number.setText(isNull(consumeVO.getNumber()));
-        date.setText(Common.sTwo.format(consumeVO.getDate()));
-        rdNumber.setText(isNull(consumeVO.getRdNumber()));
-    }
-
-    private String isNull(String s) {
-        if (s == null) {
-            s = "";
-        }
-        return s;
     }
 
 
@@ -197,29 +92,46 @@ public class SearchByQrCode extends Fragment {
         flashL.startFlashing(true, AwesomeTextView.AnimationSpeed.MEDIUM);
         flashR.startFlashing(true, AwesomeTextView.AnimationSpeed.MEDIUM);
         date.setOnClickListener(new dateClickListener());
-        showdate.setOnClickListener(new choicedateClick());
+        showDate.setOnClickListener(new choiceDateClick());
         qrcodeP.setOnClickListener(new showImage());
         rdNumberP.setOnClickListener(new closeImage());
-        search.setOnClickListener(new savecomsumer());
-        back.setOnClickListener(new goback());
+        search.setOnClickListener(new saveConsumer());
+        recordTwo.setOnClickListener(new showRecord());
     }
 
 
-    public void findviewByid(View view) {
+    public void findViewById(View view) {
         number = view.findViewById(R.id.number);
         rdNumber = view.findViewById(R.id.rdNumber);
         date = view.findViewById(R.id.date);
         date.setFocusable(false);
         date.setFocusableInTouchMode(false);
+        date.setText(Common.sTwo.format(new Date(System.currentTimeMillis())));
         search = view.findViewById(R.id.search);
-        back = view.findViewById(R.id.back);
-        showdate = view.findViewById(R.id.showdate);
+        showDate = view.findViewById(R.id.showdate);
         datePicker = view.findViewById(R.id.datePicker);
         progressL = view.findViewById(R.id.progressL);
         flashL = view.findViewById(R.id.flashL);
         flashR = view.findViewById(R.id.flashR);
         qrcodeP = view.findViewById(R.id.qrcodeP);
         rdNumberP = view.findViewById(R.id.rdNumberP);
+        recordTwo=view.findViewById(R.id.recordTwo);
+        backP=view.findViewById(R.id.backP);
+        backP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment=new ScanFragment();
+                fragment.setArguments(getArguments());
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                for (Fragment fragment1 : getFragmentManager().getFragments()) {
+                    fragmentTransaction.remove(fragment1);
+                }
+                fragmentTransaction.replace(R.id.body, fragment);
+                fragmentTransaction.commit();
+                MainActivity.oldFramgent.removeLast();
+                MainActivity.bundles.removeLast();
+            }
+        });
     }
 
 
@@ -227,27 +139,27 @@ public class SearchByQrCode extends Fragment {
         @Override
         public void onClick(View v) {
             Common.clossKeyword(context);
-            showdate.setVisibility(View.VISIBLE);
+            showDate.setVisibility(View.VISIBLE);
         }
     }
 
 
-    private class choicedateClick implements View.OnClickListener {
+    private class choiceDateClick implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            choicedate = datePicker.getYear() + "/" + String.valueOf(datePicker.getMonth() + 1) + "/" + datePicker.getDayOfMonth();
-            date.setText(choicedate);
-            showdate.setVisibility(View.GONE);
+            choiceDate = datePicker.getYear() + "/" + String.valueOf(datePicker.getMonth() + 1) + "/" + datePicker.getDayOfMonth();
+            date.setText(choiceDate);
+            showDate.setVisibility(View.GONE);
         }
     }
 
 
-    private class savecomsumer implements View.OnClickListener {
+    private class saveConsumer implements View.OnClickListener {
         @Override
         public void onClick(View view) {
 
             //date show not save
-            if (showdate.getVisibility() == View.VISIBLE) {
+            if (showDate.getVisibility() == View.VISIBLE) {
                 return;
             }
 
@@ -256,14 +168,20 @@ public class SearchByQrCode extends Fragment {
             }
 
             String CheckNul = number.getText().toString();
-            if (CheckNul == null || CheckNul.trim().length() <= 0) {
+            if (StringUtil.isBlank(CheckNul)) {
                 number.setError("不能空白");
+                return;
             }
 
             if (CheckNul.length() != 10) {
                 number.setError("統一發票中英文10個號碼");
                 return;
             }
+
+
+
+
+
             try {
                 Integer.valueOf(CheckNul.substring(2));
             } catch (NumberFormatException e) {
@@ -294,6 +212,7 @@ public class SearchByQrCode extends Fragment {
                 Common.showToast(context, "日期不能空白");
                 return;
             }
+            consumeVO=new ConsumeVO();
             consumeVO.setNumber(number.getText().toString().trim());
             consumeVO.setRdNumber(rdNumber.getText().toString().trim());
             String[] dates = date.getText().toString().split("/");
@@ -301,7 +220,13 @@ public class SearchByQrCode extends Fragment {
             c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
             Date d = new Date(c.getTimeInMillis());
             consumeVO.setDate(d);
-            setupDateBase64 = new SetupDateBase64(SearchByQrCode.this);
+            ConsumeVO old=consumeDB.findByNulAndAmountAndRd(consumeVO.getNumber(),consumeVO.getRdNumber(),consumeVO.getDate());
+            if(old!=null)
+            {
+                Common.showToast(context, "手機資料庫以存檔!\n 請換下一張發票!");
+                return;
+            }
+            setupDateBase64 = new SetupDateBase64(ScanByOnline.this);
             setupDateBase64.setConsumeVO(consumeVO);
             setupDateBase64.execute("getThisDetail");
             progressL.setVisibility(View.VISIBLE);
@@ -394,37 +319,18 @@ public class SearchByQrCode extends Fragment {
         consumeVO.setRealMoney(String.valueOf(Common.DoubleToInt(total)));
         consumeVO.setDetailname(sb.toString());
         consumeVO = getType(consumeVO);
-        Common.showToast(context, "查詢成功!");
-        setBundle();
-    }
-
-    public void setBundle() {
-        if (action.equals("InsertSpend")||action.equals("setConsume")) {
-            InsertSpend.needSet=true;
-            Fragment fragment = new InsertActivity();
-            fragment.setArguments(getArguments());
-            switchFramgent(fragment);
-        }  else if (action.equals("UpdateSpend")) {
-            Fragment fragment = new UpdateSpend();
-            bundle.putSerializable("consumeVO",consumeVO);
-            fragment.setArguments(bundle);
-            switchFramgent(fragment);
-        } else if (action.equals(Common.scanUpdateSpend)) {
-            Fragment fragment=new ScanUpdateSpend();
-            fragment.setArguments(getArguments());
-            switchFramgent(fragment);
-        } else{
-            Fragment fragment = new UpdateSpend();
-            getArguments().putSerializable("consumeVO",consumeVO);
-            fragment.setArguments(getArguments());
-            switchFramgent(fragment);
-        }
+        consumeDB.insert(consumeVO);
+        ScanFragment.nulName.add(consumeVO.getNumber());
+        Common.showToast(context, "新增成功!");
+        progressL.setVisibility(View.GONE);
     }
 
 
-    public void switchFramgent(Fragment fragment) {
-        MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size() - 1);
-        MainActivity.bundles.remove(MainActivity.bundles.size() - 1);
+
+
+    public void switchFragment(Fragment fragment) {
+        MainActivity.oldFramgent.add(Common.scanByOnline);
+        MainActivity.bundles.add(getArguments());
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);
@@ -434,19 +340,6 @@ public class SearchByQrCode extends Fragment {
     }
 
 
-    private class goback implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            consumeVO.setNumber(number.getText().toString().trim());
-            consumeVO.setRdNumber(rdNumber.getText().toString().trim());
-            String[] dates = date.getText().toString().split("/");
-            Calendar c = Calendar.getInstance();
-            c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
-            Date d = new Date(c.getTimeInMillis());
-            consumeVO.setDate(d);
-            setBundle();
-        }
-    }
 
     private ConsumeVO getType(ConsumeVO consumeVO) {
 
@@ -494,6 +387,16 @@ public class SearchByQrCode extends Fragment {
         @Override
         public void onClick(View view) {
             rdNumberP.setVisibility(View.GONE);
+        }
+    }
+
+
+    private class showRecord implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            Fragment fragment=new ScanListFragment();
+            fragment.setArguments(getArguments());
+            switchFragment(fragment);
         }
     }
 }

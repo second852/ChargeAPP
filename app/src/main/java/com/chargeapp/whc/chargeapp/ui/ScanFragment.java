@@ -114,7 +114,7 @@ public final class ScanFragment extends Fragment {
 
     public static String action;
     public RelativeLayout buttonR,scanR;
-    public BootstrapButton search,back,backP,typeSetting,recordTwo;
+    public BootstrapButton search,back,backP,typeSetting,recordTwo,searchTwo;
     public PopupMenu popupMenu;
     private LinearLayout firstL, secondL;
     private GridView firstG, secondG;
@@ -145,8 +145,7 @@ public final class ScanFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main, container, false);
-        nulName=new HashSet<>();
-        qrCode=new CopyOnWriteArraySet<>();
+
         action=getArguments().getString("action");
 
         back=view.findViewById(R.id.back);
@@ -155,12 +154,16 @@ public final class ScanFragment extends Fragment {
         search=view.findViewById(R.id.search);
         buttonR=view.findViewById(R.id.buttonR);
         backP=view.findViewById(R.id.backP);
-
+        if(ScanFragment.nulName==null)
+        {
+            ScanFragment.nulName=new HashSet<>();
+        }
 
         switch (action)
         {
             case "setConsume":
             case "UpdateSpend":
+                activity.setTitle("QR Code掃描");
                 answer=view.findViewById(R.id.answer2);
                 buttonR.setVisibility(View.VISIBLE);
                 search.setVisibility(View.VISIBLE);
@@ -196,10 +199,6 @@ public final class ScanFragment extends Fragment {
                     public void onClick(View view) {
                         if(action.equals("setConsume"))
                         {
-//                        if(BarcodeGraphic.hashMap!=null&&BarcodeGraphic.hashMap.size()==1)
-//                        {
-//                            InsertSpend.returnCM=true;
-//                        }
                             Intent intent = new Intent(activity,MainActivity.class);
                             intent.putExtra("action", ScanFragment.action);
                             activity.setResult(0,intent);
@@ -207,10 +206,6 @@ public final class ScanFragment extends Fragment {
                         }else{
                             Intent intent = new Intent( activity,MainActivity.class);
                             intent.putExtra("action", ScanFragment.action);
-//                        if(BarcodeGraphic.hashMap!=null&&BarcodeGraphic.hashMap.size()==1)
-//                        {
-//                            bundle.putSerializable("returnCM",true);
-//                        }
                             intent.putExtra("bundle",getArguments());
                             activity.setResult(0,intent);
                             activity.finish();
@@ -219,6 +214,9 @@ public final class ScanFragment extends Fragment {
                 });
                 break;
             case "PriceHand":
+
+
+                activity.setTitle("發票兌獎");
                 answer=view.findViewById(R.id.answer1);
                 backP.setVisibility(View.VISIBLE);
                 backP.setOnClickListener(new View.OnClickListener() {
@@ -233,7 +231,10 @@ public final class ScanFragment extends Fragment {
                 buttonR.setVisibility(View.GONE);
                 answer.setVisibility(View.GONE);
                 break;
-            case "moreQRcode":
+            case Common.scanFragment:
+            case Common.scanByOnline:
+            case Common.scanUpdateSpend:
+                activity.setTitle("多筆QR Code掃描");
                 buttonR.setVisibility(View.GONE);
                 answer=view.findViewById(R.id.answer2);
                 scanR=view.findViewById(R.id.scanR);
@@ -295,7 +296,7 @@ public final class ScanFragment extends Fragment {
                     Common.showsecondgrid=false;
                 }
 
-                secondType= (String) getArguments().getSerializable("secondType");
+
                 if(!StringUtil.isBlank(secondType))
                 {
                     typeSetting.setText("主項目 : "+mainType+"\n次項目 :"+secondType);
@@ -307,8 +308,7 @@ public final class ScanFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent( activity,MainActivity.class);
-                        intent.putExtra("action", ScanFragment.action);
-                        activity.setResult(0,intent);
+                        activity.setResult(10,intent);
                         activity.finish();
                     }
                 });
@@ -317,7 +317,21 @@ public final class ScanFragment extends Fragment {
                 recordTwo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        MainActivity.bundles.add(getArguments());
+                        MainActivity.oldFramgent.add(Common.scanFragment);
                         Fragment fragment=new ScanListFragment();
+                        fragment.setArguments(getArguments());
+                        Common.switchFragment(fragment,Common.scanFragment,getFragmentManager());
+                    }
+                });
+
+                searchTwo=view.findViewById(R.id.searchTwo);
+                searchTwo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        MainActivity.bundles.add(getArguments());
+                        MainActivity.oldFramgent.add(Common.scanFragment);
+                        Fragment fragment=new ScanByOnline();
                         fragment.setArguments(getArguments());
                         Common.switchFragment(fragment,Common.scanFragment,getFragmentManager());
                     }
@@ -743,10 +757,8 @@ public final class ScanFragment extends Fragment {
         bundle.putSerializable("typeVO", typeVO);
         bundle.putSerializable("action",Common.scanFragment);
         bundle.putSerializable("mainType",mainType);
-        bundle.putSerializable("secondType",secondType);
-        bundle.putSerializable(Common.multiTrackerActivityWork,action);
         fragment.setArguments(bundle);
-        Common.switchFragment(fragment,Common.multiTrackerActivityWork,getFragmentManager(),R.id.body);
+        Common.switchFragment(fragment,Common.scanFragment,getFragmentManager(),R.id.body);
     }
 
 

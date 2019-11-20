@@ -46,6 +46,7 @@ import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.ui.ScanFragment;
 import com.github.mikephil.charting.utils.Utils;
 
 

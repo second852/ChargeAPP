@@ -21,6 +21,7 @@ import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.ui.ScanUpdateSpend;
 
 import static com.chargeapp.whc.chargeapp.Control.Common.searchMainString;
 
@@ -92,14 +93,24 @@ public class UpdateConsumeDetail extends Fragment {
                 {
                     result=" ";
                 }
-                if(action.equals("InsertSpend"))
+                switch (action)
                 {
-                    InsertSpend.consumeVO.setDetailname(result);
-                    Fragment fragment=new InsertActivity();
-                    switchFragment(fragment);
-                }else{
-                    consumeVO.setDetailname(result);
-                    returnThisFramgent(new UpdateSpend());
+                    case "InsertSpend":
+                        InsertSpend.consumeVO.setDetailname(result);
+                        Fragment fragment=new InsertActivity();
+                        switchFragment(fragment);
+                        break;
+                    case Common.scanUpdateSpend:
+                        fragment=new ScanUpdateSpend();
+                        fragment.setArguments(getArguments());
+                        switchFragment(fragment);
+                        MainActivity.bundles.removeLast();
+                        MainActivity.oldFramgent.removeLast();
+                        break;
+                     default:
+                         consumeVO.setDetailname(result);
+                         returnThisFramgent(new UpdateSpend());
+                         break;
                 }
            }
          }

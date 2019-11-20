@@ -25,7 +25,7 @@
                 android:layout_gravity="center_horizontal"
                 android:id="@+id/qrcode"
                 app:bootstrapBrand="info"
-                app:bootstrapText="{fa_qrcode}QRCode輸入"
+                app:bootstrapText="{fa_qrcode}QR Code輸入"
                 />
 
             <LinearLayout

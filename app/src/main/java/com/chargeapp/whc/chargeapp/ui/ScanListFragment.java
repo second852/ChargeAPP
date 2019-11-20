@@ -37,6 +37,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ScanListFragment extends Fragment {
@@ -75,9 +77,22 @@ public class ScanListFragment extends Fragment {
         backP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment fragment=new ScanFragment();
-                fragment.setArguments(getArguments());
-                Common.switchConfirmFragment(fragment,getFragmentManager());
+                String action=MainActivity.oldFramgent.getLast();
+                switch (action)
+                {
+                    case Common.scanFragment:
+                        Fragment fragment=new ScanFragment();
+                        fragment.setArguments(getArguments());
+                        Common.switchConfirmFragment(fragment,getFragmentManager());
+                        break;
+
+                    case Common.scanByOnline:
+                        fragment=new ScanByOnline();
+                        fragment.setArguments(getArguments());
+                        Common.switchConfirmFragment(fragment,getFragmentManager());
+                        break;
+                }
+
             }
         });
         message=view.findViewById(R.id.message);
@@ -105,6 +120,12 @@ public class ScanListFragment extends Fragment {
             message.setVisibility(View.VISIBLE);
         }else {
             message.setVisibility(View.GONE);
+            Collections.sort(consumeVOS, new Comparator<ConsumeVO>() {
+                @Override
+                public int compare(ConsumeVO consumeVO, ConsumeVO t1) {
+                    return consumeVO.getId()-t1.getId();
+                }
+            });
         }
         try {
             position=getArguments().getInt("position");
@@ -237,10 +258,9 @@ public class ScanListFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     p = position;
-                    Fragment fragment = new UpdateSpend();
-                    Bundle bundle = new Bundle();
+                    Fragment fragment = new ScanUpdateSpend();
+                    Bundle bundle = getArguments();
                     bundle.putSerializable("consumeVO", c);
-                    bundle.putSerializable("action", "SelectListModelCom");
                     bundle.putSerializable("position", position);
                     fragment.setArguments(bundle);
                     switchFragment(fragment);
@@ -274,8 +294,8 @@ public class ScanListFragment extends Fragment {
     }
 
     private void switchFragment(Fragment fragment) {
-        MainActivity.oldFramgent.add("SelectListModelCom");
         MainActivity.bundles.add(fragment.getArguments());
+        MainActivity.oldFramgent.add(Common.scanFragment);
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         for (Fragment fragment1 : getFragmentManager().getFragments()) {
             fragmentTransaction.remove(fragment1);

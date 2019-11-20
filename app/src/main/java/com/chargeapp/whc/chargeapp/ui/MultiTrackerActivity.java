@@ -82,8 +82,10 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Activity for the multi-tracker app.  This app detects faces and barcodes with the rear facing
@@ -93,9 +95,7 @@ import java.util.Map;
 public final class MultiTrackerActivity extends AppCompatActivity {
 
 
-
     public static String action;
-
 
 
     /**
@@ -110,9 +110,10 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        ScanFragment.qrCode = new CopyOnWriteArraySet<>();
         TypefaceProvider.registerDefaultIconSets();
         setContentView(R.layout.scan_main);
-        AdView adView=findViewById(R.id.adView);
+        AdView adView = findViewById(R.id.adView);
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
@@ -120,91 +121,104 @@ public final class MultiTrackerActivity extends AppCompatActivity {
         });
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-        action=getIntent().getStringExtra("action");
-        switch (action)
-        {
+        action = getIntent().getStringExtra("action");
+        String fAction=null;
+        switch (action) {
+            case "moreQRcode":
+                fAction = Common.scanFragment;
+                break;
             case "setConsume":
             case "UpdateSpend":
             case "PriceHand":
-            case "moreQRcode":
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                Fragment fragment=new ScanFragment();
-                Bundle bundle=getIntent().getBundleExtra("bundle");
-                if(bundle==null)
-                {
-                    bundle=new Bundle();
-                }
-                bundle.putSerializable("action",action);
-                fragment.setArguments(bundle);
-                fragmentTransaction.replace(R.id.body, fragment);
-                fragmentTransaction.commit();
+                fAction=action;
                 break;
         }
-
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = new ScanFragment();
+        Bundle bundle = getIntent().getBundleExtra("bundle");
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putSerializable("action", fAction);
+        fragment.setArguments(bundle);
+        fragmentTransaction.replace(R.id.body, fragment);
+        fragmentTransaction.commit();
     }
-
-
 
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode==KeyEvent.KEYCODE_BACK)
-        {
-            if(action.equals("setConsume"))
-            {
-                Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
-                intent.putExtra("action",MultiTrackerActivity.action);
-                MultiTrackerActivity.this.setResult(0,intent);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (action.equals("setConsume")) {
+                Intent intent = new Intent(MultiTrackerActivity.this, MainActivity.class);
+                intent.putExtra("action", MultiTrackerActivity.action);
+                MultiTrackerActivity.this.setResult(0, intent);
                 MultiTrackerActivity.this.finish();
-            }else if(action.equals("UpdateSpend")){
-                Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
-                intent.putExtra("action",MultiTrackerActivity.action);
-                intent.putExtra("bundle",getIntent().getBundleExtra("bundle"));
-                MultiTrackerActivity.this.setResult(0,intent);
+            } else if (action.equals("UpdateSpend")) {
+                Intent intent = new Intent(MultiTrackerActivity.this, MainActivity.class);
+                intent.putExtra("action", MultiTrackerActivity.action);
+                intent.putExtra("bundle", getIntent().getBundleExtra("bundle"));
+                MultiTrackerActivity.this.setResult(0, intent);
                 MultiTrackerActivity.this.finish();
-            }else if(action.equals("PriceHand"))
-            {
-                Intent intent = new Intent(MultiTrackerActivity.this,MainActivity.class);
-                intent.putExtra("action",MultiTrackerActivity.action);
-                MultiTrackerActivity.this.setResult(0,intent);
+            } else if (action.equals("PriceHand")) {
+                Intent intent = new Intent(MultiTrackerActivity.this, MainActivity.class);
+                intent.putExtra("action", MultiTrackerActivity.action);
+                MultiTrackerActivity.this.setResult(0, intent);
                 MultiTrackerActivity.this.finish();
-            }else if(action.equals("moreQRcode"))
-            {
+            } else if (action.equals("moreQRcode")) {
 
-                if(MainActivity.bundles!=null&&MainActivity.bundles.isEmpty())
-                {
-                    Bundle bundle= MainActivity.bundles.getLast();
-                    String action= (String) bundle.getSerializable("action");
-                    switch (action) {
+                if (MainActivity.bundles != null && !MainActivity.bundles.isEmpty()) {
+                    Bundle bundle = MainActivity.bundles.getLast();
+                    String oldFragment = MainActivity.oldFramgent.getLast();
+                    Fragment fragment = null;
+                    switch (oldFragment) {
                         case Common.scanFragment:
-                            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                            Fragment fragment = new ScanFragment();
-                            bundle.putSerializable("action", bundle.getSerializable(Common.multiTrackerActivityWork));
+                            fragment = new ScanFragment();
+                            bundle.putSerializable("action",Common.scanFragment);
                             fragment.setArguments(bundle);
-                            fragmentTransaction.replace(R.id.body, fragment);
-                            fragmentTransaction.commit();
-                            return true;
+                            break;
+                        case Common.scanListFragment:
+                            fragment = new ScanListFragment();
+                            bundle.putSerializable("action", Common.scanListFragment);
+                            fragment.setArguments(bundle);
+                            break;
+                        case Common.scanUpdateSpend:
+                            fragment = new ScanUpdateSpend();
+                            bundle.putSerializable("action", Common.scanUpdateSpend);
+                            fragment.setArguments(bundle);
+                            break;
+                        case Common.scanByOnline:
+                            fragment = new ScanByOnline();
+                            fragment.setArguments(bundle);
+                            break;
                     }
+                    if (fragment != null) {
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.body, fragment);
+                        fragmentTransaction.commit();
+                        MainActivity.oldFramgent.removeLast();
+                        MainActivity.bundles.removeLast();
+                    }else {
+                        Common.showsecondgrid=false;
+                        Common.showfirstgrid=false;
+                        MainActivity.oldFramgent.clear();
+                        MainActivity.bundles.clear();
+                    }
+
+                    return true;
                 }
-
-
-
             }
         }
         return super.onKeyDown(keyCode, event);
     }
 
 
-
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        for(Fragment fragment:getSupportFragmentManager().getFragments())
-        {
-           if(fragment instanceof ScanFragment)
-           {
-               fragment.onRequestPermissionsResult(requestCode,permissions,grantResults);
-           }
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof ScanFragment) {
+                fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            }
         }
     }
 
@@ -212,31 +226,12 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        for(Fragment fragment:getSupportFragmentManager().getFragments())
-        {
-            if(fragment instanceof ScanFragment)
-            {
-                fragment.onActivityResult(requestCode,resultCode,data);
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof ScanFragment) {
+                fragment.onActivityResult(requestCode, resultCode, data);
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
