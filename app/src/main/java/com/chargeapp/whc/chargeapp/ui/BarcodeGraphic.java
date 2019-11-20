@@ -310,7 +310,6 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                         break;
                     case "PriceHand":
                         ScanFragment.answer.setText("QR Code格式有誤! 請手動兌獎");
-                        Log.d("BarcodeGraphic", stringOne);
                         Log.d("BarcodeGraphic", "QRCode格式有誤! 請手動兌獎");
                         break;
                 }
@@ -344,7 +343,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             canvas.drawRect(rect, mRectPaint);
         }
 
-
+        consumeVO=null;
         isExist = true;
         try {
             stringOne = barcode.rawValue;
@@ -393,12 +392,13 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                     Log.d("BarcodeGraphic", "QRCode格式有誤! 請手動兌獎");
                     break;
             }
+            consumeVO=null;
             Common.setShowAnimation(ScanFragment.answer, 1);
             return;
         }
 
 
-        if (!ScanFragment.nulName.contains(consumeVO.getNumber())&&StringUtil.isBlank(consumeVO.getDetailname())) {
+        if (consumeVO!=null&&!ScanFragment.nulName.contains(consumeVO.getNumber())&&StringUtil.isBlank(consumeVO.getDetailname())) {
             ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
             if (mNetworkInfo == null) {
