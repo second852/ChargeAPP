@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -138,8 +139,9 @@ public class SelectConsume extends Fragment {
     private BootstrapButton setCurrency;
     private AwesomeTextView otherMessage;
     private PopupMenu popupMenu;
-    private Calendar startPopup,endPopup;
-
+    private Calendar startPopup, endPopup;
+    private boolean oneShow;
+    private float lastX,lastY;
 
 
     @Override
@@ -163,9 +165,9 @@ public class SelectConsume extends Fragment {
         findViewById(view);
 
         //current
-        sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
-        nowCurrency=sharedPreferences.getString(Common.choiceCurrency,"TWD");
-        popupMenu=new PopupMenu(context,setCurrency);
+        sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
+        nowCurrency = sharedPreferences.getString(Common.choiceCurrency, "TWD");
+        popupMenu = new PopupMenu(context, setCurrency);
         Common.createCurrencyPopMenu(popupMenu, context);
         setCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,9 +178,7 @@ public class SelectConsume extends Fragment {
         popupMenu.setOnMenuItemClickListener(new choiceCurrency());
 
 
-
-
-        if (end == null ) {
+        if (end == null) {
             end = Calendar.getInstance();
             SelectConsume.Statue = 1;
         }
@@ -188,8 +188,7 @@ public class SelectConsume extends Fragment {
         day = end.get(Calendar.DAY_OF_MONTH);
         dayWeek = end.get(Calendar.DAY_OF_WEEK);
         //設定dayWeek period
-        switch (Statue)
-        {
+        switch (Statue) {
             case 0:
                 period = 1;
                 break;
@@ -205,16 +204,14 @@ public class SelectConsume extends Fragment {
                 period = end.getActualMaximum(Calendar.WEEK_OF_MONTH);
                 break;
             case 3:
-                period=12;
-                month=0;
+                period = 12;
+                month = 0;
                 break;
         }
 
 
-
         //載具
-        switch (CStatue)
-        {
+        switch (CStatue) {
             case 0:
                 ShowConsume = true;
                 ShowAllCarrier = true;
@@ -237,6 +234,32 @@ public class SelectConsume extends Fragment {
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
 
+        chart_bar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+
+                    float x=motionEvent.getX();
+                    float y=motionEvent.getY();
+                    oneShow=false;
+                    switch (motionEvent.getAction())
+                    {
+                        case MotionEvent.ACTION_DOWN:
+                            lastX=x;
+                            lastY=y;
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            double dis = Math.sqrt(Math.abs((x-lastX)* (x-lastX)+(y-lastY)* (y-lastY)));
+                            oneShow=(dis<10);
+                            break;
+                    }
+
+
+
+
+                return false;
+            }
+        });
         chart_bar.setOnChartValueSelectedListener(new charvalue());
         chart_pie.setOnChartValueSelectedListener(new pievalue());
         goalVO = goalDB.getFindType("支出");
@@ -262,38 +285,36 @@ public class SelectConsume extends Fragment {
     }
 
 
-    private void setGoalVO(Calendar start,Calendar end) {
+    private void setGoalVO(Calendar start, Calendar end) {
         Max = 0.0;
         choicePeriod.setBootstrapText(periodTexts.get(Statue));
         choicePeriod.setShowOutline(false);
         if (goalVO != null) {
             String goalTimeStatue = goalVO.getTimeStatue().trim();
 
-            if(StringUtil.isBlank(goalVO.getRealMoney()))
-            {
+            if (StringUtil.isBlank(goalVO.getRealMoney())) {
                 goalVO.setRealMoney(String.valueOf(goalVO.getMoney()));
                 goalDB.update(goalVO);
             }
 
 
-
             if (goalTimeStatue.equals("每天") && Statue == 0) {
-                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
-                Max = (Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney()))/Double.valueOf(this.currencyVO.getMoney());
+                CurrencyVO currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), goalVO.getCurrency());
+                Max = (Double.valueOf(goalVO.getRealMoney()) * Double.valueOf(currencyVO.getMoney())) / Double.valueOf(this.currencyVO.getMoney());
             } else if (goalTimeStatue.equals("每天") && Statue == 1) {
-                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
-                Max = (Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney()))/Double.valueOf(this.currencyVO.getMoney());
+                CurrencyVO currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), goalVO.getCurrency());
+                Max = (Double.valueOf(goalVO.getRealMoney()) * Double.valueOf(currencyVO.getMoney())) / Double.valueOf(this.currencyVO.getMoney());
             } else if (goalTimeStatue.equals("每周") && Statue == 2) {
-                int dayWeek=start.get(Calendar.WEEK_OF_MONTH);
-                start.set(Calendar.DAY_OF_MONTH,-dayWeek+1);
-                end.set(Calendar.DAY_OF_MONTH,-dayWeek+7);
-                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
-                Max = (Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney()))/Double.valueOf(this.currencyVO.getMoney());
+                int dayWeek = start.get(Calendar.WEEK_OF_MONTH);
+                start.set(Calendar.DAY_OF_MONTH, -dayWeek + 1);
+                end.set(Calendar.DAY_OF_MONTH, -dayWeek + 7);
+                CurrencyVO currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), goalVO.getCurrency());
+                Max = (Double.valueOf(goalVO.getRealMoney()) * Double.valueOf(currencyVO.getMoney())) / Double.valueOf(this.currencyVO.getMoney());
             } else if (goalTimeStatue.equals("每月") && Statue == 3) {
-                start.set(Calendar.DAY_OF_MONTH,1);
-                end.set(Calendar.DAY_OF_MONTH,end.getActualMaximum(Calendar.DAY_OF_MONTH));
-                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
-                Max = (Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney()))/Double.valueOf(this.currencyVO.getMoney());
+                start.set(Calendar.DAY_OF_MONTH, 1);
+                end.set(Calendar.DAY_OF_MONTH, end.getActualMaximum(Calendar.DAY_OF_MONTH));
+                CurrencyVO currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), goalVO.getCurrency());
+                Max = (Double.valueOf(goalVO.getRealMoney()) * Double.valueOf(currencyVO.getMoney())) / Double.valueOf(this.currencyVO.getMoney());
             }
         }
     }
@@ -305,7 +326,7 @@ public class SelectConsume extends Fragment {
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB);
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
         goalDB = new GoalDB(MainActivity.chargeAPPDB);
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
+        currencyDB = new CurrencyDB(MainActivity.chargeAPPDB);
     }
 
 
@@ -318,8 +339,8 @@ public class SelectConsume extends Fragment {
         choiceCarrier = view.findViewById(R.id.choiceCarrier);
         chart_pie = view.findViewById(R.id.chart_pie);
         goalConsume = view.findViewById(R.id.goalConsume);
-        setCurrency=view.findViewById(R.id.setCurrency);
-        otherMessage=view.findViewById(R.id.otherMessage);
+        setCurrency = view.findViewById(R.id.setCurrency);
+        otherMessage = view.findViewById(R.id.otherMessage);
         otherMessage.setBootstrapBrand(null);
         otherMessage.setTextColor(Color.BLACK);
 
@@ -411,33 +432,31 @@ public class SelectConsume extends Fragment {
             PIdateTittle.setText(Common.sFour.format(new Date(start.getTimeInMillis())));
         }
 
-        startPopup=new GregorianCalendar();
+        startPopup = new GregorianCalendar();
         startPopup.setTime(start.getTime());
-        endPopup=new GregorianCalendar();
+        endPopup = new GregorianCalendar();
         endPopup.setTime(end.getTime());
 
         //SetCurrency choice
-        currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
+        currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), nowCurrency);
 
         if (!noShowCarrier && carrierVOS.size() > 0) {
             List<InvoiceVO> invoiceVOS;
             if (ShowAllCarrier) {
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
             } else {
-                if(CStatue>=carrierVOS.size())
-                {
-                    CStatue=carrierVOS.size()-1;
+                if (CStatue >= carrierVOS.size()) {
+                    CStatue = carrierVOS.size() - 1;
                 }
-                if(CStatue<0)
-                {
-                    CStatue=0;
+                if (CStatue < 0) {
+                    CStatue = 0;
                 }
                 invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), carrierVOS.get(choiceD).getCarNul());
             }
             for (InvoiceVO I : invoiceVOS) {
-               CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
-                Double invoiceVOMoney=Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney());
-                if (I.getMaintype().equals("0") || I.getMaintype().equals("O")|| I.getMaintype().equals("其他")) {
+                CurrencyVO currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), I.getCurrency());
+                Double invoiceVOMoney = Double.valueOf(I.getRealAmount()) * Double.valueOf(currencyVO.getMoney());
+                if (I.getMaintype().equals("0") || I.getMaintype().equals("O") || I.getMaintype().equals("其他")) {
                     other.setValue(other.getValue() + invoiceVOMoney);
                     OKey.add(I.getMaintype());
                     continue;
@@ -447,7 +466,7 @@ public class SelectConsume extends Fragment {
                 } else {
                     hashMap.put(I.getMaintype(), invoiceVOMoney + hashMap.get(I.getMaintype()));
                 }
-                total = total +invoiceVOMoney;
+                total = total + invoiceVOMoney;
             }
         }
         total = total + other.getValue();
@@ -456,16 +475,15 @@ public class SelectConsume extends Fragment {
         if (ShowConsume) {
             List<ConsumeVO> consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
             for (ConsumeVO c : consumeVOS) {
-                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
+                CurrencyVO currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), c.getCurrency());
 
-                if(StringUtil.isBlank(c.getRealMoney()))
-                {
+                if (StringUtil.isBlank(c.getRealMoney())) {
                     c.setRealMoney(String.valueOf(c.getCurrency()));
                     consumeDB.update(c);
                 }
 
 
-                Double consumeVOMoney=Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney());
+                Double consumeVOMoney = Double.valueOf(c.getRealMoney()) * Double.valueOf(currencyVO.getMoney());
                 if (hashMap.get(c.getMaintype()) == null) {
                     hashMap.put(c.getMaintype(), consumeVOMoney);
                 } else {
@@ -479,7 +497,7 @@ public class SelectConsume extends Fragment {
         Collections.sort(list_Data, new Comparator<Map.Entry<String, Double>>() {
             public int compare(Map.Entry<String, Double> entry1,
                                Map.Entry<String, Double> entry2) {
-                return (int)(entry2.getValue() - entry1.getValue());
+                return (int) (entry2.getValue() - entry1.getValue());
             }
         });
         for (int i = 0; i < list_Data.size(); i++) {
@@ -531,13 +549,13 @@ public class SelectConsume extends Fragment {
 
     private List<BarEntry> getChartData() {
         List<BarEntry> chartData = new ArrayList<>();
-        Calendar start = null, end=null;
+        Calendar start = null, end = null;
         if (Statue == 0) {
             start = new GregorianCalendar(year, month, day, 0, 0, 0);
             end = new GregorianCalendar(year, month, day, 23, 59, 59);
             BarEntry barEntry = new BarEntry(0, Periodfloat(start, end));
             chartData.add(barEntry);
-            setGoalVO(start,end);
+            setGoalVO(start, end);
         } else if (Statue == 1) {
             for (int i = 0; i < period; i++) {
                 start = new GregorianCalendar(year, month, day - dayWeek + 1 + i, 0, 0, 0);
@@ -546,7 +564,7 @@ public class SelectConsume extends Fragment {
                 BarEntry barEntry = new BarEntry(i, Periodfloat(start, end));
                 chartData.add(barEntry);
             }
-            setGoalVO(start,end);
+            setGoalVO(start, end);
         } else if (Statue == 2) {
             Calendar calendar = new GregorianCalendar(year, month, 1, 0, 0, 0);
             start = new GregorianCalendar(year, month, 1, 0, 0, 0);
@@ -575,7 +593,7 @@ public class SelectConsume extends Fragment {
             end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
             barEntry = new BarEntry(period - 1, Periodfloat(start, end));
             chartData.add(barEntry);
-            setGoalVO(start,end);
+            setGoalVO(start, end);
             Log.d(TAG, "week " + String.valueOf(period - 1) + ":" + Common.sDay.format(new Date(start.getTimeInMillis())) + "~" + Common.sDay.format(new Date(end.getTimeInMillis())));
         } else {
             for (int i = 0; i < period; i++) {
@@ -584,7 +602,7 @@ public class SelectConsume extends Fragment {
                 BarEntry barEntry = new BarEntry(i, Periodfloat(start, end));
                 chartData.add(barEntry);
             }
-            setGoalVO(start,end);
+            setGoalVO(start, end);
         }
         return chartData;
     }
@@ -595,13 +613,11 @@ public class SelectConsume extends Fragment {
         float[] f = new float[list_Data.size()];
         ChartEntry other = new ChartEntry("其他", 0.0);
         if (!noShowCarrier && carrierVOS.size() > 0) {
-            if(CStatue>=carrierVOS.size())
-            {
-                CStatue=carrierVOS.size()-1;
+            if (CStatue >= carrierVOS.size()) {
+                CStatue = carrierVOS.size() - 1;
             }
-            if(CStatue<0)
-            {
-                CStatue=0;
+            if (CStatue < 0) {
+                CStatue = 0;
             }
             String carrier = carrierVOS.get(choiceD).getCarNul();
             List<InvoiceVO> periodInvoice;
@@ -612,9 +628,9 @@ public class SelectConsume extends Fragment {
             }
             for (InvoiceVO I : periodInvoice) {
                 isOther = true;
-                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
-                double invoiceVOMoney=Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney());
-                invoiceVOMoney=invoiceVOMoney/Double.valueOf(this.currencyVO.getMoney());
+                CurrencyVO currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), I.getCurrency());
+                double invoiceVOMoney = Double.valueOf(I.getRealAmount()) * Double.valueOf(currencyVO.getMoney());
+                invoiceVOMoney = invoiceVOMoney / Double.valueOf(this.currencyVO.getMoney());
                 for (Map.Entry e : list_Data) {
                     if (I.getMaintype().equals(e.getKey())) {
                         if (hashMap.get(I.getMaintype()) == null) {
@@ -635,16 +651,15 @@ public class SelectConsume extends Fragment {
             List<ConsumeVO> periodConsume = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
             for (ConsumeVO c : periodConsume) {
                 isOther = true;
-                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
+                CurrencyVO currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), c.getCurrency());
 
-                if(StringUtil.isBlank(c.getRealMoney()))
-                {
-                   c.setRealMoney(String.valueOf(c.getRealMoney()));
-                   consumeDB.update(c);
+                if (StringUtil.isBlank(c.getRealMoney())) {
+                    c.setRealMoney(String.valueOf(c.getRealMoney()));
+                    consumeDB.update(c);
                 }
 
-                double consumeVOMoney=Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney());
-                consumeVOMoney=consumeVOMoney/Double.valueOf(this.currencyVO.getMoney());
+                double consumeVOMoney = Double.valueOf(c.getRealMoney()) * Double.valueOf(currencyVO.getMoney());
+                consumeVOMoney = consumeVOMoney / Double.valueOf(this.currencyVO.getMoney());
                 for (Map.Entry e : list_Data) {
                     if (c.getMaintype().equals(e.getKey())) {
                         if (hashMap.get(c.getMaintype()) == null) {
@@ -719,7 +734,7 @@ public class SelectConsume extends Fragment {
         if (goalVO != null && Max != 0) {
             BootstrapText bootstrapText = new BootstrapText.Builder(context)
                     .addFontAwesomeIcon(FA_FLAG)
-                    .addText(" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + Common.Currency().get(goalVO.getCurrency())+goalVO.getRealMoney())
+                    .addText(" 目標 : " + goalVO.getName() + goalVO.getTimeStatue() + goalVO.getType() + Common.Currency().get(goalVO.getCurrency()) + goalVO.getRealMoney())
                     .build();
             goalConsume.setBootstrapText(bootstrapText);
             yAxis.removeAllLimitLines();
@@ -751,7 +766,7 @@ public class SelectConsume extends Fragment {
     private void addChartPieData() {
 
         otherMessage.setText(DesTittle);
-        setCurrency.setText(Common.CurrencyResult(total,currencyVO));
+        setCurrency.setText(Common.CurrencyResult(total, currencyVO));
 
 
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
@@ -792,40 +807,40 @@ public class SelectConsume extends Fragment {
         Legend l = chart_bar.getLegend();
 
 
-            switch (Common.screenSize) {
-                case xLarge:
-                    dataSet.setValueTextSize(25f);
-                    chart_pie.setEntryLabelTextSize(25f);
-                    xAxis.setTextSize(20f);
-                    yAxis.setTextSize(20f);
-                    yAxis1.setTextSize(20f);
-                    l.setTextSize(20f);
-                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                    l.setYEntrySpace(5f);
-                    l.setFormSize(20f);
-                    break;
-                case large:
-                    dataSet.setValueTextSize(20f);
-                    chart_pie.setEntryLabelTextSize(20f);
-                    xAxis.setTextSize(20f);
-                    yAxis.setTextSize(15f);
-                    yAxis1.setTextSize(15f);
-                    l.setTextSize(15f);
-                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                    l.setYEntrySpace(5f);
-                    l.setFormSize(15f);
-                    break;
-                case normal:
-                    dataSet.setValueTextSize(12f);
-                    xAxis.setTextSize(11f);
-                    yAxis.setTextSize(12f);
-                    yAxis1.setTextSize(12f);
-                    l.setTextSize(12f);
-                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                    l.setYEntrySpace(5f);
-                    l.setFormSize(12f);
-                    break;
-            }
+        switch (Common.screenSize) {
+            case xLarge:
+                dataSet.setValueTextSize(25f);
+                chart_pie.setEntryLabelTextSize(25f);
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(20f);
+                yAxis1.setTextSize(20f);
+                l.setTextSize(20f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(20f);
+                break;
+            case large:
+                dataSet.setValueTextSize(20f);
+                chart_pie.setEntryLabelTextSize(20f);
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(15f);
+                yAxis1.setTextSize(15f);
+                l.setTextSize(15f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(15f);
+                break;
+            case normal:
+                dataSet.setValueTextSize(12f);
+                xAxis.setTextSize(11f);
+                yAxis.setTextSize(12f);
+                yAxis1.setTextSize(12f);
+                l.setTextSize(12f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(12f);
+                break;
+        }
 
 
         chart_bar.notifyDataSetChanged();
@@ -952,9 +967,10 @@ public class SelectConsume extends Fragment {
     private class charvalue implements OnChartValueSelectedListener {
         @Override
         public void onValueSelected(Entry e, Highlight h) {
-            if (e.getY() <= 0) {
+            if (e.getY() <= 0||!oneShow) {
                 return;
             }
+
             if (Statue == 2) {
                 week = (int) (e.getX() + 1);
                 Statue = 1;
@@ -1010,6 +1026,8 @@ public class SelectConsume extends Fragment {
         }
 
     }
+
+
 
     private void switchFragment(Fragment fragment) {
         MainActivity.oldFramgent.add("SelectConsume");
@@ -1125,14 +1143,14 @@ public class SelectConsume extends Fragment {
                 case 1:
                     nowCurrency = "TWD";
                     sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
-                    currencyVO=currencyDB.getBytimeAndType(startPopup.getTimeInMillis(),endPopup.getTimeInMillis(),nowCurrency);
+                    currencyVO = currencyDB.getBytimeAndType(startPopup.getTimeInMillis(), endPopup.getTimeInMillis(), nowCurrency);
                 case 8:
                     popupMenu.dismiss();
                     break;
                 default:
                     nowCurrency = Common.code.get(menuItem.getItemId() - 2);
                     sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
-                    currencyVO=currencyDB.getBytimeAndType(startPopup.getTimeInMillis(),endPopup.getTimeInMillis(),nowCurrency);
+                    currencyVO = currencyDB.getBytimeAndType(startPopup.getTimeInMillis(), endPopup.getTimeInMillis(), nowCurrency);
                     break;
             }
             dataAnalyze();

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -107,7 +108,8 @@ public class SelectIncome extends Fragment {
     private AwesomeTextView otherMessage;
     private PopupMenu popupMenu;
     private Calendar startPopup,endPopup;
-
+    private boolean oneShow;
+    private float lastX,lastY;
 
 
     @Override
@@ -143,7 +145,32 @@ public class SelectIncome extends Fragment {
         chart_pie.setOnChartValueSelectedListener(new pievalue());
         chart_bar.setOnChartValueSelectedListener(new charValue());
         choicePeriod.setOnDropDownItemClickListener(new choicePeriodI());
+        chart_bar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
 
+
+                float x=motionEvent.getX();
+                float y=motionEvent.getY();
+                oneShow=false;
+                switch (motionEvent.getAction())
+                {
+                    case MotionEvent.ACTION_DOWN:
+                        lastX=x;
+                        lastY=y;
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        double dis = Math.sqrt(Math.abs((x-lastX)* (x-lastX)+(y-lastY)* (y-lastY)));
+                        oneShow=(dis<10);
+                        break;
+                }
+
+
+
+
+                return false;
+            }
+        });
 
         //current
         sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
@@ -649,7 +676,7 @@ public class SelectIncome extends Fragment {
     private class charValue implements OnChartValueSelectedListener {
         @Override
         public void onValueSelected(Entry e, Highlight h) {
-            if (e.getY()<=0) {
+            if (e.getY()<=0&&!oneShow) {
                 return;
             }
             Fragment fragment = new SelectListBarIncome();
