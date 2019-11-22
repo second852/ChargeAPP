@@ -861,12 +861,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 invoiceVO = jsonToInVoice(j, password, user);
                 if (invoiceVO != null) {
                     //確認有無重複
-                    start.setTime(new Date(invoiceVO.getTime().getTime()));
-                    start.add(Calendar.MONTH, -1);
-                    end.setTime(new Date(invoiceVO.getTime().getTime()));
-                    end.add(Calendar.MONTH, 1);
-                    oldInvoiceList = invoiceDB.checkInvoiceRepeat(start, end, invoiceVO.getInvNum());
-                    if (oldInvoiceList.size() > 0) {
+                    oldInvoiceList = invoiceDB.checkInvoiceRepeat(invoiceVO.getInvNum(), invoiceVO.getRealAmount(), new java.sql.Date(invoiceVO.getTime().getTime()));
+                    if (!oldInvoiceList.isEmpty()) {
                         continue;
                     }
                     //查詢電子發票明細和insert invoice
@@ -1145,8 +1141,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         hashMap.put("invNum", invoiceVO.getInvNum());
         hashMap.put("invDate", sf.format(new Date(invoiceVO.getTime().getTime())));
         hashMap.put("uuid", "second");
-        hashMap.put("sellerName", invoiceVO.getSellerName());
-        hashMap.put("amount", invoiceVO.getRealAmount());
+//        hashMap.put("sellerName", invoiceVO.getSellerName());
+//        hashMap.put("amount", invoiceVO.getRealAmount());
         hashMap.put("appID", "EINV3201711184648");
         hashMap.put("cardEncrypt", invoiceVO.getCardEncrypt());
         String detailjs = getRemoteData(urldetail, hashMap);

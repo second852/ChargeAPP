@@ -122,6 +122,12 @@
             android:layout_gravity="center"
             android:layout_height="250dp">
         </com.github.mikephil.charting.charts.PieChart>
+        <com.github.mikephil.charting.charts.HorizontalBarChart
+            android:id="@+id/chart_hor"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+
+
         <com.beardedhen.androidbootstrap.AwesomeTextView
             android:id="@+id/goalConsume"
             android:layout_width="wrap_content"

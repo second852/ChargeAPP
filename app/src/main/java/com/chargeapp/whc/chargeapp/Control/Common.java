@@ -1661,4 +1661,32 @@ public class Common {
         });
         view.startAnimation(mShowAnimation);
     }
+
+
+    // true 相等 false 不相等
+    public static boolean checkEqualesOnDay(Date dateOne,Date dateTwo)
+    {
+        Calendar a =Calendar.getInstance();
+        Calendar b=Calendar.getInstance();
+        a.setTime(dateOne);
+        b.setTime(dateTwo);
+
+        if(a.get(Calendar.YEAR)==b.get(Calendar.YEAR))
+        {
+            if(a.get(Calendar.MONTH)==b.get(Calendar.MONTH))
+            {
+                if(a.get(Calendar.DAY_OF_MONTH)==b.get(Calendar.DAY_OF_MONTH))
+                {
+                       return true;
+                }
+            }
+        }
+
+
+        return false;
+    }
+
+
+
+
 }

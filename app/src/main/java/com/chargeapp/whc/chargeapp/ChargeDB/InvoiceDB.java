@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
@@ -511,15 +512,20 @@ public class InvoiceDB {
     }
 
 
-    public List<InvoiceVO> checkInvoiceRepeat(Calendar start,Calendar end,String nul) {
-        String sql = "SELECT * FROM INVOICE  where time between '"+start.getTimeInMillis()+"' and '"+end.getTimeInMillis()+"' and invNum = '"+nul+"' order by time desc;";
-        String[] args = {};
+    public List<InvoiceVO> checkInvoiceRepeat(String nul,String amount,Date nowTime) {
+        String sql = "SELECT * FROM INVOICE  where  invNum = ? and realAmount = ? order by time desc;";
+        String[] args = {nul,amount};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
             invoiceVO=configInvoiceVO(cursor);
-            invoiceVOSList.add(invoiceVO);
+            if(Common.checkEqualesOnDay(nowTime,new Date(invoiceVO.getTime().getTime())))
+            {
+                invoiceVOSList.add(invoiceVO);
+                cursor.close();
+                return invoiceVOSList;
+            }
         }
         cursor.close();
         return invoiceVOSList;

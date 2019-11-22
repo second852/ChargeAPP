@@ -44,6 +44,7 @@ import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
@@ -142,6 +143,7 @@ public class SelectConsume extends Fragment {
     private Calendar startPopup, endPopup;
     private boolean oneShow;
     private float lastX,lastY;
+    private HorizontalBarChart chartHor;
 
 
     @Override
@@ -341,6 +343,9 @@ public class SelectConsume extends Fragment {
         goalConsume = view.findViewById(R.id.goalConsume);
         setCurrency = view.findViewById(R.id.setCurrency);
         otherMessage = view.findViewById(R.id.otherMessage);
+        chartHor=view.findViewById(R.id.chart_hor);
+
+
         otherMessage.setBootstrapBrand(null);
         otherMessage.setTextColor(Color.BLACK);
 
@@ -770,13 +775,65 @@ public class SelectConsume extends Fragment {
 
 
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
+        ArrayList<BarEntry> yHor = new ArrayList<BarEntry>();
+        ArrayList<String> xHr=new ArrayList<String>();
         ShowZero = true;
+        int index=1;
         for (int i = 0; i < list_Data.size(); i++) {
             if (list_Data.get(i).getValue() > 0) {
                 ShowZero = false;
                 yVals1.add(new PieEntry(list_Data.get(i).getValue().floatValue(), list_Data.get(i).getKey()));
+                yHor.add(new BarEntry(index++,list_Data.get(i).getValue().floatValue()));
+                xHr.add(list_Data.get(i).getKey());
             }
         }
+
+        BarDataSet barDataSet1 = new BarDataSet(yHor, "");
+        barDataSet1.setColors(Common.getColor(yHor.size()));
+        barDataSet1.setStackLabels(getStackLabels());
+        BarData barData = new BarData(barDataSet1);
+        barData.setBarWidth(0.9f);
+        barData.setDrawValues(false);
+
+
+        XAxis xHAxis = chartHor.getXAxis();
+        xHAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xHAxis.setGranularity(1f);
+        xHAxis.setGranularityEnabled(true);
+        YAxis yHAxis = chartHor.getAxis(YAxis.AxisDependency.LEFT);
+        YAxis yHAxis1 = chartHor.getAxis(YAxis.AxisDependency.RIGHT);
+        yHAxis.setAxisMinimum(0);
+        yHAxis1.setAxisMinimum(0);
+        xHAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                try {
+                    return xHr.get((int) value-1);
+                } catch (Exception e) {
+                    return String.valueOf(value);
+                }
+            }
+        });
+
+
+        chartHor.setFitBars(true);
+        chartHor.setDrawBarShadow(false);
+        chartHor.setDoubleTapToZoomEnabled(false);
+        chartHor.setHighlightFullBarEnabled(false);
+        chartHor.setDrawBarShadow(false);
+        chartHor.setDoubleTapToZoomEnabled(false);
+        chartHor.setDescription(Common.description);
+        chartHor.setHighlightFullBarEnabled(false);
+        chartHor.setData(barData);
+        chartHor.setNoDataText("沒有資料!");
+        chartHor.setNoDataTextColor(Color.BLACK);
+
+        chartHor.notifyDataSetChanged();
+        chartHor.invalidate();
+
+
+
+
 
         // create pie data set
         PieDataSet dataSet = new PieDataSet(yVals1, "種類");
