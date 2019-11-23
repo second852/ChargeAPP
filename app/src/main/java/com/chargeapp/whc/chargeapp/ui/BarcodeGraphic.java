@@ -116,8 +116,11 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         super(overlay);
         result = null;
         this.context = context;
+        this.action = action;
         Common.setChargeDB(context);
         priceDB = new PriceDB(MainActivity.chargeAPPDB);
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
+        bankDB=new BankDB(MainActivity.chargeAPPDB);
         String sMax = priceDB.findMaxPeriod();
         if (sMax != null) {
             max = Integer.parseInt(sMax);
@@ -131,9 +134,6 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         //paint
         levelPrice = getHashLP();
         levelLength = getlevellength();
-        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
-        this.action = action;
-        bankDB=new BankDB(MainActivity.chargeAPPDB);
     }
 
 
@@ -286,6 +286,16 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         }
 
 
+        if (barcode != null) {
+            // Draws the bounding box around the barcode.
+            RectF rect = new RectF(barcode.getBoundingBox());
+            rect.left = translateX(rect.left);
+            rect.top = translateY(rect.top);
+            rect.right = translateX(rect.right);
+            rect.bottom = translateY(rect.bottom);
+            canvas.drawRect(rect, mRectPaint);
+        }
+
         if(ScanFragment.qrCode.size()>=2)
         {
             boolean qrcodeTrue=false;
@@ -330,16 +340,6 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             }
         }
 
-
-        if (stringOne != null) {
-            // Draws the bounding box around the barcode.
-            RectF rect = new RectF(barcode.getBoundingBox());
-            rect.left = translateX(rect.left);
-            rect.top = translateY(rect.top);
-            rect.right = translateX(rect.right);
-            rect.bottom = translateY(rect.bottom);
-            canvas.drawRect(rect, mRectPaint);
-        }
 
         consumeVO=null;
         isExist = true;
@@ -390,6 +390,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                     break;
             }
             consumeVO=null;
+            isExist=false;
             Common.setShowAnimation(ScanFragment.answer, 1);
             return;
         }

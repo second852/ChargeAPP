@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
+import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.ChartEntry;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
@@ -196,7 +197,7 @@ public class ConsumeDB {
     }
 
     public List<ConsumeVO> getQRcode() {
-        String sql = "SELECT * FROM Consumer where detailname is null and rdNumber is not null and date is not null and number is not null order by id desc;";
+        String sql = "SELECT * FROM Consumer where (detailname is null or length(trim(detailname)) =0 ) and rdNumber is not null and date is not null and number is not null order by id desc;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
@@ -316,21 +317,9 @@ public class ConsumeDB {
         ConsumeVO consumeVO=null ;
         if (cursor.moveToNext()) {
             consumeVO = configConsumeVO(cursor);
-            Calendar dbTime= Calendar.getInstance();
-            Calendar nowTime=Calendar.getInstance();
-            dbTime.setTime(consumeVO.getDate());
-            dbTime.set(Calendar.HOUR_OF_DAY,0);
-            dbTime.set(Calendar.MINUTE,0);
-            dbTime.set(Calendar.SECOND,0);
-            dbTime.set(Calendar.MILLISECOND,0);
-            nowTime.setTime(cTime);
-            nowTime.set(Calendar.HOUR_OF_DAY,0);
-            nowTime.set(Calendar.MINUTE,0);
-            nowTime.set(Calendar.SECOND,0);
-            nowTime.set(Calendar.MILLISECOND,0);
-            if(!nowTime.getTime().equals(dbTime.getTime()))
+            if(!Common.checkEqualOnDay(consumeVO.getDate(),cTime))
             {
-                consumeVO=null;
+                return null;
             }
         }
         cursor.close();

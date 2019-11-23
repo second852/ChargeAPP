@@ -2,15 +2,11 @@ package com.chargeapp.whc.chargeapp.ChargeDB;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
-import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
-import com.chargeapp.whc.chargeapp.Model.ChartEntry;
-import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 
@@ -520,7 +516,7 @@ public class InvoiceDB {
         InvoiceVO invoiceVO;
         while (cursor.moveToNext()) {
             invoiceVO=configInvoiceVO(cursor);
-            if(Common.checkEqualesOnDay(nowTime,new Date(invoiceVO.getTime().getTime())))
+            if(Common.checkEqualOnDay(nowTime,new Date(invoiceVO.getTime().getTime())))
             {
                 invoiceVOSList.add(invoiceVO);
                 cursor.close();

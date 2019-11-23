@@ -1664,7 +1664,7 @@ public class Common {
 
 
     // true 相等 false 不相等
-    public static boolean checkEqualesOnDay(Date dateOne,Date dateTwo)
+    public static boolean checkEqualOnDay(Date dateOne, Date dateTwo)
     {
         Calendar a =Calendar.getInstance();
         Calendar b=Calendar.getInstance();
