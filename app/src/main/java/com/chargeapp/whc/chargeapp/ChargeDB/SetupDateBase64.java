@@ -236,6 +236,12 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                             sb.append("\n");
                         }
                         consumeVO.setDetailname(sb.toString());
+
+                        if("未知".equals(consumeVO.getMaintype()))
+                        {
+                            Common.getType(consumeVO);
+                        }
+
                         consumeDB.update(consumeVO);
                     }
                 }

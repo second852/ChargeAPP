@@ -513,7 +513,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                     resultShow.append("\n雲端發票目前尚無資料\n系統會自動更新!");
                 } else {
                     resultShow.append("\n查詢成功!");
-                    consumeVO = getType(consumeVO);
+                    consumeVO = Common.getType(consumeVO);
                 }
 
                 Common.showToast(context,resultShow.toString());
@@ -539,7 +539,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             } else {
                 resultShow.append("\n查詢成功!");
                 if (StringUtil.isBlank(consumeVO.getMaintype()) || consumeVO.getMaintype().equals("未知")) {
-                    consumeVO = getType(consumeVO);
+                    consumeVO = Common.getType(consumeVO);
                 }
             }
             Common.showToast(context,resultShow.toString());
@@ -569,7 +569,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                     resultShow.append("\n雲端發票尚無檔案\n系統會自動更新!");
                 } else {
                     if (ScanFragment.isAutoSetType) {
-                        consumeVO = getType(consumeVO);
+                        consumeVO = Common.getType(consumeVO);
                     } else {
                          consumeVO.setMaintype(ScanFragment.mainType);
                          consumeVO.setSecondType(ScanFragment.secondType);
@@ -662,7 +662,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 }
 
                 if (!StringUtil.isBlank(consumeVO.getDetailname())) {
-                    consumeVO = getType(consumeVO);
+                    consumeVO = Common.getType(consumeVO);
                 }
 
                 if (!isExist) {
@@ -773,39 +773,6 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         }
 
 
-        private ConsumeVO getType (ConsumeVO consumeVO){
-            Common.setChargeDB(context);
-            TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
-            List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
-            String main = "O", second = "O";
-            int x = 0, total = 0;
-            for (TypeDetailVO t : typeDetailVOS) {
-                x = 0;
-                String[] key = t.getKeyword().split(" ");
-                for (int i = 0; i < key.length; i++) {
-                    if (consumeVO.getDetailname().indexOf(key[i].trim()) != -1) {
-                        x = x + key[i].length();
-                    }
-                }
-                if (x > total) {
-                    total = x;
-                    main = t.getGroupNumber();
-                    second = t.getName();
-                }
-            }
-            if (second.indexOf("餐") != -1) {
-                int hour = Integer.valueOf(Common.sHour.format(consumeVO.getDate()));
-                if (hour > 0 && hour < 11) {
-                    second = "早餐";
-                } else if (hour >= 11 && hour < 18) {
-                    second = "午餐";
-                } else {
-                    second = "晚餐";
-                }
-            }
-            consumeVO.setMaintype(main);
-            consumeVO.setSecondType(second);
-            return consumeVO;
-        }
+
 
 }

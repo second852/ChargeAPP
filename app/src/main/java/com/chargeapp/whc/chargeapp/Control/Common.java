@@ -44,6 +44,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PropertyFromDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.Goal.GoalListAll;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
@@ -81,6 +82,7 @@ import com.chargeapp.whc.chargeapp.Model.GoalVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
+import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.ScanUpdateSpend;
 import com.github.mikephil.charting.components.Description;
@@ -1687,6 +1689,38 @@ public class Common {
     }
 
 
-
+    public static ConsumeVO getType (ConsumeVO consumeVO){
+        TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
+        List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
+        String main = "O", second = "O";
+        int x = 0, total = 0;
+        for (TypeDetailVO t : typeDetailVOS) {
+            x = 0;
+            String[] key = t.getKeyword().split(" ");
+            for (int i = 0; i < key.length; i++) {
+                if (consumeVO.getDetailname().indexOf(key[i].trim()) != -1) {
+                    x = x + key[i].length();
+                }
+            }
+            if (x > total) {
+                total = x;
+                main = t.getGroupNumber();
+                second = t.getName();
+            }
+        }
+        if (second.indexOf("餐") != -1) {
+            int hour = Integer.valueOf(Common.sHour.format(consumeVO.getDate()));
+            if (hour > 0 && hour < 11) {
+                second = "早餐";
+            } else if (hour >= 11 && hour < 18) {
+                second = "午餐";
+            } else {
+                second = "晚餐";
+            }
+        }
+        consumeVO.setMaintype(main);
+        consumeVO.setSecondType(second);
+        return consumeVO;
+    }
 
 }
