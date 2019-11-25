@@ -35,6 +35,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.text.InputType;
+import android.util.ArraySet;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -110,7 +111,7 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        ScanFragment.qrCode = new CopyOnWriteArraySet<>();
+        ScanFragment.qrCode = new HashSet<>();
         TypefaceProvider.registerDefaultIconSets();
         setContentView(R.layout.scan_main);
         AdView adView = findViewById(R.id.adView);

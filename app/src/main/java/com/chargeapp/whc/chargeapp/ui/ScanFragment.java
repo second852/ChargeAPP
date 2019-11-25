@@ -127,6 +127,7 @@ public final class ScanFragment extends Fragment {
     public static Set<String> nulName;
     public static Set<String> qrCode;
 
+
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -145,7 +146,6 @@ public final class ScanFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.main, container, false);
-
         action=getArguments().getString("action");
 
         back=view.findViewById(R.id.back);
