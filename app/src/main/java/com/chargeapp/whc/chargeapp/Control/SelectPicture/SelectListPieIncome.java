@@ -75,7 +75,6 @@ public class SelectListPieIncome extends Fragment {
         }else{
             this.context=getActivity();
         }
-        Utils.init(this.context);
     }
 
 

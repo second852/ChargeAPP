@@ -789,12 +789,13 @@ public class InsertIncome extends Fragment {
     private class choiceCurrency implements PopupMenu.OnMenuItemClickListener {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case 1:
+            String title= (String) menuItem.getTitle();
+            switch (title) {
+                case "新台幣":
                     nowCurrency = "TWD";
                     sharedPreferences.edit().putString(insertCurrency, nowCurrency).apply();
                     currency.setText(Common.getCurrency(nowCurrency));
-                case 8:
+                case "離開":
                     popupMenu.dismiss();
                     break;
                 default:

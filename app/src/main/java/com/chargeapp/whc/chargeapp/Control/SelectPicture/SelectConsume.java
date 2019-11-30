@@ -59,6 +59,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 
 import com.github.mikephil.charting.data.PieDataSet;
@@ -82,6 +83,7 @@ import java.util.Set;
 
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.Utils;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 
 import org.jsoup.internal.StringUtil;
@@ -154,7 +156,6 @@ public class SelectConsume extends Fragment {
         } else {
             this.context = getActivity();
         }
-        Utils.init(this.context);
     }
 
 
@@ -236,34 +237,13 @@ public class SelectConsume extends Fragment {
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
 
-        chart_bar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-
-
-                    float x=motionEvent.getX();
-                    float y=motionEvent.getY();
-                    oneShow=false;
-                    switch (motionEvent.getAction())
-                    {
-                        case MotionEvent.ACTION_DOWN:
-                            lastX=x;
-                            lastY=y;
-                            break;
-                        case MotionEvent.ACTION_UP:
-                            double dis = Math.sqrt(Math.abs((x-lastX)* (x-lastX)+(y-lastY)* (y-lastY)));
-                            oneShow=(dis<10);
-                            break;
-                    }
-
-
-
-
-                return false;
-            }
-        });
+        TouchView touchView=new TouchView();
+        chart_pie.setOnTouchListener(touchView);
+        chart_bar.setOnTouchListener(touchView);
+        chartHor.setOnTouchListener(touchView);
         chart_bar.setOnChartValueSelectedListener(new charvalue());
         chart_pie.setOnChartValueSelectedListener(new pievalue());
+        chartHor.setOnChartValueSelectedListener(new pievalue());
         goalVO = goalDB.getFindType("支出");
 
         dataAnalyze();
@@ -374,10 +354,10 @@ public class SelectConsume extends Fragment {
 
         List<String> carrierS = new ArrayList<>();
         carrierS.add("全部");
-        carrierS.add("本地");
+        carrierS.add("本機");
         carrierTexts = new ArrayList<>();
         carrierTexts.add(Common.setCarrierSetBsTest(context, "全部"));
-        carrierTexts.add(Common.setCarrierSetBsTest(context, "本地"));
+        carrierTexts.add(Common.setCarrierSetBsTest(context, "本機"));
         for (CarrierVO c : carrierVOS) {
             carrierTexts.add(Common.setCarrierSetBsTest(context, c.getCarNul()));
             carrierS.add(c.getCarNul());
@@ -713,6 +693,7 @@ public class SelectConsume extends Fragment {
         xAxis.setGranularityEnabled(true);
         YAxis yAxis = chart_bar.getAxis(YAxis.AxisDependency.LEFT);
         YAxis yAxis1 = chart_bar.getAxis(YAxis.AxisDependency.RIGHT);
+        yAxis1.setDrawLabels(false);
         yAxis1.setAxisMinimum(0);
         yAxis.setAxisMinimum(0);
         xAxis.setValueFormatter(new IAxisValueFormatter() {
@@ -793,15 +774,18 @@ public class SelectConsume extends Fragment {
         barDataSet1.setStackLabels(getStackLabels());
         BarData barData = new BarData(barDataSet1);
         barData.setBarWidth(0.9f);
-        barData.setDrawValues(false);
+        barData.setDrawValues(true);
+        barData.setValueTextSize(12f);
+
 
 
         XAxis xHAxis = chartHor.getXAxis();
-        xHAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xHAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xHAxis.setGranularity(1f);
         xHAxis.setGranularityEnabled(true);
         YAxis yHAxis = chartHor.getAxis(YAxis.AxisDependency.LEFT);
         YAxis yHAxis1 = chartHor.getAxis(YAxis.AxisDependency.RIGHT);
+        yHAxis.setDrawLabels(false);
         yHAxis.setAxisMinimum(0);
         yHAxis1.setAxisMinimum(0);
         xHAxis.setValueFormatter(new IAxisValueFormatter() {
@@ -1085,6 +1069,30 @@ public class SelectConsume extends Fragment {
     }
 
 
+    private class TouchView implements  View.OnTouchListener{
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            float x=motionEvent.getX();
+            float y=motionEvent.getY();
+            oneShow=false;
+            switch (motionEvent.getAction())
+            {
+                case MotionEvent.ACTION_DOWN:
+                    lastX=x;
+                    lastY=y;
+                    break;
+                case MotionEvent.ACTION_UP:
+                    double dis = Math.sqrt(Math.abs((x-lastX)* (x-lastX)+(y-lastY)* (y-lastY)));
+                    oneShow=(dis<10);
+                    break;
+            }
+            return false;
+        }
+    }
+
+
+
 
     private void switchFragment(Fragment fragment) {
         MainActivity.oldFramgent.add("SelectConsume");
@@ -1100,7 +1108,7 @@ public class SelectConsume extends Fragment {
     private class pievalue implements OnChartValueSelectedListener {
         @Override
         public void onValueSelected(Entry e, Highlight h) {
-            if (ShowZero) {
+            if (ShowZero||(!oneShow)) {
                 return;
             }
             String key = list_Data.get((int) h.getX()).getKey();
@@ -1196,12 +1204,13 @@ public class SelectConsume extends Fragment {
         @SuppressLint("SetTextI18n")
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case 1:
+            String title= (String) menuItem.getTitle();
+            switch (title) {
+                case "新台幣":
                     nowCurrency = "TWD";
                     sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
                     currencyVO = currencyDB.getBytimeAndType(startPopup.getTimeInMillis(), endPopup.getTimeInMillis(), nowCurrency);
-                case 8:
+                case "離開":
                     popupMenu.dismiss();
                     break;
                 default:

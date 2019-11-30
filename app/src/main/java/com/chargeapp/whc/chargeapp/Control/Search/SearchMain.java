@@ -94,6 +94,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -341,11 +342,31 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
             {
                 searchObject.addAll(consumeDB.findByKeyWordAndTime(keyNameString,start.getTime(),end.getTime()));
                 searchObject.addAll(invoiceDB.findBySearchKeyAndTime(keyNameString,start.getTime(),end.getTime()));
+                if("其他".equals(keyNameString))
+                {
+                    searchObject.addAll(consumeDB.getTimePeriod(new Timestamp(start.getTime()),new Timestamp(end.getTime()),"O"));
+                    searchObject.addAll(invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTime()),new Timestamp(end.getTime()),"O"));
+                }
+                if("未知".equals(keyNameString))
+                {
+                    searchObject.addAll(consumeDB.getTimePeriod(new Timestamp(start.getTime()),new Timestamp(end.getTime()),"0"));
+                    searchObject.addAll(invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTime()),new Timestamp(end.getTime()),"0"));
+                }
+
 
             }else {
                 searchObject.addAll(consumeDB.findByKeyWord(keyNameString));
                 searchObject.addAll(invoiceDB.findBySearchKey(keyNameString));
-
+                if("其他".equals(keyNameString))
+                {
+                    searchObject.addAll(consumeDB.getMainTypePeriod("O"));
+                    searchObject.addAll(invoiceDB.getInvoiceMainType("O"));
+                }
+                if("未知".equals(keyNameString))
+                {
+                    searchObject.addAll(consumeDB.getMainTypePeriod("0"));
+                    searchObject.addAll(invoiceDB.getInvoiceMainType("0"));
+                }
             }
         }
 
@@ -356,6 +377,7 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
             if(needTime)
             {
                 searchObject.addAll(bankDB.findBySearchKeyAndTime(keyNameString,start.getTime(),end.getTime()));
+
             }else {
                 searchObject.addAll(bankDB.findBySearchKey(keyNameString));
             }

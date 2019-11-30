@@ -41,7 +41,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
-    private final static String TAG = "GetSQLDate";
+    private final static String TAG = "SetupDateBase64";
     private final static String key ="YzQ4R1gzaTRIbTRJMzNnOA==";
     private final static String appId="EINV3201711184648";
     private SimpleDateFormat sd=new SimpleDateFormat("yyyy/MM/dd");
@@ -243,6 +243,17 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                         }
 
                         consumeDB.update(consumeVO);
+                    }else if("該筆發票並無開立".equals(invStatus))
+                    {
+                        long differ=System.currentTimeMillis()-consumeVO.getDate().getTime();
+                        differ=(differ/(1000*60*60*24));
+                        if(differ>5)
+                        {
+                            consumeVO.setDetailname(invStatus);
+                            consumeVO.setMaintype("未知");
+                            consumeVO.setSecondType("未知");
+                            consumeDB.update(consumeVO);
+                        }
                     }
                 }
             }
@@ -373,6 +384,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
             }
             conn.disconnect();
             Log.d(TAG, "jsonIn: " + jsonIn);
+            Log.d(TAG, "jsonIn: " + data);
         }catch (IOException e){
             jsonIn.append("InternetError");
         }

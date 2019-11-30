@@ -91,7 +91,6 @@ public class SelectDetList extends Fragment {
         }else{
             this.context=getActivity();
         }
-        Utils.init(this.context);
     }
 
 

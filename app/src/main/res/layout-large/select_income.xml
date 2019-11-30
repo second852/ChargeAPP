@@ -107,10 +107,14 @@
             android:layout_height="350dp">
         </com.github.mikephil.charting.charts.PieChart>
         <com.github.mikephil.charting.charts.HorizontalBarChart
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:id="@+id/chart_hor"
             android:layout_width="match_parent"
             android:layout_height="350dp" />
         <com.github.mikephil.charting.charts.BarChart
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
             android:id="@+id/chart_bar"

@@ -609,11 +609,12 @@ public class PropertyInsertConsume extends Fragment {
         @SuppressLint("SetTextI18n")
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case 1:
+            String title= (String) menuItem.getTitle();
+            switch (title) {
+                case "新台幣":
                     nowCurrency = "TWD";
                     currencyVO=new CurrencyVO("TWD","1");
-                case 8:
+                case "離開":
                     popupMenu.dismiss();
                     break;
                 default:

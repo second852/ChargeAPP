@@ -77,7 +77,6 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Common.setChargeDB(this);
         Common.insertNewTableCol();
-        Utils.init(this);
         new GetSQLDate(this).execute("checkId");
         new Thread(runnable).start();
         new Thread(downloadCurrency).start();

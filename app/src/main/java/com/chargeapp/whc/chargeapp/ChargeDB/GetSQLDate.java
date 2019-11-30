@@ -928,6 +928,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
 
     private String getRemoteData(String url, HashMap data) {
+        Log.d(" jsonIn","action"+ action);
         StringBuilder jsonIn = new StringBuilder();
         HttpURLConnection conn = null;
         try {
@@ -950,7 +951,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 while ((line = br.readLine()) != null) {
                     jsonIn.append(line);
                 }
-                Log.d("jsonIn", jsonIn.toString());
+                Log.d(" jsonIn", jsonIn.toString());
             } else {
                 jsonIn = new StringBuilder();
                 jsonIn.append("timeout");

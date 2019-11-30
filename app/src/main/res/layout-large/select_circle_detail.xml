@@ -1,51 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:background="#f5f5f5"
     android:orientation="vertical"
     >
     <LinearLayout
-        android:layout_marginTop="20dp"
-        android:id="@+id/resultL"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center"
+        android:orientation="vertical"
         >
-        <com.beardedhen.androidbootstrap.AwesomeTextView
-            android:id="@+id/otherMessage"
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:id="@+id/resultL"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_gravity="center"
-            android:textSize="30sp"
-            app:bootstrapBrand="regular"
-            />
-        <com.beardedhen.androidbootstrap.BootstrapButton
-            android:id="@+id/setCurrency"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            >
+            <com.beardedhen.androidbootstrap.AwesomeTextView
+                android:id="@+id/otherMessage"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="20sp"
+                app:bootstrapBrand="regular"
+                />
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/setCurrency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                app:buttonMode="regular"
+                app:bootstrapBrand="warning"
+                app:bootstrapSize="xl"
+                app:roundedCorners="true"
+                />
+        </LinearLayout>
+        <com.github.mikephil.charting.charts.PieChart
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:id="@+id/chart_pie"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="#f5f5f5"
+            android:layout_width="match_parent"
             android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            app:buttonMode="regular"
-            app:bootstrapBrand="warning"
-            app:bootstrapSize="lg"
-            app:roundedCorners="true"
-            />
+            android:layout_height="350dp">
+        </com.github.mikephil.charting.charts.PieChart>
+        <com.github.mikephil.charting.charts.HorizontalBarChart
+
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:id="@+id/chart_hor"
+            android:layout_width="match_parent"
+            android:layout_height="350dp" />
     </LinearLayout>
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/chart_pie"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="#f5f5f5"
-        android:layout_width="match_parent"
-        android:layout_gravity="center"
-        android:layout_height="350dp">
-    </com.github.mikephil.charting.charts.PieChart>
-    <ListView
-        android:id="@+id/listDetail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </ListView>
-</LinearLayout>
+</ScrollView>

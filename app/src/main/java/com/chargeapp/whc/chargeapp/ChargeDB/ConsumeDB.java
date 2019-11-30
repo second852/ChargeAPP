@@ -197,7 +197,7 @@ public class ConsumeDB {
     }
 
     public List<ConsumeVO> getQRcode() {
-        String sql = "SELECT * FROM Consumer where (detailname is null or length(trim(detailname)) =0 ) and rdNumber is not null and date is not null and number is not null order by id desc;";
+        String sql = "SELECT * FROM Consumer where (detailname is null or length(trim(detailname)) =0 ) and rdNumber is not null and length(trim(rdNumber))>0  and date is not null and number is not null and length(trim(number))>0 order by id desc;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();

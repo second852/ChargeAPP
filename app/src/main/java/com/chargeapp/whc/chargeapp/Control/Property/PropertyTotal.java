@@ -89,7 +89,6 @@ public class PropertyTotal extends Fragment {
         }else{
             this.activity=getActivity();
         }
-        Utils.init(activity);
     }
 
     @Nullable
@@ -346,12 +345,13 @@ public class PropertyTotal extends Fragment {
         @SuppressLint("SetTextI18n")
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case 1:
+            String title= (String) menuItem.getTitle();
+            switch (title) {
+                case "新台幣":
                     nowCurrency = "TWD";
                     currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
                     currency.setText(CurrencyResult(total,currencyVO));
-                case 8:
+                case "離開":
                     popupMenu.dismiss();
                     break;
                 default:

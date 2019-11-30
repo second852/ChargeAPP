@@ -262,7 +262,15 @@ public class Common {
     {
         StringBuilder sbTitle=new StringBuilder();
         sbTitle.append(Common.sTwo.format(consumeVO.getDate()));
-        sbTitle.append(" " +consumeVO.getSecondType()+" ");
+        if(consumeVO.getSecondType().trim().equals("0"))
+        {
+            sbTitle.append("未知");
+        }else if(consumeVO.getSecondType().trim().equals("O"))
+        {
+            sbTitle.append("其他");
+        }else{
+            sbTitle.append(" " +consumeVO.getSecondType()+" ");
+        }
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(consumeVO.getCurrency()));
         if(StringUtil.isBlank(consumeVO.getRealMoney()))
@@ -277,7 +285,17 @@ public class Common {
     {
         StringBuilder sbTitle=new StringBuilder();
         sbTitle.append(Common.sDay.format(consumeVO.getDate()));
-        sbTitle.append(" " +consumeVO.getSecondType()+" ");
+        if(consumeVO.getSecondType().trim().equals("0"))
+        {
+            sbTitle.append("未知");
+        }else if(consumeVO.getSecondType().trim().equals("O"))
+        {
+            sbTitle.append("其他");
+        }else{
+            sbTitle.append(" " +consumeVO.getSecondType()+" ");
+        }
+
+
         //設定幣別 null 新台幣
         sbTitle.append(Common.getCurrency(consumeVO.getCurrency()));
         if(StringUtil.isBlank(consumeVO.getRealMoney()))
@@ -1569,6 +1587,16 @@ public class Common {
 
    public static String KeyToRed(String s,String key)
    {
+       //可能大寫
+       if(!s.contains(key))
+       {
+           key=key.toUpperCase();
+       }
+       //可能小寫
+       if(!s.contains(key))
+       {
+           key=key.toLowerCase();
+       }
        String fontS="<font color=\"red\">"+key+"</font>";
        s=s.replace(key,fontS);
        return s.replace("\n","<br>");
@@ -1692,7 +1720,7 @@ public class Common {
     public static ConsumeVO getType (ConsumeVO consumeVO){
         TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
         List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
-        String main = "O", second = "O";
+        String main = "其他", second = "其他";
         int x = 0, total = 0;
         for (TypeDetailVO t : typeDetailVOS) {
             x = 0;

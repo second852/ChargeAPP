@@ -66,7 +66,6 @@ public class SelectListBarIncome extends Fragment {
         }else{
             this.context=getActivity();
         }
-        Utils.init(this.context);
     }
 
 
