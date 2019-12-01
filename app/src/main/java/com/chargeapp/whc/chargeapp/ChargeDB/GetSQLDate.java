@@ -952,6 +952,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     jsonIn.append(line);
                 }
                 Log.d(" jsonIn", jsonIn.toString());
+                Log.d(" jsonIn", data.toString());
             } else {
                 jsonIn = new StringBuilder();
                 jsonIn.append("timeout");

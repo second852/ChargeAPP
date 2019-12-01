@@ -48,6 +48,7 @@ import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -769,12 +770,21 @@ public class SelectConsume extends Fragment {
             }
         }
 
+        if(ShowZero)
+        {
+            yHor.add(new BarEntry(1,0));
+            xHr.add("   ");
+            yHor.add(new BarEntry(2,0));
+            xHr.add("   ");
+        }
+
+
         BarDataSet barDataSet1 = new BarDataSet(yHor, "");
         barDataSet1.setColors(Common.getColor(yHor.size()));
         barDataSet1.setStackLabels(getStackLabels());
         BarData barData = new BarData(barDataSet1);
         barData.setBarWidth(0.9f);
-        barData.setDrawValues(true);
+        barData.setDrawValues(!ShowZero);
         barData.setValueTextSize(12f);
 
 
@@ -809,11 +819,7 @@ public class SelectConsume extends Fragment {
         chartHor.setDescription(Common.description);
         chartHor.setHighlightFullBarEnabled(false);
         chartHor.setData(barData);
-        chartHor.setNoDataText("沒有資料!");
-        chartHor.setNoDataTextColor(Color.BLACK);
 
-        chartHor.notifyDataSetChanged();
-        chartHor.invalidate();
 
 
 
@@ -845,9 +851,10 @@ public class SelectConsume extends Fragment {
         chart_pie.setBackgroundColor(Color.parseColor("#f5f5f5"));
         YAxis yAxis = chart_bar.getAxis(YAxis.AxisDependency.LEFT);
         YAxis yAxis1 = chart_bar.getAxis(YAxis.AxisDependency.RIGHT);
-        Legend l = chart_bar.getLegend();
-
-
+        Legend lCharBar = chart_bar.getLegend();
+        Legend lChartHor = chartHor.getLegend();
+        lChartHor.setEnabled(!ShowZero);
+        lCharBar.setEnabled(!ShowZero);
         switch (Common.screenSize) {
             case xLarge:
                 dataSet.setValueTextSize(25f);
@@ -855,10 +862,16 @@ public class SelectConsume extends Fragment {
                 xAxis.setTextSize(20f);
                 yAxis.setTextSize(20f);
                 yAxis1.setTextSize(20f);
-                l.setTextSize(20f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(20f);
+                lCharBar.setTextSize(20f);
+                lCharBar.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                lCharBar.setYEntrySpace(5f);
+                lCharBar.setFormSize(20f);
+
+                lChartHor.setTextSize(20f);
+                lChartHor.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                lChartHor.setYEntrySpace(5f);
+                lChartHor.setFormSize(20f);
+
                 break;
             case large:
                 dataSet.setValueTextSize(20f);
@@ -866,22 +879,41 @@ public class SelectConsume extends Fragment {
                 xAxis.setTextSize(20f);
                 yAxis.setTextSize(15f);
                 yAxis1.setTextSize(15f);
-                l.setTextSize(15f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(15f);
+                lCharBar.setTextSize(15f);
+                lCharBar.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                lCharBar.setYEntrySpace(5f);
+                lCharBar.setFormSize(15f);
+
+                lChartHor.setTextSize(15f);
+                lChartHor.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                lChartHor.setYEntrySpace(5f);
+                lChartHor.setFormSize(15f);
+
                 break;
             case normal:
                 dataSet.setValueTextSize(12f);
                 xAxis.setTextSize(11f);
                 yAxis.setTextSize(12f);
                 yAxis1.setTextSize(12f);
-                l.setTextSize(12f);
-                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                l.setYEntrySpace(5f);
-                l.setFormSize(12f);
+                lCharBar.setTextSize(12f);
+                lCharBar.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                lCharBar.setYEntrySpace(5f);
+                lCharBar.setFormSize(12f);
+
+                lChartHor.setTextSize(12f);
+                lChartHor.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                lChartHor.setYEntrySpace(5f);
+                lChartHor.setFormSize(12f);
+
+
                 break;
         }
+
+
+
+
+        chartHor.notifyDataSetChanged();
+        chartHor.invalidate();
 
 
         chart_bar.notifyDataSetChanged();

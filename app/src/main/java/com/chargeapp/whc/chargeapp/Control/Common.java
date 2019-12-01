@@ -1307,7 +1307,7 @@ public class Common {
                     bankVO.setFixDate("false");
                     int month = Integer.parseInt(priceVO.getInVoYm().substring(3));
                     String detail = priceVO.getInVoYm().substring(0, 3) + "年" + getPriceMonth().get(month)
-                            + getPriceName().get(consumeVO.getIsWin()) + " : " + getPrice().get(consumeVO.getIsWin());
+                            + getPriceName().get(consumeVO.getIsWin()) + " : " + getPrice().get(consumeVO.getIsWin())+"\n中獎號碼 : "+consumeVO.getNumber();
                     bankVO.setDetailname(detail);
                     bankDB.insert(bankVO);
                 }
@@ -1342,7 +1342,7 @@ public class Common {
                         bankVO.setMaintype("中獎");
                         int month = Integer.parseInt(priceVO.getInVoYm().substring(3));
                         String detail = priceVO.getInVoYm().substring(0, 3) + "年" + getPriceMonth().get(month)
-                                + getPriceName().get(i.getIswin()) + " : " + getPrice().get(i.getIswin());
+                                + getPriceName().get(i.getIswin()) + " : " + getPrice().get(i.getIswin())+"\n中獎號碼 : "+i.getInvNum();
                         bankVO.setDetailname(detail);
                         bankDB.insert(bankVO);
                     }

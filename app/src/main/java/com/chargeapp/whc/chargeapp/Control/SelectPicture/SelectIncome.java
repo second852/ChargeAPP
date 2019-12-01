@@ -84,7 +84,7 @@ public class SelectIncome extends Fragment {
     private ImageView PIdateCut, PIdateAdd;
     private String TAG = "SelectIncome";
     private BarChart chart_bar;
-    private int month, year,day;
+    private int month, year, day;
     private BootstrapDropDown choicePeriod;
     private PieChart chart_pie;
     private int period;
@@ -108,76 +108,58 @@ public class SelectIncome extends Fragment {
     private BootstrapButton setCurrency;
     private AwesomeTextView otherMessage;
     private PopupMenu popupMenu;
-    private Calendar startPopup,endPopup;
+    private Calendar startPopup, endPopup;
     private boolean oneShow;
-    private float lastX,lastY;
+    private float lastX, lastY;
     private HorizontalBarChart chartHor;
+    private boolean ShowZero;
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof Activity)
-        {
-            this.context=(Activity) context;
-        }else{
-            this.context=getActivity();
+        if (context instanceof Activity) {
+            this.context = (Activity) context;
+        } else {
+            this.context = getActivity();
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Common.setScreen(Common.screenSize,context);
+        Common.setScreen(Common.screenSize, context);
         final View view = inflater.inflate(R.layout.select_income, container, false);
-        if(end==null)
-        {
-            end=Calendar.getInstance();
+        if (end == null) {
+            end = Calendar.getInstance();
         }
 
         month = end.get(Calendar.MONTH);
         year = end.get(Calendar.YEAR);
-        day=end.get(Calendar.DAY_OF_MONTH);
+        day = end.get(Calendar.DAY_OF_MONTH);
         Common.setChargeDB(context);
         bankDB = new BankDB(MainActivity.chargeAPPDB);
-        currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
+        currencyDB = new CurrencyDB(MainActivity.chargeAPPDB);
         findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
-        chart_pie.setOnChartValueSelectedListener(new pievalue());
+
+        PieValue pieValue=new PieValue();
+        chartHor.setOnChartValueSelectedListener(pieValue);
+        chart_pie.setOnChartValueSelectedListener(pieValue);
+
+
         chart_bar.setOnChartValueSelectedListener(new charValue());
         choicePeriod.setOnDropDownItemClickListener(new choicePeriodI());
-        chart_bar.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
 
-
-                float x=motionEvent.getX();
-                float y=motionEvent.getY();
-                oneShow=false;
-                switch (motionEvent.getAction())
-                {
-                    case MotionEvent.ACTION_DOWN:
-                        lastX=x;
-                        lastY=y;
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        double dis = Math.sqrt(Math.abs((x-lastX)* (x-lastX)+(y-lastY)* (y-lastY)));
-                        oneShow=(dis<10);
-                        break;
-                }
-
-
-
-
-                return false;
-            }
-        });
+        TouchView touchView=new TouchView();
+        chart_bar.setOnTouchListener(touchView);
+        chartHor.setOnTouchListener(touchView);
 
         //current
-        sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
-        nowCurrency=sharedPreferences.getString(Common.choiceCurrency,"TWD");
+        sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
+        nowCurrency = sharedPreferences.getString(Common.choiceCurrency, "TWD");
         setCurrency.setText(getCurrency(nowCurrency));
-        popupMenu=new PopupMenu(context,setCurrency);
+        popupMenu = new PopupMenu(context, setCurrency);
         Common.createCurrencyPopMenu(popupMenu, context);
         setCurrency.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,14 +173,13 @@ public class SelectIncome extends Fragment {
         //        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
 //        choicePeriod.setSelection(Statue);
 
-        switch (Statue)
-        {
+        switch (Statue) {
             case 0:
                 period = end.getActualMaximum(Calendar.DAY_OF_MONTH);
                 break;
             case 1:
-                month=0;
-                period=12;
+                month = 0;
+                period = 12;
                 break;
         }
         dataAnalyze();
@@ -223,20 +204,19 @@ public class SelectIncome extends Fragment {
         chart_bar = view.findViewById(R.id.chart_bar);
         choicePeriod = view.findViewById(R.id.choicePeriod);
         chart_pie = view.findViewById(R.id.chart_pie);
-        otherMessage=view.findViewById(R.id.otherMessage);
-        chartHor=view.findViewById(R.id.chart_hor);
+        otherMessage = view.findViewById(R.id.otherMessage);
+        chartHor = view.findViewById(R.id.chart_hor);
         otherMessage.setBootstrapBrand(null);
         otherMessage.setTextColor(Color.BLACK);
-        setCurrency=view.findViewById(R.id.setCurrency);
+        setCurrency = view.findViewById(R.id.setCurrency);
         ArrayList<String> SpinnerItem1 = new ArrayList<>();
         SpinnerItem1.add(" 月 ");
         SpinnerItem1.add(" 年 ");
-        periodIncome=new ArrayList<>();
-        String[] periodArray=new String[SpinnerItem1.size()];
-        for(int i=0;i<SpinnerItem1.size();i++)
-        {
-            periodIncome.add(Common.setPeriodSelectCBsTest(context,SpinnerItem1.get(i)));
-            periodArray[i]=SpinnerItem1.get(i);
+        periodIncome = new ArrayList<>();
+        String[] periodArray = new String[SpinnerItem1.size()];
+        for (int i = 0; i < SpinnerItem1.size(); i++) {
+            periodIncome.add(Common.setPeriodSelectCBsTest(context, SpinnerItem1.get(i)));
+            periodArray[i] = SpinnerItem1.get(i);
         }
         choicePeriod.setDropdownData(periodArray);
         choicePeriod.setBootstrapText(periodIncome.get(Statue));
@@ -256,7 +236,7 @@ public class SelectIncome extends Fragment {
         dataSetA.setStackLabels(getStackLabels());
         dataSetA.setDrawValues(false);
         dataSetA.setHighLightAlpha(20);
-        BarData barDataSet=new BarData(dataSetA);
+        BarData barDataSet = new BarData(dataSetA);
         return barDataSet;
     }
 
@@ -288,18 +268,18 @@ public class SelectIncome extends Fragment {
         }
 
 
-        startPopup=new GregorianCalendar();
+        startPopup = new GregorianCalendar();
         startPopup.setTime(start.getTime());
-        endPopup=new GregorianCalendar();
+        endPopup = new GregorianCalendar();
         endPopup.setTime(end.getTime());
         //SetCurrency choice
-        currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
+        currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), nowCurrency);
 
         bankVOS = bankDB.getTimeAll(start.getTimeInMillis(), end.getTimeInMillis());
         for (BankVO b : bankVOS) {
-            CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),b.getCurrency());
-            String money= (b.getRealMoney()==null)? String.valueOf(b.getMoney()):b.getRealMoney();
-            Double bankAmount=Double.valueOf(money)*Double.valueOf(currencyVO.getMoney());
+            CurrencyVO currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), b.getCurrency());
+            String money = (b.getRealMoney() == null) ? String.valueOf(b.getMoney()) : b.getRealMoney();
+            Double bankAmount = Double.valueOf(money) * Double.valueOf(currencyVO.getMoney());
             if (hashMap.get(b.getMaintype()) == null) {
                 hashMap.put(b.getMaintype(), bankAmount);
             } else {
@@ -311,7 +291,7 @@ public class SelectIncome extends Fragment {
         Collections.sort(list_Data, new Comparator<Map.Entry<String, Double>>() {
             public int compare(Map.Entry<String, Double> entry1,
                                Map.Entry<String, Double> entry2) {
-                return (int)(entry2.getValue() - entry1.getValue());
+                return (int) (entry2.getValue() - entry1.getValue());
             }
         });
 
@@ -323,7 +303,7 @@ public class SelectIncome extends Fragment {
                 other.setValue(other.getValue() + list_Data.get(i).getValue());
                 list_Data.remove(i);
                 i--;
-                Log.d(TAG,i+" : "+list_Data.size());
+                Log.d(TAG, i + " : " + list_Data.size());
                 continue;
             }
             if (i >= 4) {
@@ -379,27 +359,26 @@ public class SelectIncome extends Fragment {
     private float[] Periodfloat(Calendar start, Calendar end) {
         Map<String, Double> barMap = new HashMap<>();
         float[] f = new float[list_Data.size()];
-        List<BankVO> bankVOS = bankDB.getTimeAll(start.getTimeInMillis(),end.getTimeInMillis());
+        List<BankVO> bankVOS = bankDB.getTimeAll(start.getTimeInMillis(), end.getTimeInMillis());
         boolean isOtherExist;
         ChartEntry other = new ChartEntry("其他", 0.0);
         for (BankVO b : bankVOS) {
             isOtherExist = true;
-            CurrencyVO currencyVO =currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),b.getCurrency());
+            CurrencyVO currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), b.getCurrency());
 
-            if(StringUtil.isBlank(b.getRealMoney()))
-            {
+            if (StringUtil.isBlank(b.getRealMoney())) {
                 b.setRealMoney(String.valueOf(b.getMoney()));
                 bankDB.update(b);
             }
 
-            Double bankAmount=Double.valueOf(b.getRealMoney())*Double.valueOf(currencyVO.getMoney());
-            bankAmount=bankAmount/Double.valueOf(this.currencyVO.getMoney());
+            Double bankAmount = Double.valueOf(b.getRealMoney()) * Double.valueOf(currencyVO.getMoney());
+            bankAmount = bankAmount / Double.valueOf(this.currencyVO.getMoney());
             for (int i = 0; i < list_Data.size(); i++) {
                 if (list_Data.get(i).getKey().equals(b.getMaintype())) {
                     if (barMap.get(b.getMaintype()) == null) {
                         barMap.put(b.getMaintype(), bankAmount);
                     } else {
-                        barMap.put(b.getMaintype(),bankAmount+ barMap.get(b.getMaintype()));
+                        barMap.put(b.getMaintype(), bankAmount + barMap.get(b.getMaintype()));
                     }
                     isOtherExist = false;
                     break;
@@ -461,8 +440,8 @@ public class SelectIncome extends Fragment {
         yAxis.setMinWidth(0);
         yAxis.setAxisMinimum(0);
         yAxis1.setAxisMinimum(0);
+        yAxis1.setDrawLabels(false);
         chart_bar.setData(getBarData());
-
 
 
         //chart_pie set
@@ -473,64 +452,70 @@ public class SelectIncome extends Fragment {
         chart_pie.setRotationAngle(30);
         chart_pie.setRotationEnabled(true);
         chart_pie.setDescription(Common.getDeescription());
+        chart_pie.setRotationEnabled(false);
+
+
         addChartPieData();
         chart_pie.getLegend().setEnabled(false);
         Legend l = chart_bar.getLegend();
+        l.setEnabled(!ShowZero);
 
-
-            PieDataSet dataSet = (PieDataSet) chart_pie.getData().getDataSet();
-            switch (Common.screenSize){
-                case xLarge:
-                    dataSet.setValueTextSize(25f);
-                    chart_pie.setEntryLabelTextSize(25f);
-                    xAxis.setTextSize(20f);
-                    yAxis.setTextSize(20f);
-                    yAxis1.setTextSize(20f);
-                    l.setTextSize(20f);
-                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                    l.setYEntrySpace(5f);
-                    l.setFormSize(20f);
-                    break;
-                case large:
-                    dataSet.setValueTextSize(20f);
-                    chart_pie.setEntryLabelTextSize(20f);
-                    xAxis.setTextSize(20f);
-                    yAxis.setTextSize(15f);
-                    yAxis1.setTextSize(15f);
-                    l.setTextSize(15f);
-                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                    l.setYEntrySpace(5f);
-                    l.setFormSize(15f);
-                    break;
-                case normal:
-                    dataSet.setValueTextSize(12f);
-                    xAxis.setTextSize(11f);
-                    yAxis.setTextSize(12f);
-                    yAxis1.setTextSize(12f);
-                    l.setTextSize(12f);
-                    l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
-                    l.setYEntrySpace(5f);
-                    l.setFormSize(12f);
-                    break;
-            }
+        PieDataSet dataSet = (PieDataSet) chart_pie.getData().getDataSet();
+        switch (Common.screenSize) {
+            case xLarge:
+                dataSet.setValueTextSize(25f);
+                chart_pie.setEntryLabelTextSize(25f);
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(20f);
+                yAxis1.setTextSize(20f);
+                l.setTextSize(20f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(20f);
+                break;
+            case large:
+                dataSet.setValueTextSize(20f);
+                chart_pie.setEntryLabelTextSize(20f);
+                xAxis.setTextSize(20f);
+                yAxis.setTextSize(15f);
+                yAxis1.setTextSize(15f);
+                l.setTextSize(15f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(15f);
+                break;
+            case normal:
+                dataSet.setValueTextSize(12f);
+                xAxis.setTextSize(11f);
+                yAxis.setTextSize(12f);
+                yAxis1.setTextSize(12f);
+                l.setTextSize(12f);
+                l.setXEntrySpace(5f); // set the space between the legend entries on the x-axis
+                l.setYEntrySpace(5f);
+                l.setFormSize(12f);
+                break;
+        }
 
         chart_bar.notifyDataSetChanged();
         chart_bar.invalidate();
 
         chart_pie.notifyDataSetChanged();
         chart_pie.invalidate();
+
+        chartHor.notifyDataSetChanged();
+        chartHor.invalidate();
     }
 
     private void addChartPieData() {
         type = new ArrayList<>();
         otherMessage.setText(DesTittle);
-        setCurrency.setText(Common.CurrencyResult(total,currencyVO));
+        setCurrency.setText(Common.CurrencyResult(total, currencyVO));
 
         ArrayList<BarEntry> yHor = new ArrayList<BarEntry>();
-        ArrayList<String> xHr=new ArrayList<String>();
+        ArrayList<String> xHr = new ArrayList<String>();
         ArrayList<PieEntry> pieEntries = new ArrayList<PieEntry>();
-        boolean ShowZero = true;
-        int index=1;
+        ShowZero = true;
+        int index = 1;
         ChartEntry other = new ChartEntry("其他", 0.0);
         for (int i = 0; i < list_Data.size(); i++) {
             if (list_Data.get(i).getValue() <= 0) {
@@ -543,40 +528,45 @@ public class SelectIncome extends Fragment {
             }
             type.add(list_Data.get(i).getKey());
             pieEntries.add(new PieEntry(list_Data.get(i).getValue().floatValue(), list_Data.get(i).getKey()));
-            yHor.add(new BarEntry(index++,list_Data.get(i).getValue().floatValue()));
+            yHor.add(new BarEntry(index++, list_Data.get(i).getValue().floatValue()));
             xHr.add(list_Data.get(i).getKey());
         }
         if (other.getValue() > 0) {
             type.add("其他");
             pieEntries.add(new PieEntry(other.getValue().floatValue(), "其他"));
-            yHor.add(new BarEntry(index++,other.getValue().floatValue()));
+            yHor.add(new BarEntry(index++, other.getValue().floatValue()));
             xHr.add("其他");
         }
 
-
-
+        if (ShowZero) {
+            yHor.add(new BarEntry(1, 0));
+            xHr.add("   ");
+            yHor.add(new BarEntry(2, 0));
+            xHr.add("   ");
+        }
 
         BarDataSet barDataSet1 = new BarDataSet(yHor, "");
         barDataSet1.setColors(Common.getColor(yHor.size()));
         barDataSet1.setStackLabels(getStackLabels());
         BarData barData = new BarData(barDataSet1);
         barData.setBarWidth(0.9f);
-        barData.setDrawValues(false);
-
+        barData.setDrawValues(!ShowZero);
+        barData.setValueTextSize(12f);
 
         XAxis xHAxis = chartHor.getXAxis();
-        xHAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xHAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xHAxis.setGranularity(1f);
         xHAxis.setGranularityEnabled(true);
         YAxis yHAxis = chartHor.getAxis(YAxis.AxisDependency.LEFT);
         YAxis yHAxis1 = chartHor.getAxis(YAxis.AxisDependency.RIGHT);
         yHAxis.setAxisMinimum(0);
         yHAxis1.setAxisMinimum(0);
+        yHAxis.setDrawLabels(false);
         xHAxis.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
                 try {
-                    return xHr.get((int) value-1);
+                    return xHr.get((int) value - 1);
                 } catch (Exception e) {
                     return String.valueOf(value);
                 }
@@ -596,15 +586,7 @@ public class SelectIncome extends Fragment {
         chartHor.setNoDataText("沒有資料!");
         chartHor.setNoDataTextColor(Color.BLACK);
 
-        chartHor.notifyDataSetChanged();
-        chartHor.invalidate();
-
-
-
-
-
-
-
+        chartHor.getLegend().setEnabled(!ShowZero);
 
 
         // create pie data set
@@ -707,14 +689,14 @@ public class SelectIncome extends Fragment {
         fragmentTransaction.commit();
     }
 
-    private class pievalue implements OnChartValueSelectedListener {
+    private class PieValue implements OnChartValueSelectedListener {
 
         @Override
         public void onValueSelected(Entry e, Highlight h) {
-            if (list_Data.size()<=0) {
+            if (list_Data.size() <= 0||(!oneShow)) {
                 return;
             }
-            if (type.size()<=0) {
+            if (type.size() <= 0) {
                 return;
             }
             Fragment fragment = new SelectListPieIncome();
@@ -738,7 +720,7 @@ public class SelectIncome extends Fragment {
     private class charValue implements OnChartValueSelectedListener {
         @Override
         public void onValueSelected(Entry e, Highlight h) {
-            if (e.getY()<=0&&!oneShow) {
+            if (e.getY() <= 0 ||( !oneShow)) {
                 return;
             }
             Fragment fragment = new SelectListBarIncome();
@@ -781,23 +763,52 @@ public class SelectIncome extends Fragment {
         @SuppressLint("SetTextI18n")
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            String title= (String) menuItem.getTitle();
+            String title = (String) menuItem.getTitle();
             switch (title) {
                 case "新台幣":
                     nowCurrency = "TWD";
                     sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
-                    currencyVO=currencyDB.getBytimeAndType(startPopup.getTimeInMillis(),endPopup.getTimeInMillis(),nowCurrency);
+                    currencyVO = currencyDB.getBytimeAndType(startPopup.getTimeInMillis(), endPopup.getTimeInMillis(), nowCurrency);
                 case "離開":
                     popupMenu.dismiss();
                     break;
                 default:
                     nowCurrency = Common.code.get(menuItem.getItemId() - 2);
                     sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
-                    currencyVO=currencyDB.getBytimeAndType(startPopup.getTimeInMillis(),endPopup.getTimeInMillis(),nowCurrency);
+                    currencyVO = currencyDB.getBytimeAndType(startPopup.getTimeInMillis(), endPopup.getTimeInMillis(), nowCurrency);
                     break;
             }
             dataAnalyze();
             return true;
         }
     }
+
+
+
+    private class TouchView implements  View.OnTouchListener{
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            float x=motionEvent.getX();
+            float y=motionEvent.getY();
+            oneShow=false;
+            switch (motionEvent.getAction())
+            {
+                case MotionEvent.ACTION_DOWN:
+                    lastX=x;
+                    lastY=y;
+                    break;
+                case MotionEvent.ACTION_UP:
+                    double dis = Math.sqrt(Math.abs((x-lastX)* (x-lastX)+(y-lastY)* (y-lastY)));
+                    oneShow=(dis<10);
+                    break;
+            }
+            return false;
+        }
+    }
+
+
+
+
+
 }

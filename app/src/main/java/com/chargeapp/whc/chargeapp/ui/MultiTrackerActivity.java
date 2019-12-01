@@ -66,6 +66,7 @@ import com.chargeapp.whc.chargeapp.Control.MyContextWrapper;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.github.mikephil.charting.utils.Utils;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -111,6 +112,7 @@ public final class MultiTrackerActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        Utils.init(this);
         ScanFragment.qrCode = new HashSet<>();
         TypefaceProvider.registerDefaultIconSets();
         setContentView(R.layout.scan_main);

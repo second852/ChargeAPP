@@ -73,6 +73,7 @@ public class Welcome extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        Utils.init(this);
         setContentView(R.layout.welcome);
         super.onCreate(savedInstanceState);
         Common.setChargeDB(this);
