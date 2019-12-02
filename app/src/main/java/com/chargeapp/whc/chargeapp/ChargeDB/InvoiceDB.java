@@ -315,7 +315,7 @@ public class InvoiceDB {
     }
 
     public List<InvoiceVO> findBySearchKeyAndTime(String searchKey,long start,long end) {
-        String sql = "SELECT * FROM INVOICE  where maintype like ? or secondtype like ? or detail like ? and time between ? and ? order by time desc;";
+        String sql = "SELECT * FROM INVOICE  where ( maintype like ? or secondtype like ? or detail like ? ) and time between ? and ? order by time desc;";
         String[] args = {"%"+searchKey+"%","%"+searchKey+"%","%"+searchKey+"%",String.valueOf(start),String.valueOf(end)};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();

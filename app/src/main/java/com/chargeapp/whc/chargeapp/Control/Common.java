@@ -242,6 +242,30 @@ public class Common {
     }
 
 
+
+    public static String setSecInvoiceTittleYear(InvoiceVO invoiceVO)
+    {
+        StringBuilder sbTitle=new StringBuilder();
+        sbTitle.append(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())));
+        //無法分類顯示其他
+        if(invoiceVO.getSecondtype().trim().equals("0"))
+        {
+            sbTitle.append("未知");
+        }else if(invoiceVO.getSecondtype().trim().equals("O"))
+        {
+            sbTitle.append("其他");
+        }else{
+            sbTitle.append(" " +invoiceVO.getSecondtype()+" ");
+        }
+        //設定幣別 null 新台幣
+        sbTitle.append(Common.getCurrency(invoiceVO.getSecondtype()));
+        sbTitle.append(" "+invoiceVO.getRealAmount());
+        return  sbTitle.toString();
+    }
+
+
+
+
     public static String setMainConsumerTittle(ConsumeVO consumeVO)
     {
         StringBuilder sbTitle=new StringBuilder();
@@ -306,6 +330,39 @@ public class Common {
         return  sbTitle.toString();
     }
 
+
+
+
+    public static String setSecConsumerTittlesDayYear(ConsumeVO consumeVO)
+    {
+        StringBuilder sbTitle=new StringBuilder();
+        sbTitle.append(Common.sTwo.format(consumeVO.getDate()));
+        if(consumeVO.getSecondType().trim().equals("0"))
+        {
+            sbTitle.append("未知");
+        }else if(consumeVO.getSecondType().trim().equals("O"))
+        {
+            sbTitle.append("其他");
+        }else{
+            sbTitle.append(" " +consumeVO.getSecondType()+" ");
+        }
+
+
+        //設定幣別 null 新台幣
+        sbTitle.append(Common.getCurrency(consumeVO.getCurrency()));
+        if(StringUtil.isBlank(consumeVO.getRealMoney()))
+        {
+            consumeVO.setRealMoney(String.valueOf(consumeVO.getMoney()));
+        }
+        sbTitle.append(" "+consumeVO.getRealMoney());
+        return  sbTitle.toString();
+    }
+
+
+
+
+
+
     public static String setBankTittlesDay(BankVO bankVO)
     {
         StringBuilder sbTitle=new StringBuilder();
@@ -322,6 +379,28 @@ public class Common {
 
         return  sbTitle.toString();
     }
+
+
+
+
+
+    public static String setBankTittlesDayYear(BankVO bankVO)
+    {
+        StringBuilder sbTitle=new StringBuilder();
+        sbTitle.append(Common.sTwo.format(bankVO.getDate()));
+        sbTitle.append(" " +bankVO.getMaintype()+" ");
+        //設定幣別 null 新台幣
+        sbTitle.append(Common.getCurrency(bankVO.getCurrency()));
+        if(StringUtil.isBlank(bankVO.getRealMoney()))
+        {
+            sbTitle.append(" "+bankVO.getMoney());
+        }else{
+            sbTitle.append(" "+bankVO.getRealMoney());
+        }
+
+        return  sbTitle.toString();
+    }
+
 
     public static String setBankTittlesTwo(BankVO bankVO)
     {
@@ -1750,5 +1829,24 @@ public class Common {
         consumeVO.setSecondType(second);
         return consumeVO;
     }
+
+
+     public static Date stringToDate(String s,boolean end)
+     {
+         String[] strings=s.split("/");
+         int year= Integer.parseInt(strings[0]);
+         int month= Integer.parseInt(strings[1])-1;
+         int day= Integer.parseInt(strings[2]);
+         Calendar time;
+         if(end)
+         {
+             time=new GregorianCalendar(year,month,day,23,59,59);
+         }else {
+             time=new GregorianCalendar(year,month,day,0,0,0);
+         }
+
+         return new Date(time.getTimeInMillis());
+     }
+
 
 }

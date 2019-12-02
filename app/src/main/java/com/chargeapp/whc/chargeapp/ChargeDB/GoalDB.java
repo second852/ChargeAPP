@@ -76,7 +76,7 @@ public class GoalDB {
 
 
     public List<GoalVO> findSearchKey(String searchKey,Long start,Long end) {
-        String sql = "SELECT * FROM goal where type like ? or name like ? and startTime between ? and ? order by id desc;";
+        String sql = "SELECT * FROM goal where ( type like ? or name like ? ) and startTime between ? and ? order by id desc;";
         String[] args = {"%"+searchKey+"%","%"+searchKey+"%",start.toString(),end.toString()};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<GoalVO> goalVOS = new ArrayList<>();

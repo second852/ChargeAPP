@@ -154,7 +154,7 @@ public class BankDB {
     }
 
     public List<BankVO> findBySearchKeyAndTime(String searchKey,Long start,Long end) {
-        String sql = "SELECT * FROM BANK where  maintype like ? or detailname like ? and date between ? and ? order by date desc;";
+        String sql = "SELECT * FROM BANK where ( maintype like ? or detailname like ? ) and date between ? and ? order by date desc;";
         String[] args = {"%"+searchKey+"%","%"+searchKey+"%",start.toString(),end.toString()};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<BankVO> BankVOList = new ArrayList<>();

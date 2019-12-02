@@ -95,6 +95,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -327,12 +330,12 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
 
         searchObject=new ArrayList<>();
 
-
         if(needTime)
         {
-            start=stringToDate(beginD.getText().toString());
-            end=stringToDate(endD.getText().toString());
+            start=Common.stringToDate(beginD.getText().toString(),false);
+            end=Common.stringToDate(endD.getText().toString(),true);
         }
+
 
         //consume main/second/detail
         //invoice main/second/detail
@@ -425,6 +428,30 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
         listView.setSelection(p);
         searchSettingShow.setVisibility(View.VISIBLE);
         searchSettingShow.setText(showScope());
+
+        fileName=new StringBuffer();
+        if(needTime)
+        {
+            fileName.append(Common.sSix.format(start)+"-"+Common.sSix.format(end));
+        }else{
+            fileName.append(Common.sFive.format(new Date(System.currentTimeMillis())));
+        }
+        fileName.append(" "+keyNameString);
+        if(needConsume&&needProperty&&needGoal&&needProperty)
+        {
+            fileName.append(" 全部");
+        }else if(needConsume){
+
+            fileName.append(" 支出");
+        }else if(needIncome){
+
+            fileName.append(" 收入");
+        }else if(needGoal){
+
+            fileName.append(" 目標");
+        }else if(needProperty){
+            fileName.append("資產的資料");
+        }
     }
 
     @Override
@@ -615,31 +642,6 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
         @Override
         public void onClick(View view) {
             setListView();
-            fileName=new StringBuffer();
-            if(needTime)
-            {
-                fileName.append(Common.sSix.format(start)+"-"+Common.sSix.format(end));
-            }else{
-                fileName.append(Common.sFive.format(new Date(System.currentTimeMillis())));
-            }
-            fileName.append(" "+keyNameString);
-            if(needConsume&&needProperty&&needGoal&&needProperty)
-            {
-                fileName.append(" 全部");
-            }else if(needConsume){
-
-                fileName.append(" 支出");
-            }else if(needIncome){
-
-                fileName.append(" 收入");
-            }else if(needGoal){
-
-                fileName.append(" 目標");
-            }else if(needProperty){
-                fileName.append("資產的資料");
-            }
-
-
         }
     }
 
@@ -1306,7 +1308,7 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                     });
                 }
 
-                title.setText(Html.fromHtml(Common.KeyToRed(Common.setSecInvoiceTittle(I),keyNameString)), TextView.BufferType.SPANNABLE);
+                title.setText(Html.fromHtml(Common.KeyToRed(Common.setSecInvoiceTittleYear(I),keyNameString)), TextView.BufferType.SPANNABLE);
                 describe.setText(Html.fromHtml(Common.KeyToRed(sbDescribe.toString(),keyNameString)), TextView.BufferType.SPANNABLE);
             } else if (o instanceof ConsumeVO) {
                 update.setText("修改");
@@ -1336,7 +1338,7 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                 }
 
                 //設定 title
-                title.setText(Html.fromHtml(Common.KeyToRed(Common.setSecConsumerTittlesDay(c),keyNameString)), TextView.BufferType.SPANNABLE);
+                title.setText(Html.fromHtml(Common.KeyToRed(Common.setSecConsumerTittlesDayYear(c),keyNameString)), TextView.BufferType.SPANNABLE);
 
 
 
@@ -1453,7 +1455,7 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                 }
 
                 //設定 title
-                title.setText(Html.fromHtml(Common.KeyToRed(Common.setBankTittlesDay(bankVO),keyNameString)), TextView.BufferType.SPANNABLE);
+                title.setText(Html.fromHtml(Common.KeyToRed(Common.setBankTittlesDayYear(bankVO),keyNameString)), TextView.BufferType.SPANNABLE);
                 describe.setText(Html.fromHtml(Common.KeyToRed(stringBuffer.toString(),keyNameString)), TextView.BufferType.SPANNABLE);
 
 
@@ -1746,14 +1748,7 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
         }
     }
 
-    private Date stringToDate(String s)
-    {
-        String[] dates = s.split("/");
-        Calendar c = Calendar.getInstance();
-        c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
-        Date d = new Date(c.getTimeInMillis());
-        return d;
-    }
+
 
     private String showScope()
     {
