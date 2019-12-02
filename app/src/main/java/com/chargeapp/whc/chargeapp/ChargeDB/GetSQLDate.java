@@ -598,12 +598,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             }
             HashMap<String, String> data = getPriceMap(period.toString());
             jsonin = getRemoteData(url, data);
-            if (jsonin.indexOf("200") != -1) {
+            if (jsonin.contains("200") ) {
                 PriceVO priceVO = jsonToPriceVO(jsonin);
                 priceDB.insert(priceVO);
                 Log.d(TAG, "insert" + priceVO.getInVoYm());
             }
-            if (jsonin.indexOf("901") != -1) {
+            if (jsonin.contains("901")) {
                 break;
             }
             month = month - 2;

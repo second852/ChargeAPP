@@ -1370,7 +1370,7 @@ public class Common {
         BankDB bankDB = new BankDB(MainActivity.chargeAPPDB);
         List<ConsumeVO> consumeVOS = consumeDB.getNoWinAll(startTime, endTime);
         for (ConsumeVO consumeVO : consumeVOS) {
-            String nul = consumeVO.getNumber().trim();
+            String nul = consumeVO.getNumber();
             consumeVO.setIsWin("N");
             consumeVO.setIsWinNul("N");
             if (nul != null && nul.trim().length() == 10) {

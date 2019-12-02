@@ -35,6 +35,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertActivity;
 import com.chargeapp.whc.chargeapp.Job.DownloadNewDataJob;
@@ -385,10 +386,10 @@ public class Welcome extends AppCompatActivity {
         //判斷是否建立過
 //     tm.cancelAll(); no need,becauseCompiler will remove all job
 
-        if(tm.getAllPendingJobs().size()==2)
-        {
-            return;
-        }
+        tm.cancelAll();
+        new GetSQLDate(this).execute("download");
+        new GetSQLDate(this).execute("getWinInvoice");
+        new SetupDateBase64(this).execute("consumeVO");
 
         ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);
         JobInfo.Builder builder = new JobInfo.Builder(0, mServiceComponent);

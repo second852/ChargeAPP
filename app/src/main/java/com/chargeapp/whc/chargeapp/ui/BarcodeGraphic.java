@@ -26,9 +26,7 @@ import android.graphics.RectF;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
+
 import android.os.Vibrator;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -39,12 +37,10 @@ import android.view.View;
 import android.view.animation.Animation;
 
 import com.beardedhen.androidbootstrap.BootstrapText;
-import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertSpend;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
@@ -475,10 +471,9 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 QrCodeResultFinishForUpdate();
                 break;
             case "PriceHand":
-                priceAnswer();
-                break;
             case Common.scanFragment:
-                QrCodeResultMultiScan();
+                priceAnswer();
+//                QrCodeResultMultiScan();
                 break;
         }
     }
@@ -585,8 +580,18 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             StringBuilder periodString = new StringBuilder();
             boolean repeat = ScanFragment.nulName.contains(consumeVO.getNumber());
             if (repeat) {
-                periodString.append("此張發票已兌獎過!\n");
+                periodString.append("此張發票已掃描過!\n");
+            }else {
+                if(isExist)
+                {
+                    periodString.append("資料庫已有資料!\n");
+                }else{
+                    periodString.append("新增到資料庫!\n");
+                }
             }
+
+
+
             ScanFragment.nulName.add(consumeVO.getNumber());
 
             StringBuilder sPeriod = new StringBuilder();
@@ -637,11 +642,15 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
 
             if (Integer.valueOf(sPeriod.toString()) > max) {
                 result = "over";
+                consumeVO.setIsWin("over");
+                consumeVO.setIsWinNul("over");
             } else {
 
                 priceVO = priceDB.getPeriodAll(sPeriod.toString());
                 if (priceVO == null) {
                     result = "no";
+                    consumeVO.setIsWin("N");
+                    consumeVO.setIsWinNul("N");
                 } else {
                     List<String> answer = answer(consumeVO.getNumber().substring(2), priceVO);
                     result = answer.get(0);
@@ -650,9 +659,16 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 }
             }
 
-            if (!StringUtil.isBlank(consumeVO.getDetailname())) {
-                consumeVO = Common.getType(consumeVO);
+            if (ScanFragment.isAutoSetType) {
+                if (!StringUtil.isBlank(consumeVO.getDetailname())) {
+                    consumeVO = Common.getType(consumeVO);
+                }
+
+            } else {
+                consumeVO.setMaintype(ScanFragment.mainType);
+                consumeVO.setSecondType(ScanFragment.secondType);
             }
+
 
             if (!isExist) {
                 consumeDB.insert(consumeVO);
@@ -663,7 +679,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
 
             Spannable content;
             int textColor = Color.BLUE;
-            int remainColor = Color.parseColor("#5bc0de");
+            int remainColor = Color.parseColor("#0275d8");
             switch (result) {
                 case "no":
                     periodString.append("已過兌獎期限\n 發票號碼 : " + consumeVO.getNumber());
@@ -747,7 +763,15 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
 
             if (repeat) {
                 content.setSpan(new ForegroundColorSpan(remainColor), periodString.indexOf("此"), periodString.indexOf("!") + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }else {
+                if(isExist)
+                {
+                    content.setSpan(new ForegroundColorSpan(Color.parseColor("#5bc0de")), periodString.indexOf("資"), periodString.indexOf("!") + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }else {
+                    content.setSpan(new ForegroundColorSpan(Color.parseColor("#5cb85c")), periodString.indexOf("新"), periodString.indexOf("!") + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
             }
+
 
 
             ScanFragment.answer.setText(content);

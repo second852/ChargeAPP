@@ -21,12 +21,16 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.beardedhen.androidbootstrap.BootstrapLabel;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
+import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
+import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
+import com.chargeapp.whc.chargeapp.Model.PriceVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
@@ -57,6 +61,8 @@ public class ScanByOnline extends Fragment {
     private ImageView rdNumberP;
     private View view;
     private ConsumeDB consumeDB;
+    private PriceDB priceDB;
+    private int max;
 
 
 
@@ -78,6 +84,8 @@ public class ScanByOnline extends Fragment {
         TypefaceProvider.registerDefaultIconSets();
         gson = new Gson();
         consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
+        priceDB=new PriceDB(MainActivity.chargeAPPDB);
+        max= Integer.parseInt(priceDB.findMaxPeriod());
         context.setTitle("QR Code線上查詢");
         view = inflater.inflate(R.layout.scan_update_qrcode, container, false);
         Common.setChargeDB(context);
@@ -319,7 +327,85 @@ public class ScanByOnline extends Fragment {
         consumeVO.setRealMoney(String.valueOf(Common.DoubleToInt(total)));
         consumeVO.setDetailname(sb.toString());
         consumeVO = getType(consumeVO);
+
+
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(consumeVO.getDate());
+        int year=calendar.get(Calendar.YEAR);
+        int month=calendar.get(Calendar.MONTH);
+
+        StringBuilder sPeriod = new StringBuilder();
+        StringBuilder bPeriod = new StringBuilder();
+        sPeriod.append((year - 1911));
+        int realMonth = month + 1;
+        switch (realMonth) {
+            case 1:
+            case 2:
+                sPeriod.append("02");
+                bPeriod.append("年01-02月");
+                break;
+            case 3:
+            case 4:
+                sPeriod.append("04");
+                bPeriod.append("年03-04月");
+                break;
+            case 5:
+            case 6:
+                sPeriod.append("06");
+                bPeriod.append("年05-06月");
+                break;
+            case 7:
+            case 8:
+                sPeriod.append("08");
+                bPeriod.append("年07-08月");
+                break;
+            case 9:
+            case 10:
+                sPeriod.append("10");
+                bPeriod.append("年09-10月");
+                break;
+            case 11:
+            case 12:
+                sPeriod.append("12");
+                bPeriod.append("年11-12月");
+                break;
+        }
+
+        if (Integer.valueOf(sPeriod.toString()) > max) {
+            consumeVO.setIsWin("over");
+            consumeVO.setIsWinNul("over");
+        } else {
+
+            PriceVO priceVO = priceDB.getPeriodAll(sPeriod.toString());
+            if (priceVO == null) {
+                consumeVO.setIsWin("N");
+                consumeVO.setIsWinNul("N");
+            } else {
+                List<String> answer = Common.answer(consumeVO.getNumber().substring(2), priceVO);
+                consumeVO.setIsWin(answer.get(0));
+                consumeVO.setIsWinNul(answer.get(1));
+            }
+        }
+
         consumeDB.insert(consumeVO);
+
+
+        if(Common.getPrice().containsKey(consumeVO.getIsWin()))
+        {
+            BankDB bankDB=new BankDB(MainActivity.chargeAPPDB);
+            BankVO bankVO = bankDB.getIsExist(bPeriod.toString(), consumeVO.getNumber());
+            if (bankVO == null) {
+                bankVO = new BankVO();
+                bankVO.setFixDate("false");
+                bankVO.setMoney(Common.getIntPrice().get(consumeVO.getIsWin()));
+                bankVO.setDate(new Date(System.currentTimeMillis()));
+                bankVO.setMaintype("中獎");
+                bPeriod.append("\n" + Common.getPriceName().get(consumeVO.getIsWin()) + " : " + Common.getPrice().get(consumeVO.getIsWin()) + "\n中獎號碼 : " + consumeVO.getNumber());
+                bankVO.setDetailname(bPeriod.toString());
+                bankDB.insert(bankVO);
+            }
+        }
+
         ScanFragment.nulName.add(consumeVO.getNumber());
         Common.showToast(context, "新增成功!");
         progressL.setVisibility(View.GONE);

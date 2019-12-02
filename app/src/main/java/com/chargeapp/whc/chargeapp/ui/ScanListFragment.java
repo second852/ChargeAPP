@@ -2,7 +2,11 @@ package com.chargeapp.whc.chargeapp.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +53,7 @@ public class ScanListFragment extends Fragment {
     private TextView message;
     private int position;
     private ConsumeDB consumeDB;
-    private Gson gson=new Gson();
+    private Gson gson = new Gson();
     private BootstrapButton backP;
     private int p;
 
@@ -57,11 +61,10 @@ public class ScanListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof Activity)
-        {
-            this.activity=(Activity) context;
-        }else{
-            this.activity=getActivity();
+        if (context instanceof Activity) {
+            this.activity = (Activity) context;
+        } else {
+            this.activity = getActivity();
         }
     }
 
@@ -71,31 +74,30 @@ public class ScanListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.scan_list, container, false);
         Common.setChargeDB(activity);
-        consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
-        list=view.findViewById(R.id.list);
-        backP=view.findViewById(R.id.backP);
+        consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
+        list = view.findViewById(R.id.list);
+        backP = view.findViewById(R.id.backP);
         backP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String action=MainActivity.oldFramgent.getLast();
-                switch (action)
-                {
+                String action = MainActivity.oldFramgent.getLast();
+                switch (action) {
                     case Common.scanFragment:
-                        Fragment fragment=new ScanFragment();
+                        Fragment fragment = new ScanFragment();
                         fragment.setArguments(getArguments());
-                        Common.switchConfirmFragment(fragment,getFragmentManager());
+                        Common.switchConfirmFragment(fragment, getFragmentManager());
                         break;
 
                     case Common.scanByOnline:
-                        fragment=new ScanByOnline();
+                        fragment = new ScanByOnline();
                         fragment.setArguments(getArguments());
-                        Common.switchConfirmFragment(fragment,getFragmentManager());
+                        Common.switchConfirmFragment(fragment, getFragmentManager());
                         break;
                 }
 
             }
         });
-        message=view.findViewById(R.id.message);
+        message = view.findViewById(R.id.message);
         return view;
     }
 
@@ -105,35 +107,31 @@ public class ScanListFragment extends Fragment {
         setAdapt();
     }
 
-    public void setAdapt()
-    {
-        List<ConsumeVO> consumeVOS=new ArrayList<>();
-        for(String nul:ScanFragment.nulName)
-        {
-           ConsumeVO consumeVO=consumeDB.findConByNul(nul);
-           consumeVOS.add(consumeVO);
+    public void setAdapt() {
+        List<ConsumeVO> consumeVOS = new ArrayList<>();
+        for (String nul : ScanFragment.nulName) {
+            ConsumeVO consumeVO = consumeDB.findConByNul(nul);
+            consumeVOS.add(consumeVO);
         }
 
-        if(consumeVOS.isEmpty())
-        {
+        if (consumeVOS.isEmpty()) {
             message.setText(R.string.error_noScanData);
             message.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             message.setVisibility(View.GONE);
             Collections.sort(consumeVOS, new Comparator<ConsumeVO>() {
                 @Override
                 public int compare(ConsumeVO consumeVO, ConsumeVO t1) {
-                    return consumeVO.getId()-t1.getId();
+                    return consumeVO.getId() - t1.getId();
                 }
             });
         }
         try {
-            position=getArguments().getInt("position");
-        }catch (Exception e)
-        {
-            position=0;
+            position = getArguments().getInt("position");
+        } catch (Exception e) {
+            position = 0;
         }
-        list.setAdapter(new ListAdapter(activity,consumeVOS));
+        list.setAdapter(new ListAdapter(activity, consumeVOS));
         list.setSelection(position);
     }
 
@@ -171,22 +169,46 @@ public class ScanListFragment extends Fragment {
             BootstrapButton typeT = itemView.findViewById(R.id.typeT);
 
             //新增ele Type
-            LinearLayout eleTypeL=itemView.findViewById(R.id.eleTypeL);
-            BootstrapButton eleTypeT=itemView.findViewById(R.id.eleTypeT);
+            LinearLayout eleTypeL = itemView.findViewById(R.id.eleTypeL);
+            BootstrapButton eleTypeT = itemView.findViewById(R.id.eleTypeT);
 
             update.setText("修改");
             final ConsumeVO c = consumeVOS.get(position);
 
-            //紙本發票種類
-            eleTypeL.setVisibility(View.GONE);
+            //中獎資訊
+            StringBuffer stringBuffer = new StringBuffer();
+            eleTypeL.setVisibility(View.VISIBLE);
+            switch (c.getIsWin()) {
+                case "over":
+                    eleTypeT.setBootstrapBrand(DefaultBootstrapBrand.INFO);
+                    eleTypeT.setText("尚未開獎");
+                    break;
+                case "N":
+                    eleTypeT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
+                    eleTypeT.setText("未中獎");
+                    break;
+                default:
+                    eleTypeT.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
+                    eleTypeT.setText(Common.getPriceName().get(c.getIsWin()));
+
+
+                    //detail
+                    stringBuffer.append("發票號碼 : ");
+                    stringBuffer.append(c.getNumber());
+                    stringBuffer.append("\n中獎號碼 : ");
+                    stringBuffer.append(c.getIsWinNul());
+                    stringBuffer.append("\n獎金 : ");
+                    stringBuffer.append(Common.getPrice().get(c.getIsWin()) + "\n");
+
+                    break;
+            }
 
 
             typeL.setVisibility(View.VISIBLE);
-            if(c.getNumber()==null||c.getNumber().trim().length()<=0)
-            {
+            if (c.getNumber() == null || c.getNumber().trim().length() <= 0) {
                 typeT.setText("無發票");
                 typeT.setBootstrapBrand(DefaultBootstrapBrand.REGULAR);
-            }else{
+            } else {
                 typeT.setText("紙本發票");
                 typeT.setBootstrapBrand(DefaultBootstrapBrand.WARNING);
             }
@@ -204,7 +226,6 @@ public class ScanListFragment extends Fragment {
             title.setText(Common.setSecConsumerTittlesDay(c));
 
             //設定 describe
-            StringBuffer stringBuffer = new StringBuffer();
             fixL.setVisibility(View.GONE);
             if (c.isAuto()) {
                 fixT.setText("自動");
@@ -218,15 +239,14 @@ public class ScanListFragment extends Fragment {
                     if (js.get("choicestatue").getAsString().trim().equals("每天") && noweek) {
                         stringBuffer.append(" 假日除外");
                     }
-                }catch (Exception e)
-                {
+                } catch (Exception e) {
                     stringBuffer.append(" ");
                 }
                 stringBuffer.append("\n");
             }
 
 
-            if (c.getFixDate()!=null&&c.getFixDate().equals("true")) {
+            if (c.getFixDate() != null && c.getFixDate().equals("true")) {
 
                 fixT.setText("固定");
                 fixT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
@@ -239,20 +259,41 @@ public class ScanListFragment extends Fragment {
                     if (js.get("choicestatue").getAsString().trim().equals("每天") && noweek) {
                         stringBuffer.append(" 假日除外");
                     }
-                }catch (Exception e)
-                {
+                } catch (Exception e) {
                     stringBuffer.append(" ");
                 }
                 stringBuffer.append("\n");
             }
 
 
-            stringBuffer.append((c.getDetailname()==null?"":c.getDetailname()));
-            if(stringBuffer.indexOf("\n")==-1)
-            {
+            stringBuffer.append((c.getDetailname() == null ? "" : c.getDetailname()));
+            if (stringBuffer.indexOf("\n") == -1) {
                 stringBuffer.append("\n");
             }
-            decribe.setText(stringBuffer.toString());
+
+
+            if(Common.getPrice().containsKey(c.getIsWin()))
+            {
+                SpannableString detailC = new SpannableString(stringBuffer.toString());
+
+                int nulL=Common.getlevellength().get(c.getIsWin());
+                int indexF=stringBuffer.indexOf(c.getNumber());
+                int indexS=stringBuffer.indexOf("中獎號碼 : ");
+                int sL="中獎號碼 : ".length();
+                int indexT=stringBuffer.indexOf("獎金 : ");
+                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),indexF+c.getNumber().length(),
+                        indexF+c.getNumber().length()+nulL, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),indexS+sL,
+                        indexS+nulL+sL, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),indexT,
+                       indexT+Common.getPrice().get(c.getIsWin()).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                decribe.setText(detailC);
+            }else {
+                decribe.setText(stringBuffer.toString());
+            }
+
+
+
 
             update.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -269,14 +310,14 @@ public class ScanListFragment extends Fragment {
 
 
             deleteI.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DeleteDialogFragment aa = new DeleteDialogFragment();
-                aa.setObject(c);
-                aa.setFragment(ScanListFragment.this);
-                aa.show(getFragmentManager(), "show");
-            }
-        });
+                @Override
+                public void onClick(View view) {
+                    DeleteDialogFragment aa = new DeleteDialogFragment();
+                    aa.setObject(c);
+                    aa.setFragment(ScanListFragment.this);
+                    aa.show(getFragmentManager(), "show");
+                }
+            });
 
 
             return itemView;
