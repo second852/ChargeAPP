@@ -1602,6 +1602,9 @@ public class Common {
              {
                 consumeVO.setDate(new Date(System.currentTimeMillis()));
                 consumeVO.setFkKey(UUID.randomUUID().toString());
+                consumeVO.setIsWin("0");
+                consumeVO.setNumber("");
+                consumeVO.setIsWinNul("0");
                 consumeDB.insert(consumeVO);
                 propertyFromVO.setImportFeeId(consumeVO.getFkKey());
              }

@@ -573,7 +573,8 @@ public class PropertyInsertConsume extends Fragment {
                 consumeVO.setDetailname(propertyVO.getName()+"資產支出"+choiceSecSource+"的手續費");
                 consumeVO.setDate(new Date(System.currentTimeMillis()));
                 consumeVO.setFkKey(UUID.randomUUID().toString());
-
+                consumeVO.setIsWin("0");
+                consumeVO.setIsWinNul("0");
                 ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
                 consumeDB.insert(consumeVO);
                 propertyFromVO.setImportFeeId(consumeVO.getFkKey());

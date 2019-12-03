@@ -37,6 +37,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.ArraySet;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -124,7 +125,7 @@ public final class ScanFragment extends Fragment {
     private Activity activity;
     public static boolean isAutoSetType=true;
     public static String mainType,secondType;
-    public static Set<String> nulName;
+    public static Map<String,String> nulName;
     public static Set<String> qrCode;
 
 
@@ -156,7 +157,7 @@ public final class ScanFragment extends Fragment {
         backP=view.findViewById(R.id.backP);
         if(ScanFragment.nulName==null)
         {
-            ScanFragment.nulName=new HashSet<>();
+            ScanFragment.nulName=new HashMap<>();
         }
 
         switch (action)

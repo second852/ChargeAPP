@@ -1080,7 +1080,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             } else if (object instanceof EleUpdateCarrier) {
                 EleUpdateCarrier eleUpdateCarrier = (EleUpdateCarrier) object;
                 eleUpdateCarrier.check(s);
-            } else if (object instanceof DownloadNewDataJob) {
+            } else if (object instanceof DownloadNewDataJob||object instanceof Welcome) {
                 new Common().AutoSetPrice();
             }else if(object instanceof MainActivity)
             {

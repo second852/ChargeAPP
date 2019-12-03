@@ -23,7 +23,7 @@ public class ConsumeVO implements Serializable{
     private String detailname;//9花費金額
     private boolean auto;//10是否自動產生
     private int autoId;//11自動產生母ID(-1:無)
-    private String isWin;//12是否中獎 (N 沒中獎 over 超過)
+    private String isWin;//12是否中獎 (0 沒對獎 N 沒中獎 其他 中獎)
     private String isWinNul;//13中獎號碼
     private String rdNumber;//14 QrCode 隨機碼
     private String currency;//15 幣別

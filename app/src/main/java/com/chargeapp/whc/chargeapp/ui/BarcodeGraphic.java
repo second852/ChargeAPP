@@ -151,7 +151,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         hashMap.put("second", "二獎4萬元");
         hashMap.put("third", "三獎1萬元");
         hashMap.put("fourth", "四獎4000元");
-        hashMap.put("fifth", "五獎1000千元");
+        hashMap.put("fifth", "五獎1000元");
         hashMap.put("sixth", "六獎200元");
         return hashMap;
     }
@@ -383,7 +383,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         }
 
 
-        if (consumeVO != null && !ScanFragment.nulName.contains(consumeVO.getNumber()) && StringUtil.isBlank(consumeVO.getDetailname())) {
+        if (consumeVO != null && StringUtil.isBlank(ScanFragment.nulName.get(consumeVO.getNumber())) && StringUtil.isBlank(consumeVO.getDetailname())) {
             ConnectivityManager mConnectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
             if (mNetworkInfo == null) {
@@ -561,7 +561,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                     resultShow.append("\n存進資料庫!");
                 }
                 consumeDB.insert(consumeVO);
-                ScanFragment.nulName.add(consumeVO.getNumber());
+                ScanFragment.nulName.put(consumeVO.getNumber(),consumeVO.getRdNumber());
             }
             int start = resultShow.indexOf(":") + 1;
             int end = start + consumeVO.getNumber().length();
@@ -578,7 +578,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
         if (consumeVO != null) {
 
             StringBuilder periodString = new StringBuilder();
-            boolean repeat = ScanFragment.nulName.contains(consumeVO.getNumber());
+            boolean repeat = (!StringUtil.isBlank(ScanFragment.nulName.get(consumeVO.getNumber())));
             if (repeat) {
                 periodString.append("此張發票已掃描過!\n");
             }else {
@@ -592,8 +592,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
 
 
 
-            ScanFragment.nulName.add(consumeVO.getNumber());
-
+            ScanFragment.nulName.put(consumeVO.getNumber(),consumeVO.getRdNumber());
             StringBuilder sPeriod = new StringBuilder();
             StringBuilder bPeriod = new StringBuilder();
             sPeriod.append((year - 1911));
@@ -642,15 +641,15 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
 
             if (Integer.valueOf(sPeriod.toString()) > max) {
                 result = "over";
-                consumeVO.setIsWin("over");
-                consumeVO.setIsWinNul("over");
+                consumeVO.setIsWin("0");
+                consumeVO.setIsWinNul("0");
             } else {
 
                 priceVO = priceDB.getPeriodAll(sPeriod.toString());
                 if (priceVO == null) {
                     result = "no";
-                    consumeVO.setIsWin("N");
-                    consumeVO.setIsWinNul("N");
+                    consumeVO.setIsWin("0");
+                    consumeVO.setIsWinNul("0");
                 } else {
                     List<String> answer = answer(consumeVO.getNumber().substring(2), priceVO);
                     result = answer.get(0);
@@ -661,7 +660,10 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
 
             if (ScanFragment.isAutoSetType) {
                 if (!StringUtil.isBlank(consumeVO.getDetailname())) {
-                    consumeVO = Common.getType(consumeVO);
+                    if("未知".equals(consumeVO.getMaintype()))
+                    {
+                        consumeVO = Common.getType(consumeVO);
+                    }
                 }
 
             } else {

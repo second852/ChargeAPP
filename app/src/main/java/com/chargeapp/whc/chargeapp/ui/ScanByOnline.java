@@ -43,6 +43,7 @@ import java.lang.reflect.Type;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
 
 public class ScanByOnline extends Fragment {
@@ -372,21 +373,21 @@ public class ScanByOnline extends Fragment {
         }
 
         if (Integer.valueOf(sPeriod.toString()) > max) {
-            consumeVO.setIsWin("over");
-            consumeVO.setIsWinNul("over");
+            consumeVO.setIsWin("0");
+            consumeVO.setIsWinNul("0");
         } else {
 
             PriceVO priceVO = priceDB.getPeriodAll(sPeriod.toString());
             if (priceVO == null) {
-                consumeVO.setIsWin("N");
-                consumeVO.setIsWinNul("N");
+                consumeVO.setIsWin("0");
+                consumeVO.setIsWinNul("0");
             } else {
                 List<String> answer = Common.answer(consumeVO.getNumber().substring(2), priceVO);
                 consumeVO.setIsWin(answer.get(0));
                 consumeVO.setIsWinNul(answer.get(1));
             }
         }
-
+        consumeVO.setFkKey(UUID.randomUUID().toString());
         consumeDB.insert(consumeVO);
 
 
@@ -406,7 +407,7 @@ public class ScanByOnline extends Fragment {
             }
         }
 
-        ScanFragment.nulName.add(consumeVO.getNumber());
+        ScanFragment.nulName.put(consumeVO.getNumber(),consumeVO.getRdNumber());
         Common.showToast(context, "新增成功!");
         progressL.setVisibility(View.GONE);
     }

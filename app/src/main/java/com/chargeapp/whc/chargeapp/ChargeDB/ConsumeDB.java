@@ -225,7 +225,7 @@ public class ConsumeDB {
     }
 
     public List<ConsumeVO> getNoWinAll(long startTime, long endTime) {
-        String sql = "SELECT * FROM Consumer where iswin != 'N' and date between '" + startTime + "' and '" + endTime + "' order by id;";
+        String sql = "SELECT * FROM Consumer where iswin = '0' and date between '" + startTime + "' and '" + endTime + "' order by id;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
@@ -540,6 +540,19 @@ public class ConsumeDB {
     public ConsumeVO findConByNul(String number) {
         String sql = "SELECT * FROM Consumer where number = ? order by id desc;";
         String[] args = {number};
+        Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
+        ConsumeVO consumeVO = null;
+        if (cursor.moveToNext()) {
+            consumeVO = configConsumeVO(cursor);
+        }
+        cursor.close();
+        return consumeVO;
+    }
+
+
+    public ConsumeVO findConByNul(String number,String rdNumber) {
+        String sql = "SELECT * FROM Consumer where number = ? and rdNumber = ? order by id desc;";
+        String[] args = {number,rdNumber};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         ConsumeVO consumeVO = null;
         if (cursor.moveToNext()) {

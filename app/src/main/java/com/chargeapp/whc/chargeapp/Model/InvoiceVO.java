@@ -27,7 +27,7 @@ public class InvoiceVO implements Serializable{
     private String sellerBan;//15電子發票
     private String sellerName;//16電子發票
     private String sellerAddress;//17電子發票
-    private String iswin; //18電子發票中獎資訊
+    private String iswin; //18電子發票中獎資訊 (0 沒對獎 N 沒中獎 其他 中獎)
     private String isWinNul; //19電子發票中獎號碼
     private String currency;// 20幣別
     private String realAmount;//21小數點金額 新的

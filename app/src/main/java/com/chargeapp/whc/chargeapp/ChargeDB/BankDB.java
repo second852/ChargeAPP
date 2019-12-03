@@ -244,7 +244,7 @@ public class BankDB {
 
     public BankVO getIsExist(String period,String number) {
         String sql = "SELECT * FROM BANK where detailname like ? order by date;";
-        String[] args = {"%"+period+"%"+number};
+        String[] args = {"%"+period+"%"+number+"%"};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         BankVO bankVO = null;
         if (cursor.moveToNext()) {
@@ -372,6 +372,12 @@ public class BankDB {
     public int deleteById(int id) {
         String whereClause = COL_id + " = ?;";
         String[] whereArgs = {String.valueOf(id)};
+        return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
+    }
+
+    public int deleteByTime(Timestamp timestamp) {
+        String whereClause = "date > ? ;";
+        String[] whereArgs = {String.valueOf(timestamp.getTime())};
         return db.getWritableDatabase().delete(TABLE_NAME, whereClause, whereArgs);
     }
 

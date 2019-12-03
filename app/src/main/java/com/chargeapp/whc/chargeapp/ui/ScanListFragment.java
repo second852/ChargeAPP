@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 public class ScanListFragment extends Fragment {
 
@@ -55,7 +56,8 @@ public class ScanListFragment extends Fragment {
     private ConsumeDB consumeDB;
     private Gson gson = new Gson();
     private BootstrapButton backP;
-    private int p;
+    private Set<String> winLevel;
+
 
 
     @Override
@@ -75,6 +77,7 @@ public class ScanListFragment extends Fragment {
         view = inflater.inflate(R.layout.scan_list, container, false);
         Common.setChargeDB(activity);
         consumeDB = new ConsumeDB(MainActivity.chargeAPPDB);
+        winLevel=Common.getPrice().keySet();
         list = view.findViewById(R.id.list);
         backP = view.findViewById(R.id.backP);
         backP.setOnClickListener(new View.OnClickListener() {
@@ -109,8 +112,8 @@ public class ScanListFragment extends Fragment {
 
     public void setAdapt() {
         List<ConsumeVO> consumeVOS = new ArrayList<>();
-        for (String nul : ScanFragment.nulName) {
-            ConsumeVO consumeVO = consumeDB.findConByNul(nul);
+        for (String nul : ScanFragment.nulName.keySet()) {
+            ConsumeVO consumeVO = consumeDB.findConByNul(nul,ScanFragment.nulName.get(nul));
             consumeVOS.add(consumeVO);
         }
 
@@ -122,7 +125,14 @@ public class ScanListFragment extends Fragment {
             Collections.sort(consumeVOS, new Comparator<ConsumeVO>() {
                 @Override
                 public int compare(ConsumeVO consumeVO, ConsumeVO t1) {
-                    return consumeVO.getId() - t1.getId();
+                    switch (consumeVO.getIsWin())
+                    {
+                        case "0":
+                        case "N":
+                            return  -(consumeVO.getDate().compareTo(t1.getDate())) ;
+                        default:
+                             return 1;
+                    }
                 }
             });
         }
@@ -179,7 +189,7 @@ public class ScanListFragment extends Fragment {
             StringBuffer stringBuffer = new StringBuffer();
             eleTypeL.setVisibility(View.VISIBLE);
             switch (c.getIsWin()) {
-                case "over":
+                case "0":
                     eleTypeT.setBootstrapBrand(DefaultBootstrapBrand.INFO);
                     eleTypeT.setText("尚未開獎");
                     break;
@@ -272,7 +282,7 @@ public class ScanListFragment extends Fragment {
             }
 
 
-            if(Common.getPrice().containsKey(c.getIsWin()))
+            if(winLevel.contains(c.getIsWin()))
             {
                 SpannableString detailC = new SpannableString(stringBuffer.toString());
 
@@ -280,11 +290,19 @@ public class ScanListFragment extends Fragment {
                 int indexF=stringBuffer.indexOf(c.getNumber());
                 int indexS=stringBuffer.indexOf("中獎號碼 : ");
                 int sL="中獎號碼 : ".length();
-                int indexT=stringBuffer.indexOf("獎金 : ");
-                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),indexF+c.getNumber().length(),
-                        indexF+c.getNumber().length()+nulL, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),indexS+sL,
-                        indexS+nulL+sL, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                int sBetween=nulL-2;
+                if(c.getIsWinNul().length()<=nulL)
+                {
+                    sBetween=0;
+                }
+
+
+                int indexT=stringBuffer.indexOf(Common.getPrice().get(c.getIsWin()));
+
+                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),indexF+nulL,
+                        indexF+c.getNumber().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),indexS+sL+sBetween,
+                        indexS+c.getIsWinNul().length()+sL, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 detailC.setSpan(new ForegroundColorSpan(Color.parseColor("#CC0000")),indexT,
                        indexT+Common.getPrice().get(c.getIsWin()).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 decribe.setText(detailC);
@@ -298,7 +316,7 @@ public class ScanListFragment extends Fragment {
             update.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    p = position;
+                    ScanListFragment.this.position = position;
                     Fragment fragment = new ScanUpdateSpend();
                     Bundle bundle = getArguments();
                     bundle.putSerializable("consumeVO", c);

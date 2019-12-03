@@ -193,7 +193,7 @@ public class InvoiceDB {
 
 
     public List<InvoiceVO> getNotSetWin(String carrrier,long startTime,long endTime) {
-        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and iswin != 'N' and heartyteam is null and time between '"+startTime+"' and '"+endTime+"' order by time desc;";
+        String sql = "SELECT * FROM INVOICE  where carrier = '"+carrrier+"' and iswin = '0' and heartyteam is null and time between '"+startTime+"' and '"+endTime+"' order by time desc;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<InvoiceVO> invoiceVOSList = new ArrayList<>();

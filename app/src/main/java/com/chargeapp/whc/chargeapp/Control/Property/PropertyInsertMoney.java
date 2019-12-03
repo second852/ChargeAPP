@@ -499,6 +499,8 @@ public class PropertyInsertMoney extends Fragment {
                 consumeVO.setDate(new Date(System.currentTimeMillis()));
                 ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
                 consumeVO.setFkKey(UUID.randomUUID().toString());
+                consumeVO.setIsWin("0");
+                consumeVO.setIsWinNul("0");
                 consumeDB.insert(consumeVO);
                 propertyFromVO.setImportFeeId(consumeVO.getFkKey());
             }

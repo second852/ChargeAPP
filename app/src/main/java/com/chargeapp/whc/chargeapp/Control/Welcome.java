@@ -138,7 +138,8 @@ public class Welcome extends AppCompatActivity {
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Currency;");
           InvoiceDB invoiceDB=new InvoiceDB(MainActivity.chargeAPPDB);
           invoiceDB.deleteBytime(Timestamp.valueOf("2019-02-01 00:00:00"));
-
+//        BankDB bankDB=new BankDB(MainActivity.chargeAPPDB);
+//        bankDB.deleteByTime(Timestamp.valueOf("2019-11-01 00:00:00"));
 //        ElePeriodDB ele=new ElePeriodDB(MainActivity.chargeAPPDB.getReadableDatabase());
 //        ele.deleteByCARNUL("/2RDO8+P");
 //        new GetSQLDate(this).execute("download");
