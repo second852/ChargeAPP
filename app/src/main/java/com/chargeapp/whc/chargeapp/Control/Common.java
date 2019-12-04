@@ -1259,6 +1259,31 @@ public class Common {
     }
 
 
+    public static String[] sellerList={"全家","統一","天瓏資訊","東森","凱擘","網路家庭","全聯","萊爾富","來來超商","Google","家福","水牛"};
+
+    //電子發票 Card類別
+    public static String CardType(String sellerName) {
+        for(String s:sellerList)
+        {
+            if(sellerName.contains(s))
+            {
+                switch (s) {
+                    case "家福":
+                        s="家樂福";
+                        break;
+                    case "來來超商":
+                        s="OK";
+                        break;
+                }
+                return s;
+            }
+        }
+        return null;
+    }
+
+
+
+
     //price month
     public static HashMap<Integer, String> getPriceMonth() {
         HashMap<Integer, String> hashMap = new HashMap<>();

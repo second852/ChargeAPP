@@ -308,7 +308,7 @@ public class SelectShowCircleDeList extends Fragment {
                 //設定電子發票種類
                 try {
                     eleTypeL.setVisibility(View.VISIBLE);
-                    eleTypeT.setText(Common.CardType().get(I.getCardType().trim()));
+                    eleTypeT.setText(Common.CardType(I.getSellerName().trim()));
                     eleTypeT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
                 }catch (Exception e)
                 {

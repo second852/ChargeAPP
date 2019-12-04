@@ -324,8 +324,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
                 String code = js.get("code").getAsString().trim();
                 if (code.equals("200")) {
-                    Type cdType = new TypeToken<List<JsonObject>>() {
-                    }.getType();
+                    Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                     String s = js.get("details").toString();
                     if (s != null && s.length() > 0) {
                         List<JsonObject> jsonObjects = gson.fromJson(s, cdType);
@@ -545,11 +544,24 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         String password = carrierVO.getPassword();
         String jsonIn = "";
         List<ElePeriod> elePeriods = elePeriodDB.getCarrierAll(user);
+        Calendar calendar=Calendar.getInstance();
+        calendar.add(Calendar.MONTH,-6);
+        int minYear=calendar.get(Calendar.YEAR);
+        int minMon=calendar.get(Calendar.MONTH);
+
+
         for (ElePeriod elePeriod : elePeriods) {
             year = elePeriod.getYear();
             month = elePeriod.getMonth();
+
+            if(minYear>year||minMon>month)
+            {
+                elePeriod.setDownload(true);
+                elePeriodDB.update(elePeriod);
+                continue;
+            }
             jsonIn = findMonthHead(year, month, user, password);
-            if (jsonIn.indexOf("code") != -1) {
+            if (jsonIn.contains("code")) {
                 JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
                 String code = js.get("code").getAsString().trim();
                 //success
@@ -568,20 +580,22 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
 
     private String searchNewPriceNul() {
-        boolean end = true;
         PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB);
         String url = "https://api.einvoice.nat.gov.tw/PB2CAPIVAN/invapp/InvApp?";
-        String jsonin = "";
+        String jsonIn = "";
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
-        if (month % 2 == 1) {
-            month = month - 1;
+        if(month%2!=0)
+        {
+            month=month+1;
         }
+
         StringBuffer period;
         String max = priceDB.findMaxPeriod();
-
-        while (end) {
+        //抓6個月
+        for(int i=0;i<6;i++)
+        {
             period = new StringBuffer();
             if (month <= 0) {
                 month = 12 + month;
@@ -594,21 +608,18 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             period.append(month);
             Log.d(TAG, "searchPrice" + max + " " + period.toString() + " " + period.toString().equals(max));
             if (max.equals(period.toString().trim())) {
-                return "isNew";
+                break;
             }
             HashMap<String, String> data = getPriceMap(period.toString());
-            jsonin = getRemoteData(url, data);
-            if (jsonin.contains("200") ) {
-                PriceVO priceVO = jsonToPriceVO(jsonin);
+            jsonIn = getRemoteData(url, data);
+            if (jsonIn.contains("200") ) {
+                PriceVO priceVO = jsonToPriceVO(jsonIn);
                 priceDB.insert(priceVO);
                 Log.d(TAG, "insert" + priceVO.getInVoYm());
             }
-            if (jsonin.contains("901")) {
-                break;
-            }
-            month = month - 2;
+            month=month-2;
         }
-        return jsonin;
+        return jsonIn;
     }
 
     private String searchPriceNul() {

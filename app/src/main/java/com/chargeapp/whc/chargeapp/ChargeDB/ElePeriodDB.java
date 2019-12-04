@@ -43,8 +43,8 @@ public class ElePeriodDB {
     }
 
     public List<ElePeriod> getCarrierAll(String CarNul) {
-        String sql = "SELECT * FROM ElePeriod where CARNUL = '"+CarNul+"' and download = 'false' order by year desc,month desc;";
-        String[] args = {};
+        String sql = "SELECT * FROM ElePeriod where CARNUL = ? and download = 'false' order by year desc,month desc;";
+        String[] args = {CarNul};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ElePeriod> elePeriods = new ArrayList<>();
         ElePeriod elePeriod;

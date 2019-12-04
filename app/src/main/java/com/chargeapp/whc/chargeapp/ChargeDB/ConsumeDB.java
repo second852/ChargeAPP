@@ -225,8 +225,8 @@ public class ConsumeDB {
     }
 
     public List<ConsumeVO> getNoWinAll(long startTime, long endTime) {
-        String sql = "SELECT * FROM Consumer where iswin = '0' and date between '" + startTime + "' and '" + endTime + "' order by id;";
-        String[] args = {};
+        String sql = "SELECT * FROM Consumer where (iswin = '0' or iswin is null) and date between ? and ? order by id;";
+        String[] args = {String.valueOf(startTime), String.valueOf(endTime)};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
