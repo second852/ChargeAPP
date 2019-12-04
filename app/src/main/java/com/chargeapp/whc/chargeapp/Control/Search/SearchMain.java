@@ -1318,6 +1318,15 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                 //紙本發票種類
                 eleTypeL.setVisibility(View.GONE);
 
+                //設定紙本發票種類
+                try {
+                    eleTypeL.setVisibility(View.VISIBLE);
+                    eleTypeT.setText(Common.CardType(c.getSellerName().trim()));
+                    eleTypeT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
+                }catch (Exception e)
+                {
+                    eleTypeL.setVisibility(View.GONE);
+                }
 
                 typeL.setVisibility(View.VISIBLE);
                 if(c.getNumber()==null||c.getNumber().trim().length()<=0)

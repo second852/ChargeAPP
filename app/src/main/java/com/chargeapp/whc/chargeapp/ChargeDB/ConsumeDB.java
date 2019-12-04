@@ -267,8 +267,8 @@ public class ConsumeDB {
     }
 
     public List<ConsumeVO> findByKeyWord(String searchKey) {
-        String sql = "SELECT * FROM Consumer where maintype like ? or secondtype like ? or detailname like ? order by date desc;";
-        String[] args = {"%"+searchKey+"%","%"+searchKey+"%","%"+searchKey+"%"};
+        String sql = "SELECT * FROM Consumer where  maintype like ? or secondtype like ? or detailname like ? or sellerName like ? order by date desc;";
+        String[] args = {"%"+searchKey+"%","%"+searchKey+"%","%"+searchKey+"%","%"+searchKey+"%"};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;
@@ -281,8 +281,8 @@ public class ConsumeDB {
     }
 
     public List<ConsumeVO> findByKeyWordAndTime(String searchKey,long start,long end) {
-        String sql = "SELECT * FROM Consumer where ( maintype like ? or secondtype like ? or detailname like ? ) and date between ? and ? order by date desc;";
-        String[] args = {"%"+searchKey+"%","%"+searchKey+"%","%"+searchKey+"%",String.valueOf(start),String.valueOf(end)};
+        String sql = "SELECT * FROM Consumer where ( maintype like ? or secondtype like ? or detailname like ? or sellerName like ?) and date between ? and ? order by date desc;";
+        String[] args = {"%"+searchKey+"%","%"+searchKey+"%","%"+searchKey+"%","%"+searchKey+"%",String.valueOf(start),String.valueOf(end)};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<ConsumeVO> consumeList = new ArrayList<>();
         ConsumeVO consumeVO;

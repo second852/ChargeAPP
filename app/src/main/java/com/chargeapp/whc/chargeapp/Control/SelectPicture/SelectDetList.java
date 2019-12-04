@@ -343,7 +343,15 @@ public class SelectDetList extends Fragment {
                     typeT.setBootstrapBrand(DefaultBootstrapBrand.WARNING);
                 }
 
-
+                //設定紙本發票種類
+                try {
+                    eleTypeL.setVisibility(View.VISIBLE);
+                    eleTypeT.setText(Common.CardType(c.getSellerName().trim()));
+                    eleTypeT.setBootstrapBrand(DefaultBootstrapBrand.PRIMARY);
+                }catch (Exception e)
+                {
+                    eleTypeL.setVisibility(View.GONE);
+                }
                  //set Notify
                 if (Boolean.valueOf(c.getNotify())) {
                     remindL.setVisibility(View.VISIBLE);
