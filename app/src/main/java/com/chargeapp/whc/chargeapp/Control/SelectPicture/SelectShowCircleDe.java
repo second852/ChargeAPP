@@ -430,7 +430,7 @@ public class SelectShowCircleDe extends Fragment {
                     consumeDB.update(c);
                 }
 
-                Double cMoney=Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney())/Double.valueOf(c.getMoney());
+                Double cMoney=Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney())/Double.valueOf(this.currencyVO.getMoney());
                 if(hashMap.get(c.getSecondType())==null)
                 {
                     hashMap.put(c.getSecondType(),cMoney);

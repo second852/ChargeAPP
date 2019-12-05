@@ -118,6 +118,12 @@ public class KeyBoardInputNumberOnItemClickListener implements AdapterView.OnIte
                 calculate.setText(null);
                 break;
             case "確定":
+
+
+                if(symbol.equals("+")||symbol.equals("-")||symbol.equals("x")||symbol.equals("÷"))
+                {
+                    resultCalculate(symbol);
+                }
                 numberKeyBoard.setVisibility(View.GONE);
                 calculate.setText(null);
                 oldNumber = 0.0;
