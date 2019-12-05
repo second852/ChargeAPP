@@ -192,6 +192,9 @@ public class SelectShowCircleDe extends Fragment {
             title=Common.sThree.format(new Date(start.getTimeInMillis()));
             title=title.substring(0,title.indexOf("年")+1);
         }
+
+        currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),nowCurrency);
+
         setLayout();
 
         return view;
@@ -363,12 +366,26 @@ public class SelectShowCircleDe extends Fragment {
     }
 
     private class PieValue implements OnChartValueSelectedListener {
+
+        View view;
+
+        public PieValue(View view) {
+            this.view = view;
+        }
+
         @Override
         public void onValueSelected(Entry e, Highlight h) {
             if (ShowZero||(!oneShow)) {
                 return;
             }
-            String key = yVals1.get((int) h.getX()).getLabel();
+
+            int id=view.getId();
+            int index= (int) h.getX();
+            if (id == R.id.chart_hor) {
+                index = index - 1;
+            }
+
+            String key = yVals1.get(index).getLabel();
             Bundle bundle = new Bundle();
             Fragment fragment=new SelectShowCircleDeList();
             bundle.putStringArrayList("OKey", Okey);
@@ -399,6 +416,8 @@ public class SelectShowCircleDe extends Fragment {
     public void setLayout() {
         hashMap=new HashMap<>();
         total=0;
+
+
         if(ShowConsume)
         {
             consumeVOS=consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()),new Timestamp(end.getTimeInMillis()),mainTitle);
@@ -411,14 +430,14 @@ public class SelectShowCircleDe extends Fragment {
                     consumeDB.update(c);
                 }
 
-
+                Double cMoney=Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney())/Double.valueOf(c.getMoney());
                 if(hashMap.get(c.getSecondType())==null)
                 {
-                    hashMap.put(c.getSecondType(),Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney()));
+                    hashMap.put(c.getSecondType(),cMoney);
                 }else{
-                    hashMap.put(c.getSecondType(),hashMap.get(c.getSecondType())+Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney()));
+                    hashMap.put(c.getSecondType(),hashMap.get(c.getSecondType())+cMoney);
                 }
-                total=total+Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney());
+                total=total+cMoney;
             }
         }
         if(!noShowCarrier&&carrierVOS.size()>0)
@@ -432,21 +451,21 @@ public class SelectShowCircleDe extends Fragment {
             for(InvoiceVO I:invoiceVOS)
             {
                CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
-                if(hashMap.get(I.getSecondtype())==null)
-                {
-                    hashMap.put(I.getSecondtype(),Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney()));
-                }else{
-                    hashMap.put(I.getSecondtype(),hashMap.get(I.getSecondtype())+Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney()));
+               Double iMoney= Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney())/Double.valueOf(this.currencyVO.getMoney());
+               if(hashMap.get(I.getSecondtype())==null)
+               {
+                    hashMap.put(I.getSecondtype(),iMoney);
+               }else{
+                    hashMap.put(I.getSecondtype(),hashMap.get(I.getSecondtype())+iMoney);
                 }
-                total= total+Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney());
+                total= total+iMoney;
             }
         }
 
         TouchView touchView=new TouchView();
-        PieValue pieValue=new PieValue();
-        pieChart.setOnChartValueSelectedListener(pieValue);
+        pieChart.setOnChartValueSelectedListener(new PieValue(pieChart));
         pieChart.setOnTouchListener(touchView);
-        chart_hor.setOnChartValueSelectedListener(pieValue);
+        chart_hor.setOnChartValueSelectedListener(new PieValue(chart_hor));
         chart_hor.setOnTouchListener(touchView);
 
 
@@ -489,7 +508,7 @@ public class SelectShowCircleDe extends Fragment {
         otherMessage.setBootstrapBrand(null);
         otherMessage.setTextColor(Color.BLACK);
         otherMessage.setText(mainTitle);
-        setCurrency.setText(Common.CurrencyResult(total,currencyVO));
+        setCurrency.setText(Common.goalCurrencyResult(total,currencyVO.getType()));
         progressDialog.cancel();
     }
 

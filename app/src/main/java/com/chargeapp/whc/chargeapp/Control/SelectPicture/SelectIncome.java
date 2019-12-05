@@ -142,18 +142,19 @@ public class SelectIncome extends Fragment {
         findViewById(view);
         PIdateAdd.setOnClickListener(new AddOnClick());
         PIdateCut.setOnClickListener(new CutOnClick());
+        TouchView touchView=new TouchView();
+        chart_pie.setOnTouchListener(touchView);
+        chart_bar.setOnTouchListener(touchView);
+        chartHor.setOnTouchListener(touchView);
 
-        PieValue pieValue=new PieValue();
-        chartHor.setOnChartValueSelectedListener(pieValue);
-        chart_pie.setOnChartValueSelectedListener(pieValue);
+        chartHor.setOnChartValueSelectedListener(new PieValue(chartHor));
+        chart_pie.setOnChartValueSelectedListener(new PieValue(chart_pie));
 
 
         chart_bar.setOnChartValueSelectedListener(new charValue());
         choicePeriod.setOnDropDownItemClickListener(new choicePeriodI());
 
-        TouchView touchView=new TouchView();
-        chart_bar.setOnTouchListener(touchView);
-        chartHor.setOnTouchListener(touchView);
+
 
         //current
         sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
@@ -279,7 +280,7 @@ public class SelectIncome extends Fragment {
         for (BankVO b : bankVOS) {
             CurrencyVO currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), b.getCurrency());
             String money = (b.getRealMoney() == null) ? String.valueOf(b.getMoney()) : b.getRealMoney();
-            Double bankAmount = Double.valueOf(money) * Double.valueOf(currencyVO.getMoney());
+            Double bankAmount = Double.valueOf(money) * Double.valueOf(currencyVO.getMoney())/Double.valueOf(this.currencyVO.getMoney());
             if (hashMap.get(b.getMaintype()) == null) {
                 hashMap.put(b.getMaintype(), bankAmount);
             } else {
@@ -509,7 +510,7 @@ public class SelectIncome extends Fragment {
     private void addChartPieData() {
         type = new ArrayList<>();
         otherMessage.setText(DesTittle);
-        setCurrency.setText(Common.CurrencyResult(total, currencyVO));
+        setCurrency.setText(Common.goalCurrencyResult(total, currencyVO.getType()));
 
         ArrayList<BarEntry> yHor = new ArrayList<BarEntry>();
         ArrayList<String> xHr = new ArrayList<String>();
@@ -691,6 +692,12 @@ public class SelectIncome extends Fragment {
 
     private class PieValue implements OnChartValueSelectedListener {
 
+        View view;
+
+        public PieValue(View view) {
+            this.view = view;
+        }
+
         @Override
         public void onValueSelected(Entry e, Highlight h) {
             if (list_Data.size() <= 0||(!oneShow)) {
@@ -699,13 +706,22 @@ public class SelectIncome extends Fragment {
             if (type.size() <= 0) {
                 return;
             }
+
+
+            int id=view.getId();
+            int index= (int) h.getX();
+            if (id == R.id.chart_hor) {
+                index = index - 1;
+            }
+
+
             Fragment fragment = new SelectListPieIncome();
             Bundle bundle = new Bundle();
             bundle.putSerializable("year", year);
             bundle.putSerializable("month", month);
             bundle.putSerializable("day", day);
             bundle.putSerializable("statue", Statue);
-            bundle.putSerializable("type", type.get((int) h.getX()));
+            bundle.putSerializable("type", type.get(index));
             bundle.putStringArrayList("OKey", Okey);
             fragment.setArguments(bundle);
             switchFragment(fragment);

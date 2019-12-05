@@ -243,10 +243,9 @@ public class SelectConsume extends Fragment {
         chart_bar.setOnTouchListener(touchView);
         chartHor.setOnTouchListener(touchView);
         chart_bar.setOnChartValueSelectedListener(new charvalue());
-        chart_pie.setOnChartValueSelectedListener(new pievalue());
-        chartHor.setOnChartValueSelectedListener(new pievalue());
+        chart_pie.setOnChartValueSelectedListener(new pieValue(chart_pie));
+        chartHor.setOnChartValueSelectedListener(new pieValue(chartHor));
         goalVO = goalDB.getFindType("支出");
-
         dataAnalyze();
         //        choicePeriod.setOnItemSelectedListener(new ChoicePeriodStatue());
 //        choiceCarrier.setOnItemSelectedListener(new ChoiceCarrier());
@@ -441,7 +440,7 @@ public class SelectConsume extends Fragment {
             }
             for (InvoiceVO I : invoiceVOS) {
                 CurrencyVO currencyVO = currencyDB.getBytimeAndType(start.getTimeInMillis(), end.getTimeInMillis(), I.getCurrency());
-                Double invoiceVOMoney = Double.valueOf(I.getRealAmount()) * Double.valueOf(currencyVO.getMoney());
+                Double invoiceVOMoney = (Double.valueOf(I.getRealAmount()) * Double.valueOf(currencyVO.getMoney()))/Double.valueOf(this.currencyVO.getMoney());
                 if (I.getMaintype().equals("0") || I.getMaintype().equals("O") || I.getMaintype().equals("其他")) {
                     other.setValue(other.getValue() + invoiceVOMoney);
                     OKey.add(I.getMaintype());
@@ -469,7 +468,7 @@ public class SelectConsume extends Fragment {
                 }
 
 
-                Double consumeVOMoney = Double.valueOf(c.getRealMoney()) * Double.valueOf(currencyVO.getMoney());
+                Double consumeVOMoney = Double.valueOf(c.getRealMoney()) * Double.valueOf(currencyVO.getMoney())/Double.valueOf(this.currencyVO.getMoney());
                 if (hashMap.get(c.getMaintype()) == null) {
                     hashMap.put(c.getMaintype(), consumeVOMoney);
                 } else {
@@ -753,7 +752,7 @@ public class SelectConsume extends Fragment {
     private void addChartPieData() {
 
         otherMessage.setText(DesTittle);
-        setCurrency.setText(Common.CurrencyResult(total, currencyVO));
+        setCurrency.setText(Common.goalCurrencyResult(total, currencyVO.getType()));
 
 
         ArrayList<PieEntry> yVals1 = new ArrayList<PieEntry>();
@@ -1137,13 +1136,26 @@ public class SelectConsume extends Fragment {
         fragmentTransaction.commit();
     }
 
-    private class pievalue implements OnChartValueSelectedListener {
+    private class pieValue implements OnChartValueSelectedListener {
+
+        public  View view;
+
+        public pieValue(View view) {
+            this.view = view;
+        }
+
         @Override
         public void onValueSelected(Entry e, Highlight h) {
             if (ShowZero||(!oneShow)) {
                 return;
             }
-            String key = list_Data.get((int) h.getX()).getKey();
+
+            int id=view.getId();
+            int index= (int) h.getX();
+            if (id == R.id.chart_hor) {
+                index = index - 1;
+            }
+            String key = list_Data.get(index).getKey();
             Bundle bundle = new Bundle();
             Fragment fragment;
             if (key.equals("其他")) {
@@ -1161,7 +1173,7 @@ public class SelectConsume extends Fragment {
             bundle.putSerializable("year", year);
             bundle.putSerializable("month", month);
             bundle.putSerializable("day", day);
-            bundle.putSerializable("index", list_Data.get((int) h.getX()).getKey());
+            bundle.putSerializable("index", list_Data.get(index).getKey());
             bundle.putSerializable("carrier", choiceD);
             bundle.putSerializable("statue", Statue);
             bundle.putSerializable("period", period);
@@ -1175,6 +1187,7 @@ public class SelectConsume extends Fragment {
         public void onNothingSelected() {
 
         }
+
     }
 
     private class choiceCarrierOnClick implements BootstrapDropDown.OnDropDownItemClickListener {
