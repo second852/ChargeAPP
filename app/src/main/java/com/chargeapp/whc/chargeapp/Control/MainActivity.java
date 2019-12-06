@@ -142,7 +142,15 @@ public class MainActivity extends AppCompatActivity {
         super.attachBaseContext(MyContextWrapper.wrap(newBase));
     }
 
-//    @Override
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        firstShowF=false;
+        firstShowInsertActivity=false;
+    }
+
+    //    @Override
 //    public Resources getResources() {
 //        Resources res = super.getResources();
 //        if (res.getConfiguration().fontScale > 1) {

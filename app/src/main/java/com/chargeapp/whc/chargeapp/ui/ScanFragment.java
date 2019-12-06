@@ -58,6 +58,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.beardedhen.androidbootstrap.BootstrapButton;
@@ -387,7 +388,7 @@ public final class ScanFragment extends Fragment {
      */
     private void createCameraSource() {
 
-        Context context = activity.getApplicationContext();
+        Context context = activity;
         // A face detector is created to track faces.  An associated multi-processor instance
         // is set to receive the face detection results, track the faces, and maintain graphics for
         // each face on screen.  The factory is used by the multi-processor to create a separate
@@ -436,7 +437,7 @@ public final class ScanFragment extends Fragment {
         // Creates and starts the camera.  Note that this uses a higher resolution in comparison
         // to other detection examples to enable the barcode detector to detect small barcodes
         // at long distances.
-        mCameraSource = new CameraSource.Builder(activity.getApplicationContext(), barcodeDetector)
+        mCameraSource = new CameraSource.Builder(activity, barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setRequestedPreviewSize(1600, 1024)
                 .setAutoFocusEnabled(true)
@@ -503,7 +504,11 @@ public final class ScanFragment extends Fragment {
 
         if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // we have permission, so create the camerasource
-            createCameraSource();
+            Fragment fragment=new ScanFragment();
+            fragment.setArguments(getArguments());
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.body, fragment);
+            fragmentTransaction.commit();
             Common.showToast(activity,"開始QRCode掃描!");
             return;
         }
@@ -566,6 +571,7 @@ public final class ScanFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         int result = ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA);
         if (result != PackageManager.PERMISSION_GRANTED) {
 
@@ -622,8 +628,12 @@ public final class ScanFragment extends Fragment {
 
 
         } else {
-            createCameraSource();
-            Common.showToast(activity, "開始QRCode掃描!");
+            Fragment fragment=new ScanFragment();
+            fragment.setArguments(getArguments());
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.body, fragment);
+            fragmentTransaction.commit();
+            Common.showToast(activity,"開始QRCode掃描!");
         }
 
     }
