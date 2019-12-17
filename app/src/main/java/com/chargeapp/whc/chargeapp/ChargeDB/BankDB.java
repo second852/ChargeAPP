@@ -13,6 +13,7 @@ import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -267,15 +268,30 @@ public class BankDB {
     }
 
 
-    public Double getTimeTotal(long start, long end) {
-        String sql = "SELECT realMoney,currency  FROM BANK where date between '" + start + "' and '" + end + "' order by id;";
-        String[] args = {};
+    public Double getTimeTotal(Date start,Date end) {
+        Calendar beginTime=Calendar.getInstance();
+        beginTime.setTime(start);
+        beginTime.set(Calendar.HOUR_OF_DAY,0);
+        beginTime.set(Calendar.MINUTE,0);
+        beginTime.set(Calendar.SECOND,0);
+        beginTime.set(Calendar.MILLISECOND,0);
+
+        Calendar endTime=Calendar.getInstance();
+        endTime.setTime(end);
+        endTime.set(Calendar.HOUR_OF_DAY,23);
+        endTime.set(Calendar.MINUTE,59);
+        endTime.set(Calendar.SECOND,59);
+        endTime.set(Calendar.MILLISECOND,999);
+
+
+        String sql = "SELECT realMoney,currency  FROM BANK where date between ? and ? order by id;";
+        String[] args = {String.valueOf(beginTime.getTimeInMillis()),String.valueOf(endTime.getTimeInMillis())};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         Double total = 0.0;
         CurrencyDB currencyDB = new CurrencyDB(MainActivity.chargeAPPDB);
         CurrencyVO currencyVO;
         while (cursor.moveToNext()) {
-            currencyVO = currencyDB.getBytimeAndType(start, end, cursor.getString(1));
+            currencyVO = currencyDB.getBytimeAndType(beginTime.getTimeInMillis(), endTime.getTimeInMillis(), cursor.getString(1));
             total = total + Double.valueOf(cursor.getString(0)) * Double.valueOf(currencyVO.getMoney());
         }
         cursor.close();

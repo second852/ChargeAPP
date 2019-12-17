@@ -213,7 +213,7 @@ public class GoalListAll extends Fragment {
 
                 totalI = invoiceDB.getInvoiceByTimeHashMap(goalVO.getStartTime().getTime(),goalVO.getEndTime().getTime()).get("total");
                 totalC = consumeDB.getTimePeriodHashMap(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime()).get("total");
-                totalB = bankDB.getTimeTotal(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime());
+                totalB = bankDB.getTimeTotal(goalVO.getStartTime(), goalVO.getEndTime());
                 amount = totalB - totalC - totalI;
 
                 Calendar endDay = new GregorianCalendar();
@@ -373,7 +373,7 @@ public class GoalListAll extends Fragment {
                     if (start != null && end != null) {
                         totalI = invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(), end.getTimeInMillis()).get("total");
                         totalC = consumeDB.getTimePeriodHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
-                        totalB = bankDB.getTimeTotal(start.getTimeInMillis(),end.getTimeInMillis());
+                        totalB = bankDB.getTimeTotal(new java.sql.Date(start.getTimeInMillis()),new java.sql.Date(end.getTimeInMillis()));
                         double saveMoney=totalB - totalI - totalC;
                         sbResult.append(" " +Common.CurrencyResult(saveMoney,currencyVO));
                         if (goalMoney < saveMoney) {

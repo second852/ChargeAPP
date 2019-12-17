@@ -36,7 +36,7 @@ import org.jsoup.internal.StringUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
+import java.sql.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -261,7 +261,6 @@ public class ThirdReceiver extends BroadcastReceiver {
                 CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
                 consumeCount=consumeDB.getTimePeriodHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total")+
                         invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
-                consumeCount=consumeCount/Double.valueOf(currencyVO.getMoney());
                 message=" 花費 : 本日支出"+Common.CurrencyResult(consumeCount,currencyVO);
             }else if(timeStatue.equals("每周"))
             {
@@ -297,8 +296,8 @@ public class ThirdReceiver extends BroadcastReceiver {
                 CurrencyVO currencyVO=currencyDB.getBytimeAndType(goalVO.getStartTime().getTime(),goalVO.getEndTime().getTime(),goalVO.getCurrency());
                 consumeCount=consumeDB.getTimePeriodHashMap(goalVO.getStartTime().getTime(),goalVO.getEndTime().getTime()).get("total")+
                         invoiceDB.getInvoiceByTimeHashMap(goalVO.getStartTime().getTime(),goalVO.getEndTime().getTime()).get("total");
-                double saveMoney=bankDB.getTimeTotal(goalVO.getStartTime().getTime(),goalVO.getEndTime().getTime())-consumeCount;
-                saveMoney=saveMoney/Double.valueOf(currencyVO.getMoney());
+                double saveMoney=bankDB.getTimeTotal(goalVO.getStartTime(),goalVO.getEndTime())-consumeCount;
+
 
                 if(goalVO.getEndTime().getTime()<System.currentTimeMillis())
                 {
@@ -352,7 +351,7 @@ public class ThirdReceiver extends BroadcastReceiver {
                 CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
                 consumeCount=consumeDB.getTimePeriodHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total")+
                         invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
-                double saveMoney=bankDB.getTimeTotal(start.getTimeInMillis(),end.getTimeInMillis())-consumeCount;
+                double saveMoney=bankDB.getTimeTotal(new Date(start.getTimeInMillis()),new Date(end.getTimeInMillis()))-consumeCount;
                 title=" 目標 :"+goalVO.getName()+" 每月儲蓄"+Common.goalCurrencyResult(Double.valueOf(goalVO.getRealMoney()),goalVO.getCurrency());
                 message=" 目前 : 本月已存款"+Common.CurrencyResult(saveMoney,currencyVO);
             }else if(timeStatue.equals("每年"))
@@ -362,7 +361,7 @@ public class ThirdReceiver extends BroadcastReceiver {
                 CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
                 consumeCount=consumeDB.getTimePeriodHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total")+
                         invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
-                double saveMoney=bankDB.getTimeTotal(start.getTimeInMillis(),end.getTimeInMillis())-consumeCount;
+                double saveMoney=bankDB.getTimeTotal(new Date(start.getTimeInMillis()),new Date(end.getTimeInMillis()))-consumeCount;
                 title=" 目標 :"+goalVO.getName()+" 每年儲蓄"+Common.goalCurrencyResult(Double.valueOf(goalVO.getRealMoney()),goalVO.getCurrency());
                 message=" 目前 : 本年已存款"+Common.CurrencyResult(saveMoney,currencyVO);
             }

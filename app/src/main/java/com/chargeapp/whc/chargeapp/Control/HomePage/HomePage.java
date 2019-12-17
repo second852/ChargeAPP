@@ -415,11 +415,10 @@ public class HomePage extends Fragment {
                     if (timeStatue.equals("今日")) {
                         consumeCount = consumeDB.getTimeMaxType(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime()).get("total") +
                                 invoiceDB.getInvoiceByTimeMaxType(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime()).get("total");
-                        Double saveMoney = bankDB.getTimeTotal(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime()) - consumeCount;
-                        saveMoney=saveMoney/Double.valueOf(currencyVO.getMoney());
+                        Double saveMoney = bankDB.getTimeTotal(goalVO.getStartTime(), goalVO.getEndTime()) - consumeCount;
                         goalCurrencyVO=currencyDB.getBytimeAndType(goalVO.getStartTime().getTime(),goalVO.getEndTime().getTime(),goalVO.getCurrency());
 
-                        double goalVOMoney=(Double.valueOf(goalVO.getRealMoney())*Double.valueOf(goalCurrencyVO.getMoney()))/Double.valueOf(currencyVO.getMoney());
+                        double goalVOMoney=(Double.valueOf(goalVO.getRealMoney())*Double.valueOf(goalCurrencyVO.getMoney()));
 
 
                         String saveMoneyResult=Common.CurrencyResult(saveMoney,currencyVO);
@@ -488,9 +487,8 @@ public class HomePage extends Fragment {
                                 invoiceDB.getInvoiceByTimeMaxType(start.getTimeInMillis(), end.getTimeInMillis()).get("total");
                         goalCurrencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
 
-                        Double saveMoney = bankDB.getTimeTotal(start.getTimeInMillis(),end.getTimeInMillis()) - consumeCount;
-                        saveMoney=saveMoney/Double.valueOf(currencyVO.getMoney());
-                        double goalVOMoney=(Double.valueOf(goalVO.getRealMoney())*Double.valueOf(goalCurrencyVO.getMoney()))/Double.valueOf(currencyVO.getMoney());
+                        Double saveMoney = bankDB.getTimeTotal(new java.sql.Date(start.getTimeInMillis()),new java.sql.Date(end.getTimeInMillis())) - consumeCount;
+                        double goalVOMoney=(Double.valueOf(goalVO.getRealMoney())*Double.valueOf(goalCurrencyVO.getMoney()));
                         String saveMoneyResult=Common.CurrencyResult(saveMoney,currencyVO);
                         String goalVOMoneyResult=Common.CurrencyResult(goalVOMoney,currencyVO);
 
@@ -516,9 +514,8 @@ public class HomePage extends Fragment {
                                 invoiceDB.getInvoiceByTimeMaxType(start.getTimeInMillis(),end.getTimeInMillis()).get("total");
                         goalCurrencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),goalVO.getCurrency());
 
-                        Double saveMoney = bankDB.getTimeTotal(start.getTimeInMillis(), end.getTimeInMillis()) - consumeCount;
-                        saveMoney=saveMoney/Double.valueOf(currencyVO.getMoney());
-                        double goalVOMoney=(Double.valueOf(goalVO.getRealMoney())*Double.valueOf(goalCurrencyVO.getMoney()))/Double.valueOf(currencyVO.getMoney());
+                        Double saveMoney = bankDB.getTimeTotal(new java.sql.Date(start.getTimeInMillis()), new java.sql.Date(end.getTimeInMillis())) - consumeCount;
+                        double goalVOMoney=(Double.valueOf(goalVO.getRealMoney())*Double.valueOf(goalCurrencyVO.getMoney()));
                         String saveMoneyResult=Common.CurrencyResult(saveMoney,currencyVO);
                         String goalVOMoneyResult=Common.CurrencyResult(goalVOMoney,currencyVO);
                         sbResult.append("目標 : " + goalVO.getName() +"\n");
@@ -556,7 +553,7 @@ public class HomePage extends Fragment {
                     end = new GregorianCalendar(year, month, day - dayWeek + 7, 23, 59, 59);
                     invoiceHashMap= invoiceDB.getInvoiceByTimeMaxType(start.getTimeInMillis(), end.getTimeInMillis());
                     consumeHashMap= consumeDB.getTimeMaxType(start.getTimeInMillis(),end.getTimeInMillis());
-                    consumeCount = (invoiceHashMap.get("total")+consumeHashMap.get("total"))/Double.valueOf(currencyVO.getMoney());
+                    consumeCount = invoiceHashMap.get("total")+consumeHashMap.get("total");
                     title.setText("本周支出 : " + Common.CurrencyResult(consumeCount,currencyVO));
                 } else {
                     //顯示本月花費
@@ -566,7 +563,7 @@ public class HomePage extends Fragment {
                     end = new GregorianCalendar(year, month, max, 23, 59, 59);
                     invoiceHashMap= invoiceDB.getInvoiceByTimeMaxType(start.getTimeInMillis(), end.getTimeInMillis());
                     consumeHashMap= consumeDB.getTimeMaxType(start.getTimeInMillis(), end.getTimeInMillis());
-                    consumeCount = (invoiceHashMap.get("total")+consumeHashMap.get("total"))/Double.valueOf(currencyVO.getMoney());
+                    consumeCount = (invoiceHashMap.get("total")+consumeHashMap.get("total"));
                     title.setText("本月支出 : " + Common.CurrencyResult(consumeCount,currencyVO));
                 }
                 totalKey.addAll(invoiceHashMap.keySet());

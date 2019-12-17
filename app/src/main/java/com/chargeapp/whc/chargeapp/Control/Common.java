@@ -1596,16 +1596,6 @@ public class Common {
               sTotal=consumeDB.getAllSecondTypeMoney(propertyFromVO.getSourceSecondType());
           }
           sTotal=sTotal-pTotal;
-          CurrencyDB currencyDB=new CurrencyDB(MainActivity.chargeAPPDB);
-          Calendar findTime=Calendar.getInstance();
-          findTime.setTime(propertyFromVO.getSourceTime());
-          int year=findTime.get(Calendar.YEAR);
-          int month=findTime.get(Calendar.MONTH);
-          int day=findTime.get(Calendar.DAY_OF_MONTH);
-          Calendar start=new GregorianCalendar(year,month,day,0,0,0);
-          Calendar end=new GregorianCalendar(year,month,day,23,59,59);
-          CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),propertyFromVO.getSourceCurrency());
-          sTotal=sTotal/Double.valueOf(currencyVO.getMoney());
           //金額小於0部新增
           if(sTotal<0)
           {

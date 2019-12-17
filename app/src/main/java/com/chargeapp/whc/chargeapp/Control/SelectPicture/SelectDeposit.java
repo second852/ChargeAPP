@@ -460,7 +460,7 @@ public class SelectDeposit extends Fragment {
                 StringBuilder sb = new StringBuilder();
 
                 double Itotal = invoiceDB.getInvoiceByTimeHashMap(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime()).get("total");
-                double Btotal = bankDB.getTimeTotal(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime());
+                double Btotal = bankDB.getTimeTotal(goalVO.getStartTime(), goalVO.getEndTime());
                 double Ctotal = consumeDB.getTimePeriodHashMap(goalVO.getStartTime().getTime(), goalVO.getEndTime().getTime()).get("total");
                 double Alltotal = Btotal - Ctotal - Itotal;
                 double differentMoney = Double.valueOf(goalVO.getRealMoney())*Double.valueOf(currencyVO.getMoney()) - Alltotal;
@@ -624,7 +624,7 @@ public class SelectDeposit extends Fragment {
     private List<Double> PerStatue(Calendar start, Calendar end) {
         double income, comsume, total, invoice;
         List<Double> addList = new ArrayList<>();
-        income = bankDB.getTimeTotal(start.getTimeInMillis(), end.getTimeInMillis());
+        income = bankDB.getTimeTotal(new java.sql.Date(start.getTimeInMillis()), new java.sql.Date(end.getTimeInMillis()));
         comsume = consumeDB.getTimePeriodHashMap(start.getTimeInMillis(), end.getTimeInMillis()).get("total");
         invoice = invoiceDB.getInvoiceByTimeHashMap(start.getTimeInMillis(), end.getTimeInMillis()).get("total");
         total = income - comsume - invoice;
