@@ -13,6 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePage;
 import com.chargeapp.whc.chargeapp.Control.Insert.InsertActivity;
@@ -30,11 +32,11 @@ import static com.chargeapp.whc.chargeapp.Control.Common.searchMainString;
  */
 
 public class UpdateConsumeDetail extends Fragment {
-    private EditText detail;
+    private BootstrapEditText detail,store,address;
     private String action;
     private ConsumeVO consumeVO;
     private Activity context;
-
+    private BootstrapButton backP;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -52,16 +54,15 @@ public class UpdateConsumeDetail extends Fragment {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.update_consume_detail, container, false);
         detail=view.findViewById(R.id.detail);
+        store=view.findViewById(R.id.store);
+        address=view.findViewById(R.id.address);
+        backP=view.findViewById(R.id.backP);
         action= (String) getArguments().getSerializable("action");
         context.setTitle("細節");
+        ConsumeVO consumeVO;
         if(action.equals("InsertSpend"))
         {
-            if(InsertSpend.consumeVO.getDetailname()==null)
-            {
-                detail.setText("");
-            }else{
-                detail.setText(InsertSpend.consumeVO.getDetailname());
-            }
+            consumeVO=InsertSpend.consumeVO;
 
         }else{
 
@@ -73,30 +74,29 @@ public class UpdateConsumeDetail extends Fragment {
                 Common.showToast(context,"資料遺失!請重新操作!");
                 return view;
             }
-
             consumeVO= (ConsumeVO) getArguments().getSerializable("consumeVO");
-            if(consumeVO.getDetailname()==null)
-            {
-                detail.setText("");
-            }else{
-                detail.setText(consumeVO.getDetailname());
-            }
+            this.consumeVO=consumeVO;
         }
 
-        view.setOnClickListener(new View.OnClickListener() {
+        detail.setText(consumeVO.getDetailname()==null?"":consumeVO.getDetailname());
+        address.setText(consumeVO.getSellerAddress()==null?"":consumeVO.getSellerAddress());
+        store.setText(consumeVO.getSellerName()==null?"":consumeVO.getSellerName());
+
+        backP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MainActivity.oldFramgent.remove(MainActivity.oldFramgent.size()-1);
                 MainActivity.bundles.remove(MainActivity.bundles.size()-1);
                 String result=detail.getText().toString().trim();
-                if(result==null)
-                {
-                    result=" ";
-                }
+                String storeR=store.getText().toString().trim();
+                String addressR=address.getText().toString().trim();
+
                 switch (action)
                 {
                     case "InsertSpend":
                         InsertSpend.consumeVO.setDetailname(result);
+                        InsertSpend.consumeVO.setSellerAddress(addressR);
+                        InsertSpend.consumeVO.setSellerName(storeR);
                         Fragment fragment=new InsertActivity();
                         switchFragment(fragment);
                         break;
@@ -109,6 +109,8 @@ public class UpdateConsumeDetail extends Fragment {
                         break;
                      default:
                          consumeVO.setDetailname(result);
+                         consumeVO.setSellerAddress(addressR);
+                         consumeVO.setSellerName(storeR);
                          returnThisFramgent(new UpdateSpend());
                          break;
                 }

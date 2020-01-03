@@ -985,13 +985,26 @@ public class Common {
                 break;
             case "UpdateSpend":
                 EditText detail=view.findViewById(R.id.detail);
+                EditText store=view.findViewById(R.id.store);
+                EditText address=view.findViewById(R.id.address);
+                ConsumeVO consumeVO= (ConsumeVO) bundle.getSerializable("consumeVO");
                 if(detail!=null)
                 {
-                    ConsumeVO consumeVO= (ConsumeVO) bundle.getSerializable("consumeVO");
                     consumeVO.setDetailname(detail.getText().toString());
-                    bundle.putSerializable("consumeVO",consumeVO);
-                    bundle.putSerializable("object", consumeVO);
+
                 }
+                if(store!=null)
+                {
+                    consumeVO.setSellerName(store.getText().toString());
+                }
+
+                if(address!=null)
+                {
+                    consumeVO.setSellerAddress(address.getText().toString());
+                }
+
+                bundle.putSerializable("consumeVO",consumeVO);
+                bundle.putSerializable("object", consumeVO);
                 fragment = new UpdateSpend();
                 break;
             case "UpdateIncome":
@@ -1004,11 +1017,25 @@ public class Common {
                 fragment = new HomePagetList();
                 break;
             case "InsertSpend":
-                EditText detailI=view.findViewById(R.id.detail);
-                if(detailI!=null)
+                 detail=view.findViewById(R.id.detail);
+                 store=view.findViewById(R.id.store);
+                 address=view.findViewById(R.id.address);
+                if(detail!=null)
                 {
-                    InsertSpend.consumeVO.setDetailname(detailI.getText().toString());
+                    InsertSpend.consumeVO.setDetailname(detail.getText().toString());
                 }
+
+                if(store!=null)
+                {
+                    InsertSpend.consumeVO.setSellerName(store.getText().toString());
+                }
+
+
+                if(address!=null)
+                {
+                    InsertSpend.consumeVO.setSellerAddress(address.getText().toString());
+                }
+
                 fragment = new InsertActivity();
                 break;
             case "InsertIncome":

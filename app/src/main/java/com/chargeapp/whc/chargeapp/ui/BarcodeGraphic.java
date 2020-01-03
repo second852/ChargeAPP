@@ -433,7 +433,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                                 }
                                 sb.append(":\n");
                                 try {
-                                    sb.append(jDetail.get("unitPrice").getAsString());
+                                    sb.append(Common.doubleRemoveZero(jDetail.get("unitPrice").getAsDouble()));
                                     unitPrice = jDetail.get("unitPrice").getAsDouble();
                                 } catch (Exception e) {
                                     sb.append("0");
@@ -441,7 +441,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                                 }
                                 sb.append("X");
                                 try {
-                                    sb.append(jDetail.get("quantity").getAsString());
+                                    sb.append(Common.doubleRemoveZero(jDetail.get("quantity").getAsDouble()));
                                     quantity = jDetail.get("quantity").getAsDouble();
                                 } catch (Exception e) {
                                     sb.append("1");
@@ -450,7 +450,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                                 sb.append("=");
 
                                 try {
-                                    sb.append(jsonObject.get("amount").getAsDouble());
+                                    sb.append(Common.doubleRemoveZero(jsonObject.get("amount").getAsDouble()));
                                 } catch (Exception e) {
                                     sb.append(Common.doubleRemoveZero(unitPrice * quantity));
                                 }

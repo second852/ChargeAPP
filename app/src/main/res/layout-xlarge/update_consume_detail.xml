@@ -1,19 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
-    android:background="#AAAAAA"
+    android:orientation="vertical"
+    android:background="#f5f5f5"
     >
-    <EditText
-        android:id="@+id/detail"
-        android:layout_width="500dp"
-        android:layout_height="450dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:background="#FFEE99"
-        android:hint="請點擊輸入"
-        android:gravity="left"
-        android:textColor="#000000"
-        android:textColorHint="#AAAAAA"
-        android:textSize="40sp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/backP"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="商店"
+            android:textSize="20sp" />
+
+        <com.beardedhen.androidbootstrap.BootstrapEditText
+            android:layout_marginTop="10dp"
+            android:id="@+id/store"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:hint="XX超商"
+            android:singleLine="true"
+            app:bootstrapBrand="primary"
+            android:inputType="text"
+            android:textColor="#000000"
+            android:textColorHint="#AAAAAA"
+            app:roundedCorners="true"
+            app:bootstrapSize="xl"
+            />
+
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="地址"
+            android:textSize="20sp" />
+
+        <com.beardedhen.androidbootstrap.BootstrapEditText
+            android:layout_marginTop="10dp"
+            android:id="@+id/address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:singleLine="true"
+            android:hint="XXX縣XXX市XXX路"
+            android:inputType="text"
+            android:textColor="#000000"
+            android:textColorHint="#AAAAAA"
+            app:roundedCorners="true"
+            app:bootstrapSize="xl"
+            app:bootstrapBrand="primary"
+            />
+
+        <TextView
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="明細"
+            android:textSize="20sp" />
+
+        <com.beardedhen.androidbootstrap.BootstrapEditText
+            android:background="@drawable/input_modul_two"
+            android:layout_marginTop="10dp"
+            android:id="@+id/detail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_gravity="center"
+            android:gravity="top"
+            android:textColor="#000000"
+            android:textColorHint="#AAAAAA"
+            app:roundedCorners="true"
+            app:bootstrapSize="xl"
+            app:bootstrapBrand="primary"
+            />
+
+    </LinearLayout>
+
+    <com.beardedhen.androidbootstrap.BootstrapButton
+        android:id="@+id/backP"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:bootstrapSize="xl"
+        app:bootstrapBrand="warning"
+        app:roundedCorners="true"
+        app:bootstrapText="{fa_reply_all}"
+        />
 </RelativeLayout>

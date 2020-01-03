@@ -553,13 +553,27 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         for (ElePeriod elePeriod : elePeriods) {
             year = elePeriod.getYear();
             month = elePeriod.getMonth();
+            boolean isAlreadyDownload=false;
+            if(minYear==year&&minMon>month)
+            {
+                isAlreadyDownload=true;
+            }else if(minYear>year)
+            {
+                isAlreadyDownload=true;
+            }
 
-            if(minYear>year||minMon>month)
+
+            if(isAlreadyDownload)
             {
                 elePeriod.setDownload(true);
                 elePeriodDB.update(elePeriod);
                 continue;
             }
+
+
+
+
+
             jsonIn = findMonthHead(year, month, user, password);
             if (jsonIn.contains("code")) {
                 JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
