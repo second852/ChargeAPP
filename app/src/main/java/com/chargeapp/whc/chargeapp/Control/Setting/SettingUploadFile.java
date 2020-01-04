@@ -484,12 +484,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                                 price = j.get("unitPrice").getAsFloat();
                                 if(price==0)
                                 {
-                                    sb.append(j.get("description").getAsString() + " : " + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元 ");
+                                    sb.append(j.get("description").getAsString() + " : " + (int)(amout/n) + "X" + (int)n + "= "+Common.getCurrency(invoiceVO.getCurrency()) + (int)amout);
                                 }else{
-                                    sb.append(j.get("description").getAsString() + " : " + (int)price + "X" + (int)n + "=" + (int)amout + "元 ");
+                                    sb.append(j.get("description").getAsString() + " : " + (int)price + "X" + (int)n + "= "+Common.getCurrency(invoiceVO.getCurrency()) + (int)amout);
                                 }
                             } catch (Exception e) {
-                                sb.append(j.get("description").getAsString() + " : " + 0 + "X" + 0 + "=" + 0 + "元 ");
+                                sb.append(j.get("description").getAsString() + " : " + 0 + "X" + 0 + "= "+Common.getCurrency(invoiceVO.getCurrency()) + 0);
                             }
                         }
                         bw.append(sb.toString());
@@ -923,12 +923,12 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                                 price = j.get("unitPrice").getAsFloat();
                                 if(price==0)
                                 {
-                                    sb.append(j.get("description").getAsString() + " : " + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元  ");
+                                    sb.append(j.get("description").getAsString() + " : " + (int)(amout/n) + "X" + (int)n + "= "+Common.getCurrency(invoiceVO.getCurrency()) + (int)amout);
                                 }else{
-                                    sb.append(j.get("description").getAsString() + " : " + (int)price + "X" + (int)n + "=" + (int)amout + "元  ");
+                                    sb.append(j.get("description").getAsString() + " : " + (int)price + "X" + (int)n + "= "+ Common.getCurrency(invoiceVO.getCurrency())+ (int)amout);
                                 }
                             } catch (Exception e) {
-                                sb.append(j.get("description").getAsString() + " : " + 0 + "X" + 0 + "=" + 0 + "元 ");
+                                sb.append(j.get("description").getAsString() + " : " + 0 + "X" + 0 + "= "+Common.getCurrency(invoiceVO.getCurrency()) + 0 );
                             }
                         }
 

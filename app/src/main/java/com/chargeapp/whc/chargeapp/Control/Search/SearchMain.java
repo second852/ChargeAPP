@@ -841,12 +841,12 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                                 price = j.get("unitPrice").getAsFloat();
                                 if(price==0)
                                 {
-                                    sb.append(j.get("description").getAsString() + " : " + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元  ");
+                                    sb.append(j.get("description").getAsString() + " : " + (int)(amout/n) + "X" + (int)n + "= "+Common.getCurrency(invoiceVO.getCurrency()) + (int)amout);
                                 }else{
-                                    sb.append(j.get("description").getAsString() + " : " + (int)price + "X" + (int)n + "=" + (int)amout + "元  ");
+                                    sb.append(j.get("description").getAsString() + " : " + (int)price + "X" + (int)n + "= "+Common.getCurrency(invoiceVO.getCurrency()) + (int)amout );
                                 }
                             } catch (Exception e) {
-                                sb.append(j.get("description").getAsString() + " : " + 0 + "X" + 0 + "=" + 0 + "元 ");
+                                sb.append(j.get("description").getAsString() + " : " + 0 + "X" + 0 + "= "+Common.getCurrency(invoiceVO.getCurrency()) + 0 );
                             }
                         }
 
@@ -1288,9 +1288,9 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                         }
                         if(n!=0)
                         {
-                            sbDescribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
+                            sbDescribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "= "+Common.getCurrency(I.getCurrency()) + (int)amout + "\n");
                         }else{
-                            sbDescribe.append(j.get("description").getAsString() + " : \n" + (int)amout + "X" + 1 + "=" + (int)amout + "元\n");
+                            sbDescribe.append(j.get("description").getAsString() + " : \n" + (int)amout + "X" + 1 + "= "+Common.getCurrency(I.getCurrency()) + (int)amout + "\n");
                         }
                     }
 

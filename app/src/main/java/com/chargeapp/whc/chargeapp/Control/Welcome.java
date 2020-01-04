@@ -375,7 +375,7 @@ public class Welcome extends AppCompatActivity {
             TypefaceProvider.registerDefaultIconSets();
             imageWelcome=findViewById(R.id.imageWelcome);
             setJob();
-            mHandler.sendEmptyMessageDelayed(1, 300);
+            mHandler.sendEmptyMessageDelayed(1, 50);
         }
     };
 

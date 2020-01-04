@@ -491,7 +491,7 @@ public class SelectDeposit extends Fragment {
                             .build();
                 } else {
 
-                    sb.append("還差" + Common.CurrencyResult(differentMoney,this.currencyVO) + "元 加油!");
+                    sb.append("還差" + Common.CurrencyResult(differentMoney,this.currencyVO) + " 加油!");
                     bootstrapText = new BootstrapText.Builder(context)
                             .addFontAwesomeIcon(FA_FLAG)
                             .addText(" 目標 : " + goalVO.getName() + goalVO.getType() +Common.CurrencyResult(goalMoney,this.currencyVO) + "\n" + sb.toString())

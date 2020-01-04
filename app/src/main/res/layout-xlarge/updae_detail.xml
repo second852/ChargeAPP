@@ -76,7 +76,6 @@
             android:textSize="20sp" />
 
         <com.beardedhen.androidbootstrap.BootstrapEditText
-            android:background="@drawable/input_modul_two"
             android:layout_marginTop="10dp"
             android:id="@+id/detail"
             android:layout_width="match_parent"

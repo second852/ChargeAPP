@@ -319,9 +319,9 @@ public class HomePagetList extends Fragment {
 
                         if(n!=0)
                         {
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amount/n) + "X" + (int)n + "=" + (int)amount + "元\n");
+                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amount/n) + "X" + (int)n + "= "+Common.getCurrency(I.getCurrency()) + (int)amount + "\n");
                         }else{
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)amount + "X" + 1 + "=" + (int)amount + "元\n");
+                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)amount + "X" + 1 + "= "+Common.getCurrency(I.getCurrency()) + (int)amount + "\n");
                         }
                     }
 

@@ -212,7 +212,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                             }
                             sb.append(":\n");
                             try {
-                                sb.append(jDetail.get("unitPrice").getAsString());
+                                sb.append(Common.doubleRemoveZero(jDetail.get("unitPrice").getAsDouble()));
                                 unitPrice = jDetail.get("unitPrice").getAsDouble();
                             } catch (Exception e) {
                                 sb.append("0");
@@ -220,14 +220,14 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                             }
                             sb.append("X");
                             try {
-                                sb.append(jDetail.get("quantity").getAsString());
+                                sb.append(Common.doubleRemoveZero(jDetail.get("quantity").getAsDouble()));
                                 quantity = jDetail.get("quantity").getAsDouble();
                             } catch (Exception e) {
                                 sb.append("1");
                                 quantity = 1;
                             }
-                            sb.append("=");
-
+                            sb.append("= ");
+                            sb.append(Common.getCurrency(consumeVO.getCurrency()));
                             try {
                                 sb.append(jsonObject.get("amount").getAsDouble());
                             } catch (Exception e) {

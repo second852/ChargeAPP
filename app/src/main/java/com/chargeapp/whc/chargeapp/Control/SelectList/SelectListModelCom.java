@@ -289,9 +289,9 @@ public class SelectListModelCom extends Fragment {
                         }
                         if(n!=0)
                         {
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "=" + (int)amout + "元\n");
+                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "= "+Common.getCurrency(I.getCurrency()) + (int)amout + "\n");
                         }else{
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)amout + "X" + 1 + "=" + (int)amout + "元\n");
+                            sbDecribe.append(j.get("description").getAsString() +" : \n"+(int)amout + "X" + 1 + "= "+Common.getCurrency(I.getCurrency()) + (int)amout + "\n");
                         }
                     }
 

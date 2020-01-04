@@ -447,8 +447,8 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                                     sb.append("1");
                                     quantity = 1;
                                 }
-                                sb.append("=");
-
+                                sb.append("= ");
+                                sb.append(Common.getCurrency(consumeVO.getCurrency()));
                                 try {
                                     sb.append(Common.doubleRemoveZero(jsonObject.get("amount").getAsDouble()));
                                 } catch (Exception e) {
