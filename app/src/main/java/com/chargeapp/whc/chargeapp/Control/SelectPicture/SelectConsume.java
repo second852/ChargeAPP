@@ -1161,6 +1161,7 @@ public class SelectConsume extends Fragment {
             if (key.equals("其他")) {
                 fragment = new SelectOtherCircle();
                 ArrayList<String> s = new ArrayList<>();
+                OKey.add("其他");
                 s.addAll(OKey);
                 bundle.putStringArrayList("OKey", s);
                 bundle.putSerializable("total", (int) h.getY());

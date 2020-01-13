@@ -37,6 +37,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.util.ArraySet;
+import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -112,6 +113,7 @@ public final class ScanFragment extends Fragment {
     private GraphicOverlay mGraphicOverlay;
     public static AwesomeTextView answer;
     public static String result;
+    private View view;
     //避免重複對獎
 
     public static String action;
@@ -147,20 +149,40 @@ public final class ScanFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.main, container, false);
-        action=getArguments().getString("action");
+        view = inflater.inflate(R.layout.main, container, false);
 
+        action=getArguments().getString("action");
         back=view.findViewById(R.id.back);
         mPreview =view.findViewById(R.id.preview);
         mGraphicOverlay =view.findViewById(R.id.faceOverlay);
         search=view.findViewById(R.id.search);
         buttonR=view.findViewById(R.id.buttonR);
         backP=view.findViewById(R.id.backP);
+
+        // Check for the camera permission before accessing the camera.  If the
+        // permission is not granted yet, request permission.
+        int rc = ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA);
+        if (rc == PackageManager.PERMISSION_GRANTED) {
+            createCameraSource();
+        } else {
+            requestCameraPermission();
+        }
+
+
         if(ScanFragment.nulName==null)
         {
             ScanFragment.nulName=new HashMap<>();
         }
 
+
+
+        return view;
+    }
+
+
+
+    public void setAction()
+    {
         switch (action)
         {
             case "setConsume":
@@ -341,24 +363,10 @@ public final class ScanFragment extends Fragment {
 
                 break;
         }
-
-
-
-        // Check for the camera permission before accessing the camera.  If the
-        // permission is not granted yet, request permission.
-        int rc = ActivityCompat.checkSelfPermission(activity, Manifest.permission.CAMERA);
-        if (rc == PackageManager.PERMISSION_GRANTED) {
-            createCameraSource();
-        } else {
-            requestCameraPermission();
-        }
-
-
-
-
-
-        return view;
     }
+
+
+
 
     /**
      * Handles the requesting of the camera permission.  This includes
@@ -444,12 +452,24 @@ public final class ScanFragment extends Fragment {
                 .build();
     }
 
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setAction();
+    }
+
+
+
+
+
     @Override
     public void onStart() {
         super.onStart();
         startCameraSource();
-    }
 
+    }
 
 
 
@@ -659,6 +679,7 @@ public final class ScanFragment extends Fragment {
             } catch (IOException e) {
                 mCameraSource.release();
                 mCameraSource = null;
+                Log.d("XXXXXXXX",e.toString());
             }
         }
     }
