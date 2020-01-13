@@ -20,7 +20,7 @@
 
         <com.beardedhen.androidbootstrap.BootstrapEditText
             android:id="@+id/keyName"
-            android:layout_width="250dp"
+            android:layout_width="450dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
@@ -29,7 +29,7 @@
             android:textColor="#000000"
             android:textColorHint="#AAAAAA"
             android:textSize="25sp"
-            app:bootstrapBrand="primary"
+            app:bootstrapBrand="info"
             app:bootstrapSize="xl"
             app:roundedCorners="true" />
         <ImageView
@@ -54,17 +54,37 @@
         android:gravity="center"
         android:visibility="gone"
         android:layout_below="@+id/searchL"
-        app:bootstrapBrand="info"
+        app:bootstrapBrand="primary"
         app:bootstrapSize="xl"
         app:buttonMode="regular"
         app:showOutline="true"
         app:roundedCorners="true"
         />
 
+
+    <com.beardedhen.androidbootstrap.BootstrapButton
+        android:layout_marginTop="20dp"
+        android:id="@+id/searchTotal"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_below="@+id/searchSettingShow"
+        app:bootstrapBrand="regular"
+        app:bootstrapSize="lg"
+        app:buttonMode="regular"
+        app:showOutline="true"
+        app:roundedCorners="true"
+        />
+
+
+
     <ListView
         android:id="@+id/list"
         android:layout_marginTop="20dp"
-        android:layout_below="@id/searchSettingShow"
+        android:layout_below="@id/searchTotal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
        />

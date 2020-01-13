@@ -14,6 +14,7 @@ import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
 import java.lang.reflect.Type;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -83,8 +84,17 @@ public class CurrencyDB {
     }
 
     public CurrencyVO getAllByDate(Date time,String type) {
-        String sql = "SELECT * FROM Currency where date(time) =date("+time+") and type ='"+type+"' order by time desc;";
-        String[] args = {};
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(time);
+        calendar.set(Calendar.HOUR_OF_DAY,0);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND,0);
+        calendar.set(Calendar.MILLISECOND,0);
+        long start=calendar.getTimeInMillis();
+        calendar.add(Calendar.DAY_OF_MONTH,+1);
+        long end=calendar.getTimeInMillis();
+        String sql = "SELECT * FROM Currency where (time>=? and time < ?) and type = ? order by time desc;";
+        String[] args = {String.valueOf(start),String.valueOf(end),type};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         CurrencyVO currencyVO;
         if (cursor.moveToNext()) {

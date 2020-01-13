@@ -1,10 +1,12 @@
 package com.chargeapp.whc.chargeapp.Control.Search;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -29,6 +31,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -56,6 +59,7 @@ import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdate;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateConsume;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateMoney;
+import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectIncome;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateIncome;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateInvoice;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateSpend;
@@ -95,14 +99,14 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.temporal.ChronoField;
-import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import static com.chargeapp.whc.chargeapp.Control.Common.choiceCurrency;
+import static com.chargeapp.whc.chargeapp.Control.Common.getCurrency;
 
 public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener{
@@ -125,7 +129,7 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
     private Gson gson;
     private CurrencyDB currencyDB;
     private RelativeLayout settingR;
-    private BootstrapButton searchSetting;
+    private BootstrapButton searchSetting,searchTotal;
     private CheckBox timeCheck,consumeCheck,incomeCheck,goalCheck,propertyCheck;
     private LinearLayout beginL,endL,showDate;
     private boolean needTime,needConsume,needIncome,needGoal,needProperty;
@@ -142,6 +146,11 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
     private GoogleApiClient mGoogleApiClient;
     private StringBuffer fileName;
     private BigDecimal c,t,hundred=new BigDecimal(100);
+    private Double total;
+    private PopupMenu popupMenu;
+    private SharedPreferences sharedPreferences;
+    private String nowCurrency;
+    private CurrencyVO currencyVO;
 
 
 
@@ -171,6 +180,23 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
         }else {
             setOld();
         }
+
+
+
+        sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
+        nowCurrency = sharedPreferences.getString(Common.choiceCurrency, "TWD");
+        currencyVO=currencyDB.getOneByType(nowCurrency);
+        searchTotal.setText("總共 : "+getCurrency(nowCurrency)+" 0");
+        popupMenu = new PopupMenu(context, searchTotal);
+        Common.createCurrencyPopMenu(popupMenu, context);
+        searchTotal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popupMenu.show();
+            }
+        });
+        popupMenu.setOnMenuItemClickListener(new choiceCurrency());
+        searchTotal.setVisibility(View.GONE);
         return view;
     }
 
@@ -275,15 +301,15 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
         dateSave=view.findViewById(R.id.dateSave);
         dateSave.setOnClickListener(new choiceDate());
         fabBGLayout=view.findViewById(R.id.fabBGLayout);
-        fabBGLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                settingR.setVisibility(View.GONE);
-                fabBGLayout.setVisibility(View.GONE);
-                searchSettingShow.setVisibility(View.VISIBLE);
-                searchSettingShow.setText(showScope());
-            }
-        });
+//        fabBGLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                settingR.setVisibility(View.GONE);
+//                fabBGLayout.setVisibility(View.GONE);
+//                searchSettingShow.setVisibility(View.VISIBLE);
+//                searchSettingShow.setText(showScope());
+//            }
+//        });
         consumeCheck=view.findViewById(R.id.consumeCheck);
         consumeCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -315,6 +341,7 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
         message=view.findViewById(R.id.message);
         progressL=view.findViewById(R.id.progressL);
         percent =view.findViewById(R.id.percent);
+        searchTotal=view.findViewById(R.id.searchTotal);
     }
 
 
@@ -423,6 +450,8 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
             message.setVisibility(View.GONE);
         }
 
+        calculateTotal();//計算金額
+
 
         listView.setAdapter(new ListAdapter(context,searchObject));
         listView.setSelection(p);
@@ -453,6 +482,57 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
             fileName.append("資產的資料");
         }
     }
+
+
+    private void calculateTotal()
+    {
+        total=0.0;
+        CurrencyVO objectVO;
+        for(Object object:searchObject)
+        {
+            if(object instanceof InvoiceVO)
+            {
+              InvoiceVO invoiceVO= (InvoiceVO) object;
+              objectVO=currencyDB.getAllByDate(new Date(invoiceVO.getTime().getTime()),invoiceVO.getCurrency());
+              total=total+(Double.valueOf(invoiceVO.getRealAmount())*Double.valueOf(objectVO.getMoney()));
+            }else if(object instanceof ConsumeVO)
+            {
+                ConsumeVO consumeVO= (ConsumeVO) object;
+                objectVO=currencyDB.getAllByDate(consumeVO.getDate(),consumeVO.getCurrency());
+                total=total+(Double.valueOf(consumeVO.getRealMoney())*Double.valueOf(objectVO.getMoney()));
+            }else if(object instanceof BankVO)
+            {
+                BankVO bankVO= (BankVO) object;
+                objectVO=currencyDB.getAllByDate(bankVO.getDate(),bankVO.getCurrency());
+                total=total+(Double.valueOf(bankVO.getRealMoney())*Double.valueOf(objectVO.getMoney()));
+            }else if(object instanceof GoalVO)
+            {
+                GoalVO goalVO= (GoalVO) object;
+                objectVO=currencyDB.getAllByDate(goalVO.getStartTime(),goalVO.getCurrency());
+                total=total+(Double.valueOf(goalVO.getRealMoney())*Double.valueOf(objectVO.getMoney()));
+            }else if(object instanceof PropertyFromVO)
+            {
+                PropertyFromVO propertyFromVO= (PropertyFromVO) object;
+                objectVO=currencyDB.getAllByDate(new Date(propertyFromVO.getSourceTime().getTime()),propertyFromVO.getSourceCurrency());
+                total=total+(Double.valueOf(propertyFromVO.getSourceMoney())*Double.valueOf(objectVO.getMoney()));
+            }
+        }
+        String result=Common.CurrencyResult(total,currencyVO);
+        searchTotal.setText(keyNameString+"總計 : "+result);
+        searchTotal.setVisibility(View.VISIBLE);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -1762,40 +1842,40 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
     private String showScope()
     {
         StringBuilder sb=new StringBuilder();
+//
+//
+//        int searchCount=0;
+//        if(needConsume)
+//        {
+//            sb.append("支出 ");
+//            searchCount++;
+//        }
+//        if(needIncome)
+//        {
+//            sb.append("收入 ");
+//            searchCount++;
+//        }
+//        if(needGoal)
+//        {
+//            sb.append("目標 ");
+//            searchCount++;
+//        }
+//        if(needProperty)
+//        {
+//            sb.append("資產 ");
+//            searchCount++;
+//        }
+//
+//        if(searchCount>=4)
+//        {
+//            sb=new StringBuilder();
+//            sb.append("範圍 : 全部");
+//        }else{
+//            sb.insert(0,"範圍 : ");
+//        }
 
 
-        int searchCount=0;
-        if(needConsume)
-        {
-            sb.append("支出 ");
-            searchCount++;
-        }
-        if(needIncome)
-        {
-            sb.append("收入 ");
-            searchCount++;
-        }
-        if(needGoal)
-        {
-            sb.append("目標 ");
-            searchCount++;
-        }
-        if(needProperty)
-        {
-            sb.append("資產 ");
-            searchCount++;
-        }
-
-        if(searchCount>=4)
-        {
-            sb=new StringBuilder();
-            sb.append("範圍 : 全部");
-        }else{
-            sb.insert(0,"範圍 : ");
-        }
-
-
-        sb.append("\n時間 : ");
+        sb.append("時間 : ");
 
         if(needTime)
         {
@@ -1820,5 +1900,32 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
         message.obj= c.divide(t,4, RoundingMode.HALF_UP).multiply(hundred).setScale(1,BigDecimal.ROUND_HALF_UP)+"%";
         handler.sendMessage(message);
     }
+
+
+
+    private class choiceCurrency implements PopupMenu.OnMenuItemClickListener {
+        @SuppressLint("SetTextI18n")
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            String title = (String) menuItem.getTitle();
+            switch (title) {
+                case "新台幣":
+                    nowCurrency = "TWD";
+                    sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
+                case "離開":
+                    popupMenu.dismiss();
+                    break;
+                default:
+                    nowCurrency = Common.code.get(menuItem.getItemId() - 2);
+                    sharedPreferences.edit().putString(choiceCurrency, nowCurrency).apply();
+                    break;
+            }
+            currencyVO=currencyDB.getOneByType(nowCurrency);
+            calculateTotal();
+            return true;
+        }
+    }
+
+
 
 }
