@@ -59,7 +59,6 @@ import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdate;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateConsume;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyUpdateMoney;
-import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectIncome;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateIncome;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateInvoice;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateSpend;
@@ -72,7 +71,6 @@ import com.chargeapp.whc.chargeapp.Model.PropertyFromVO;
 import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -832,9 +830,11 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                 sheetCon.setColumnWidth(1, 13 * 256);// 調整欄位寬度
                 sheetCon.setColumnWidth(8, 12 * 256);// 調整欄位寬度
                 sheetCon.setColumnWidth(9, 12 * 256);// 調整欄位寬度
-                sheetCon.setColumnWidth(10, 100 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(10, 50 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(11, 50 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(12, 100 * 256);// 調整欄位寬度
                 Row rowTitle = sheetCon.createRow(0);
-                rowTitle.createCell(0).setCellValue("日期");
+                rowTitle.createCell(0).setCellValue("消費日期");
                 rowTitle.createCell(1).setCellValue("發票號碼");
                 rowTitle.createCell(2).setCellValue("幣別");
                 rowTitle.createCell(3).setCellValue("金額");
@@ -844,7 +844,9 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                 rowTitle.createCell(7).setCellValue("類別");
                 rowTitle.createCell(8).setCellValue("是否定期");
                 rowTitle.createCell(9).setCellValue("定期頻率");
-                rowTitle.createCell(10).setCellValue("細節");
+                rowTitle.createCell(10).setCellValue("賣家");
+                rowTitle.createCell(11).setCellValue("賣家地址");
+                rowTitle.createCell(12).setCellValue("細節");
 
                 //照時間排列
                 Collections.sort(consumeList, new Comparator<Object>() {
@@ -911,6 +913,9 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                             js = gson.fromJson(invoiceVO.getDetail(), cdType);
                         }
 
+                        rowContent.createCell(10).setCellValue(invoiceVO.getSellerName());
+                        rowContent.createCell(11).setCellValue(invoiceVO.getSellerAddress());
+
 
                         StringBuilder sb=new StringBuilder();
                         float price,amout,n;
@@ -930,7 +935,7 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                             }
                         }
 
-                        rowContent.createCell(10).setCellValue(sb.toString());
+                        rowContent.createCell(12).setCellValue(sb.toString());
                          setMessage(count++);
                     } else {
                         ConsumeVO consumeVO = (ConsumeVO) o;
@@ -985,7 +990,10 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                         }
 
 
-                        rowContent.createCell(10).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
+                        rowContent.createCell(10).setCellValue((consumeVO.getSellerName()==null?"":consumeVO.getSellerName()));
+                        rowContent.createCell(11).setCellValue((consumeVO.getSellerAddress()==null?"":consumeVO.getSellerAddress()));
+                        rowContent.createCell(12).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
+
                         setMessage(count++);
                     }
                 }
