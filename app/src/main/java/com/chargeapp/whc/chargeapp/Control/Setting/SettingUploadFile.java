@@ -429,17 +429,19 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             if (consume) {
                 bw.write("消費資料");
                 bw.write("\r\n");
-                bw.append("日期 ");
-                bw.append("主項目 ");
-                bw.append("次項目 ");
-                bw.append("幣別 ");
-                bw.append("金額 ");
-                bw.append("發票號碼 ");
-                bw.append("細節 ");
-                bw.append("中獎 ");
-                bw.append("是否定期 ");
-                bw.append("定期頻率 ");
-                bw.append("類別 ");
+                bw.append("日期 "); bw.append(File.separator);
+                bw.append("主項目 ");   bw.append(File.separator);
+                bw.append("次項目 "); bw.append(File.separator);
+                bw.append("類別 "); bw.append(File.separator);
+                bw.append("幣別 "); bw.append(File.separator);
+                bw.append("金額 "); bw.append(File.separator);
+                bw.append("發票號碼 "); bw.append(File.separator);
+                bw.append("中獎 ");  bw.append(File.separator);
+                bw.append("是否定期 "); bw.append(File.separator);
+                bw.append("定期頻率 ");bw.append(File.separator);
+                bw.append("賣家 "); bw.append(File.separator);
+                bw.append("消費地點 "); bw.append(File.separator);
+                bw.append("細節 ");bw.append(File.separator);
                 bw.newLine();
                 bw.write("\r\n");
 
@@ -467,12 +469,35 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     Object o = objects.get(i);
                     if (o instanceof InvoiceVO) {
                         InvoiceVO invoiceVO = (InvoiceVO) o;
-                        bw.append(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())) + " ");
-                        bw.append(Common.getType(invoiceVO.getMaintype()) + " ");
-                        bw.append(Common.getType(invoiceVO.getSecondtype()) + " ");
-                        bw.append(Common.getCurrency(invoiceVO.getCurrency())+" ");
-                        bw.append(invoiceVO.getRealAmount() + " ");
-                        bw.append(invoiceVO.getInvNum() + " ");
+                        bw.append(Common.sSix.format(new Date(invoiceVO.getTime().getTime())) + " ");bw.append(File.separator);
+                        bw.append(Common.getType(invoiceVO.getMaintype()) + " ");bw.append(File.separator);
+                        bw.append(Common.getType(invoiceVO.getSecondtype()) + " "); bw.append(File.separator);
+                        bw.append("雲端發票" + " "); bw.append(File.separator);
+                        bw.append(Common.getCurrency(invoiceVO.getCurrency())+" "); bw.append(File.separator);
+                        bw.append(invoiceVO.getRealAmount() + " "); bw.append(File.separator);
+                        bw.append(invoiceVO.getInvNum() + " "); bw.append(File.separator);
+
+                        //中獎訊息
+                        try {
+                            if(invoiceVO.getIswin().equals("0"))
+                            {
+                                bw.append("尚未對獎 "); bw.append(File.separator);
+                            }else if(invoiceVO.getIswin().equals("N")){
+                                bw.append("無中獎 "); bw.append(File.separator);
+                            }else {
+                                bw.append(Common.getPriceName().get(invoiceVO.getIswin()));
+                            }
+                        }catch (Exception e)
+                        {
+                            bw.append("尚未對獎 :"); bw.append(File.separator);
+                        }
+                        bw.append("否 "); bw.append(File.separator);
+                        bw.append(" "); bw.append(File.separator);
+
+                        bw.append((invoiceVO.getSellerName()==null?"":invoiceVO.getSellerName()) + " "); bw.append(File.separator);
+                        bw.append((invoiceVO.getSellerAddress()==null?"":invoiceVO.getSellerAddress()) + " "); bw.append(File.separator);
+
+
                         //電子發票細節
                         List<JsonObject> js = gson.fromJson(invoiceVO.getDetail(), cdType);
                         sb=new StringBuffer();
@@ -492,24 +517,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                                 sb.append(j.get("description").getAsString() + " : " + 0 + "X" + 0 + "= "+Common.getCurrency(invoiceVO.getCurrency()) + 0);
                             }
                         }
-                        bw.append(sb.toString());
-                        //中獎訊息
-                        try {
-                            if(invoiceVO.getIswin().equals("0"))
-                            {
-                                bw.append("尚未對獎 ");
-                            }else if(invoiceVO.getIswin().equals("N")){
-                                bw.append("無中獎 ");
-                            }else {
-                                bw.append(Common.getPriceName().get(invoiceVO.getIswin()));
-                            }
-                        }catch (Exception e)
-                        {
-                            bw.append("尚未對獎 ");
-                        }
-                        bw.append("否 ");
-                        bw.append(" ");
-                        bw.append("雲端發票" + " ");
+                        bw.append(sb.toString()); bw.append(File.separator);
                         bw.newLine();
                         bw.write("\r\n");
                         setMessage(count++);
@@ -522,13 +530,36 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                             consumeDB.update(consumeVO);
                         }
 
-                        bw.append(Common.sTwo.format(new Date(consumeVO.getDate().getTime())) + " ");
-                        bw.append(consumeVO.getMaintype() + " ");
-                        bw.append(consumeVO.getSecondType() + " ");
-                        bw.append(Common.getCurrency(consumeVO.getCurrency())+" ");
-                        bw.append(consumeVO.getRealMoney() + " ");
-                        bw.append(consumeVO.getNumber() + " ");
-                        bw.append((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()) + " ");
+                        bw.append(Common.sSix.format(new Date(consumeVO.getDate().getTime())) + " "); bw.append(File.separator);
+                        bw.append(consumeVO.getMaintype() + " "); bw.append(File.separator);
+                        bw.append(consumeVO.getSecondType() + " "); bw.append(File.separator);
+
+                        if(StringUtil.isBlank(consumeVO.getNumber()))
+                        {
+                            bw.append("無發票 "); bw.append(File.separator);
+                            bw.append(" "); bw.append(File.separator);
+                        }else{
+                            bw.append("紙本發票 "); bw.append(File.separator);
+                            try {
+                                if(consumeVO.getIsWin().equals("0"))
+                                {
+                                    bw.append("尚未對獎 "); bw.append(File.separator);
+                                }else if(consumeVO.getIsWin().equals("N")){
+                                    bw.append("無中獎 "); bw.append(File.separator);
+                                }else {
+                                    bw.append(Common.getPriceName().get(consumeVO.getIsWin())); bw.append(File.separator);
+                                }
+                            }catch (Exception e)
+                            {
+                                bw.append("尚未對獎 "); bw.append(File.separator);
+                            }
+                        }
+
+
+
+                        bw.append(Common.getCurrency(consumeVO.getCurrency())+" "); bw.append(File.separator);
+                        bw.append(consumeVO.getRealMoney() + " "); bw.append(File.separator);
+                        bw.append(consumeVO.getNumber() + " "); bw.append(File.separator);
                         //中獎訊息
 
                         boolean fixData=Boolean.valueOf(consumeVO.getFixDate());
@@ -536,40 +567,23 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
 
                         if(auto||fixData)
                         {
-                            bw.append("是 ");
+                            bw.append("是 "); bw.append(File.separator);
 
                             JsonObject js = gson.fromJson(consumeVO.getFixDateDetail(), JsonObject.class);
                             String choicestatue = js.get("choicestatue").getAsString().trim();
                             String choicedate = js.get("choicedate").getAsString().trim();
                             String s=choicestatue+" "+choicedate;
-                            bw.append(s);
+                            bw.append(s); bw.append(File.separator);
                         }else {
-                            bw.append("否 ");
-                            bw.append("  ");
+                            bw.append("否 "); bw.append(File.separator);
+                            bw.append("  "); bw.append(File.separator);
                         }
 
+                        bw.append((consumeVO.getSellerName()==null?"":consumeVO.getSellerName()) + " "); bw.append(File.separator);
+                        bw.append((consumeVO.getSellerAddress()==null?"":consumeVO.getSellerAddress()) + " "); bw.append(File.separator);
+                        bw.append((consumeVO.getDetailname()==null?"":consumeVO.getDetailname().replace("\n","")) + " "); bw.append(File.separator);
 
 
-                        if(StringUtil.isBlank(consumeVO.getNumber()))
-                        {
-                            bw.append("無發票 ");
-                            bw.append(" ");
-                        }else{
-                            bw.append("紙本發票 ");
-                            try {
-                                if(consumeVO.getIsWin().equals("0"))
-                                {
-                                    bw.append("尚未對獎 ");
-                                }else if(consumeVO.getIsWin().equals("N")){
-                                    bw.append("無中獎 ");
-                                }else {
-                                    bw.append(Common.getPriceName().get(consumeVO.getIsWin()));
-                                }
-                            }catch (Exception e)
-                            {
-                                bw.append("尚未對獎 ");
-                            }
-                        }
                         bw.newLine();
                         bw.write("\r\n");
                     }
@@ -579,28 +593,28 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 bw.write("\r\n");
                 bw.write("收入資料");
                 bw.write("\r\n");
-                bw.append("日期 ");
-                bw.append("主項目 ");
-                bw.append("幣別" );
-                bw.append("金額 ");
-                bw.append("是否定期 ");
-                bw.append("定期頻率 ");
-                bw.append("細節 ");
+                bw.append("日期 "); bw.append(File.separator);
+                bw.append("主項目 "); bw.append(File.separator);
+                bw.append("幣別" ); bw.append(File.separator);
+                bw.append("金額 "); bw.append(File.separator);
+                bw.append("是否定期 "); bw.append(File.separator);
+                bw.append("定期頻率 "); bw.append(File.separator);
+                bw.append("細節 "); bw.append(File.separator);
                 bw.newLine();
 
                 for (int i = 0; i < bankVOS.size(); i++) {
                     BankVO bankVO = bankVOS.get(i);
-                    bw.append(Common.sTwo.format(new Date(bankVO.getDate().getTime())) + " ");
-                    bw.append(bankVO.getMaintype() + " ");
-                    bw.append(Common.getCurrency(bankVO.getCurrency())+" ");
+                    bw.append(Common.sSix.format(new Date(bankVO.getDate().getTime())) + " "); bw.append(File.separator);
+                    bw.append(bankVO.getMaintype() + " "); bw.append(File.separator);
+                    bw.append(Common.getCurrency(bankVO.getCurrency())+" "); bw.append(File.separator);
 
                     if(StringUtil.isBlank(bankVO.getRealMoney()))
                     {
                         bankDB.update(bankVO);
-                        bw.append(bankVO.getRealMoney() + " ");
+                        bw.append(bankVO.getRealMoney() + " "); bw.append(File.separator);
                     }
-                    bw.append(bankVO.getRealMoney() + " ");
-                    bw.append(bankVO.getDetailname() + " ");
+                    bw.append(bankVO.getRealMoney() + " "); bw.append(File.separator);
+                    bw.append(bankVO.getDetailname() + " "); bw.append(File.separator);
 
                     boolean fixdate=Boolean.valueOf(bankVO.getFixDate());
                     boolean isAuto=Boolean.valueOf(bankVO.isAuto());
@@ -611,11 +625,11 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         String choicestatue= js.get("choicestatue").getAsString().trim();
                         String choicedate=js.get("choicedate").getAsString().trim();
                         String s=choicestatue+" "+choicedate;
-                        bw.append(s);
+                        bw.append(s); bw.append(File.separator);
 
                     }else{
-                        bw.append("否 ");
-                        bw.append(" ");
+                        bw.append("否 "); bw.append(File.separator);
+                        bw.append(" "); bw.append(File.separator);
                     }
 
 
@@ -647,21 +661,21 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 bw.write("\r\n");
 
 
-                bw.append("種類 ");
-                bw.append("名稱 ");
-                bw.append("幣別 ");
-                bw.append("金額 ");
-                bw.append("狀態 ");
-                bw.append("目標期限 ");
+                bw.append("種類 "); bw.append(File.separator);
+                bw.append("名稱 "); bw.append(File.separator);
+                bw.append("幣別 "); bw.append(File.separator);
+                bw.append("金額 "); bw.append(File.separator);
+                bw.append("狀態 "); bw.append(File.separator);
+                bw.append("目標期限 "); bw.append(File.separator);
                 bw.newLine();
 
                 for(int i=0;i<goalVOS.size();i++) {
 
                     GoalVO goalVO = goalVOS.get(i);
-                    bw.append(goalVO.getType()+" ");
-                    bw.append(goalVO.getName()+" ");
-                    bw.append(Common.getCurrency(goalVO.getCurrency())+" ");
-                    bw.append(goalVO.getRealMoney()+" ");
+                    bw.append(goalVO.getType()+" "); bw.append(File.separator);
+                    bw.append(goalVO.getName()+" "); bw.append(File.separator);
+                    bw.append(Common.getCurrency(goalVO.getCurrency())+" "); bw.append(File.separator);
+                    bw.append(goalVO.getRealMoney()+" "); bw.append(File.separator);
                     String status;
                     switch (goalVO.getStatue()) {
 
@@ -675,17 +689,17 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                             status = "進行中";
                             break;
                     }
-                    bw.append(status+" ");
+                    bw.append(status+" "); bw.append(File.separator);
 
                     switch (goalVO.getTimeStatue()) {
                         case "每天":
                         case "每周":
                         case "每月":
                         case "每年":
-                            bw.append(goalVO.getTimeStatue()+" ");
+                            bw.append(goalVO.getTimeStatue()+" "); bw.append(File.separator);
                             break;
                         default:
-                            bw.append(Common.sTwo.format(goalVO.getStartTime()) + " ~ " + Common.sTwo.format(goalVO.getEndTime())+" ");
+                            bw.append(Common.sSix.format(goalVO.getStartTime()) + " ~ " + Common.sSix.format(goalVO.getEndTime())+" "); bw.append(File.separator);
                             break;
                     }
                     bw.newLine();
@@ -702,20 +716,20 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 bw.write("\r\n");
 
 
-                bw.append("名稱 ");
-                bw.append("幣別 ");
-                bw.append("總金額 ");
-                bw.append("總支出 ");
-                bw.append("總收入 ");
+                bw.append("名稱 "); bw.append(File.separator);
+                bw.append("幣別 "); bw.append(File.separator);
+                bw.append("總金額 "); bw.append(File.separator);
+                bw.append("總支出 "); bw.append(File.separator);
+                bw.append("總收入 "); bw.append(File.separator);
                 bw.newLine();
 
 
                 for (int i = 0; i < propertyVOS.size(); i++) {
                     PropertyVO propertyVO = propertyVOS.get(i);
-                    bw.append(propertyVO.getName()+" ");
-                    bw.append(Common.getCurrency(propertyVO.getCurrency())+" ");
-                    bw.append(propertyVO.getConsumeAll()+" ");
-                    bw.append(propertyVO.getIncomeAll()+" ");
+                    bw.append(propertyVO.getName()+" "); bw.append(File.separator);
+                    bw.append(Common.getCurrency(propertyVO.getCurrency())+" "); bw.append(File.separator);
+                    bw.append(propertyVO.getConsumeAll()+" "); bw.append(File.separator);
+                    bw.append(propertyVO.getIncomeAll()+" "); bw.append(File.separator);
                     bw.newLine();
                     setMessage(count++);
                 }
@@ -739,29 +753,29 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 bw.write("\r\n");
 
 
-                bw.append("隸屬資產 ");
-                bw.append("來源時間 ");
-                bw.append("來源類別 ");
-                bw.append("來源幣別 ");
-                bw.append("來源金額 ");
-                bw.append("來源主類別 ");
-                bw.append("來源次類別 ");
-                bw.append("手續費 ");
-                bw.append("是否定期 ");
-                bw.append("定期頻率 ");
+                bw.append("隸屬資產 "); bw.append(File.separator);
+                bw.append("來源時間 "); bw.append(File.separator);
+                bw.append("來源類別 "); bw.append(File.separator);
+                bw.append("來源幣別 "); bw.append(File.separator);
+                bw.append("來源金額 "); bw.append(File.separator);
+                bw.append("來源主類別 "); bw.append(File.separator);
+                bw.append("來源次類別 "); bw.append(File.separator);
+                bw.append("手續費 "); bw.append(File.separator);
+                bw.append("是否定期 "); bw.append(File.separator);
+                bw.append("定期頻率 "); bw.append(File.separator);
                 bw.newLine();
                 for (int i = 0; i < propertyFromVOS.size(); i++) {
 
                     PropertyFromVO propertyFromVO = propertyFromVOS.get(i);
                     PropertyVO propertyVO = propertyDB.findById(propertyFromVO.getPropertyId());
-                    bw.append(propertyVO.getName()+" ");
-                    bw.append(Common.sTwo.format(propertyFromVO.getSourceTime())+" ");
-                    bw.append(propertyFromVO.getType().getNarrative()+" ");
-                    bw.append(Common.getCurrency(propertyFromVO.getSourceCurrency())+" ");
-                    bw.append(propertyFromVO.getSourceMoney()+" ");
-                    bw.append(propertyFromVO.getSourceMainType()+" ");
-                    bw.append(propertyFromVO.getSourceSecondType() == null ? " " : propertyFromVO.getSourceSecondType()+" ");
-                    bw.append(propertyFromVO.getImportFee() == null ? "0" : propertyFromVO.getImportFee()+" ");
+                    bw.append(propertyVO.getName()+" "); bw.append(File.separator);
+                    bw.append(Common.sSix.format(propertyFromVO.getSourceTime())+" "); bw.append(File.separator);
+                    bw.append(propertyFromVO.getType().getNarrative()+" "); bw.append(File.separator);
+                    bw.append(Common.getCurrency(propertyFromVO.getSourceCurrency())+" "); bw.append(File.separator);
+                    bw.append(propertyFromVO.getSourceMoney()+" "); bw.append(File.separator);
+                    bw.append(propertyFromVO.getSourceMainType()+" "); bw.append(File.separator);
+                    bw.append(propertyFromVO.getSourceSecondType() == null ? " " : propertyFromVO.getSourceSecondType()+" "); bw.append(File.separator);
+                    bw.append(propertyFromVO.getImportFee() == null ? "0" : propertyFromVO.getImportFee()+" "); bw.append(File.separator);
 
                     if (propertyFromVO.getFixImport()) {
                         bw.append("是 ");
@@ -770,10 +784,10 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         if (!StringUtil.isBlank(propertyFromVO.getFixDateDetail())) {
                             stringBuilder.append(" " + propertyFromVO.getFixDateDetail());
                         }
-                        bw.append(stringBuilder.toString()+" ");
+                        bw.append(stringBuilder.toString()+" "); bw.append(File.separator);
                     } else {
-                        bw.append("否 ");
-                        bw.append("  ");
+                        bw.append("否 "); bw.append(File.separator);
+                        bw.append("  "); bw.append(File.separator);
                     }
                     setMessage(count++);
                 }
@@ -834,9 +848,11 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 sheetCon.setColumnWidth(1, 13 * 256);// 調整欄位寬度
                 sheetCon.setColumnWidth(8, 12 * 256);// 調整欄位寬度
                 sheetCon.setColumnWidth(9, 12 * 256);// 調整欄位寬度
-                sheetCon.setColumnWidth(10, 100 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(10, 50 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(11, 50 * 256);// 調整欄位寬度
+                sheetCon.setColumnWidth(12, 100 * 256);// 調整欄位寬度
                 Row rowTitle = sheetCon.createRow(0);
-                rowTitle.createCell(0).setCellValue("日期");
+                rowTitle.createCell(0).setCellValue("消費日期");
                 rowTitle.createCell(1).setCellValue("發票號碼");
                 rowTitle.createCell(2).setCellValue("幣別");
                 rowTitle.createCell(3).setCellValue("金額");
@@ -846,7 +862,9 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 rowTitle.createCell(7).setCellValue("類別");
                 rowTitle.createCell(8).setCellValue("是否定期");
                 rowTitle.createCell(9).setCellValue("定期頻率");
-                rowTitle.createCell(10).setCellValue("細節");
+                rowTitle.createCell(10).setCellValue("賣家");
+                rowTitle.createCell(11).setCellValue("消費地點");
+                rowTitle.createCell(12).setCellValue("細節");
 
                 List<Object> objects = new ArrayList<>();
                 objects.addAll(consumeVOList);
@@ -877,7 +895,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         rowContent.createCell(0).setCellValue(Common.sTwo.format(new Date(invoiceVO.getTime().getTime())));
                         rowContent.createCell(1).setCellValue(invoiceVO.getInvNum());
                         rowContent.createCell(2).setCellValue(Common.getCurrency(invoiceVO.getCurrency()));
-                        rowContent.createCell(3).setCellValue(invoiceVO.getRealAmount());
+                        rowContent.createCell(3).setCellValue(Double.valueOf(invoiceVO.getRealAmount()));
                         rowContent.createCell(4).setCellValue(Common.getType(invoiceVO.getMaintype()));
                         rowContent.createCell(5).setCellValue(Common.getType(invoiceVO.getSecondtype()));
                         //中獎訊息
@@ -935,7 +953,9 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
 
                         rowContent.createCell(8).setCellValue("否");
                         rowContent.createCell(9).setCellValue(" ");
-                        rowContent.createCell(10).setCellValue(sb.toString());
+                        rowContent.createCell(10).setCellValue(invoiceVO.getSellerName());
+                        rowContent.createCell(11).setCellValue(invoiceVO.getSellerAddress());
+                        rowContent.createCell(12).setCellValue(sb.toString());
 
                         setMessage(count++);
 
@@ -949,7 +969,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         rowContent.createCell(0).setCellValue(Common.sTwo.format(new Date(consumeVO.getDate().getTime())));
                         rowContent.createCell(1).setCellValue(consumeVO.getNumber());
                         rowContent.createCell(2).setCellValue(Common.getCurrency(consumeVO.getCurrency()));
-                        rowContent.createCell(3).setCellValue(consumeVO.getRealMoney());
+                        rowContent.createCell(3).setCellValue(Double.valueOf(consumeVO.getRealMoney()));
                         rowContent.createCell(4).setCellValue(consumeVO.getMaintype());
                         rowContent.createCell(5).setCellValue(consumeVO.getSecondType());
 
@@ -992,8 +1012,9 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                             rowContent.createCell(8).setCellValue("否");
                             rowContent.createCell(9).setCellValue(" ");
                         }
-
-                        rowContent.createCell(10).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
+                        rowContent.createCell(10).setCellValue((consumeVO.getSellerName()==null?"":consumeVO.getSellerName()));
+                        rowContent.createCell(11).setCellValue((consumeVO.getSellerAddress()==null?"":consumeVO.getSellerAddress()));
+                        rowContent.createCell(12).setCellValue((consumeVO.getDetailname()==null?"":consumeVO.getDetailname()));
                         setMessage(count++);
                     }
                 }
