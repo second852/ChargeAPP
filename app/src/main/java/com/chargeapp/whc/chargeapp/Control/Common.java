@@ -13,15 +13,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -33,6 +24,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.beardedhen.androidbootstrap.BootstrapText;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
@@ -86,9 +84,6 @@ import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.ScanUpdateSpend;
 import com.github.mikephil.charting.components.Description;
-
-
-
 
 import org.jsoup.internal.StringUtil;
 
@@ -193,9 +188,9 @@ public class Common {
     public static String doubleRemoveZero(double d) {
         int a = (int) d;
         if (a == d) {
-            return Common.nf.format(d);
+            return String.valueOf(a);
         } else {
-            return Common.nf.format(a);
+            return Common.nf.format(d);
         }
     }
 
@@ -236,7 +231,7 @@ public class Common {
             sbTitle.append(" " +invoiceVO.getSecondtype()+" ");
         }
         //設定幣別 null 新台幣
-        sbTitle.append(Common.getCurrency(invoiceVO.getSecondtype()));
+        sbTitle.append(Common.getCurrency(invoiceVO.getCurrency()));
         sbTitle.append(" "+invoiceVO.getRealAmount());
         return  sbTitle.toString();
     }
@@ -258,7 +253,7 @@ public class Common {
             sbTitle.append(" " +invoiceVO.getSecondtype()+" ");
         }
         //設定幣別 null 新台幣
-        sbTitle.append(Common.getCurrency(invoiceVO.getSecondtype()));
+        sbTitle.append(Common.getCurrency(invoiceVO.getCurrency()));
         sbTitle.append(" "+invoiceVO.getRealAmount());
         return  sbTitle.toString();
     }

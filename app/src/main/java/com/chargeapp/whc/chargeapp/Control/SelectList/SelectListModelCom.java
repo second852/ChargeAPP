@@ -3,13 +3,9 @@ package com.chargeapp.whc.chargeapp.Control.SelectList;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -27,11 +22,11 @@ import androidx.fragment.app.FragmentTransaction;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
+import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
-import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateInvoice;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateSpend;
@@ -145,10 +140,10 @@ public class SelectListModelCom extends Fragment {
         List<ConsumeVO> consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
         List<InvoiceVO> invoiceVOS = invoiceDB.getInvoiceBytime(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()));
 
-         for(InvoiceVO i:invoiceVOS)
-         {
-             Log.d("XXXXXXX",i.getMaintype()+" "+i.getSecondtype());
-         }
+//         for(InvoiceVO i:invoiceVOS)
+//         {
+//             Log.d("XXXXXXX",i.getMaintype()+" "+i.getSecondtype());
+//         }
 
         objects.addAll(consumeVOS);
         objects.addAll(invoiceVOS);
@@ -275,23 +270,23 @@ public class SelectListModelCom extends Fragment {
                     update.setText("修改");
                     Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                     List<JsonObject> js = gson.fromJson(I.getDetail(), cdType);
-                    float amout,n;
+                    Float amout,n;
                     for (JsonObject j : js) {
                         try {
                             amout=j.get("amount").getAsFloat();
                         } catch (Exception e) {
-                            amout=0;
+                            amout=0f;
                         }
                         try {
                             n = j.get("quantity").getAsFloat();
                         } catch (Exception e) {
-                            n=0;
+                            n=0f;
                         }
-                        if(n!=0)
+                        if(n!=0f)
                         {
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "= "+Common.getCurrency(I.getCurrency()) + (int)amout + "\n");
+                            sbDecribe.append(j.get("description").getAsString() + " : \n" + Common.doubleRemoveZero(amout/n) + "X" + n.intValue() + "= "+Common.goalCurrencyResult(amout.doubleValue(),I.getCurrency()) + "\n");
                         }else{
-                            sbDecribe.append(j.get("description").getAsString() +" : \n"+(int)amout + "X" + 1 + "= "+Common.getCurrency(I.getCurrency()) + (int)amout + "\n");
+                            sbDecribe.append(j.get("description").getAsString() +" : \n"+Common.doubleRemoveZero(amout) + "X" + 1 + "= "+Common.goalCurrencyResult(amout.doubleValue(),I.getCurrency()) + "\n");
                         }
                     }
 
@@ -312,6 +307,7 @@ public class SelectListModelCom extends Fragment {
 
                 title.setText(Common.setSecInvoiceTittle(I));
                 decribe.setText(sbDecribe.toString());
+
             } else {
                 update.setText("修改");
                 final ConsumeVO c = (ConsumeVO) o;

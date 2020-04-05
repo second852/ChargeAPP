@@ -5,26 +5,23 @@ import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-
-
 import android.util.Log;
 import android.widget.TextView;
 
-
 import com.chargeapp.whc.chargeapp.Control.Common;
-import com.chargeapp.whc.chargeapp.Control.Welcome;
-import com.chargeapp.whc.chargeapp.Job.DownloadNewDataJob;
 import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleDonate;
 import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleSetCarrier;
 import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleUpdateCarrier;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePagetList;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
-import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetList;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelCom;
+import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetList;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDe;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDeList;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateInvoice;
+import com.chargeapp.whc.chargeapp.Control.Welcome;
+import com.chargeapp.whc.chargeapp.Job.DownloadNewDataJob;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.Model.ElePeriod;
@@ -35,7 +32,6 @@ import com.chargeapp.whc.chargeapp.TypeCode.PriceNotify;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -1174,7 +1170,13 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         hashMap.put("cardEncrypt", invoiceVO.getCardEncrypt());
         String detailjs = getRemoteData(urldetail, hashMap);
         if (detailjs == null || detailjs.equals("error") || detailjs.equals("timeout")) {
-            invoiceDB.insert(invoiceVO);
+
+            if(invoiceVO.getId()==0)
+            {
+                invoiceDB.insert(invoiceVO);
+            }else{
+                invoiceDB.update(invoiceVO);
+            }
             return "fail";
         }
         JsonObject jsonObject = null;
@@ -1188,7 +1190,14 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         if (jsonObject != null) {
             invoiceVO.setDetail(jsonObject.get("details").toString());
             InvoiceVO type = getType(invoiceVO);
-            invoiceDB.insert(type);
+
+            if(invoiceVO.getId()==0)
+            {
+                invoiceDB.insert(type);
+            }else{
+                invoiceDB.update(type);
+            }
+
             Log.d("total :", Common.sDay.format(new Date(invoiceVO.getTime().getTime())) + " : " + invoiceVO.getRealAmount() + " : " + invoiceVO.getAmount());
             detailjs = "success";
         }

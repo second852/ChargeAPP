@@ -1362,23 +1362,23 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                     update.setText("修改");
                     Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                     List<JsonObject> js = gson.fromJson(I.getDetail(), cdType);
-                    float amout,n;
+                    Float amout,n;
                     for (JsonObject j : js) {
                         try {
                             amout=j.get("amount").getAsFloat();
                         } catch (Exception e) {
-                            amout=0;
+                            amout=0f;
                         }
                         try {
                             n = j.get("quantity").getAsFloat();
                         } catch (Exception e) {
-                            n=0;
+                            n=0f;
                         }
-                        if(n!=0)
+                        if(n!=0f)
                         {
-                            sbDescribe.append(j.get("description").getAsString() + " : \n" + (int)(amout/n) + "X" + (int)n + "= "+Common.getCurrency(I.getCurrency()) + (int)amout + "\n");
+                            sbDescribe.append(j.get("description").getAsString() + " : \n" + Common.doubleRemoveZero(amout/n) + "X" + n.intValue() + "= "+Common.goalCurrencyResult(amout.doubleValue(),I.getCurrency()) + "\n");
                         }else{
-                            sbDescribe.append(j.get("description").getAsString() + " : \n" + (int)amout + "X" + 1 + "= "+Common.getCurrency(I.getCurrency()) + (int)amout + "\n");
+                            sbDescribe.append(j.get("description").getAsString() +" : \n"+Common.doubleRemoveZero(amout) + "X" + 1 + "= "+Common.goalCurrencyResult(amout.doubleValue(),I.getCurrency()) + "\n");
                         }
                     }
 

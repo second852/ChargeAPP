@@ -303,25 +303,25 @@ public class HomePagetList extends Fragment {
                     update.setText("修改");
                     Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                     List<JsonObject> js=gson.fromJson(I.getDetail(), cdType);
-                    float amount,n;
+                    Float amount,n;
 
                     for (JsonObject j : js) {
                         try {
                             amount=j.get("amount").getAsFloat();
                         } catch (Exception e) {
-                            amount=0;
+                            amount=0f;
                         }
                         try {
                             n = j.get("quantity").getAsFloat();
                         } catch (Exception e) {
-                            n=0;
+                            n=0f;
                         }
 
-                        if(n!=0)
+                        if(n!=0f)
                         {
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)(amount/n) + "X" + (int)n + "= "+Common.getCurrency(I.getCurrency()) + (int)amount + "\n");
+                            sbDecribe.append(j.get("description").getAsString() + " : \n" + Common.doubleRemoveZero(amount/n) + "X" + n.intValue() + "= "+Common.goalCurrencyResult(amount.doubleValue(),I.getCurrency()) + "\n");
                         }else{
-                            sbDecribe.append(j.get("description").getAsString() + " : \n" + (int)amount + "X" + 1 + "= "+Common.getCurrency(I.getCurrency()) + (int)amount + "\n");
+                            sbDecribe.append(j.get("description").getAsString() +" : \n"+Common.doubleRemoveZero(amount) + "X" + 1 + "= "+Common.goalCurrencyResult(amount.doubleValue(),I.getCurrency()) + "\n");
                         }
                     }
 

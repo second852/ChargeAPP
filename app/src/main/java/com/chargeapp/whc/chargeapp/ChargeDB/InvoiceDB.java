@@ -52,7 +52,7 @@ public class InvoiceDB {
         invoiceVO.setSellerAddress(cursor.getString(18));
         invoiceVO.setIsWinNul(cursor.getString(19));
         invoiceVO.setCurrency(cursor.getString(20));
-        invoiceVO.setRealAmount(cursor.getString(21));
+        invoiceVO.setRealAmount(Common.doubleRemoveZero(cursor.getDouble(21)));
         return invoiceVO;
     }
 
@@ -454,9 +454,8 @@ public class InvoiceDB {
     }
 
     public InvoiceVO findOldByNulAmount(String nul,String amount) {
-        String sql = "SELECT * FROM INVOICE  where "+
-                "invNum = '"+nul+"' and realAmount = '"+amount+"';";
-        String[] args = {};
+        String sql = "SELECT * FROM INVOICE  where invNum = ? and realAmount =  ? ;";
+        String[] args = {nul,amount};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         InvoiceVO invoiceVO=null;
         if (cursor.moveToNext()) {
