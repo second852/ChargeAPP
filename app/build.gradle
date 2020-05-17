@@ -14,8 +14,8 @@ android {
         applicationId "com.chargeapp.whc.chargeapp"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 90
-        versionName "2.18"
+        versionCode 91
+        versionName "2.19"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -29,11 +29,12 @@ android {
             signingConfig signingConfigs.Keystore
         }
     }
-    buildToolsVersion = '28.0.3'
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
+
     }
+    buildToolsVersion = '29.0.3'
 }
 
 dependencies {

@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -46,8 +47,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -56,6 +60,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+
+import static java.math.BigDecimal.ROUND_HALF_DOWN;
 
 public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private final static String TAG = "GetSQLDate";
@@ -72,13 +78,16 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private InvoiceVO invoiceVO;
     private TextView percentage, progressT;
     private String downloadS;
-    private double total;
     private ElePeriodDB elePeriodDB;
     private HashMap<Integer, String> priceMonth;
     private PriceDB priceDB;
+    private BigDecimal one=BigDecimal.ONE;
+    private BigDecimal hundred=new BigDecimal(100);
+    private BigDecimal sixteen=new BigDecimal(16);
+    private BigDecimal total;
 
     public GetSQLDate(Object object) {
-        total = 0;
+        total =new BigDecimal(0);
         this.object = object;
         if (object instanceof JobService) {
             JobService jobService = (JobService) object;
@@ -132,16 +141,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         carrierVO.setCarNul(user);
                         carrierVO.setPassword(password);
                         carrierDB.insert(carrierVO);
-                        //insert 最新的月發票
-                        jsonIn = getjsonIn(jsonIn, password, user);
-                        //最新的月
-                        if (jsonIn.equals("error")) {
-                            elePeriodDB.insert(new ElePeriod(year, month, user, false));
-                        } else {
-                            elePeriodDB.insert(new ElePeriod(year, month, user, true));
-                        }
+
                         //insert 6 month
-                        for (int i = 1; i <= 6; i++) {
+                        for (int i = 0; i <= 6; i++) {
                             int year = this.year;
                             int month = this.month - i;
                             if (month < 0) {
@@ -540,6 +542,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         String password = carrierVO.getPassword();
         String jsonIn = "";
         List<ElePeriod> elePeriods = elePeriodDB.getCarrierAll(user);
+
         Calendar calendar=Calendar.getInstance();
         calendar.add(Calendar.MONTH,-6);
         int minYear=calendar.get(Calendar.YEAR);
@@ -565,8 +568,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 elePeriodDB.update(elePeriod);
                 continue;
             }
-
-
 
 
 
@@ -659,7 +660,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             HashMap<String, String> data = getPriceMap(period.toString());
             jsonin = getRemoteData(url, data);
             if (jsonin.equals("timeout") || jsonin.equals("error")) {
-                publishProgress(2, month, (int) total);
+                publishProgress(2, month, total.intValue());
                 return jsonin;
             }
             JsonObject js = gson.fromJson(jsonin, JsonObject.class);
@@ -667,8 +668,8 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             if (code.equals("200")) {
                 PriceVO priceVO = jsonToPriceVO(jsonin);
                 priceDB.insert(priceVO);
-                total = total + 1;
-                publishProgress(0, month, (int) total);
+                total = total.add(one);
+                publishProgress(0, month,total.intValue());
                 Log.d(TAG, "insert price :" + priceVO.getInVoYm());
             }
             month = month - 2;
@@ -865,17 +866,16 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         try {
             InvoiceVO invoiceVO;
             List<InvoiceVO> oldInvoiceList;
-            Calendar start = Calendar.getInstance();
-            Calendar end = Calendar.getInstance();
             JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
-            Type cdType = new TypeToken<List<JsonObject>>() {
-            }.getType();
+            Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
             String s = js.get("details").toString();
             List<JsonObject> b = gson.fromJson(s, cdType);
             //設定processBar process
-            double divide = 0.0;
+            BigDecimal one=BigDecimal.ONE;
+            BigDecimal max=new BigDecimal(b.size());
+
             if (b.size() != 0) {
-                divide = 16 / b.size();
+                one = one.divide(max,4,ROUND_HALF_DOWN).multiply(sixteen).multiply(hundred);
             }
             String result = "";
             for (JsonObject j : b) {
@@ -887,9 +887,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         continue;
                     }
                     //查詢電子發票明細和insert invoice
-                    result = getInvoiceDetail(invoiceVO);
-                    total = total + divide;
-                    publishProgress(0, month, (int) total);
+                    result= getInvoiceDetail(invoiceVO);
+                    total=total.add(one);
+                    publishProgress(0, month, total.intValue());
                 }
             }
             return result;
@@ -1331,7 +1331,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
         int statue = values[0].intValue();
         int month = values[1].intValue();
-        int percent = values[2].intValue();
+        BigDecimal percent=new BigDecimal(values[2]).divide(hundred,1, ROUND_HALF_DOWN);//取到小數點第一位
         String s, totalS = "";
 
         if (statue == 0) {
@@ -1342,22 +1342,23 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             s = "下載失敗";
         }
 
+        if (percent.compareTo(hundred)>0) {
+            percent = hundred;
+        }
 
         if (action.equals("download")) {
             if (downloadS.equals("price")) {
                 totalS = (year - 1911) + "年" + priceMonth.get(month) + s;
             } else {
-                if (percent > 100) {
-                    percent = 100;
-                }
+
                 totalS = (year - 1911) + "年" + (month + 1) + "月雲端發票\n" + s;
             }
             progressT.setText(totalS);
-            percentage.setText(String.valueOf(percent) + "%");
+            percentage.setText(hundred.toString() + "%");
         } else {
             Calendar now = new GregorianCalendar((year - 1911), month, 1);
             progressT.setText(Common.sYear.format(new Date(now.getTimeInMillis())) + s);
-            percentage.setText(String.valueOf(percent) + "%");
+            percentage.setText(percent.toString() + "%");
         }
     }
 

@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.R;
 
 public class InsertActivity extends Fragment implements ViewPager.OnPageChangeListener {
@@ -40,6 +41,7 @@ public class InsertActivity extends Fragment implements ViewPager.OnPageChangeLi
             activity=getActivity();
         }
         activity.setTitle(R.string.text_Com);
+        MainActivity.firstShowInsertActivity=false;
     }
 
     private  Handler handlerP=new Handler(Looper.getMainLooper()){

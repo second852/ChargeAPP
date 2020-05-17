@@ -145,12 +145,9 @@ public class HomePage extends Fragment {
     private void setListLayout() {
         List<GoalVO> goalVOS = goalDB.getNoCompleteAll();
         List<Object> objects = new ArrayList<>();
-        if (goalVOS.size() > 0) {
-            objects.addAll(goalVOS);
-        } else {
-            objects.add("本周花費");
-            objects.add("本月花費");
-        }
+        objects.add("本周花費");
+        objects.add("本月花費");
+        objects.addAll(goalVOS);
         ListAdapter listAdapter = (ListAdapter) listView.getAdapter();
         if (listAdapter == null) {
             listView.setAdapter(new ListAdapter(context, objects));
