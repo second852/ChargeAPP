@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,8 +40,6 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.utils.Utils;
-
 
 import org.jsoup.internal.StringUtil;
 
@@ -175,10 +172,13 @@ public class SelectOtherCircle extends Fragment {
         HashMap<String, Double> second;
         HashMap<String, Double> totalOther = new HashMap<>();
         total = 0;
+        double value=0.0;
         for (int i = 0; i < Okey.size(); i++) {
             String key = Okey.get(i);
+            value=0.0;
             if (ShowConsume) {
                 consumeVOS = consumeDB.getTimePeriod(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key);
+
                 for (ConsumeVO c : consumeVOS) {
                  CurrencyVO  currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),c.getCurrency());
 
@@ -200,7 +200,8 @@ public class SelectOtherCircle extends Fragment {
                         }
                     }
                     mapHashMap.put(c.getMaintype(), second);
-                    total = total + Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney());
+                    value=Double.valueOf(c.getRealMoney())*Double.valueOf(currencyVO.getMoney());
+                    total = total + value;
                 }
             }
 
@@ -210,6 +211,8 @@ public class SelectOtherCircle extends Fragment {
                 } else {
                     invoiceVOS = invoiceDB.getInvoiceBytimeMainType(new Timestamp(start.getTimeInMillis()), new Timestamp(end.getTimeInMillis()), key, carrierVOS.get(carrier).getCarNul());
                 }
+
+
                 for (InvoiceVO I : invoiceVOS) {
                     CurrencyVO currencyVO=currencyDB.getBytimeAndType(start.getTimeInMillis(),end.getTimeInMillis(),I.getCurrency());
                     if (mapHashMap.get(I.getMaintype()) == null) {
@@ -224,11 +227,12 @@ public class SelectOtherCircle extends Fragment {
                         }
                     }
                     mapHashMap.put(I.getMaintype(), second);
-                    total = total + Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney());
+                    value= Double.valueOf(I.getRealAmount())*Double.valueOf(currencyVO.getMoney());
+                    total = total +value;
                 }
             }
 
-            if (total > 0) {
+            if (value > 0) {
                 ListKey.add(Okey.get(i));
                 totalOther.put(key, total);
             }

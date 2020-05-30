@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -33,7 +32,6 @@ import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CurrencyDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GoalDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.InvoiceDB;
-
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
@@ -48,24 +46,22 @@ import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.LegendEntry;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
-
-import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
+import org.jsoup.internal.StringUtil;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -80,14 +76,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.Utils;
-import com.github.mikephil.charting.utils.ViewPortHandler;
-
-
-import org.jsoup.internal.StringUtil;
 
 import static com.beardedhen.androidbootstrap.font.FontAwesome.FA_FLAG;
 import static com.chargeapp.whc.chargeapp.Control.Common.choiceCurrency;
@@ -1158,7 +1146,7 @@ public class SelectConsume extends Fragment {
             String key = list_Data.get(index).getKey();
             Bundle bundle = new Bundle();
             Fragment fragment;
-            if (key.equals("其他")) {
+            if (key.equals("其他")&&!OKey.contains("其他")) {
                 fragment = new SelectOtherCircle();
                 ArrayList<String> s = new ArrayList<>();
                 OKey.add("其他");
