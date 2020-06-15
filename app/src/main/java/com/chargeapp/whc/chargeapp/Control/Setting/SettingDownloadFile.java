@@ -14,7 +14,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,7 +59,6 @@ import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -72,12 +70,10 @@ import com.google.android.gms.drive.DriveFile;
 import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.OpenFileActivityBuilder;
 
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -366,10 +362,12 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         if(oldTypeVO==null)
                         {
                             typeDB.insert(typeVO);
-
+                        }else{
+                            typeDB.update(typeVO);
                         }
                         setMessage(count++,total);
                     } else if (sheetTitle.equals("TypeDetail")) {
+
                         TypeDetailVO typeDetailVO = new TypeDetailVO();
                         typeDetailVO.setId((int) row.getCell(0).getNumericCellValue());
                         typeDetailVO.setGroupNumber(row.getCell(1).getStringCellValue());
@@ -381,6 +379,8 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         {
                             typeDetailDB.insert(typeDetailVO);
 
+                        }else{
+                            typeDetailDB.update(typeDetailVO);
                         }
                         setMessage(count++,total);
                     } else if (sheetTitle.equals("BankType")) {
@@ -393,6 +393,8 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         if(oldBankTypeVO==null)
                         {
                             bankTypeDB.insert(bankTypeVO);
+                        }else{
+                            bankTypeDB.update(bankTypeVO);
                         }
                         setMessage(count++,total);
                     } else if (sheetTitle.equals("Goal")) {

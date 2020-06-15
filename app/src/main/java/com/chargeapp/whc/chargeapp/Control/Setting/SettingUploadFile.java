@@ -1230,8 +1230,9 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             if (all) {
                 //Type
                 Sheet sheetCon = workbook.createSheet("Type");
-                List<TypeVO> typeVOS = typeDB.getExport();
-                List<BankTypeVO> bankTypeVOS = bankTypeDB.getExport();
+                List<TypeVO> typeVOS = typeDB.getAll();
+                List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
+                List<BankTypeVO> bankTypeVOS = bankTypeDB.getAll();
                 List<GoalVO> goalVOS = goalDB.getAll();
                 List<BankVO> bankVOS = bankDB.getAll();
                 List<ConsumeVO> consumeVOS = consumeDB.getAll();
@@ -1241,8 +1242,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 List<ElePeriod> elePeriods = elePeriodDB.getAll();
                 List<PropertyVO> propertyVOS=propertyDB.getAll();
                 List<PropertyFromVO> propertyFromVOS=propertyFromDB.getAll();
-
-                totalDataCount=typeVOS.size()+bankTypeVOS.size()+goalVOS.size()+
+                totalDataCount=typeVOS.size()+bankTypeVOS.size()+goalVOS.size()+typeDetailVOS.size()+
                         consumeVOS.size()+invoiceVOS.size()+carrierVOS.size()+
                         priceVOS.size()+elePeriods.size()+priceVOS.size()+propertyFromVOS.size();
 
@@ -1259,7 +1259,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 }
                 //TypeDetail
                 Sheet sheetCon1 = workbook.createSheet("TypeDetail");
-                List<TypeDetailVO> typeDetailVOS = typeDetailDB.getExport();
+
                 for (int i = 0; i < typeDetailVOS.size(); i++) {
                     Row rowContent = sheetCon1.createRow(i); // 建立儲存格
                     TypeDetailVO typeDetailVO = typeDetailVOS.get(i);
