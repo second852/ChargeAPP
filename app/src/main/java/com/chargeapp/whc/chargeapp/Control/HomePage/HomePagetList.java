@@ -291,7 +291,7 @@ public class HomePagetList extends Fragment {
                             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                             if(mNetworkInfo!=null)
                             {
-                                new GetSQLDate(HomePagetList.this,I).execute("reDownload");
+                                new GetSQLDate(HomePagetList.this,I,context).execute("reDownload");
                                 progressDialog.setMessage("正在下傳資料,請稍候...");
                                 progressDialog.show();
                             }else{

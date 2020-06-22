@@ -273,7 +273,7 @@ public class UpdateInvoice extends Fragment {
                     NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                     if(mNetworkInfo!=null)
                     {
-                        new GetSQLDate(UpdateInvoice.this, invoiceVO).execute("reDownload");
+                        new GetSQLDate(UpdateInvoice.this, invoiceVO,context).execute("reDownload");
                         progressDialog.setMessage("正在下傳資料,請稍候...");
                         progressDialog.show();
                     }else{

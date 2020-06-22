@@ -25,13 +25,11 @@ import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.ConsumeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.PriceDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
-import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -235,7 +233,7 @@ public class ScanByOnline extends Fragment {
                 Common.showToast(context, "手機資料庫以存檔!\n 請換下一張發票!");
                 return;
             }
-            setupDateBase64 = new SetupDateBase64(ScanByOnline.this);
+            setupDateBase64 = new SetupDateBase64(ScanByOnline.this,context);
             setupDateBase64.setConsumeVO(consumeVO);
             setupDateBase64.execute("getThisDetail");
             progressL.setVisibility(View.VISIBLE);
@@ -327,7 +325,7 @@ public class ScanByOnline extends Fragment {
         }
         consumeVO.setRealMoney(String.valueOf(Common.DoubleToInt(total)));
         consumeVO.setDetailname(sb.toString());
-        consumeVO = getType(consumeVO);
+        consumeVO = Common.getType(consumeVO,context);
 
 
         Calendar calendar=Calendar.getInstance();
@@ -428,40 +426,6 @@ public class ScanByOnline extends Fragment {
 
 
 
-    private ConsumeVO getType(ConsumeVO consumeVO) {
-
-        TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
-        List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
-        String main = "O", second = "O";
-        int x = 0, total = 0;
-        for (TypeDetailVO t : typeDetailVOS) {
-            x = 0;
-            String[] key = t.getKeyword().split(" ");
-            for (int i = 0; i < key.length; i++) {
-                if (consumeVO.getDetailname().indexOf(key[i].trim()) != -1) {
-                    x = x + key[i].length();
-                }
-            }
-            if (x > total) {
-                total = x;
-                main = t.getGroupNumber();
-                second = t.getName();
-            }
-        }
-        if (second.indexOf("餐") != -1) {
-            int hour = Integer.valueOf(Common.sHour.format(consumeVO.getDate()));
-            if (hour > 0 && hour < 11) {
-                second = "早餐";
-            } else if (hour >= 11 && hour < 18) {
-                second = "午餐";
-            } else {
-                second = "晚餐";
-            }
-        }
-        consumeVO.setMaintype(main);
-        consumeVO.setSecondType(second);
-        return consumeVO;
-    }
 
     private class showImage implements View.OnClickListener {
         @Override

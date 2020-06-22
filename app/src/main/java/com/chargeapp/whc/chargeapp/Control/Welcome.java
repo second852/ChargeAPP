@@ -17,7 +17,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,15 +40,11 @@ import com.chargeapp.whc.chargeapp.Control.Insert.InsertActivity;
 import com.chargeapp.whc.chargeapp.Job.DownloadNewDataJob;
 import com.chargeapp.whc.chargeapp.Job.JobSchedulerService;
 import com.chargeapp.whc.chargeapp.Job.ThirdReceiver;
-
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.CurrencyVO;
-
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.chargeapp.whc.chargeapp.ui.ScanFragment;
 import com.github.mikephil.charting.utils.Utils;
-
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -59,13 +54,11 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 public class Welcome extends AppCompatActivity {
 
@@ -79,7 +72,7 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Common.setChargeDB(this);
         Common.insertNewTableCol();
-        new GetSQLDate(this).execute("checkId");
+        new GetSQLDate(this,this).execute("checkId");
         new Thread(runnable).start();
         new Thread(downloadCurrency).start();
 //        MainActivity.chargeAPPDB.getReadableDatabase().execSQL("DROP TABLE Property;");
@@ -388,9 +381,9 @@ public class Welcome extends AppCompatActivity {
 //     tm.cancelAll(); no need,becauseCompiler will remove all job
 
         tm.cancelAll();
-        new GetSQLDate(this).execute("download");
-        new GetSQLDate(this).execute("getWinInvoice");
-        new SetupDateBase64(this).execute("consumeVO");
+        new GetSQLDate(this,this).execute("download");
+        new GetSQLDate(this,this).execute("getWinInvoice");
+        new SetupDateBase64(this,this).execute("consumeVO");
 
         ComponentName mServiceComponent = new ComponentName(this, JobSchedulerService.class);
         JobInfo.Builder builder = new JobInfo.Builder(0, mServiceComponent);

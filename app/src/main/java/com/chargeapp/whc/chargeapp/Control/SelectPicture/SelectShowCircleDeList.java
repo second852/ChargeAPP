@@ -325,7 +325,7 @@ public class SelectShowCircleDeList extends Fragment {
                             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                             if(mNetworkInfo!=null)
                             {
-                                new GetSQLDate(SelectShowCircleDeList.this,I).execute("reDownload");
+                                new GetSQLDate(SelectShowCircleDeList.this,I,context).execute("reDownload");
                                 progressDialog.setMessage("正在下傳資料,請稍候...");
                                 progressDialog.show();
                             }else{

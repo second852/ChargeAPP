@@ -266,10 +266,10 @@ public class UpdateConsumeType extends Fragment {
                 secondName.setError("次項目不能空白");
                 return;
             }
-            if (keyWorld == null || keyWorld.isEmpty()) {
-                secondKey.setError("關鍵字不能空白");
-                return;
-            }
+//            if (keyWorld == null || keyWorld.isEmpty()) {
+//                secondKey.setError("關鍵字不能空白");
+//                return;
+//            }
 
             if (secondTitle.indexOf(";") !=-1) {
                 secondName.setError("次項目不能有特殊符號");

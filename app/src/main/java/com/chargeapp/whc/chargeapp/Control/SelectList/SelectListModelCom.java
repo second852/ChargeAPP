@@ -258,7 +258,7 @@ public class SelectListModelCom extends Fragment {
                             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                             if (mNetworkInfo != null) {
                                 p = position;
-                                new GetSQLDate(SelectListModelCom.this, I).execute("reDownload");
+                                new GetSQLDate(SelectListModelCom.this, I,context).execute("reDownload");
                                 progressDialog.setMessage("正在下傳資料,請稍候...");
                                 progressDialog.show();
                             } else {

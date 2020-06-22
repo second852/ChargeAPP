@@ -1,8 +1,10 @@
 package com.chargeapp.whc.chargeapp.Adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Html;
@@ -32,6 +34,18 @@ public class AlertDialogFragment extends DialogFragment implements  DialogInterf
 
     public void setObject(Object object) {
         this.object = object;
+    }
+
+    public Activity activity;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if(context instanceof Activity){
+            activity= (Activity) context;
+        }else {
+            activity=getActivity();
+        }
     }
 
     @Override
@@ -83,7 +97,7 @@ public class AlertDialogFragment extends DialogFragment implements  DialogInterf
             case DialogInterface.BUTTON_POSITIVE:
                 EleDonate eleDonate= (EleDonate) object;
                 eleDonate.showDialog();
-                new SetupDateBase64(eleDonate).execute("DonateTeam");
+                new SetupDateBase64(eleDonate,activity).execute("DonateTeam");
                 break;
             default:
                 dialog.cancel();

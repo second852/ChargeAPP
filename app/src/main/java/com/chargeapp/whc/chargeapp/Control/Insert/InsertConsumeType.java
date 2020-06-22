@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,6 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.Download;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
-import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateInvoice;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateSpend;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
@@ -41,13 +39,11 @@ import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.ui.ScanFragment;
 import com.chargeapp.whc.chargeapp.ui.ScanUpdateSpend;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.chargeapp.whc.chargeapp.Control.Common.fragment;
 import static com.chargeapp.whc.chargeapp.Control.Common.searchMainString;
 
 /**
@@ -282,10 +278,12 @@ public class InsertConsumeType extends Fragment {
                 secondName.setError("次項目不能空白");
                 return;
             }
-            if (keyWorld == null || keyWorld.isEmpty()) {
-                secondKey.setError("關鍵字不能空白");
-                return;
-            }
+
+//            if (keyWorld == null || keyWorld.isEmpty()) {
+//                secondKey.setError("關鍵字不能空白");
+//                return;
+//            }
+
             if (mainType.indexOf(";") != -1) {
                 mainName.setError("項目種類不能有特殊符號");
                 return;

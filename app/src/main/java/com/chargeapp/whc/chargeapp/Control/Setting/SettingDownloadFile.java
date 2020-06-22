@@ -1,11 +1,11 @@
 package com.chargeapp.whc.chargeapp.Control.Setting;
 
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -616,6 +616,12 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         }
 
                         setMessage(count++,total);
+                    }else if (sheetTitle.equals("Setting")) {
+                        boolean notify=  Boolean.valueOf(row.getCell(0).getStringCellValue());
+                        boolean autoCategory=Boolean.valueOf(row.getCell(1).getStringCellValue());
+                        SharedPreferences sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
+                        sharedPreferences.edit().putBoolean("notify", notify).apply();
+                        sharedPreferences.edit().putBoolean("autoCategory", autoCategory).apply();
                     }
                 }
                 i++;

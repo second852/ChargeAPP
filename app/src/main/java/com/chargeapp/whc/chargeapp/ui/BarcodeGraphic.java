@@ -26,7 +26,6 @@ import android.graphics.RectF;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-
 import android.os.Vibrator;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -47,13 +46,11 @@ import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
-import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONObject;
 import org.jsoup.internal.StringUtil;
 
 import java.lang.reflect.Type;
@@ -392,7 +389,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             }
 
             try {
-                result = new SetupDateBase64(consumeVO).execute("getNetDetail").get();
+                result = new SetupDateBase64(consumeVO,context).execute("getNetDetail").get();
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -419,8 +416,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                             consumeVO.setSellerAddress(jsonObject.get("sellerAddress").getAsString());
                             consumeVO.setBuyerBan(jsonObject.get("sellerBan").getAsString());
                             consumeVO.setCurrency(jsonObject.get("currency").getAsString());
-                            Type cdType = new TypeToken<List<JsonObject>>() {
-                            }.getType();
+                            Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                             String detail = jsonObject.get("details").toString();
                             List<JsonObject> jDetailList = gson.fromJson(detail, cdType);
                             StringBuilder sb = new StringBuilder();
@@ -498,11 +494,10 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                     resultShow.append("\n雲端發票目前尚無資料\n系統會自動更新!");
                 } else {
                     resultShow.append("\n查詢成功!");
-                    consumeVO = Common.getType(consumeVO);
+                    consumeVO = Common.getType(consumeVO,context);
                 }
 
                 Common.showToast(context, resultShow.toString());
-
                 Intent intent = new Intent(context, MainActivity.class);
                 InsertSpend.consumeVO = consumeVO;
                 InsertSpend.needSet = true;
@@ -524,7 +519,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
             } else {
                 resultShow.append("\n查詢成功!");
                 if (StringUtil.isBlank(consumeVO.getMaintype()) || consumeVO.getMaintype().equals("未知")) {
-                    consumeVO = Common.getType(consumeVO);
+                    consumeVO = Common.getType(consumeVO,context);
                 }
             }
             Common.showToast(context, resultShow.toString());
@@ -553,7 +548,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                     resultShow.append("\n雲端發票尚無檔案\n系統會自動更新!");
                 } else {
                     if (ScanFragment.isAutoSetType) {
-                        consumeVO = Common.getType(consumeVO);
+                        consumeVO = Common.getType(consumeVO,context);
                     } else {
                         consumeVO.setMaintype(ScanFragment.mainType);
                         consumeVO.setSecondType(ScanFragment.secondType);
@@ -662,7 +657,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 if (!StringUtil.isBlank(consumeVO.getDetailname())) {
                     if("未知".equals(consumeVO.getMaintype()))
                     {
-                        consumeVO = Common.getType(consumeVO);
+                        consumeVO = Common.getType(consumeVO,context);
                     }
                 }
 

@@ -82,7 +82,7 @@ public class Download extends Fragment {
         ConnectivityManager mConnectivityManager = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
         if (mNetworkInfo != null) {
-            getSQLDate = new GetSQLDate(this);
+            getSQLDate = new GetSQLDate(this,activity);
             getSQLDate.setPercentage(percentage);
             getSQLDate.setProgressT(progressT);
             getSQLDate.execute("download");

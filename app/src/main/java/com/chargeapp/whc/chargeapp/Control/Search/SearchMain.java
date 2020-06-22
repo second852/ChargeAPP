@@ -903,7 +903,7 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                             if (mNetworkInfo != null) {
                                 try {
-                                    new GetSQLDate(SearchMain.this, invoiceVO).execute("reDownload").get();
+                                    new GetSQLDate(SearchMain.this, invoiceVO,context).execute("reDownload").get();
                                     js = gson.fromJson(invoiceVO.getDetail(), cdType);
                                 } catch (Exception e) {
                                     js = new ArrayList<>();
@@ -1349,7 +1349,7 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
                             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                             if (mNetworkInfo != null) {
                                 p = position;
-                                new GetSQLDate(SearchMain.this, I).execute("reDownload");
+                                new GetSQLDate(SearchMain.this, I,context).execute("reDownload");
                                 progressDialog=new ProgressDialog(context);
                                 progressDialog.setMessage("正在下傳資料,請稍候...");
                                 progressDialog.show();

@@ -12,13 +12,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
-
-import androidx.annotation.Nullable;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,20 +23,23 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
+import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.GetSQLDate;
 import com.chargeapp.whc.chargeapp.Control.Common;
-import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Widget.SimpleWidgetProviderBig;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
 import com.chargeapp.whc.chargeapp.R;
-
-
-
 
 import java.util.List;
 
@@ -333,7 +329,7 @@ public class EleSetCarrier extends Fragment {
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 }
 
-                getIvnum= (GetSQLDate) new GetSQLDate(EleSetCarrier.this);
+                getIvnum= (GetSQLDate) new GetSQLDate(EleSetCarrier.this,context);
                 getIvnum.setProgressT(progressT);
                 getIvnum.setPercentage(percentage);
                 getIvnum.execute("getInvoice",user,password);

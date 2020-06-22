@@ -4,6 +4,7 @@ package com.chargeapp.whc.chargeapp.ChargeDB;
 import android.app.job.JobService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
@@ -47,11 +48,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -85,8 +83,9 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private BigDecimal hundred=new BigDecimal(100);
     private BigDecimal sixteen=new BigDecimal(16);
     private BigDecimal total;
+    private Context context;
 
-    public GetSQLDate(Object object) {
+    public GetSQLDate(Object object,Context context) {
         total =new BigDecimal(0);
         this.object = object;
         if (object instanceof JobService) {
@@ -99,16 +98,17 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
         elePeriodDB = new ElePeriodDB(MainActivity.chargeAPPDB);
         priceDB = new PriceDB(MainActivity.chargeAPPDB);
-
+        this.context=context;
 //        invoiceDB.deleteBytime(Timestamp.valueOf("2018-09-01 00:00:00"));
     }
 
-    public GetSQLDate(Object object, InvoiceVO invoiceVO) {
+    public GetSQLDate(Object object, InvoiceVO invoiceVO,Context context) {
         this.object = object;
         this.invoiceVO = invoiceVO;
         invoiceDB = new InvoiceDB(MainActivity.chargeAPPDB);
         carrierDB = new CarrierDB(MainActivity.chargeAPPDB);
         typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
+        this.context=context;
     }
 
 
@@ -256,8 +256,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             return false;
         }
 
-        Type cdType = new TypeToken<List<JsonObject>>() {
-        }.getType();
+        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
         String s = js.get("details").toString();
         List<JsonObject> b = gson.fromJson(s, cdType);
         if (b.isEmpty()) {
@@ -847,8 +846,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         try {
             InvoiceVO invoiceVO;
             JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
-            Type cdType = new TypeToken<List<JsonObject>>() {
-            }.getType();
+            Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
             String s = js.get("details").toString();
             List<JsonObject> b = gson.fromJson(s, cdType);
             for (JsonObject j : b) {
@@ -1144,7 +1142,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
         if (jsonObject != null) {
             invoiceVO.setDetail(jsonObject.get("details").toString());
-            InvoiceVO type = getType(invoiceVO);
+            InvoiceVO type = getType(invoiceVO,context);
             invoiceDB.update(type);
             detailjs = "success";
         }
@@ -1189,7 +1187,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
 
         if (jsonObject != null) {
             invoiceVO.setDetail(jsonObject.get("details").toString());
-            InvoiceVO type = getType(invoiceVO);
+            InvoiceVO type = getType(invoiceVO,context);
 
             if(invoiceVO.getId()==0)
             {
@@ -1226,7 +1224,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         }
         JsonObject jsonObject = gson.fromJson(detailjs, JsonObject.class);
         invoiceVO.setDetail(jsonObject.get("details").toString());
-        InvoiceVO type = getType(invoiceVO);
+        InvoiceVO type = getType(invoiceVO,context);
         invoiceDB.update(type);
         Log.d("total :", Common.sDay.format(new Date(invoiceVO.getTime().getTime())) + " : " + invoiceVO.getInvNum());
         detailjs = "success";
@@ -1234,38 +1232,45 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     }
 
 
-    private InvoiceVO getType(InvoiceVO invoiceVO) {
-        List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
-        String main = "其他", second = "其他";
-        int x = 0, total = 0;
-        for (TypeDetailVO t : typeDetailVOS) {
-            x = 0;
-            String[] key = t.getKeyword().split(" ");
-            for (int i = 0; i < key.length; i++) {
-                if (invoiceVO.getDetail().indexOf(key[i].trim()) != -1) {
-                    x = x + key[i].length();
+    private InvoiceVO getType(InvoiceVO invoiceVO,Context context) {
+        SharedPreferences sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
+        boolean autoCategory=sharedPreferences.getBoolean("autoCategory",true);
+        if(autoCategory){
+            List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
+            String main = "其他", second = "其他";
+            int x = 0, total = 0;
+            for (TypeDetailVO t : typeDetailVOS) {
+                x = 0;
+                String[] key = t.getKeyword().split(" ");
+                for (int i = 0; i < key.length; i++) {
+                    if (invoiceVO.getDetail().indexOf(key[i].trim()) != -1) {
+                        x = x + key[i].length();
+                    }
+                }
+                if (x > total) {
+                    total = x;
+                    main = t.getGroupNumber();
+                    second = t.getName();
                 }
             }
-            if (x > total) {
-                total = x;
-                main = t.getGroupNumber();
-                second = t.getName();
+            if (second.indexOf("餐") != -1) {
+                int hour = Integer.valueOf(sd.format(new Date(invoiceVO.getTime().getTime())));
+                if (hour > 0 && hour < 11) {
+                    second = "早餐";
+                } else if (hour >= 11 && hour < 18) {
+                    second = "午餐";
+                } else {
+                    second = "晚餐";
+                }
             }
+            invoiceVO.setMaintype(main);
+            invoiceVO.setSecondtype(second);
+            invoiceDB.update(invoiceVO);
+            Log.d(TAG, invoiceVO.getInvNum() + " : " + main + " : " + second);
+        }else{
+            invoiceVO.setMaintype("未分類");
+            invoiceVO.setSecondtype("未分類");
         }
-        if (second.indexOf("餐") != -1) {
-            int hour = Integer.valueOf(sd.format(new Date(invoiceVO.getTime().getTime())));
-            if (hour > 0 && hour < 11) {
-                second = "早餐";
-            } else if (hour >= 11 && hour < 18) {
-                second = "午餐";
-            } else {
-                second = "晚餐";
-            }
-        }
-        invoiceVO.setMaintype(main);
-        invoiceVO.setSecondtype(second);
-        invoiceDB.update(invoiceVO);
-        Log.d(TAG, invoiceVO.getInvNum() + " : " + main + " : " + second);
         return invoiceVO;
     }
 

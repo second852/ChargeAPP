@@ -1,11 +1,11 @@
 package com.chargeapp.whc.chargeapp.Control.Setting;
 
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -13,7 +13,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,12 +71,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.jsoup.internal.StringUtil;
-
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -921,7 +918,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                             if (mNetworkInfo != null) {
                                 try {
-                                    new GetSQLDate(SettingUploadFile.this, invoiceVO).execute("reDownload").get();
+                                    new GetSQLDate(SettingUploadFile.this, invoiceVO,context).execute("reDownload").get();
                                     js = gson.fromJson(invoiceVO.getDetail(), cdType);
                                 } catch (Exception e) {
                                     js = new ArrayList<>();
@@ -1484,6 +1481,13 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     setMessage(count++);
                 }
 
+                Sheet sheetCon12 = workbook.createSheet("Setting");
+                Row rowContent=sheetCon12.createRow(0);
+                SharedPreferences sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
+                boolean notify=sharedPreferences.getBoolean("notify",true);
+                rowContent.createCell(0).setCellValue(String.valueOf(notify));
+                boolean autoCategory=sharedPreferences.getBoolean("autoCategory",true);
+                rowContent.createCell(1).setCellValue(String.valueOf(autoCategory));
             }
             workbook.write(outputStream);
             workbook.close();

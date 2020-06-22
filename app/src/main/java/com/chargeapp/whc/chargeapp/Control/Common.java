@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -1836,37 +1837,44 @@ public class Common {
     }
 
 
-    public static ConsumeVO getType (ConsumeVO consumeVO){
-        TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
-        List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
-        String main = "其他", second = "其他";
-        int x = 0, total = 0;
-        for (TypeDetailVO t : typeDetailVOS) {
-            x = 0;
-            String[] key = t.getKeyword().split(" ");
-            for (int i = 0; i < key.length; i++) {
-                if (consumeVO.getDetailname().indexOf(key[i].trim()) != -1) {
-                    x = x + key[i].length();
+    public static ConsumeVO getType (ConsumeVO consumeVO,Context context){
+        SharedPreferences sharedPreferences=context.getSharedPreferences("Charge_User",Context.MODE_PRIVATE);
+        boolean autoCategory=sharedPreferences.getBoolean("autoCategory",true);
+        if(autoCategory){
+            TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
+            List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
+            String main = "其他", second = "其他";
+            int x = 0, total = 0;
+            for (TypeDetailVO t : typeDetailVOS) {
+                x = 0;
+                String[] key = t.getKeyword().split(" ");
+                for (int i = 0; i < key.length; i++) {
+                    if (consumeVO.getDetailname().indexOf(key[i].trim()) != -1) {
+                        x = x + key[i].length();
+                    }
+                }
+                if (x > total) {
+                    total = x;
+                    main = t.getGroupNumber();
+                    second = t.getName();
                 }
             }
-            if (x > total) {
-                total = x;
-                main = t.getGroupNumber();
-                second = t.getName();
+            if (second.indexOf("餐") != -1) {
+                int hour = Integer.valueOf(Common.sHour.format(consumeVO.getDate()));
+                if (hour > 0 && hour < 11) {
+                    second = "早餐";
+                } else if (hour >= 11 && hour < 18) {
+                    second = "午餐";
+                } else {
+                    second = "晚餐";
+                }
             }
+            consumeVO.setMaintype(main);
+            consumeVO.setSecondType(second);
+        }else{
+            consumeVO.setMaintype("未分類");
+            consumeVO.setSecondType("未分類");
         }
-        if (second.indexOf("餐") != -1) {
-            int hour = Integer.valueOf(Common.sHour.format(consumeVO.getDate()));
-            if (hour > 0 && hour < 11) {
-                second = "早餐";
-            } else if (hour >= 11 && hour < 18) {
-                second = "午餐";
-            } else {
-                second = "晚餐";
-            }
-        }
-        consumeVO.setMaintype(main);
-        consumeVO.setSecondType(second);
         return consumeVO;
     }
 

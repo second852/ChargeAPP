@@ -1,16 +1,17 @@
 package com.chargeapp.whc.chargeapp.ChargeDB;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleDonate;
-import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Insert.SearchByQrCode;
+import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
 import com.chargeapp.whc.chargeapp.Model.InvoiceVO;
-import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
 import com.chargeapp.whc.chargeapp.ui.ScanByOnline;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -48,11 +49,11 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
     private Object object;
     private InvoiceDB invoiceDB= new InvoiceDB(MainActivity.chargeAPPDB);
     private ConsumeVO consumeVO;
+    private Context context;
 
-
-    public SetupDateBase64(Object object)
-    {
+    public SetupDateBase64(Object object, Context context) {
           this.object=object;
+          this.context=context;
     }
 
 
@@ -198,8 +199,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
                         consumeVO.setSellerAddress(jsonObject.get("sellerAddress").getAsString());
                         consumeVO.setBuyerBan(jsonObject.get("sellerBan").getAsString());
                         consumeVO.setCurrency(jsonObject.get("currency").getAsString());
-                        Type cdType = new TypeToken<List<JsonObject>>() {
-                        }.getType();
+                        Type cdType = new TypeToken<List<JsonObject>>() {}.getType();
                         String detail = jsonObject.get("details").toString();
                         List<JsonObject> jDetailList = gson.fromJson(detail, cdType);
                         StringBuilder sb = new StringBuilder();
@@ -239,7 +239,7 @@ public class SetupDateBase64 extends AsyncTask<Object, Integer, String> {
 
                         if("未知".equals(consumeVO.getMaintype()))
                         {
-                            Common.getType(consumeVO);
+                            Common.getType(consumeVO,context);
                         }
 
                         consumeDB.update(consumeVO);

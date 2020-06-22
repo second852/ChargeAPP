@@ -9,7 +9,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,22 +20,18 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
-
-import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Adapter.DeleteDialogFragment;
+import com.chargeapp.whc.chargeapp.ChargeDB.ChargeAPPDB;
+import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.Download;
-import com.chargeapp.whc.chargeapp.Job.JobSchedulerService;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Job.JobSchedulerService;
 import com.chargeapp.whc.chargeapp.Model.EleMainItemVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.google.android.gms.ads.AdView;
-
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -91,6 +86,7 @@ public class SettingMain extends Fragment {
         eleMainItemVOList.add(new EleMainItemVO("關閉提醒", R.drawable.notifyt));
         eleMainItemVOList.add(new EleMainItemVO("設定提醒時間", R.drawable.timei));
         eleMainItemVOList.add(new EleMainItemVO("設定定期項目", R.drawable.cancel));
+        eleMainItemVOList.add(new EleMainItemVO("自動分類", R.drawable.book));
         eleMainItemVOList.add(new EleMainItemVO("本日匯率查詢", R.drawable.bouns));
         eleMainItemVOList.add(new EleMainItemVO("匯出檔案", R.drawable.importf));
         eleMainItemVOList.add(new EleMainItemVO("匯入檔案", R.drawable.export));
@@ -152,18 +148,24 @@ public class SettingMain extends Fragment {
                 boolean b=sharedPreferences.getBoolean("notify",true);
                 notify.setChecked(b);
                 notify.setVisibility(View.VISIBLE);
+                if(b)
+                {
+                    textView.setText("自動提醒(使用中)");
+                }else {
+                    textView.setText("自動提醒(關閉中)");
+                }
+
                 notify.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         sharedPreferences.edit().putBoolean("notify",isChecked).apply();
                         NotificationManager notificationManager= (NotificationManager) SettingMain.this.context.getSystemService(NOTIFICATION_SERVICE);
                         notificationManager.cancelAll();
-
                         if(isChecked)
                         {
-                            textView.setText("關閉提醒");
+                            textView.setText("自動提醒(使用中)");
                         }else{
-                            textView.setText("打開提醒");
+                            textView.setText("自動提醒(關閉中)");
                             //重製job
                             String setTime = sharedPreferences.getString("userTime", "6:00 p.m.").trim();
                             int hour, min;
@@ -270,7 +272,30 @@ public class SettingMain extends Fragment {
                         switchFragment(fragment);
                     }
                 });
-            }  else if (position == 4) {
+            } else if(position == 4){
+
+                boolean autoCategory=sharedPreferences.getBoolean("autoCategory",true);
+                notify.setChecked(autoCategory);
+                notify.setVisibility(View.VISIBLE);
+                if(autoCategory)
+                {
+                    textView.setText("自動分類(使用中)");
+                }else{
+                    textView.setText("自動分類(關閉中)");
+                }
+                notify.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        if(isChecked)
+                        {
+                            textView.setText("自動分類(使用中)");
+                        }else{
+                            textView.setText("自動分類(關閉中)");
+                        }
+                        sharedPreferences.edit().putBoolean("autoCategory", isChecked).apply();
+                    }
+                });
+            } else if (position == 5) {
 
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -280,7 +305,7 @@ public class SettingMain extends Fragment {
                     }
                 });
 
-            }else if (position == 5) {
+            }else if (position == 6) {
 
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -293,7 +318,7 @@ public class SettingMain extends Fragment {
                     }
                 });
 
-            }else if (position == 6) {
+            }else if (position == 7) {
 
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -306,7 +331,7 @@ public class SettingMain extends Fragment {
                     }
                 });
 
-            } else if (position == 7) {
+            } else if (position == 8) {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

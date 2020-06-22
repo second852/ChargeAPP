@@ -260,7 +260,7 @@ public class EleDonate extends Fragment {
             NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
             if(mNetworkInfo!=null)
             {
-                new GetSQLDate(EleDonate.this).execute("searchHeartyTeam", inputH.getText().toString());
+                new GetSQLDate(EleDonate.this,context).execute("searchHeartyTeam", inputH.getText().toString());
                 progressbar.setVisibility(View.VISIBLE);
             }else{
                 Common.showToast(EleDonate.this.context,"網路沒有開啟，無法下載!");
@@ -403,7 +403,7 @@ public class EleDonate extends Fragment {
                         NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
                         if(mNetworkInfo!=null)
                         {
-                            new GetSQLDate(EleDonate.this,invoiceVO).execute("reDownload");
+                            new GetSQLDate(EleDonate.this,invoiceVO,context).execute("reDownload");
                             progressDialog.setMessage("正在下傳資料,請稍候...");
                             progressDialog.show();
                             EleDonate.this.poisition=position;

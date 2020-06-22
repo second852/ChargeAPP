@@ -4,7 +4,6 @@ package com.chargeapp.whc.chargeapp.Control.Insert;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -24,14 +22,11 @@ import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.beardedhen.androidbootstrap.BootstrapLabel;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.chargeapp.whc.chargeapp.ChargeDB.SetupDateBase64;
-import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Update.UpdateSpend;
 import com.chargeapp.whc.chargeapp.Model.ConsumeVO;
-import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
 import com.chargeapp.whc.chargeapp.ui.ScanUpdateSpend;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -40,7 +35,6 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.sql.Date;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 
@@ -301,7 +295,7 @@ public class SearchByQrCode extends Fragment {
             c.set(Integer.valueOf(dates[0]), (Integer.valueOf(dates[1]) - 1), Integer.valueOf(dates[2]), 12, 0, 0);
             Date d = new Date(c.getTimeInMillis());
             consumeVO.setDate(d);
-            setupDateBase64 = new SetupDateBase64(SearchByQrCode.this);
+            setupDateBase64 = new SetupDateBase64(SearchByQrCode.this,context);
             setupDateBase64.setConsumeVO(consumeVO);
             setupDateBase64.execute("getThisDetail");
             progressL.setVisibility(View.VISIBLE);
@@ -393,7 +387,7 @@ public class SearchByQrCode extends Fragment {
         }
         consumeVO.setRealMoney(String.valueOf(Common.DoubleToInt(total)));
         consumeVO.setDetailname(sb.toString());
-        consumeVO = getType(consumeVO);
+        consumeVO = Common.getType(consumeVO,context);
         Common.showToast(context, "查詢成功!");
         setBundle();
     }
@@ -448,40 +442,6 @@ public class SearchByQrCode extends Fragment {
         }
     }
 
-    private ConsumeVO getType(ConsumeVO consumeVO) {
-
-        TypeDetailDB typeDetailDB = new TypeDetailDB(MainActivity.chargeAPPDB);
-        List<TypeDetailVO> typeDetailVOS = typeDetailDB.getTypdAll();
-        String main = "O", second = "O";
-        int x = 0, total = 0;
-        for (TypeDetailVO t : typeDetailVOS) {
-            x = 0;
-            String[] key = t.getKeyword().split(" ");
-            for (int i = 0; i < key.length; i++) {
-                if (consumeVO.getDetailname().indexOf(key[i].trim()) != -1) {
-                    x = x + key[i].length();
-                }
-            }
-            if (x > total) {
-                total = x;
-                main = t.getGroupNumber();
-                second = t.getName();
-            }
-        }
-        if (second.indexOf("餐") != -1) {
-            int hour = Integer.valueOf(Common.sHour.format(consumeVO.getDate()));
-            if (hour > 0 && hour < 11) {
-                second = "早餐";
-            } else if (hour >= 11 && hour < 18) {
-                second = "午餐";
-            } else {
-                second = "晚餐";
-            }
-        }
-        consumeVO.setMaintype(main);
-        consumeVO.setSecondType(second);
-        return consumeVO;
-    }
 
     private class showImage implements View.OnClickListener {
         @Override
