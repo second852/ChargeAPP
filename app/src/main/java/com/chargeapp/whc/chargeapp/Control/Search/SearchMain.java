@@ -169,6 +169,12 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.search_main, container, false);
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         searchMainAction=getArguments().getString("searchMainAction");
         findViewById();
         setDB();
@@ -178,12 +184,8 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
         }else {
             setOld();
         }
-
-
-
         sharedPreferences = context.getSharedPreferences("Charge_User", Context.MODE_PRIVATE);
         nowCurrency = sharedPreferences.getString(Common.choiceCurrency, "TWD");
-        currencyVO=currencyDB.getOneByType(nowCurrency);
         searchTotal.setText("總共 : "+getCurrency(nowCurrency)+" 0");
         popupMenu = new PopupMenu(context, searchTotal);
         Common.createCurrencyPopMenu(popupMenu, context);
@@ -195,7 +197,6 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
         });
         popupMenu.setOnMenuItemClickListener(new choiceCurrency());
         searchTotal.setVisibility(View.GONE);
-        return view;
     }
 
     private void setOld() {
@@ -345,8 +346,8 @@ public class SearchMain extends Fragment implements GoogleApiClient.ConnectionCa
 
     private void setListView()
     {
+        currencyVO=currencyDB.getOneByType(nowCurrency);
         keyNameString=keyName.getText().toString();
-
         if(StringUtil.isBlank(keyNameString))
         {
             keyName.setError("不能空白!");
