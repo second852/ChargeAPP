@@ -65,5 +65,6 @@
     <string name="error_noScanData">請掃描QRcode!</string>
     <string name="mainType">主項目種類</string>
     <string name="secondType">次要項目種類</string>
-
+    <string name="DropboxKey">0i5wzgjn086a41v</string>
+    <string name="mainDropboxKey">db-0i5wzgjn086a41v</string>
 </resources>

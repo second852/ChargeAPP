@@ -43,6 +43,9 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Drobox.DbxRequestConfigFactory;
+import com.chargeapp.whc.chargeapp.Drobox.DropboxClientFactory;
+import com.chargeapp.whc.chargeapp.Drobox.FileActivity;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
@@ -59,6 +62,11 @@ import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
+import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
+import com.dropbox.core.DbxDownloader;
+import com.dropbox.core.DbxException;
+import com.dropbox.core.android.Auth;
+import com.dropbox.core.v2.files.FileMetadata;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -77,11 +85,14 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -94,7 +105,7 @@ import java.util.List;
 public class SettingDownloadFile extends Fragment implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-
+    private String TAG="SettingDownloadFile";
     private ListView listView;
     private ConsumeDB consumeDB;
     private InvoiceDB invoiceDB;
@@ -116,6 +127,10 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     private TextView percent;
     private BigDecimal hundred=new BigDecimal(100);
     private BigDecimal t,c;
+    public static boolean dropboxOpen;
+    public static boolean dropboxEnd;
+
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -125,6 +140,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         }else{
             this.context=getActivity();
         }
+        dropboxOpen=false;
     }
 
 
@@ -153,12 +169,43 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         progressL = view.findViewById(R.id.progressL);
         listView.setAdapter(new ListAdapter(context, itemSon));
         progressL.setVisibility(View.GONE);
-
-
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(dropboxOpen){
+            DropboxClientFactory.per(this.context);
+            Thread thread=new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        DropboxClientFactory.getClient().files().getPreview(FileActivity.mPath);
+                    } catch (DbxException e) {
+                        Log.d(TAG, e.getMessage());
+                        try {
+                            DropboxClientFactory.getClient().files().createFolderV2(FileActivity.mPath);
+                        } catch (DbxException ex) {
+                            Log.d(TAG, ex.getMessage());
+                        }
+                    }
+                    Intent filesIntent = new Intent(context, FileActivity.class);
+                    startActivityForResult(filesIntent,8);
+                    //            startActivity();
+                }
+            });
+            thread.start();
 
+        }
+        if(FileActivity.result!=null&&dropboxEnd){
+            try {
+                inputExcel(new FileInputStream(FileActivity.result));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -189,6 +236,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         List<EleMainItemVO> eleMainItemVOList = new ArrayList<>();
         eleMainItemVOList.add(new EleMainItemVO("從本機匯入資料", R.drawable.export));
         eleMainItemVOList.add(new EleMainItemVO("從Google雲端匯入資料", R.drawable.export));
+        eleMainItemVOList.add(new EleMainItemVO("從Dropbox匯入資料", R.drawable.dropbox));
         return eleMainItemVOList;
     }
 
@@ -313,6 +361,13 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                         }
                     }
                 });
+            }else if (position == 2) {
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Auth.startOAuth2PKCE(context, getString(R.string.DropboxKey), DbxRequestConfigFactory.getRequestConfig(), DbxRequestConfigFactory.scope);
+                        dropboxOpen=true;
+                    }});
             }
             return itemView;
         }
