@@ -8,11 +8,22 @@ public class EleMainItemVO {
     private String name;
     private int idstring;
     private int image;
-
+    private int code;
 
     public EleMainItemVO(int idstring, int image) {
         this.idstring = idstring;
         this.image = image;
+    }
+
+    public EleMainItemVO(String name, int image) {
+        this.name = name;
+        this.image = image;
+    }
+
+    public EleMainItemVO(String name, int image, int code) {
+        this.name = name;
+        this.image = image;
+        this.code = code;
     }
 
     public int getIdstring() {
@@ -21,11 +32,6 @@ public class EleMainItemVO {
 
     public void setIdstring(int idstring) {
         this.idstring = idstring;
-    }
-
-    public EleMainItemVO(String name, int image) {
-        this.name = name;
-        this.image = image;
     }
 
     public String getName() {
@@ -42,5 +48,13 @@ public class EleMainItemVO {
 
     public void setImage(int image) {
         this.image = image;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 }

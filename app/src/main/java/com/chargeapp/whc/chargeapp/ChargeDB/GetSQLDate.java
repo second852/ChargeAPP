@@ -84,6 +84,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     private BigDecimal sixteen=new BigDecimal(16);
     private BigDecimal total;
     private Context context;
+    private int timeout;
 
     public GetSQLDate(Object object,Context context) {
         total =new BigDecimal(0);
@@ -115,6 +116,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     @Override
     protected String doInBackground(Object... params) {
         action = params[0].toString();
+        if(params.length>1){
+            Object timeOutTemp=params[1];
+            timeout=Integer.valueOf(timeOutTemp.toString());
+        }else{
+            timeout=10;
+        }
         String jsonIn = null;
         try {
 
@@ -958,6 +965,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             conn.setUseCaches(false);
+            conn.setConnectTimeout(timeout);
             DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
             wr.write(postData);
             wr.flush();

@@ -628,9 +628,12 @@ public class Common {
         colExist("Goal","realMoney","text");
         colExist("PRICE","isCheck","text");
         colExist("PRICE","priceNotify","Integer");
-        ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
+    }
 
+    //修正錯誤
+    public static void correctErrorData(){
         //改用UUID FK consume
+        ConsumeDB consumeDB=new ConsumeDB(MainActivity.chargeAPPDB);
         List<ConsumeVO> cFatherList = consumeDB.getFixdateAndfkKeyIsNull();
         for(ConsumeVO father:cFatherList)
         {
@@ -694,6 +697,7 @@ public class Common {
             goalDB.update(goalVO);
         }
     }
+
 
 
     //新增table

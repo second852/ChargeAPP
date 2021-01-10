@@ -43,6 +43,8 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.RequestCode;
+import com.chargeapp.whc.chargeapp.Control.ResultCode;
 import com.chargeapp.whc.chargeapp.Drobox.DbxRequestConfigFactory;
 import com.chargeapp.whc.chargeapp.Drobox.DropboxClientFactory;
 import com.chargeapp.whc.chargeapp.Drobox.FileActivity;
@@ -86,6 +88,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -95,7 +98,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 
 /**
@@ -104,6 +113,7 @@ import java.util.List;
 
 public class SettingDownloadFile extends Fragment implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
+
 
     private String TAG="SettingDownloadFile";
     private ListView listView;
@@ -130,6 +140,7 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     public static boolean dropboxOpen;
     public static boolean dropboxEnd;
 
+    //------生命週期
 
     @Override
     public void onAttach(Context context) {
@@ -175,70 +186,177 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     @Override
     public void onResume() {
         super.onResume();
-        if(dropboxOpen){
-            DropboxClientFactory.per(this.context);
-            Thread thread=new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        DropboxClientFactory.getClient().files().getPreview(FileActivity.mPath);
-                    } catch (DbxException e) {
-                        Log.d(TAG, e.getMessage());
-                        try {
-                            DropboxClientFactory.getClient().files().createFolderV2(FileActivity.mPath);
-                        } catch (DbxException ex) {
-                            Log.d(TAG, ex.getMessage());
-                        }
-                    }
-                    Intent filesIntent = new Intent(context, FileActivity.class);
-                    startActivityForResult(filesIntent,8);
-                    //            startActivity();
-                }
-            });
-            thread.start();
-
-        }
-        if(FileActivity.result!=null&&dropboxEnd){
-            try {
-                inputExcel(new FileInputStream(FileActivity.result));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+        if(dropboxOpen) {
+            dropBoxAction();
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==4)
-        {
-            openCloud();
-        }else if(requestCode==5)
-        {
-            if (resultCode == -1) {
-                mSelectedFileDriveId = data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-                open();
-                progressL.setVisibility(View.VISIBLE);
-                Common.showToast(context, "下載成功");
-                percent.setText("0%");
-            } else {
-                if(mGoogleApiClient!=null)
-                {
-                    mGoogleApiClient.disconnect();
-                    mGoogleApiClient=null;
+        RequestCode resultCodeEnum= RequestCode.getEnum(requestCode);
+        switch (resultCodeEnum) {
+            case DownLoadGoogleOpen:
+                openCloud();
+                break;
+            case DownLoadGoogleDownload:
+                if (resultCode == ResultCode.GoogleDownload.getCode()) {
+                    mSelectedFileDriveId = data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+                    open();
+                    progressL.setVisibility(View.VISIBLE);
+                    Common.showToast(context, "下載成功");
+                    percent.setText("0%");
+                } else {
+                    if (mGoogleApiClient != null) {
+                        mGoogleApiClient.disconnect();
+                        mGoogleApiClient = null;
+                    }
+                    Common.showToast(context, "下載失敗");
                 }
-                Common.showToast(context, "下載失敗");
-            }
+                break;
+            case Dropbox:
+                progressL.setVisibility(View.GONE);
+                if(FileActivity.result!=null){
+                    FileInput fileInput=new FileInput(FileActivity.result);
+                    new Thread(fileInput).start();
+                }else{
+                  Common.showToast(context,"無匯入檔案!");
+                }
+                break;
         }
     }
 
+
+    //--------view
+
     private List<EleMainItemVO> getNewItem() {
         List<EleMainItemVO> eleMainItemVOList = new ArrayList<>();
-        eleMainItemVOList.add(new EleMainItemVO("從本機匯入資料", R.drawable.export));
-        eleMainItemVOList.add(new EleMainItemVO("從Google雲端匯入資料", R.drawable.export));
-        eleMainItemVOList.add(new EleMainItemVO("從Dropbox匯入資料", R.drawable.dropbox));
+        eleMainItemVOList.add(new EleMainItemVO("從本機匯入資料", R.drawable.export,0));
+//        eleMainItemVOList.add(new EleMainItemVO("從Google雲端匯入資料", R.drawable.export,1));
+        eleMainItemVOList.add(new EleMainItemVO("從Dropbox匯入資料", R.drawable.export,2));
         return eleMainItemVOList;
     }
+
+    private class ListAdapter extends BaseAdapter {
+        private Context context;
+        private List<EleMainItemVO> eleMainItemVOS;
+
+        ListAdapter(Context context, List<EleMainItemVO> eleMainItemVOS) {
+            this.context = context;
+            this.eleMainItemVOS = eleMainItemVOS;
+        }
+
+
+        @Override
+        public int getCount() {
+            return eleMainItemVOS.size();
+        }
+
+        @Override
+        public View getView(final int position, View itemView, final ViewGroup parent) {
+            if (itemView == null) {
+                LayoutInflater layoutInflater = LayoutInflater.from(context);
+                itemView = layoutInflater.inflate(R.layout.setting_main_item, parent, false);
+            }
+            final EleMainItemVO eleMainItemVO = eleMainItemVOS.get(position);
+            ImageView imageView = itemView.findViewById(R.id.image);
+            TextView textView = itemView.findViewById(R.id.listTitle);
+            imageView.setImageResource(eleMainItemVO.getImage());
+            textView.setText(eleMainItemVO.getName());
+            Switch notify = itemView.findViewById(R.id.notify);
+            TextView setTime = itemView.findViewById(R.id.setTime);
+            setTime.setVisibility(View.GONE);
+            notify.setVisibility(View.GONE);
+            if (eleMainItemVO.getCode() == 0) {
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                        if (!dir.exists()) {
+                            dir.mkdirs();
+                        }
+                        File file = new File(dir, "記帳小助手.xls");
+                        FileInput fileInput=new FileInput(file);
+                        new Thread(fileInput).start();
+                    }
+                });
+            } else if (eleMainItemVO.getCode() == 1) {
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        percent.setText("0%");
+                        ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingDownloadFile.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+                        if(mNetworkInfo!=null)
+                        {
+                            firstEnter=true;
+                            openCloud();
+                        }else{
+                            Common.showToast(SettingDownloadFile.this.context,"網路沒有開啟，無法下載!");
+                        }
+                    }
+                });
+            }else if (eleMainItemVO.getCode() == 2) {
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Auth.startOAuth2PKCE(context, getString(R.string.DropboxKey), DbxRequestConfigFactory.getRequestConfig(), DbxRequestConfigFactory.scope);
+                        dropboxOpen=true;
+                    }});
+            }
+            return itemView;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return eleMainItemVOS.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+    }
+
+    //----dropbox 上傳
+    private void dropBoxAction(){
+        try {
+            DropboxClientFactory.per(SettingDownloadFile.this.context);
+            DropboxClientFactory.getClient();
+        }catch (Exception e){
+            dropboxOpen=false;
+            Log.e(TAG, "dropBoxAction: ",e);
+            Common.showToast(context,"讀取DropBox失敗!");
+            return;
+        }
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        progressL.setVisibility(View.VISIBLE);
+        percent.setText("");
+        Future<Boolean> future=executor.submit(dropboxCallBack);
+        while (!future.isDone()){}
+        executor.shutdown();
+        Intent filesIntent = new Intent(context, FileActivity.class);
+        startActivityForResult(filesIntent,RequestCode.Dropbox.getCode());
+    }
+
+    private Callable<Boolean> dropboxCallBack=new Callable<Boolean>() {
+        @Override
+        public Boolean call() throws Exception {
+            try {
+                DropboxClientFactory.getClient().files().getPreview(FileActivity.mPath);
+            } catch (DbxException e) {
+                Log.d(TAG, e.getMessage());
+                try {
+                    DropboxClientFactory.getClient().files().createFolderV2(FileActivity.mPath);
+                } catch (DbxException ex) {
+                    Log.d(TAG, ex.getMessage());
+                }
+            }
+            return true;
+        }
+    };
+
+    //----google
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -247,8 +365,6 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
             open();
             return;
         }
-
-        // Let the user pick a file...
         IntentSender intentSender = Drive.DriveApi
                 .newOpenFileActivityBuilder()
                 .setMimeType(new String[]{"file/xls"})
@@ -286,105 +402,87 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         }
     }
 
-
-    private class ListAdapter extends BaseAdapter {
-        private Context context;
-        private List<EleMainItemVO> eleMainItemVOS;
-
-        ListAdapter(Context context, List<EleMainItemVO> eleMainItemVOS) {
-            this.context = context;
-            this.eleMainItemVOS = eleMainItemVOS;
+    public void openCloud() {
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(context)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
         }
+        mGoogleApiClient.connect();
+    }
 
+    private void open() {
+        DriveFile.DownloadProgressListener listener = new DriveFile.DownloadProgressListener() {
+            @Override
+            public void onProgress(long bytesDownloaded, long bytesExpected) {
+                // Update progress dialog with the latest progress.
+                int progress = (int) (bytesDownloaded * 100 / bytesExpected);
 
-        @Override
-        public int getCount() {
-            return eleMainItemVOS.size();
-        }
-
-        @Override
-        public View getView(final int position, View itemView, final ViewGroup parent) {
-            if (itemView == null) {
-                LayoutInflater layoutInflater = LayoutInflater.from(context);
-                itemView = layoutInflater.inflate(R.layout.setting_main_item, parent, false);
             }
-            final EleMainItemVO eleMainItemVO = eleMainItemVOS.get(position);
-            ImageView imageView = itemView.findViewById(R.id.image);
-            TextView textView = itemView.findViewById(R.id.listTitle);
-            imageView.setImageResource(eleMainItemVO.getImage());
-            textView.setText(eleMainItemVO.getName());
-            Switch notify = itemView.findViewById(R.id.notify);
-            TextView setTime = itemView.findViewById(R.id.setTime);
-            setTime.setVisibility(View.GONE);
-            notify.setVisibility(View.GONE);
-            if (position == 0) {
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                   progressL.setVisibility(View.VISIBLE);
-                         Runnable runnable=new Runnable() {
-                            @Override
-                            public void run() {
+        };
+        Log.d("XXXX","open");
+        DriveFile driveFile = mSelectedFileDriveId.asDriveFile();
+        driveFile.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, listener)
+                .setResultCallback(driveContentsCallback);
+        mSelectedFileDriveId = null;
+    }
 
-                                try {
-                                    percent.setText("0%");
-                                    File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                                    if (!dir.exists()) {
-                                        dir.mkdirs();
-                                    }
-                                    File file = new File(dir, "記帳小助手.xls");
-                                    InputStream inp = new FileInputStream(file);
-                                    inputExcel(inp);
-                                } catch (Exception e) {
-                                    Message message=handler.obtainMessage();
-                                    message.what=3;
-                                    message.sendToTarget();
-                                }
-                            }
-                        };
-                       new Thread(runnable).start();
+
+    private final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback =
+            new ResultCallback<DriveApi.DriveContentsResult>() {
+                @Override
+                public void onResult(@NonNull DriveApi.DriveContentsResult result) {
+                    if (!result.getStatus().isSuccess()) {
+                        Common.showToast(context, "連線失敗!");
+                        return;
                     }
-                });
-            } else if (position == 1) {
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        percent.setText("0%");
-                        ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingDownloadFile.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-                        if(mNetworkInfo!=null)
-                        {
-                            firstEnter=true;
-                            openCloud();
-                        }else{
-                            Common.showToast(SettingDownloadFile.this.context,"網路沒有開啟，無法下載!");
+                    // Read from the input stream an print to LOGCAT
+                    final DriveContents driveContents = result.getDriveContents();
+                    Runnable runnable=new Runnable() {
+                        @Override
+                        public void run() {
+
+                            inputExcel(driveContents.getInputStream());
+                            // Close file contents
+                            driveContents.discard(mGoogleApiClient);
+                            mGoogleApiClient.disconnect();
+                            mGoogleApiClient = null;
                         }
-                    }
-                });
-            }else if (position == 2) {
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Auth.startOAuth2PKCE(context, getString(R.string.DropboxKey), DbxRequestConfigFactory.getRequestConfig(), DbxRequestConfigFactory.scope);
-                        dropboxOpen=true;
-                    }});
+                    };
+                    Thread thread=new Thread(runnable);
+                    thread.start();
+
+                }
+    };
+
+    //-----file
+    public class FileInput implements Runnable{
+        private File file;
+        public FileInput(File file) {
+            this.file = file;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Message message=handler.obtainMessage(5);
+                message.sendToTarget();
+                InputStream inp = new FileInputStream(file);
+                inputExcel(inp);
+            } catch (Exception e) {
+                Message message=handler.obtainMessage();
+                message.what=3;
+                message.sendToTarget();
             }
-            return itemView;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return eleMainItemVOS.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
         }
     }
 
 
     private void inputExcel(InputStream inp) {
+        Common.insertNewTableCol();
         int i = 0;
         Message msg = new Message();
         try {
@@ -684,13 +782,19 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
             msg.what=0;
             setMessage(total,total);
             workbook.close();
-            inp.close();
-            Common.insertNewTableCol();
+            Common.correctErrorData();
         } catch (Exception e) {
             msg.what=1;
             Log.d("xxxxxxxx", e.toString());
             e.printStackTrace();
         }finally {
+            try {
+                if(inp!=null){
+                    inp.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             handler.sendMessage(msg);
         }
     }
@@ -714,73 +818,17 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                 case 4:
                     percent.setText((String) msg.obj);
                     break;
+                case 5:
+                    progressL.setVisibility(View.VISIBLE);
+                    percent.setText("0%");
+                    break;
             }
-            if(msg.what!=4)
+            if(msg.what!=4&&msg.what!=5)
             {
                 progressL.setVisibility(View.GONE);
             }
-
         }
     };
-
-
-
-    public void openCloud() {
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(context)
-                    .addApi(Drive.API)
-                    .addScope(Drive.SCOPE_FILE)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
-        }
-        mGoogleApiClient.connect();
-    }
-
-    private void open() {
-        DriveFile.DownloadProgressListener listener = new DriveFile.DownloadProgressListener() {
-            @Override
-            public void onProgress(long bytesDownloaded, long bytesExpected) {
-                // Update progress dialog with the latest progress.
-                int progress = (int) (bytesDownloaded * 100 / bytesExpected);
-
-            }
-        };
-        Log.d("XXXX","open");
-        DriveFile driveFile = mSelectedFileDriveId.asDriveFile();
-        driveFile.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, listener)
-                .setResultCallback(driveContentsCallback);
-        mSelectedFileDriveId = null;
-    }
-
-
-    private final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback =
-            new ResultCallback<DriveApi.DriveContentsResult>() {
-                @Override
-                public void onResult(@NonNull DriveApi.DriveContentsResult result) {
-                    if (!result.getStatus().isSuccess()) {
-                        Common.showToast(context, "連線失敗!");
-                        return;
-                    }
-                    // Read from the input stream an print to LOGCAT
-                    final DriveContents driveContents = result.getDriveContents();
-                    Runnable runnable=new Runnable() {
-                        @Override
-                        public void run() {
-
-                            inputExcel(driveContents.getInputStream());
-                            // Close file contents
-                            driveContents.discard(mGoogleApiClient);
-                            mGoogleApiClient.disconnect();
-                            mGoogleApiClient = null;
-                        }
-                    };
-                    Thread thread=new Thread(runnable);
-                    thread.start();
-
-                }
-            };
-
 
 
     private void setMessage(int count,int total)

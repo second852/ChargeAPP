@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
@@ -43,7 +44,8 @@ public class FileActivity extends AppCompatActivity {
 
 
     private static final String TAG = FileActivity.class.getName();
-    public static String mPath="/Charge-APP";
+    public final static String mPath="/Charge-APP";
+    public String nowPath;
     public final static String EXTRA_PATH = "FilesActivity_Path";
     private FilesAdapter mFilesAdapter;
     private FileMetadata mSelectedFile;
@@ -58,24 +60,51 @@ public class FileActivity extends AppCompatActivity {
         setTitle("Dropbox");
         setContentView(R.layout.dropbox_list);
         filePath.clear();
-
+        nowPath=mPath;
+        filePath.add(mPath);
         mSelectedFile = null;
     }
 
-    private void  createList(){
+    @Override
+    protected void onStart() {
+        super.onStart();
+        createList();
+        loadData();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            int lastIndex=filePath.size()-1;
+            nowPath=filePath.get(lastIndex);
+            filePath.remove(lastIndex);
+            if(lastIndex!=0){
+                loadData();
+            }else{
+                FileActivity.result=null;
+                SettingDownloadFile.dropboxOpen=false;
+                FileActivity.this.finish();
+            }
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+    private void createList(){
         DropboxClientFactory.per(this);
         PicassoClient.init(this, DropboxClientFactory.getClient());
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.files_list);
         mFilesAdapter = new FilesAdapter(PicassoClient.getPicasso(), new FilesAdapter.Callback() {
             @Override
             public void onFolderClicked(FolderMetadata folder) {
-                startActivity(FileActivity.getIntent(FileActivity.this, folder.getPathLower()));
+                createList();
+                nowPath=folder.getPathLower();
+                filePath.add(folder.getPathLower());
             }
 
             @Override
             public void onFileClicked(final FileMetadata file) {
-                performWithPermissions(FileAction.DOWNLOAD);
                 mSelectedFile = file;
+                performWithPermissions(FileAction.DOWNLOAD);
             }
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -84,12 +113,7 @@ public class FileActivity extends AppCompatActivity {
 
 
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        DropboxClientFactory.per(this);
-        loadData();
-    }
+
 
     private void performWithPermissions(final FileAction action) {
         if (hasPermissionsForAction(action)) {
@@ -182,7 +206,7 @@ public class FileActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT)
                         .show();
             }
-        }).execute(fileUri, mPath);
+        }).execute(fileUri, nowPath);
     }
 
 
@@ -214,18 +238,6 @@ public class FileActivity extends AppCompatActivity {
                 Log.e(TAG, "Can't perform unhandled file action: " + action);
         }
     }
-
-    public static Intent getIntent(Context context, String path) {
-        Intent filesIntent = new Intent(context, FileActivity.class);
-        filesIntent.putExtra(FileActivity.EXTRA_PATH, path);
-        return filesIntent;
-    }
-
-
-
-
-
-
 
 
     private enum FileAction {
@@ -268,7 +280,6 @@ public class FileActivity extends AppCompatActivity {
             @Override
             public void onDownloadComplete(File result) {
                 dialog.dismiss();
-
                 if (result != null) {
                     viewFileInExternalApp(result);
                 }
@@ -290,8 +301,7 @@ public class FileActivity extends AppCompatActivity {
     private void viewFileInExternalApp(File result) {
         FileActivity.result=result;
         SettingDownloadFile.dropboxOpen=false;
-        SettingDownloadFile.dropboxEnd=true;
-        this.finish();
+        FileActivity.this.finish();
     }
 
 
@@ -321,9 +331,8 @@ public class FileActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT)
                         .show();
             }
-        }).execute(mPath);
+        }).execute(nowPath);
     }
-
 
 
 }

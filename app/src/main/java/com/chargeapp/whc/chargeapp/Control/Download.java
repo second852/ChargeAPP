@@ -85,7 +85,7 @@ public class Download extends Fragment {
             getSQLDate = new GetSQLDate(this,activity);
             getSQLDate.setPercentage(percentage);
             getSQLDate.setProgressT(progressT);
-            getSQLDate.execute("download");
+            getSQLDate.execute("download","3");
         } else {
             tonNewActivity();
             Common.showToast(activity, "網路沒有開啟，無法下載!");

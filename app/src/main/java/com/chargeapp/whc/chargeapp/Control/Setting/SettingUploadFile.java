@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,6 +48,11 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
+import com.chargeapp.whc.chargeapp.Control.RequestCode;
+import com.chargeapp.whc.chargeapp.Drobox.DbxRequestConfigFactory;
+import com.chargeapp.whc.chargeapp.Drobox.DropboxClientFactory;
+import com.chargeapp.whc.chargeapp.Drobox.FileActivity;
+import com.chargeapp.whc.chargeapp.Drobox.UploadFileTask;
 import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.BankVO;
 import com.chargeapp.whc.chargeapp.Model.CarrierVO;
@@ -60,6 +67,10 @@ import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.dropbox.core.DbxException;
+import com.dropbox.core.android.Auth;
+import com.dropbox.core.v2.files.FileMetadata;
+import com.dropbox.core.v2.files.WriteMode;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -74,11 +85,14 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.util.IOUtils;
 import org.jsoup.internal.StringUtil;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -86,11 +100,16 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 /**
@@ -101,6 +120,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         GoogleApiClient.OnConnectionFailedListener {
 
 
+    private static final String TAG =SettingUploadFile.class.getName();
     private ListView listView;
     private LinearLayout fileChoice;
     private ImageView excel, txtFile, cancelF;
@@ -126,7 +146,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private Gson gson;
     private StringBuffer sb;
     private boolean firstEnter;
-    private String fileName;
+    private String fileNameTemp;
     private List<ConsumeVO> consumeVOList;
     private List<InvoiceVO> invoiceVOS;
     private List<BankVO> bankVOS;
@@ -135,11 +155,15 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private List<PropertyFromVO> propertyFromVOS;
     private TextView percent;
     private int totalDataCount;
-    private  BigDecimal hundred=new BigDecimal(100),c,t;
+    private BigDecimal hundred=new BigDecimal(100),c,t;
+    public static boolean dropboxOpen;
+
+    //----訊息處理
 
     Handler handler=new Handler(Looper.getMainLooper()){
         @Override
         public void handleMessage(Message msg) {
+            String fileName=getFileName();
             switch (msg.what)
             {
                 case 0:
@@ -171,6 +195,8 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         }
     };
 
+    //------生命週期
+
 
     @Override
     public void onAttach(Context context) {
@@ -181,6 +207,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         }else{
             this.context=getActivity();
         }
+        dropboxOpen=false;
     }
 
 
@@ -222,30 +249,102 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         return view;
     }
 
-
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode==0)
+    public void onPause() {
+        super.onPause();
+        if(mGoogleApiClient!=null)
         {
-            txt=false;
-            openCloud();
-        }else if(requestCode==1){
-            txt=true;
-            openCloud();
-        }else if(requestCode==2){
-            txt=false;
-            openCloud();
-        }else if(requestCode==3){
-            progressL.setVisibility(View.GONE);
-            if (resultCode == -1) {
-                Common.showToast(context, "上傳成功");
-            } else {
-                Common.showToast(context, "上傳失敗");
-            }
+            mGoogleApiClient.disconnect();
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(dropboxOpen) {
+            try {
+                dropBoxAction();
+            }catch (Exception e){
+                Log.e(TAG, "onResume: ",e);
+            }
 
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        RequestCode resultCodeEnum= RequestCode.getEnum(requestCode);
+        switch (resultCodeEnum) {
+            case UpLoadGoogleOpen:
+                openCloud();
+                break;
+            case UpLoadGoogleUpload:
+                progressL.setVisibility(View.GONE);
+                if (resultCode == -1) {
+                    Common.showToast(context, "上傳成功");
+                } else {
+                    Common.showToast(context, "上傳失敗");
+                }
+                break;
+        }
+    }
+
+   //---dropBox 上傳
+   private void dropBoxAction() throws Exception{
+       dropboxOpen=false;
+       try {
+           DropboxClientFactory.per(SettingUploadFile.this.context);
+           DropboxClientFactory.getClient();
+       }catch (Exception e){
+           Log.e(TAG, "dropBoxAction: ",e);
+           Common.showToast(context,"讀取DropBox失敗!");
+           return;
+       }
+       progressL.setVisibility(View.VISIBLE);
+       percent.setText("0%");
+       String fileName=getFileName();
+       ExecutorService executor = Executors.newSingleThreadExecutor();
+       DropBoxFileOut dropBoxFileOut=new DropBoxFileOut();
+       Future<byte[]> dataFuture=executor.submit(dropBoxFileOut);
+       while (!dataFuture.isDone()){}
+       byte[] dataResult=dataFuture.get();
+       if(dataResult==null){
+           Common.showToast(context,"上傳檔案失敗!");
+           return;
+       }
+       new UploadFileTask(context, DropboxClientFactory.getClient(), new UploadFileTask.Callback() {
+           @Override
+           public void onUploadComplete(FileMetadata result) {
+               progressL.setVisibility(View.GONE);
+               Common.showToast(context,"上傳成功，檔案位置:"+FileActivity.mPath + "/" + fileName);
+           }
+           @Override
+           public void onError(Exception e) {
+               Log.e(TAG, "Failed to upload file.", e);
+               Toast.makeText(context,
+                       "An error has occurred",
+                       Toast.LENGTH_SHORT)
+                       .show();
+           }
+       },dataResult).execute(FileActivity.mPath, fileName);
+   }
+
+   public class DropBoxFileOut implements Callable<byte[]>{
+       @Override
+       public byte[] call() throws Exception {
+           Thread.sleep(5);
+           byte[] result;
+           if(txt){
+               result=outPutTxt();
+           }else{
+               result=outputExcel();
+           }
+           return result;
+       }
+   }
+
+
+    //-----view
     private void setSpinner() {
         ArrayList<String> spinnerItem = new ArrayList();
         spinnerItem.add("備分資料庫");
@@ -263,56 +362,11 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
 
     private List<EleMainItemVO> getNewItem() {
         List<EleMainItemVO> eleMainItemVOList = new ArrayList<>();
-        eleMainItemVOList.add(new EleMainItemVO("匯出資料到本機", R.drawable.importf));
-        eleMainItemVOList.add(new EleMainItemVO("匯出資料到Google雲端", R.drawable.importf));
+        eleMainItemVOList.add(new EleMainItemVO("匯出資料到本機", R.drawable.importf,0));
+//        eleMainItemVOList.add(new EleMainItemVO("匯出資料到Google雲端", R.drawable.importf,1));
+        eleMainItemVOList.add(new EleMainItemVO("匯出資料到Dropbox", R.drawable.importf,2));
         return eleMainItemVOList;
     }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        saveFileToDrive();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult result) {
-        if (!result.hasResolution()) {
-            // show the localized error dialog.
-            GoogleApiAvailability.getInstance().getErrorDialog(context, result.getErrorCode(), 0).show();
-            return;
-        }
-        // Called typically when the app is not yet authorized, and authorization dialog is displayed to the user.
-       if(!firstEnter)
-       {
-           Common.showToast(context, "登入失敗");
-           progressL.setVisibility(View.GONE);
-           return;
-       }
-        firstEnter=false;
-        try {
-            if(position==0)
-            {
-                result.startResolutionForResult(context, 0);
-            }
-            else
-            {
-                if(txt)
-                {
-                    result.startResolutionForResult(context, 1);
-                }else{
-                    result.startResolutionForResult(context, 2);
-                }
-            }
-        } catch (IntentSender.SendIntentException e) {
-
-        }
-    }
-
 
     private class ListAdapter extends BaseAdapter {
         private Context context;
@@ -344,7 +398,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             TextView setTime = itemView.findViewById(R.id.setTime);
             setTime.setVisibility(View.GONE);
             notify.setVisibility(View.GONE);
-            if (position == 0) {
+            if (eleMainItemVO.getCode() == 0) {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -360,7 +414,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     }
                 });
 
-            } else if (position == 1) {
+            } else if (eleMainItemVO.getCode() == 1) {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -377,8 +431,23 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                         }
                     }
                 });
+            }else if(eleMainItemVO.getCode() == 2){
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        local = false;
+                        dropboxOpen=true;
+                        if (SettingUploadFile.this.position == 0) {
+                            txt = false;
+                            Auth.startOAuth2PKCE(context, getString(R.string.DropboxKey), DbxRequestConfigFactory.getRequestConfig(), DbxRequestConfigFactory.scope);
+                        } else {
+                            if (show) {
+                                fileChoice.setVisibility(View.VISIBLE);
+                                show = false;
+                            }
+                        }
+                    }});
             }
-
             return itemView;
         }
 
@@ -393,35 +462,183 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         }
     }
 
-    private void TxtToLocal() {
-        progressL.setVisibility(View.VISIBLE);
-        Runnable runnable=new Runnable() {
-            @Override
-            public void run() {
 
-                try {
-                    File dir = Environment.getExternalStoragePublicDirectory(
-                            Environment.DIRECTORY_DOWNLOADS);
-                    if (!dir.exists()) {
-                        dir.mkdirs();
-                    }
-                    File file = new File(dir, fileName+".txt");
-                    FileOutputStream fs = new FileOutputStream(file);
-                    OutPutTxt(fs);
-                } catch (Exception e) {
-                    Message message=handler.obtainMessage();
-                    message.what=3;
-                    message.sendToTarget();
-                }
-            }
-        };
-        new Thread(runnable).start();
+
+    //-- Google
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        saveFileToDrive();
     }
 
-    private void OutPutTxt(OutputStream outputStream) {
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
+        if (!result.hasResolution()) {
+            // show the localized error dialog.
+            GoogleApiAvailability.getInstance().getErrorDialog(context, result.getErrorCode(), 0).show();
+            return;
+        }
+        // Called typically when the app is not yet authorized, and authorization dialog is displayed to the user.
+       if(!firstEnter)
+       {
+           Common.showToast(context, "登入失敗");
+           progressL.setVisibility(View.GONE);
+           return;
+       }
+        firstEnter=false;
+        try {
+            result.startResolutionForResult(context, RequestCode.UpLoadGoogleOpen.getCode());
+        } catch (IntentSender.SendIntentException e) {
+            Log.e(TAG, "onConnectionFailed: ",e);
+        }
+    }
+
+
+    public void openCloud() {
+        ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingUploadFile.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
+        if(mNetworkInfo==null)
+        {
+            Common.showToast(SettingUploadFile.this.context,"網路沒有開啟，無法下載!");
+            return;
+        }
+        Message message=handler.obtainMessage();
+        message.what=0;
+        message.sendToTarget();
+        if (mGoogleApiClient == null) {
+            // Create the API client and bind it to an instance variable.
+            // We use this instance as the callback for connection and connection
+            // failures.
+            // Since no account name is passed, the user is prompted to choose.
+            mGoogleApiClient = new GoogleApiClient.Builder(context)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+        // Connect the client. Once connected, the camera is launched.
+        mGoogleApiClient.connect();
+    }
+
+
+    private void saveFileToDrive() {
+        // Start by creating a new contents, and setting a callback.
+
+        Drive.DriveApi.newDriveContents(mGoogleApiClient)
+                .setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
+
+                    @Override
+                    public void onResult(final DriveApi.DriveContentsResult result) {
+                        // If the operation was not successful, we cannot do anything
+                        // and must
+                        // fail.
+                        if (!result.getStatus().isSuccess()) {
+                            Common.showToast(context,"連線失敗!");
+                            return;
+                        }
+                        Runnable runnable=new Runnable() {
+                            @Override
+                            public void run() {
+                                String fileType=null;
+                                String fileName=getFileName();
+                                try {
+                                    // Otherwise, we can write our data to the new contents.
+                                    // Get an output stream for the contents.
+                                    OutputStream outputStream = result.getDriveContents().getOutputStream();
+                                    // Write the bitmap data from it.
+                                    byte[] bitmapStream;
+                                    if (txt) {
+                                        fileType = "File/txt";
+                                        bitmapStream= outPutTxt();
+                                    } else {
+                                        fileType = "File/xls";
+                                        bitmapStream=outputExcel();
+                                    }
+                                    outputStream.write(bitmapStream);
+                                } catch (Exception e1) {
+                                       Log.e(TAG,e1.toString());
+                                }
+                                // Create the initial metadata - MIME type and title.
+                                // Note that the user will be able to change the title later.
+                                MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                                        .setMimeType(fileType).setTitle(fileName).build();
+                                // Create an intent for the file chooser, and start it.
+                                IntentSender intentSender = Drive.DriveApi
+                                        .newCreateFileActivityBuilder()
+                                        .setInitialMetadata(metadataChangeSet)
+                                        .setInitialDriveContents(result.getDriveContents())
+                                        .build(mGoogleApiClient);
+                                try {
+                                    context.startIntentSenderForResult(
+                                            intentSender, 3, null, 0, 0, 0);
+                                } catch (IntentSender.SendIntentException e) {
+
+                                }
+                            }
+                        };
+                        new Thread(runnable).start();
+                    }
+                });
+    }
+
+
+    //------File
+    private String getFileName(){
+        String fileName=fileNameTemp+Common.sFive.format(new Date());
+        if(txt){
+            fileName+=".txt";
+        }else{
+            fileName+=".xls";
+        }
+        return fileName;
+    }
+
+    private void FileTOLocal() {
+        progressL.setVisibility(View.VISIBLE);
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File file = new File(dir, getFileName());
+        LocalFileOut fileOut=new LocalFileOut(file);
+        new Thread(fileOut).start();
+    }
+
+    public class LocalFileOut implements Runnable{
+        private  File file;
+        public LocalFileOut(File file) {
+            this.file = file;
+        }
+        @Override
+        public void run() {
+            try(OutputStream outputStream = new FileOutputStream(file)){
+                byte[] data;
+                if(txt){
+                    data=outPutTxt();
+                }else{
+                    data=outputExcel();
+                }
+                outputStream.write(data);
+            }catch (Exception e){
+                Log.e(TAG, "run: ",e);
+                Message message=handler.obtainMessage(3);
+                message.sendToTarget();
+            }
+        }
+    }
+
+    private byte[] outPutTxt() throws IOException {
+        ByteArrayOutputStream result=new ByteArrayOutputStream();
         try {
             int count=0;
-            OutputStreamWriter ow = new OutputStreamWriter(outputStream);
+            OutputStreamWriter ow = new OutputStreamWriter(result);
             BufferedWriter bw = new BufferedWriter(ow);
             if (consume) {
                 bw.write("消費資料");
@@ -789,16 +1006,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     setMessage(count++);
                 }
             }
-
-
-
-
-
-
-
-
-
-
             bw.close();
             if(local)
             {
@@ -806,36 +1013,17 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 message.what=2;
                 message.sendToTarget();
             }
+            result.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG,e.toString());
+        }finally {
+            result.close();
         }
+        return result.toByteArray();
     }
 
-    private void FileTOLocal() {
-        progressL.setVisibility(View.VISIBLE);
-        Runnable runnable=new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                    if (!dir.exists()) {
-                        dir.mkdirs();
-                    }
-                    File file = new File(dir, fileName+".xls");
-                    OutputStream outputStream = new FileOutputStream(file);
-                    outputExcel(outputStream);
-                } catch (Exception e) {
-                   Message message=handler.obtainMessage();
-                   message.what=3;
-                   message.sendToTarget();
-                }
-            }
-        };
-        new Thread(runnable).start();
-    }
-
-
-    private void outputExcel(OutputStream outputStream) {
+    private byte[] outputExcel() throws IOException {
+        ByteArrayOutputStream result=new ByteArrayOutputStream();
         try {
             HSSFWorkbook workbook = new HSSFWorkbook();
             int count=0;
@@ -1489,19 +1677,21 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 boolean autoCategory=sharedPreferences.getBoolean("autoCategory",true);
                 rowContent.createCell(1).setCellValue(String.valueOf(autoCategory));
             }
-            workbook.write(outputStream);
+            workbook.write(result);
             workbook.close();
-            outputStream.close();
+            result.flush();
             if(local)
             {
                 Message message=handler.obtainMessage();
                 message.what=4;
                 message.sendToTarget();
             }
-
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG,e.toString());
+        }finally {
+            result.close();
         }
+        return result.toByteArray();
     }
 
 
@@ -1514,7 +1704,9 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             txt = false;
             if (local) {
                 FileTOLocal();
-            } else {
+            } else if(dropboxOpen){
+                Auth.startOAuth2PKCE(context, getString(R.string.DropboxKey), DbxRequestConfigFactory.getRequestConfig(), DbxRequestConfigFactory.scope);
+            }else{
                 openCloud();
             }
         }
@@ -1527,8 +1719,10 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
             fileChoice.setVisibility(View.GONE);
             show = true;
             if (local) {
-                TxtToLocal();
-            } else {
+                FileTOLocal();
+            } else if(dropboxOpen){
+                Auth.startOAuth2PKCE(context, getString(R.string.DropboxKey), DbxRequestConfigFactory.getRequestConfig(), DbxRequestConfigFactory.scope);
+            }else {
                openCloud();
             }
         }
@@ -1552,14 +1746,14 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 consume = false;
                 needGoal=false;
                 needProperty=false;
-                fileName="記帳小助手(備份資料)"+Common.sFive.format(new Date());
+                fileNameTemp="記帳小助手(備份資料)";
             } else if (position == 1) {
                 all = false;
                 income = true;
                 consume = true;
                 needGoal=true;
                 needProperty=true;
-                fileName="記帳小助手(全部)"+Common.sFive.format(new Date());
+                fileNameTemp="記帳小助手(全部)";
                 consumeVOList=consumeDB.getAll();
                 invoiceVOS=invoiceDB.getAll();
                 bankVOS=bankDB.getAll();
@@ -1576,7 +1770,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 consume = true;
                 needGoal=false;
                 needProperty=false;
-                fileName="記帳小助手(支出)"+Common.sFive.format(new Date());
+                fileNameTemp="記帳小助手(支出)";
 
 
                 consumeVOList=consumeDB.getAll();
@@ -1590,7 +1784,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 consume = false;
                 needGoal=false;
                 needProperty=false;
-                fileName="記帳小助手(收入)"+Common.sFive.format(new Date());
+                fileNameTemp="記帳小助手(收入)";
 
 
 
@@ -1604,7 +1798,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 consume = false;
                 needGoal=true;
                 needProperty=false;
-                fileName="記帳小助手(目標)"+Common.sFive.format(new Date());
+                fileNameTemp="記帳小助手(目標)";
                 goalVOS=goalDB.getAll();
                 totalDataCount=goalVOS.size();
 
@@ -1614,7 +1808,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 consume = false;
                 needGoal=false;
                 needProperty=true;
-                fileName="記帳小助手(資產)"+Common.sFive.format(new Date());
+                fileNameTemp="記帳小助手(資產)";
 
                 propertyVOS=propertyDB.getAll();
                 propertyFromVOS=propertyFromDB.getAll();
@@ -1629,106 +1823,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         }
     }
 
-    public void openCloud() {
-        ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingUploadFile.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-        if(mNetworkInfo==null)
-        {
-            Common.showToast(SettingUploadFile.this.context,"網路沒有開啟，無法下載!");
-            return;
-        }
-        Message message=handler.obtainMessage();
-        message.what=0;
-        message.sendToTarget();
-        if (mGoogleApiClient == null) {
-            // Create the API client and bind it to an instance variable.
-            // We use this instance as the callback for connection and connection
-            // failures.
-            // Since no account name is passed, the user is prompted to choose.
-            mGoogleApiClient = new GoogleApiClient.Builder(context)
-                    .addApi(Drive.API)
-                    .addScope(Drive.SCOPE_FILE)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
-        }
-        // Connect the client. Once connected, the camera is launched.
-        mGoogleApiClient.connect();
-    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if(mGoogleApiClient!=null)
-        {
-            mGoogleApiClient.disconnect();
-        }
-    }
-
-
-
-    private void saveFileToDrive() {
-        // Start by creating a new contents, and setting a callback.
-
-        Drive.DriveApi.newDriveContents(mGoogleApiClient)
-                .setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
-
-                    @Override
-                    public void onResult(final DriveApi.DriveContentsResult result) {
-                        // If the operation was not successful, we cannot do anything
-                        // and must
-                        // fail.
-                        if (!result.getStatus().isSuccess()) {
-                            Common.showToast(context,"連線失敗!");
-                            return;
-                        }
-                        Runnable runnable=new Runnable() {
-                            @Override
-                            public void run() {
-                                // Otherwise, we can write our data to the new contents.
-                                // Get an output stream for the contents.
-                                OutputStream outputStream = result.getDriveContents().getOutputStream();
-                                // Write the bitmap data from it.
-                                ByteArrayOutputStream bitmapStream = new ByteArrayOutputStream();
-                                String fileType;
-                                if (txt) {
-                                    fileName = fileName+".txt";
-                                    fileType = "File/txt";
-                                    OutPutTxt(bitmapStream);
-                                } else {
-                                    fileName = fileName+".xls";
-                                    fileType = "File/xls";
-                                    outputExcel(bitmapStream);
-                                }
-
-
-                                try {
-                                    outputStream.write(bitmapStream.toByteArray());
-                                } catch (IOException e1) {
-
-                                }
-                                // Create the initial metadata - MIME type and title.
-                                // Note that the user will be able to change the title later.
-                                MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
-                                        .setMimeType(fileType).setTitle(fileName).build();
-                                // Create an intent for the file chooser, and start it.
-                                IntentSender intentSender = Drive.DriveApi
-                                        .newCreateFileActivityBuilder()
-                                        .setInitialMetadata(metadataChangeSet)
-                                        .setInitialDriveContents(result.getDriveContents())
-                                        .build(mGoogleApiClient);
-                                try {
-                                    context.startIntentSenderForResult(
-                                            intentSender, 3, null, 0, 0, 0);
-                                } catch (IntentSender.SendIntentException e) {
-
-                                }
-                            }
-                        };
-                        new Thread(runnable).start();
-                    }
-                });
-    }
 
     private void setMessage(int count)
     {
