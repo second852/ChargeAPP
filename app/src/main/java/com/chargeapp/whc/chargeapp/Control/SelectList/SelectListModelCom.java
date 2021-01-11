@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.TypefaceProvider;
@@ -65,6 +67,8 @@ public class SelectListModelCom extends Fragment {
     public static int p;
     private TextView message;
     private Activity context;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ProgressDialog dialog;
 
 
     @Override
@@ -76,13 +80,17 @@ public class SelectListModelCom extends Fragment {
         }else{
             this.context=getActivity();
         }
+        dialog = new ProgressDialog(context);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setCancelable(false);
+        dialog.setMessage("更新數據中..");
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         TypefaceProvider.registerDefaultIconSets();
-        View view = inflater.inflate(R.layout.select_con_list, container, false);
+        View view = inflater.inflate(R.layout.select_con_swip_list, container, false);
         if(year==0)
         {
             Calendar calendar=Calendar.getInstance();
@@ -134,6 +142,7 @@ public class SelectListModelCom extends Fragment {
 
 
     public void setLayout() {
+        dialog.dismiss();
         objects = new ArrayList<>();
         Calendar start = new GregorianCalendar(year, month, 1, 0, 0, 0);
         Calendar end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
@@ -184,6 +193,17 @@ public class SelectListModelCom extends Fragment {
         DRcarrier = view.findViewById(R.id.DRcarrier);
         listView = view.findViewById(R.id.list);
         message = view.findViewById(R.id.message);
+        swipeRefreshLayout=view.findViewById(R.id.swipeRefresh);
+        swipeRefreshLayout.setEnabled(false);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
+                dialog.show();
+                new GetSQLDate(SelectListModelCom.this,context).execute("getThisMonth",year,month);
+            }
+        });
+        listView.setOnScrollListener(onListScroll);
     }
 
     private class ListAdapter extends BaseAdapter {
@@ -210,6 +230,7 @@ public class SelectListModelCom extends Fragment {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
                 itemView = layoutInflater.inflate(R.layout.select_con_detail_list_item, parent, false);
             }
+            itemView.setId(position);
             TextView title = itemView.findViewById(R.id.listTitle);
             TextView decribe = itemView.findViewById(R.id.listDetail);
             BootstrapButton update = itemView.findViewById(R.id.updateD);
@@ -446,4 +467,23 @@ public class SelectListModelCom extends Fragment {
         fragmentTransaction.commit();
     }
 
+    private AbsListView.OnScrollListener onListScroll = new AbsListView.OnScrollListener() {
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem,
+                             int visibleItemCount, int totalItemCount) {
+            if (firstVisibleItem == 0) {
+                swipeRefreshLayout.setEnabled(true);
+            }else{
+                swipeRefreshLayout.setEnabled(false);
+            }
+        }
+    };
 }
+
+

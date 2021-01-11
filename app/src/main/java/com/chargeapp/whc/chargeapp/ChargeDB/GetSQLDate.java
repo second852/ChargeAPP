@@ -17,6 +17,7 @@ import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleUpdateCarrier;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePagetList;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelCom;
+import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelIM;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetList;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDe;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDeList;
@@ -116,12 +117,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
     @Override
     protected String doInBackground(Object... params) {
         action = params[0].toString();
-        if(params.length>1){
-            Object timeOutTemp=params[1];
-            timeout=Integer.valueOf(timeOutTemp.toString());
-        }else{
-            timeout=10;
-        }
+        timeout=10;
         String jsonIn = null;
         try {
 
@@ -168,6 +164,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     }
                 }
             } else if (action.equals("download")) {
+                timeout=3;
                 PriceDB priceDB = new PriceDB(MainActivity.chargeAPPDB);
                 priceMonth = Common.getPriceMonth();
                 if (priceDB.getAll().size() <= 0) {
@@ -244,6 +241,12 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
             }else if(action.equals("checkId"))
             {
                 checkId();
+            }else if(action.equals("getThisMonth"))
+            {
+                timeout=3;
+                Integer year=Integer.valueOf(params[1].toString());
+                Integer month=Integer.valueOf(params[2].toString());
+                jsonIn=getThisMonth(year,month);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -251,6 +254,25 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
         }
         return jsonIn;
     }
+
+    private String getThisMonth(Integer year,Integer month){
+        String jsonIn=null;
+        for(CarrierVO carrierVO:carrierDB.getAll()){
+            String user=carrierVO.getCarNul();
+            String password=carrierVO.getPassword();
+            jsonIn = findMonthHead(year, month, user, password);
+            if (jsonIn.contains("code")) {
+                JsonObject js = gson.fromJson(jsonIn, JsonObject.class);
+                String code = js.get("code").getAsString().trim();
+                //success
+                if (code.equals("200")) {
+                    jsonIn = getjsonIn(jsonIn, password, user);
+                }
+            }
+        }
+        return jsonIn;
+    }
+
 
 
     private boolean checkWinInvoice(String jsonIn, PriceVO priceVO, String user, String password) {
@@ -1109,9 +1131,10 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 eleUpdateCarrier.check(s);
             } else if (object instanceof DownloadNewDataJob||object instanceof Welcome) {
                 new Common().AutoSetPrice();
-            }else if(object instanceof MainActivity)
+            }else if(object instanceof SelectListModelCom)
             {
-
+                SelectListModelCom ss= (SelectListModelCom) object;
+                ss.setLayout();
             }
         } catch (Exception e) {
             Log.d(TAG, "onPostExecute" + e.getMessage());

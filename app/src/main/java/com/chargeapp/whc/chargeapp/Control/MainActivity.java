@@ -80,6 +80,7 @@ import com.chargeapp.whc.chargeapp.ui.BarcodeGraphic;
 import com.chargeapp.whc.chargeapp.ui.MultiTrackerActivity;
 import com.github.mikephil.charting.utils.Utils;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean firstShowF;
     public static boolean firstShowInsertActivity;
     public static GridView numberKeyBoard;
-    public AdView adView;
+    private AdView mAdView;
 
 
     @Override
@@ -124,16 +125,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         firstShowF = true;
         firstShowInsertActivity = true;
-
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
         });
-        adView=findViewById(R.id.adView);
+        mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
-
+        mAdView.loadAd(adRequest);
     }
 
 

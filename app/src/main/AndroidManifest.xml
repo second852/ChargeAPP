@@ -19,8 +19,6 @@
     <supports-screens android:largeScreens="true" />
     <supports-screens android:xlargeScreens="true" />
 
-
-
     <application
 
         android:allowBackup="false"
@@ -31,6 +29,12 @@
         android:resizeableActivity="false"
         android:theme="@style/AppTheme"
         >
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-5169620543343332~2865524734"/>
+
+
         <activity
             android:name=".Control.Welcome"
             android:hardwareAccelerated="true"
@@ -100,9 +104,6 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent"
             />
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5169620543343332~2865524734"/>
         <activity
             android:name="com.dropbox.core.android.AuthActivity"
             android:configChanges="orientation|keyboard"
