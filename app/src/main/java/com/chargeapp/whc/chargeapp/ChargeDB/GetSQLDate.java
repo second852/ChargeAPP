@@ -1109,6 +1109,7 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 SelectListModelCom selectListModelCom = (SelectListModelCom) object;
                 if (s.equals("timeout") || s.equals("error")) {
                     selectListModelCom.cancelshow();
+                    Common.showToast(context, "財政部網路忙線~");
                 } else {
                     selectListModelCom.setLayout();
                 }
@@ -1131,10 +1132,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                 eleUpdateCarrier.check(s);
             } else if (object instanceof DownloadNewDataJob||object instanceof Welcome) {
                 new Common().AutoSetPrice();
-            }else if(object instanceof SelectListModelCom)
-            {
-                SelectListModelCom ss= (SelectListModelCom) object;
-                ss.setLayout();
             }
         } catch (Exception e) {
             Log.d(TAG, "onPostExecute" + e.getMessage());

@@ -50,11 +50,14 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 
+
+
 /**
  * Created by 1709008NB01 on 2017/12/22.
  */
 
 public class SelectListModelCom extends Fragment {
+    private final String TAG="SelectListModelCom";
     private ImageView DRadd, DRcut;
     private TextView DRcarrier;
     private ListView listView;
@@ -69,7 +72,7 @@ public class SelectListModelCom extends Fragment {
     private Activity context;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ProgressDialog dialog;
-
+    Integer firstVisibleItemCount;
 
     @Override
     public void onAttach(Context context) {
@@ -109,10 +112,7 @@ public class SelectListModelCom extends Fragment {
         return view;
     }
 
-    public void cancelshow() {
-        progressDialog.cancel();
-        Common.showToast(context, "財政部網路忙線~");
-    }
+
 
     private class cutOnClick implements View.OnClickListener {
         @Override
@@ -140,9 +140,14 @@ public class SelectListModelCom extends Fragment {
         }
     }
 
+    public void cancelshow() {
+        dialog.dismiss();
+        progressDialog.cancel();
+    }
 
     public void setLayout() {
-        dialog.dismiss();
+        firstVisibleItemCount=null;
+        cancelshow();//關閉下載顯示
         objects = new ArrayList<>();
         Calendar start = new GregorianCalendar(year, month, 1, 0, 0, 0);
         Calendar end = new GregorianCalendar(year, month, start.getActualMaximum(Calendar.DAY_OF_MONTH), 23, 59, 59);
@@ -184,7 +189,6 @@ public class SelectListModelCom extends Fragment {
             listView.setAdapter(new ListAdapter(context, objects));
         }
         listView.setSelection(p);
-        progressDialog.cancel();
     }
 
     private void findViewById(View view) {
@@ -467,6 +471,8 @@ public class SelectListModelCom extends Fragment {
         fragmentTransaction.commit();
     }
 
+
+
     private AbsListView.OnScrollListener onListScroll = new AbsListView.OnScrollListener() {
 
         @Override
@@ -475,9 +481,15 @@ public class SelectListModelCom extends Fragment {
         }
 
         @Override
-        public void onScroll(AbsListView view, int firstVisibleItem,
-                             int visibleItemCount, int totalItemCount) {
-            if (firstVisibleItem == 0) {
+        public void onScroll(AbsListView view, int firstVisibleItem,int visibleItemCount, int totalItemCount) {
+
+            if(firstVisibleItemCount==null){
+                firstVisibleItemCount=visibleItemCount;
+            }
+
+            if(firstVisibleItemCount==1&&visibleItemCount==1){
+                swipeRefreshLayout.setEnabled(true);
+            }else if(firstVisibleItemCount>1&&firstVisibleItem==0){
                 swipeRefreshLayout.setEnabled(true);
             }else{
                 swipeRefreshLayout.setEnabled(false);
