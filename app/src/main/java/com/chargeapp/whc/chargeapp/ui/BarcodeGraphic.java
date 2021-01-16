@@ -769,6 +769,7 @@ public class BarcodeGraphic extends TrackedGraphic<Barcode> {
                 }
             }
 
+            content.setSpan(new ForegroundColorSpan(Color.parseColor("#009100")), periodString.indexOf("年")-3, periodString.indexOf("月") + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 
             ScanFragment.answer.setText(content);
