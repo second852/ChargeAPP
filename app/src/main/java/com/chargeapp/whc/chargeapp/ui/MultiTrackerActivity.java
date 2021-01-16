@@ -116,14 +116,17 @@ public final class MultiTrackerActivity extends AppCompatActivity {
         ScanFragment.qrCode = new HashSet<>();
         TypefaceProvider.registerDefaultIconSets();
         setContentView(R.layout.scan_main);
+        //廣告
         AdView adView = findViewById(R.id.adView);
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
         });
+        adView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
+
         action = getIntent().getStringExtra("action");
         String fAction=null;
         switch (action) {

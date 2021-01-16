@@ -31,7 +31,7 @@ import java.util.List;
 public class PriceActivity extends Fragment implements ViewPager.OnPageChangeListener {
     private ViewPager priceViewPager;
     private FragmentPagerAdapter mAdapterViewPager;
-    private Button importMoney, showN, howtogetprice,goneD;
+    private Button showD, showN, howtogetprice,goneD;
     public Button goneMoney;
     private LinearLayout text;
     private static int nowPoint = 0;
@@ -59,7 +59,7 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
         priceViewPager.setAdapter(mAdapterViewPager);
         priceViewPager.addOnPageChangeListener(this);
         exportMoney = view.findViewById(R.id.exportD);
-        importMoney = view.findViewById(R.id.showD);
+        showD = view.findViewById(R.id.showD);
         goneMoney = view.findViewById(R.id.goneD);
         showN = view.findViewById(R.id.showN);
         text = view.findViewById(R.id.text);
@@ -100,16 +100,16 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
         if(page==0)
         {
             exportMoney.setOnClickListener(new ChangePage(page));
-            importMoney.setOnClickListener(new ChangePage(page + 1));
+            showD.setOnClickListener(new ChangePage(page + 1));
             showN.setOnClickListener(new ChangePage(page +2));
         }else if(page==1)
         {
             exportMoney.setOnClickListener(new ChangePage(page));
-            importMoney.setOnClickListener(new ChangePage(page + 1));
+            showD.setOnClickListener(new ChangePage(page + 1));
             showN.setOnClickListener(new ChangePage(page - 1));
         }else{
             exportMoney.setOnClickListener(new ChangePage(page));
-            importMoney.setOnClickListener(new ChangePage(page - 2));
+            showD.setOnClickListener(new ChangePage(page - 2));
             showN.setOnClickListener(new ChangePage(page - 1));
         }
     }
@@ -149,19 +149,19 @@ public class PriceActivity extends Fragment implements ViewPager.OnPageChangeLis
             setCurrentPage();
             goneMoney.setText("對獎號碼");
             exportMoney.setText("中獎發票");
-            importMoney.setText("對獎");
+            showD.setText("對獎");
             showN.setText("對獎號碼");
         } else if (position == 1) {
             setCurrentPage();
             goneMoney.setText("中獎發票");
             exportMoney.setText("對獎");
-            importMoney.setText("對獎號碼");
+            showD.setText("對獎號碼");
             showN.setText("中獎發票");
         } else {
             setCurrentPage();
             goneMoney.setText("對獎");
             exportMoney.setText("對獎號碼");
-            importMoney.setText("中獎發票");
+            showD.setText("中獎發票");
             showN.setText("對獎");
         }
     }
