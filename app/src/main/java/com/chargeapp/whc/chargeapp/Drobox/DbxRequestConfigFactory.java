@@ -11,7 +11,7 @@ public class DbxRequestConfigFactory {
 
     private static DbxRequestConfig sDbxRequestConfig;
 
-    public static List<String> scope= Arrays.asList("account_info.read", "files.content.write","files.content.read","contacts.write","file_requests.write","sharing.write","files.metadata.read");
+    public static List<String> scope= Arrays.asList("account_info.read", "files.content.write","files.content.read");
 
     public static DbxRequestConfig getRequestConfig() {
         if (sDbxRequestConfig == null) {
