@@ -6,6 +6,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -482,14 +483,12 @@ public class SelectListModelCom extends Fragment {
 
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem,int visibleItemCount, int totalItemCount) {
-
-            if(firstVisibleItemCount==null){
-                firstVisibleItemCount=visibleItemCount;
+            View c = listView.getChildAt(0);
+            if(c==null){
+                return;
             }
-
-            if(firstVisibleItemCount==1&&visibleItemCount==1){
-                swipeRefreshLayout.setEnabled(true);
-            }else if(firstVisibleItemCount>1&&firstVisibleItem==0){
+            int scrolly = -c.getTop() + listView.getFirstVisiblePosition() * c.getHeight();
+            if(scrolly<1&&firstVisibleItem==0){
                 swipeRefreshLayout.setEnabled(true);
             }else{
                 swipeRefreshLayout.setEnabled(false);
