@@ -31,6 +31,7 @@ import com.chargeapp.whc.chargeapp.Control.HomePage.HomePagetList;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyList;
 import com.chargeapp.whc.chargeapp.Control.Property.PropertyMoneyList;
+import com.chargeapp.whc.chargeapp.Control.Search.SearchMain;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelCom;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelIM;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetList;
@@ -344,6 +345,10 @@ public class DeleteDialogFragment extends DialogFragment implements  DialogInter
                     ScanListFragment scanListFragment= (ScanListFragment) fragment;
                     scanListFragment.setAdapt();
 
+                }else if(fragment instanceof SearchMain)
+                {
+                    SearchMain scanListFragment= (SearchMain) fragment;
+                    scanListFragment.setListView();
                 }
                 break;
             default:

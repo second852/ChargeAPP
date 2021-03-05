@@ -79,6 +79,10 @@ public class ChargeAPPDB extends SQLiteOpenHelper {
             "CREATE TABLE PropertyFrom ( id TEXT PRIMARY KEY ," +
                     "type integer,sourceMoney TEXT,sourceCurrency TEXT,sourceMainType text,sourceSecondType text,sourceDate dateTime,importFee TEXT,importFeeId integer,fixImport TEXT,fixDateCode TEXT,fixDateDetail TEXT,propertyId Integer,fixFromId INTEGER) ;";
 
+    public static final String TABLE_PriceCheck =
+            "CREATE TABLE PriceCheck ( inVoYm TEXT ," +
+                    "CarNul TEXT,checkLimit DATETIME,isCheck integer,needNotify integer , PRIMARY KEY (inVoYm, CarNul) ) ;";
+
     public ChargeAPPDB(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }

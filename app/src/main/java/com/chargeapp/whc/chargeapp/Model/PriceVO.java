@@ -1,5 +1,6 @@
 package com.chargeapp.whc.chargeapp.Model;
 
+import com.chargeapp.whc.chargeapp.TypeCode.PriceCheck;
 import com.chargeapp.whc.chargeapp.TypeCode.PriceNotify;
 
 /**
@@ -27,24 +28,7 @@ public class PriceVO {
     private String sixthPrizeNo4;
     private String sixthPrizeNo5;
     private String sixthPrizeNo6;
-    private Boolean isCheck;
-    private PriceNotify needNotify;
 
-    public PriceNotify getNeedNotify() {
-        return needNotify;
-    }
-
-    public void setNeedNotify(PriceNotify needNotify) {
-        this.needNotify = needNotify;
-    }
-
-    public Boolean getCheck() {
-        return isCheck;
-    }
-
-    public void setCheck(Boolean check) {
-        isCheck = check;
-    }
 
     public String getInVoYm() {
         return inVoYm;

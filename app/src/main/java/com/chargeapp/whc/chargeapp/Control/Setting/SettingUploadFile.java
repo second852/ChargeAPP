@@ -48,7 +48,7 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
-import com.chargeapp.whc.chargeapp.Control.RequestCode;
+import com.chargeapp.whc.chargeapp.TypeCode.RequestCode;
 import com.chargeapp.whc.chargeapp.Drobox.DbxRequestConfigFactory;
 import com.chargeapp.whc.chargeapp.Drobox.DropboxClientFactory;
 import com.chargeapp.whc.chargeapp.Drobox.FileActivity;
@@ -67,10 +67,8 @@ import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-import com.dropbox.core.DbxException;
 import com.dropbox.core.android.Auth;
 import com.dropbox.core.v2.files.FileMetadata;
-import com.dropbox.core.v2.files.WriteMode;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -85,14 +83,11 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.util.IOUtils;
 import org.jsoup.internal.StringUtil;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -100,7 +95,6 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -591,7 +585,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
 
     //------File
     private String getFileName(){
-        String fileName=fileNameTemp+Common.sFive.format(new Date());
+        String fileName=fileNameTemp+Common.sSeven.format(new Date());
         if(txt){
             fileName+=".txt";
         }else{

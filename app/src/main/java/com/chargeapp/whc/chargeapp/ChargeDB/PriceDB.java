@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.chargeapp.whc.chargeapp.Model.PriceVO;
+import com.chargeapp.whc.chargeapp.TypeCode.PriceCheck;
 import com.chargeapp.whc.chargeapp.TypeCode.PriceNotify;
 
 import java.util.ArrayList;
@@ -21,8 +22,7 @@ public class PriceDB {
     }
 
 
-    private PriceVO configPriceVO(Cursor cursor)
-    {
+    private PriceVO configPriceVO(Cursor cursor) {
         PriceVO priceVO = new PriceVO();
         priceVO.setInVoYm(cursor.getString(0));
         priceVO.setSuperPrizeNo(cursor.getString(1));
@@ -44,15 +44,11 @@ public class PriceDB {
         priceVO.setSixthPrizeNo4(cursor.getString(17));
         priceVO.setSixthPrizeNo5(cursor.getString(18));
         priceVO.setSixthPrizeNo6(cursor.getString(19));
-        priceVO.setCheck(Boolean.valueOf(cursor.getString(20)));
-        priceVO.setNeedNotify(PriceNotify.codeToEnum(cursor.getInt(21)));
         return priceVO;
     }
 
 
-    private ContentValues configContentValues(PriceVO priceVO)
-    {
-
+    private ContentValues configContentValues(PriceVO priceVO) {
         ContentValues values = new ContentValues();
         values.put("invoYm", priceVO.getInVoYm());
         values.put("superPrizeNo", priceVO.getSuperPrizeNo());
@@ -74,13 +70,8 @@ public class PriceDB {
         values.put("sixthPrizeNo4", priceVO.getSixthPrizeNo4());
         values.put("sixthPrizeNo5", priceVO.getSixthPrizeNo5());
         values.put("sixthPrizeNo6", priceVO.getSixthPrizeNo6());
-        values.put("isCheck", priceVO.getCheck()==null?null:priceVO.getCheck().toString());
-        values.put("priceNotify", priceVO.getNeedNotify()==null?null:priceVO.getNeedNotify().getCode());
         return values;
     }
-
-
-
 
 
     public List<PriceVO> getAll() {
@@ -99,7 +90,7 @@ public class PriceDB {
 
 
     public List<PriceVO> getNotCheckAll() {
-        String sql = "SELECT * FROM PRICE where isCheck is null order by invoYm;";
+        String sql = "SELECT * FROM PRICE where isCheck is null or isCheck = '0' order by invoYm;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
         List<PriceVO> priceVOS = new ArrayList<>();
@@ -114,10 +105,10 @@ public class PriceDB {
 
 
     public PriceVO getPeriodAll(String period) {
-        String sql = "SELECT * FROM PRICE where invoYm ='"+period+"'order by invoYm;";
+        String sql = "SELECT * FROM PRICE where invoYm ='" + period + "'order by invoYm;";
         String[] args = {};
         Cursor cursor = db.getReadableDatabase().rawQuery(sql, args);
-        PriceVO priceVO=null;
+        PriceVO priceVO = null;
         if (cursor.moveToNext()) {
             priceVO = configPriceVO(cursor);
         }

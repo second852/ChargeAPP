@@ -137,6 +137,7 @@ public class Common {
     public static SimpleDateFormat sFour = new SimpleDateFormat("yyyy 年");
     public static SimpleDateFormat sFive = new SimpleDateFormat("yyyyMMdd-HHmm");
     public static SimpleDateFormat sSix = new SimpleDateFormat("yyyyMMdd");
+    public static SimpleDateFormat sSeven = new SimpleDateFormat("yyyy-MM-dd_HH-mm");
 
     public static SimpleDateFormat sDay = new SimpleDateFormat("MM/dd");
     public static SimpleDateFormat sHour = new SimpleDateFormat("hh");
@@ -612,6 +613,7 @@ public class Common {
         tableExist("Currency", ChargeAPPDB.TABLE_Currency);
         tableExist("Property", ChargeAPPDB.TABLE_Property);
         tableExist("PropertyFrom", ChargeAPPDB.TABLE_PropertyFrom);
+        tableExist("PriceCheck", ChargeAPPDB.TABLE_PriceCheck);
         colExist("Consumer","rdNumber","text");
         colExist("Consumer","currency","text");
         colExist("Consumer","realMoney","text");
@@ -1899,6 +1901,8 @@ public class Common {
 
          return new Date(time.getTimeInMillis());
      }
+
+
 
 
 }

@@ -1,4 +1,4 @@
-package com.chargeapp.whc.chargeapp.Control;
+package com.chargeapp.whc.chargeapp.TypeCode;
 
 public enum ResultCode {
 

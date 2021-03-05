@@ -1,4 +1,4 @@
-package com.chargeapp.whc.chargeapp.Control;
+package com.chargeapp.whc.chargeapp.TypeCode;
 
 public enum RequestCode {
     UpLoadGoogleOpen(0,"上傳頁面打開雲端"),
