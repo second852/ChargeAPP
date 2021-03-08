@@ -1,7 +1,7 @@
 package com.chargeapp.whc.chargeapp.TypeCode;
 
 public enum RequestCode {
-    UpLoadGoogleOpen(0,"上傳頁面打開雲端"),
+    UpLoadLocalOpen(0,"上傳頁面打開Local"),
     UpLoadGoogleUpload(3,"上傳頁面上傳雲端"),
     DownLoadGoogleOpen(4,"下傳頁面打開雲端"),
     DownLoadGoogleDownload(5,"下傳頁面下載雲端"),

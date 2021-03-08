@@ -46,7 +46,7 @@ public class DropboxClientFactory {
         }
     }
 
-    private static void initAndLoadData(String accessToken) {
+    private static void initAndLoadData(String accessToken) throws DbxException {
         DropboxClientFactory.init(accessToken);
         PicassoClient.init(context, DropboxClientFactory.getClient());
     }
@@ -58,37 +58,29 @@ public class DropboxClientFactory {
 
 
 
-    public static void init(String accessToken)  {
+    public static void init(String accessToken) throws DbxException {
         if (sDbxClient == null) {
             sDbxClient = new DbxClientV2(DbxRequestConfigFactory.getRequestConfig(), accessToken);
-
             ListFolderBuilder listFolderBuilder = sDbxClient.files().listFolderBuilder("");
-            try {
-                ListFolderResult result = listFolderBuilder.withRecursive(true).start();
-                while (true) {
-
-                    if (result != null) {
-                        for ( Metadata entry : result.getEntries()) {
-                            if (entry instanceof FileMetadata){
-                                Log.d("XX","Added file: " + entry.getPathLower());
-                            }
-                        }
-
-                        if (!result.getHasMore()) {
-
-                            return ;
-                        }
-
-                        try {
-                            result = sDbxClient.files().listFolderContinue(result.getCursor());
-                        } catch (DbxException e) {
-
+            ListFolderResult result = listFolderBuilder.withRecursive(true).start();
+            while (true) {
+                if (result != null) {
+                    for (Metadata entry : result.getEntries()) {
+                        if (entry instanceof FileMetadata) {
+                            Log.d("XX", "Added file: " + entry.getPathLower());
                         }
                     }
+                    if (!result.getHasMore()) {
+                        break;
+                    }
+                    try {
+                        result = sDbxClient.files().listFolderContinue(result.getCursor());
+                    } catch (DbxException e) {
+                        e.fillInStackTrace();
+                    }
                 }
-            }catch (Exception e) {
-
             }
+
         }
     }
 

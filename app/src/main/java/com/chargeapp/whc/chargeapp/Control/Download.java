@@ -6,12 +6,10 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -24,7 +22,6 @@ import com.chargeapp.whc.chargeapp.Model.BankTypeVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
-
 
 import java.util.List;
 
@@ -86,10 +83,11 @@ public class Download extends Fragment {
             getSQLDate.setPercentage(percentage);
             getSQLDate.setProgressT(progressT);
             getSQLDate.execute("download","3");
+            new GetSQLDate(this,activity).execute("getWinInvoice");
         } else {
-            tonNewActivity();
             Common.showToast(activity, "網路沒有開啟，無法下載!");
         }
+        tonNewActivity();
     }
 
     public void tonNewActivity() {

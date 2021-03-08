@@ -4,16 +4,15 @@ package com.chargeapp.whc.chargeapp.Control.Setting;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +24,6 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -43,8 +41,6 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
-import com.chargeapp.whc.chargeapp.TypeCode.RequestCode;
-import com.chargeapp.whc.chargeapp.TypeCode.ResultCode;
 import com.chargeapp.whc.chargeapp.Drobox.DbxRequestConfigFactory;
 import com.chargeapp.whc.chargeapp.Drobox.DropboxClientFactory;
 import com.chargeapp.whc.chargeapp.Drobox.FileActivity;
@@ -64,26 +60,17 @@ import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
 import com.chargeapp.whc.chargeapp.TypeCode.FixDateCode;
 import com.chargeapp.whc.chargeapp.TypeCode.PropertyType;
+import com.chargeapp.whc.chargeapp.TypeCode.RequestCode;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.android.Auth;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi;
-import com.google.android.gms.drive.DriveContents;
-import com.google.android.gms.drive.DriveFile;
-import com.google.android.gms.drive.DriveId;
-import com.google.android.gms.drive.OpenFileActivityBuilder;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -102,8 +89,7 @@ import java.util.concurrent.Future;
  * Created by 1709008NB01 on 2017/12/7.
  */
 
-public class SettingDownloadFile extends Fragment implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+public class SettingDownloadFile extends Fragment {
 
 
     private String TAG="SettingDownloadFile";
@@ -118,18 +104,14 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
     private CarrierDB carrierDB;
     private PriceDB priceDB;
     private ElePeriodDB elePeriodDB;
-    public  GoogleApiClient mGoogleApiClient;
-    public  DriveId mSelectedFileDriveId;
     private RelativeLayout progressL;
     private Activity context;
-    private boolean firstEnter;
     private PropertyFromDB propertyFromDB;
     private PropertyDB propertyDB;
     private TextView percent;
     private BigDecimal hundred=new BigDecimal(100);
     private BigDecimal t,c;
     public static boolean dropboxOpen;
-    public static boolean dropboxEnd;
 
     //------生命週期
 
@@ -187,31 +169,22 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         super.onActivityResult(requestCode, resultCode, data);
         RequestCode resultCodeEnum= RequestCode.getEnum(requestCode);
         switch (resultCodeEnum) {
-            case DownLoadGoogleOpen:
-                openCloud();
-                break;
-            case DownLoadGoogleDownload:
-                if (resultCode == ResultCode.GoogleDownload.getCode()) {
-                    mSelectedFileDriveId = data.getParcelableExtra(OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-                    open();
-                    progressL.setVisibility(View.VISIBLE);
-                    Common.showToast(context, "下載成功");
-                    percent.setText("0%");
-                } else {
-                    if (mGoogleApiClient != null) {
-                        mGoogleApiClient.disconnect();
-                        mGoogleApiClient = null;
-                    }
-                    Common.showToast(context, "下載失敗");
-                }
-                break;
             case Dropbox:
                 progressL.setVisibility(View.GONE);
                 if(FileActivity.result!=null){
-                    FileInput fileInput=new FileInput(FileActivity.result);
+                    FileInput fileInput=new FileInput(new ByteArrayInputStream(FileActivity.result));
                     new Thread(fileInput).start();
                 }else{
                   Common.showToast(context,"無匯入檔案!");
+                }
+                break;
+            case UpLoadLocalOpen:
+                Uri uri =data.getData();
+                try {
+                    FileInput fileInput=new FileInput(context.getContentResolver().openInputStream(uri));
+                    new Thread(fileInput).start();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
                 }
                 break;
         }
@@ -262,32 +235,14 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                        if (!dir.exists()) {
-                            dir.mkdirs();
-                        }
-                        File file = new File(dir, "記帳小助手.xls");
-                        FileInput fileInput=new FileInput(file);
-                        new Thread(fileInput).start();
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+                        intent.setType("application/vnd.ms-excel");
+                        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, MediaStore.VOLUME_EXTERNAL);
+                        startActivityForResult(intent, RequestCode.UpLoadLocalOpen.getCode());
                     }
                 });
-            } else if (eleMainItemVO.getCode() == 1) {
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        percent.setText("0%");
-                        ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingDownloadFile.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-                        if(mNetworkInfo!=null)
-                        {
-                            firstEnter=true;
-                            openCloud();
-                        }else{
-                            Common.showToast(SettingDownloadFile.this.context,"網路沒有開啟，無法下載!");
-                        }
-                    }
-                });
-            }else if (eleMainItemVO.getCode() == 2) {
+            } else if (eleMainItemVO.getCode() == 2) {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -347,113 +302,12 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
         }
     };
 
-    //----google
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-        if (mSelectedFileDriveId != null) {
-            open();
-            return;
-        }
-        IntentSender intentSender = Drive.DriveApi
-                .newOpenFileActivityBuilder()
-                .setMimeType(new String[]{"file/xls"})
-                .build(mGoogleApiClient);
-        try {
-           context.startIntentSenderForResult(intentSender, 5, null, 0, 0, 0);
-        } catch (IntentSender.SendIntentException e) {
-        }
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult result) {
-        // Called whenever the API client fails to connect.
-        if (!result.hasResolution()) {
-            // show the localized error dialog.
-            GoogleApiAvailability.getInstance().getErrorDialog(context, result.getErrorCode(), 0).show();
-            return;
-        }
-        // Called typically when the app is not yet authorized, and authorization dialog is displayed to the user.
-        if(!firstEnter)
-        {
-            Common.showToast(context,"登入失敗");
-            progressL.setVisibility(View.GONE);
-            return;
-        }
-        firstEnter=false;
-        try {
-            result.startResolutionForResult(context, 4);
-        } catch (IntentSender.SendIntentException e) {
-        }
-    }
-
-    public void openCloud() {
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(context)
-                    .addApi(Drive.API)
-                    .addScope(Drive.SCOPE_FILE)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
-        }
-        mGoogleApiClient.connect();
-    }
-
-    private void open() {
-        DriveFile.DownloadProgressListener listener = new DriveFile.DownloadProgressListener() {
-            @Override
-            public void onProgress(long bytesDownloaded, long bytesExpected) {
-                // Update progress dialog with the latest progress.
-                int progress = (int) (bytesDownloaded * 100 / bytesExpected);
-
-            }
-        };
-        Log.d("XXXX","open");
-        DriveFile driveFile = mSelectedFileDriveId.asDriveFile();
-        driveFile.open(mGoogleApiClient, DriveFile.MODE_READ_ONLY, listener)
-                .setResultCallback(driveContentsCallback);
-        mSelectedFileDriveId = null;
-    }
-
-
-    private final ResultCallback<DriveApi.DriveContentsResult> driveContentsCallback =
-            new ResultCallback<DriveApi.DriveContentsResult>() {
-                @Override
-                public void onResult(@NonNull DriveApi.DriveContentsResult result) {
-                    if (!result.getStatus().isSuccess()) {
-                        Common.showToast(context, "連線失敗!");
-                        return;
-                    }
-                    // Read from the input stream an print to LOGCAT
-                    final DriveContents driveContents = result.getDriveContents();
-                    Runnable runnable=new Runnable() {
-                        @Override
-                        public void run() {
-
-                            inputExcel(driveContents.getInputStream());
-                            // Close file contents
-                            driveContents.discard(mGoogleApiClient);
-                            mGoogleApiClient.disconnect();
-                            mGoogleApiClient = null;
-                        }
-                    };
-                    Thread thread=new Thread(runnable);
-                    thread.start();
-
-                }
-    };
 
     //-----file
     public class FileInput implements Runnable{
-        private File file;
-        public FileInput(File file) {
-            this.file = file;
+        private InputStream inp;
+        public FileInput(InputStream inp) {
+            this.inp = inp;
         }
 
         @Override
@@ -461,7 +315,6 @@ public class SettingDownloadFile extends Fragment implements GoogleApiClient.Con
             try {
                 Message message=handler.obtainMessage(5);
                 message.sendToTarget();
-                InputStream inp = new FileInputStream(file);
                 inputExcel(inp);
             } catch (Exception e) {
                 Message message=handler.obtainMessage();

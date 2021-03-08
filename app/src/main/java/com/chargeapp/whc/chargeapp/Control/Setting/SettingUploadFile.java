@@ -2,17 +2,18 @@ package com.chargeapp.whc.chargeapp.Control.Setting;
 
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -48,7 +48,6 @@ import com.chargeapp.whc.chargeapp.ChargeDB.TypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.TypeDetailDB;
 import com.chargeapp.whc.chargeapp.Control.Common;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
-import com.chargeapp.whc.chargeapp.TypeCode.RequestCode;
 import com.chargeapp.whc.chargeapp.Drobox.DbxRequestConfigFactory;
 import com.chargeapp.whc.chargeapp.Drobox.DropboxClientFactory;
 import com.chargeapp.whc.chargeapp.Drobox.FileActivity;
@@ -67,15 +66,9 @@ import com.chargeapp.whc.chargeapp.Model.PropertyVO;
 import com.chargeapp.whc.chargeapp.Model.TypeDetailVO;
 import com.chargeapp.whc.chargeapp.Model.TypeVO;
 import com.chargeapp.whc.chargeapp.R;
+import com.chargeapp.whc.chargeapp.TypeCode.RequestCode;
 import com.dropbox.core.android.Auth;
 import com.dropbox.core.v2.files.FileMetadata;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi;
-import com.google.android.gms.drive.MetadataChangeSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -90,7 +83,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -110,8 +102,7 @@ import java.util.concurrent.Future;
  * Created by 1709008NB01 on 2017/12/7.
  */
 
-public class SettingUploadFile extends Fragment implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+public class SettingUploadFile extends Fragment {
 
 
     private static final String TAG =SettingUploadFile.class.getName();
@@ -130,7 +121,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private PriceDB priceDB;
     public static int position;
     private boolean local, consume, income, all, show = true, txt,needGoal,needProperty;
-    private GoogleApiClient mGoogleApiClient;
     private RelativeLayout progressL;
     private ElePeriodDB elePeriodDB;
     private PropertyFromDB propertyFromDB;
@@ -139,7 +129,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private Type cdType;
     private Gson gson;
     private StringBuffer sb;
-    private boolean firstEnter;
     private String fileNameTemp;
     private List<ConsumeVO> consumeVOList;
     private List<InvoiceVO> invoiceVOS;
@@ -151,6 +140,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     private int totalDataCount;
     private BigDecimal hundred=new BigDecimal(100),c,t;
     public static boolean dropboxOpen;
+    private Uri uri;
 
     //----訊息處理
 
@@ -243,14 +233,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
         return view;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if(mGoogleApiClient!=null)
-        {
-            mGoogleApiClient.disconnect();
-        }
-    }
 
     @Override
     public void onResume() {
@@ -269,9 +251,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         RequestCode resultCodeEnum= RequestCode.getEnum(requestCode);
         switch (resultCodeEnum) {
-            case UpLoadGoogleOpen:
-                openCloud();
-                break;
             case UpLoadGoogleUpload:
                 progressL.setVisibility(View.GONE);
                 if (resultCode == -1) {
@@ -408,24 +387,7 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                     }
                 });
 
-            } else if (eleMainItemVO.getCode() == 1) {
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        local = false;
-                        firstEnter=true;
-                        if (SettingUploadFile.this.position == 0) {
-                            txt = false;
-                            openCloud();
-                        } else {
-                            if (show) {
-                                fileChoice.setVisibility(View.VISIBLE);
-                                show = false;
-                            }
-                        }
-                    }
-                });
-            }else if(eleMainItemVO.getCode() == 2){
+            } else if(eleMainItemVO.getCode() == 2){
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -458,132 +420,9 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
 
 
 
-    //-- Google
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        saveFileToDrive();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult result) {
-        if (!result.hasResolution()) {
-            // show the localized error dialog.
-            GoogleApiAvailability.getInstance().getErrorDialog(context, result.getErrorCode(), 0).show();
-            return;
-        }
-        // Called typically when the app is not yet authorized, and authorization dialog is displayed to the user.
-       if(!firstEnter)
-       {
-           Common.showToast(context, "登入失敗");
-           progressL.setVisibility(View.GONE);
-           return;
-       }
-        firstEnter=false;
-        try {
-            result.startResolutionForResult(context, RequestCode.UpLoadGoogleOpen.getCode());
-        } catch (IntentSender.SendIntentException e) {
-            Log.e(TAG, "onConnectionFailed: ",e);
-        }
-    }
-
-
-    public void openCloud() {
-        ConnectivityManager mConnectivityManager = (ConnectivityManager) SettingUploadFile.this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();
-        if(mNetworkInfo==null)
-        {
-            Common.showToast(SettingUploadFile.this.context,"網路沒有開啟，無法下載!");
-            return;
-        }
-        Message message=handler.obtainMessage();
-        message.what=0;
-        message.sendToTarget();
-        if (mGoogleApiClient == null) {
-            // Create the API client and bind it to an instance variable.
-            // We use this instance as the callback for connection and connection
-            // failures.
-            // Since no account name is passed, the user is prompted to choose.
-            mGoogleApiClient = new GoogleApiClient.Builder(context)
-                    .addApi(Drive.API)
-                    .addScope(Drive.SCOPE_FILE)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
-        }
-        // Connect the client. Once connected, the camera is launched.
-        mGoogleApiClient.connect();
-    }
-
-
-    private void saveFileToDrive() {
-        // Start by creating a new contents, and setting a callback.
-
-        Drive.DriveApi.newDriveContents(mGoogleApiClient)
-                .setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
-
-                    @Override
-                    public void onResult(final DriveApi.DriveContentsResult result) {
-                        // If the operation was not successful, we cannot do anything
-                        // and must
-                        // fail.
-                        if (!result.getStatus().isSuccess()) {
-                            Common.showToast(context,"連線失敗!");
-                            return;
-                        }
-                        Runnable runnable=new Runnable() {
-                            @Override
-                            public void run() {
-                                String fileType=null;
-                                String fileName=getFileName();
-                                try {
-                                    // Otherwise, we can write our data to the new contents.
-                                    // Get an output stream for the contents.
-                                    OutputStream outputStream = result.getDriveContents().getOutputStream();
-                                    // Write the bitmap data from it.
-                                    byte[] bitmapStream;
-                                    if (txt) {
-                                        fileType = "File/txt";
-                                        bitmapStream= outPutTxt();
-                                    } else {
-                                        fileType = "File/xls";
-                                        bitmapStream=outputExcel();
-                                    }
-                                    outputStream.write(bitmapStream);
-                                } catch (Exception e1) {
-                                       Log.e(TAG,e1.toString());
-                                }
-                                // Create the initial metadata - MIME type and title.
-                                // Note that the user will be able to change the title later.
-                                MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
-                                        .setMimeType(fileType).setTitle(fileName).build();
-                                // Create an intent for the file chooser, and start it.
-                                IntentSender intentSender = Drive.DriveApi
-                                        .newCreateFileActivityBuilder()
-                                        .setInitialMetadata(metadataChangeSet)
-                                        .setInitialDriveContents(result.getDriveContents())
-                                        .build(mGoogleApiClient);
-                                try {
-                                    context.startIntentSenderForResult(
-                                            intentSender, 3, null, 0, 0, 0);
-                                } catch (IntentSender.SendIntentException e) {
-
-                                }
-                            }
-                        };
-                        new Thread(runnable).start();
-                    }
-                });
-    }
-
 
     //------File
+
     private String getFileName(){
         String fileName=fileNameTemp+Common.sSeven.format(new Date());
         if(txt){
@@ -596,23 +435,19 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
 
     private void FileTOLocal() {
         progressL.setVisibility(View.VISIBLE);
-        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        File file = new File(dir, getFileName());
-        LocalFileOut fileOut=new LocalFileOut(file);
+        LocalFileOut fileOut=new LocalFileOut();
         new Thread(fileOut).start();
     }
 
     public class LocalFileOut implements Runnable{
-        private  File file;
-        public LocalFileOut(File file) {
-            this.file = file;
-        }
         @Override
         public void run() {
-            try(OutputStream outputStream = new FileOutputStream(file)){
+            uri=Common.insertFileIntoMediaStore(context,new File(SettingUploadFile.this.getFileName()));
+            ContentResolver contentResolver = context.getContentResolver();
+            FileOutputStream outputStream=null;
+            try{
+                ParcelFileDescriptor parcelFileDescriptor= contentResolver.openFileDescriptor(uri, "w");
+                outputStream = new FileOutputStream(parcelFileDescriptor.getFileDescriptor());
                 byte[] data;
                 if(txt){
                     data=outPutTxt();
@@ -624,6 +459,14 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 Log.e(TAG, "run: ",e);
                 Message message=handler.obtainMessage(3);
                 message.sendToTarget();
+            }finally {
+                if(outputStream!=null){
+                    try {
+                        outputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
@@ -1700,8 +1543,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 FileTOLocal();
             } else if(dropboxOpen){
                 Auth.startOAuth2PKCE(context, getString(R.string.DropboxKey), DbxRequestConfigFactory.getRequestConfig(), DbxRequestConfigFactory.scope);
-            }else{
-                openCloud();
             }
         }
     }
@@ -1716,8 +1557,6 @@ public class SettingUploadFile extends Fragment implements GoogleApiClient.Conne
                 FileTOLocal();
             } else if(dropboxOpen){
                 Auth.startOAuth2PKCE(context, getString(R.string.DropboxKey), DbxRequestConfigFactory.getRequestConfig(), DbxRequestConfigFactory.scope);
-            }else {
-               openCloud();
             }
         }
     }

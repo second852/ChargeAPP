@@ -17,7 +17,6 @@ import com.chargeapp.whc.chargeapp.Control.EleInvoice.EleUpdateCarrier;
 import com.chargeapp.whc.chargeapp.Control.HomePage.HomePagetList;
 import com.chargeapp.whc.chargeapp.Control.MainActivity;
 import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelCom;
-import com.chargeapp.whc.chargeapp.Control.SelectList.SelectListModelIM;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectDetList;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDe;
 import com.chargeapp.whc.chargeapp.Control.SelectPicture.SelectShowCircleDeList;
@@ -180,7 +179,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                     searchNewPriceNul();
                 }
                 jsonIn = updateInvoice();
-                new GetSQLDate(object,context).execute("getWinInvoice");
                 return jsonIn;
             } else if (action.equals("searchHeartyTeam")) {
                 String keyworld = params[1].toString();

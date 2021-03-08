@@ -50,7 +50,7 @@ public class FileActivity extends AppCompatActivity {
     private FilesAdapter mFilesAdapter;
     private FileMetadata mSelectedFile;
     private static final int PICKFILE_REQUEST_CODE = 15;
-    public static File result;
+    public static byte[] result;
     public static List<String> filePath=new ArrayList<>();
 
 
@@ -278,7 +278,7 @@ public class FileActivity extends AppCompatActivity {
 
         new DownloadFileTask(FileActivity.this, DropboxClientFactory.getClient(), new DownloadFileTask.Callback() {
             @Override
-            public void onDownloadComplete(File result) {
+            public void onDownloadComplete(byte[] result) {
                 dialog.dismiss();
                 if (result != null) {
                     viewFileInExternalApp(result);
@@ -298,7 +298,7 @@ public class FileActivity extends AppCompatActivity {
         }).execute(file);
     }
 
-    private void viewFileInExternalApp(File result) {
+    private void viewFileInExternalApp(byte[] result) {
         FileActivity.result=result;
         SettingDownloadFile.dropboxOpen=false;
         FileActivity.this.finish();
