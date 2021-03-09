@@ -434,7 +434,7 @@ public class Welcome extends AppCompatActivity {
 
     public void askPermissions() {
         //因為是群組授權，所以請求ACCESS_COARSE_LOCATION就等同於請求ACCESS_FINE_LOCATION，因為同屬於LOCATION群組
-        String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
         Set<String> permissionsRequest = new HashSet<>();
         for (String permission : permissions) {
             int result = ContextCompat.checkSelfPermission(Welcome.this, permission);

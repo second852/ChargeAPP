@@ -1,11 +1,13 @@
 package com.chargeapp.whc.chargeapp.Control.Setting;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -30,9 +32,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.chargeapp.whc.chargeapp.Adapter.PermissionFragment;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.BankTypeDB;
 import com.chargeapp.whc.chargeapp.ChargeDB.CarrierDB;
@@ -228,7 +233,7 @@ public class SettingUploadFile extends Fragment {
         txtFile.setOnClickListener(new txtOnClick());
         cancelF.setOnClickListener(new cancelOnClick());
         listView.setAdapter(new ListAdapter(context, itemSon));
-
+        requestPermission();
         setSpinner();
         return view;
     }
@@ -1672,5 +1677,23 @@ public class SettingUploadFile extends Fragment {
         handler.sendMessage(message);
     }
 
+    private void requestPermission() {
+        final String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            ActivityCompat.requestPermissions(context, permissions, 0);
+            return;
+        }
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        PermissionFragment permissionFragment = new PermissionFragment();
+        permissionFragment.setObject(context);
+        permissionFragment.show(getFragmentManager(), "show");
+    }
 }

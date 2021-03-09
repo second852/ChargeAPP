@@ -1,6 +1,7 @@
 package com.chargeapp.whc.chargeapp.Adapter;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -10,7 +11,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
-
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -98,7 +98,7 @@ public class PermissionFragment extends DialogFragment implements  DialogInterfa
                 }
                 break;
             default:
-                Welcome d= (Welcome) object;
+                Activity d= (Welcome) object;
                 d.finish();
                 break;
         }
