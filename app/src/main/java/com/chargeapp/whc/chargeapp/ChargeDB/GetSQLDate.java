@@ -1105,7 +1105,6 @@ public class GetSQLDate extends AsyncTask<Object, Integer, String> {
                         Common.showToast(download.activity, sb.toString());
                     }
                 }
-                download.tonNewActivity();
             } else if (object instanceof SelectDetList) {
                 SelectDetList selectDetList = (SelectDetList) object;
                 if (s.equals("timeout") || s.equals("error")) {
