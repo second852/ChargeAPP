@@ -104,7 +104,7 @@ public class FileActivity extends AppCompatActivity {
             @Override
             public void onFileClicked(final FileMetadata file) {
                 mSelectedFile = file;
-                performWithPermissions(FileAction.DOWNLOAD);
+                performAction(FileAction.DOWNLOAD);
             }
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
